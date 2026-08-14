@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   Award,
   BookMarked,
@@ -6,6 +6,7 @@ import {
   History,
   LifeBuoy,
   LogIn,
+  LogOut,
   Menu,
   Settings,
   TrendingUp,
@@ -21,6 +22,8 @@ import { GeoDropdown, GeoDropdownItem } from "@/components/shared/GeoDropdown";
 import { GlobalSearch } from "@/components/shared/GlobalSearch";
 import { NotificationBell } from "@/components/shared/NotificationBell";
 import { mainNav, site } from "@/config/site";
+import { signOut } from "@/lib/supabase/auth-sync";
+import { selectIsSignedIn, useAuthStore } from "@/stores/authStore";
 
 const accountLinks = [
   { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
@@ -43,6 +46,13 @@ export function Navbar() {
   const headerRef = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const signedIn = useAuthStore(selectIsSignedIn);
+  const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    setOpen(false);
+    void signOut().then(() => navigate({ to: "/" }));
+  };
 
   useEffect(() => {
     const node = headerRef.current;
@@ -111,24 +121,40 @@ export function Navbar() {
               </button>
             }
           >
-            {accountLinks.map((item) => (
-              <GeoDropdownItem key={item.to} asChild>
-                <Link to={item.to} className="flex items-center gap-3">
-                  <item.icon className="h-4 w-4" strokeWidth={1.5} />
-                  {item.label}
+            {signedIn ? (
+              <>
+                {accountLinks.map((item) => (
+                  <GeoDropdownItem key={item.to} asChild>
+                    <Link to={item.to} className="flex items-center gap-3">
+                      <item.icon className="h-4 w-4" strokeWidth={1.5} />
+                      {item.label}
+                    </Link>
+                  </GeoDropdownItem>
+                ))}
+                <GeoDropdownItem
+                  onSelect={handleSignOut}
+                  className="mt-1 border-t border-bronze/12 pt-3 text-bronze/90"
+                >
+                  <span className="flex items-center gap-3">
+                    <LogOut className="h-4 w-4" strokeWidth={1.5} />
+                    Sign out
+                  </span>
+                </GeoDropdownItem>
+              </>
+            ) : (
+              <GeoDropdownItem asChild className="text-bronze/90">
+                <Link to="/auth/login" className="flex items-center gap-3">
+                  <LogIn className="h-4 w-4" strokeWidth={1.5} />
+                  Sign in
                 </Link>
               </GeoDropdownItem>
-            ))}
-            <GeoDropdownItem asChild className="mt-1 border-t border-bronze/12 pt-3 text-bronze/90">
-              <Link to="/auth/login" className="flex items-center gap-3">
-                <LogIn className="h-4 w-4" strokeWidth={1.5} />
-                Sign in
-              </Link>
-            </GeoDropdownItem>
+            )}
           </GeoDropdown>
-          <GeoButton asChild variant="primary" size="sm">
-            <Link to="/auth/signup">Get Started</Link>
-          </GeoButton>
+          {signedIn ? null : (
+            <GeoButton asChild variant="primary" size="sm">
+              <Link to="/auth/signup">Get Started</Link>
+            </GeoButton>
+          )}
         </div>
 
         <div className="flex items-center gap-2 lg:hidden">
@@ -163,25 +189,41 @@ export function Navbar() {
               {item.label}
             </Link>
           ))}
-          {accountLinks.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className="flex items-center gap-3 border-b border-bronze/10 py-4 text-sm text-foreground/50 transition-colors hover:text-bronze"
-            >
-              <item.icon className="h-4 w-4" strokeWidth={1.5} />
-              {item.label}
-            </Link>
-          ))}
+          {signedIn
+            ? accountLinks.map((item) => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className="flex items-center gap-3 border-b border-bronze/10 py-4 text-sm text-foreground/50 transition-colors hover:text-bronze"
+                >
+                  <item.icon className="h-4 w-4" strokeWidth={1.5} />
+                  {item.label}
+                </Link>
+              ))
+            : null}
         </nav>
 
         <div className="mt-8 flex flex-col gap-3">
-          <GeoButton asChild variant="secondary" size="lg" className="w-full">
-            <Link to="/auth/login">Sign in</Link>
-          </GeoButton>
-          <GeoButton asChild variant="primary" size="lg" className="w-full">
-            <Link to="/auth/signup">Get Started</Link>
-          </GeoButton>
+          {signedIn ? (
+            <GeoButton
+              variant="secondary"
+              size="lg"
+              className="w-full gap-2"
+              onClick={handleSignOut}
+            >
+              <LogOut className="h-4 w-4" strokeWidth={1.5} />
+              Sign out
+            </GeoButton>
+          ) : (
+            <>
+              <GeoButton asChild variant="secondary" size="lg" className="w-full">
+                <Link to="/auth/login">Sign in</Link>
+              </GeoButton>
+              <GeoButton asChild variant="primary" size="lg" className="w-full">
+                <Link to="/auth/signup">Get Started</Link>
+              </GeoButton>
+            </>
+          )}
         </div>
       </GeoDrawer>
     </header>

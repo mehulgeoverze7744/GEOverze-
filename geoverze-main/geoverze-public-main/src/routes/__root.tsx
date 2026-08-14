@@ -10,6 +10,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { initAuthSync } from "@/lib/supabase/auth-sync";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
@@ -117,6 +118,13 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  // Restores the Supabase session (if any) and keeps useAuthStore in sync for
+  // the lifetime of the app. Guarded internally, so this is safe to call on
+  // every render/remount.
+  useEffect(() => {
+    initAuthSync();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

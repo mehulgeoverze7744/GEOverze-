@@ -18,15 +18,19 @@ import {
   SKILL_LEVELS,
   type SkillLevelId,
 } from "@/features/auth/data/onboarding";
-import { useAuthStore } from "@/stores/authStore";
 import { useOnboardingStore } from "@/stores/onboardingStore";
 import { cn } from "@/lib/utils";
 
-/** Five-step onboarding. Selections persist locally between steps. */
+/**
+ * Five-step onboarding. Selections persist locally between steps.
+ *
+ * By the time a signer-upper reaches this page they already have a real
+ * Supabase session (established at signup, or once they confirm their
+ * email — see VerifyEmailPage) — this step is presentational only and does
+ * not touch auth state.
+ */
 export function OnboardingPage() {
   const navigate = useNavigate();
-  const signInAsDemo = useAuthStore((s) => s.signInAsDemo);
-  const user = useAuthStore((s) => s.user);
 
   const step = useOnboardingStore((s) => s.step);
   const setStep = useOnboardingStore((s) => s.setStep);
@@ -52,11 +56,6 @@ export function OnboardingPage() {
   const onEnter = () => {
     setEntering(true);
     complete();
-    signInAsDemo({
-      email: user?.email ?? "explorer@geoverze.com",
-      displayName: user?.displayName ?? "Explorer",
-      ...(avatarId ? { avatarId } : {}),
-    });
     setTimeout(() => navigate({ to: "/play" }), 900);
   };
 

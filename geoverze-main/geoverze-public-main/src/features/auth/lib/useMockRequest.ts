@@ -1,21 +1,26 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
- * Simulates a network round-trip so every auth screen can show real
- * idle → pending → success/error states without a backend.
- *
- * Swap the body for a server call in the backend phase; the state machine and
- * every consumer stay untouched.
+ * Drives the idle → pending → success/error state machine every auth screen
+ * uses. Originally a fixed-delay simulation; now `run({ action })` awaits a
+ * real Supabase call and resolves the same way, so every consumer's markup
+ * (spinners, `ValidationMessage`, `SuccessBurst`) needed no changes to become
+ * real. The old `failWith` + timer path is kept only as a fallback for any
+ * call site that doesn't pass an `action`.
  */
 export type RequestState = "idle" | "pending" | "success" | "error";
+
+export type RequestOutcome = { ok: true } | { ok: false; error: string };
 
 export function useMockRequest({ delay = 1100 }: { delay?: number } = {}) {
   const [state, setState] = useState<RequestState>("idle");
   const [error, setError] = useState<string | null>(null);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const mounted = useRef(true);
 
   useEffect(
     () => () => {
+      mounted.current = false;
       timers.current.forEach(clearTimeout);
       timers.current = [];
     },
@@ -23,10 +28,30 @@ export function useMockRequest({ delay = 1100 }: { delay?: number } = {}) {
   );
 
   const run = useCallback(
-    (options?: { failWith?: string | null; onSuccess?: () => void; delay?: number }) =>
-      new Promise<boolean>((resolve) => {
-        setError(null);
-        setState("pending");
+    (options?: {
+      action?: () => Promise<RequestOutcome>;
+      failWith?: string | null;
+      onSuccess?: () => void;
+      delay?: number;
+    }) => {
+      setError(null);
+      setState("pending");
+
+      if (options?.action) {
+        return options.action().then((outcome) => {
+          if (!mounted.current) return outcome.ok;
+          if (!outcome.ok) {
+            setError(outcome.error);
+            setState("error");
+            return false;
+          }
+          setState("success");
+          options.onSuccess?.();
+          return true;
+        });
+      }
+
+      return new Promise<boolean>((resolve) => {
         const timer = setTimeout(() => {
           if (options?.failWith) {
             setError(options.failWith);
@@ -39,7 +64,8 @@ export function useMockRequest({ delay = 1100 }: { delay?: number } = {}) {
           resolve(true);
         }, options?.delay ?? delay);
         timers.current.push(timer);
-      }),
+      });
+    },
     [delay],
   );
 
@@ -49,16 +75,4 @@ export function useMockRequest({ delay = 1100 }: { delay?: number } = {}) {
   }, []);
 
   return { state, error, run, reset, isPending: state === "pending" } as const;
-}
-
-/**
- * Demo failure hook: this address always fails so the error state is
- * reviewable without a backend.
- */
-export const DEMO_FAILING_EMAIL = "error@geoverze.com";
-
-export function demoFailureFor(email: string) {
-  return email.trim().toLowerCase() === DEMO_FAILING_EMAIL
-    ? "We couldn't verify those credentials. Check your details and try again."
-    : null;
 }

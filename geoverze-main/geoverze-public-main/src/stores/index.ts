@@ -12,7 +12,7 @@
  *   Session material is never persisted by hand — the auth client owns it.
  */
 
-export { useAuthStore, selectIsSignedIn, selectUser } from "./authStore";
+export { useAuthStore, selectIsSignedIn, selectUser, selectRole } from "./authStore";
 export type { AuthStatus, SessionUser } from "./authStore";
 
 export { usePreferencesStore, selectMotion, selectUnits } from "./preferencesStore";

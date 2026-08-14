@@ -19,7 +19,8 @@ import {
   type FieldErrors,
   type SignupValues,
 } from "@/features/auth/lib/schemas";
-import { demoFailureFor, useMockRequest } from "@/features/auth/lib/useMockRequest";
+import { useMockRequest } from "@/features/auth/lib/useMockRequest";
+import { supabase } from "@/lib/supabase/client";
 
 const EMPTY: SignupValues = {
   firstName: "",
@@ -59,7 +60,29 @@ export function SignupPage() {
       return;
     }
     setErrors({});
-    const ok = await run({ failWith: demoFailureFor(values.email) });
+    const ok = await run({
+      action: async () => {
+        const { error: signUpError } = await supabase.auth.signUp({
+          email: parsed.data.email,
+          password: parsed.data.password,
+          options: {
+            data: {
+              username: parsed.data.username,
+              display_name: `${parsed.data.firstName} ${parsed.data.lastName}`.trim(),
+              first_name: parsed.data.firstName,
+              last_name: parsed.data.lastName,
+            },
+            ...(typeof window !== "undefined"
+              ? {
+                  emailRedirectTo: `${window.location.origin}/auth/verify-email?email=${encodeURIComponent(parsed.data.email)}`,
+                }
+              : {}),
+          },
+        });
+        if (signUpError) return { ok: false, error: signUpError.message };
+        return { ok: true };
+      },
+    });
     if (ok) {
       navigate({ to: "/auth/verify-email", search: { email: parsed.data.email } });
     }

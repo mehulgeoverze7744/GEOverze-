@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Bell,
   ChevronDown,
@@ -26,6 +26,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { signOut } from "@/lib/supabase/auth-sync";
+import { selectRole, selectUser, useAuthStore } from "@/stores/authStore";
 
 export interface TopBarProps {
   onOpenCommand: () => void;
@@ -37,6 +39,22 @@ export interface TopBarProps {
   onToggleTheme: () => void;
 }
 
+function initialsFor(email: string) {
+  const name = email.split("@")[0] ?? "";
+  const parts = name.split(/[._-]/).filter(Boolean);
+  const initials =
+    parts.length > 1 ? `${parts[0]?.[0] ?? ""}${parts[1]?.[0] ?? ""}` : name.slice(0, 2);
+  return (initials || "?").toUpperCase();
+}
+
+function roleLabel(role: string | null) {
+  if (!role) return "Signed in";
+  return role
+    .split("_")
+    .map((part) => part[0]?.toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
 export function TopBar({
   onOpenCommand,
   onOpenSearch,
@@ -46,6 +64,14 @@ export function TopBar({
   theme,
   onToggleTheme,
 }: TopBarProps) {
+  const navigate = useNavigate();
+  const user = useAuthStore(selectUser);
+  const role = useAuthStore(selectRole);
+
+  const handleSignOut = () => {
+    void signOut().then(() => navigate({ to: "/login" }));
+  };
+
   return (
     <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border bg-surface/80 px-3 backdrop-blur">
       <Button
@@ -161,21 +187,23 @@ export function TopBar({
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="sm" className="gap-2 pl-1.5">
               <span className="flex size-6 items-center justify-center rounded-full bg-primary/15 text-[10px] font-semibold text-primary">
-                AV
+                {initialsFor(user?.email ?? "?")}
               </span>
-              <span className="hidden text-sm sm:inline">Ava Reyes</span>
+              <span className="hidden text-sm sm:inline">{user?.email ?? "Signed in"}</span>
               <ChevronDown className="size-3.5 text-muted-foreground" aria-hidden="true" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel className="space-y-0.5">
-              <span className="block text-sm">Ava Reyes</span>
+              <span className="block truncate text-sm">{user?.email ?? "Signed in"}</span>
               <span className="block text-xs font-normal text-muted-foreground">
-                Platform Administrator
+                {roleLabel(role)}
               </span>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => toast.info("Admin profile arrives with auth.")}>
+            <DropdownMenuItem
+              onSelect={() => toast.info("Profile management arrives in a later phase.")}
+            >
               <UserCircle2 className="size-4" aria-hidden="true" />
               Profile
             </DropdownMenuItem>
@@ -192,7 +220,7 @@ export function TopBar({
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => toast.info("Sign out arrives with authentication.")}>
+            <DropdownMenuItem onSelect={handleSignOut}>
               <LogOut className="size-4" aria-hidden="true" />
               Sign out
             </DropdownMenuItem>

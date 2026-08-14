@@ -16,10 +16,9 @@ import { useAuthStore } from "@/stores/authStore";
 /**
  * Account area gate.
  *
- * There is no auth backend yet, so this reads the client session store and
- * renders an inline sign-in wall instead of redirecting — the URL stays intact
- * and the page never flashes protected content. When real sessions land, this
- * is the single place that changes.
+ * Reads the Supabase-backed session mirror (`useAuthStore`) and renders an
+ * inline sign-in wall instead of redirecting — the URL stays intact and the
+ * page never flashes protected content while the session is restored.
  */
 export const Route = createFileRoute("/_app")({
   component: AccountArea,
@@ -41,7 +40,7 @@ function AccountArea() {
       <PageHeader
         eyebrow="Account"
         title="Sign in to continue"
-        description="This area belongs to your GEOverze account. Accounts activate in the authentication phase — the screens are finished and waiting on their backend."
+        description="This area belongs to your GEOverze account. Sign in to pick up where you left off."
       />
       <SectionContainer>
         <AnimatedSection>

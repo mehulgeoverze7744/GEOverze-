@@ -18,18 +18,13 @@ import {
   type FieldErrors,
   type LoginValues,
 } from "@/features/auth/lib/schemas";
-import {
-  DEMO_FAILING_EMAIL,
-  demoFailureFor,
-  useMockRequest,
-} from "@/features/auth/lib/useMockRequest";
+import { useMockRequest } from "@/features/auth/lib/useMockRequest";
 import { PasswordField } from "@/features/auth/components/PasswordField";
-import { useAuthStore } from "@/stores/authStore";
+import { supabase } from "@/lib/supabase/client";
 
-/** Sign-in screen. Frontend-only: a successful submit sets the local session. */
+/** Sign-in screen. Authenticates against Supabase; a successful submit starts a real session. */
 export function LoginPage() {
   const navigate = useNavigate();
-  const signInAsDemo = useAuthStore((s) => s.signInAsDemo);
   const [values, setValues] = useState<LoginValues>({ email: "", password: "", remember: true });
   const [errors, setErrors] = useState<FieldErrors<LoginValues>>({});
   const { state, error, run, reset } = useMockRequest();
@@ -48,12 +43,17 @@ export function LoginPage() {
       return;
     }
     setErrors({});
-    const ok = await run({ failWith: demoFailureFor(values.email) });
+    const ok = await run({
+      action: async () => {
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: parsed.data.email,
+          password: parsed.data.password,
+        });
+        if (signInError) return { ok: false, error: signInError.message };
+        return { ok: true };
+      },
+    });
     if (ok) {
-      signInAsDemo({
-        email: parsed.data.email,
-        displayName: parsed.data.email.split("@")[0] ?? "Explorer",
-      });
       setTimeout(() => navigate({ to: "/profile" }), 1200);
     }
   };
@@ -132,11 +132,6 @@ export function LoginPage() {
           <AuthSubmitButton pending={state === "pending"} pendingLabel="Signing in">
             Sign in
           </AuthSubmitButton>
-
-          <p className="text-center text-[0.68rem] text-foreground/50">
-            Demo build — any valid email signs you in. Use {DEMO_FAILING_EMAIL} to preview the error
-            state.
-          </p>
 
           <AuthDivider />
 

@@ -1,12 +1,17 @@
 /**
  * Auth session state.
  *
- * There is still no auth backend. `signInAsDemo` is the single seam that a real
- * session replaces — every auth screen goes through it, so nothing else in the
- * app needs to change when Lovable Cloud is enabled.
+ * Supabase Auth is the authoritative source of truth for whether someone is
+ * signed in; this store is a read-only mirror kept in sync by
+ * `src/lib/supabase/auth-sync.ts` so the rest of the app can keep reading
+ * `useAuthStore` exactly as it always has. Nothing here is persisted by hand —
+ * supabase-js already persists the session (see lib/supabase/client.ts) and
+ * re-hydrating from a second, separate copy in localStorage would let the two
+ * disagree after a sign-out or token refresh.
  */
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+
+import type { AppRole } from "@/lib/supabase/client";
 
 export type AuthStatus = "unknown" | "signed-out" | "signed-in";
 
@@ -22,34 +27,26 @@ export type SessionUser = {
 type AuthState = {
   status: AuthStatus;
   user: SessionUser | null;
+  /** Highest role held by the current user, resolved from public.user_roles. */
+  role: AppRole | null;
   setSession: (user: SessionUser | null) => void;
   setStatus: (status: AuthStatus) => void;
-  /** Frontend-only stand-in for a real sign-in. Replaced in the backend phase. */
-  signInAsDemo: (user: Omit<SessionUser, "id"> & { id?: string }) => void;
+  setRole: (role: AppRole | null) => void;
+  /** Local-only reset. Does not call Supabase — use the `signOut` action for that. */
   clear: () => void;
 };
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      status: "unknown",
-      user: null,
-      setSession: (user) => set({ user, status: user ? "signed-in" : "signed-out" }),
-      setStatus: (status) => set({ status }),
-      signInAsDemo: ({ id, ...rest }) =>
-        set({
-          user: { id: id ?? `demo-${rest.email.toLowerCase()}`, ...rest },
-          status: "signed-in",
-        }),
-      clear: () => set({ user: null, status: "signed-out" }),
-    }),
-    {
-      name: "geoverze.session",
-      partialize: (state) => ({ status: state.status, user: state.user }),
-    },
-  ),
-);
+export const useAuthStore = create<AuthState>()((set) => ({
+  status: "unknown",
+  user: null,
+  role: null,
+  setSession: (user) => set({ user, status: user ? "signed-in" : "signed-out" }),
+  setStatus: (status) => set({ status }),
+  setRole: (role) => set({ role }),
+  clear: () => set({ user: null, status: "signed-out", role: null }),
+}));
 
 /** Narrow selectors — subscribe to a slice, never the whole store. */
 export const selectIsSignedIn = (s: AuthState) => s.status === "signed-in";
 export const selectUser = (s: AuthState) => s.user;
+export const selectRole = (s: AuthState) => s.role;

@@ -18,6 +18,7 @@ import {
   type ResetPasswordValues,
 } from "@/features/auth/lib/schemas";
 import { useMockRequest } from "@/features/auth/lib/useMockRequest";
+import { supabase } from "@/lib/supabase/client";
 
 /** Set a new password from a recovery link. */
 export function ResetPasswordPage() {
@@ -39,7 +40,17 @@ export function ResetPasswordPage() {
       return;
     }
     setErrors({});
-    await run();
+    await run({
+      action: async () => {
+        // Reaching this page via a valid recovery link already established a
+        // recovery session (supabase-js reads it from the URL on load).
+        const { error: updateError } = await supabase.auth.updateUser({
+          password: parsed.data.password,
+        });
+        if (updateError) return { ok: false, error: updateError.message };
+        return { ok: true };
+      },
+    });
   };
 
   return (

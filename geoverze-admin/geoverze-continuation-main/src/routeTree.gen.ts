@@ -16,6 +16,7 @@ import { Route as AuditLogsRouteImport } from './routes/audit-logs'
 import { Route as CreatorsRouteImport } from './routes/creators'
 import { Route as CreditsRouteImport } from './routes/credits'
 import { Route as LibraryRouteImport } from './routes/library'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as ModerationRouteImport } from './routes/moderation'
 import { Route as MonitoringRouteImport } from './routes/monitoring'
 import { Route as NotificationsRouteImport } from './routes/notifications'
@@ -95,6 +96,11 @@ const CreditsRoute = CreditsRouteImport.update({
 const LibraryRoute = LibraryRouteImport.update({
   id: '/library',
   path: '/library',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ModerationRoute = ModerationRouteImport.update({
@@ -332,6 +338,7 @@ export interface FileRoutesByFullPath {
   '/creators': typeof CreatorsRouteWithChildren
   '/credits': typeof CreditsRouteWithChildren
   '/library': typeof LibraryRouteWithChildren
+  '/login': typeof LoginRoute
   '/moderation': typeof ModerationRouteWithChildren
   '/monitoring': typeof MonitoringRoute
   '/notifications': typeof NotificationsRoute
@@ -382,6 +389,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/achievements': typeof AchievementsRoute
   '/audit-logs': typeof AuditLogsRoute
+  '/login': typeof LoginRoute
   '/monitoring': typeof MonitoringRoute
   '/notifications': typeof NotificationsRoute
   '/payments': typeof PaymentsRoute
@@ -432,6 +440,7 @@ export interface FileRoutesById {
   '/creators': typeof CreatorsRouteWithChildren
   '/credits': typeof CreditsRouteWithChildren
   '/library': typeof LibraryRouteWithChildren
+  '/login': typeof LoginRoute
   '/moderation': typeof ModerationRouteWithChildren
   '/monitoring': typeof MonitoringRoute
   '/notifications': typeof NotificationsRoute
@@ -488,6 +497,7 @@ export interface FileRouteTypes {
     | '/creators'
     | '/credits'
     | '/library'
+    | '/login'
     | '/moderation'
     | '/monitoring'
     | '/notifications'
@@ -538,6 +548,7 @@ export interface FileRouteTypes {
     | '/'
     | '/achievements'
     | '/audit-logs'
+    | '/login'
     | '/monitoring'
     | '/notifications'
     | '/payments'
@@ -587,6 +598,7 @@ export interface FileRouteTypes {
     | '/creators'
     | '/credits'
     | '/library'
+    | '/login'
     | '/moderation'
     | '/monitoring'
     | '/notifications'
@@ -642,6 +654,7 @@ export interface RootRouteChildren {
   CreatorsRoute: typeof CreatorsRouteWithChildren
   CreditsRoute: typeof CreditsRouteWithChildren
   LibraryRoute: typeof LibraryRouteWithChildren
+  LoginRoute: typeof LoginRoute
   ModerationRoute: typeof ModerationRouteWithChildren
   MonitoringRoute: typeof MonitoringRoute
   NotificationsRoute: typeof NotificationsRoute
@@ -707,6 +720,13 @@ declare module '@tanstack/react-router' {
       path: '/library'
       fullPath: '/library'
       preLoaderRoute: typeof LibraryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/moderation': {
@@ -1182,6 +1202,7 @@ const rootRouteChildren: RootRouteChildren = {
   CreatorsRoute: CreatorsRouteWithChildren,
   CreditsRoute: CreditsRouteWithChildren,
   LibraryRoute: LibraryRouteWithChildren,
+  LoginRoute: LoginRoute,
   ModerationRoute: ModerationRouteWithChildren,
   MonitoringRoute: MonitoringRoute,
   NotificationsRoute: NotificationsRoute,
@@ -1200,3 +1221,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

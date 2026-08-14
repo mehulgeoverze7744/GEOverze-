@@ -4,15 +4,21 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { ShieldAlert } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppShell } from "@/components/layout/app-shell";
+import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
+import { initAuthSync, signOut } from "@/lib/supabase/auth-sync";
+import { isPrivilegedRole } from "@/lib/supabase/client";
+import { selectIsSignedIn, selectRole, useAuthStore } from "@/stores/authStore";
 
 function NotFoundComponent() {
   return (
@@ -119,15 +125,97 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * Admin access gate.
+ *
+ * `/login` always renders un-gated (there is nothing to protect there). Every
+ * other route requires a signed-in Supabase session AND a role of "admin" or
+ * "super_admin" resolved from public.user_roles — that lookup runs a fresh,
+ * RLS-scoped database query on every load, so a user cannot grant themselves
+ * access by editing localStorage, Zustand state, or app JavaScript. See the
+ * Phase 2A report for the residual caveat: this is client-side route
+ * rendering, not a network boundary — real protection for future admin-only
+ * data comes from RLS on those tables, not from this component.
+ */
+function AdminGate() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const router = useRouter();
+  const signedIn = useAuthStore(selectIsSignedIn);
+  const role = useAuthStore(selectRole);
+  const roleChecked = useAuthStore((s) => s.roleChecked);
+
+  useEffect(() => {
+    initAuthSync();
+  }, []);
+
+  // The login page renders standalone (no dashboard chrome) and is never
+  // gated — it's the one place a signed-out visitor needs to reach.
+  if (pathname === "/login") return <Outlet />;
+
+  if (!signedIn || !roleChecked) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center bg-background px-4">
+        <div className="max-w-sm text-center">
+          <div className="mx-auto flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <ShieldAlert className="size-5" aria-hidden="true" />
+          </div>
+          <h1 className="mt-4 text-lg font-semibold text-foreground">Sign in required</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {roleChecked || !signedIn
+              ? "This console is restricted to authorized administrators."
+              : "Checking your account…"}
+          </p>
+          <div className="mt-6">
+            <Button asChild>
+              <Link to="/login">Go to sign in</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isPrivilegedRole(role)) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center bg-background px-4">
+        <div className="max-w-sm text-center">
+          <div className="mx-auto flex size-10 items-center justify-center rounded-lg bg-destructive/10 text-destructive">
+            <ShieldAlert className="size-5" aria-hidden="true" />
+          </div>
+          <h1 className="mt-4 text-lg font-semibold text-foreground">Access restricted</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Your account is signed in but does not hold an admin role for GEOverze. Contact a super
+            admin if you believe this is a mistake.
+          </p>
+          <div className="mt-6">
+            <Button
+              variant="outline"
+              onClick={() => {
+                void signOut().then(() => router.navigate({ to: "/login" }));
+              }}
+            >
+              Sign out
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <AppShell>
+      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+      <Outlet />
+    </AppShell>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AppShell>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
-      </AppShell>
+      <AdminGate />
       <Toaster position="bottom-right" />
     </QueryClientProvider>
   );

@@ -17,7 +17,8 @@ import {
   type FieldErrors,
   type ForgotPasswordValues,
 } from "@/features/auth/lib/schemas";
-import { demoFailureFor, useMockRequest } from "@/features/auth/lib/useMockRequest";
+import { useMockRequest } from "@/features/auth/lib/useMockRequest";
+import { supabase } from "@/lib/supabase/client";
 
 /** Request a reset link. */
 export function ForgotPasswordPage() {
@@ -33,7 +34,20 @@ export function ForgotPasswordPage() {
       return;
     }
     setErrors({});
-    await run({ failWith: demoFailureFor(email) });
+    await run({
+      action: async () => {
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+          ...(typeof window !== "undefined"
+            ? { redirectTo: `${window.location.origin}/auth/reset-password` }
+            : {}),
+        });
+        // Supabase returns an error for real failures (rate limits, invalid
+        // config) but does not reveal whether the email exists — the success
+        // copy below already accounts for that ("if this belongs to...").
+        if (resetError) return { ok: false, error: resetError.message };
+        return { ok: true };
+      },
+    });
   };
 
   return (

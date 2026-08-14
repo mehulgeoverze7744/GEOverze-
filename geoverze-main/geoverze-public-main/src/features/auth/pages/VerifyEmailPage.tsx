@@ -10,19 +10,29 @@ import {
   AuthSubmitButton,
   SuccessBurst,
   SuccessMessage,
+  ValidationMessage,
 } from "@/features/auth/components";
 import { useMockRequest } from "@/features/auth/lib/useMockRequest";
+import { supabase } from "@/lib/supabase/client";
+import { selectIsSignedIn, useAuthStore } from "@/stores/authStore";
 
 const RESEND_COOLDOWN = 30;
 
 /**
- * Email verification. Pending by default; "I've verified" moves the journey on
- * to the mandatory age check.
+ * Email verification.
+ *
+ * Confirming happens out-of-band (the user opens the emailed link, often in a
+ * new tab). supabase-js syncs sessions across tabs of the same browser via
+ * localStorage, so `useAuthStore`'s status flips to "signed-in" here
+ * automatically the moment that happens — no polling required. The manual
+ * "I've verified" button stays as an explicit fallback that re-checks the
+ * session directly.
  */
 export function VerifyEmailPage({ email }: { email?: string }) {
   const resend = useMockRequest({ delay: 900 });
-  const confirm = useMockRequest({ delay: 1200 });
+  const confirm = useMockRequest({ delay: 600 });
   const [cooldown, setCooldown] = useState(0);
+  const signedIn = useAuthStore(selectIsSignedIn);
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -31,11 +41,30 @@ export function VerifyEmailPage({ email }: { email?: string }) {
   }, [cooldown]);
 
   const onResend = async () => {
-    const ok = await resend.run();
+    if (!email) return;
+    const ok = await resend.run({
+      action: async () => {
+        const { error } = await supabase.auth.resend({ type: "signup", email });
+        if (error) return { ok: false, error: error.message };
+        return { ok: true };
+      },
+    });
     if (ok) setCooldown(RESEND_COOLDOWN);
   };
 
-  if (confirm.state === "success") {
+  const onManualCheck = () =>
+    void confirm.run({
+      action: async () => {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) return { ok: false, error: error.message };
+        if (!data.session) {
+          return { ok: false, error: "Not verified yet — open the link from your inbox first." };
+        }
+        return { ok: true };
+      },
+    });
+
+  if (signedIn || confirm.state === "success") {
     return (
       <PageShell>
         <AuthLayout eyebrow="Verified" title="Your email is confirmed">
@@ -96,13 +125,19 @@ export function VerifyEmailPage({ email }: { email?: string }) {
               A new confirmation email is on its way. Check spam if it doesn't arrive shortly.
             </SuccessMessage>
           ) : null}
+          {resend.state === "error" && resend.error ? (
+            <ValidationMessage>{resend.error}</ValidationMessage>
+          ) : null}
+          {confirm.state === "error" && confirm.error ? (
+            <ValidationMessage>{confirm.error}</ValidationMessage>
+          ) : null}
 
           <div className="space-y-3">
             <AuthSubmitButton
               type="button"
               pending={confirm.state === "pending"}
               pendingLabel="Checking"
-              onClick={() => void confirm.run()}
+              onClick={onManualCheck}
             >
               I've verified my email
             </AuthSubmitButton>
