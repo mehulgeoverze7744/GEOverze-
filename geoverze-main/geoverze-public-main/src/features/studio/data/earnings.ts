@@ -1,0 +1,148 @@
+/** Placeholder earnings data. No payment logic anywhere. */
+import type { Payout, Transaction } from "./types";
+
+export const EARNINGS_SUMMARY = {
+  currency: "USD",
+  totalEarned: 18_942.5,
+  availableBalance: 2_418.75,
+  pendingClearance: 640.2,
+  lastPayout: { amount: 3_200, date: "2026-07-15T00:00:00Z" },
+  nextPayoutDate: "2026-08-15T00:00:00Z",
+  minimumPayout: 100,
+  creditsEarned: 412_800,
+};
+
+export const REVENUE_STREAMS = [
+  { id: "r1", label: "Quiz plays", amount: 9_640.25, share: 0.51 },
+  { id: "r2", label: "Premium articles", amount: 5_120.8, share: 0.27 },
+  { id: "r3", label: "GEOstore bundles", amount: 2_845.45, share: 0.15 },
+  { id: "r4", label: "Community tips", amount: 1_336.0, share: 0.07 },
+];
+
+export const TRANSACTIONS: Transaction[] = [
+  {
+    id: "t1",
+    date: "2026-08-06T09:12:00Z",
+    label: "Quiz plays — Flags That Fool Everyone",
+    kind: "quiz-royalty",
+    amount: 184.6,
+    credits: null,
+    status: "cleared",
+  },
+  {
+    id: "t2",
+    date: "2026-08-05T09:12:00Z",
+    label: "Premium article reads — How Long Is a Coastline?",
+    kind: "article-royalty",
+    amount: 96.4,
+    credits: null,
+    status: "cleared",
+  },
+  {
+    id: "t3",
+    date: "2026-08-04T09:12:00Z",
+    label: "GEOstore bundle — Physical Geography Pack",
+    kind: "bundle-sale",
+    amount: 240.0,
+    credits: null,
+    status: "pending",
+  },
+  {
+    id: "t4",
+    date: "2026-08-03T14:00:00Z",
+    label: "Creator credit bonus — weekly streak",
+    kind: "credit-bonus",
+    amount: null,
+    credits: 4_800,
+    status: "cleared",
+  },
+  {
+    id: "t5",
+    date: "2026-08-01T09:12:00Z",
+    label: "Quiz plays — Rivers of the World",
+    kind: "quiz-royalty",
+    amount: 131.25,
+    credits: null,
+    status: "cleared",
+  },
+  {
+    id: "t6",
+    date: "2026-07-15T00:00:00Z",
+    label: "Payout to bank transfer •••• 4417",
+    kind: "payout",
+    amount: -3_200.0,
+    credits: null,
+    status: "cleared",
+  },
+  {
+    id: "t7",
+    date: "2026-07-12T09:12:00Z",
+    label: "Bundle sale — Flags Starter Pack",
+    kind: "bundle-sale",
+    amount: 384.0,
+    credits: null,
+    status: "cleared",
+  },
+  {
+    id: "t8",
+    date: "2026-07-09T09:12:00Z",
+    label: "Premium article reads — The Monsoon Machine",
+    kind: "article-royalty",
+    amount: 210.75,
+    credits: null,
+    status: "cleared",
+  },
+  {
+    id: "t9",
+    date: "2026-06-15T00:00:00Z",
+    label: "Payout to bank transfer •••• 4417",
+    kind: "payout",
+    amount: -2_850.0,
+    credits: null,
+    status: "cleared",
+  },
+  {
+    id: "t10",
+    date: "2026-06-02T09:12:00Z",
+    label: "Creator credit bonus — featured placement",
+    kind: "credit-bonus",
+    amount: null,
+    credits: 12_000,
+    status: "cleared",
+  },
+];
+
+export const PAYOUTS: Payout[] = [
+  {
+    id: "p1",
+    date: "2026-07-15T00:00:00Z",
+    amount: 3_200.0,
+    method: "Bank transfer •••• 4417",
+    status: "paid",
+    reference: "GVZ-PAY-2026-07",
+  },
+  {
+    id: "p2",
+    date: "2026-06-15T00:00:00Z",
+    amount: 2_850.0,
+    method: "Bank transfer •••• 4417",
+    status: "paid",
+    reference: "GVZ-PAY-2026-06",
+  },
+  {
+    id: "p3",
+    date: "2026-05-15T00:00:00Z",
+    amount: 2_140.0,
+    method: "Bank transfer •••• 4417",
+    status: "paid",
+    reference: "GVZ-PAY-2026-05",
+  },
+  {
+    id: "p4",
+    date: "2026-08-15T00:00:00Z",
+    amount: 2_418.75,
+    method: "Bank transfer •••• 4417",
+    status: "scheduled",
+    reference: "GVZ-PAY-2026-08",
+  },
+];

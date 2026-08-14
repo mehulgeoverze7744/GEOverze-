@@ -1,0 +1,400 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design system definition.
+ *
+ * The @theme inline block maps CSS custom properties to Tailwind utility
+ * classes (e.g. --color-primary -> bg-primary, text-primary).
+ *
+ * The :root and .dark blocks define the actual color values using oklch.
+ * All colors MUST use oklch format.
+ *
+ * To add a new semantic color:
+ * 1. Add the variable to :root (light value) and .dark (dark value)
+ * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-bronze: var(--bronze);
+  --color-bronze-glow: var(--bronze-glow);
+  --color-charcoal: var(--charcoal);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(0.06 0.004 60);
+  --foreground: oklch(0.93 0.02 70);
+  --bronze: oklch(0.68 0.09 62);
+  --bronze-glow: oklch(0.82 0.08 78);
+  --charcoal: oklch(0.16 0.006 60);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.129 0.042 264.695);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.129 0.042 264.695);
+  --primary: oklch(0.208 0.042 265.755);
+  --primary-foreground: oklch(0.984 0.003 247.858);
+  --secondary: oklch(0.968 0.007 247.896);
+  --secondary-foreground: oklch(0.208 0.042 265.755);
+  --muted: oklch(0.968 0.007 247.896);
+  --muted-foreground: oklch(0.554 0.046 257.417);
+  --accent: oklch(0.968 0.007 247.896);
+  --accent-foreground: oklch(0.208 0.042 265.755);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --border: oklch(0.929 0.013 255.508);
+  --input: oklch(0.929 0.013 255.508);
+  --ring: oklch(0.704 0.04 256.788);
+}
+
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * GEOverze design tokens — glass, glow, motion, spacing.
+ * Components must reference these tokens, never raw color/shadow literals.
+ * ------------------------------------------------------------------------- */
+
+:root {
+  /* glass */
+  --glass-bg: oklch(0.16 0.006 60 / 0.42);
+  --glass-bg-strong: oklch(0.12 0.006 60 / 0.72);
+  --glass-border: oklch(0.68 0.09 62 / 0.18);
+  --glass-border-strong: oklch(0.68 0.09 62 / 0.38);
+  --glass-blur: 18px;
+
+  /* glow + shadow */
+  --glow-bronze: 0 0 40px oklch(0.68 0.09 62 / 0.22);
+  --glow-bronze-strong: 0 0 60px oklch(0.72 0.1 66 / 0.35);
+  --shadow-panel: 0 24px 60px -24px oklch(0 0 0 / 0.85);
+  --shadow-float: 0 10px 30px -12px oklch(0 0 0 / 0.7);
+
+  /* atmospheric layers */
+  --bloom-bronze: oklch(0.22 0.02 60 / 0.4);
+
+  /* gradients */
+  --gradient-bronze: linear-gradient(
+    100deg,
+    oklch(0.62 0.08 55) 0%,
+    oklch(0.82 0.08 78) 48%,
+    oklch(0.6 0.08 52) 100%
+  );
+  --gradient-surface: linear-gradient(
+    160deg,
+    oklch(0.2 0.01 60 / 0.6) 0%,
+    oklch(0.09 0.004 60 / 0.4) 100%
+  );
+
+  /* motion */
+  --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 180ms;
+  --dur-base: 320ms;
+  --dur-slow: 700ms;
+
+  /* layout rhythm */
+  --space-section: 7rem;
+  --space-section-sm: 4.5rem;
+  --nav-height: 4.75rem;
+
+  /* typography scale helpers */
+  --tracking-eyebrow: 0.42em;
+  --tracking-button: 0.24em;
+
+  /* overlays + focus */
+  --overlay-scrim: oklch(0.03 0.004 60 / 0.82);
+  --focus-ring: 0 0 0 2px oklch(0.68 0.09 62 / 0.55);
+
+  /* z layers — every fixed/absolute surface reads one of these */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 30;
+  --z-nav: 40;
+  --z-overlay: 50;
+  --z-modal: 60;
+  --z-toast: 70;
+  --z-skip: 100;
+}
+
+@theme inline {
+  --shadow-panel: var(--shadow-panel);
+  --shadow-float: var(--shadow-float);
+  --ease-cinematic: var(--ease-cinematic);
+  --ease-soft: var(--ease-soft);
+  --ease-snap: var(--ease-snap);
+  --font-cta: "Chakra Petch", sans-serif;
+}
+
+/* One motion scale. Components use these instead of ad-hoc duration classes. */
+@utility motion-snap {
+  transition-duration: var(--dur-snap);
+  transition-timing-function: var(--ease-snap);
+}
+
+@utility motion-fast {
+  transition-duration: var(--dur-fast);
+  transition-timing-function: var(--ease-soft);
+}
+
+@utility motion-base {
+  transition-duration: var(--dur-base);
+  transition-timing-function: var(--ease-cinematic);
+}
+
+@utility motion-slow {
+  transition-duration: var(--dur-slow);
+  transition-timing-function: var(--ease-cinematic);
+}
+
+@utility overlay-scrim {
+  background-color: var(--overlay-scrim);
+}
+
+@utility focus-ring {
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+}
+
+
+@utility glass-panel {
+  background-color: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.1);
+  box-shadow: var(--shadow-panel);
+}
+
+@utility glass-panel-strong {
+  background-color: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border-strong);
+  backdrop-filter: blur(calc(var(--glass-blur) * 1.4)) saturate(1.15);
+  box-shadow: var(--shadow-panel);
+}
+
+@utility bronze-glow {
+  box-shadow: var(--glow-bronze);
+}
+
+@utility bronze-glow-strong {
+  box-shadow: var(--glow-bronze-strong);
+}
+
+@utility text-gradient-bronze {
+  background-image: var(--gradient-bronze);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+@utility eyebrow {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--bronze);
+}
+
+@utility brand-sheen {
+  /* the pseudo-element must anchor to this box, and its bleed must be clipped */
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -8%;
+    border-radius: 9999px;
+    pointer-events: none;
+    background: radial-gradient(
+      circle at 32% 28%,
+      color-mix(in oklab, var(--bronze-glow) 30%, transparent),
+      transparent 62%
+    );
+    opacity: 0.35;
+    animation: brand-sheen 9s var(--ease-soft) infinite;
+  }
+
+  &:hover::after {
+    opacity: 0.6;
+  }
+}
+
+@keyframes brand-sheen {
+  0%,
+  100% {
+    opacity: 0.22;
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translate3d(4%, -3%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-sheen::after {
+    animation: none;
+  }
+}
+
+@utility hairline-top {
+  border-top: 1px solid var(--glass-border);
+}
+
+@utility surface-gradient {
+  background-image: var(--gradient-surface);
+}
+
+@layer base {
+  ::selection {
+    background-color: oklch(0.68 0.09 62 / 0.3);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@utility bg-gradient-bronze {
+  background-image: var(--gradient-bronze);
+}
+
+/* ---------------------------------------------------------------------------
+ * Game lobby surfaces (Let's Play).
+ * Solid, tactile cards + fast motion — deliberately not the glass language.
+ * ------------------------------------------------------------------------- */
+
+:root {
+  --game-bg: oklch(0.145 0.006 60);
+  --game-bg-raised: oklch(0.185 0.008 62);
+  --game-border: oklch(0.68 0.09 62 / 0.14);
+  --game-border-hover: oklch(0.68 0.09 62 / 0.55);
+  --shadow-game: 0 10px 24px -14px oklch(0 0 0 / 0.9);
+  --shadow-game-hover: 0 18px 40px -18px oklch(0 0 0 / 0.95);
+  --dur-snap: 140ms;
+  --ease-snap: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@utility game-surface {
+  background-color: var(--game-bg);
+  border: 1px solid var(--game-border);
+  box-shadow: var(--shadow-game);
+}
+
+@utility game-surface-raised {
+  background-color: var(--game-bg-raised);
+  border: 1px solid var(--game-border);
+  box-shadow: var(--shadow-game);
+}
+
+@utility game-lift {
+  transition:
+    transform var(--dur-snap) var(--ease-snap),
+    border-color var(--dur-snap) var(--ease-snap),
+    box-shadow var(--dur-snap) var(--ease-snap);
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: var(--game-border-hover);
+    box-shadow: var(--shadow-game-hover);
+  }
+
+  &:active {
+    transform: translateY(-1px);
+  }
+}
+
+@utility rail-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  & > * {
+    scroll-snap-align: start;
+  }
+}
+
+@keyframes cta-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 oklch(0.68 0.09 62 / 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 14px oklch(0.68 0.09 62 / 0);
+  }
+}
+
+@utility cta-pulse {
+  animation: cta-pulse 2.4s var(--ease-soft) infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Global accessibility + motion baselines.
+ * ------------------------------------------------------------------------- */
+
+@layer base {
+  :focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
