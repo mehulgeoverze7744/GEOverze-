@@ -5,7 +5,7 @@ import { ArrowLeft, Check, Clock, Repeat2, X } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer, StatCard } from "@/components/shared";
 import { MetaChip } from "@/features/play/components/Badges";
-import { resolveQuizSet } from "@/features/quiz";
+import { useQuizSet } from "@/features/quiz";
 import { MATCHES, MATCH_MODE_LABEL, MATCH_OUTCOME_LABEL } from "../data/matches";
 
 /** /play/history/$matchId — question-by-question replay of a stored match. */
@@ -14,6 +14,10 @@ export function ReplayPage() {
   // Locale timestamps only render after hydration to keep SSR output stable.
   const [playedLabel, setPlayedLabel] = useState("");
   const match = MATCHES.find((m) => m.id === matchId);
+
+  // useQuizSet must be called unconditionally (Rules of Hooks).
+  // When match is undefined the hook receives undefined and returns loading=false, error set.
+  const { set, loading: setLoading } = useQuizSet(match?.quizId);
 
   useEffect(() => {
     if (match) setPlayedLabel(new Date(match.playedAt).toLocaleString());
@@ -37,7 +41,19 @@ export function ReplayPage() {
     );
   }
 
-  const set = resolveQuizSet(match.quizId);
+  if (setLoading || !set) {
+    return (
+      <PageShell>
+        <div className="flex min-h-[70vh] items-center justify-center">
+          <div
+            className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent text-bronze"
+            aria-label="Loading replay…"
+          />
+        </div>
+      </PageShell>
+    );
+  }
+
   const correctCount = Math.round((match.accuracy / 100) * set.questions.length);
 
   return (

@@ -7,7 +7,7 @@ import { AnimatedSection, GeoButton, ProgressRing, SectionContainer } from "@/co
 import { DifficultyBadge, MetaChip } from "@/features/play/components/Badges";
 import { CoverArt } from "@/features/play/components/CoverArt";
 import { GAME_MODES } from "@/features/play/data/gameModes";
-import { resolveQuizSet } from "@/features/quiz";
+import { useQuizSet } from "@/features/quiz";
 import { useMatchStore } from "@/stores/matchStore";
 import { useQuizStore, type QuizMode } from "@/stores/quizStore";
 import { PlayerSlot, ReservedSlot } from "../components/PlayerSlot";
@@ -26,7 +26,10 @@ export function LobbyScreen() {
   const { mode, quiz } = useSearch({ from: "/play/lobby" });
   const navigate = useNavigate();
   const resolvedMode = mode ?? "solo";
-  const set = resolveQuizSet(quiz ?? resolvedMode);
+  const { set: rawSet, loading: setLoading } = useQuizSet(quiz ?? resolvedMode);
+  // Provide a stable fallback shape while loading so downstream JSX that reads
+  // `set.*` always has a value.  The loading spinner hides the partial state.
+  const set = rawSet;
   const modeMeta = GAME_MODES.find((m) => m.id === resolvedMode);
 
   const roster = useMatchStore((s) => s.roster);
@@ -45,6 +48,7 @@ export function LobbyScreen() {
   }, [social, roster.length, resolveMatch, resolvedMode]);
 
   const launch = () => {
+    if (!set) return;
     startRun(set.id, RUN_MODE[resolvedMode] ?? "solo");
     const target =
       resolvedMode === "pvp"
@@ -70,6 +74,19 @@ export function LobbyScreen() {
   }, [youReady, countdown]);
 
   const seats = [{ ...YOU }, ...roster];
+
+  if (setLoading || !set) {
+    return (
+      <PageShell>
+        <div className="flex min-h-[70vh] items-center justify-center">
+          <div
+            className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent text-bronze"
+            aria-label="Loading lobby…"
+          />
+        </div>
+      </PageShell>
+    );
+  }
 
   return (
     <PageShell>

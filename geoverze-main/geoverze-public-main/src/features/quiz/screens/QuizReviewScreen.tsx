@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { useQuizStore } from "@/stores/quizStore";
 import { QuizLayout } from "../components/QuizLayout";
 import { ReviewCard } from "../components/ReviewCard";
-import { resolveQuizSet } from "../data/quizSets";
+import { useQuizSet } from "../hooks/useQuizSet";
 
 const FILTERS = [
   { id: "all", label: "All" },
@@ -21,21 +21,51 @@ export function QuizReviewScreen() {
   const { quiz } = useSearch({ from: "/play/quiz/review" });
   const answers = useQuizStore((s) => s.answers);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["id"]>("all");
-  const set = resolveQuizSet(quiz);
+  const { set, loading, error } = useQuizSet(quiz);
   const hasRun = Object.keys(answers).length > 0;
 
   const rows = useMemo(
     () =>
-      set.questions
-        .map((question, i) => ({ question, answer: answers[question.id], number: i + 1 }))
-        .filter(({ answer }) => {
-          if (filter === "all") return true;
-          if (filter === "skipped") return !answer || answer.skipped;
-          if (filter === "correct") return Boolean(answer?.correct);
-          return Boolean(answer) && !answer!.skipped && !answer!.correct;
-        }),
-    [answers, filter, set.questions],
+      set
+        ? set.questions
+            .map((question, i) => ({ question, answer: answers[question.id], number: i + 1 }))
+            .filter(({ answer }) => {
+              if (filter === "all") return true;
+              if (filter === "skipped") return !answer || answer.skipped;
+              if (filter === "correct") return Boolean(answer?.correct);
+              return Boolean(answer) && !answer!.skipped && !answer!.correct;
+            })
+        : [],
+    [answers, filter, set],
   );
+
+  if (loading) {
+    return (
+      <QuizLayout width="default" className="pt-10">
+        <div className="flex items-center justify-center py-16">
+          <div
+            className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent text-bronze"
+            aria-label="Loading…"
+          />
+        </div>
+      </QuizLayout>
+    );
+  }
+
+  if (error || !set) {
+    return (
+      <QuizLayout width="default" className="pt-10">
+        <div className="game-surface rounded-2xl p-6 text-center">
+          <p className="text-[0.9rem] text-foreground/60">
+            {error ?? "Could not load quiz. Please try again."}
+          </p>
+          <GeoButton variant="dark" size="md" asChild className="mt-4">
+            <Link to="/play">Back to hub</Link>
+          </GeoButton>
+        </div>
+      </QuizLayout>
+    );
+  }
 
   return (
     <QuizLayout width="default" className="pt-10">

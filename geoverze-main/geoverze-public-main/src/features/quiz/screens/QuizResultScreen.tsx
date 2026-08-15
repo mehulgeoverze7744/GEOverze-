@@ -10,7 +10,7 @@ import { useProgressionStore } from "@/stores/progressionStore";
 import { useQuizStore } from "@/stores/quizStore";
 import { ResultSummary } from "../components/ResultSummary";
 import { QuizLayout } from "../components/QuizLayout";
-import { resolveQuizSet } from "../data/quizSets";
+import { useQuizSet } from "../hooks/useQuizSet";
 import { summarise, type RunSummary } from "../lib/session";
 
 /** Shape returned by the record_quiz_attempt RPC (Phase 2C idempotency). */
@@ -84,22 +84,21 @@ export function QuizResultScreen() {
   const setPersisted = useQuizStore((s) => s.setPersisted);
   const attemptId = useQuizStore((s) => s.attemptId);
   const user = useAuthStore((s) => s.user);
-  const set = resolveQuizSet(quiz);
+  const { set, loading: setLoading } = useQuizSet(quiz);
 
   // True only when this tab has a live, finished run in memory.
   const hasRun = Object.keys(answers).length > 0 && finishedAt !== null;
 
-  // Try to load a previously-saved result from sessionStorage.
-  // Consulted only when there is no live in-memory run — never overrides a
-  // just-completed run that is still in memory.
+  // Use the quiz URL param directly for sessionStorage lookup — it is the
+  // quiz ID string, available synchronously before the set loads from DB.
   const [hydratedResult] = useState<StoredQuizResult | null>(() =>
-    hasRun ? null : loadResult(set.id),
+    hasRun ? null : loadResult(quiz ?? ""),
   );
 
   // Derive the run summary from the live session, or fall back to hydrated.
   const liveSummary = useMemo(
     () =>
-      hasRun
+      hasRun && set
         ? summarise(set, answers, (finishedAt ?? Date.now()) - (startedAt ?? Date.now()))
         : null,
     [answers, finishedAt, hasRun, set, startedAt],
@@ -119,8 +118,9 @@ export function QuizResultScreen() {
   // Fire record_quiz_attempt() exactly once per live completed run.
   // This block is intentionally skipped when the result is hydrated from
   // sessionStorage — hydrated results are already persisted; no re-submission.
+  // Guard on `set` being loaded: the RPC needs set.questions.length and set.id.
   useEffect(() => {
-    if (!hasRun || persisted || hasFiredRef.current || !user?.id || !attemptId) return;
+    if (!hasRun || persisted || hasFiredRef.current || !user?.id || !attemptId || !set) return;
     hasFiredRef.current = true;
 
     // Capture stable values before the async boundary.
@@ -210,18 +210,35 @@ export function QuizResultScreen() {
     setPersisted,
   ]);
 
+  // While the quiz set is loading from Supabase show a minimal spinner.
+  // This is typically sub-second; the result screen's core state (answers,
+  // finishedAt, attemptId) is already in the store and does not depend on it.
+  if (setLoading) {
+    return (
+      <QuizLayout width="narrow" className="pt-16">
+        <div className="flex items-center justify-center py-16">
+          <div
+            className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent text-bronze"
+            aria-label="Loading…"
+          />
+        </div>
+      </QuizLayout>
+    );
+  }
+
   // No result: neither a live in-memory run nor a hydrated sessionStorage entry.
   if (!summary) {
+    const quizTitle = set?.title ?? quiz ?? "this quiz";
     return (
       <QuizLayout width="narrow" className="pt-16">
         <div className="game-surface rounded-2xl p-7 text-center">
           <h1 className="text-xl font-semibold tracking-tight text-foreground">No result yet</h1>
           <p className="mt-2 text-[0.88rem] text-foreground/55">
-            Runs are not stored between visits. Play {set.title} to see your summary here.
+            Runs are not stored between visits. Play {quizTitle} to see your summary here.
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
             <GeoButton variant="solid" size="md" asChild>
-              <Link to="/play/quiz" search={{ quiz: set.id }}>
+              <Link to="/play/quiz" search={{ quiz: quiz ?? "" }}>
                 Open lobby
               </Link>
             </GeoButton>
@@ -229,6 +246,19 @@ export function QuizResultScreen() {
               <Link to="/play">Back to hub</Link>
             </GeoButton>
           </div>
+        </div>
+      </QuizLayout>
+    );
+  }
+
+  if (!set) {
+    return (
+      <QuizLayout width="narrow" className="pt-16">
+        <div className="game-surface rounded-2xl p-7 text-center">
+          <p className="text-[0.9rem] text-foreground/60">Could not load quiz details.</p>
+          <GeoButton variant="dark" size="md" asChild className="mt-4">
+            <Link to="/play">Back to hub</Link>
+          </GeoButton>
         </div>
       </QuizLayout>
     );
