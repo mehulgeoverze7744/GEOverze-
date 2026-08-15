@@ -1,12 +1,14 @@
 import { useMemo, useState } from "react";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Archive, Download, Plus, RefreshCw, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 import { ActionToolbar } from "@/components/shared/action-toolbar";
 import { ChartCard } from "@/components/shared/chart-card";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { DataTable } from "@/components/shared/data-table";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
+import { EmptyState } from "@/components/shared/empty-state";
 import { PageBody } from "@/components/shared/page-body";
 import { PageHeader } from "@/components/shared/page-header";
 import { SearchBar } from "@/components/shared/search-bar";
@@ -17,16 +19,17 @@ import {
   quizCategorySeries,
   quizDifficultySeries,
   quizPlaysSeries,
-  quizRecords,
   summarizeQuizzes,
 } from "@/features/quizzes/data";
 import { filterQuizzes } from "@/features/quizzes/filtering";
+import { useQuizMutations } from "@/features/quizzes/hooks/useQuizMutations";
+import { useQuizzes } from "@/features/quizzes/hooks/useQuizzes";
 import { QuizFilters } from "@/features/quizzes/quiz-filters";
 import { QuizStats } from "@/features/quizzes/quiz-stats";
 import { emptyQuizFilters, type QuizFilterState } from "@/features/quizzes/types";
-import { useQuizActions } from "@/features/quizzes/use-quiz-actions";
 import { catalogMonths } from "@/lib/catalog";
 import { num } from "@/lib/format";
+import { notReadyNow } from "@/lib/placeholder";
 
 export const Route = createFileRoute("/quizzes/")({
   head: () => ({
@@ -54,23 +57,52 @@ function QuizDirectoryPage() {
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<QuizFilterState>(emptyQuizFilters);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [deleteIds, setDeleteIds] = useState<string[] | null>(null);
 
-  const actions = useQuizActions(quizRecords);
+  const { quizzes, loading, error, refetch } = useQuizzes();
+  const mutations = useQuizMutations();
+
   const rows = useMemo(
-    () => filterQuizzes(actions.quizzes, query, filters),
-    [actions.quizzes, query, filters],
+    () => filterQuizzes(quizzes, query, filters),
+    [quizzes, query, filters],
   );
   const columns = useMemo(() => buildQuizColumns(query), [query]);
-  const summary = useMemo(() => summarizeQuizzes(actions.quizzes), [actions.quizzes]);
-  const plays = useMemo(() => quizPlaysSeries(actions.quizzes), [actions.quizzes]);
-  const categories = useMemo(() => quizCategorySeries(actions.quizzes), [actions.quizzes]);
-  const difficulty = useMemo(() => quizDifficultySeries(actions.quizzes), [actions.quizzes]);
+  const summary = useMemo(() => summarizeQuizzes(quizzes), [quizzes]);
+  const plays = useMemo(() => quizPlaysSeries(quizzes), [quizzes]);
+  const categories = useMemo(() => quizCategorySeries(quizzes), [quizzes]);
+  const difficulty = useMemo(() => quizDifficultySeries(quizzes), [quizzes]);
 
-  const refresh = () => {
-    setLoading(true);
-    setTimeout(() => setLoading(false), 500);
+  const bulkPublish = () => {
+    selectedIds.forEach((id) => mutations.publish.mutate(id));
+    setSelectedIds([]);
   };
+
+  const bulkUnpublish = () => {
+    selectedIds.forEach((id) => mutations.unpublish.mutate(id));
+    setSelectedIds([]);
+  };
+
+  const bulkArchive = () => {
+    selectedIds.forEach((id) => mutations.unpublish.mutate(id));
+    toast.info("Quizzes archived (unpublished).");
+    setSelectedIds([]);
+  };
+
+  if (error) {
+    return (
+      <PageBody>
+        <EmptyState
+          title="Could not load quizzes"
+          description={error}
+          action={
+            <Button size="sm" variant="outline" className="mt-2" onClick={() => void refetch()}>
+              Try again
+            </Button>
+          }
+        />
+      </PageBody>
+    );
+  }
 
   return (
     <>
@@ -79,11 +111,7 @@ function QuizDirectoryPage() {
         description="The full GEOverze quiz catalogue — publishing, visibility and performance."
         actions={
           <>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={actions.placeholder("Export queued — backend integration pending.")}
-            >
+            <Button size="sm" variant="outline" onClick={() => notReadyNow("Export queued.")}>
               <Download className="size-4" aria-hidden="true" />
               Export
             </Button>
@@ -126,25 +154,25 @@ function QuizDirectoryPage() {
           selectedCount={selectedIds.length}
           onClearSelection={() => setSelectedIds([])}
           bulkActions={[
-            { label: "Publish selected", onSelect: () => actions.publish(selectedIds) },
-            { label: "Unpublish selected", onSelect: () => actions.unpublish(selectedIds) },
+            { label: "Publish selected", onSelect: bulkPublish },
+            { label: "Unpublish selected", onSelect: bulkUnpublish },
             {
               label: "Archive selected",
               icon: <Archive className="size-4" aria-hidden="true" />,
-              onSelect: () => actions.requestArchive(selectedIds),
+              onSelect: bulkArchive,
             },
             {
               label: "Delete selected",
               variant: "destructive",
               icon: <Trash2 className="size-4" aria-hidden="true" />,
-              onSelect: () => actions.requestDelete(selectedIds),
+              onSelect: () => setDeleteIds([...selectedIds]),
             },
           ]}
           actions={[
             {
               label: "Refresh",
               icon: <RefreshCw className="size-4" aria-hidden="true" />,
-              onSelect: refresh,
+              onSelect: () => void refetch(),
             },
           ]}
         >
@@ -160,7 +188,7 @@ function QuizDirectoryPage() {
         <QuizFilters value={filters} onChange={setFilters} />
 
         <p className="text-xs text-muted-foreground" aria-live="polite">
-          {num(rows.length)} of {num(actions.quizzes.length)} quizzes
+          {num(rows.length)} of {num(quizzes.length)} quizzes
         </p>
 
         <DataTable
@@ -207,30 +235,44 @@ function QuizDirectoryPage() {
               label: "Open",
               onSelect: (quiz) => navigate({ to: "/quizzes/$quizId", params: { quizId: quiz.id } }),
             },
-            { label: "Publish", onSelect: (quiz) => actions.publish([quiz.id]) },
-            { label: "Unpublish", onSelect: (quiz) => actions.unpublish([quiz.id]) },
-            { label: "Duplicate", onSelect: (quiz) => actions.duplicate(quiz) },
-            { label: "Archive", onSelect: (quiz) => actions.requestArchive([quiz.id]) },
+            { label: "Publish", onSelect: (quiz) => mutations.publish.mutate(quiz.id) },
+            { label: "Unpublish", onSelect: (quiz) => mutations.unpublish.mutate(quiz.id) },
+            {
+              label: "Duplicate",
+              onSelect: (quiz) =>
+                mutations.duplicate.mutate(quiz.id, {
+                  onSuccess: (newId) =>
+                    navigate({ to: "/quizzes/$quizId", params: { quizId: newId } }),
+                }),
+            },
+            {
+              label: "Archive",
+              onSelect: (quiz) => {
+                mutations.unpublish.mutate(quiz.id);
+                toast.info("Quiz archived (unpublished).");
+              },
+            },
             {
               label: "Delete",
               destructive: true,
-              onSelect: (quiz) => actions.requestDelete([quiz.id]),
+              onSelect: (quiz) => setDeleteIds([quiz.id]),
             },
           ]}
         />
       </PageBody>
 
-      {actions.confirm && (
+      {deleteIds && (
         <ConfirmDialog
           open
-          onOpenChange={(next) => !next && actions.setConfirm(null)}
-          title={actions.confirm.title}
-          description={actions.confirm.description}
-          confirmLabel={actions.confirm.confirmLabel}
-          destructive={actions.confirm.destructive}
+          onOpenChange={(next) => !next && setDeleteIds(null)}
+          title={deleteIds.length === 1 ? "Delete this quiz?" : `Delete ${deleteIds.length} quizzes?`}
+          description="Quizzes with play history cannot be deleted — unpublish them instead. This action is permanent for quizzes without attempts."
+          confirmLabel="Delete"
+          destructive
           onConfirm={() => {
-            actions.confirm?.onConfirm();
-            actions.setConfirm(null);
+            deleteIds.forEach((id) => mutations.remove.mutate(id));
+            setDeleteIds(null);
+            setSelectedIds([]);
           }}
         />
       )}

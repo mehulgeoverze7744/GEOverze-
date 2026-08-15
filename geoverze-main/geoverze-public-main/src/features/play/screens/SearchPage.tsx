@@ -12,13 +12,15 @@ import {
 import { useBookmarksStore } from "@/stores/bookmarksStore";
 import { FilterBar } from "../components/FilterBar";
 import { QuizCard } from "../components/QuizCard";
-import { QUIZZES, type Quiz } from "../data/quizzes";
+import type { Quiz } from "../data/quizzes";
+import { usePublishedQuizzes } from "../hooks/usePublishedQuizzes";
 import { INITIAL_FILTERS, applyFilters, isFiltering, type PlayFilterState } from "../lib/filter";
 
 /** /play/search — full-catalog search with the shared filter model. */
 export function SearchPage() {
   const { q } = useSearch({ from: "/play/search" });
   const navigate = useNavigate();
+  const { quizzes, loading, error, refetch } = usePublishedQuizzes();
   const [filters, setFilters] = useState<PlayFilterState>({
     ...INITIAL_FILTERS,
     query: q ?? "",
@@ -26,7 +28,7 @@ export function SearchPage() {
 
   const bookmarkIds = useBookmarksStore((s) => s.ids);
   const toggleBookmark = useBookmarksStore((s) => s.toggle);
-  const results = useMemo(() => applyFilters(QUIZZES, filters), [filters]);
+  const results = useMemo(() => applyFilters(quizzes, filters), [quizzes, filters]);
 
   const patch = (next: Partial<PlayFilterState>) => {
     setFilters((f) => ({ ...f, ...next }));
@@ -40,6 +42,27 @@ export function SearchPage() {
   };
 
   const playQuiz = (quiz: Quiz) => navigate({ to: "/play/quiz", search: { quiz: quiz.id } });
+
+  if (error) {
+    return (
+      <PageShell>
+        <SectionContainer
+          size="wide"
+          className="pt-[calc(var(--nav-height)+var(--space-section-sm))] pb-[var(--space-section-sm)]"
+        >
+          <EmptyState
+            title="Could not load the quiz catalog"
+            description={error}
+            action={
+              <GeoButton variant="solid" size="md" onClick={() => refetch()}>
+                Try again
+              </GeoButton>
+            }
+          />
+        </SectionContainer>
+      </PageShell>
+    );
+  }
 
   return (
     <PageShell>
@@ -58,11 +81,22 @@ export function SearchPage() {
         </AnimatedSection>
 
         <AnimatedSection className="mt-9">
-          <FilterBar filters={filters} onChange={patch} resultCount={results.length} />
+          <FilterBar
+            filters={filters}
+            onChange={patch}
+            resultCount={results.length}
+            quizzes={quizzes}
+          />
         </AnimatedSection>
 
         <div className="mt-8">
-          {results.length > 0 ? (
+          {loading && quizzes.length === 0 ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {Array.from({ length: 8 }).map((_, index) => (
+                <SkeletonBlock key={index} className="h-72 w-full rounded-2xl" />
+              ))}
+            </div>
+          ) : results.length > 0 ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {results.map((quiz) => (
                 <QuizCard
@@ -74,6 +108,11 @@ export function SearchPage() {
                 />
               ))}
             </div>
+          ) : quizzes.length === 0 ? (
+            <EmptyState
+              title="No published quizzes yet"
+              description="Check back soon — new sets appear here as soon as they are published."
+            />
           ) : (
             <EmptyState
               title="Nothing matched that search"

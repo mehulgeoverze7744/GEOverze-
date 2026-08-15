@@ -138,6 +138,133 @@ export type Database = {
           user_id?: string
           xp_earned?: number
         }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_attempts_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_questions: {
+        Row: {
+          accepted: string[] | null
+          answer_bool: boolean | null
+          answer_id: string | null
+          answer_ids: string[] | null
+          board_art: string | null
+          explanation: string | null
+          id: string
+          items: string[] | null
+          media: Json | null
+          options: Json | null
+          placeholder: string | null
+          position: number
+          prompt: string
+          quiz_id: string
+          regions: Json | null
+          targets: string[] | null
+          type: Database["public"]["Enums"]["question_type"]
+        }
+        Insert: {
+          accepted?: string[] | null
+          answer_bool?: boolean | null
+          answer_id?: string | null
+          answer_ids?: string[] | null
+          board_art?: string | null
+          explanation?: string | null
+          id?: string
+          items?: string[] | null
+          media?: Json | null
+          options?: Json | null
+          placeholder?: string | null
+          position: number
+          prompt: string
+          quiz_id: string
+          regions?: Json | null
+          targets?: string[] | null
+          type: Database["public"]["Enums"]["question_type"]
+        }
+        Update: {
+          accepted?: string[] | null
+          answer_bool?: boolean | null
+          answer_id?: string | null
+          answer_ids?: string[] | null
+          board_art?: string | null
+          explanation?: string | null
+          id?: string
+          items?: string[] | null
+          media?: Json | null
+          options?: Json | null
+          placeholder?: string | null
+          position?: number
+          prompt?: string
+          quiz_id?: string
+          regions?: Json | null
+          targets?: string[] | null
+          type?: Database["public"]["Enums"]["question_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quizzes: {
+        Row: {
+          art: string
+          category_id: string
+          created_at: string
+          creator: string
+          description: string | null
+          difficulty: string
+          id: string
+          is_published: boolean
+          language: string
+          minutes: number
+          reward_credits: number
+          reward_xp: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          art: string
+          category_id: string
+          created_at?: string
+          creator: string
+          description?: string | null
+          difficulty: string
+          id: string
+          is_published?: boolean
+          language?: string
+          minutes?: number
+          reward_credits?: number
+          reward_xp?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          art?: string
+          category_id?: string
+          created_at?: string
+          creator?: string
+          description?: string | null
+          difficulty?: string
+          id?: string
+          is_published?: boolean
+          language?: string
+          minutes?: number
+          reward_credits?: number
+          reward_xp?: number
+          title?: string
+          updated_at?: string
+        }
         Relationships: []
       }
       user_progression: {
@@ -233,6 +360,15 @@ export type Database = {
     }
     Enums: {
       app_role: "user" | "creator" | "admin" | "super_admin"
+      question_type:
+        | "single"
+        | "multiple"
+        | "boolean"
+        | "image"
+        | "map"
+        | "typed"
+        | "order"
+        | "dragdrop"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -361,6 +497,16 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["user", "creator", "admin", "super_admin"],
+      question_type: [
+        "single",
+        "multiple",
+        "boolean",
+        "image",
+        "map",
+        "typed",
+        "order",
+        "dragdrop",
+      ],
     },
   },
 } as const

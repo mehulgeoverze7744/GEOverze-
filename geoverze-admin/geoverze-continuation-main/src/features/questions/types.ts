@@ -57,6 +57,8 @@ export interface QuestionRecord {
   author: string;
   createdAt: string;
   updatedAt: string;
+  /** Preserved DB-only fields for complex question types the editor cannot fully round-trip. */
+  preservedDbFields?: import("@/features/questions/data/question-mapper").PreservedDbFields;
 }
 
 export interface QuestionFilterState {

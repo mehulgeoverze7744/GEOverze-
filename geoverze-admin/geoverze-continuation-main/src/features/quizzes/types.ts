@@ -36,6 +36,8 @@ export interface QuizRecord {
   passingScore: number;
   instructions: string;
   description: string;
+  rewardXp: number;
+  rewardCredits: number;
   createdAt: string;
   updatedAt: string;
   plays: number;

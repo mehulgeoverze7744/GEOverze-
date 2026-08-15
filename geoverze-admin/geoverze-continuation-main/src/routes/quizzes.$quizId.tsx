@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
-import { Link, createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Copy, Eye, Star, Trash2, Upload } from "lucide-react";
+import { useState } from "react";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { ArrowLeft, Copy, Eye, Loader2, Star, Trash2, Upload } from "lucide-react";
 
 import { ActivityTimeline } from "@/components/shared/activity-timeline";
 import { ChartCard } from "@/components/shared/chart-card";
@@ -19,30 +19,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { QuizPlayerPreview } from "@/features/questions/question-preview";
-import { getQuizById, getQuizQuestions, quizRecords } from "@/features/quizzes/data";
 import { QuizBuilder } from "@/features/quizzes/quiz-builder";
-import { useQuizActions } from "@/features/quizzes/use-quiz-actions";
+import { useQuizDetail } from "@/features/quizzes/hooks/useQuizDetail";
+import { useQuizMutations } from "@/features/quizzes/hooks/useQuizMutations";
+import { QuizQuestionsPanel } from "@/features/quizzes/quiz-questions-panel";
 import { formatDate, formatDateTime } from "@/features/users/format";
 import { catalogMonths } from "@/lib/catalog";
 import { num } from "@/lib/format";
 
 export const Route = createFileRoute("/quizzes/$quizId")({
-  loader: ({ params }) => {
-    const quiz = getQuizById(params.quizId);
-    if (!quiz) throw notFound();
-    return { quizId: quiz.id, title: quiz.title };
-  },
-  head: ({ loaderData }) => {
-    if (!loaderData) {
-      return {
-        meta: [
-          { title: "Quiz not found — GEOverze Admin" },
-          { name: "robots", content: "noindex" },
-        ],
-      };
-    }
-    const title = `${loaderData.title} — Quiz Details | GEOverze Admin`;
-    const description = `Questions, analytics, versions and moderation history for ${loaderData.title}.`;
+  head: ({ params }) => {
+    const title = `${params.quizId} — Quiz Details | GEOverze Admin`;
+    const description = `Questions, analytics, versions and moderation history for ${params.quizId}.`;
     return {
       meta: [
         { title },
@@ -77,11 +65,37 @@ function QuizNotFound() {
 function QuizDetailPage() {
   const { quizId } = Route.useParams();
   const navigate = useNavigate();
-  const actions = useQuizActions(quizRecords);
+  const { quiz, questions, loading, error } = useQuizDetail(quizId);
+  const mutations = useQuizMutations();
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const quiz = actions.quizzes.find((entry) => entry.id === quizId);
-  const questions = useMemo(() => (quiz ? getQuizQuestions(quiz) : []), [quiz]);
+  if (loading) {
+    return (
+      <PageBody>
+        <div className="flex items-center justify-center gap-2 py-16 text-sm text-muted-foreground">
+          <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+          Loading quiz…
+        </div>
+      </PageBody>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageBody>
+        <EmptyState
+          title="Could not load quiz"
+          description={error}
+          action={
+            <Button size="sm" variant="outline" className="mt-2" asChild>
+              <Link to="/quizzes">Back to catalogue</Link>
+            </Button>
+          }
+        />
+      </PageBody>
+    );
+  }
 
   if (!quiz) return <QuizNotFound />;
 
@@ -107,16 +121,35 @@ function QuizDetailPage() {
               <Eye className="size-4" aria-hidden="true" />
               Preview
             </Button>
-            <Button size="sm" variant="outline" onClick={() => actions.duplicate(quiz)}>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={mutations.duplicate.isPending}
+              onClick={() =>
+                mutations.duplicate.mutate(quiz.id, {
+                  onSuccess: (newId) =>
+                    navigate({ to: "/quizzes/$quizId", params: { quizId: newId } }),
+                })
+              }
+            >
               <Copy className="size-4" aria-hidden="true" />
               Duplicate
             </Button>
             {quiz.status === "published" ? (
-              <Button size="sm" variant="outline" onClick={() => actions.unpublish([quiz.id])}>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={mutations.unpublish.isPending}
+                onClick={() => mutations.unpublish.mutate(quiz.id)}
+              >
                 Unpublish
               </Button>
             ) : (
-              <Button size="sm" onClick={() => actions.publish([quiz.id])}>
+              <Button
+                size="sm"
+                disabled={mutations.publish.isPending}
+                onClick={() => mutations.publish.mutate(quiz.id)}
+              >
                 <Upload className="size-4" aria-hidden="true" />
                 Publish
               </Button>
@@ -125,7 +158,7 @@ function QuizDetailPage() {
               size="sm"
               variant="outline"
               className="text-destructive"
-              onClick={() => actions.requestDelete([quiz.id])}
+              onClick={() => setDeleteOpen(true)}
             >
               <Trash2 className="size-4" aria-hidden="true" />
               Delete
@@ -186,20 +219,11 @@ function QuizDetailPage() {
                   label="Quiz ID"
                   value={<code className="font-mono text-xs">{quiz.id}</code>}
                 />
-                <InspectorField
-                  label="Creator"
-                  value={
-                    <Link
-                      to="/creators/$creatorId"
-                      params={{ creatorId: quiz.creatorId }}
-                      className="text-primary hover:underline"
-                    >
-                      {quiz.creator}
-                    </Link>
-                  }
-                />
+                <InspectorField label="Creator" value={quiz.creator} />
                 <InspectorField label="Language" value={quiz.language} />
-                <InspectorField label="Thumbnail" value={quiz.thumbnailLabel || "—"} />
+                <InspectorField label="Art / thumbnail" value={quiz.thumbnailLabel || "—"} />
+                <InspectorField label="Reward XP" value={num(quiz.rewardXp)} />
+                <InspectorField label="Reward credits" value={num(quiz.rewardCredits)} />
                 <InspectorField label="Created" value={formatDate(quiz.createdAt)} />
                 <InspectorField label="Last updated" value={formatDateTime(quiz.updatedAt)} />
               </div>
@@ -207,49 +231,27 @@ function QuizDetailPage() {
             <section className="rounded-lg border border-border bg-card p-4">
               <SectionHeader title="Settings" description="Scoring and play rules." />
               <div className="mt-2">
-                <InspectorField label="Visibility" value={quiz.visibility} />
+                <InspectorField label="Visibility" value={`${quiz.visibility} (UI only)`} />
                 <InspectorField
                   label="Time limit"
-                  value={quiz.timeLimitMinutes ? `${quiz.timeLimitMinutes} min` : "No limit"}
+                  value={
+                    quiz.timeLimitMinutes ? `${quiz.timeLimitMinutes} min (UI only)` : "No limit"
+                  }
                 />
-                <InspectorField label="Passing score" value={`${quiz.passingScore}%`} />
-                <InspectorField label="Instructions" value={quiz.instructions} />
+                <InspectorField
+                  label="Passing score"
+                  value={quiz.passingScore ? `${quiz.passingScore}% (UI only)` : "—"}
+                />
+                <InspectorField
+                  label="Instructions"
+                  value={quiz.instructions ? `${quiz.instructions} (UI only)` : "—"}
+                />
               </div>
             </section>
           </TabsContent>
 
           <TabsContent value="questions" className="mt-4">
-            <section className="rounded-lg border border-border bg-card">
-              <SectionHeader
-                title={`Question set (${questions.length})`}
-                description="Play order as configured in the builder."
-                className="border-b border-border px-4 py-3"
-              />
-              {questions.length === 0 ? (
-                <EmptyState title="No questions attached" />
-              ) : (
-                <ol className="divide-y divide-border">
-                  {questions.map((question, index) => (
-                    <li
-                      key={`${question.id}-${index}`}
-                      className="flex items-start gap-3 px-4 py-3"
-                    >
-                      <span className="w-6 shrink-0 text-xs text-muted-foreground tabular">
-                        {index + 1}
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm text-foreground">{question.prompt}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {question.type} · {question.region} · used {num(question.usageCount)}×
-                        </p>
-                      </div>
-                      <DifficultyBadge level={question.difficulty} />
-                      <StatusBadge status={question.status} />
-                    </li>
-                  ))}
-                </ol>
-              )}
-            </section>
+            <QuizQuestionsPanel quizId={quiz.id} questions={questions} />
           </TabsContent>
 
           <TabsContent value="analytics" className="mt-4 grid gap-3 lg:grid-cols-2">
@@ -271,8 +273,9 @@ function QuizDetailPage() {
             <QuizBuilder
               initial={quiz}
               submitLabel="Save changes"
+              saving={mutations.update.isPending}
               onCancel={() => navigate({ to: "/quizzes" })}
-              onSave={actions.save}
+              onSave={(draft) => mutations.update.mutate({ ...draft, id: quiz.id })}
             />
           </TabsContent>
 
@@ -283,38 +286,17 @@ function QuizDetailPage() {
                 description="Every published revision of this quiz."
                 className="border-b border-border px-4 py-3"
               />
-              <ul className="divide-y divide-border">
-                {quiz.versions.map((version) => (
-                  <li key={version.id} className="flex items-start gap-3 px-4 py-3">
-                    <Badge variant="outline" className="shrink-0 font-mono text-xs">
-                      {version.version}
-                    </Badge>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm text-foreground">{version.summary}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {version.author} · {formatDate(version.at)}
-                      </p>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={actions.placeholder("Version restore needs the backend.")}
-                    >
-                      Restore
-                    </Button>
-                  </li>
-                ))}
-              </ul>
+              <EmptyState
+                title="No version history"
+                description="Version tracking is not stored in the database yet."
+              />
             </section>
           </TabsContent>
 
           <TabsContent value="activity" className="mt-4">
-            <ActivityTimeline
-              title="Moderation & edit history"
-              events={quiz.activity.map((entry) => ({
-                ...entry,
-                time: formatDateTime(entry.time),
-              }))}
+            <EmptyState
+              title="No activity recorded"
+              description="Moderation and edit history is not stored in the database yet."
             />
           </TabsContent>
         </Tabs>
@@ -330,18 +312,19 @@ function QuizDetailPage() {
         <QuizPlayerPreview questions={questions} heading={quiz.title} />
       </SideDrawer>
 
-      {actions.confirm && (
+      {deleteOpen && (
         <ConfirmDialog
           open
-          onOpenChange={(next) => !next && actions.setConfirm(null)}
-          title={actions.confirm.title}
-          description={actions.confirm.description}
-          confirmLabel={actions.confirm.confirmLabel}
-          destructive={actions.confirm.destructive}
+          onOpenChange={setDeleteOpen}
+          title="Delete this quiz?"
+          description="Quizzes with play history cannot be deleted. Unpublish instead. This is permanent for quizzes without attempts."
+          confirmLabel="Delete"
+          destructive
           onConfirm={() => {
-            actions.confirm?.onConfirm();
-            actions.setConfirm(null);
-            if (actions.confirm?.destructive) navigate({ to: "/quizzes" });
+            mutations.remove.mutate(quiz.id, {
+              onSuccess: () => navigate({ to: "/quizzes" }),
+            });
+            setDeleteOpen(false);
           }}
         />
       )}

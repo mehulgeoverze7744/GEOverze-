@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { AlertTriangle, Check, GripVertical, Plus, Search, Trash2 } from "lucide-react";
+import { AlertTriangle, Check, GripVertical, Plus, Search } from "lucide-react";
 
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -29,19 +29,19 @@ import {
 import { catalogDaysAgo, languages, quizCategories, quizVisibilities } from "@/lib/catalog";
 import { cn } from "@/lib/utils";
 
-const steps = ["Details", "Questions", "Settings", "Review"] as const;
-type Step = (typeof steps)[number];
+const allSteps = ["Details", "Questions", "Settings", "Review"] as const;
+type Step = (typeof allSteps)[number];
 
 export function createBlankQuiz(): QuizRecord {
   return {
-    id: `QZ-${Math.floor(Math.random() * 9000) + 9000}`,
+    id: "",
     title: "",
-    creatorId: "CR-1001",
+    creatorId: "",
     creator: "GEOverze Studio",
     category: quizCategories[0] as string,
     difficulty: "Medium",
     questionCount: 0,
-    durationMinutes: 0,
+    durationMinutes: 5,
     status: "draft",
     visibility: "Private",
     language: "English",
@@ -51,6 +51,8 @@ export function createBlankQuiz(): QuizRecord {
     passingScore: 60,
     instructions: "Answer every question. You can review explanations after each answer.",
     description: "",
+    rewardXp: 100,
+    rewardCredits: 25,
     createdAt: catalogDaysAgo(0, 12),
     updatedAt: catalogDaysAgo(0, 12),
     plays: 0,
@@ -66,13 +68,16 @@ export function createBlankQuiz(): QuizRecord {
   };
 }
 
-function issuesFor(draft: QuizRecord) {
+function issuesFor(draft: QuizRecord, manageQuestions: boolean) {
   const issues: string[] = [];
   if (!draft.title.trim()) issues.push("A quiz title is required.");
   if (!draft.description.trim()) issues.push("Add a short description for the catalogue.");
-  if (draft.questionIds.length < 3) issues.push("Add at least three questions.");
-  if (draft.passingScore < 1 || draft.passingScore > 100)
-    issues.push("Passing score must be between 1 and 100.");
+  if (manageQuestions && draft.questionIds.length < 3) {
+    issues.push("Add at least three questions.");
+  }
+  if (draft.rewardXp < 0) issues.push("Reward XP must be zero or greater.");
+  if (draft.rewardCredits < 0) issues.push("Reward credits must be zero or greater.");
+  if (draft.durationMinutes < 1) issues.push("Duration must be at least 1 minute.");
   return issues;
 }
 
@@ -81,17 +86,26 @@ export interface QuizBuilderProps {
   submitLabel?: string | undefined;
   onSave: (quiz: QuizRecord) => void;
   onCancel: () => void;
+  /** When false, questions are managed on the quiz detail page (Supabase-scoped). */
+  manageQuestions?: boolean;
+  saving?: boolean;
 }
 
-/** Multi-step quiz builder. Pure UI state — persistence happens in the caller. */
+/** Multi-step quiz builder. Persistence happens in the caller via Supabase mutations. */
 export function QuizBuilder({
   initial,
   submitLabel = "Save quiz",
   onSave,
   onCancel,
+  manageQuestions = false,
+  saving = false,
 }: QuizBuilderProps) {
   const [draft, setDraft] = useState<QuizRecord>(initial);
-  const [step, setStep] = useState<Step>("Details");
+  const steps = useMemo(
+    () => (manageQuestions ? [...allSteps] : allSteps.filter((s) => s !== "Questions")),
+    [manageQuestions],
+  );
+  const [step, setStep] = useState<Step>(steps[0] as Step);
   const [query, setQuery] = useState("");
 
   const set = <K extends keyof QuizRecord>(key: K, value: QuizRecord[K]) =>
@@ -113,33 +127,16 @@ export function QuizBuilder({
       .slice(0, 40);
   }, [query, draft.questionIds]);
 
-  const issues = issuesFor(draft);
+  const issues = issuesFor(draft, manageQuestions);
   const stepIndex = steps.indexOf(step);
 
-  const addQuestion = (id: string) => set("questionIds", [...draft.questionIds, id]);
-  const removeQuestion = (id: string) =>
-    set(
-      "questionIds",
-      draft.questionIds.filter((entry) => entry !== id),
-    );
-  const move = (index: number, delta: number) => {
-    const next = [...draft.questionIds];
-    const target = index + delta;
-    if (target < 0 || target >= next.length) return;
-    const [item] = next.splice(index, 1);
-    next.splice(target, 0, item as string);
-    set("questionIds", next);
-  };
-
   const submit = () => {
-    const mix: Record<QuizDifficulty, number> = { Easy: 0, Medium: 0, Hard: 0, Expert: 0 };
-    for (const question of selected) mix[question.difficulty] += 1;
     onSave({
       ...draft,
       questionCount: draft.questionIds.length,
-      durationMinutes: Math.max(1, Math.round(draft.questionIds.length * 0.75)),
-      difficultyMix: mix,
-      updatedAt: catalogDaysAgo(0, 12),
+      durationMinutes: Math.max(1, draft.durationMinutes),
+      rewardXp: Math.max(0, draft.rewardXp),
+      rewardCredits: Math.max(0, draft.rewardCredits),
     });
   };
 
@@ -240,7 +237,22 @@ export function QuizBuilder({
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="quiz-tags">Tags</Label>
+            <Label htmlFor="quiz-creator">Creator</Label>
+            <Input
+              id="quiz-creator"
+              value={draft.creator}
+              onChange={(event) => set("creator", event.target.value)}
+              placeholder="GEOverze Studio"
+            />
+          </div>
+          {!manageQuestions && (
+            <p className="text-xs text-muted-foreground">
+              Questions are added on the quiz detail page after saving. Tags, visibility, passing
+              score and instructions are UI-only until a future schema update.
+            </p>
+          )}
+          <div className="space-y-2">
+            <Label htmlFor="quiz-tags">Tags (UI only — not saved to database)</Label>
             <Input
               id="quiz-tags"
               value={draft.tags.join(", ")}
@@ -259,69 +271,14 @@ export function QuizBuilder({
         </div>
       )}
 
-      {step === "Questions" && (
+      {step === "Questions" && manageQuestions && (
         <div className="grid gap-3 lg:grid-cols-2">
-          <div className="rounded-lg border border-border bg-card">
-            <SectionHeader
-              title={`Selected questions (${selected.length})`}
-              description="Order defines play sequence."
-              className="border-b border-border px-3 py-2"
+          <div className="rounded-lg border border-border bg-card p-4">
+            <EmptyState
+              title="Question bank not connected"
+              description="Add questions from the quiz detail page after creating this quiz in Supabase."
             />
-            {selected.length === 0 ? (
-              <EmptyState
-                title="No questions yet"
-                description="Add questions from the bank on the right."
-              />
-            ) : (
-              <ul className="divide-y divide-border">
-                {selected.map((question, index) => (
-                  <li key={question.id} className="flex items-start gap-2 px-3 py-2">
-                    <GripVertical
-                      className="mt-0.5 size-4 shrink-0 text-muted-foreground"
-                      aria-hidden="true"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm text-foreground">{question.prompt}</p>
-                      <div className="mt-1 flex items-center gap-2">
-                        <DifficultyBadge level={question.difficulty} />
-                        <span className="text-xs text-muted-foreground">{question.type}</span>
-                      </div>
-                    </div>
-                    <div className="flex shrink-0 items-center gap-1">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-7 px-2"
-                        onClick={() => move(index, -1)}
-                        aria-label={`Move question ${index + 1} up`}
-                      >
-                        ↑
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-7 px-2"
-                        onClick={() => move(index, 1)}
-                        aria-label={`Move question ${index + 1} down`}
-                      >
-                        ↓
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="size-7 text-destructive"
-                        onClick={() => removeQuestion(question.id)}
-                        aria-label={`Remove question ${index + 1}`}
-                      >
-                        <Trash2 className="size-4" aria-hidden="true" />
-                      </Button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
           </div>
-
           <div className="rounded-lg border border-border bg-card">
             <div className="border-b border-border px-3 py-2">
               <SearchBar
@@ -335,29 +292,17 @@ export function QuizBuilder({
             {candidates.length === 0 ? (
               <EmptyState
                 icon={Search}
-                title="No matching questions"
-                description="Try a different search term."
+                title="Mock bank only"
+                description="Use the Questions tab on the quiz detail page for Supabase-backed questions."
               />
             ) : (
               <ul className="max-h-96 divide-y divide-border overflow-y-auto">
                 {candidates.map((question) => (
-                  <li key={question.id} className="flex items-start gap-2 px-3 py-2">
+                  <li key={question.id} className="flex items-start gap-2 px-3 py-2 opacity-50">
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm text-foreground">{question.prompt}</p>
-                      <div className="mt-1 flex items-center gap-2">
-                        <DifficultyBadge level={question.difficulty} />
-                        <span className="text-xs text-muted-foreground">{question.region}</span>
-                      </div>
+                      <DifficultyBadge level={question.difficulty} />
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-7"
-                      onClick={() => addQuestion(question.id)}
-                    >
-                      <Plus className="size-3.5" aria-hidden="true" />
-                      Add
-                    </Button>
                   </li>
                 ))}
               </ul>
@@ -369,7 +314,46 @@ export function QuizBuilder({
       {step === "Settings" && (
         <div className="grid gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="quiz-visibility">Visibility</Label>
+            <Label htmlFor="quiz-duration">Duration (minutes)</Label>
+            <Input
+              id="quiz-duration"
+              type="number"
+              min={1}
+              value={draft.durationMinutes}
+              onChange={(event) => set("durationMinutes", Number(event.target.value))}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="quiz-thumbnail">Art / thumbnail path</Label>
+            <Input
+              id="quiz-thumbnail"
+              value={draft.thumbnailLabel}
+              onChange={(event) => set("thumbnailLabel", event.target.value)}
+              placeholder="flags or thumbnails/world-capitals.jpg"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="quiz-reward-xp">Reward XP</Label>
+            <Input
+              id="quiz-reward-xp"
+              type="number"
+              min={0}
+              value={draft.rewardXp}
+              onChange={(event) => set("rewardXp", Number(event.target.value))}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="quiz-reward-credits">Reward credits</Label>
+            <Input
+              id="quiz-reward-credits"
+              type="number"
+              min={0}
+              value={draft.rewardCredits}
+              onChange={(event) => set("rewardCredits", Number(event.target.value))}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="quiz-visibility">Visibility (UI only)</Label>
             <Select
               value={draft.visibility}
               onValueChange={(value) => set("visibility", value as QuizVisibility)}
@@ -387,7 +371,7 @@ export function QuizBuilder({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="quiz-time-limit">Time limit (minutes, 0 = none)</Label>
+            <Label htmlFor="quiz-time-limit">Time limit (UI only, minutes)</Label>
             <Input
               id="quiz-time-limit"
               type="number"
@@ -397,7 +381,7 @@ export function QuizBuilder({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="quiz-passing">Passing score (%)</Label>
+            <Label htmlFor="quiz-passing">Passing score (UI only, %)</Label>
             <Input
               id="quiz-passing"
               type="number"
@@ -407,17 +391,8 @@ export function QuizBuilder({
               onChange={(event) => set("passingScore", Number(event.target.value))}
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="quiz-thumbnail">Thumbnail path</Label>
-            <Input
-              id="quiz-thumbnail"
-              value={draft.thumbnailLabel}
-              onChange={(event) => set("thumbnailLabel", event.target.value)}
-              placeholder="thumbnails/world-capitals.jpg"
-            />
-          </div>
           <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="quiz-instructions">Player instructions</Label>
+            <Label htmlFor="quiz-instructions">Player instructions (UI only)</Label>
             <Textarea
               id="quiz-instructions"
               rows={3}
@@ -431,19 +406,16 @@ export function QuizBuilder({
       {step === "Review" && (
         <div className="grid gap-3 lg:grid-cols-2">
           <div className="space-y-3 rounded-lg border border-border bg-card p-4">
-            <SectionHeader title="Summary" description="Check before publishing." />
+            <SectionHeader title="Summary" description="Check before saving." />
             <dl className="space-y-2 text-sm">
               {[
                 ["Title", draft.title || "—"],
                 ["Category", draft.category],
                 ["Difficulty", draft.difficulty],
-                ["Questions", String(draft.questionIds.length)],
-                ["Visibility", draft.visibility],
-                ["Passing score", `${draft.passingScore}%`],
-                [
-                  "Time limit",
-                  draft.timeLimitMinutes ? `${draft.timeLimitMinutes} min` : "No limit",
-                ],
+                ["Duration", `${draft.durationMinutes} min`],
+                ["Reward XP", String(draft.rewardXp)],
+                ["Reward credits", String(draft.rewardCredits)],
+                ["Questions", manageQuestions ? String(draft.questionIds.length) : "Add on detail page"],
               ].map(([label, value]) => (
                 <div key={label} className="flex items-center justify-between gap-3">
                   <dt className="text-muted-foreground">{label}</dt>
@@ -451,13 +423,6 @@ export function QuizBuilder({
                 </div>
               ))}
             </dl>
-            <div className="flex flex-wrap gap-1">
-              {draft.tags.map((tag) => (
-                <Badge key={tag} variant="secondary" className="text-xs font-normal">
-                  {tag}
-                </Badge>
-              ))}
-            </div>
             {issues.length > 0 && (
               <ul className="space-y-1 rounded-md border border-warning/30 bg-warning/10 p-3 text-sm text-warning">
                 {issues.map((issue) => (
@@ -469,19 +434,24 @@ export function QuizBuilder({
               </ul>
             )}
           </div>
-          <QuizPlayerPreview questions={selected} heading={draft.title || "Untitled quiz"} />
+          {!manageQuestions && (
+            <p className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
+              After saving, open the Questions tab to add at least three questions before
+              publishing.
+            </p>
+          )}
         </div>
       )}
 
       <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-card px-3 py-2">
-        <Button variant="ghost" size="sm" onClick={onCancel}>
+        <Button variant="ghost" size="sm" onClick={onCancel} disabled={saving}>
           Cancel
         </Button>
         <div className="ml-auto flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
-            disabled={stepIndex === 0}
+            disabled={stepIndex === 0 || saving}
             onClick={() => setStep(steps[stepIndex - 1] as Step)}
           >
             Back
@@ -491,8 +461,8 @@ export function QuizBuilder({
               Next
             </Button>
           ) : (
-            <Button size="sm" disabled={issues.length > 0} onClick={submit}>
-              {submitLabel}
+            <Button size="sm" disabled={issues.length > 0 || saving} onClick={submit}>
+              {saving ? "Saving…" : submitLabel}
             </Button>
           )}
         </div>

@@ -120,6 +120,8 @@ function buildQuiz(index: number): QuizRecord {
     passingScore: pickFrom(rand, [50, 60, 70, 80]),
     instructions: "Answer every question. You can review explanations after each answer.",
     description: `A ${difficulty.toLowerCase()} ${questionCount}-question tour of the topic, curated by ${creator?.displayName ?? "GEOverze Studio"}.`,
+    rewardXp: 0,
+    rewardCredits: 0,
     createdAt: catalogDaysAgo(createdDays, 10),
     updatedAt: catalogDaysAgo(Math.max(1, createdDays - Math.floor(rand() * 400)), 16),
     plays,

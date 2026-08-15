@@ -13,6 +13,31 @@ export const quizCategories = [
   "Population",
 ];
 
+/** Phase 3A category_id slugs → Admin catalogue display labels. */
+export const categoryIdToLabel: Record<string, string> = {
+  capitals: "Capitals",
+  countries: "Physical Geography",
+  flags: "Flags",
+  landmarks: "Landmarks",
+  maps: "Borders",
+};
+
+export function categoryIdToDisplay(categoryId: string): string {
+  const mapped = categoryIdToLabel[categoryId];
+  if (mapped) return mapped;
+  return categoryId.charAt(0).toUpperCase() + categoryId.slice(1);
+}
+
+/** Admin catalogue label → Phase 3A category_id slug. */
+export function categoryLabelToId(label: string): string {
+  const entry = Object.entries(categoryIdToLabel).find(([, display]) => display === label);
+  if (entry) return entry[0];
+  return label
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export const regions = [
   "Africa",
   "Asia",

@@ -23,6 +23,7 @@ import {
   type QuestionType,
 } from "@/features/questions/types";
 import { issuesFor, validateQuestion } from "@/features/questions/validation";
+import { EDITOR_SUPPORTED_TYPES } from "@/features/questions/data/question-mapper";
 import {
   catalogDaysAgo,
   countriesByRegion,
@@ -35,7 +36,7 @@ import { cn } from "@/lib/utils";
 
 export function createBlankQuestion(): QuestionRecord {
   return {
-    id: `QN-${Math.floor(Math.random() * 9000) + 9000}`,
+    id: "",
     prompt: "",
     type: "Multiple Choice",
     difficulty: "Medium",
@@ -80,9 +81,17 @@ export interface QuestionEditorProps {
   onOpenChange: (open: boolean) => void;
   question: QuestionRecord | null;
   onSave: (question: QuestionRecord) => void;
+  /** When true, limits types and copy for quiz-scoped question editing. */
+  quizScoped?: boolean;
 }
 
-export function QuestionEditor({ open, onOpenChange, question, onSave }: QuestionEditorProps) {
+export function QuestionEditor({
+  open,
+  onOpenChange,
+  question,
+  onSave,
+  quizScoped = false,
+}: QuestionEditorProps) {
   const [draft, setDraft] = useState<QuestionRecord>(question ?? createBlankQuestion());
   const [showErrors, setShowErrors] = useState(false);
 
@@ -100,10 +109,26 @@ export function QuestionEditor({ open, onOpenChange, question, onSave }: Questio
     draft.type === "True / False" ||
     draft.type === "Matching" ||
     draft.type === "Ordering";
+  const isComplexExisting =
+    quizScoped &&
+    question != null &&
+    question.preservedDbFields?.["type"] != null &&
+    !EDITOR_SUPPORTED_TYPES.includes(question.type);
+  const availableTypes = quizScoped && !question ? EDITOR_SUPPORTED_TYPES : questionTypes;
   const errorsFor = (field: Parameters<typeof issuesFor>[1]) =>
     showErrors ? issuesFor(issues, field).map((issue) => issue.message) : [];
 
   const submit = () => {
+    if (isComplexExisting) {
+      if (!draft.prompt.trim()) {
+        setShowErrors(true);
+        return;
+      }
+      onSave({ ...draft, updatedAt: catalogDaysAgo(0, 12) });
+      onOpenChange(false);
+      return;
+    }
+
     if (issues.length > 0) {
       setShowErrors(true);
       return;
@@ -117,7 +142,11 @@ export function QuestionEditor({ open, onOpenChange, question, onSave }: Questio
       open={open}
       onOpenChange={onOpenChange}
       title={question ? "Edit question" : "New question"}
-      description="Questions are reusable across every quiz in the catalogue."
+      description={
+        quizScoped
+          ? "This question belongs to the current quiz only."
+          : "Questions are reusable across every quiz in the catalogue."
+      }
       width="sm:max-w-xl"
       footer={
         <div className="flex flex-wrap items-center gap-2">
@@ -136,6 +165,13 @@ export function QuestionEditor({ open, onOpenChange, question, onSave }: Questio
       }
     >
       <div className="space-y-4">
+        {isComplexExisting && (
+          <p className="rounded-md border border-warning/30 bg-warning/10 p-3 text-xs text-warning">
+            This is a complex question type stored in the database. Only the prompt and explanation
+            can be edited here — map, order and drag-drop fields are preserved as-is.
+          </p>
+        )}
+
         <div>
           <Label htmlFor="q-prompt">Question text</Label>
           <Textarea
@@ -153,6 +189,7 @@ export function QuestionEditor({ open, onOpenChange, question, onSave }: Questio
             <Label htmlFor="q-type">Type</Label>
             <Select
               value={draft.type}
+              disabled={isComplexExisting}
               onValueChange={(value) =>
                 patch({
                   type: value as QuestionType,
@@ -164,10 +201,10 @@ export function QuestionEditor({ open, onOpenChange, question, onSave }: Questio
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {questionTypes.map((type) => (
+                {availableTypes.map((type) => (
                   <SelectItem key={type} value={type}>
                     {type}
-                    {backendReadyQuestionTypes.includes(type) ? " (backend-ready)" : ""}
+                    {!quizScoped && backendReadyQuestionTypes.includes(type) ? " (backend-ready)" : ""}
                   </SelectItem>
                 ))}
               </SelectContent>

@@ -1,24 +1,36 @@
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import { ArrowLeft, Clock, Layers, Play } from "lucide-react";
+import { useMemo } from "react";
 
 import { PageShell } from "@/components/layout/PageShell";
-import { AnimatedSection, EmptyState, GeoButton, SectionContainer } from "@/components/shared";
+import {
+  AnimatedSection,
+  EmptyState,
+  GeoButton,
+  SectionContainer,
+  SkeletonBlock,
+} from "@/components/shared";
 import { useBookmarksStore } from "@/stores/bookmarksStore";
 import { MetaChip } from "../components/Badges";
 import { CoverArt } from "../components/CoverArt";
 import { QuizCard } from "../components/QuizCard";
 import { collectionBySlug } from "../data/collections";
-import { QUIZZES, type Quiz } from "../data/quizzes";
-
-const byId = new Map(QUIZZES.map((q) => [q.id, q]));
+import { pick, type Quiz } from "../data/quizzes";
+import { usePublishedQuizzes } from "../hooks/usePublishedQuizzes";
 
 /** /play/collections/$slug — a single curated route through several quizzes. */
 export function CollectionDetailPage() {
   const { slug } = useParams({ from: "/play/collections/$slug" });
   const navigate = useNavigate();
+  const { quizzes: catalog, loading, error, refetch } = usePublishedQuizzes();
   const bookmarkIds = useBookmarksStore((s) => s.ids);
   const toggleBookmark = useBookmarksStore((s) => s.toggle);
   const collection = collectionBySlug(slug);
+
+  const quizzes = useMemo(() => {
+    if (!collection) return [];
+    return pick([...collection.quizIds], catalog);
+  }, [collection, catalog]);
 
   const playQuiz = (quiz: Quiz) => navigate({ to: "/play/quiz", search: { quiz: quiz.id } });
 
@@ -40,7 +52,24 @@ export function CollectionDetailPage() {
     );
   }
 
-  const quizzes = collection.quizIds.map((id) => byId.get(id)).filter(Boolean) as Quiz[];
+  if (error) {
+    return (
+      <PageShell>
+        <SectionContainer className="pt-[calc(var(--nav-height)+var(--space-section-sm))]">
+          <EmptyState
+            title="Could not load quizzes for this collection"
+            description={error}
+            action={
+              <GeoButton variant="solid" size="md" onClick={() => refetch()}>
+                Try again
+              </GeoButton>
+            }
+          />
+        </SectionContainer>
+      </PageShell>
+    );
+  }
+
   const first = quizzes[0];
 
   return (
@@ -97,21 +126,33 @@ export function CollectionDetailPage() {
           <h2 className="text-lg font-semibold tracking-tight text-foreground md:text-xl">
             In this collection
           </h2>
-          <ol className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {quizzes.map((quiz, i) => (
-              <li key={quiz.id} className="relative">
-                <span className="absolute -top-2 left-4 z-10 inline-flex h-7 w-7 items-center justify-center rounded-full border border-bronze/50 bg-[oklch(0.12_0.006_60)] text-[0.7rem] font-semibold tabular-nums text-bronze-glow">
-                  {i + 1}
-                </span>
-                <QuizCard
-                  quiz={quiz}
-                  bookmarked={bookmarkIds.includes(quiz.id)}
-                  onToggleBookmark={toggleBookmark}
-                  onPlay={playQuiz}
-                />
-              </li>
-            ))}
-          </ol>
+          {loading && quizzes.length === 0 ? (
+            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <SkeletonBlock key={index} className="h-72 w-full rounded-2xl" />
+              ))}
+            </div>
+          ) : quizzes.length > 0 ? (
+            <ol className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {quizzes.map((quiz, i) => (
+                <li key={quiz.id} className="relative">
+                  <span className="absolute -top-2 left-4 z-10 inline-flex h-7 w-7 items-center justify-center rounded-full border border-bronze/50 bg-[oklch(0.12_0.006_60)] text-[0.7rem] font-semibold tabular-nums text-bronze-glow">
+                    {i + 1}
+                  </span>
+                  <QuizCard
+                    quiz={quiz}
+                    bookmarked={bookmarkIds.includes(quiz.id)}
+                    onToggleBookmark={toggleBookmark}
+                    onPlay={playQuiz}
+                  />
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className="mt-4 text-sm text-foreground/60">
+              No published quizzes from this collection are available right now.
+            </p>
+          )}
         </AnimatedSection>
       </SectionContainer>
     </PageShell>

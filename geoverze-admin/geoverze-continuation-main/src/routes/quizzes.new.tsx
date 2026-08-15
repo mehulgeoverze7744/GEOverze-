@@ -1,10 +1,10 @@
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import { toast } from "sonner";
 
 import { PageBody } from "@/components/shared/page-body";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
+import { useQuizMutations } from "@/features/quizzes/hooks/useQuizMutations";
 import { QuizBuilder, createBlankQuiz } from "@/features/quizzes/quiz-builder";
 
 export const Route = createFileRoute("/quizzes/new")({
@@ -31,12 +31,13 @@ export const Route = createFileRoute("/quizzes/new")({
 
 function NewQuizPage() {
   const navigate = useNavigate();
+  const { create } = useQuizMutations();
 
   return (
     <>
       <PageHeader
         title="Create quiz"
-        description="Four steps: details, questions, settings and review."
+        description="Four steps: details, settings and review. Questions are added after creation."
         actions={
           <Button size="sm" variant="outline" asChild>
             <Link to="/quizzes">
@@ -50,10 +51,14 @@ function NewQuizPage() {
         <QuizBuilder
           initial={createBlankQuiz()}
           submitLabel="Create quiz"
+          saving={create.isPending}
           onCancel={() => navigate({ to: "/quizzes" })}
           onSave={(quiz) => {
-            toast.success(`“${quiz.title}” saved as a draft.`);
-            navigate({ to: "/quizzes" });
+            create.mutate(quiz, {
+              onSuccess: (created) => {
+                navigate({ to: "/quizzes/$quizId", params: { quizId: created.id } });
+              },
+            });
           }}
         />
       </PageBody>

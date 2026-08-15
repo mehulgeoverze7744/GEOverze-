@@ -1,13 +1,12 @@
 import { X } from "lucide-react";
+import { useMemo } from "react";
 
 import { GeoButton, SearchBar } from "@/components/shared";
 import { cn } from "@/lib/utils";
 import { QUIZ_CATEGORIES } from "../data/categories";
 import { COUNT_OPTIONS, DIFFICULTY_OPTIONS, SORT_OPTIONS, TIME_OPTIONS } from "../data/filters";
+import type { Quiz } from "../data/quizzes";
 import { INITIAL_FILTERS, isFiltering, type PlayFilterState } from "../lib/filter";
-import { QUIZZES } from "../data/quizzes";
-
-const CREATORS = Array.from(new Set(QUIZZES.map((q) => q.creator))).sort();
 
 function Select({
   label,
@@ -45,12 +44,18 @@ export function FilterBar({
   filters,
   onChange,
   resultCount,
+  quizzes,
 }: {
   filters: PlayFilterState;
   onChange: (patch: Partial<PlayFilterState>) => void;
   resultCount: number;
+  quizzes: readonly Quiz[];
 }) {
   const active = isFiltering(filters);
+  const creators = useMemo(
+    () => Array.from(new Set(quizzes.map((quiz) => quiz.creator))).sort(),
+    [quizzes],
+  );
 
   return (
     <div className={cn("game-surface rounded-2xl p-5 md:p-6")}>
@@ -99,7 +104,7 @@ export function FilterBar({
           onChange={(creator) => onChange({ creator })}
           options={[
             { id: "any", label: "Any creator" },
-            ...CREATORS.map((c) => ({ id: c, label: c })),
+            ...creators.map((creator) => ({ id: creator, label: creator })),
           ]}
         />
         <Select

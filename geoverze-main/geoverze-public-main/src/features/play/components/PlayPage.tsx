@@ -10,12 +10,20 @@ import {
   GeoButton,
   SectionContainer,
   SectionHeading,
+  SkeletonBlock,
 } from "@/components/shared";
 import { useBookmarksStore } from "@/stores/bookmarksStore";
 import { QUIZ_CATEGORIES, type QuizCategory } from "../data/categories";
 import { GAME_MODES, type GameMode } from "../data/gameModes";
-import { DISCOVERY_RAILS, FEATURED_QUIZ_IDS, QUIZZES, type Quiz } from "../data/quizzes";
+import {
+  DISCOVERY_RAILS,
+  FEATURED_QUIZ_IDS,
+  pick,
+  type Quiz,
+} from "../data/quizzes";
+import { usePublishedQuizzes } from "../hooks/usePublishedQuizzes";
 import { INITIAL_FILTERS, applyFilters, type PlayFilterState } from "../lib/filter";
+import { quizzesForRail } from "../lib/discovery";
 import { COLLECTIONS } from "../data/collections";
 import { CategoryCard } from "./CategoryCard";
 import { CollectionCard } from "./CollectionCard";
@@ -30,17 +38,20 @@ import { QuizCard } from "./QuizCard";
 import { QuizRail } from "./QuizRail";
 import { WeeklyChallenge } from "./WeeklyChallenge";
 
-const byId = new Map(QUIZZES.map((q) => [q.id, q]));
-const featured = FEATURED_QUIZ_IDS.map((id) => byId.get(id)).filter(Boolean) as Quiz[];
-
 /** Let's Play — the full quiz hub lobby. */
 export function PlayPage() {
   const navigate = useNavigate();
+  const { quizzes, loading, error, refetch } = usePublishedQuizzes();
   const [filters, setFilters] = useState<PlayFilterState>(INITIAL_FILTERS);
   const bookmarkIds = useBookmarksStore((s) => s.ids);
   const toggleBookmark = useBookmarksStore((s) => s.toggle);
 
-  const results = useMemo(() => applyFilters(QUIZZES, filters), [filters]);
+  const featured = useMemo(() => pick([...FEATURED_QUIZ_IDS], quizzes), [quizzes]);
+  const results = useMemo(() => applyFilters(quizzes, filters), [quizzes, filters]);
+  const bookmarked = useMemo(
+    () => quizzes.filter((quiz) => bookmarkIds.includes(quiz.id)),
+    [quizzes, bookmarkIds],
+  );
 
   const patch = (next: Partial<PlayFilterState>) => setFilters((f) => ({ ...f, ...next }));
 
@@ -58,11 +69,28 @@ export function PlayPage() {
   };
 
   const playRandom = () => {
-    const pick = QUIZZES[Math.floor(Math.random() * QUIZZES.length)];
-    if (pick) openLobby(pick.id);
+    if (quizzes.length === 0) return;
+    const choice = quizzes[Math.floor(Math.random() * quizzes.length)];
+    if (choice) openLobby(choice.id);
   };
 
-  const bookmarked = QUIZZES.filter((q) => bookmarkIds.includes(q.id));
+  if (error) {
+    return (
+      <PageShell>
+        <SectionContainer size="wide" className="pt-[calc(var(--nav-height)+var(--space-section-sm))]">
+          <EmptyState
+            title="Could not load the quiz catalog"
+            description={error}
+            action={
+              <GeoButton variant="solid" size="md" onClick={() => refetch()}>
+                Try again
+              </GeoButton>
+            }
+          />
+        </SectionContainer>
+      </PageShell>
+    );
+  }
 
   return (
     <PageShell>
@@ -71,7 +99,11 @@ export function PlayPage() {
       <section className="pb-[var(--space-section-sm)]">
         <SectionContainer size="wide">
           <AnimatedSection>
-            <FeaturedCarousel quizzes={featured} onPlay={playQuiz} />
+            {loading && featured.length === 0 ? (
+              <SkeletonBlock className="h-64 w-full rounded-2xl" />
+            ) : (
+              <FeaturedCarousel quizzes={featured} onPlay={playQuiz} />
+            )}
           </AnimatedSection>
 
           <AnimatedSection className="mt-12">
@@ -146,19 +178,27 @@ export function PlayPage() {
           <AnimatedSection className="mt-16">
             <SectionHeading eyebrow="Discover" title="Curated for the way you play" />
             <div className="mt-2">
-              {DISCOVERY_RAILS.map((rail) => (
-                <QuizRail
-                  key={rail.id}
-                  title={rail.title}
-                  description={rail.description}
-                  quizzes={rail.quizIds.map((id) => byId.get(id)).filter(Boolean) as Quiz[]}
-                  bookmarkIds={bookmarkIds}
-                  onToggleBookmark={toggleBookmark}
-                  onPlay={playQuiz}
-                  viewAllTo="/play/search"
-                  viewAllLabel="Browse catalog"
-                />
-              ))}
+              {loading && quizzes.length === 0 ? (
+                <div className="space-y-8">
+                  {Array.from({ length: 3 }).map((_, index) => (
+                    <SkeletonBlock key={index} className="h-48 w-full rounded-2xl" />
+                  ))}
+                </div>
+              ) : (
+                DISCOVERY_RAILS.map((rail) => (
+                  <QuizRail
+                    key={rail.id}
+                    title={rail.title}
+                    description={rail.description}
+                    quizzes={quizzesForRail(rail, quizzes)}
+                    bookmarkIds={bookmarkIds}
+                    onToggleBookmark={toggleBookmark}
+                    onPlay={playQuiz}
+                    viewAllTo="/play/search"
+                    viewAllLabel="Browse catalog"
+                  />
+                ))
+              )}
               {bookmarked.length > 0 ? (
                 <QuizRail
                   title="Your bookmarks"
@@ -179,10 +219,21 @@ export function PlayPage() {
               description="Search and filter the full catalog by difficulty, category, length, size and creator."
             />
             <div className="mt-7">
-              <FilterBar filters={filters} onChange={patch} resultCount={results.length} />
+              <FilterBar
+                filters={filters}
+                onChange={patch}
+                resultCount={results.length}
+                quizzes={quizzes}
+              />
             </div>
 
-            {results.length > 0 ? (
+            {loading && quizzes.length === 0 ? (
+              <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {Array.from({ length: 8 }).map((_, index) => (
+                  <SkeletonBlock key={index} className="h-72 w-full rounded-2xl" />
+                ))}
+              </div>
+            ) : results.length > 0 ? (
               <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {results.map((quiz) => (
                   <QuizCard
@@ -193,6 +244,13 @@ export function PlayPage() {
                     onPlay={playQuiz}
                   />
                 ))}
+              </div>
+            ) : quizzes.length === 0 ? (
+              <div className="mt-6">
+                <EmptyState
+                  title="No published quizzes yet"
+                  description="Check back soon — new sets appear here as soon as they are published."
+                />
               </div>
             ) : (
               <div className="mt-6">
