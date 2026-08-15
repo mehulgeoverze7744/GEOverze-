@@ -71,6 +71,7 @@ export function SignupPage() {
               display_name: `${parsed.data.firstName} ${parsed.data.lastName}`.trim(),
               first_name: parsed.data.firstName,
               last_name: parsed.data.lastName,
+              country_code: parsed.data.country.toUpperCase(),
             },
             ...(typeof window !== "undefined"
               ? {

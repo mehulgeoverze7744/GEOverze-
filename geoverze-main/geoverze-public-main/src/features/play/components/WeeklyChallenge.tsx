@@ -2,8 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { CalendarRange, Flame, Gift, Trophy } from "lucide-react";
 
 import { GeoButton } from "@/components/shared";
-import { PLAYER } from "@/features/progression";
 import { MetaChip } from "./Badges";
+import { useProgressionStore } from "@/stores/progressionStore";
 
 const TASKS = [
   { label: "Finish four ranked rounds", done: 3, total: 4 },
@@ -16,6 +16,7 @@ const TASKS = [
  * scoring logic behind it yet.
  */
 export function WeeklyChallenge({ onPlay }: { onPlay: () => void }) {
+  const currentStreak = useProgressionStore((s) => s.player.currentStreak);
   const done = TASKS.filter((t) => t.done >= t.total).length;
 
   return (
@@ -29,7 +30,7 @@ export function WeeklyChallenge({ onPlay }: { onPlay: () => void }) {
             </MetaChip>
             <MetaChip>
               <Flame className="h-3 w-3 text-bronze" strokeWidth={2.2} aria-hidden />
-              {PLAYER.currentStreak}-day streak
+              {currentStreak}-day streak
             </MetaChip>
           </div>
           <h2 className="mt-4 text-lg font-semibold tracking-tight text-foreground md:text-xl">

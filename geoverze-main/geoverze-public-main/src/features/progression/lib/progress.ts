@@ -2,6 +2,35 @@
 import { LEVELS, type LevelTier } from "../data/levels";
 import type { PlayerSnapshot } from "../data/player";
 
+/**
+ * XP required to reach each level (index = level - 1).
+ * Matches the CASE statement in the Phase 2C SQL migration.
+ */
+export const XP_THRESHOLDS: readonly number[] = [
+  0, 500, 1000, 2000, 3500, 5500, 8000, 10500, 12000, 13200, 14800, 16000, 17200, 18000, 19000,
+  20400, 22000, 24000, 26200, 28500,
+];
+
+/** Derive the level title from the LEVELS ladder (levels 12+) or "Explorer" below. */
+export function getLevelTitle(level: number): string {
+  const found = [...LEVELS].reverse().find((t) => t.level <= level);
+  return found?.title ?? "Explorer";
+}
+
+/** XP into the current level and XP required for the full level span. */
+export function getXpProgress(
+  xp: number,
+  level: number,
+): { xpIntoLevel: number; xpForLevel: number } {
+  const idx = Math.max(0, level - 1);
+  const currentThreshold = XP_THRESHOLDS[idx] ?? 0;
+  const nextThreshold = XP_THRESHOLDS[idx + 1] ?? currentThreshold + 2000;
+  return {
+    xpIntoLevel: Math.max(0, xp - currentThreshold),
+    xpForLevel: Math.max(1, nextThreshold - currentThreshold),
+  };
+}
+
 export function xpProgress(player: PlayerSnapshot) {
   const pct = Math.min(100, Math.round((player.xpIntoLevel / player.xpForLevel) * 100));
   return { pct, remaining: Math.max(0, player.xpForLevel - player.xpIntoLevel) };

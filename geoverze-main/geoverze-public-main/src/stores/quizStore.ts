@@ -4,6 +4,14 @@
  * Holds the active run so the play → result → review handoff needs no prop
  * drilling. Deliberately transient: a refresh should not resume a timed round,
  * and nothing here is persisted or sent anywhere.
+ *
+ * Phase 2C: `persisted` flag guards against duplicate RPC submissions.
+ * It is set to true after record_quiz_attempt() succeeds and cleared on reset().
+ *
+ * Phase 2C idempotency: `attemptId` is a client-generated UUID created once
+ * per quiz session via crypto.randomUUID(). It is passed to record_quiz_attempt()
+ * as the server-side idempotency key. It is stable for the entire session and
+ * only resets when a genuinely new quiz session starts (via start() or reset()).
  */
 import { create } from "zustand";
 
@@ -47,6 +55,14 @@ type QuizState = {
   answers: Record<string, RunAnswer>;
   startedAt: number | null;
   finishedAt: number | null;
+  /** True after record_quiz_attempt() has succeeded for this run. */
+  persisted: boolean;
+  /**
+   * Client-generated UUID created once per quiz session.
+   * Passed to record_quiz_attempt() as the server-side idempotency key.
+   * Null before the first quiz starts; reset to a new UUID on start().
+   */
+  attemptId: string | null;
   settings: QuizSettings;
   start: (quizId: string, mode: QuizMode) => void;
   record: (answer: RunAnswer) => void;
@@ -54,6 +70,7 @@ type QuizState = {
   next: () => void;
   previous: () => void;
   finish: () => void;
+  setPersisted: () => void;
   reset: () => void;
   updateSettings: (patch: Partial<QuizSettings>) => void;
 };
@@ -66,19 +83,29 @@ const initial = {
   answers: {} as Record<string, RunAnswer>,
   startedAt: null,
   finishedAt: null,
+  persisted: false,
+  attemptId: null as string | null,
 };
 
 export const useQuizStore = create<QuizState>((set) => ({
   ...initial,
   settings: DEFAULT_SETTINGS,
   start: (quizId, mode) =>
-    set({ ...initial, status: "active", quizId, mode, startedAt: Date.now() }),
+    set({
+      ...initial,
+      status: "active",
+      quizId,
+      mode,
+      startedAt: Date.now(),
+      attemptId: crypto.randomUUID(),
+    }),
   record: (answer) =>
     set((state) => ({ answers: { ...state.answers, [answer.questionId]: answer } })),
   goTo: (index) => set({ index: Math.max(0, index) }),
   next: () => set((state) => ({ index: state.index + 1 })),
   previous: () => set((state) => ({ index: Math.max(0, state.index - 1) })),
   finish: () => set({ status: "complete", finishedAt: Date.now() }),
+  setPersisted: () => set({ persisted: true }),
   reset: () => set({ ...initial }),
   updateSettings: (patch) => set((state) => ({ settings: { ...state.settings, ...patch } })),
 }));

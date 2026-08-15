@@ -1,10 +1,21 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { BookOpen, ShieldCheck, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { GeoButton } from "@/components/shared/GeoButton";
 import { AuthLayout } from "@/features/auth/components";
+import { supabase } from "@/lib/supabase/client";
 import { useOnboardingStore } from "@/stores/onboardingStore";
+
+/** Persists the age answer to the DB via the SECURITY DEFINER RPC. Non-blocking. */
+async function persistAgeBracket(bracket: "adult" | "minor") {
+  const { error } = await supabase.rpc("set_age_bracket", { _bracket: bracket });
+  if (error) {
+    console.error("Failed to persist age bracket", error);
+    toast.error("Could not save your age answer. You can continue, but you may be asked again.");
+  }
+}
 
 /**
  * Mandatory age check that runs once inside the signup journey.
@@ -94,12 +105,20 @@ export function AgeVerificationPage() {
               size="lg"
               onClick={() => {
                 setAgeAnswer("adult");
+                void persistAgeBracket("adult");
                 navigate({ to: "/auth/onboarding" });
               }}
             >
               Yes, I am 18+
             </GeoButton>
-            <GeoButton variant="secondary" size="lg" onClick={() => setAgeAnswer("minor")}>
+            <GeoButton
+              variant="secondary"
+              size="lg"
+              onClick={() => {
+                setAgeAnswer("minor");
+                void persistAgeBracket("minor");
+              }}
+            >
               No, I'm under 18
             </GeoButton>
           </div>

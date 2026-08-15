@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, Globe2 } from "lucide-react";
+import { toast } from "sonner";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { GeoButton } from "@/components/shared/GeoButton";
@@ -18,8 +19,10 @@ import {
   SKILL_LEVELS,
   type SkillLevelId,
 } from "@/features/auth/data/onboarding";
-import { useOnboardingStore } from "@/stores/onboardingStore";
+import { supabase } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/stores/authStore";
+import { useOnboardingStore } from "@/stores/onboardingStore";
 
 /**
  * Five-step onboarding. Selections persist locally between steps.
@@ -31,6 +34,7 @@ import { cn } from "@/lib/utils";
  */
 export function OnboardingPage() {
   const navigate = useNavigate();
+  const user = useAuthStore((s) => s.user);
 
   const step = useOnboardingStore((s) => s.step);
   const setStep = useOnboardingStore((s) => s.setStep);
@@ -56,6 +60,35 @@ export function OnboardingPage() {
   const onEnter = () => {
     setEntering(true);
     complete();
+
+    // Persist onboarding selections to the database (non-blocking).
+    if (user?.id) {
+      const userId = user.id;
+      void Promise.all([
+        supabase
+          .from("profiles")
+          .update({ avatar_id: avatarId })
+          .eq("id", userId)
+          .then(({ error }) => {
+            if (error) console.error("Failed to persist avatar_id", error);
+          }),
+        supabase
+          .from("profile_preferences")
+          .upsert(
+            { user_id: userId, interests, skill_level: skillLevel },
+            { onConflict: "user_id" },
+          )
+          .then(({ error }) => {
+            if (error) {
+              console.error("Failed to persist preferences", error);
+              toast.error(
+                "Could not save your onboarding preferences. You can update them later in Settings.",
+              );
+            }
+          }),
+      ]);
+    }
+
     setTimeout(() => navigate({ to: "/play" }), 900);
   };
 

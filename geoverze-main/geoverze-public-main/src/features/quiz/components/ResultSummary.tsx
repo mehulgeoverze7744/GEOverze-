@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Home, ListChecks, RotateCcw, Share2, Sparkles } from "lucide-react";
+import { AlertCircle, Home, ListChecks, RotateCcw, Share2 } from "lucide-react";
 import { useState } from "react";
 
 import { AnimatedCounter, GeoButton, ProgressRing } from "@/components/shared";
@@ -9,6 +9,15 @@ import type { QuizSet } from "../data/types";
 import { formatDuration, type RunSummary } from "../lib/session";
 import { Confetti } from "./Confetti";
 import { QuizLayout } from "./QuizLayout";
+
+/** Server-confirmed values returned by record_quiz_attempt(). */
+type ServerResult = {
+  xp_earned: number;
+  credits_earned: number;
+  new_level: number;
+  level_up: boolean;
+  new_streak: number;
+};
 
 function Stat({ label, value, tone }: { label: string; value: string; tone?: "good" | "bad" }) {
   return (
@@ -34,16 +43,30 @@ function Stat({ label, value, tone }: { label: string; value: string; tone?: "go
 export function ResultSummary({
   set,
   summary,
+  serverResult,
+  submitError,
+  hydrated = false,
   onPlayAgain,
   reviewSearch,
 }: {
   set: QuizSet;
   summary: RunSummary;
+  serverResult: ServerResult | null;
+  submitError: boolean;
+  /**
+   * True when the result is hydrated from sessionStorage after a page refresh.
+   * In this mode the RPC is not re-fired; individual answer review is unavailable.
+   */
+  hydrated?: boolean;
   onPlayAgain: () => void;
-  reviewSearch: { quiz: string };
+  /** Undefined in hydrated mode — answer review requires the original session. */
+  reviewSearch?: { quiz: string };
 }) {
   const [shared, setShared] = useState(false);
   const pct = Math.round(summary.accuracy * 100);
+
+  // Use server-confirmed values once available; fall back to local estimates.
+  const xpDisplay = serverResult ? serverResult.xp_earned : summary.xp;
 
   const share = async () => {
     try {
@@ -88,26 +111,42 @@ export function ResultSummary({
           <Stat label="Time" value={formatDuration(summary.durationMs)} />
           <Stat label="Score" value={String(summary.score)} />
           <Stat label="Best streak" value={String(summary.bestStreak)} />
-          <Stat label="XP earned" value={`+${summary.xp}`} />
-          <Stat label="Credits" value={`+${summary.credits}`} />
+          <Stat label="XP earned" value={`+${xpDisplay}`} />
+          <Stat label="Credits" value="+0" />
         </div>
 
-        <p className="relative mt-4 flex items-center justify-center gap-2 text-[0.72rem] text-foreground/50">
-          <Sparkles className="h-3.5 w-3.5 text-bronze" strokeWidth={1.8} aria-hidden />
-          XP, credits and streaks are placeholders until progression is connected.
-        </p>
+        {serverResult?.level_up ? (
+          <p className="relative mt-4 text-center text-[0.8rem] font-semibold text-bronze-glow">
+            Level up! You reached level {serverResult.new_level}.
+          </p>
+        ) : null}
+
+        {submitError ? (
+          <p className="relative mt-4 flex items-center justify-center gap-2 text-[0.72rem] text-[oklch(0.84_0.15_25)]">
+            <AlertCircle className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden />
+            Could not save your result. Your score is shown below but was not recorded.
+          </p>
+        ) : hydrated ? (
+          <p className="relative mt-4 text-center text-[0.72rem] text-foreground/40">
+            Saved result — answer review is only available in the original session.
+          </p>
+        ) : serverResult ? null : (
+          <p className="relative mt-4 text-center text-[0.72rem] text-foreground/40">Saving…</p>
+        )}
 
         <div className="relative mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <GeoButton variant="solid" size="lg" onClick={onPlayAgain}>
             <RotateCcw className="h-4 w-4" strokeWidth={2} aria-hidden />
             Play again
           </GeoButton>
-          <GeoButton variant="dark" size="lg" asChild>
-            <Link to="/play/quiz/review" search={reviewSearch}>
-              <ListChecks className="h-4 w-4" strokeWidth={1.9} aria-hidden />
-              Review answers
-            </Link>
-          </GeoButton>
+          {reviewSearch ? (
+            <GeoButton variant="dark" size="lg" asChild>
+              <Link to="/play/quiz/review" search={reviewSearch}>
+                <ListChecks className="h-4 w-4" strokeWidth={1.9} aria-hidden />
+                Review answers
+              </Link>
+            </GeoButton>
+          ) : null}
           <GeoButton variant="ghost" size="lg" onClick={share}>
             <Share2 className="h-4 w-4" strokeWidth={1.9} aria-hidden />
             {shared ? "Copied" : "Share result"}

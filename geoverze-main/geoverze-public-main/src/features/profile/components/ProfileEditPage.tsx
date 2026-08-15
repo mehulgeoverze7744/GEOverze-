@@ -14,6 +14,7 @@ import { AvatarMark } from "@/features/auth/components/AvatarMark";
 import { COUNTRIES } from "@/features/auth/data/countries";
 import { AVATARS, INTERESTS } from "@/features/auth/data/onboarding";
 import { useProfile } from "@/features/profile/lib/useProfile";
+import { supabase } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/authStore";
 import { useOnboardingStore } from "@/stores/onboardingStore";
@@ -55,6 +56,8 @@ export function ProfileEditPage() {
     if (Object.keys(nextErrors).length > 0) return;
 
     setSaving(true);
+
+    // Optimistic local update — stores are a cache layer.
     updateProfile({
       displayName: displayName.trim(),
       username: username.trim().toLowerCase(),
@@ -71,6 +74,40 @@ export function ProfileEditPage() {
         ...(country ? { country } : {}),
       });
     }
+
+    // Persist to database in parallel; errors are surfaced via toast without
+    // rolling back the optimistic state (the user's intent is already captured
+    // in localStorage and shown on-screen).
+    if (user?.id) {
+      const userId = user.id;
+      void Promise.all([
+        supabase
+          .from("profiles")
+          .update({
+            display_name: displayName.trim(),
+            username: username.trim().toLowerCase(),
+            bio: bio.trim() || null,
+            country_code: country ? country.toUpperCase() : null,
+            avatar_id: avatarId,
+          })
+          .eq("id", userId)
+          .then(({ error }) => {
+            if (error) {
+              console.error("Failed to update profile", error);
+              toast.error(
+                "Profile saved locally, but could not reach the server. Changes will sync on next login.",
+              );
+            }
+          }),
+        supabase
+          .from("profile_preferences")
+          .upsert({ user_id: userId, interests }, { onConflict: "user_id" })
+          .then(({ error }) => {
+            if (error) console.error("Failed to update preferences", error);
+          }),
+      ]);
+    }
+
     window.setTimeout(() => {
       setSaving(false);
       toast.success("Profile updated");
