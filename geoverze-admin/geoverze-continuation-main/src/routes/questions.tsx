@@ -17,6 +17,7 @@ import { filterBankQuestions } from "@/features/questions/bank-filtering";
 import { BankQuestionFilters } from "@/features/questions/bank-question-filters";
 import { BankQuestionStats } from "@/features/questions/bank-question-stats";
 import { summarizeBankQuestions, toBankChartSeries } from "@/features/questions/bank-stats";
+import { DuplicateToQuizDialog } from "@/features/questions/duplicate-to-quiz-dialog";
 import { QuizPlayerPreview } from "@/features/questions/question-preview";
 import { useQuestionBank } from "@/features/questions/hooks/useQuestionBank";
 import {
@@ -52,6 +53,7 @@ function QuestionBankPage() {
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<BankQuestionFilterState>(emptyBankQuestionFilters);
   const [previewing, setPreviewing] = useState<BankQuestionRecord | null>(null);
+  const [duplicating, setDuplicating] = useState<BankQuestionRecord | null>(null);
 
   const { questions, loading, error, refetch } = useQuestionBank();
 
@@ -190,14 +192,28 @@ function QuestionBankPage() {
           rowActions={[
             { label: "Preview", onSelect: (question) => setPreviewing(question) },
             { label: "Open in quiz", onSelect: openInQuiz },
+            { label: "Duplicate to quiz", onSelect: (question) => setDuplicating(question) },
           ]}
         />
 
         <p className="text-xs text-muted-foreground">
           Quiz status reflects whether the parent quiz is published — not an independent question
-          lifecycle. Duplicate-to-quiz is not available in this read-only bank yet.
+          lifecycle. Duplicate to quiz creates a new copy in the target quiz; the source row is never
+          changed.
         </p>
       </PageBody>
+
+      <DuplicateToQuizDialog
+        open={duplicating !== null}
+        onOpenChange={(next) => !next && setDuplicating(null)}
+        source={duplicating}
+        onOpenInQuiz={(quizId) => {
+          void navigate({
+            to: "/quizzes/$quizId",
+            params: { quizId },
+          });
+        }}
+      />
 
       <SideDrawer
         open={previewing !== null}
