@@ -78,3 +78,25 @@ export const emptyQuestionFilters: QuestionFilterState = {
   language: "all",
   topic: "all",
 };
+
+/** Read-only Question Bank row: quiz-scoped question plus parent quiz context. */
+export interface BankQuestionRecord extends QuestionRecord {
+  quizId: string;
+  quizTitle: string;
+  quizPublished: boolean;
+  quizCreatedAt: string;
+  quizUpdatedAt: string;
+  position: number;
+}
+
+export interface BankQuestionFilterState {
+  type: string;
+  quizId: string;
+  quizStatus: string;
+}
+
+export const emptyBankQuestionFilters: BankQuestionFilterState = {
+  type: "all",
+  quizId: "all",
+  quizStatus: "all",
+};

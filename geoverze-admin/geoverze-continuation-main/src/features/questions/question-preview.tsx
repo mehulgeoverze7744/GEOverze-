@@ -16,6 +16,27 @@ export interface QuizPlayerPreviewProps {
   className?: string | undefined;
 }
 
+type PreviewMapRegion = {
+  id: string;
+  label: string;
+  x: number;
+  y: number;
+};
+
+function parseMapRegions(regions: unknown): PreviewMapRegion[] {
+  if (!Array.isArray(regions)) return [];
+  return regions.flatMap((entry) => {
+    if (!entry || typeof entry !== "object") return [];
+    const row = entry as Record<string, unknown>;
+    const id = typeof row["id"] === "string" ? row["id"] : "";
+    const label = typeof row["label"] === "string" ? row["label"] : "";
+    const x = typeof row["x"] === "number" ? row["x"] : NaN;
+    const y = typeof row["y"] === "number" ? row["y"] : NaN;
+    if (!id || !label || Number.isNaN(x) || Number.isNaN(y)) return [];
+    return [{ id, label, x, y }];
+  });
+}
+
 /**
  * Interactive player-style preview. Pure UI — no scoring is persisted.
  * Used by the quiz builder, the quiz detail page and the question bank.
@@ -49,12 +70,20 @@ export function QuizPlayerPreview({ questions, heading, className }: QuizPlayerP
 
   const question = questions[Math.min(index, questions.length - 1)] as QuestionRecord;
   const total = questions.length;
+  const preserved = question.preservedDbFields;
+  const mapRegions =
+    question.type === "Map Based" ? parseMapRegions(preserved?.regions) : [];
+  const isMapBased = mapRegions.length > 0;
+  const mapAnswerId = isMapBased ? (preserved?.answer_id ?? null) : null;
   const hasOptions = question.options.length > 0;
   const correctOption = question.options.find((option) => option.correct);
-  const answered = hasOptions ? selected !== null : typed.trim().length > 0;
+  const correctMapRegion = mapRegions.find((region) => region.id === mapAnswerId);
+  const answered = hasOptions || isMapBased ? selected !== null : typed.trim().length > 0;
   const isCorrect = hasOptions
     ? selected === correctOption?.id
-    : typed.trim().toLowerCase() === question.answerText.trim().toLowerCase();
+    : isMapBased
+      ? selected === mapAnswerId
+      : typed.trim().toLowerCase() === question.answerText.trim().toLowerCase();
 
   return (
     <section
@@ -75,13 +104,9 @@ export function QuizPlayerPreview({ questions, heading, className }: QuizPlayerP
 
       <Progress value={((index + 1) / total) * 100} className="mt-3 h-1.5" />
 
-      {question.requiresMedia && (
+      {question.requiresMedia && !isMapBased && (
         <div className="mt-4 flex h-32 items-center justify-center gap-2 rounded-md border border-dashed border-border bg-muted/40 text-xs text-muted-foreground">
-          {question.type === "Map Based" ? (
-            <MapPin className="size-4" aria-hidden="true" />
-          ) : (
-            <ImageIcon className="size-4" aria-hidden="true" />
-          )}
+          <ImageIcon className="size-4" aria-hidden="true" />
           {question.mediaLabel || "Media placeholder"}
         </div>
       )}
@@ -120,6 +145,66 @@ export function QuizPlayerPreview({ questions, heading, className }: QuizPlayerP
             );
           })}
         </ul>
+      ) : isMapBased ? (
+        <div className="mt-3">
+          <div
+            className="relative aspect-[16/10] w-full overflow-hidden rounded-md border border-border bg-muted/60"
+            aria-label={preserved?.board_art ? `Map board: ${preserved.board_art}` : "Map board"}
+          >
+            {preserved?.board_art && (
+              <span className="absolute left-2 top-2 z-10 rounded bg-background/80 px-2 py-0.5 text-[0.65rem] font-medium text-muted-foreground">
+                {preserved.board_art}
+              </span>
+            )}
+            <div className="absolute inset-0" role="group" aria-label="Map locations">
+              {mapRegions.map((region) => {
+                const chosen = selected === region.id;
+                const isAnswer = region.id === mapAnswerId;
+                const showState = revealed && (isAnswer || chosen);
+                return (
+                  <button
+                    key={region.id}
+                    type="button"
+                    onClick={() => setSelected(region.id)}
+                    aria-label={region.label}
+                    aria-pressed={chosen}
+                    style={{ left: `${region.x}%`, top: `${region.y}%` }}
+                    className={cn(
+                      "absolute inline-flex min-h-9 min-w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+                      !showState &&
+                        (chosen
+                          ? "border-primary bg-primary/20 text-primary"
+                          : "border-border bg-background/80 text-muted-foreground hover:border-primary/50 hover:bg-primary/10"),
+                      showState &&
+                        (isAnswer
+                          ? "border-success bg-success/20 text-success"
+                          : "border-destructive bg-destructive/20 text-destructive"),
+                    )}
+                  >
+                    <MapPin className="size-4" aria-hidden="true" />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {mapRegions.map((region) => (
+              <li
+                key={region.id}
+                className={cn(
+                  "rounded-full border px-2.5 py-1 text-xs font-medium",
+                  revealed && region.id === mapAnswerId
+                    ? "border-success/50 text-success"
+                    : selected === region.id
+                      ? "border-primary/50 text-primary"
+                      : "border-border text-muted-foreground",
+                )}
+              >
+                {region.label}
+              </li>
+            ))}
+          </ul>
+        </div>
       ) : (
         <div className="mt-3">
           <label htmlFor="preview-answer" className="sr-only">
@@ -146,7 +231,7 @@ export function QuizPlayerPreview({ questions, heading, className }: QuizPlayerP
         >
           <p className="font-medium">{isCorrect ? "Correct" : "Not quite"}</p>
           <p className="mt-0.5 text-foreground">
-            Answer: {correctOption?.text ?? question.answerText ?? "—"}
+            Answer: {correctOption?.text ?? correctMapRegion?.label ?? question.answerText ?? "—"}
           </p>
           <p className="mt-0.5 text-xs text-muted-foreground">{question.explanation}</p>
         </div>
