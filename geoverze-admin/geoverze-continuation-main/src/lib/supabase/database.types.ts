@@ -343,16 +343,13 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id?: string }; Returns: boolean }
-      record_quiz_attempt: {
+      submit_quiz_attempt: {
         Args: {
+          _answers: Json
           _attempt_id: string
-          _best_streak: number
-          _correct: number
           _duration_ms: number
           _mode: string
           _quiz_id: string
-          _score: number
-          _total: number
         }
         Returns: Json
       }

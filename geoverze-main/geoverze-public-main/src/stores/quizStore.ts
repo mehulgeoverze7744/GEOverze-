@@ -6,10 +6,10 @@
  * and nothing here is persisted or sent anywhere.
  *
  * Phase 2C: `persisted` flag guards against duplicate RPC submissions.
- * It is set to true after record_quiz_attempt() succeeds and cleared on reset().
+ * It is set to true after submit_quiz_attempt() succeeds and cleared on reset().
  *
  * Phase 2C idempotency: `attemptId` is a client-generated UUID created once
- * per quiz session via crypto.randomUUID(). It is passed to record_quiz_attempt()
+ * per quiz session via crypto.randomUUID(). It is passed to submit_quiz_attempt()
  * as the server-side idempotency key. It is stable for the entire session and
  * only resets when a genuinely new quiz session starts (via start() or reset()).
  */
@@ -55,11 +55,11 @@ type QuizState = {
   answers: Record<string, RunAnswer>;
   startedAt: number | null;
   finishedAt: number | null;
-  /** True after record_quiz_attempt() has succeeded for this run. */
+  /** True after submit_quiz_attempt() has succeeded for this run. */
   persisted: boolean;
   /**
    * Client-generated UUID created once per quiz session.
-   * Passed to record_quiz_attempt() as the server-side idempotency key.
+   * Passed to submit_quiz_attempt() as the server-side idempotency key.
    * Null before the first quiz starts; reset to a new UUID on start().
    */
   attemptId: string | null;

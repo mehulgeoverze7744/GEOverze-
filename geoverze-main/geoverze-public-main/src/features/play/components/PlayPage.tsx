@@ -61,7 +61,11 @@ export function PlayPage() {
   const playQuiz = (quiz: Quiz) => openLobby(quiz.id);
   const playCategory = (category: QuizCategory) => openLobby(category.id);
   const playMode = (mode: GameMode) => {
-    if (mode.id === "pvp" || mode.id === "multiplayer") {
+    if (mode.id === "pvp") {
+      navigate({ to: "/play/pvp" });
+      return;
+    }
+    if (mode.id === "multiplayer") {
       navigate({ to: "/play/matchmaking", search: { mode: mode.id, quiz: undefined } });
       return;
     }

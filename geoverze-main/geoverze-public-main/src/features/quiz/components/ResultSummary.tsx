@@ -10,13 +10,17 @@ import { formatDuration, type RunSummary } from "../lib/session";
 import { Confetti } from "./Confetti";
 import { QuizLayout } from "./QuizLayout";
 
-/** Server-confirmed values returned by record_quiz_attempt(). */
+/** Server-confirmed values returned by submit_quiz_attempt(). */
 type ServerResult = {
   xp_earned: number;
   credits_earned: number;
   new_level: number;
   level_up: boolean;
   new_streak: number;
+  correct?: number;
+  total?: number;
+  score?: number;
+  best_streak?: number;
 };
 
 function Stat({ label, value, tone }: { label: string; value: string; tone?: "good" | "bad" }) {

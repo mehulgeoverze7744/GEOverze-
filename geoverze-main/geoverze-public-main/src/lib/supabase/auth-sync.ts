@@ -201,3 +201,10 @@ export async function signOut() {
   if (error) console.error("Sign out failed", error);
   useAuthStore.getState().clear();
 }
+
+/** Re-fetch user_progression into progressionStore (e.g. after PvP reward settlement). */
+export async function refreshProgression(userId: string) {
+  const sessionUser = useAuthStore.getState().user;
+  if (!sessionUser || sessionUser.id !== userId) return;
+  await hydrateProgression({ id: userId, email: sessionUser.email } as User);
+}

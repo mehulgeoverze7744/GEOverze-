@@ -11,9 +11,9 @@ import { useQuizStore } from "@/stores/quizStore";
 import { ResultSummary } from "../components/ResultSummary";
 import { QuizLayout } from "../components/QuizLayout";
 import { useQuizSet } from "../hooks/useQuizSet";
-import { summarise, type RunSummary } from "../lib/session";
+import { summarise, ratingFor, type RunSummary } from "../lib/session";
 
-/** Shape returned by the record_quiz_attempt RPC (Phase 2C idempotency). */
+/** Shape returned by the submit_quiz_attempt RPC (Phase L2 server grading). */
 type AttemptResult = {
   xp_earned: number;
   credits_earned: number;
@@ -25,9 +25,42 @@ type AttemptResult = {
   total_quizzes: number;
   total_correct: number;
   total_answered: number;
+  /** Authoritative run stats computed server-side. */
+  correct: number;
+  total: number;
+  score: number;
+  best_streak: number;
   /** True when this attempt_id was already recorded; no progression was changed. */
   duplicate: boolean;
 };
+
+/** Build the answer payload sent to submit_quiz_attempt(). */
+function buildAnswerPayload(answers: Record<string, { questionId: string; value: string[] | null; skipped: boolean }>) {
+  return Object.values(answers).map((answer) => ({
+    question_id: answer.questionId,
+    value: answer.skipped ? null : answer.value,
+    skipped: answer.skipped,
+  }));
+}
+
+/** Merge server-authoritative stats into a RunSummary for display. */
+function authoritativeSummary(base: RunSummary, result: AttemptResult): RunSummary {
+  const skipped = base.skipped;
+  const wrong = Math.max(0, result.total - result.correct - skipped);
+  const accuracy = result.total === 0 ? 0 : result.correct / result.total;
+  return {
+    ...base,
+    total: result.total,
+    correct: result.correct,
+    wrong,
+    skipped,
+    accuracy,
+    score: result.score,
+    bestStreak: result.best_streak,
+    xp: result.xp_earned,
+    rating: ratingFor(accuracy),
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Tab-session result persistence
@@ -104,21 +137,25 @@ export function QuizResultScreen() {
     [answers, finishedAt, hasRun, set, startedAt],
   );
 
-  const summary: RunSummary | null = liveSummary ?? hydratedResult?.summary ?? null;
-
   // Initialise from sessionStorage when hydrating a post-refresh result.
   const [serverResult, setServerResult] = useState<AttemptResult | null>(
     hydratedResult?.serverResult ?? null,
   );
   const [submitError, setSubmitError] = useState(false);
 
+  const summary: RunSummary | null = useMemo(() => {
+    const base = liveSummary ?? hydratedResult?.summary ?? null;
+    if (!base || !serverResult) return base;
+    return authoritativeSummary(base, serverResult);
+  }, [liveSummary, hydratedResult?.summary, serverResult]);
+
   // Prevents React StrictMode double-invoke from firing two RPC calls.
   const hasFiredRef = useRef(false);
 
-  // Fire record_quiz_attempt() exactly once per live completed run.
+  // Fire submit_quiz_attempt() exactly once per live completed run.
   // This block is intentionally skipped when the result is hydrated from
   // sessionStorage — hydrated results are already persisted; no re-submission.
-  // Guard on `set` being loaded: the RPC needs set.questions.length and set.id.
+  // Guard on `set` being loaded: the RPC needs set.id for quiz_id.
   useEffect(() => {
     if (!hasRun || persisted || hasFiredRef.current || !user?.id || !attemptId || !set) return;
     hasFiredRef.current = true;
@@ -126,43 +163,37 @@ export function QuizResultScreen() {
     // Capture stable values before the async boundary.
     const stableAttemptId = attemptId;
     const durationMs = Math.max(1, (finishedAt ?? Date.now()) - (startedAt ?? 0));
-    const correctCount = Object.values(answers).filter((a) => a.correct).length;
-    const totalCount = set.questions.length;
-    const score = liveSummary?.score ?? 0;
-    const bestStreak = liveSummary?.bestStreak ?? 0;
+    const answerPayload = buildAnswerPayload(answers);
 
     void supabase
-      .rpc("record_quiz_attempt", {
+      .rpc("submit_quiz_attempt", {
         _attempt_id: stableAttemptId,
         _quiz_id: set.id,
         _mode: mode ?? "solo",
-        _score: score,
-        _correct: correctCount,
-        _total: totalCount,
-        _best_streak: bestStreak,
         _duration_ms: durationMs,
+        _answers: answerPayload,
       })
       .then(({ data, error }) => {
         if (error) {
-          console.error("record_quiz_attempt failed", error);
+          console.error("submit_quiz_attempt failed", error);
           setSubmitError(true);
           toast.error("Could not save your quiz result. Your score is shown below.");
           return;
         }
 
         const result = data as AttemptResult | null;
-        if (!result) return;
+        if (!result || liveSummary == null) return;
+
+        const confirmedSummary = authoritativeSummary(liveSummary, result);
 
         // Persist the confirmed result to sessionStorage so it survives a
         // page refresh in the same tab.
-        if (liveSummary) {
-          saveResult({
-            attemptId: stableAttemptId,
-            quizId: set.id,
-            summary: liveSummary,
-            serverResult: result,
-          });
-        }
+        saveResult({
+          attemptId: stableAttemptId,
+          quizId: set.id,
+          summary: confirmedSummary,
+          serverResult: result,
+        });
 
         // Mark persisted regardless of duplicate — the run is recorded.
         setPersisted();

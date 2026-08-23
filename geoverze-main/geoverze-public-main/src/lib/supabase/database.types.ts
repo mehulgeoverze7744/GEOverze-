@@ -14,6 +14,47 @@ export type Database = {
   };
   public: {
     Tables: {
+      credit_transactions: {
+        Row: {
+          amount: number;
+          created_at: string;
+          id: string;
+          month_key: string;
+          opponent_user_id: string;
+          room_id: string;
+          user_id: string;
+          win_tier: number;
+        };
+        Insert: {
+          amount: number;
+          created_at?: string;
+          id?: string;
+          month_key: string;
+          opponent_user_id: string;
+          room_id: string;
+          user_id: string;
+          win_tier: number;
+        };
+        Update: {
+          amount?: number;
+          created_at?: string;
+          id?: string;
+          month_key?: string;
+          opponent_user_id?: string;
+          room_id?: string;
+          user_id?: string;
+          win_tier?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "credit_transactions_room_id_fkey";
+            columns: ["room_id"];
+            isOneToOne: true;
+            referencedRelation: "pvp_rooms";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       profile_preferences: {
         Row: {
           interests: string[];
@@ -270,6 +311,7 @@ export type Database = {
       user_progression: {
         Row: {
           credits: number;
+          credits_month_key: string | null;
           current_streak: number;
           last_played_date: string | null;
           level: number;
@@ -330,11 +372,109 @@ export type Database = {
         };
         Relationships: [];
       };
+      pvp_participants: {
+        Row: {
+          attempt_id: string | null;
+          best_streak: number | null;
+          correct: number | null;
+          credits_earned: number | null;
+          duration_ms: number | null;
+          id: string;
+          is_ready: boolean;
+          joined_at: string;
+          ready_at: string | null;
+          room_id: string;
+          score: number | null;
+          submitted_at: string | null;
+          total: number | null;
+          user_id: string;
+          xp_earned: number | null;
+        };
+        Insert: {
+          id?: string;
+          is_ready?: boolean;
+          joined_at?: string;
+          ready_at?: string | null;
+          room_id: string;
+          user_id: string;
+        };
+        Update: {
+          id?: string;
+          is_ready?: boolean;
+          joined_at?: string;
+          ready_at?: string | null;
+          room_id?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pvp_participants_room_id_fkey";
+            columns: ["room_id"];
+            isOneToOne: false;
+            referencedRelation: "pvp_rooms";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      pvp_rooms: {
+        Row: {
+          completed_at: string | null;
+          created_at: string;
+          host_user_id: string;
+          id: string;
+          max_players: number;
+          quiz_id: string;
+          rewards_settled_at: string | null;
+          room_code: string;
+          started_at: string | null;
+          status: Database["public"]["Enums"]["pvp_room_status"];
+          winner_user_id: string | null;
+        };
+        Insert: {
+          completed_at?: string | null;
+          created_at?: string;
+          host_user_id: string;
+          id?: string;
+          max_players?: number;
+          quiz_id: string;
+          room_code: string;
+          started_at?: string | null;
+          status?: Database["public"]["Enums"]["pvp_room_status"];
+        };
+        Update: {
+          completed_at?: string | null;
+          created_at?: string;
+          host_user_id?: string;
+          id?: string;
+          max_players?: number;
+          quiz_id?: string;
+          room_code?: string;
+          started_at?: string | null;
+          status?: Database["public"]["Enums"]["pvp_room_status"];
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pvp_rooms_quiz_id_fkey";
+            columns: ["quiz_id"];
+            isOneToOne: false;
+            referencedRelation: "quizzes";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
+      build_pvp_room_state: {
+        Args: { _room_id: string };
+        Returns: Json;
+      };
+      create_pvp_room: {
+        Args: { _quiz_id: string };
+        Returns: Json;
+      };
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"];
@@ -343,16 +483,38 @@ export type Database = {
         Returns: boolean;
       };
       is_admin: { Args: { _user_id?: string }; Returns: boolean };
-      record_quiz_attempt: {
+      join_pvp_room: {
+        Args: { _room_code: string };
+        Returns: Json;
+      };
+      leave_pvp_room: {
+        Args: { _room_id: string };
+        Returns: Json;
+      };
+      set_pvp_ready: {
+        Args: { _ready: boolean; _room_id: string };
+        Returns: Json;
+      };
+      start_pvp_match: {
+        Args: { _room_id: string };
+        Returns: Json;
+      };
+      submit_pvp_attempt: {
         Args: {
+          _answers: Json;
           _attempt_id: string;
-          _best_streak: number;
-          _correct: number;
+          _duration_ms: number;
+          _room_id: string;
+        };
+        Returns: Json;
+      };
+      submit_quiz_attempt: {
+        Args: {
+          _answers: Json;
+          _attempt_id: string;
           _duration_ms: number;
           _mode: string;
           _quiz_id: string;
-          _score: number;
-          _total: number;
         };
         Returns: Json;
       };
@@ -360,6 +522,7 @@ export type Database = {
     };
     Enums: {
       app_role: "user" | "creator" | "admin" | "super_admin";
+      pvp_room_status: "waiting" | "ready" | "playing" | "completed" | "cancelled";
       question_type:
         | "single"
         | "multiple"

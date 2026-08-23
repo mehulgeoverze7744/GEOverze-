@@ -77,6 +77,7 @@ import { Route as PlayLobbyRouteImport } from './routes/play.lobby'
 import { Route as PlayMatchmakingRouteImport } from './routes/play.matchmaking'
 import { Route as PlayModesRouteImport } from './routes/play.modes'
 import { Route as PlayProgressionRouteImport } from './routes/play.progression'
+import { Route as PlayPvpRouteImport } from './routes/play.pvp'
 import { Route as PlayQuizRouteImport } from './routes/play.quiz'
 import { Route as PlayRewardsRouteImport } from './routes/play.rewards'
 import { Route as PlaySearchRouteImport } from './routes/play.search'
@@ -106,6 +107,10 @@ import { Route as PlayCollectionsIndexRouteImport } from './routes/play.collecti
 import { Route as PlayCollectionsSlugRouteImport } from './routes/play.collections.$slug'
 import { Route as PlayHistoryIndexRouteImport } from './routes/play.history.index'
 import { Route as PlayHistoryMatchIdRouteImport } from './routes/play.history.$matchId'
+import { Route as PlayPvpIndexRouteImport } from './routes/play.pvp.index'
+import { Route as PlayPvpCreateRouteImport } from './routes/play.pvp.create'
+import { Route as PlayPvpJoinRouteImport } from './routes/play.pvp.join'
+import { Route as PlayPvpRoomRouteImport } from './routes/play.pvp.room'
 import { Route as PlayQuizIndexRouteImport } from './routes/play.quiz.index'
 import { Route as PlayQuizMultiplayerRouteImport } from './routes/play.quiz.multiplayer'
 import { Route as PlayQuizPvpRouteImport } from './routes/play.quiz.pvp'
@@ -460,6 +465,11 @@ const PlayProgressionRoute = PlayProgressionRouteImport.update({
   path: '/progression',
   getParentRoute: () => PlayRoute,
 } as any)
+const PlayPvpRoute = PlayPvpRouteImport.update({
+  id: '/pvp',
+  path: '/pvp',
+  getParentRoute: () => PlayRoute,
+} as any)
 const PlayQuizRoute = PlayQuizRouteImport.update({
   id: '/quiz',
   path: '/quiz',
@@ -608,6 +618,26 @@ const PlayHistoryMatchIdRoute = PlayHistoryMatchIdRouteImport.update({
   path: '/history/$matchId',
   getParentRoute: () => PlayRoute,
 } as any)
+const PlayPvpIndexRoute = PlayPvpIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PlayPvpRoute,
+} as any)
+const PlayPvpCreateRoute = PlayPvpCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => PlayPvpRoute,
+} as any)
+const PlayPvpJoinRoute = PlayPvpJoinRouteImport.update({
+  id: '/join',
+  path: '/join',
+  getParentRoute: () => PlayPvpRoute,
+} as any)
+const PlayPvpRoomRoute = PlayPvpRoomRouteImport.update({
+  id: '/room',
+  path: '/room',
+  getParentRoute: () => PlayPvpRoute,
+} as any)
 const PlayQuizIndexRoute = PlayQuizIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -743,6 +773,7 @@ export interface FileRoutesByFullPath {
   '/play/matchmaking': typeof PlayMatchmakingRoute
   '/play/modes': typeof PlayModesRoute
   '/play/progression': typeof PlayProgressionRoute
+  '/play/pvp': typeof PlayPvpRouteWithChildren
   '/play/quiz': typeof PlayQuizRouteWithChildren
   '/play/rewards': typeof PlayRewardsRoute
   '/play/search': typeof PlaySearchRoute
@@ -771,6 +802,9 @@ export interface FileRoutesByFullPath {
   '/geostore/product/$slug': typeof GeostoreProductSlugRoute
   '/play/collections/$slug': typeof PlayCollectionsSlugRoute
   '/play/history/$matchId': typeof PlayHistoryMatchIdRoute
+  '/play/pvp/create': typeof PlayPvpCreateRoute
+  '/play/pvp/join': typeof PlayPvpJoinRoute
+  '/play/pvp/room': typeof PlayPvpRoomRoute
   '/play/quiz/multiplayer': typeof PlayQuizMultiplayerRoute
   '/play/quiz/pvp': typeof PlayQuizPvpRoute
   '/play/quiz/result': typeof PlayQuizResultRoute
@@ -786,6 +820,7 @@ export interface FileRoutesByFullPath {
   '/geolibrary/creators/': typeof GeolibraryCreatorsIndexRoute
   '/play/collections/': typeof PlayCollectionsIndexRoute
   '/play/history/': typeof PlayHistoryIndexRoute
+  '/play/pvp/': typeof PlayPvpIndexRoute
   '/play/quiz/': typeof PlayQuizIndexRoute
   '/play/tournaments/': typeof PlayTournamentsIndexRoute
   '/studio/articles/': typeof StudioArticlesIndexRoute
@@ -875,6 +910,9 @@ export interface FileRoutesByTo {
   '/geostore/product/$slug': typeof GeostoreProductSlugRoute
   '/play/collections/$slug': typeof PlayCollectionsSlugRoute
   '/play/history/$matchId': typeof PlayHistoryMatchIdRoute
+  '/play/pvp/create': typeof PlayPvpCreateRoute
+  '/play/pvp/join': typeof PlayPvpJoinRoute
+  '/play/pvp/room': typeof PlayPvpRoomRoute
   '/play/quiz/multiplayer': typeof PlayQuizMultiplayerRoute
   '/play/quiz/pvp': typeof PlayQuizPvpRoute
   '/play/quiz/result': typeof PlayQuizResultRoute
@@ -890,6 +928,7 @@ export interface FileRoutesByTo {
   '/geolibrary/creators': typeof GeolibraryCreatorsIndexRoute
   '/play/collections': typeof PlayCollectionsIndexRoute
   '/play/history': typeof PlayHistoryIndexRoute
+  '/play/pvp': typeof PlayPvpIndexRoute
   '/play/quiz': typeof PlayQuizIndexRoute
   '/play/tournaments': typeof PlayTournamentsIndexRoute
   '/studio/articles': typeof StudioArticlesIndexRoute
@@ -961,6 +1000,7 @@ export interface FileRoutesById {
   '/play/matchmaking': typeof PlayMatchmakingRoute
   '/play/modes': typeof PlayModesRoute
   '/play/progression': typeof PlayProgressionRoute
+  '/play/pvp': typeof PlayPvpRouteWithChildren
   '/play/quiz': typeof PlayQuizRouteWithChildren
   '/play/rewards': typeof PlayRewardsRoute
   '/play/search': typeof PlaySearchRoute
@@ -989,6 +1029,9 @@ export interface FileRoutesById {
   '/geostore/product/$slug': typeof GeostoreProductSlugRoute
   '/play/collections/$slug': typeof PlayCollectionsSlugRoute
   '/play/history/$matchId': typeof PlayHistoryMatchIdRoute
+  '/play/pvp/create': typeof PlayPvpCreateRoute
+  '/play/pvp/join': typeof PlayPvpJoinRoute
+  '/play/pvp/room': typeof PlayPvpRoomRoute
   '/play/quiz/multiplayer': typeof PlayQuizMultiplayerRoute
   '/play/quiz/pvp': typeof PlayQuizPvpRoute
   '/play/quiz/result': typeof PlayQuizResultRoute
@@ -1004,6 +1047,7 @@ export interface FileRoutesById {
   '/geolibrary/creators/': typeof GeolibraryCreatorsIndexRoute
   '/play/collections/': typeof PlayCollectionsIndexRoute
   '/play/history/': typeof PlayHistoryIndexRoute
+  '/play/pvp/': typeof PlayPvpIndexRoute
   '/play/quiz/': typeof PlayQuizIndexRoute
   '/play/tournaments/': typeof PlayTournamentsIndexRoute
   '/studio/articles/': typeof StudioArticlesIndexRoute
@@ -1075,6 +1119,7 @@ export interface FileRouteTypes {
     | '/play/matchmaking'
     | '/play/modes'
     | '/play/progression'
+    | '/play/pvp'
     | '/play/quiz'
     | '/play/rewards'
     | '/play/search'
@@ -1103,6 +1148,9 @@ export interface FileRouteTypes {
     | '/geostore/product/$slug'
     | '/play/collections/$slug'
     | '/play/history/$matchId'
+    | '/play/pvp/create'
+    | '/play/pvp/join'
+    | '/play/pvp/room'
     | '/play/quiz/multiplayer'
     | '/play/quiz/pvp'
     | '/play/quiz/result'
@@ -1118,6 +1166,7 @@ export interface FileRouteTypes {
     | '/geolibrary/creators/'
     | '/play/collections/'
     | '/play/history/'
+    | '/play/pvp/'
     | '/play/quiz/'
     | '/play/tournaments/'
     | '/studio/articles/'
@@ -1207,6 +1256,9 @@ export interface FileRouteTypes {
     | '/geostore/product/$slug'
     | '/play/collections/$slug'
     | '/play/history/$matchId'
+    | '/play/pvp/create'
+    | '/play/pvp/join'
+    | '/play/pvp/room'
     | '/play/quiz/multiplayer'
     | '/play/quiz/pvp'
     | '/play/quiz/result'
@@ -1222,6 +1274,7 @@ export interface FileRouteTypes {
     | '/geolibrary/creators'
     | '/play/collections'
     | '/play/history'
+    | '/play/pvp'
     | '/play/quiz'
     | '/play/tournaments'
     | '/studio/articles'
@@ -1292,6 +1345,7 @@ export interface FileRouteTypes {
     | '/play/matchmaking'
     | '/play/modes'
     | '/play/progression'
+    | '/play/pvp'
     | '/play/quiz'
     | '/play/rewards'
     | '/play/search'
@@ -1320,6 +1374,9 @@ export interface FileRouteTypes {
     | '/geostore/product/$slug'
     | '/play/collections/$slug'
     | '/play/history/$matchId'
+    | '/play/pvp/create'
+    | '/play/pvp/join'
+    | '/play/pvp/room'
     | '/play/quiz/multiplayer'
     | '/play/quiz/pvp'
     | '/play/quiz/result'
@@ -1335,6 +1392,7 @@ export interface FileRouteTypes {
     | '/geolibrary/creators/'
     | '/play/collections/'
     | '/play/history/'
+    | '/play/pvp/'
     | '/play/quiz/'
     | '/play/tournaments/'
     | '/studio/articles/'
@@ -1849,6 +1907,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlayProgressionRouteImport
       parentRoute: typeof PlayRoute
     }
+    '/play/pvp': {
+      id: '/play/pvp'
+      path: '/pvp'
+      fullPath: '/play/pvp'
+      preLoaderRoute: typeof PlayPvpRouteImport
+      parentRoute: typeof PlayRoute
+    }
     '/play/quiz': {
       id: '/play/quiz'
       path: '/quiz'
@@ -2051,6 +2116,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/play/history/$matchId'
       preLoaderRoute: typeof PlayHistoryMatchIdRouteImport
       parentRoute: typeof PlayRoute
+    }
+    '/play/pvp/': {
+      id: '/play/pvp/'
+      path: '/'
+      fullPath: '/play/pvp/'
+      preLoaderRoute: typeof PlayPvpIndexRouteImport
+      parentRoute: typeof PlayPvpRoute
+    }
+    '/play/pvp/create': {
+      id: '/play/pvp/create'
+      path: '/create'
+      fullPath: '/play/pvp/create'
+      preLoaderRoute: typeof PlayPvpCreateRouteImport
+      parentRoute: typeof PlayPvpRoute
+    }
+    '/play/pvp/join': {
+      id: '/play/pvp/join'
+      path: '/join'
+      fullPath: '/play/pvp/join'
+      preLoaderRoute: typeof PlayPvpJoinRouteImport
+      parentRoute: typeof PlayPvpRoute
+    }
+    '/play/pvp/room': {
+      id: '/play/pvp/room'
+      path: '/room'
+      fullPath: '/play/pvp/room'
+      preLoaderRoute: typeof PlayPvpRoomRouteImport
+      parentRoute: typeof PlayPvpRoute
     }
     '/play/quiz/': {
       id: '/play/quiz/'
@@ -2287,6 +2380,23 @@ const GeostoreRouteWithChildren = GeostoreRoute._addFileChildren(
   GeostoreRouteChildren,
 )
 
+interface PlayPvpRouteChildren {
+  PlayPvpCreateRoute: typeof PlayPvpCreateRoute
+  PlayPvpJoinRoute: typeof PlayPvpJoinRoute
+  PlayPvpRoomRoute: typeof PlayPvpRoomRoute
+  PlayPvpIndexRoute: typeof PlayPvpIndexRoute
+}
+
+const PlayPvpRouteChildren: PlayPvpRouteChildren = {
+  PlayPvpCreateRoute: PlayPvpCreateRoute,
+  PlayPvpJoinRoute: PlayPvpJoinRoute,
+  PlayPvpRoomRoute: PlayPvpRoomRoute,
+  PlayPvpIndexRoute: PlayPvpIndexRoute,
+}
+
+const PlayPvpRouteWithChildren =
+  PlayPvpRoute._addFileChildren(PlayPvpRouteChildren)
+
 interface PlayQuizRouteChildren {
   PlayQuizMultiplayerRoute: typeof PlayQuizMultiplayerRoute
   PlayQuizPvpRoute: typeof PlayQuizPvpRoute
@@ -2319,6 +2429,7 @@ interface PlayRouteChildren {
   PlayMatchmakingRoute: typeof PlayMatchmakingRoute
   PlayModesRoute: typeof PlayModesRoute
   PlayProgressionRoute: typeof PlayProgressionRoute
+  PlayPvpRoute: typeof PlayPvpRouteWithChildren
   PlayQuizRoute: typeof PlayQuizRouteWithChildren
   PlayRewardsRoute: typeof PlayRewardsRoute
   PlaySearchRoute: typeof PlaySearchRoute
@@ -2343,6 +2454,7 @@ const PlayRouteChildren: PlayRouteChildren = {
   PlayMatchmakingRoute: PlayMatchmakingRoute,
   PlayModesRoute: PlayModesRoute,
   PlayProgressionRoute: PlayProgressionRoute,
+  PlayPvpRoute: PlayPvpRouteWithChildren,
   PlayQuizRoute: PlayQuizRouteWithChildren,
   PlayRewardsRoute: PlayRewardsRoute,
   PlaySearchRoute: PlaySearchRoute,
