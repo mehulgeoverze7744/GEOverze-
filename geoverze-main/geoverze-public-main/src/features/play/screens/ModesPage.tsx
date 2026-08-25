@@ -15,7 +15,7 @@ export function ModesPage() {
       return;
     }
     if (mode.id === "multiplayer") {
-      navigate({ to: "/play/matchmaking", search: { mode: mode.id, quiz: undefined } });
+      navigate({ to: "/play/multiplayer" });
       return;
     }
     navigate({ to: "/play/lobby", search: { mode: mode.id, quiz: undefined } });

@@ -20,7 +20,7 @@ export type Database = {
           created_at: string;
           id: string;
           month_key: string;
-          opponent_user_id: string;
+          opponent_user_id: string | null;
           room_id: string;
           user_id: string;
           win_tier: number;
@@ -30,7 +30,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           month_key: string;
-          opponent_user_id: string;
+          opponent_user_id: string | null;
           room_id: string;
           user_id: string;
           win_tier: number;
@@ -379,6 +379,7 @@ export type Database = {
           correct: number | null;
           credits_earned: number | null;
           duration_ms: number | null;
+          finish_rank: number | null;
           id: string;
           is_ready: boolean;
           joined_at: string;
@@ -418,37 +419,47 @@ export type Database = {
       };
       pvp_rooms: {
         Row: {
+          active_player_count: number | null;
           completed_at: string | null;
           created_at: string;
           host_user_id: string;
           id: string;
           max_players: number;
+          min_players: number;
           quiz_id: string;
+          rankings_finalized_at: string | null;
           rewards_settled_at: string | null;
           room_code: string;
+          room_mode: Database["public"]["Enums"]["room_mode"];
           started_at: string | null;
           status: Database["public"]["Enums"]["pvp_room_status"];
           winner_user_id: string | null;
         };
         Insert: {
+          active_player_count?: number | null;
           completed_at?: string | null;
           created_at?: string;
           host_user_id: string;
           id?: string;
           max_players?: number;
+          min_players?: number;
           quiz_id: string;
           room_code: string;
+          room_mode?: Database["public"]["Enums"]["room_mode"];
           started_at?: string | null;
           status?: Database["public"]["Enums"]["pvp_room_status"];
         };
         Update: {
+          active_player_count?: number | null;
           completed_at?: string | null;
           created_at?: string;
           host_user_id?: string;
           id?: string;
           max_players?: number;
+          min_players?: number;
           quiz_id?: string;
           room_code?: string;
+          room_mode?: Database["public"]["Enums"]["room_mode"];
           started_at?: string | null;
           status?: Database["public"]["Enums"]["pvp_room_status"];
         };
@@ -467,8 +478,16 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      build_multiplayer_room_state: {
+        Args: { _room_id: string };
+        Returns: Json;
+      };
       build_pvp_room_state: {
         Args: { _room_id: string };
+        Returns: Json;
+      };
+      create_multiplayer_room: {
+        Args: { _max_players: number; _quiz_id: string };
         Returns: Json;
       };
       create_pvp_room: {
@@ -483,16 +502,41 @@ export type Database = {
         Returns: boolean;
       };
       is_admin: { Args: { _user_id?: string }; Returns: boolean };
+      join_multiplayer_room: {
+        Args: { _room_code: string };
+        Returns: Json;
+      };
       join_pvp_room: {
         Args: { _room_code: string };
+        Returns: Json;
+      };
+      leave_multiplayer_room: {
+        Args: { _room_id: string };
         Returns: Json;
       };
       leave_pvp_room: {
         Args: { _room_id: string };
         Returns: Json;
       };
+      set_multiplayer_ready: {
+        Args: { _ready: boolean; _room_id: string };
+        Returns: Json;
+      };
       set_pvp_ready: {
         Args: { _ready: boolean; _room_id: string };
+        Returns: Json;
+      };
+      start_multiplayer_match: {
+        Args: { _room_id: string };
+        Returns: Json;
+      };
+      submit_multiplayer_attempt: {
+        Args: {
+          _answers: Json;
+          _attempt_id: string;
+          _duration_ms: number;
+          _room_id: string;
+        };
         Returns: Json;
       };
       start_pvp_match: {
@@ -523,6 +567,7 @@ export type Database = {
     Enums: {
       app_role: "user" | "creator" | "admin" | "super_admin";
       pvp_room_status: "waiting" | "ready" | "playing" | "completed" | "cancelled";
+      room_mode: "pvp" | "multiplayer";
       question_type:
         | "single"
         | "multiple"

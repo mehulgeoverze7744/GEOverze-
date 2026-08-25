@@ -38,7 +38,14 @@ export const CREDIT_RULES: readonly CreditRule[] = [
   },
 ] as const;
 
-export type CreditReason = "New Opponent" | "Second Win" | "Third Win" | "Repeated Win";
+export type CreditReason =
+  | "New Opponent"
+  | "Second Win"
+  | "Third Win"
+  | "Repeated Win"
+  | "Multiplayer — 1st Place"
+  | "Multiplayer — 2nd Place"
+  | "Multiplayer — 3rd Place";
 
 export type CreditEntry = {
   id: string;

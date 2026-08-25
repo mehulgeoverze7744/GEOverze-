@@ -21,6 +21,9 @@ const FILTERS: readonly (CreditReason | "All")[] = [
   "Second Win",
   "Third Win",
   "Repeated Win",
+  "Multiplayer — 1st Place",
+  "Multiplayer — 2nd Place",
+  "Multiplayer — 3rd Place",
 ];
 
 /** /play/credit-history */
@@ -47,7 +50,7 @@ export function CreditHistoryPage() {
             }),
             opponent: row.opponent_username,
             opponentAvatarId: "compass",
-            matchType: "1v1 Duel",
+            matchType: row.matchType,
             credits: row.amount,
             reason: row.reason,
             status: "credited" as const,
