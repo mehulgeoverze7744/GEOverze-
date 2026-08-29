@@ -7,6 +7,8 @@ import { AnimatedSection, GeoButton, ProgressRing, SectionContainer } from "@/co
 import { DifficultyBadge, MetaChip } from "@/features/play/components/Badges";
 import { CoverArt } from "@/features/play/components/CoverArt";
 import { GAME_MODES } from "@/features/play/data/gameModes";
+import { defaultPublishedQuizId } from "@/features/play/data/quizzes";
+import { usePublishedQuizzes } from "@/features/play/hooks/usePublishedQuizzes";
 import { useQuizSet } from "@/features/quiz";
 import { useMatchStore } from "@/stores/matchStore";
 import { useQuizStore, type QuizMode } from "@/stores/quizStore";
@@ -26,7 +28,9 @@ export function LobbyScreen() {
   const { mode, quiz } = useSearch({ from: "/play/lobby" });
   const navigate = useNavigate();
   const resolvedMode = mode ?? "solo";
-  const { set: rawSet, loading: setLoading } = useQuizSet(quiz ?? resolvedMode);
+  const { quizzes, loading: catalogLoading, error: catalogError } = usePublishedQuizzes();
+  const resolvedQuizId = quiz ?? defaultPublishedQuizId(quizzes);
+  const { set: rawSet, loading: setLoading, error: setError } = useQuizSet(resolvedQuizId);
   // Provide a stable fallback shape while loading so downstream JSX that reads
   // `set.*` always has a value.  The loading spinner hides the partial state.
   const set = rawSet;
@@ -75,7 +79,7 @@ export function LobbyScreen() {
 
   const seats = [{ ...YOU }, ...roster];
 
-  if (setLoading || !set) {
+  if (catalogLoading || setLoading) {
     return (
       <PageShell>
         <div className="flex min-h-[70vh] items-center justify-center">
@@ -83,6 +87,25 @@ export function LobbyScreen() {
             className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent text-bronze"
             aria-label="Loading lobby…"
           />
+        </div>
+      </PageShell>
+    );
+  }
+
+  if (catalogError || setError || !set) {
+    return (
+      <PageShell>
+        <div className="flex min-h-[70vh] flex-col items-center justify-center gap-4 p-6 text-center">
+          <p className="text-[0.9rem] text-foreground/60">
+            {setError ??
+              catalogError ??
+              "No published quizzes are available for this mode yet. Pick a quiz from the catalog."}
+          </p>
+          <GeoButton asChild variant="solid" size="md">
+            <Link to="/play/search" search={{ q: undefined, category: undefined }}>
+              Browse quizzes
+            </Link>
+          </GeoButton>
         </div>
       </PageShell>
     );

@@ -18,12 +18,13 @@ import { INITIAL_FILTERS, applyFilters, isFiltering, type PlayFilterState } from
 
 /** /play/search — full-catalog search with the shared filter model. */
 export function SearchPage() {
-  const { q } = useSearch({ from: "/play/search" });
+  const { q, category } = useSearch({ from: "/play/search" });
   const navigate = useNavigate();
   const { quizzes, loading, error, refetch } = usePublishedQuizzes();
   const [filters, setFilters] = useState<PlayFilterState>({
     ...INITIAL_FILTERS,
     query: q ?? "",
+    category: category ?? "any",
   });
 
   const bookmarkIds = useBookmarksStore((s) => s.ids);
@@ -31,14 +32,20 @@ export function SearchPage() {
   const results = useMemo(() => applyFilters(quizzes, filters), [quizzes, filters]);
 
   const patch = (next: Partial<PlayFilterState>) => {
-    setFilters((f) => ({ ...f, ...next }));
-    if (typeof next.query === "string") {
-      navigate({
-        to: "/play/search",
-        search: { q: next.query.trim() === "" ? undefined : next.query },
-        replace: true,
-      });
-    }
+    setFilters((f) => {
+      const merged = { ...f, ...next };
+      if (typeof next.query === "string") {
+        navigate({
+          to: "/play/search",
+          search: {
+            q: next.query.trim() === "" ? undefined : next.query,
+            category: merged.category === "any" ? undefined : merged.category,
+          },
+          replace: true,
+        });
+      }
+      return merged;
+    });
   };
 
   const playQuiz = (quiz: Quiz) => navigate({ to: "/play/quiz", search: { quiz: quiz.id } });
@@ -127,7 +134,11 @@ export function SearchPage() {
                   size="md"
                   onClick={() => {
                     setFilters(INITIAL_FILTERS);
-                    navigate({ to: "/play/search", search: { q: undefined }, replace: true });
+                    navigate({
+                      to: "/play/search",
+                      search: { q: undefined, category: undefined },
+                      replace: true,
+                    });
                   }}
                 >
                   Reset search

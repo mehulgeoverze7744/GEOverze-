@@ -30,6 +30,12 @@ export function pick(ids: readonly string[], catalog: readonly Quiz[]): Quiz[] {
   return ids.map((id) => byId.get(id)).filter((quiz): quiz is Quiz => Boolean(quiz));
 }
 
+/** Default playable quiz when a mode lobby has no explicit quiz id yet. */
+export function defaultPublishedQuizId(catalog: readonly Quiz[]): string | undefined {
+  const featured = pick([...FEATURED_QUIZ_IDS], catalog);
+  return featured[0]?.id ?? catalog[0]?.id;
+}
+
 export const FEATURED_QUIZ_IDS = [
   "q-flag-blitz",
   "q-atlas-sprint",

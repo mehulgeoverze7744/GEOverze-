@@ -55,11 +55,17 @@ export function PlayPage() {
 
   const patch = (next: Partial<PlayFilterState>) => setFilters((f) => ({ ...f, ...next }));
 
-  /** Every launch point lands in the quiz lobby, which resolves the set. */
-  const openLobby = (key: string) => navigate({ to: "/play/quiz", search: { quiz: key } });
+  /** Pre-run lobby for a specific published quiz id. */
+  const openQuizLobby = (quizId: string) =>
+    navigate({ to: "/play/quiz", search: { quiz: quizId } });
 
-  const playQuiz = (quiz: Quiz) => openLobby(quiz.id);
-  const playCategory = (category: QuizCategory) => openLobby(category.id);
+  /** Mode lobby — mode id is separate from quizzes.id (see /play/lobby). */
+  const openModeLobby = (modeId: string) =>
+    navigate({ to: "/play/lobby", search: { mode: modeId, quiz: undefined } });
+
+  const playQuiz = (quiz: Quiz) => openQuizLobby(quiz.id);
+  const playCategory = (category: QuizCategory) =>
+    navigate({ to: "/play/search", search: { q: undefined, category: category.id } });
   const playMode = (mode: GameMode) => {
     if (mode.id === "pvp") {
       navigate({ to: "/play/pvp" });
@@ -69,13 +75,14 @@ export function PlayPage() {
       navigate({ to: "/play/multiplayer" });
       return;
     }
-    openLobby(mode.id);
+    if (mode.comingSoon) return;
+    openModeLobby(mode.id);
   };
 
   const playRandom = () => {
     if (quizzes.length === 0) return;
     const choice = quizzes[Math.floor(Math.random() * quizzes.length)];
-    if (choice) openLobby(choice.id);
+    if (choice) openQuizLobby(choice.id);
   };
 
   if (error) {
@@ -111,11 +118,11 @@ export function PlayPage() {
           </AnimatedSection>
 
           <AnimatedSection className="mt-12">
-            <DailyChallenge onPlay={() => openLobby("daily")} />
+            <DailyChallenge onPlay={() => openModeLobby("daily")} />
           </AnimatedSection>
 
           <AnimatedSection className="mt-6">
-            <WeeklyChallenge onPlay={() => openLobby("weekly")} />
+            <WeeklyChallenge onPlay={() => openModeLobby("weekly")} />
           </AnimatedSection>
 
           <AnimatedSection className="mt-12">
