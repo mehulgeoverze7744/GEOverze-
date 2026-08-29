@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   fetchMultiplayerRoomState,
@@ -14,27 +14,47 @@ export function useMultiplayerRoom(roomId: string | undefined) {
   const [error, setError] = useState<string | null>(null);
   const [readyPending, setReadyPending] = useState(false);
   const [startPending, setStartPending] = useState(false);
+  const refreshSeqRef = useRef(0);
+  const hasLoadedStateRef = useRef(false);
 
   const refresh = useCallback(async () => {
     if (!roomId) return;
-    setError(null);
+
+    const seq = ++refreshSeqRef.current;
+    const isInitialLoad = !hasLoadedStateRef.current;
+
     try {
       const next = await fetchMultiplayerRoomState(roomId);
+      if (refreshSeqRef.current !== seq) return;
+
       setState(next);
+      setError(null);
+      hasLoadedStateRef.current = true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not load room");
+      if (refreshSeqRef.current !== seq) return;
+
+      if (!hasLoadedStateRef.current) {
+        setError(err instanceof Error ? err.message : "Could not load room");
+      }
     } finally {
-      setLoading(false);
+      if (refreshSeqRef.current === seq && isInitialLoad) {
+        setLoading(false);
+      }
     }
   }, [roomId]);
 
   useEffect(() => {
     if (!roomId) {
+      refreshSeqRef.current += 1;
+      hasLoadedStateRef.current = false;
       setState(null);
       setLoading(false);
       setError(null);
       return;
     }
+
+    refreshSeqRef.current += 1;
+    hasLoadedStateRef.current = false;
     setState(null);
     setError(null);
     setLoading(true);
@@ -51,6 +71,7 @@ export function useMultiplayerRoom(roomId: string | undefined) {
       try {
         const next = await setMultiplayerReady(roomId, ready);
         setState(next);
+        hasLoadedStateRef.current = true;
       } catch (err) {
         setError(err instanceof Error ? err.message : "Could not update ready state");
       } finally {
@@ -67,6 +88,7 @@ export function useMultiplayerRoom(roomId: string | undefined) {
     try {
       const next = await startMultiplayerMatch(roomId);
       setState(next);
+      hasLoadedStateRef.current = true;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not start match");
     } finally {

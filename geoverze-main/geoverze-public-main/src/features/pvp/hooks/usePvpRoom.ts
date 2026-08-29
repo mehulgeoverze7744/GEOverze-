@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { fetchPvpRoomState, setPvpReady, startPvpMatch } from "../data/pvpRoomApi";
 import type { PvpRoomState } from "../types";
@@ -10,27 +10,47 @@ export function usePvpRoom(roomId: string | undefined) {
   const [error, setError] = useState<string | null>(null);
   const [readyPending, setReadyPending] = useState(false);
   const [startPending, setStartPending] = useState(false);
+  const refreshSeqRef = useRef(0);
+  const hasLoadedStateRef = useRef(false);
 
   const refresh = useCallback(async () => {
     if (!roomId) return;
-    setError(null);
+
+    const seq = ++refreshSeqRef.current;
+    const isInitialLoad = !hasLoadedStateRef.current;
+
     try {
       const next = await fetchPvpRoomState(roomId);
+      if (refreshSeqRef.current !== seq) return;
+
       setState(next);
+      setError(null);
+      hasLoadedStateRef.current = true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not load room");
+      if (refreshSeqRef.current !== seq) return;
+
+      if (!hasLoadedStateRef.current) {
+        setError(err instanceof Error ? err.message : "Could not load room");
+      }
     } finally {
-      setLoading(false);
+      if (refreshSeqRef.current === seq && isInitialLoad) {
+        setLoading(false);
+      }
     }
   }, [roomId]);
 
   useEffect(() => {
     if (!roomId) {
+      refreshSeqRef.current += 1;
+      hasLoadedStateRef.current = false;
       setState(null);
       setLoading(false);
       setError(null);
       return;
     }
+
+    refreshSeqRef.current += 1;
+    hasLoadedStateRef.current = false;
     setState(null);
     setError(null);
     setLoading(true);
@@ -47,6 +67,7 @@ export function usePvpRoom(roomId: string | undefined) {
       try {
         const next = await setPvpReady(roomId, ready);
         setState(next);
+        hasLoadedStateRef.current = true;
       } catch (err) {
         setError(err instanceof Error ? err.message : "Could not update ready state");
       } finally {
@@ -63,6 +84,7 @@ export function usePvpRoom(roomId: string | undefined) {
     try {
       const next = await startPvpMatch(roomId);
       setState(next);
+      hasLoadedStateRef.current = true;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not start match");
     } finally {
