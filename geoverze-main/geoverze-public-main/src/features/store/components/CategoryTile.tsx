@@ -1,14 +1,26 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 
+import {
+  isMerchStoreCategory,
+  merchCountForStoreCategory,
+  type MerchStoreCategorySlug,
+} from "@/features/marketing/data/geostoreMerch";
 import { CoverArt } from "@/features/play/components/CoverArt";
 
 import type { StoreCategory } from "../data/taxonomy";
 import { productsInCategory } from "../data/products";
 
+function categoryItemCount(categoryId: string): number {
+  if (isMerchStoreCategory(categoryId)) {
+    return merchCountForStoreCategory(categoryId as MerchStoreCategorySlug);
+  }
+  return productsInCategory(categoryId).length;
+}
+
 /** Category entry tile used on the store home and group shelves. */
 export function CategoryTile({ category }: { category: StoreCategory }) {
-  const count = productsInCategory(category.id).length;
+  const count = categoryItemCount(category.id);
 
   return (
     <Link

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { GeoButton } from "@/components/shared";
 import { cn } from "@/lib/utils";
 import type { Quiz } from "../data/quizzes";
+import { quizThumbnailForId } from "../data/quizThumbnails";
 import { DifficultyBadge, MetaChip } from "./Badges";
 import { CoverArt } from "./CoverArt";
 
@@ -33,27 +34,40 @@ export function FeaturedCarousel({
   const active = quizzes[index];
   if (!active) return null;
 
+  const thumbnail = quizThumbnailForId(active.id);
+
   const go = (i: number) => {
     setAuto(false);
     setIndex((i + quizzes.length) % quizzes.length);
   };
 
   return (
-    <div className="game-surface overflow-hidden rounded-2xl">
+    <div className="group/card game-surface overflow-hidden rounded-2xl">
       <div className="relative">
         <CoverArt
           key={active.id}
           art={active.art}
           ratio="wide"
           className="h-[15rem] md:h-[19rem]"
+          {...(thumbnail ? { imageSrc: thumbnail.src, imageAlt: thumbnail.alt } : {})}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.12_0.006_60)] via-[oklch(0.12_0.006_60/0.55)] to-transparent" />
+        <div
+          className={cn(
+            "absolute inset-0 bg-gradient-to-t from-[oklch(0.12_0.006_60)] to-transparent",
+            thumbnail?.labelArtwork ? "via-transparent" : "via-[oklch(0.12_0.006_60/0.55)]",
+          )}
+        />
         <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
           <div className="flex flex-wrap items-center gap-2">
             <MetaChip tone="bronze">Featured</MetaChip>
             <DifficultyBadge level={active.difficulty} />
           </div>
-          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
+          <h2
+            className={cn(
+              "mt-3 text-2xl font-semibold tracking-tight text-foreground md:text-3xl",
+              thumbnail?.labelArtwork && "sr-only",
+            )}
+          >
             {active.title}
           </h2>
           <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-[0.75rem] text-foreground/60">

@@ -20,6 +20,7 @@ export function ProductCard({
   saved,
   owned,
   affordable,
+  purchasing,
   onToggleWishlist,
   onQuickView,
   onAdd,
@@ -30,6 +31,8 @@ export function ProductCard({
   owned?: boolean;
   /** True when the shopper holds enough credits to claim it outright. */
   affordable?: boolean;
+  /** True while a production credit purchase is in flight. */
+  purchasing?: boolean;
   onToggleWishlist: (slug: string) => void;
   onQuickView?: (product: Product) => void;
   onAdd?: (product: Product) => void;
@@ -143,17 +146,19 @@ export function ProductCard({
               variant="solid"
               size="sm"
               className="flex-1"
-              disabled={soldOut || owned}
+              disabled={soldOut || owned || purchasing}
               onClick={() => onAdd(product)}
             >
               <ShoppingBag className="mr-2 h-3.5 w-3.5" />
-              {owned
-                ? "In your library"
-                : soldOut
-                  ? "Sold out"
-                  : product.price === null
-                    ? "Claim"
-                    : "Add to cart"}
+              {purchasing
+                ? "Claiming…"
+                : owned
+                  ? "In your library"
+                  : soldOut
+                    ? "Sold out"
+                    : product.price === null
+                      ? "Claim"
+                      : "Add to cart"}
             </GeoButton>
           </div>
         ) : null}

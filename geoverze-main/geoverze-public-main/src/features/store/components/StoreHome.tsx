@@ -15,18 +15,27 @@ import { QuickViewModal } from "./QuickViewModal";
 import { BUNDLES } from "../data/offers";
 import { PRODUCTS, productBySlug, type Product } from "../data/products";
 import { STORE_CATEGORIES, STORE_GROUPS } from "../data/taxonomy";
-import { bestSellers, creditPicks, featuredProducts, newArrivals } from "../lib/filter";
+import { useCreditPurchase } from "../hooks/useCreditPurchase";
+import { isProductOwned, useEntitlements } from "../hooks/useEntitlements";
+import { useStoreCatalogue } from "../hooks/useStoreCatalogue";
+import { catalogueProductBySlug, type StoreCatalogueProduct } from "../lib/mergeCatalogue";
+import { bestSellers, featuredProducts, newArrivals } from "../lib/filter";
 import { money } from "../lib/format";
 import { useStoreActions } from "../lib/useStoreActions";
-import { useStoreCredits } from "../lib/useStoreCredits";
+import { useStoreCreditsState } from "../lib/useStoreCredits";
 
 /** GEOstore front page: hero, credit balance, categories and merchandising rails. */
 export function StoreHome() {
   const [quickView, setQuickView] = useState<Product | null>(null);
-  const { addProduct, addBundle, wishlistToggle, wishlist, owned } = useStoreActions();
-  const balance = useStoreCredits();
+  const { addProduct, addBundle, wishlistToggle, wishlist } = useStoreActions();
+  const { balance, signedIn, authReady } = useStoreCreditsState();
+  const entitlements = useEntitlements();
+  const { rewardProducts, products: catalogueProducts } = useStoreCatalogue();
+  const { purchase, isPurchasing } = useCreditPurchase();
   const cartCount = useCartStore(selectCartCount);
   const recentlyViewed = useStoreStore((s) => s.recentlyViewed);
+
+  const balanceDisplay = !authReady ? "…" : signedIn ? String(balance ?? 0) : "—";
 
   const featured = featuredProducts(PRODUCTS, 3);
   const recent = recentlyViewed
@@ -34,16 +43,50 @@ export function StoreHome() {
     .filter((p): p is Product => Boolean(p))
     .slice(0, 4);
 
-  const card = (product: Product) => (
+  const affordableRewards =
+    balance === null
+      ? []
+      : rewardProducts
+          .filter(
+            (p) =>
+              p.purchasable && p.credits !== null && p.credits <= balance && p.stock !== "sold-out",
+          )
+          .slice(0, 4);
+
+  const card = (product: Product) => {
+    const display = catalogueProductBySlug(catalogueProducts, product.slug) ?? product;
+
+    return (
+      <ProductCard
+        key={product.slug}
+        product={display}
+        saved={wishlist.includes(product.slug)}
+        owned={isProductOwned(entitlements, product.slug)}
+        affordable={balance !== null && display.credits !== null && display.credits <= balance}
+        onToggleWishlist={wishlistToggle}
+        onQuickView={setQuickView}
+        onAdd={(p) => addProduct(p)}
+      />
+    );
+  };
+
+  const rewardCard = (product: StoreCatalogueProduct) => (
     <ProductCard
       key={product.slug}
       product={product}
       saved={wishlist.includes(product.slug)}
-      owned={owned.includes(product.slug)}
-      affordable={product.credits !== null && product.credits <= balance}
+      owned={isProductOwned(entitlements, product.slug)}
+      affordable={balance !== null && product.credits !== null && product.credits <= balance}
+      purchasing={isPurchasing(product.slug)}
       onToggleWishlist={wishlistToggle}
-      onQuickView={setQuickView}
-      onAdd={(p) => addProduct(p)}
+      onAdd={() => {
+        if (!product.purchasable || !product.serverProductId) return;
+        void purchase({
+          slug: product.slug,
+          name: product.name,
+          serverProductId: product.serverProductId,
+        });
+      }}
     />
   );
 
@@ -80,13 +123,22 @@ export function StoreHome() {
             <p className="inline-flex items-center gap-2 text-[0.62rem] uppercase tracking-[0.2em] text-foreground/50">
               <Coins className="h-3.5 w-3.5 text-bronze" /> Credit balance
             </p>
-            <p className="mt-3 text-3xl font-light text-bronze-glow">{balance}</p>
-            <Link
-              to="/play/credit-history"
-              className="mt-3 inline-block text-[0.64rem] uppercase tracking-[0.16em] text-bronze hover:text-bronze-glow"
-            >
-              Credit history
-            </Link>
+            <p className="mt-3 text-3xl font-light text-bronze-glow">{balanceDisplay}</p>
+            {signedIn ? (
+              <Link
+                to="/play/credit-history"
+                className="mt-3 inline-block text-[0.64rem] uppercase tracking-[0.16em] text-bronze hover:text-bronze-glow"
+              >
+                Credit history
+              </Link>
+            ) : authReady ? (
+              <Link
+                to="/auth/login"
+                className="mt-3 inline-block text-[0.64rem] uppercase tracking-[0.16em] text-bronze hover:text-bronze-glow"
+              >
+                Sign in to view balance
+              </Link>
+            ) : null}
           </div>
           <div className="rounded-2xl border border-bronze/12 bg-charcoal/45 p-6">
             <p className="text-[0.62rem] uppercase tracking-[0.2em] text-foreground/50">
@@ -145,11 +197,20 @@ export function StoreHome() {
 
         <ProductRail
           title="Claim with credits"
-          description={`Everything here is within your ${balance} credits.`}
+          description={
+            signedIn
+              ? `Rewards you can claim with your ${balanceDisplay} credits.`
+              : "Sign in to claim digital rewards with credits."
+          }
           to="/geostore/rewards"
           linkLabel="All rewards"
         >
-          {creditPicks(PRODUCTS, balance, 4).map(card)}
+          {affordableRewards.length > 0
+            ? affordableRewards.map(rewardCard)
+            : rewardProducts
+                .filter((p) => p.purchasable)
+                .slice(0, 4)
+                .map(rewardCard)}
         </ProductRail>
 
         <AnimatedSection className="mt-[var(--space-section-sm)]">

@@ -4,6 +4,7 @@ import { GeoButton } from "@/components/shared";
 import { cn } from "@/lib/utils";
 import { QUIZ_CATEGORIES } from "../data/categories";
 import type { Quiz } from "../data/quizzes";
+import { quizThumbnailForId } from "../data/quizThumbnails";
 import { DifficultyBadge } from "./Badges";
 import { CoverArt } from "./CoverArt";
 import { GameCard } from "./GameCard";
@@ -31,11 +32,15 @@ export function QuizCard({
   className?: string;
 }) {
   const Icon = ICONS.get(quiz.categoryId);
+  const thumbnail = quizThumbnailForId(quiz.id);
 
   return (
-    <GameCard className={cn("flex flex-col", className)}>
+    <GameCard className={cn("group/card flex flex-col", className)}>
       <div className="relative">
-        <CoverArt art={quiz.art} icon={Icon} />
+        <CoverArt
+          art={quiz.art}
+          {...(thumbnail ? { imageSrc: thumbnail.src, imageAlt: thumbnail.alt } : { icon: Icon })}
+        />
         <button
           type="button"
           onClick={() => onToggleBookmark(quiz.id)}
@@ -67,7 +72,12 @@ export function QuizCard({
       <div className="flex flex-1 flex-col p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h3 className="truncate text-[0.95rem] font-semibold tracking-tight text-foreground">
+            <h3
+              className={cn(
+                "truncate text-[0.95rem] font-semibold tracking-tight text-foreground",
+                thumbnail?.labelArtwork && "sr-only",
+              )}
+            >
               {quiz.title}
             </h3>
             <p className="mt-1 truncate text-[0.7rem] text-foreground/50">by {quiz.creator}</p>

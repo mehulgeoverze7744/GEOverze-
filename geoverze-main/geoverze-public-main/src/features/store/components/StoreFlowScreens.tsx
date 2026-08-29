@@ -10,18 +10,22 @@ import {
   SectionContainer,
 } from "@/components/shared";
 import { useCartStore } from "@/stores/cartStore";
-import { useStoreStore } from "@/stores/storeStore";
 
 import { CartLineRow } from "./CartLineRow";
 import { OrderCard } from "./OrderCard";
 import { BundleCard } from "./BundleCard";
 import { ProductCard } from "./ProductCard";
-import { PRODUCTS, productBySlug } from "../data/products";
+import { productBySlug } from "../data/products";
+import { SEED_ORDERS } from "../data/orders";
 import { BUNDLES, DEALS } from "../data/offers";
+import { useCreditPurchase } from "../hooks/useCreditPurchase";
+import { isProductOwned, useEntitlements } from "../hooks/useEntitlements";
+import { useStoreCatalogue } from "../hooks/useStoreCatalogue";
 import { money } from "../lib/format";
-import { buildOrder, computeTotals, lineCredits, lineMoney } from "../lib/purchase";
+import { computeTotals, lineCredits, lineMoney } from "../lib/purchase";
 import { useStoreActions } from "../lib/useStoreActions";
-import { useStoreCredits } from "../lib/useStoreCredits";
+import { useStoreCredits, useStoreCreditsState } from "../lib/useStoreCredits";
+import { toast } from "sonner";
 
 function crumbs(label: string) {
   return [{ label: "GEOstore", to: "/geostore" as const }, { label }];
@@ -37,7 +41,11 @@ export function CartScreen() {
   const moveToCart = useCartStore((s) => s.moveToCart);
   const removeSaved = useCartStore((s) => s.removeSaved);
   const balance = useStoreCredits();
-  const totals = computeTotals(lines, { shipping: "standard", creditsToApply: 0, balance });
+  const totals = computeTotals(lines, {
+    shipping: "standard",
+    creditsToApply: 0,
+    balance: balance ?? 0,
+  });
 
   return (
     <PageShell>
@@ -126,14 +134,16 @@ export function CartScreen() {
   );
 }
 
-/** Placeholder checkout — no payment processing. */
+/** Placeholder checkout — demo merch flow only; credit rewards bypass this screen. */
 export function CheckoutScreen() {
   const lines = useCartStore((s) => s.lines);
   const clear = useCartStore((s) => s.clear);
-  const addOrder = useStoreStore((s) => s.addOrder);
-  const spendCredits = useStoreStore((s) => s.spendCredits);
   const balance = useStoreCredits();
-  const totals = computeTotals(lines, { shipping: "standard", creditsToApply: 0, balance });
+  const totals = computeTotals(lines, {
+    shipping: "standard",
+    creditsToApply: 0,
+    balance: balance ?? 0,
+  });
 
   return (
     <PageShell>
@@ -176,9 +186,11 @@ export function CheckoutScreen() {
               <GeoButton
                 variant="solid"
                 onClick={() => {
-                  addOrder(buildOrder(lines, totals, "standard"));
-                  spendCredits(totals.creditsDue + totals.creditsApplied);
                   clear();
+                  toast.message("Demo checkout complete", {
+                    description:
+                      "Physical and hybrid items are not connected to production payments yet.",
+                  });
                 }}
               >
                 Place order
@@ -191,9 +203,9 @@ export function CheckoutScreen() {
   );
 }
 
-/** Order history. */
+/** Order history (demo seed data — production orders deferred). */
 export function OrdersScreen() {
-  const orders = useStoreStore((s) => s.orders);
+  const orders = SEED_ORDERS;
   return (
     <PageShell>
       <PageHeader
@@ -221,36 +233,66 @@ export function OrdersScreen() {
   );
 }
 
-/** Credit-only rewards shelf. */
+/** Credit-only rewards shelf — production-backed purchase flow. */
 export function RewardsScreen() {
-  const balance = useStoreCredits();
-  const { addProduct, wishlistToggle, wishlist, owned } = useStoreActions();
-  const rewards = PRODUCTS.filter((p) => p.group === "rewards" || p.price === null);
+  const { balance, signedIn, authReady } = useStoreCreditsState();
+  const { wishlistToggle, wishlist } = useStoreActions();
+  const { rewardProducts, loading: catalogueLoading, error: catalogueError } = useStoreCatalogue();
+  const entitlements = useEntitlements();
+  const { purchase, isPurchasing } = useCreditPurchase();
+
+  const balanceLabel = !authReady
+    ? "…"
+    : signedIn
+      ? String(balance ?? 0)
+      : "Sign in to view balance";
 
   return (
     <PageShell>
       <PageHeader
         eyebrow="GEOstore"
         title="Redeem with credits"
-        description={`You have ${balance} credits to spend on the rewards below.`}
+        description={
+          signedIn
+            ? `You have ${balanceLabel} credits to spend on the rewards below.`
+            : "Sign in to view your balance and claim digital rewards."
+        }
         breadcrumb={crumbs("Rewards")}
       />
       <SectionContainer size="wide">
-        {rewards.length === 0 ? (
+        {catalogueLoading ? (
+          <EmptyState icon={Gift} title="Loading rewards…" />
+        ) : catalogueError ? (
+          <EmptyState icon={Gift} title="Could not load rewards" description={catalogueError} />
+        ) : rewardProducts.length === 0 ? (
           <EmptyState icon={Gift} title="No rewards available" />
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {rewards.map((product) => (
-              <ProductCard
-                key={product.slug}
-                product={product}
-                saved={wishlist.includes(product.slug)}
-                owned={owned.includes(product.slug)}
-                affordable={product.credits !== null && product.credits <= balance}
-                onToggleWishlist={wishlistToggle}
-                onAdd={(p) => addProduct(p)}
-              />
-            ))}
+            {rewardProducts.map((product) => {
+              const owned = isProductOwned(entitlements, product.slug);
+              const affordable =
+                balance !== null && product.credits !== null && product.credits <= balance;
+
+              return (
+                <ProductCard
+                  key={product.slug}
+                  product={product}
+                  saved={wishlist.includes(product.slug)}
+                  owned={owned}
+                  affordable={affordable}
+                  purchasing={isPurchasing(product.slug)}
+                  onToggleWishlist={wishlistToggle}
+                  onAdd={() => {
+                    if (!product.purchasable || !product.serverProductId) return;
+                    void purchase({
+                      slug: product.slug,
+                      name: product.name,
+                      serverProductId: product.serverProductId,
+                    });
+                  }}
+                />
+              );
+            })}
           </div>
         )}
       </SectionContainer>
@@ -300,7 +342,8 @@ export function OffersScreen() {
 /** Saved items. */
 export function WishlistScreen() {
   const balance = useStoreCredits();
-  const { addProduct, wishlistToggle, wishlist, owned } = useStoreActions();
+  const { addProduct, wishlistToggle, wishlist } = useStoreActions();
+  const entitlements = useEntitlements();
   const items = wishlist.map(productBySlug).filter((p): p is NonNullable<typeof p> => Boolean(p));
 
   return (
@@ -330,8 +373,10 @@ export function WishlistScreen() {
                 key={product.slug}
                 product={product}
                 saved
-                owned={owned.includes(product.slug)}
-                affordable={product.credits !== null && product.credits <= balance}
+                owned={isProductOwned(entitlements, product.slug)}
+                affordable={
+                  balance !== null && product.credits !== null && product.credits <= balance
+                }
                 onToggleWishlist={wishlistToggle}
                 onAdd={(p) => addProduct(p)}
               />

@@ -16,7 +16,7 @@ export type ProductFilters = {
   availability: string;
   query: string;
   /** Credits the shopper currently holds — used by the `affordable` filter. */
-  balance: number;
+  balance: number | null;
 };
 
 function matchesPrice(product: Product, band: PriceBandId): boolean {
@@ -26,9 +26,10 @@ function matchesPrice(product: Product, band: PriceBandId): boolean {
   return product.price >= definition.min && product.price < definition.max;
 }
 
-function matchesCredits(product: Product, filter: CreditFilterId, balance: number): boolean {
+function matchesCredits(product: Product, filter: CreditFilterId, balance: number | null): boolean {
   if (filter === "credits-accepted") return product.credits !== null;
   if (filter === "credits-only") return product.credits !== null && product.price === null;
+  if (balance === null) return false;
   return product.credits !== null && product.credits <= balance;
 }
 
@@ -102,9 +103,10 @@ export function newArrivals(products: readonly Product[], limit = 4): readonly P
 /** Credit-claimable items ordered by cheapest first. */
 export function creditPicks(
   products: readonly Product[],
-  balance: number,
+  balance: number | null,
   limit = 4,
 ): readonly Product[] {
+  if (balance === null) return [];
   return products
     .filter((p) => p.credits !== null && p.credits <= balance)
     .sort((a, b) => (a.credits ?? 0) - (b.credits ?? 0))

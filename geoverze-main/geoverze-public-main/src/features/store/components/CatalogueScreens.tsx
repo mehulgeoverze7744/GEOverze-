@@ -12,7 +12,14 @@ import {
   SectionContainer,
 } from "@/components/shared";
 import { useStoreStore } from "@/stores/storeStore";
+import { GeostoreMerchCard } from "@/features/marketing/components/home/GeostoreMerchCard";
+import {
+  isMerchStoreCategory,
+  merchProductById,
+  merchProductsForStoreCategory,
+} from "@/features/marketing/data/geostoreMerch";
 
+import { MerchProductScreen } from "./MerchProductScreen";
 import { ProductCard } from "./ProductCard";
 import { ProductGallery } from "./ProductGallery";
 import { ProductRail } from "./ProductRail";
@@ -41,26 +48,37 @@ import {
 import { filterProducts, sortProducts } from "../lib/filter";
 import { defaultOptions } from "../lib/cart";
 import { useStoreActions } from "../lib/useStoreActions";
-import { useStoreCredits } from "../lib/useStoreCredits";
+import { useStoreCredits, useStoreCreditsState } from "../lib/useStoreCredits";
+import { useCreditPurchase } from "../hooks/useCreditPurchase";
+import { isProductOwned, useEntitlements } from "../hooks/useEntitlements";
+import { useStoreCatalogue } from "../hooks/useStoreCatalogue";
+import { catalogueProductBySlug } from "../lib/mergeCatalogue";
+import { isPurchasableRewardSlug } from "../lib/rewards";
 
 const ALL = { id: "all", label: "All" } as const;
 
 function useCardFactory(onQuickView: (p: Product) => void) {
-  const { addProduct, wishlistToggle, wishlist, owned } = useStoreActions();
+  const { addProduct, wishlistToggle, wishlist } = useStoreActions();
   const balance = useStoreCredits();
+  const entitlements = useEntitlements();
+  const { products: catalogueProducts } = useStoreCatalogue();
 
-  return (product: Product) => (
-    <ProductCard
-      key={product.slug}
-      product={product}
-      saved={wishlist.includes(product.slug)}
-      owned={owned.includes(product.slug)}
-      affordable={product.credits !== null && product.credits <= balance}
-      onToggleWishlist={wishlistToggle}
-      onQuickView={onQuickView}
-      onAdd={(p) => addProduct(p)}
-    />
-  );
+  return (product: Product) => {
+    const display = catalogueProductBySlug(catalogueProducts, product.slug) ?? product;
+
+    return (
+      <ProductCard
+        key={product.slug}
+        product={display}
+        saved={wishlist.includes(product.slug)}
+        owned={isProductOwned(entitlements, product.slug)}
+        affordable={balance !== null && display.credits !== null && display.credits <= balance}
+        onToggleWishlist={wishlistToggle}
+        onQuickView={onQuickView}
+        onAdd={(p) => addProduct(p)}
+      />
+    );
+  };
 }
 
 /** Faceted catalogue browse. */
@@ -214,9 +232,56 @@ export function StoreBrowse() {
   );
 }
 
-/** Single category shelf. */
-export function CategoryScreen() {
-  const { slug } = useParams({ from: "/geostore/category/$slug" });
+/** Static merchandise shelf (T-shirts / Hoodies). */
+function MerchCategoryShelf({ slug }: { slug: "tshirts" | "hoodies" }) {
+  const category = categoryById(slug);
+  const items = merchProductsForStoreCategory(slug);
+
+  return (
+    <PageShell>
+      <PageHeader
+        eyebrow="GEOstore"
+        title={category?.label ?? "Merchandise"}
+        description={category?.blurb ?? "Premium GEOverze apparel."}
+        breadcrumb={[
+          { label: "GEOstore", to: "/geostore" },
+          { label: "Browse", to: "/geostore/browse" },
+          { label: category?.label ?? "Merchandise" },
+        ]}
+      />
+      <SectionContainer size="wide">
+        {items.length === 0 ? (
+          <EmptyState
+            icon={ShoppingBag}
+            title="Nothing on this shelf yet"
+            description="New pieces land here first — check the full catalogue in the meantime."
+            action={
+              <GeoButton asChild variant="ghost">
+                <Link to="/geostore/browse">Browse everything</Link>
+              </GeoButton>
+            }
+          />
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {items.map((product) => (
+              <Link
+                key={product.id}
+                to="/geostore/product/$slug"
+                params={{ slug: product.id }}
+                className="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+              >
+                <GeostoreMerchCard product={product} />
+              </Link>
+            ))}
+          </div>
+        )}
+      </SectionContainer>
+    </PageShell>
+  );
+}
+
+/** Mock catalogue category shelf (rewards, accessories, etc.). */
+function CatalogCategoryShelf({ slug }: { slug: string }) {
   const [quickView, setQuickView] = useState<Product | null>(null);
   const card = useCardFactory(setQuickView);
   const { addProduct } = useStoreActions();
@@ -260,21 +325,41 @@ export function CategoryScreen() {
   );
 }
 
+/** Single category shelf. */
+export function CategoryScreen() {
+  const { slug } = useParams({ from: "/geostore/category/$slug" });
+
+  if (isMerchStoreCategory(slug)) {
+    return <MerchCategoryShelf slug={slug} />;
+  }
+
+  return <CatalogCategoryShelf slug={slug} />;
+}
+
 /** Product detail: gallery, variants, pricing and related items. */
 export function ProductScreen() {
   const { slug } = useParams({ from: "/geostore/product/$slug" });
-  const product = productBySlug(slug);
+  const merch = merchProductById(slug);
+  const staticProduct = productBySlug(slug);
+  const { products: catalogueProducts } = useStoreCatalogue();
+  const catalogueProduct = catalogueProductBySlug(catalogueProducts, slug);
+  const product = catalogueProduct ?? staticProduct;
+  const isProductionReward = isPurchasableRewardSlug(slug);
   const [quickView, setQuickView] = useState<Product | null>(null);
   const card = useCardFactory(setQuickView);
-  const { addProduct, wishlistToggle, wishlist, owned } = useStoreActions();
+  const { addProduct, wishlistToggle, wishlist } = useStoreActions();
   const view = useStoreStore((s) => s.view);
-  const balance = useStoreCredits();
+  const { balance, signedIn, authReady } = useStoreCreditsState();
+  const entitlements = useEntitlements();
+  const { purchase, isPurchasing } = useCreditPurchase();
   const [options, setOptions] = useState<Record<string, string>>({});
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     if (product) view(product.slug);
   }, [product, view]);
+
+  if (merch) return <MerchProductScreen product={merch} />;
 
   if (!product) {
     return (
@@ -302,7 +387,12 @@ export function ProductScreen() {
 
   const selected = Object.keys(options).length ? options : defaultOptions(product);
   const saved = wishlist.includes(product.slug);
-  const isOwned = owned.includes(product.slug);
+  const isOwned = isProductOwned(entitlements, product.slug);
+  const canPurchaseProduction =
+    isProductionReward &&
+    catalogueProduct?.purchasable &&
+    Boolean(catalogueProduct.serverProductId);
+  const balanceLabel = !authReady ? "…" : signedIn ? String(balance ?? 0) : null;
 
   return (
     <PageShell>
@@ -337,8 +427,16 @@ export function ProductScreen() {
             {product.credits !== null ? (
               <p className="inline-flex items-center gap-2 text-xs text-foreground/50">
                 <Coins className="h-3.5 w-3.5 text-bronze" strokeWidth={1.6} />
-                You hold {balance} credits
-                {product.credits <= balance ? " — enough to claim this now." : "."}
+                {balanceLabel === null ? (
+                  <>Sign in to see your credit balance.</>
+                ) : (
+                  <>
+                    You hold {balanceLabel} credits
+                    {balance !== null && product.credits <= balance
+                      ? " — enough to claim this now."
+                      : "."}
+                  </>
+                )}
               </p>
             ) : null}
 
@@ -368,17 +466,31 @@ export function ProductScreen() {
               </div>
               <GeoButton
                 variant="solid"
-                disabled={product.stock === "sold-out" || isOwned}
-                onClick={() => addProduct(product, selected, quantity)}
+                disabled={product.stock === "sold-out" || isOwned || isPurchasing(product.slug)}
+                onClick={() => {
+                  if (canPurchaseProduction && catalogueProduct?.serverProductId) {
+                    void purchase({
+                      slug: product.slug,
+                      name: product.name,
+                      serverProductId: catalogueProduct.serverProductId,
+                    });
+                    return;
+                  }
+                  addProduct(product, selected, quantity);
+                }}
               >
                 <ShoppingBag className="mr-2 h-4 w-4" />
-                {isOwned
-                  ? "Already yours"
-                  : product.stock === "sold-out"
-                    ? "Sold out"
-                    : product.price === null
-                      ? "Claim with credits"
-                      : "Add to cart"}
+                {isPurchasing(product.slug)
+                  ? "Claiming…"
+                  : isOwned
+                    ? "Already yours"
+                    : product.stock === "sold-out"
+                      ? "Sold out"
+                      : product.price === null
+                        ? canPurchaseProduction
+                          ? "Claim with credits"
+                          : "Unavailable"
+                        : "Add to cart"}
               </GeoButton>
               <GeoButton variant="ghost" onClick={() => wishlistToggle(product.slug)}>
                 <Heart className={saved ? "mr-2 h-4 w-4 fill-current" : "mr-2 h-4 w-4"} />
