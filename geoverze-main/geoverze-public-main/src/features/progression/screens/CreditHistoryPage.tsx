@@ -17,13 +17,15 @@ import { Receipt } from "lucide-react";
 
 const FILTERS: readonly (CreditReason | "All")[] = [
   "All",
-  "New Opponent",
-  "Second Win",
-  "Third Win",
-  "Repeated Win",
+  "First win",
+  "Repeat win",
   "Multiplayer — 1st Place",
   "Multiplayer — 2nd Place",
   "Multiplayer — 3rd Place",
+  "Legacy — Second Win",
+  "Legacy — Third Win",
+  "Legacy — Repeated Win",
+  "Legacy — Placement reward",
 ];
 
 /** /play/credit-history */

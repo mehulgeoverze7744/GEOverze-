@@ -85,6 +85,10 @@ export function QuizPlay({
       onFinish();
       return;
     }
+    // Clear local selection before the next question renders so reused option IDs
+    // (e.g. "a", "b") never appear selected on the following question.
+    setValue(null);
+    setLocked(false);
     next();
   }, [finish, isLast, next, onFinish]);
 
@@ -149,6 +153,7 @@ export function QuizPlay({
       <div className={cn("pt-6", sidebar && "grid gap-6 lg:grid-cols-[1fr_18rem]")}>
         <div>
           <QuestionRenderer
+            key={question.id}
             question={question}
             value={value}
             locked={locked}

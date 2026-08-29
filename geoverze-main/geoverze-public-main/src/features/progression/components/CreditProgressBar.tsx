@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { creditProgress } from "../lib/progress";
 import { ProgressBarFill } from "./ProgressBarFill";
 
-/** Credits earned toward the monthly redemption goal. */
+/** Credits earned toward the monthly goal. */
 export function CreditProgressBar({
   credits,
   goal,
@@ -37,7 +37,7 @@ export function CreditProgressBar({
       />
       <p className="mt-3 text-xs text-foreground/50">
         {eligible
-          ? "Goal reached — redemption unlocked."
+          ? "Goal reached — keep earning toward GEOverze rewards."
           : `${remaining} credits remaining to reach the goal.`}
       </p>
     </div>

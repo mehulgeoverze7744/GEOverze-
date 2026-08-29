@@ -183,7 +183,7 @@ export function StoreHome() {
             {
               icon: Coins,
               title: "Credits count",
-              copy: "Earned credits work like cash on most of the catalogue.",
+              copy: "Earn credits to unlock merchandise, digital rewards, and premium perks.",
             },
             {
               icon: Heart,

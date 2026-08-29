@@ -3,6 +3,18 @@ import { CheckCircle2, Clock3 } from "lucide-react";
 import { AvatarMark } from "@/features/auth/components/AvatarMark";
 import type { CreditEntry } from "../data/credits";
 
+function headline(entry: CreditEntry): string {
+  if (entry.reason.startsWith("Legacy")) {
+    return entry.matchType === "Multiplayer" ? entry.reason : `Defeated ${entry.opponent}`;
+  }
+
+  if (entry.matchType === "Multiplayer") {
+    return entry.reason;
+  }
+
+  return `${entry.reason} vs ${entry.opponent}`;
+}
+
 /** One credit ledger row. */
 export function CreditHistoryCard({ entry }: { entry: CreditEntry }) {
   const credited = entry.status === "credited";
@@ -12,15 +24,11 @@ export function CreditHistoryCard({ entry }: { entry: CreditEntry }) {
       <AvatarMark id={entry.opponentAvatarId} size={44} className="border border-bronze/25" />
 
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold text-foreground">
-          {entry.matchType === "Multiplayer" ? entry.reason : `Defeated ${entry.opponent}`}
-        </p>
+        <p className="truncate text-sm font-semibold text-foreground">{headline(entry)}</p>
         <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.7rem] text-foreground/50">
           <span>{entry.date}</span>
           <span aria-hidden="true">·</span>
           <span>{entry.matchType}</span>
-          <span aria-hidden="true">·</span>
-          <span className="text-foreground/60">({entry.reason})</span>
         </p>
       </div>
 

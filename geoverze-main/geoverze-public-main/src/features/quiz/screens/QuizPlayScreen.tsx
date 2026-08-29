@@ -19,6 +19,7 @@ export function QuizPlayScreen({ mode, from }: { mode: QuizMode; from: PlayRoute
   const navigate = useNavigate();
   const status = useQuizStore((s) => s.status);
   const quizId = useQuizStore((s) => s.quizId);
+  const storeMode = useQuizStore((s) => s.mode);
   const start = useQuizStore((s) => s.start);
   const reset = useQuizStore((s) => s.reset);
   const { set, loading, error } = useQuizSet(quiz);
@@ -27,8 +28,10 @@ export function QuizPlayScreen({ mode, from }: { mode: QuizMode; from: PlayRoute
   // Guard on set being loaded — do not call start() until questions are available.
   useEffect(() => {
     if (!set) return;
-    if (status === "idle" || quizId !== set.id) start(set.id, mode);
-  }, [mode, quizId, set, start, status]);
+    const isActiveRun =
+      status === "active" && quizId === set.id && storeMode === mode;
+    if (!isActiveRun) start(set.id, mode);
+  }, [mode, quizId, set, start, status, storeMode]);
 
   if (loading) {
     return (

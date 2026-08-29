@@ -15,10 +15,10 @@ export type CreditTransactionRow = {
 };
 
 const PVP_TIER_TO_REASON: Record<number, CreditReason> = {
-  1: "New Opponent",
-  2: "Second Win",
-  3: "Third Win",
-  4: "Repeated Win",
+  1: "First win",
+  2: "Repeat win",
+  3: "Legacy — Third Win",
+  4: "Legacy — Repeated Win",
 };
 
 const MP_PLACEMENT_TO_REASON: Record<number, CreditReason> = {
@@ -26,6 +26,29 @@ const MP_PLACEMENT_TO_REASON: Record<number, CreditReason> = {
   2: "Multiplayer — 2nd Place",
   3: "Multiplayer — 3rd Place",
 };
+
+function reasonForRow(
+  winTier: number,
+  opponentUserId: string | null,
+  isMultiplayer: boolean,
+): CreditReason {
+  if (isMultiplayer) {
+    if (opponentUserId == null) {
+      return MP_PLACEMENT_TO_REASON[winTier] ?? "Legacy — Placement reward";
+    }
+    // Historical pairwise multiplayer row from brief opponent-based rollout.
+    return "Legacy — Placement reward";
+  }
+
+  if (opponentUserId == null) {
+    return "Legacy — Placement reward";
+  }
+
+  if (winTier === 1) return "First win";
+  if (winTier === 2) return "Repeat win";
+
+  return PVP_TIER_TO_REASON[winTier] ?? "Repeat win";
+}
 
 /** Fetch the caller's credit ledger rows for the current calendar month. */
 export async function fetchCreditTransactions(): Promise<CreditTransactionRow[]> {
@@ -69,6 +92,7 @@ export async function fetchCreditTransactions(): Promise<CreditTransactionRow[]>
     const isMultiplayer = roomModeById.get(row.room_id) === "multiplayer";
 
     if (isMultiplayer) {
+      const reason = reasonForRow(row.win_tier, row.opponent_user_id, true);
       return {
         id: row.id,
         amount: row.amount,
@@ -78,7 +102,7 @@ export async function fetchCreditTransactions(): Promise<CreditTransactionRow[]>
         opponent_user_id: row.opponent_user_id,
         opponent_username: "Placement reward",
         matchType: "Multiplayer" as const,
-        reason: MP_PLACEMENT_TO_REASON[row.win_tier] ?? "Multiplayer — 1st Place",
+        reason,
       };
     }
 
@@ -93,7 +117,7 @@ export async function fetchCreditTransactions(): Promise<CreditTransactionRow[]>
         ? (nameById.get(row.opponent_user_id) ?? "Opponent")
         : "Opponent",
       matchType: "1v1 Duel" as const,
-      reason: PVP_TIER_TO_REASON[row.win_tier] ?? "Repeated Win",
+      reason: reasonForRow(row.win_tier, row.opponent_user_id, false),
     };
   });
 }

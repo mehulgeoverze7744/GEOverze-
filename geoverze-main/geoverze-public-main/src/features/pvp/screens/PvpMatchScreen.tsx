@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Loader2, Swords } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { PageShell } from "@/components/layout/PageShell";
@@ -39,7 +39,6 @@ export function PvpMatchScreen({
   const { set, loading: setLoading } = useQuizSet(state?.room.quiz_id);
 
   const quizStatus = useQuizStore((s) => s.status);
-  const quizId = useQuizStore((s) => s.quizId);
   const answers = useQuizStore((s) => s.answers);
   const attemptId = useQuizStore((s) => s.attemptId);
   const startedAt = useQuizStore((s) => s.startedAt);
@@ -49,6 +48,8 @@ export function PvpMatchScreen({
 
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  /** Tracks which room_id received a fresh local quiz run via start(). */
+  const initializedRoomIdRef = useRef<string | null>(null);
   const hasFiredRef = useRef(false);
 
   const you = state?.participants.find((p) => p.user_id === user?.id) ?? null;
@@ -63,18 +64,29 @@ export function PvpMatchScreen({
     void refreshProgression(user.id);
   }, [roomCompleted, rewardsSettled, user?.id]);
 
-  // Start a fresh quiz run when the match is in progress and the player has not submitted.
+  // Reset room-scoped guards when entering a different PvP room.
   useEffect(() => {
-    if (!set || !state || state.room.status !== "playing" || youSubmitted) return;
-    if (quizStatus === "idle" || quizId !== set.id) start(set.id, "pvp");
-  }, [quizId, quizStatus, set, start, state, youSubmitted]);
+    initializedRoomIdRef.current = null;
+    hasFiredRef.current = false;
+  }, [roomId]);
 
-  // Submit answers once when the local run finishes.
+  // Start exactly one fresh quiz run per room while playing and not yet submitted.
   useEffect(() => {
+    if (!roomId || !set || !state || state.room.status !== "playing" || youSubmitted) return;
+    if (initializedRoomIdRef.current === roomId) return;
+
+    start(set.id, "pvp");
+    initializedRoomIdRef.current = roomId;
+    hasFiredRef.current = false;
+  }, [roomId, set, start, state, youSubmitted]);
+
+  // Submit answers once when the local run for this room finishes.
+  const submitAttempt = useCallback(async () => {
     if (
       !roomId ||
       !attemptId ||
       !set ||
+      initializedRoomIdRef.current !== roomId ||
       state?.room.status !== "playing" ||
       youSubmitted ||
       quizStatus !== "complete" ||
@@ -88,21 +100,20 @@ export function PvpMatchScreen({
     setSubmitError(null);
 
     const durationMs = Math.max(1, (finishedAt ?? Date.now()) - (startedAt ?? 0));
-    const payload = buildAnswerPayload(answers);
+    const validQuestionIds = set.questions.map((q) => q.id);
+    const payload = buildAnswerPayload(answers, validQuestionIds);
 
-    void submitPvpAttempt(roomId, attemptId, durationMs, payload)
-      .then(async () => {
-        await refresh();
-      })
-      .catch((err) => {
-        hasFiredRef.current = false;
-        const message = err instanceof Error ? err.message : "Could not submit duel answers";
-        setSubmitError(message);
-        toast.error(message);
-      })
-      .finally(() => {
-        setSubmitting(false);
-      });
+    try {
+      await submitPvpAttempt(roomId, attemptId, durationMs, payload);
+      await refresh();
+    } catch (err) {
+      hasFiredRef.current = false;
+      const message = err instanceof Error ? err.message : "Could not submit duel answers";
+      setSubmitError(message);
+      toast.error(message);
+    } finally {
+      setSubmitting(false);
+    }
   }, [
     answers,
     attemptId,
@@ -115,6 +126,11 @@ export function PvpMatchScreen({
     state?.room.status,
     youSubmitted,
   ]);
+
+  useEffect(() => {
+    if (submitError) return;
+    void submitAttempt();
+  }, [submitAttempt, submitError]);
 
   if (loading || setLoading) {
     return (
@@ -159,7 +175,13 @@ export function PvpMatchScreen({
     );
   }
 
-  if (submitting || (quizStatus === "complete" && !youSubmitted && !submitError)) {
+  if (
+    submitting ||
+    (quizStatus === "complete" &&
+      !youSubmitted &&
+      !submitError &&
+      initializedRoomIdRef.current === roomId)
+  ) {
     return (
       <PageShell>
         <div className="flex min-h-[70vh] flex-col items-center justify-center gap-4">
@@ -216,8 +238,8 @@ export function PvpMatchScreen({
               size="md"
               className="mt-6"
               onClick={() => {
-                hasFiredRef.current = false;
                 setSubmitError(null);
+                void submitAttempt();
               }}
             >
               Retry submission

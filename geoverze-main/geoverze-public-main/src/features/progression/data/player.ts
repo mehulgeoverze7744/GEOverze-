@@ -40,9 +40,12 @@ export const PLAYER: PlayerSnapshot = {
   favoriteCategory: "Flags",
 };
 
-/** Redemption rule shown across the credit surfaces. */
-export const REDEMPTION = {
+/** Monthly credit tracker shown across progression surfaces. */
+export const MONTHLY_CREDITS = {
   goal: 100,
-  rewardLabel: "US$1",
+  rewardLabel: "GEOverze rewards",
   note: "Credits reset at the end of every calendar month.",
 } as const;
+
+/** @deprecated Use MONTHLY_CREDITS — kept for import compatibility during cutover. */
+export const REDEMPTION = MONTHLY_CREDITS;

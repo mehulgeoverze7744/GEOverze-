@@ -1,15 +1,15 @@
-import { CalendarClock, Coins, Wallet } from "lucide-react";
+import { CalendarClock, Coins, Sparkles } from "lucide-react";
 
 import { GameCard } from "@/features/play/components/GameCard";
 import { MetaChip } from "@/features/play/components/Badges";
-import { REDEMPTION } from "../data/player";
+import { MONTHLY_CREDITS } from "../data/player";
 import { creditProgress, monthMeta } from "../lib/progress";
 import { CreditProgressBar } from "./CreditProgressBar";
 
 /** Monthly credit tracker: goal, progress, reset date and reward preview. */
 export function MonthlyProgressCard({ credits }: { credits: number }) {
   const { month, resetLabel } = monthMeta();
-  const { eligible, remaining } = creditProgress(credits, REDEMPTION.goal);
+  const { eligible, remaining } = creditProgress(credits, MONTHLY_CREDITS.goal);
 
   return (
     <GameCard interactive={false} raised>
@@ -22,14 +22,15 @@ export function MonthlyProgressCard({ credits }: { credits: number }) {
         </div>
 
         <p className="mt-5 text-2xl font-semibold tracking-tight text-foreground">
-          {REDEMPTION.goal} credits in one month
+          {MONTHLY_CREDITS.goal} credits in one month
         </p>
         <p className="mt-2 text-[0.85rem] leading-relaxed text-foreground/60">
-          Reach the goal inside the same calendar month to become eligible to redeem{" "}
-          <span className="font-semibold text-bronze-glow">{REDEMPTION.rewardLabel}</span>.
+          Earn credits to unlock{" "}
+          <span className="font-semibold text-bronze-glow">{MONTHLY_CREDITS.rewardLabel}</span>{" "}
+          across merchandise, digital rewards, and premium subscriptions.
         </p>
 
-        <CreditProgressBar className="mt-6" credits={credits} goal={REDEMPTION.goal} />
+        <CreditProgressBar className="mt-6" credits={credits} goal={MONTHLY_CREDITS.goal} />
 
         <dl className="mt-6 grid gap-4 sm:grid-cols-3">
           <div>
@@ -49,7 +50,7 @@ export function MonthlyProgressCard({ credits }: { credits: number }) {
               Status
             </dt>
             <dd className="mt-1 text-sm font-semibold text-bronze-glow">
-              {eligible ? "Eligible" : "In progress"}
+              {eligible ? "Goal reached" : "In progress"}
             </dd>
           </div>
         </dl>
@@ -64,8 +65,8 @@ export function MonthlyProgressCard({ credits }: { credits: number }) {
             Next reset: {resetLabel} (placeholder)
           </p>
           <p className="inline-flex items-center gap-2">
-            <Wallet className="h-3.5 w-3.5 text-bronze/90" strokeWidth={1.8} aria-hidden="true" />
-            {REDEMPTION.note}
+            <Sparkles className="h-3.5 w-3.5 text-bronze/90" strokeWidth={1.8} aria-hidden="true" />
+            {MONTHLY_CREDITS.note}
           </p>
         </div>
       </div>

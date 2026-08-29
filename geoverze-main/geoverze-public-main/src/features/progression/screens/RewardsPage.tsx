@@ -22,8 +22,8 @@ export function RewardsPage() {
             The GEOverze reward catalogue
           </h1>
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-foreground/60 md:text-base">
-            Credits, XP, achievements, merchandise, seasonal drops, mystery crates and cash
-            redemption. Redemption tooling is not built yet.
+            Credits, XP, achievements, merchandise, seasonal drops, mystery crates and platform
+            rewards. Spending flows are not built yet.
           </p>
         </AnimatedSection>
         <div className="mt-8">

@@ -8,7 +8,7 @@ import { SectionHeading } from "@/components/shared/SectionHeading";
 
 import { rewardSteps } from "../data/rewards";
 
-/** Credits, redemptions, bonuses and offers explained. */
+/** Credits, rewards, bonuses and offers explained. */
 export function RewardsExplainer() {
   return (
     <section aria-labelledby="rewards-heading" className="pb-[var(--space-section-sm)]">
