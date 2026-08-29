@@ -121,3 +121,8 @@ export const selectAccuracy = (s: QuizState) => {
 };
 
 export const selectHasRun = (s: QuizState) => s.quizId !== null;
+
+/** Clears transient quiz run state (PvP/MP hub exit, rematch navigation). */
+export function resetQuizRun() {
+  useQuizStore.getState().reset();
+}

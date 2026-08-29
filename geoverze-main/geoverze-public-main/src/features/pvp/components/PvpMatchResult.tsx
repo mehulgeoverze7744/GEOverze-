@@ -1,10 +1,11 @@
-import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { Crown, Minus, Swords, Trophy } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
 import { MetaChip } from "@/features/play/components/Badges";
 import type { QuizSet } from "@/features/quiz/data/types";
+import { resetQuizRun } from "@/stores/quizStore";
 import type { PvpParticipant, PvpRoom } from "../types";
 
 type PvpMatchResultProps = {
@@ -17,7 +18,13 @@ type PvpMatchResultProps = {
 
 /** Final authoritative duel result after both players submit. */
 export function PvpMatchResult({ set, room, participants, youUserId, roomCode }: PvpMatchResultProps) {
+  const navigate = useNavigate();
   const you = participants.find((p) => p.user_id === youUserId) ?? null;
+
+  const exitTo = (to: "/play/pvp" | "/play") => {
+    resetQuizRun();
+    void navigate({ to, replace: true });
+  };
   const opponent = participants.find((p) => p.user_id !== youUserId) ?? null;
 
   const isDraw = room.is_draw ?? room.winner_user_id === null;
@@ -129,11 +136,11 @@ export function PvpMatchResult({ set, room, participants, youUserId, roomCode }:
         </div>
 
         <div className="mt-8 flex flex-wrap gap-3">
-          <GeoButton variant="solid" size="md" asChild>
-            <Link to="/play/pvp">Back to PvP hub</Link>
+          <GeoButton variant="solid" size="md" onClick={() => exitTo("/play/pvp")}>
+            Back to PvP hub
           </GeoButton>
-          <GeoButton variant="dark" size="md" asChild>
-            <Link to="/play">Play hub</Link>
+          <GeoButton variant="dark" size="md" onClick={() => exitTo("/play")}>
+            Play hub
           </GeoButton>
         </div>
       </SectionContainer>

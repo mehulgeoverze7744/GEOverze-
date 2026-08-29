@@ -1,10 +1,11 @@
-import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { Trophy, Users } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
 import { MetaChip } from "@/features/play/components/Badges";
 import type { QuizSet } from "@/features/quiz/data/types";
+import { resetQuizRun } from "@/stores/quizStore";
 import type { MultiplayerParticipant, MultiplayerRoom } from "../types";
 
 type MultiplayerMatchCompleteProps = {
@@ -50,7 +51,13 @@ export function MultiplayerMatchComplete({
   roomCode,
   rewardsSettled,
 }: MultiplayerMatchCompleteProps) {
+  const navigate = useNavigate();
   const you = participants.find((p) => p.user_id === youUserId) ?? null;
+
+  const exitToHub = () => {
+    resetQuizRun();
+    void navigate({ to: "/play/multiplayer", replace: true });
+  };
   const youRank = you?.finish_rank ?? null;
   const isFirstPlace = youRank === 1;
 
@@ -180,8 +187,8 @@ export function MultiplayerMatchComplete({
         </div>
 
         <AnimatedSection className="mt-10 flex flex-wrap gap-3">
-          <GeoButton variant="solid" size="lg" asChild>
-            <Link to="/play/multiplayer">Back to multiplayer hub</Link>
+          <GeoButton variant="solid" size="lg" onClick={exitToHub}>
+            Back to multiplayer hub
           </GeoButton>
         </AnimatedSection>
       </SectionContainer>

@@ -1,14 +1,20 @@
 import { Link } from "@tanstack/react-router";
 import { DoorOpen, Lock, Plus, Users } from "lucide-react";
+import { useEffect } from "react";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
 import { MetaChip } from "@/features/play/components/Badges";
 import { selectIsSignedIn, useAuthStore } from "@/stores/authStore";
+import { resetQuizRun } from "@/stores/quizStore";
 
 /** /play/multiplayer — private-room entry: create or join by code. */
 export function MultiplayerHubScreen() {
   const signedIn = useAuthStore(selectIsSignedIn);
+
+  useEffect(() => {
+    resetQuizRun();
+  }, []);
 
   if (!signedIn) {
     return (

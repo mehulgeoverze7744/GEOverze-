@@ -32,8 +32,11 @@ export function useMultiplayerRoom(roomId: string | undefined) {
     if (!roomId) {
       setState(null);
       setLoading(false);
+      setError(null);
       return;
     }
+    setState(null);
+    setError(null);
     setLoading(true);
     void refresh();
   }, [roomId, refresh]);
