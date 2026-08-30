@@ -60,9 +60,16 @@ function directionFor(row: CreditLedgerRow): CreditLedgerDirection {
 
 function categoryFor(row: CreditLedgerRow): CreditLedgerCategory {
   if (row.entry_type === "store_spend") return "geostore";
+  if (row.entry_type === "membership_grant") return "membership";
   if (GAMEPLAY_ENTRY_TYPES.has(row.entry_type)) return "gameplay";
   if (row.entry_type === "reconciliation_opening") return "adjustment";
   return "other";
+}
+
+function membershipDisplayName(metadata: unknown): string | null {
+  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) return null;
+  const displayName = (metadata as Record<string, unknown>)["display_name"];
+  return typeof displayName === "string" && displayName.trim() !== "" ? displayName : null;
 }
 
 function filtersFor(row: CreditLedgerRow, category: CreditLedgerCategory): CreditHistoryFilter[] {
@@ -70,6 +77,8 @@ function filtersFor(row: CreditLedgerRow, category: CreditLedgerCategory): Credi
 
   if (row.amount > 0 && category === "gameplay") {
     tags.push("Earned", "Gameplay");
+  } else if (row.amount > 0 && category === "membership") {
+    tags.push("Earned");
   } else if (row.amount < 0 || row.entry_type === "store_spend") {
     tags.push("Spent", "GEOstore");
   } else if (row.amount > 0 && category !== "adjustment") {
@@ -188,6 +197,12 @@ function mapEntry(row: CreditLedgerRow, bundle: CreditLedgerRawBundle): CreditLe
     detail = "Account adjustment";
     avatarId = "atlas";
     statusLabel = "Adjustment";
+  } else if (category === "membership") {
+    const planLabel = membershipDisplayName(row.metadata) ?? "Membership";
+    headline = `${planLabel} membership credits`;
+    detail = "Monthly membership";
+    avatarId = "atlas";
+    statusLabel = "Earned";
   } else if (direction === "earned") {
     headline = "Credits earned";
     statusLabel = "Earned";

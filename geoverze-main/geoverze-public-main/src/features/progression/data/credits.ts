@@ -42,7 +42,7 @@ export const CREDIT_HISTORY_FILTERS: readonly CreditHistoryFilter[] = [
 
 export type CreditLedgerDirection = "earned" | "spent";
 
-export type CreditLedgerCategory = "gameplay" | "geostore" | "adjustment" | "other";
+export type CreditLedgerCategory = "gameplay" | "geostore" | "adjustment" | "membership" | "other";
 
 export type CreditLedgerDisplayEntry = {
   id: string;
