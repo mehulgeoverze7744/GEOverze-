@@ -2,16 +2,17 @@ import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, SectionContainer, SectionHeading } from "@/components/shared";
 import { GameCard } from "@/features/play/components/GameCard";
 import { MetaChip } from "@/features/play/components/Badges";
+import { CreditBalanceSummary } from "../components/CreditBalanceSummary";
 import { MonthlyProgressCard } from "../components/MonthlyProgressCard";
 import { ProgressBarFill } from "../components/ProgressBarFill";
 import { ProgressionNav } from "../components/ProgressionNav";
 import { RewardCard } from "../components/RewardCard";
 import { REWARD_SECTIONS, SEASON } from "../data/rewards";
-import { useProgressionStore } from "@/stores/progressionStore";
+import { useCreditHistory } from "../hooks/useCreditHistory";
 
 /** /play/rewards */
 export function RewardsPage() {
-  const player = useProgressionStore((s) => s.player);
+  const { monthlyEarned } = useCreditHistory();
 
   return (
     <PageShell>
@@ -22,8 +23,9 @@ export function RewardsPage() {
             The GEOverze reward catalogue
           </h1>
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-foreground/60 md:text-base">
-            Credits, XP, achievements, merchandise, seasonal drops, mystery crates and platform
-            rewards. Spending flows are not built yet.
+            Credits, XP, achievements, merchandise, seasonal drops, and platform rewards. Claim
+            digital GEOstore rewards with credits today; other catalogue sections are still
+            expanding.
           </p>
         </AnimatedSection>
         <div className="mt-8">
@@ -33,8 +35,9 @@ export function RewardsPage() {
 
       <SectionContainer className="mt-[var(--space-section-sm)]">
         <div className="grid gap-4 lg:grid-cols-2">
-          <AnimatedSection>
-            <MonthlyProgressCard credits={player.credits} />
+          <AnimatedSection className="grid gap-4">
+            <CreditBalanceSummary />
+            <MonthlyProgressCard monthlyEarned={monthlyEarned} />
           </AnimatedSection>
           <AnimatedSection delay={80}>
             <GameCard interactive={false} raised className="h-full">

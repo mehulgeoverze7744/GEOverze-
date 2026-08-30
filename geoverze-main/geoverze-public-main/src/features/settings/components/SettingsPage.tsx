@@ -24,8 +24,9 @@ import { SectionContainer } from "@/components/shared/SectionContainer";
 import { SettingsTile } from "@/components/shared/SettingsTile";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CREDITS, SUBSCRIPTION } from "@/features/dashboard/data/dashboard";
+import { SUBSCRIPTION } from "@/features/dashboard/data/dashboard";
 import { useProfile } from "@/features/profile/lib/useProfile";
+import { useProgressionStore } from "@/stores/progressionStore";
 import { usePreferencesStore, type ToggleKey } from "@/stores/preferencesStore";
 
 const SECTIONS = [
@@ -86,6 +87,7 @@ const notAvailable = (what: string) =>
  */
 export function SettingsPage() {
   const profile = useProfile();
+  const walletBalance = useProgressionStore((s) => s.player.credits);
   const motion = usePreferencesStore((s) => s.motion);
   const setMotion = usePreferencesStore((s) => s.setMotion);
   const units = usePreferencesStore((s) => s.units);
@@ -415,7 +417,7 @@ export function SettingsPage() {
                   />
                   <SettingsTile
                     label="GEO credits"
-                    description={`${CREDITS.balance.toLocaleString()} credits · ${CREDITS.nextReward}`}
+                    description={`${walletBalance.toLocaleString()} credits available in your wallet`}
                     control={
                       <GeoButton asChild variant="secondary">
                         <Link to="/geostore">Spend</Link>

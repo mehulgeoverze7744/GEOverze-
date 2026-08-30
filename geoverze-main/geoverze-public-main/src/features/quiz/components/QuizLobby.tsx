@@ -135,7 +135,7 @@ export function QuizLobby({ set, onStart }: { set: QuizSet; onStart: () => void 
             <MetaChip>Streak shield</MetaChip>
           </div>
           <p className="mt-3 text-[0.72rem] text-foreground/50">
-            Records and rewards are placeholders until progression goes live.
+            XP and credits from completed quizzes are recorded on your account when signed in.
           </p>
         </section>
 

@@ -145,7 +145,7 @@ export function PvpMatchScreen({
     );
   }
 
-  if (!roomId || !set || (!state && !loading)) {
+  if (!roomId || !set || !state) {
     return (
       <PageShell>
         <SectionContainer className="pt-[calc(var(--nav-height)+var(--space-section-sm))]">

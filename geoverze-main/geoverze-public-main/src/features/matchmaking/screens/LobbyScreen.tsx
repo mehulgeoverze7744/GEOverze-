@@ -230,7 +230,8 @@ export function LobbyScreen() {
                 </GeoButton>
                 <p className="mt-4 flex items-center gap-2 text-[0.72rem] text-foreground/50">
                   <Sparkles className="h-3.5 w-3.5 text-bronze" strokeWidth={1.8} aria-hidden />
-                  Opponents and ready states are placeholders until the room service is live.
+                  This quick lobby uses illustrative opponents. For live matches, use PvP or
+                  Multiplayer rooms.
                 </p>
               </div>
             </div>

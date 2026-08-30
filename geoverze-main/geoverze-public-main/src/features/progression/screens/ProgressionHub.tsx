@@ -5,6 +5,7 @@ import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer, SectionHeading } from "@/components/shared";
 import { GameCard } from "@/features/play/components/GameCard";
 import { ChallengeCard } from "../components/ChallengeCard";
+import { CreditBalanceSummary } from "../components/CreditBalanceSummary";
 import { CreditRulesCard } from "../components/CreditRulesCard";
 import { LevelLadder } from "../components/LevelLadder";
 import { MonthlyProgressCard } from "../components/MonthlyProgressCard";
@@ -13,6 +14,7 @@ import { ProgressionNav } from "../components/ProgressionNav";
 import { StreakCalendar } from "../components/StreakCalendar";
 import { DAILY_CHALLENGES } from "../data/challenges";
 import { XP_RULES } from "../data/xpRules";
+import { useCreditHistory } from "../hooks/useCreditHistory";
 import { useProgressionStore } from "@/stores/progressionStore";
 
 const SHORTCUTS = [
@@ -25,6 +27,7 @@ const SHORTCUTS = [
 /** /play/progression — the progression command centre. */
 export function ProgressionHub() {
   const player = useProgressionStore((s) => s.player);
+  const { monthlyEarned } = useCreditHistory();
 
   return (
     <PageShell>
@@ -35,8 +38,8 @@ export function ProgressionHub() {
             Every round moves you forward
           </h1>
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-foreground/60 md:text-base">
-            Levels, XP, credits, streaks and challenges in one place. All figures are placeholders
-            until the progression service goes live.
+            Levels, XP, credits, streaks and challenges in one place. XP and credits sync from your
+            account when signed in; daily and weekly challenges are still illustrative.
           </p>
         </AnimatedSection>
         <div className="mt-8">
@@ -52,8 +55,9 @@ export function ProgressionHub() {
 
       <SectionContainer className="mt-[var(--space-section-sm)]">
         <div className="grid gap-4 lg:grid-cols-2">
-          <AnimatedSection>
-            <MonthlyProgressCard credits={player.credits} />
+          <AnimatedSection className="grid gap-4">
+            <CreditBalanceSummary />
+            <MonthlyProgressCard monthlyEarned={monthlyEarned} />
           </AnimatedSection>
           <AnimatedSection delay={80} className="grid gap-4">
             <StreakCalendar />

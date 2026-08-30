@@ -49,6 +49,7 @@ export function FeaturedCarousel({
           art={active.art}
           ratio="wide"
           className="h-[15rem] md:h-[19rem]"
+          fit="cover"
           {...(thumbnail ? { imageSrc: thumbnail.src, imageAlt: thumbnail.alt } : {})}
         />
         <div

@@ -9,7 +9,6 @@ import { SectionContainer } from "@/components/shared/SectionContainer";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { TimelineItem } from "@/components/shared/TimelineItem";
 import {
-  CREDITS,
   FAVORITE_CATEGORIES,
   LEARNING_PROGRESS,
   QUIZ_HISTORY,
@@ -19,6 +18,8 @@ import {
   SUBSCRIPTION,
   UPCOMING_EVENTS,
 } from "@/features/dashboard/data/dashboard";
+import { useCreditHistory } from "@/features/progression/hooks/useCreditHistory";
+import { useProgressionStore } from "@/stores/progressionStore";
 
 /** Small titled panel used by every dashboard widget. */
 function Widget({
@@ -71,6 +72,9 @@ function Bar({ value, label, detail }: { value: number; label: string; detail: s
 
 /** The dashboard widget mosaic: progress, history, recommendations and account. */
 export function DashboardWidgets() {
+  const walletBalance = useProgressionStore((s) => s.player.credits);
+  const { monthlyEarned } = useCreditHistory();
+
   return (
     <SectionContainer className="mt-[var(--space-section-sm)]">
       <AnimatedSection>
@@ -221,12 +225,12 @@ export function DashboardWidgets() {
         <AnimatedSection delay={360}>
           <Widget title="GEO credits" icon={Coins}>
             <p className="text-[clamp(1.8rem,3vw,2.4rem)] font-light leading-none text-gradient-bronze">
-              <AnimatedCounter value={CREDITS.balance} />
+              <AnimatedCounter value={walletBalance} />
             </p>
-            <p className="mt-4 text-xs text-foreground/50">
-              +{CREDITS.monthlyEarned} earned this month
+            <p className="mt-4 text-xs text-foreground/50">Available balance</p>
+            <p className="mt-1 text-xs text-foreground/50">
+              +{monthlyEarned} earned this month from gameplay
             </p>
-            <p className="mt-1 text-xs text-foreground/50">{CREDITS.nextReward}</p>
           </Widget>
         </AnimatedSection>
 

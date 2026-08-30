@@ -9,9 +9,16 @@ import { GameCard } from "./GameCard";
 /** Large game-mode selection card. */
 export function ModeCard({ mode, onSelect }: { mode: GameMode; onSelect: (m: GameMode) => void }) {
   return (
-    <GameCard interactive={!mode.comingSoon} className="flex flex-col">
+    <GameCard interactive={!mode.comingSoon} className="group/card flex flex-col">
       <div className="relative">
-        <CoverArt art={mode.art} icon={mode.icon} ratio="wide" />
+        <CoverArt
+          art={mode.art}
+          icon={mode.icon}
+          ratio="wide"
+          {...(mode.imageSrc
+            ? { imageSrc: mode.imageSrc, imageAlt: mode.imageAlt, fit: "cover" as const }
+            : {})}
+        />
         {mode.comingSoon ? (
           <div className="absolute right-3 top-3">
             <MetaChip>

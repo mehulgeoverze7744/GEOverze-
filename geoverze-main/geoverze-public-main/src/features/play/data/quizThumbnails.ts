@@ -10,8 +10,8 @@ const QUIZ_LABEL_BASE = "/assets/quizzes";
 
 export const QUIZ_THUMBNAILS: Readonly<Record<string, QuizThumbnail>> = {
   "q-pin-the-place": {
-    src: `${QUIZ_LABEL_BASE}/pin-the-place-quiz-label.png`,
-    alt: "GEOverze Pin the Place quiz",
+    src: `${QUIZ_LABEL_BASE}/pin-the-place-quiz-label.jpg`,
+    alt: "Pin the Place geography quiz artwork",
     labelArtwork: true,
   },
   "q-capital-cities": {
@@ -20,18 +20,18 @@ export const QUIZ_THUMBNAILS: Readonly<Record<string, QuizThumbnail>> = {
     labelArtwork: true,
   },
   "q-monuments": {
-    src: `${QUIZ_LABEL_BASE}/monuments-and-marvels-quiz-label.png`,
-    alt: "GEOverze Monuments and Marvels quiz",
+    src: `${QUIZ_LABEL_BASE}/monuments-and-marvels-quiz-label.jpg`,
+    alt: "Monuments and Marvels geography quiz artwork",
     labelArtwork: true,
   },
   "q-atlas-sprint": {
-    src: `${QUIZ_LABEL_BASE}/atlas-sprint-quiz-label.png`,
-    alt: "GEOverze Atlas Sprint quiz",
+    src: `${QUIZ_LABEL_BASE}/atlas-sprint-quiz-label.jpg`,
+    alt: "Atlas Sprint geography quiz artwork",
     labelArtwork: true,
   },
   "q-flag-blitz": {
-    src: `${QUIZ_LABEL_BASE}/flag-blitz-quiz-label.png`,
-    alt: "GEOverze Flag Blitz quiz",
+    src: `${QUIZ_LABEL_BASE}/flag-blitz-quiz-label.jpg`,
+    alt: "Flag Blitz geography quiz artwork",
     labelArtwork: true,
   },
 };

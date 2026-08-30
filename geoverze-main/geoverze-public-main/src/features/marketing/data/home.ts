@@ -30,6 +30,7 @@ export type HomeFeature = {
   icon: LucideIcon;
   title: string;
   description: string;
+  imageSrc?: string;
 };
 
 /** Section 1 — Why GEOverze. */
@@ -39,36 +40,42 @@ export const whyPillars: HomeFeature[] = [
     title: "Learning",
     description:
       "Geography presented with the clarity of a great atlas and the pacing of a modern product — structured, precise, never dry.",
+    imageSrc: "/assets/home/learning.jpg",
   },
   {
     icon: Compass,
     title: "Discovery",
     description:
       "Every session surfaces something you did not know: a border, a basin, a capital, a culture worth remembering.",
+    imageSrc: "/assets/home/discovery.jpg",
   },
   {
     icon: Globe2,
     title: "Exploration",
     description:
       "Move across the planet in three dimensions. The world is the interface, not a list of chapters.",
+    imageSrc: "/assets/home/exploration.jpg",
   },
   {
     icon: Target,
     title: "Interactive quizzes",
     description:
       "Short, elegant rounds that ask you to recognise and reason rather than recite what you memorised.",
+    imageSrc: "/assets/home/interactive-quizzes.jpg",
   },
   {
     icon: Trophy,
     title: "Friendly competition",
     description:
       "Measure yourself against the world with standings designed to motivate curiosity, not anxiety.",
+    imageSrc: "/assets/home/friendly-competition.jpg",
   },
   {
     icon: Users,
     title: "Community",
     description:
       "A shared expedition — learners, travellers and map lovers exploring the same planet together.",
+    imageSrc: "/assets/home/community.jpg",
   },
 ];
 

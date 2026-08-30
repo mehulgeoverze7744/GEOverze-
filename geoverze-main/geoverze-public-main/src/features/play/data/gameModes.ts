@@ -10,6 +10,8 @@ export type GameMode = {
   art: string;
   cta: string;
   comingSoon?: boolean;
+  imageSrc?: string;
+  imageAlt?: string;
 };
 
 export const GAME_MODES: readonly GameMode[] = [
@@ -20,6 +22,8 @@ export const GAME_MODES: readonly GameMode[] = [
     icon: User,
     art: "solo",
     cta: "Play solo",
+    imageSrc: "/assets/play/solo.jpg",
+    imageAlt: "Solo geography game",
   },
   {
     id: "pvp",
@@ -28,6 +32,8 @@ export const GAME_MODES: readonly GameMode[] = [
     icon: Swords,
     art: "pvp",
     cta: "Find a duel",
+    imageSrc: "/assets/play/pvp.jpg",
+    imageAlt: "PvP geography game",
   },
   {
     id: "multiplayer",
@@ -36,6 +42,8 @@ export const GAME_MODES: readonly GameMode[] = [
     icon: Users,
     art: "multiplayer",
     cta: "Join a room",
+    imageSrc: "/assets/play/multiplayer.jpg",
+    imageAlt: "Multiplayer geography game",
   },
   {
     id: "practice",
@@ -44,6 +52,8 @@ export const GAME_MODES: readonly GameMode[] = [
     icon: Dumbbell,
     art: "practice",
     cta: "Start practising",
+    imageSrc: "/assets/play/practice.jpg",
+    imageAlt: "Practice geography game",
   },
   {
     id: "daily",
@@ -52,6 +62,8 @@ export const GAME_MODES: readonly GameMode[] = [
     icon: CalendarDays,
     art: "daily",
     cta: "Play today's set",
+    imageSrc: "/assets/play/daily-challenge.jpg",
+    imageAlt: "Daily Challenge geography game",
   },
   {
     id: "weekly",
@@ -60,6 +72,8 @@ export const GAME_MODES: readonly GameMode[] = [
     icon: CalendarRange,
     art: "weekly",
     cta: "Enter this week",
+    imageSrc: "/assets/play/weekly-challenge.jpg",
+    imageAlt: "Weekly Challenge geography game",
   },
   {
     id: "tournament",

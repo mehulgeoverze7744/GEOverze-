@@ -19,6 +19,7 @@ import { StreakPanel } from "@/features/progress";
 import { CreditProgressBar } from "@/features/progression/components/CreditProgressBar";
 import { LevelBadge } from "@/features/progression/components/LevelBadge";
 import { XpProgressBar } from "@/features/progression/components/XpProgressBar";
+import { useCreditHistory } from "@/features/progression/hooks/useCreditHistory";
 import { nextLevel } from "@/features/progression/lib/progress";
 import { REDEMPTION } from "@/features/progression/data/player";
 import { ActivityFeedItem } from "@/components/shared/ActivityFeedItem";
@@ -38,6 +39,7 @@ export function DashboardPage() {
   const profile = useProfile();
   const unread = useNotificationsStore(selectUnreadCount);
   const player = useProgressionStore(selectPlayer);
+  const { monthlyEarned } = useCreditHistory();
   const next = nextLevel(player.level);
   const greeting = greetingFor();
   const motivation = motivationFor();
@@ -79,7 +81,15 @@ export function DashboardPage() {
                   xpForLevel={player.xpForLevel}
                   nextLevelLabel={next ? `Level ${next.level} · ${next.title}` : undefined}
                 />
-                <CreditProgressBar credits={player.credits} goal={REDEMPTION.goal} />
+                <p className="text-xs text-foreground/50">
+                  <AnimatedCounter value={player.credits} className="text-bronze-glow" /> credits
+                  available
+                </p>
+                <CreditProgressBar
+                  credits={monthlyEarned}
+                  goal={REDEMPTION.goal}
+                  label="Earned this month"
+                />
               </div>
             </div>
 

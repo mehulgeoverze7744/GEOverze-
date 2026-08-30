@@ -57,8 +57,7 @@ export function MultiplayerMatchScreen({
   const rewardsSettled = Boolean(state?.room.rewards_settled_at);
   const youSubmitted = Boolean(you?.submitted_at);
   const activeCount = state?.room.active_player_count ?? state?.participants.length ?? 0;
-  const submittedCount =
-    state?.participants.filter((p) => Boolean(p.submitted_at)).length ?? 0;
+  const submittedCount = state?.participants.filter((p) => Boolean(p.submitted_at)).length ?? 0;
   const othersStillPlaying = youSubmitted && !roomCompleted && submittedCount < activeCount;
 
   useEffect(() => {
@@ -144,7 +143,7 @@ export function MultiplayerMatchScreen({
     );
   }
 
-  if (!roomId || !set || (!state && !loading)) {
+  if (!roomId || !set || !state) {
     return (
       <PageShell>
         <SectionContainer className="pt-[calc(var(--nav-height)+var(--space-section-sm))]">
@@ -200,7 +199,9 @@ export function MultiplayerMatchScreen({
             <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl border border-bronze/30 bg-bronze/10 text-bronze-glow">
               <Users className="h-6 w-6" strokeWidth={1.8} aria-hidden />
             </span>
-            <h1 className="mt-5 text-xl font-semibold text-foreground">Waiting for other players</h1>
+            <h1 className="mt-5 text-xl font-semibold text-foreground">
+              Waiting for other players
+            </h1>
             <p className="mt-2 text-[0.9rem] leading-relaxed text-foreground/60">
               Your answers were submitted and graded by the server.{" "}
               {submittedCount >= activeCount

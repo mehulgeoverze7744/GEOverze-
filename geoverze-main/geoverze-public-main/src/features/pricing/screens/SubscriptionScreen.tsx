@@ -95,7 +95,8 @@ export function SubscriptionScreen() {
                   credits per month
                 </p>
                 <p className="mt-6 text-sm leading-relaxed text-foreground/55">
-                  Membership credits land on renewal day and never expire while your plan is active.
+                  Paid membership credit grants are planned for a future billing release. Gameplay
+                  credits follow the rollover rules on your credit history page.
                 </p>
                 <GeoButton asChild variant="secondary" size="sm" className="mt-8">
                   <Link to="/geostore/rewards">Spend credits</Link>
