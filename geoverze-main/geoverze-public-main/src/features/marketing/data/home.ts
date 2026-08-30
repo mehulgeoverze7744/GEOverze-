@@ -152,42 +152,49 @@ export const ecosystem: {
   title: string;
   description: string;
   to: NavItem["to"];
+  imageSrc?: string;
 }[] = [
   {
     icon: Gamepad2,
     title: "Let's Play",
     description: "The interactive heart of GEOverze — rounds, challenges and expeditions.",
     to: "/play",
+    imageSrc: "/assets/home/ecosystem/lets-play.jpg",
   },
   {
     icon: Library,
     title: "GEOlibrary",
     description: "A living reference of countries, regions and landforms.",
     to: "/geolibrary",
+    imageSrc: "/assets/home/ecosystem/geolibrary.jpg",
   },
   {
     icon: Store,
     title: "GEOstore",
     description: "Atlases, collections and profile pieces to unlock as you explore.",
     to: "/geostore",
+    imageSrc: "/assets/home/ecosystem/geostore.jpg",
   },
   {
     icon: Trophy,
     title: "Leaderboards",
     description: "Where standings, seasons and recognition come together.",
     to: "/leaderboard",
+    imageSrc: "/assets/home/ecosystem/leaderboards.jpg",
   },
   {
     icon: Crown,
     title: "Premium membership",
     description: "Deeper content and refined experiences for dedicated explorers.",
     to: "/pricing",
+    imageSrc: "/assets/home/ecosystem/premium-membership.jpg",
   },
   {
     icon: UserRound,
     title: "User profiles",
     description: "Your expedition log — progress, achievements and collections.",
     to: "/profile",
+    imageSrc: "/assets/home/ecosystem/user-profiles.jpg",
   },
 ];
 
