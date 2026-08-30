@@ -10,10 +10,12 @@ export function CreditProgressBar({
   credits,
   goal,
   className,
+  label = "Credits this month",
 }: {
   credits: number;
   goal: number;
   className?: string;
+  label?: string;
 }) {
   const { pct, remaining, eligible } = creditProgress(credits, goal);
 
@@ -22,7 +24,7 @@ export function CreditProgressBar({
       <div className="flex items-end justify-between gap-4">
         <p className="inline-flex items-center gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.18em] text-foreground/50">
           <Coins className="h-3.5 w-3.5 text-bronze/90" strokeWidth={2} aria-hidden="true" />
-          Credits this month
+          {label}
         </p>
         <p className="text-xs text-foreground/60">
           <AnimatedCounter value={credits} className="text-bronze-glow" /> / {goal}

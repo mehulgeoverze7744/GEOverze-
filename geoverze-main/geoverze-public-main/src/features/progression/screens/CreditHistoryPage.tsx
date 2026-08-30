@@ -1,70 +1,71 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { AlertCircle, Loader2, Lock, Receipt } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
-import { AnimatedSection, EmptyState, SectionContainer, SectionHeading } from "@/components/shared";
+import {
+  AnimatedSection,
+  EmptyState,
+  GeoButton,
+  SectionContainer,
+  SectionHeading,
+} from "@/components/shared";
 import { GameCard } from "@/features/play/components/GameCard";
+import { MetaChip } from "@/features/play/components/Badges";
 import { cn } from "@/lib/utils";
-import { useAuthStore } from "@/stores/authStore";
+import { selectIsSignedIn, useAuthStore } from "@/stores/authStore";
+
+import { CreditBalanceSummary } from "../components/CreditBalanceSummary";
+import { CreditExpiryNotice } from "../components/CreditExpiryNotice";
 import { CreditHistoryCard } from "../components/CreditHistoryCard";
 import { CreditRulesCard } from "../components/CreditRulesCard";
 import { MonthlyProgressCard } from "../components/MonthlyProgressCard";
 import { ProgressionNav } from "../components/ProgressionNav";
-import { type CreditEntry, type CreditReason } from "../data/credits";
-import { fetchCreditTransactions } from "../data/fetchCreditTransactions";
-import { monthlyCreditTotal } from "../lib/progress";
-import { useProgressionStore } from "@/stores/progressionStore";
-import { Receipt } from "lucide-react";
-
-const FILTERS: readonly (CreditReason | "All")[] = [
-  "All",
-  "First win",
-  "Repeat win",
-  "Multiplayer — 1st Place",
-  "Multiplayer — 2nd Place",
-  "Multiplayer — 3rd Place",
-  "Legacy — Second Win",
-  "Legacy — Third Win",
-  "Legacy — Repeated Win",
-  "Legacy — Placement reward",
-];
+import { CREDIT_HISTORY_FILTERS, type CreditHistoryFilter } from "../data/credits";
+import { useCreditHistory } from "../hooks/useCreditHistory";
+import { filterLedgerEntries } from "../lib/mapCreditLedgerEntry";
 
 /** /play/credit-history */
 export function CreditHistoryPage() {
-  const player = useProgressionStore((s) => s.player);
-  const userId = useAuthStore((s) => s.user?.id);
-  const [filter, setFilter] = useState<CreditReason | "All">("All");
-  const [ledger, setLedger] = useState<CreditEntry[]>([]);
+  const signedIn = useAuthStore(selectIsSignedIn);
+  const authStatus = useAuthStore((s) => s.status);
+  const authReady = authStatus !== "unknown";
+  const [filter, setFilter] = useState<CreditHistoryFilter>("All");
+  const { entries, expiringLots, monthlyEarned, loading, error } = useCreditHistory();
 
-  useEffect(() => {
-    if (!userId) {
-      setLedger([]);
-      return;
-    }
-    void fetchCreditTransactions()
-      .then((rows) =>
-        setLedger(
-          rows.map((row) => ({
-            id: row.id,
-            date: new Date(row.created_at).toLocaleDateString(undefined, {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            }),
-            opponent: row.opponent_username,
-            opponentAvatarId: "compass",
-            matchType: row.matchType,
-            credits: row.amount,
-            reason: row.reason,
-            status: "credited" as const,
-          })),
-        ),
-      )
-      .catch(() => setLedger([]));
-  }, [userId]);
+  const filtered = filterLedgerEntries(entries, filter);
+  const earnedCount = entries.filter((entry) => entry.direction === "earned").length;
+  const spentCount = entries.filter((entry) => entry.direction === "spent").length;
 
-  const entries =
-    filter === "All" ? ledger : ledger.filter((entry) => entry.reason === filter);
-  const total = monthlyCreditTotal(ledger);
+  if (authReady && !signedIn) {
+    return (
+      <PageShell>
+        <SectionContainer className="pt-[calc(var(--nav-height)+var(--space-section-sm))] pb-[var(--space-section-sm)]">
+          <AnimatedSection className="mx-auto max-w-xl text-center">
+            <MetaChip tone="bronze">
+              <Lock className="h-3 w-3" strokeWidth={2.2} aria-hidden />
+              Credit history
+            </MetaChip>
+            <h1 className="mt-5 text-[clamp(1.8rem,4vw,2.6rem)] font-semibold tracking-tight text-foreground">
+              Sign in to view your credits
+            </h1>
+            <p className="mt-4 text-[0.9rem] leading-relaxed text-foreground/60">
+              Your wallet balance, earn history, GEOstore spending, and upcoming expiry dates are
+              tied to your account.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <GeoButton variant="solid" size="lg" asChild>
+                <Link to="/auth/login">Sign in</Link>
+              </GeoButton>
+              <GeoButton variant="dark" size="lg" asChild>
+                <Link to="/geostore/rewards">Browse rewards</Link>
+              </GeoButton>
+            </div>
+          </AnimatedSection>
+        </SectionContainer>
+      </PageShell>
+    );
+  }
 
   return (
     <PageShell>
@@ -75,7 +76,7 @@ export function CreditHistoryPage() {
             Every credit, accounted for
           </h1>
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-foreground/60 md:text-base">
-            A transparent ledger of victories and the credits they awarded this month.
+            Your full credit ledger — gameplay earns, GEOstore spending, and upcoming expiry dates.
           </p>
         </AnimatedSection>
         <div className="mt-8">
@@ -86,26 +87,44 @@ export function CreditHistoryPage() {
       <SectionContainer className="mt-[var(--space-section-sm)]">
         <div className="grid gap-4 lg:grid-cols-2">
           <AnimatedSection>
-            <MonthlyProgressCard credits={player.credits} />
+            <CreditBalanceSummary />
           </AnimatedSection>
-          <AnimatedSection delay={80}>
-            <CreditRulesCard />
+          <AnimatedSection delay={40}>
+            <MonthlyProgressCard monthlyEarned={monthlyEarned} />
           </AnimatedSection>
         </div>
+      </SectionContainer>
+
+      {expiringLots.length > 0 ? (
+        <SectionContainer className="mt-4">
+          <AnimatedSection delay={60}>
+            <CreditExpiryNotice lots={expiringLots} />
+          </AnimatedSection>
+        </SectionContainer>
+      ) : null}
+
+      <SectionContainer className="mt-[var(--space-section-sm)]">
+        <AnimatedSection delay={80}>
+          <CreditRulesCard />
+        </AnimatedSection>
       </SectionContainer>
 
       <SectionContainer className="mt-[var(--space-section)]">
         <AnimatedSection>
           <SectionHeading
             eyebrow="Ledger"
-            title="Recorded credits"
-            description={`${total} credits logged across ${ledger.length} entries this month.`}
+            title="Credit history"
+            description={
+              loading
+                ? "Loading your ledger…"
+                : `${entries.length} entries · ${earnedCount} earned · ${spentCount} spent`
+            }
           />
         </AnimatedSection>
 
         <AnimatedSection className="mt-7">
           <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
-            {FILTERS.map((item) => (
+            {CREDIT_HISTORY_FILTERS.map((item) => (
               <button
                 key={item}
                 type="button"
@@ -125,17 +144,41 @@ export function CreditHistoryPage() {
         </AnimatedSection>
 
         <div className="mt-6">
-          {entries.length === 0 ? (
+          {loading ? (
+            <GameCard interactive={false} className="p-8">
+              <EmptyState
+                icon={Loader2}
+                title="Loading credit history"
+                description="Fetching your ledger from the server."
+              />
+            </GameCard>
+          ) : error ? (
+            <GameCard interactive={false} className="p-8">
+              <EmptyState
+                icon={AlertCircle}
+                title="Could not load credit history"
+                description={error}
+              />
+            </GameCard>
+          ) : filtered.length === 0 ? (
             <GameCard interactive={false} className="p-8">
               <EmptyState
                 icon={Receipt}
-                title="No credits in this category yet"
-                description="Win duels to start filling the ledger."
+                title={
+                  filter === "All"
+                    ? "No credit activity yet"
+                    : `No ${filter.toLowerCase()} entries yet`
+                }
+                description={
+                  filter === "All"
+                    ? "Win duels or claim GEOstore rewards to start filling the ledger."
+                    : "Try another filter or earn credits through gameplay."
+                }
               />
             </GameCard>
           ) : (
             <ul className="grid gap-3">
-              {entries.map((entry) => (
+              {filtered.map((entry) => (
                 <CreditHistoryCard key={entry.id} entry={entry} />
               ))}
             </ul>

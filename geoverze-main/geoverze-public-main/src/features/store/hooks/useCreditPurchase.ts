@@ -13,6 +13,7 @@ import {
   type PlaceCreditOrderResult,
 } from "../lib/placeCreditOrder";
 import { entitlementsQueryKey } from "./useEntitlements";
+import { creditHistoryQueryKey } from "@/features/progression/hooks/useCreditHistory";
 
 export type CreditPurchaseTarget = {
   slug: string;
@@ -61,6 +62,7 @@ export function useCreditPurchase(): UseCreditPurchaseResult {
 
         void refreshProgression(user.id);
         void queryClient.invalidateQueries({ queryKey: entitlementsQueryKey });
+        void queryClient.invalidateQueries({ queryKey: creditHistoryQueryKey });
 
         toast.success(`${target.name} claimed`, {
           description: `${result.credits_total} credits spent · ${result.new_balance} credits remaining`,

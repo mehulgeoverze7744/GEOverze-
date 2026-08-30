@@ -44,7 +44,7 @@ export const PLAYER: PlayerSnapshot = {
 export const MONTHLY_CREDITS = {
   goal: 100,
   rewardLabel: "GEOverze rewards",
-  note: "Credits reset at the end of every calendar month.",
+  note: "Monthly earning progress resets each calendar month. Unused credits follow the rollover window for your plan.",
 } as const;
 
 /** @deprecated Use MONTHLY_CREDITS — kept for import compatibility during cutover. */

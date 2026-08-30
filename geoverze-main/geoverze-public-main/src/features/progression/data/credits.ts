@@ -1,7 +1,7 @@
 /**
- * Official GEOverze credit rules and a placeholder monthly ledger.
+ * Official GEOverze credit rules and ledger display types.
  *
- * The rules are educational UI only — no calculation happens anywhere.
+ * Rules are educational UI only — balances and history come from the server.
  */
 
 export type CreditRule = {
@@ -26,6 +26,51 @@ export const CREDIT_RULES: readonly CreditRule[] = [
   },
 ] as const;
 
+/** User-facing expiry copy (Free tier until PAY-2 plan resolution). */
+export const CREDIT_EXPIRY_NOTE =
+  "Credits earned in a calendar month stay available through the following calendar month on Free, Basic, and Pro. Advance extends that window to two calendar months.";
+
+export type CreditHistoryFilter = "All" | "Earned" | "Spent" | "Gameplay" | "GEOstore";
+
+export const CREDIT_HISTORY_FILTERS: readonly CreditHistoryFilter[] = [
+  "All",
+  "Earned",
+  "Spent",
+  "Gameplay",
+  "GEOstore",
+] as const;
+
+export type CreditLedgerDirection = "earned" | "spent";
+
+export type CreditLedgerCategory = "gameplay" | "geostore" | "adjustment" | "other";
+
+export type CreditLedgerDisplayEntry = {
+  id: string;
+  createdAt: string;
+  dateLabel: string;
+  timeLabel: string;
+  direction: CreditLedgerDirection;
+  /** Absolute magnitude for display. */
+  amount: number;
+  /** Signed ledger amount. */
+  signedAmount: number;
+  headline: string;
+  detail: string;
+  category: CreditLedgerCategory;
+  entryType: string;
+  statusLabel: "Earned" | "Spent" | "Adjustment";
+  filterTags: CreditHistoryFilter[];
+  avatarId: string;
+};
+
+export type ExpiringCreditLot = {
+  id: string;
+  remainingAmount: number;
+  expiresAt: string;
+  expiresLabel: string;
+};
+
+/** @deprecated Legacy duel-only type — use CreditLedgerDisplayEntry. */
 export type CreditReason =
   | "First win"
   | "Repeat win"
@@ -36,57 +81,3 @@ export type CreditReason =
   | "Legacy — Third Win"
   | "Legacy — Repeated Win"
   | "Legacy — Placement reward";
-
-export type CreditEntry = {
-  id: string;
-  date: string;
-  opponent: string;
-  opponentAvatarId: string;
-  matchType: "1v1 Duel" | "Multiplayer" | "Ranked Duel";
-  credits: number;
-  reason: CreditReason;
-  status: "credited" | "pending";
-};
-
-export const CREDIT_HISTORY: readonly CreditEntry[] = [
-  {
-    id: "c1",
-    date: "Aug 5, 2026",
-    opponent: "Emma",
-    opponentAvatarId: "compass",
-    matchType: "1v1 Duel",
-    credits: 5,
-    reason: "First win",
-    status: "credited",
-  },
-  {
-    id: "c2",
-    date: "Aug 4, 2026",
-    opponent: "Alex",
-    opponentAvatarId: "atlas",
-    matchType: "Ranked Duel",
-    credits: 1,
-    reason: "Repeat win",
-    status: "credited",
-  },
-  {
-    id: "c3",
-    date: "Aug 1, 2026",
-    opponent: "Alex",
-    opponentAvatarId: "atlas",
-    matchType: "1v1 Duel",
-    credits: 5,
-    reason: "First win",
-    status: "credited",
-  },
-  {
-    id: "c4",
-    date: "Aug 1, 2026",
-    opponent: "Noor",
-    opponentAvatarId: "meridian",
-    matchType: "Multiplayer",
-    credits: 5,
-    reason: "Multiplayer — 1st Place",
-    status: "pending",
-  },
-] as const;

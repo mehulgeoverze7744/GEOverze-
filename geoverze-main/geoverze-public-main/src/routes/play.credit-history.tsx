@@ -8,12 +8,14 @@ export const Route = createFileRoute("/play/credit-history")({
       { title: "Credit History — GEOverze" },
       {
         name: "description",
-        content: "A transparent ledger of every credit earned from duel victories this month.",
+        content:
+          "Your full credit ledger — wallet balance, gameplay earns, GEOstore spending, and upcoming expiry dates.",
       },
       { property: "og:title", content: "Credit History — GEOverze" },
       {
         property: "og:description",
-        content: "A transparent ledger of every credit earned from duel victories this month.",
+        content:
+          "Your full credit ledger — wallet balance, gameplay earns, GEOstore spending, and upcoming expiry dates.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

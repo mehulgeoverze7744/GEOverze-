@@ -6,17 +6,27 @@ import { MONTHLY_CREDITS } from "../data/player";
 import { creditProgress, monthMeta } from "../lib/progress";
 import { CreditProgressBar } from "./CreditProgressBar";
 
+type MonthlyProgressCardProps = {
+  /** Wallet balance — legacy default for non–credit-history surfaces. */
+  credits?: number;
+  /** Gameplay credits earned this calendar month (credit history page). */
+  monthlyEarned?: number;
+};
+
 /** Monthly credit tracker: goal, progress, reset date and reward preview. */
-export function MonthlyProgressCard({ credits }: { credits: number }) {
+export function MonthlyProgressCard({ credits, monthlyEarned }: MonthlyProgressCardProps) {
   const { month, resetLabel } = monthMeta();
-  const { eligible, remaining } = creditProgress(credits, MONTHLY_CREDITS.goal);
+  const earnedThisMonth = monthlyEarned ?? credits ?? 0;
+  const showMonthlyOnly = monthlyEarned !== undefined;
+  const { eligible, remaining } = creditProgress(earnedThisMonth, MONTHLY_CREDITS.goal);
 
   return (
     <GameCard interactive={false} raised>
       <div className="p-6 sm:p-7">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <MetaChip tone="bronze">
-            <Coins className="h-3 w-3" strokeWidth={2.4} aria-hidden="true" /> Monthly tracker
+            <Coins className="h-3 w-3" strokeWidth={2.4} aria-hidden="true" />{" "}
+            {showMonthlyOnly ? "Monthly progress" : "Monthly tracker"}
           </MetaChip>
           <MetaChip>{month}</MetaChip>
         </div>
@@ -30,18 +40,23 @@ export function MonthlyProgressCard({ credits }: { credits: number }) {
           across merchandise, digital rewards, and premium subscriptions.
         </p>
 
-        <CreditProgressBar className="mt-6" credits={credits} goal={MONTHLY_CREDITS.goal} />
+        <CreditProgressBar
+          className="mt-6"
+          credits={earnedThisMonth}
+          goal={MONTHLY_CREDITS.goal}
+          label={showMonthlyOnly ? "Earned this month" : "Credits this month"}
+        />
 
         <dl className="mt-6 grid gap-4 sm:grid-cols-3">
           <div>
             <dt className="text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-foreground/50">
-              Current credits
+              {showMonthlyOnly ? "Earned this month" : "Current credits"}
             </dt>
-            <dd className="mt-1 text-lg font-semibold text-foreground">{credits}</dd>
+            <dd className="mt-1 text-lg font-semibold text-foreground">{earnedThisMonth}</dd>
           </div>
           <div>
             <dt className="text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-foreground/50">
-              Remaining
+              {showMonthlyOnly ? "To reach goal" : "Remaining"}
             </dt>
             <dd className="mt-1 text-lg font-semibold text-foreground">{remaining}</dd>
           </div>
@@ -62,7 +77,7 @@ export function MonthlyProgressCard({ credits }: { credits: number }) {
               strokeWidth={1.8}
               aria-hidden="true"
             />
-            Next reset: {resetLabel} (placeholder)
+            Next reset: {resetLabel}
           </p>
           <p className="inline-flex items-center gap-2">
             <Sparkles className="h-3.5 w-3.5 text-bronze/90" strokeWidth={1.8} aria-hidden="true" />

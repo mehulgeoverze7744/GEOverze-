@@ -29,7 +29,7 @@ export const pricingFaq: FaqItem[] = [
     id: "credits",
     question: "Do credits expire or carry over?",
     answer:
-      "Credits belong to your account, not your plan. They do not expire and they survive a downgrade. Paid tiers simply earn them faster.",
+      "Credits belong to your account, not your plan. On Free, Basic, and Pro, credits earned in a calendar month stay available through the following calendar month. Advance extends that window to two calendar months. Paid tiers simply earn them faster.",
   },
   {
     id: "creator",

@@ -1,7 +1,7 @@
 import { Info } from "lucide-react";
 
 import { GameCard } from "@/features/play/components/GameCard";
-import { CREDIT_RULES } from "../data/credits";
+import { CREDIT_EXPIRY_NOTE, CREDIT_RULES } from "../data/credits";
 
 /** Educational card that states the official credit rules. Display only. */
 export function CreditRulesCard() {
@@ -18,7 +18,7 @@ export function CreditRulesCard() {
           <div>
             <h3 className="text-base font-semibold text-foreground">How credits are earned</h3>
             <p className="mt-1 text-[0.83rem] leading-relaxed text-foreground/55">
-              Credits come from victories against other players inside the current calendar month.
+              Credits come from PvP and multiplayer victories inside the current calendar month.
             </p>
           </div>
         </div>
@@ -39,6 +39,10 @@ export function CreditRulesCard() {
             </li>
           ))}
         </ul>
+
+        <p className="mt-6 border-t border-bronze/12 pt-5 text-[0.83rem] leading-relaxed text-foreground/55">
+          {CREDIT_EXPIRY_NOTE}
+        </p>
       </div>
     </GameCard>
   );
