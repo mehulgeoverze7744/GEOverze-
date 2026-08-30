@@ -11,7 +11,7 @@ import { SectionHeading } from "@/components/shared/SectionHeading";
 import { cn } from "@/lib/utils";
 
 import { currentSubscription, invoiceHistory, paymentMethods } from "../data/billing";
-import { pricingPlans } from "../data/plans";
+import { usePricingCatalog } from "../hooks/usePricingCatalog";
 import { notBillableYet } from "../lib/checkout";
 
 const statusTone: Record<string, string> = {
@@ -22,7 +22,12 @@ const statusTone: Record<string, string> = {
 
 /** Subscription & billing management. Read-only placeholders until payments land. */
 export function SubscriptionScreen() {
-  const plan = pricingPlans.find((p) => p.id === currentSubscription.tier) ?? pricingPlans[0]!;
+  const { plans, loading, error } = usePricingCatalog();
+  const plan =
+    plans.find((p) => p.id === currentSubscription.tier) ??
+    plans.find((p) => p.id === "explorer") ??
+    null;
+  const creditsGrant = plan?.monthlyCreditGrant ?? currentSubscription.creditsGrant;
 
   return (
     <PageShell>
@@ -38,50 +43,69 @@ export function SubscriptionScreen() {
           <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
             <AnimatedSection>
               <GlassCard strong className="h-full p-8 md:p-10">
-                <div className="flex flex-wrap items-start justify-between gap-6">
-                  <div className="min-w-0">
-                    <p className="eyebrow">Current plan</p>
-                    <h2 className="mt-4 font-light tracking-tight text-foreground text-[clamp(1.5rem,2.6vw,2rem)]">
-                      {plan.name}
-                    </h2>
-                    <p className="mt-3 max-w-md text-sm leading-relaxed text-foreground/55">
-                      {plan.summary}
-                    </p>
-                  </div>
-                  <span className="rounded-full border border-bronze/30 bg-bronze/10 px-3 py-1.5 text-[0.58rem] uppercase tracking-[0.24em] text-bronze">
-                    {currentSubscription.status}
-                  </span>
-                </div>
+                {error ? (
+                  <p className="text-sm text-foreground/60">
+                    Plan details could not be loaded. {error}
+                  </p>
+                ) : null}
 
-                <dl className="mt-9 grid gap-6 border-t border-bronze/12 pt-8 sm:grid-cols-3">
-                  {[
-                    { label: "Billing cycle", value: currentSubscription.cycle },
-                    { label: "Member since", value: currentSubscription.since },
-                    { label: "Renews on", value: currentSubscription.renewsOn },
-                  ].map((row) => (
-                    <div key={row.label}>
-                      <dt className="text-[0.58rem] uppercase tracking-[0.26em] text-foreground/50">
-                        {row.label}
-                      </dt>
-                      <dd className="mt-2 text-sm capitalize text-foreground/80">{row.value}</dd>
+                {!error && loading ? (
+                  <div className="h-48 animate-pulse rounded-xl bg-bronze/5" aria-hidden />
+                ) : null}
+
+                {!error && !loading && plan ? (
+                  <>
+                    <div className="flex flex-wrap items-start justify-between gap-6">
+                      <div className="min-w-0">
+                        <p className="eyebrow">Current plan</p>
+                        <h2 className="mt-4 font-light tracking-tight text-foreground text-[clamp(1.5rem,2.6vw,2rem)]">
+                          {plan.name}
+                        </h2>
+                        <p className="mt-3 max-w-md text-sm leading-relaxed text-foreground/55">
+                          {plan.summary}
+                        </p>
+                      </div>
+                      <span className="rounded-full border border-bronze/30 bg-bronze/10 px-3 py-1.5 text-[0.58rem] uppercase tracking-[0.24em] text-bronze">
+                        {currentSubscription.status}
+                      </span>
                     </div>
-                  ))}
-                </dl>
 
-                <div className="mt-10 flex flex-wrap gap-3">
-                  <GeoButton asChild variant="primary">
-                    <Link to="/pricing">
-                      Change plan
-                      <ArrowUpRight className="h-4 w-4" strokeWidth={1.6} />
-                    </Link>
-                  </GeoButton>
-                  <GeoButton variant="secondary" onClick={() => notBillableYet("Cycle switching")}>
-                    Switch to annual
-                  </GeoButton>
-                  <GeoButton variant="ghost" onClick={() => notBillableYet("Cancellation")}>
-                    Cancel membership
-                  </GeoButton>
-                </div>
+                    <dl className="mt-9 grid gap-6 border-t border-bronze/12 pt-8 sm:grid-cols-3">
+                      {[
+                        { label: "Billing cycle", value: currentSubscription.cycle },
+                        { label: "Member since", value: currentSubscription.since },
+                        { label: "Renews on", value: currentSubscription.renewsOn },
+                      ].map((row) => (
+                        <div key={row.label}>
+                          <dt className="text-[0.58rem] uppercase tracking-[0.26em] text-foreground/50">
+                            {row.label}
+                          </dt>
+                          <dd className="mt-2 text-sm capitalize text-foreground/80">
+                            {row.value}
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+
+                    <div className="mt-10 flex flex-wrap gap-3">
+                      <GeoButton asChild variant="primary">
+                        <Link to="/pricing">
+                          Change plan
+                          <ArrowUpRight className="h-4 w-4" strokeWidth={1.6} />
+                        </Link>
+                      </GeoButton>
+                      <GeoButton
+                        variant="secondary"
+                        onClick={() => notBillableYet("Cycle switching")}
+                      >
+                        Switch to annual
+                      </GeoButton>
+                      <GeoButton variant="ghost" onClick={() => notBillableYet("Cancellation")}>
+                        Cancel membership
+                      </GeoButton>
+                    </div>
+                  </>
+                ) : null}
               </GlassCard>
             </AnimatedSection>
 
@@ -89,13 +113,13 @@ export function SubscriptionScreen() {
               <GlassCard className="h-full p-8">
                 <p className="eyebrow">Monthly grant</p>
                 <p className="mt-5 font-light leading-none text-bronze-glow text-[clamp(2rem,4vw,2.8rem)]">
-                  {currentSubscription.creditsGrant}
+                  {loading ? "—" : creditsGrant}
                 </p>
                 <p className="mt-3 text-xs uppercase tracking-[0.22em] text-foreground/50">
                   credits per month
                 </p>
                 <p className="mt-6 text-sm leading-relaxed text-foreground/55">
-                  Paid membership credit grants are planned for a future billing release. Gameplay
+                  Paid membership credit grants follow the authoritative plan catalog. Gameplay
                   credits follow the rollover rules on your credit history page.
                 </p>
                 <GeoButton asChild variant="secondary" size="sm" className="mt-8">

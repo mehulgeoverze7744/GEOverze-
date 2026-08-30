@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { PageShell } from "@/components/layout/PageShell";
 
+import { usePricingCatalog } from "../hooks/usePricingCatalog";
 import type { BillingCycle } from "../data/plans";
 import { BenefitGrid } from "./BenefitGrid";
 import { ComparisonTable } from "./ComparisonTable";
@@ -17,14 +18,20 @@ import { WhyUpgrade } from "./WhyUpgrade";
 /** Pricing home — the full membership story. Nothing billable yet. */
 export function PricingPage() {
   const [cycle, setCycle] = useState<BillingCycle>("monthly");
+  const { plans, comparisonGroups, loading, error } = usePricingCatalog();
 
   return (
     <PageShell>
       <PricingHero cycle={cycle} onCycleChange={setCycle} />
-      <PlanGrid cycle={cycle} />
+      <PlanGrid cycle={cycle} plans={plans} loading={loading} error={error} />
       <BenefitGrid />
       <WhyUpgrade />
-      <ComparisonTable />
+      <ComparisonTable
+        plans={plans}
+        comparisonGroups={comparisonGroups}
+        loading={loading}
+        error={error}
+      />
       <RewardsExplainer />
       <CreatorMembership />
       <SuccessStories />

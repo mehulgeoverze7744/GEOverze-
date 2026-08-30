@@ -9,7 +9,7 @@ export const Route = createFileRoute("/pricing/compare")({
       {
         name: "description",
         content:
-          "A full feature comparison of GEOverze Explorer, Pro and Advance memberships — play limits, library access, rewards and Creator Studio.",
+          "A full feature comparison of GEOverze Explorer, Basic, Pro and Advance memberships — play limits, library access, rewards and Creator Studio.",
       },
       { property: "og:title", content: "Compare Plans — GEOverze Membership" },
       {

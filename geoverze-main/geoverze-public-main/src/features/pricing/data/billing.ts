@@ -19,7 +19,7 @@ export const currentSubscription: SubscriptionState = {
   cycle: "monthly",
   since: "12 March 2026",
   renewsOn: "12 September 2026",
-  creditsGrant: 400,
+  creditsGrant: 20,
 };
 
 export type Invoice = {
@@ -35,35 +35,35 @@ export const invoiceHistory: Invoice[] = [
     id: "GV-2026-0812",
     date: "12 Aug 2026",
     description: "Pro — monthly",
-    amount: "$9.00",
+    amount: "$4.99",
     status: "paid",
   },
   {
     id: "GV-2026-0712",
     date: "12 Jul 2026",
     description: "Pro — monthly",
-    amount: "$9.00",
+    amount: "$4.99",
     status: "paid",
   },
   {
     id: "GV-2026-0612",
     date: "12 Jun 2026",
     description: "Pro — monthly",
-    amount: "$9.00",
+    amount: "$4.99",
     status: "paid",
   },
   {
     id: "GV-2026-0512",
     date: "12 May 2026",
     description: "Pro — monthly",
-    amount: "$9.00",
+    amount: "$4.99",
     status: "paid",
   },
   {
     id: "GV-2026-0412",
     date: "12 Apr 2026",
     description: "Pro — monthly",
-    amount: "$9.00",
+    amount: "$4.99",
     status: "refunded",
   },
 ];

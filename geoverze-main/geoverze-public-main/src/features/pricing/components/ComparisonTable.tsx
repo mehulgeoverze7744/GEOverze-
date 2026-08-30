@@ -6,8 +6,8 @@ import { SectionContainer } from "@/components/shared/SectionContainer";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { cn } from "@/lib/utils";
 
-import { comparisonGroups, type ComparisonValue } from "../data/comparison";
-import { pricingPlans, type TierId } from "../data/plans";
+import type { ComparisonGroup, ComparisonValue } from "../data/comparison";
+import type { PricingPlan, TierId } from "../data/plans";
 
 function ValueCell({ value }: { value: ComparisonValue }) {
   if (value === true)
@@ -28,7 +28,41 @@ function ValueCell({ value }: { value: ComparisonValue }) {
 }
 
 /** Desktop table + mobile per-plan stacks. */
-export function ComparisonTable({ heading = true }: { heading?: boolean }) {
+export function ComparisonTable({
+  heading = true,
+  plans,
+  comparisonGroups,
+  loading = false,
+  error = null,
+}: {
+  heading?: boolean;
+  plans: PricingPlan[];
+  comparisonGroups: ComparisonGroup[];
+  loading?: boolean;
+  error?: string | null;
+}) {
+  if (error) {
+    return (
+      <section aria-labelledby="compare-heading" className="pb-[var(--space-section-sm)]">
+        <SectionContainer size="wide">
+          <GlassCard className="p-8 text-center text-sm text-foreground/60">
+            Plan comparison could not be loaded. {error}
+          </GlassCard>
+        </SectionContainer>
+      </section>
+    );
+  }
+
+  if (loading || plans.length === 0) {
+    return (
+      <section aria-labelledby="compare-heading" className="pb-[var(--space-section-sm)]">
+        <SectionContainer size="wide">
+          <GlassCard className="h-64 animate-pulse p-0" aria-hidden />
+        </SectionContainer>
+      </section>
+    );
+  }
+
   return (
     <section aria-labelledby="compare-heading" className="pb-[var(--space-section-sm)]">
       <SectionContainer size="wide">
@@ -53,16 +87,16 @@ export function ComparisonTable({ heading = true }: { heading?: boolean }) {
               <tr className="border-b border-bronze/15">
                 <th
                   scope="col"
-                  className="w-[38%] px-8 py-6 text-[0.62rem] uppercase tracking-[0.28em] text-foreground/50"
+                  className="w-[30%] px-6 py-6 text-[0.62rem] uppercase tracking-[0.28em] text-foreground/50"
                 >
                   Feature
                 </th>
-                {pricingPlans.map((plan) => (
+                {plans.map((plan) => (
                   <th
                     key={plan.id}
                     scope="col"
                     className={cn(
-                      "px-6 py-6 text-center text-[0.66rem] uppercase tracking-[0.28em]",
+                      "px-4 py-6 text-center text-[0.62rem] uppercase tracking-[0.24em]",
                       plan.featured ? "text-bronze-glow" : "text-foreground/55",
                     )}
                   >
@@ -76,25 +110,25 @@ export function ComparisonTable({ heading = true }: { heading?: boolean }) {
                 <tr>
                   <th
                     scope="colgroup"
-                    colSpan={pricingPlans.length + 1}
-                    className="bg-bronze/[0.04] px-8 py-3 text-left text-[0.6rem] uppercase tracking-[0.3em] text-bronze"
+                    colSpan={plans.length + 1}
+                    className="bg-bronze/[0.04] px-6 py-3 text-left text-[0.6rem] uppercase tracking-[0.3em] text-bronze"
                   >
                     {group.title}
                   </th>
                 </tr>
                 {group.rows.map((row) => (
                   <tr key={row.feature} className="border-t border-bronze/10">
-                    <th scope="row" className="px-8 py-5 align-top font-normal">
+                    <th scope="row" className="px-6 py-5 align-top font-normal">
                       <span className="block text-sm text-foreground/85">{row.feature}</span>
                       <span className="mt-1 block text-xs leading-relaxed text-foreground/50">
                         {row.detail}
                       </span>
                     </th>
-                    {pricingPlans.map((plan) => (
+                    {plans.map((plan) => (
                       <td
                         key={plan.id}
                         className={cn(
-                          "px-6 py-5 text-center align-middle",
+                          "px-4 py-5 text-center align-middle",
                           plan.featured && "bg-bronze/[0.03]",
                         )}
                       >
@@ -110,7 +144,7 @@ export function ComparisonTable({ heading = true }: { heading?: boolean }) {
 
         {/* Tablet & mobile */}
         <div className="grid gap-5 lg:hidden">
-          {pricingPlans.map((plan, i) => (
+          {plans.map((plan, i) => (
             <AnimatedSection key={plan.id} delay={i * 80}>
               <GlassCard strong={plan.featured} className="p-7">
                 <p className="text-[0.66rem] uppercase tracking-[0.3em] text-bronze">{plan.name}</p>

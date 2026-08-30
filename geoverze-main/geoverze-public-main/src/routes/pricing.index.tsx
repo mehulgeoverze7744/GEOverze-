@@ -9,12 +9,13 @@ export const Route = createFileRoute("/pricing/")({
       {
         name: "description",
         content:
-          "Choose your journey through GEOverze: a free Explorer tier, Pro for unlimited play and Advance for creators.",
+          "Choose your journey through GEOverze: Explorer, Basic, Pro and Advance memberships for every kind of explorer.",
       },
       { property: "og:title", content: "Membership & Pricing — GEOverze" },
       {
         property: "og:description",
-        content: "Explorer, Pro and Advance memberships for the GEOverze geography universe.",
+        content:
+          "Explorer, Basic, Pro and Advance memberships for the GEOverze geography universe.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

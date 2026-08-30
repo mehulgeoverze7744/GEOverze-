@@ -35,13 +35,18 @@ export const PlanCard = memo(function PlanCard({
       <p className="text-[0.66rem] uppercase tracking-[0.3em] text-bronze">{plan.name}</p>
       <p className="mt-3 text-sm text-foreground/50">{plan.positioning}</p>
 
-      <div className="mt-7 flex items-baseline gap-2">
-        <span className="font-light leading-none text-foreground text-[clamp(2.1rem,3.6vw,3rem)]">
-          {price.amount}
-        </span>
-        <span className="text-xs uppercase tracking-[0.2em] text-foreground/50">
-          {price.cadence}
-        </span>
+      <div className="mt-7">
+        {price.compareAt ? (
+          <p className="text-sm text-foreground/45 line-through">{price.compareAt}</p>
+        ) : null}
+        <div className="flex items-baseline gap-2">
+          <span className="font-light leading-none text-foreground text-[clamp(2.1rem,3.6vw,3rem)]">
+            {price.amount}
+          </span>
+          <span className="text-xs uppercase tracking-[0.2em] text-foreground/50">
+            {price.cadence}
+          </span>
+        </div>
       </div>
       {price.note ? <p className="mt-3 text-xs text-foreground/50">{price.note}</p> : null}
 
