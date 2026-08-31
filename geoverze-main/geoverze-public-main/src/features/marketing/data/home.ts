@@ -4,23 +4,15 @@ import {
   Compass,
   CalendarDays,
   Crown,
-  Flag,
   Gamepad2,
   Globe2,
-  Landmark,
-  Layers,
   Library,
-  LineChart,
-  Map,
-  Mountain,
   Radio,
-  Sparkles,
   Store,
   Target,
   Trophy,
   UserRound,
   Users,
-  Waves,
   Gift,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -79,70 +71,37 @@ export const whyPillars: HomeFeature[] = [
   },
 ];
 
-/** Section 2 — Explore the World. */
-export const exploreCategories: { icon: LucideIcon; label: string; note: string }[] = [
-  { icon: Flag, label: "Countries", note: "195 sovereign states" },
-  { icon: Landmark, label: "Capitals", note: "Seats of every nation" },
-  { icon: Flag, label: "Flags", note: "Colours and symbolism" },
-  { icon: Map, label: "Maps", note: "Borders and projections" },
-  { icon: Mountain, label: "Mountains", note: "Ranges and summits" },
-  { icon: Waves, label: "Rivers", note: "Basins and deltas" },
-  { icon: Waves, label: "Oceans", note: "Seas, currents, trenches" },
-  { icon: Landmark, label: "Landmarks", note: "Built and natural wonders" },
-  { icon: Sparkles, label: "Cultures", note: "Languages and traditions" },
-  { icon: Layers, label: "Continents", note: "The seven great masses" },
-];
-
-/** Section 3 — Learn Through Play. */
-export const learnConcepts: HomeFeature[] = [
-  {
-    icon: Gamepad2,
-    title: "Interactive quizzes",
-    description: "Knowledge is tested through play, so recall becomes a reflex instead of a chore.",
-  },
-  {
-    icon: Target,
-    title: "Challenges",
-    description: "Focused objectives give each session a purpose and a clear sense of progress.",
-  },
-  {
-    icon: Award,
-    title: "Achievements",
-    description: "Milestones mark real understanding — earned across regions, themes and mastery.",
-  },
-  {
-    icon: LineChart,
-    title: "Progress & personalisation",
-    description: "The experience adapts to what you know and gently returns to what you don't.",
-  },
-];
-
 /** Section 4 — Compete (roadmap framing). */
-export const competeItems: { icon: LucideIcon; title: string; description: string }[] = [
+export const competeItems: HomeFeature[] = [
   {
     icon: Trophy,
     title: "Leaderboards",
     description: "Global and regional standings that reward accuracy as much as speed.",
+    imageSrc: "/assets/home/compete/leaderboards.jpg",
   },
   {
     icon: CalendarDays,
     title: "Daily challenges",
     description: "One shared question set each day, played by the entire community.",
+    imageSrc: "/assets/home/compete/daily-challenges.jpg",
   },
   {
     icon: Award,
     title: "Tournaments",
     description: "Seasonal brackets where explorers advance round by round.",
+    imageSrc: "/assets/home/compete/tournaments.jpg",
   },
   {
     icon: Radio,
     title: "Live events",
     description: "Scheduled expeditions played together in real time.",
+    imageSrc: "/assets/home/compete/live-events.jpg",
   },
   {
     icon: Gift,
     title: "Rewards",
     description: "Recognition, credits and collectibles earned through participation.",
+    imageSrc: "/assets/home/compete/rewards.jpg",
   },
 ];
 

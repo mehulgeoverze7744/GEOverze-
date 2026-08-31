@@ -62,6 +62,12 @@ import { Route as StoreRedemptionsRouteImport } from './routes/store.redemptions
 import { Route as SubscriptionsIndexRouteImport } from './routes/subscriptions.index'
 import { Route as SubscriptionsAnalyticsRouteImport } from './routes/subscriptions.analytics'
 import { Route as SubscriptionsSubscribersRouteImport } from './routes/subscriptions.subscribers'
+import { Route as LibraryCollectionsIndexRouteImport } from './routes/library.collections.index'
+import { Route as LibraryCollectionsCollectionIdRouteImport } from './routes/library.collections.$collectionId'
+import { Route as LibraryCollectionsNewRouteImport } from './routes/library.collections.new'
+import { Route as LibraryCreatorsIndexRouteImport } from './routes/library.creators.index'
+import { Route as LibraryCreatorsHandleRouteImport } from './routes/library.creators.$handle'
+import { Route as LibraryCreatorsNewRouteImport } from './routes/library.creators.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -329,6 +335,37 @@ const SubscriptionsSubscribersRoute =
     path: '/subscribers',
     getParentRoute: () => SubscriptionsRoute,
   } as any)
+const LibraryCollectionsIndexRoute = LibraryCollectionsIndexRouteImport.update({
+  id: '/collections/',
+  path: '/collections/',
+  getParentRoute: () => LibraryRoute,
+} as any)
+const LibraryCollectionsCollectionIdRoute =
+  LibraryCollectionsCollectionIdRouteImport.update({
+    id: '/collections/$collectionId',
+    path: '/collections/$collectionId',
+    getParentRoute: () => LibraryRoute,
+  } as any)
+const LibraryCollectionsNewRoute = LibraryCollectionsNewRouteImport.update({
+  id: '/collections/new',
+  path: '/collections/new',
+  getParentRoute: () => LibraryRoute,
+} as any)
+const LibraryCreatorsIndexRoute = LibraryCreatorsIndexRouteImport.update({
+  id: '/creators/',
+  path: '/creators/',
+  getParentRoute: () => LibraryRoute,
+} as any)
+const LibraryCreatorsHandleRoute = LibraryCreatorsHandleRouteImport.update({
+  id: '/creators/$handle',
+  path: '/creators/$handle',
+  getParentRoute: () => LibraryRoute,
+} as any)
+const LibraryCreatorsNewRoute = LibraryCreatorsNewRouteImport.update({
+  id: '/creators/new',
+  path: '/creators/new',
+  getParentRoute: () => LibraryRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -384,6 +421,12 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof SettingsIndexRoute
   '/store/': typeof StoreIndexRoute
   '/subscriptions/': typeof SubscriptionsIndexRoute
+  '/library/collections/$collectionId': typeof LibraryCollectionsCollectionIdRoute
+  '/library/collections/new': typeof LibraryCollectionsNewRoute
+  '/library/creators/$handle': typeof LibraryCreatorsHandleRoute
+  '/library/creators/new': typeof LibraryCreatorsNewRoute
+  '/library/collections/': typeof LibraryCollectionsIndexRoute
+  '/library/creators/': typeof LibraryCreatorsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -430,6 +473,12 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsIndexRoute
   '/store': typeof StoreIndexRoute
   '/subscriptions': typeof SubscriptionsIndexRoute
+  '/library/collections/$collectionId': typeof LibraryCollectionsCollectionIdRoute
+  '/library/collections/new': typeof LibraryCollectionsNewRoute
+  '/library/creators/$handle': typeof LibraryCreatorsHandleRoute
+  '/library/creators/new': typeof LibraryCreatorsNewRoute
+  '/library/collections': typeof LibraryCollectionsIndexRoute
+  '/library/creators': typeof LibraryCreatorsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -486,6 +535,12 @@ export interface FileRoutesById {
   '/settings/': typeof SettingsIndexRoute
   '/store/': typeof StoreIndexRoute
   '/subscriptions/': typeof SubscriptionsIndexRoute
+  '/library/collections/$collectionId': typeof LibraryCollectionsCollectionIdRoute
+  '/library/collections/new': typeof LibraryCollectionsNewRoute
+  '/library/creators/$handle': typeof LibraryCreatorsHandleRoute
+  '/library/creators/new': typeof LibraryCreatorsNewRoute
+  '/library/collections/': typeof LibraryCollectionsIndexRoute
+  '/library/creators/': typeof LibraryCreatorsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -543,6 +598,12 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/store/'
     | '/subscriptions/'
+    | '/library/collections/$collectionId'
+    | '/library/collections/new'
+    | '/library/creators/$handle'
+    | '/library/creators/new'
+    | '/library/collections/'
+    | '/library/creators/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -589,6 +650,12 @@ export interface FileRouteTypes {
     | '/settings'
     | '/store'
     | '/subscriptions'
+    | '/library/collections/$collectionId'
+    | '/library/collections/new'
+    | '/library/creators/$handle'
+    | '/library/creators/new'
+    | '/library/collections'
+    | '/library/creators'
   id:
     | '__root__'
     | '/'
@@ -644,6 +711,12 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/store/'
     | '/subscriptions/'
+    | '/library/collections/$collectionId'
+    | '/library/collections/new'
+    | '/library/creators/$handle'
+    | '/library/creators/new'
+    | '/library/collections/'
+    | '/library/creators/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1044,6 +1117,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SubscriptionsSubscribersRouteImport
       parentRoute: typeof SubscriptionsRoute
     }
+    '/library/collections/': {
+      id: '/library/collections/'
+      path: '/collections'
+      fullPath: '/library/collections/'
+      preLoaderRoute: typeof LibraryCollectionsIndexRouteImport
+      parentRoute: typeof LibraryRoute
+    }
+    '/library/collections/$collectionId': {
+      id: '/library/collections/$collectionId'
+      path: '/collections/$collectionId'
+      fullPath: '/library/collections/$collectionId'
+      preLoaderRoute: typeof LibraryCollectionsCollectionIdRouteImport
+      parentRoute: typeof LibraryRoute
+    }
+    '/library/collections/new': {
+      id: '/library/collections/new'
+      path: '/collections/new'
+      fullPath: '/library/collections/new'
+      preLoaderRoute: typeof LibraryCollectionsNewRouteImport
+      parentRoute: typeof LibraryRoute
+    }
+    '/library/creators/': {
+      id: '/library/creators/'
+      path: '/creators'
+      fullPath: '/library/creators/'
+      preLoaderRoute: typeof LibraryCreatorsIndexRouteImport
+      parentRoute: typeof LibraryRoute
+    }
+    '/library/creators/$handle': {
+      id: '/library/creators/$handle'
+      path: '/creators/$handle'
+      fullPath: '/library/creators/$handle'
+      preLoaderRoute: typeof LibraryCreatorsHandleRouteImport
+      parentRoute: typeof LibraryRoute
+    }
+    '/library/creators/new': {
+      id: '/library/creators/new'
+      path: '/creators/new'
+      fullPath: '/library/creators/new'
+      preLoaderRoute: typeof LibraryCreatorsNewRouteImport
+      parentRoute: typeof LibraryRoute
+    }
   }
 }
 
@@ -1096,12 +1211,24 @@ interface LibraryRouteChildren {
   LibraryResourceIdRoute: typeof LibraryResourceIdRoute
   LibraryNewRoute: typeof LibraryNewRoute
   LibraryIndexRoute: typeof LibraryIndexRoute
+  LibraryCollectionsCollectionIdRoute: typeof LibraryCollectionsCollectionIdRoute
+  LibraryCollectionsNewRoute: typeof LibraryCollectionsNewRoute
+  LibraryCreatorsHandleRoute: typeof LibraryCreatorsHandleRoute
+  LibraryCreatorsNewRoute: typeof LibraryCreatorsNewRoute
+  LibraryCollectionsIndexRoute: typeof LibraryCollectionsIndexRoute
+  LibraryCreatorsIndexRoute: typeof LibraryCreatorsIndexRoute
 }
 
 const LibraryRouteChildren: LibraryRouteChildren = {
   LibraryResourceIdRoute: LibraryResourceIdRoute,
   LibraryNewRoute: LibraryNewRoute,
   LibraryIndexRoute: LibraryIndexRoute,
+  LibraryCollectionsCollectionIdRoute: LibraryCollectionsCollectionIdRoute,
+  LibraryCollectionsNewRoute: LibraryCollectionsNewRoute,
+  LibraryCreatorsHandleRoute: LibraryCreatorsHandleRoute,
+  LibraryCreatorsNewRoute: LibraryCreatorsNewRoute,
+  LibraryCollectionsIndexRoute: LibraryCollectionsIndexRoute,
+  LibraryCreatorsIndexRoute: LibraryCreatorsIndexRoute,
 }
 
 const LibraryRouteWithChildren =

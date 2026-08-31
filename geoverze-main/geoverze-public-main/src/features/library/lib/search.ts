@@ -1,11 +1,12 @@
 /**
  * Library search.
  *
- * Pure ranking over the local article, collection, creator and entity records.
- * A full-text backend query later replaces `searchLibrary` only.
+ * Production paths use Supabase FTS via `searchLibraryAsync`.
+ * Mock index below is retained for offline/dev fixtures only.
  */
 import type { LucideIcon } from "lucide-react";
 
+import { fetchCreatorSearchHits, fetchLibraryScopedHits } from "../data/fetchLibrarySearch";
 import { ARTICLES } from "../data/articles";
 import { COLLECTIONS } from "../data/collections";
 import { CREATORS } from "../data/creators";
@@ -32,7 +33,7 @@ type Indexed = {
   target: LibraryHit["target"];
 };
 
-/** One flat index across every searchable kind. */
+/** Dev/offline mock index — not used by browse or global search in production. */
 export const LIBRARY_INDEX: readonly Indexed[] = [
   ...ARTICLES.map((a) => ({
     id: `a-${a.slug}`,
@@ -68,7 +69,22 @@ export const LIBRARY_INDEX: readonly Indexed[] = [
   })),
 ];
 
-/** Prefix, substring and keyword ranking. */
+/** Supabase FTS + creator lookup for library-scoped search. */
+export async function searchLibraryAsync(query: string, limit = 24): Promise<LibraryHit[]> {
+  const q = query.trim();
+  if (q.length === 0) return [];
+
+  const [articles, creators] = await Promise.all([
+    fetchLibraryScopedHits(q, limit),
+    fetchCreatorSearchHits(q, Math.min(8, limit)),
+  ]);
+
+  return [...articles, ...creators]
+    .sort((a, b) => b.score - a.score || a.title.localeCompare(b.title))
+    .slice(0, limit);
+}
+
+/** Mock prefix ranking — dev/offline only. */
 export function searchLibrary(query: string, limit = 24): LibraryHit[] {
   const q = query.trim().toLowerCase();
   if (q.length === 0) return [];

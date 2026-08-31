@@ -7,6 +7,7 @@ import { ChartCard } from "@/components/shared/chart-card";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { DataTable } from "@/components/shared/data-table";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
+import { EmptyState } from "@/components/shared/empty-state";
 import { PageBody } from "@/components/shared/page-body";
 import { PageHeader } from "@/components/shared/page-header";
 import { SearchBar } from "@/components/shared/search-bar";
@@ -17,19 +18,20 @@ import { buildLibraryColumns } from "@/features/library/columns";
 import {
   libraryCategorySeries,
   libraryRegionSeries,
-  libraryResources,
   libraryViewsSeries,
   popularCategories,
   summarizeLibrary,
   topArticles,
 } from "@/features/library/data";
 import { filterLibrary } from "@/features/library/filtering";
+import { useLibraryMutations } from "@/features/library/hooks/useLibraryMutations";
+import { useLibraryResources } from "@/features/library/hooks/useLibraryResources";
 import { LibraryFilters } from "@/features/library/library-filters";
 import { LibraryStats } from "@/features/library/library-stats";
 import { emptyLibraryFilters, type LibraryFilterState } from "@/features/library/types";
-import { useLibraryActions } from "@/features/library/use-library-actions";
 import { catalogMonths } from "@/lib/catalog";
 import { num } from "@/lib/format";
+import { notReady } from "@/lib/placeholder";
 
 export const Route = createFileRoute("/library/")({
   head: () => ({
@@ -57,29 +59,45 @@ function LibraryDirectoryPage() {
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<LibraryFilterState>(emptyLibraryFilters);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [deleteIds, setDeleteIds] = useState<string[] | null>(null);
 
-  const actions = useLibraryActions(libraryResources);
+  const { resources, loading, error, refetch } = useLibraryResources();
+  const mutations = useLibraryMutations();
+
   const rows = useMemo(
-    () => filterLibrary(actions.resources, query, filters),
-    [actions.resources, query, filters],
+    () => filterLibrary(resources, query, filters),
+    [resources, query, filters],
   );
   const columns = useMemo(() => buildLibraryColumns(query), [query]);
-  const summary = useMemo(() => summarizeLibrary(actions.resources), [actions.resources]);
-  const views = useMemo(() => libraryViewsSeries(actions.resources), [actions.resources]);
-  const categories = useMemo(() => libraryCategorySeries(actions.resources), [actions.resources]);
-  const regionSeries = useMemo(() => libraryRegionSeries(actions.resources), [actions.resources]);
+  const summary = useMemo(() => summarizeLibrary(resources), [resources]);
+  const views = useMemo(() => libraryViewsSeries(resources), [resources]);
+  const categories = useMemo(() => libraryCategorySeries(resources), [resources]);
+  const regionSeries = useMemo(() => libraryRegionSeries(resources), [resources]);
   const featured = useMemo(
-    () => actions.resources.filter((item) => item.featured).slice(0, 4),
-    [actions.resources],
+    () => resources.filter((item) => item.featured).slice(0, 4),
+    [resources],
   );
-  const top = useMemo(() => topArticles(actions.resources), [actions.resources]);
-  const popular = useMemo(() => popularCategories(actions.resources), [actions.resources]);
+  const top = useMemo(() => topArticles(resources), [resources]);
+  const popular = useMemo(() => popularCategories(resources), [resources]);
 
-  const refresh = () => {
-    setLoading(true);
-    setTimeout(() => setLoading(false), 500);
-  };
+  if (error) {
+    return (
+      <>
+        <PageHeader title="GEOlibrary Management" />
+        <PageBody>
+          <EmptyState
+            title="Could not load GEOlibrary"
+            description={error}
+            action={
+              <Button size="sm" onClick={refetch}>
+                Retry
+              </Button>
+            }
+          />
+        </PageBody>
+      </>
+    );
+  }
 
   return (
     <>
@@ -88,11 +106,7 @@ function LibraryDirectoryPage() {
         description="Articles, country profiles, continent collections, maps, infographics and PDFs."
         actions={
           <>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={actions.placeholder("Export queued — backend integration pending.")}
-            >
+            <Button size="sm" variant="outline" onClick={notReady("Export queued — backend integration pending.")}>
               <Download className="size-4" aria-hidden="true" />
               Export
             </Button>
@@ -112,7 +126,7 @@ function LibraryDirectoryPage() {
         <div className="grid gap-3 lg:grid-cols-3">
           <ChartCard
             title="Views over time"
-            description="Rolling 12 months across the library"
+            description="Analytics not connected — placeholder only"
             series={views}
             labels={catalogMonths}
             state={loading ? "loading" : "ready"}
@@ -132,7 +146,7 @@ function LibraryDirectoryPage() {
         </div>
 
         <div className="grid gap-3 lg:grid-cols-2">
-          <Widget title="Top articles" description="Highest lifetime views">
+          <Widget title="Top articles" description="Ordered by recency until analytics ship">
             <ol className="divide-y divide-border">
               {top.map((item) => (
                 <li key={item.id} className="flex items-center gap-2 py-2 text-sm">
@@ -148,7 +162,7 @@ function LibraryDirectoryPage() {
               ))}
             </ol>
           </Widget>
-          <Widget title="Popular categories" description="Views by category">
+          <Widget title="Popular categories" description="Distribution by resource kind">
             <ol className="divide-y divide-border">
               {popular.map((entry) => (
                 <li key={entry.label} className="flex items-center gap-2 py-2 text-sm">
@@ -180,7 +194,7 @@ function LibraryDirectoryPage() {
                   {item.title}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {item.category} · {num(item.views)} views
+                  {item.category} · {item.status}
                 </p>
               </Link>
             ))}
@@ -191,25 +205,40 @@ function LibraryDirectoryPage() {
           selectedCount={selectedIds.length}
           onClearSelection={() => setSelectedIds([])}
           bulkActions={[
-            { label: "Publish selected", onSelect: () => actions.publish(selectedIds) },
-            { label: "Unpublish selected", onSelect: () => actions.unpublish(selectedIds) },
+            {
+              label: "Publish selected",
+              onSelect: () => {
+                selectedIds.forEach((id) => mutations.publish.mutate(id));
+                setSelectedIds([]);
+              },
+            },
+            {
+              label: "Unpublish selected",
+              onSelect: () => {
+                selectedIds.forEach((id) => mutations.unpublish.mutate(id));
+                setSelectedIds([]);
+              },
+            },
             {
               label: "Archive selected",
               icon: <Archive className="size-4" aria-hidden="true" />,
-              onSelect: () => actions.requestArchive(selectedIds),
+              onSelect: () => {
+                selectedIds.forEach((id) => mutations.archive.mutate(id));
+                setSelectedIds([]);
+              },
             },
             {
               label: "Delete selected",
               variant: "destructive",
               icon: <Trash2 className="size-4" aria-hidden="true" />,
-              onSelect: () => actions.requestDelete(selectedIds),
+              onSelect: () => setDeleteIds([...selectedIds]),
             },
           ]}
           actions={[
             {
               label: "Refresh",
               icon: <RefreshCw className="size-4" aria-hidden="true" />,
-              onSelect: refresh,
+              onSelect: refetch,
             },
           ]}
         >
@@ -225,7 +254,7 @@ function LibraryDirectoryPage() {
         <LibraryFilters value={filters} onChange={setFilters} />
 
         <p className="text-xs text-muted-foreground" aria-live="polite">
-          {num(rows.length)} of {num(actions.resources.length)} resources
+          {num(rows.length)} of {num(resources.length)} resources
         </p>
 
         <DataTable
@@ -261,7 +290,7 @@ function LibraryDirectoryPage() {
             <div className="space-y-1">
               <p className="text-sm font-medium text-foreground">{item.title}</p>
               <p className="text-xs text-muted-foreground">
-                {item.category} · {item.author} · {num(item.views)} views
+                {item.category} · {item.author} · {item.status}
               </p>
               <div className="flex items-center gap-2">
                 <DifficultyBadge level={item.difficulty} />
@@ -275,31 +304,41 @@ function LibraryDirectoryPage() {
               onSelect: (item) =>
                 navigate({ to: "/library/$resourceId", params: { resourceId: item.id } }),
             },
-            { label: "Publish", onSelect: (item) => actions.publish([item.id]) },
-            { label: "Send to review", onSelect: (item) => actions.submitForReview([item.id]) },
-            { label: "Toggle featured", onSelect: (item) => actions.toggleFeatured(item.id) },
-            { label: "Duplicate", onSelect: (item) => actions.duplicate(item) },
-            { label: "Archive", onSelect: (item) => actions.requestArchive([item.id]) },
+            { label: "Publish", onSelect: (item) => mutations.publish.mutate(item.id) },
+            {
+              label: "Send to review",
+              onSelect: (item) => mutations.submitForReview.mutate(item.id),
+            },
+            {
+              label: "Toggle featured",
+              onSelect: (item) =>
+                mutations.feature.mutate({ id: item.id, featured: !item.featured }),
+            },
+            { label: "Duplicate", onSelect: (item) => mutations.duplicate.mutate(item.id) },
+            { label: "Archive", onSelect: (item) => mutations.archive.mutate(item.id) },
             {
               label: "Delete",
               destructive: true,
-              onSelect: (item) => actions.requestDelete([item.id]),
+              onSelect: (item) => setDeleteIds([item.id]),
             },
           ]}
         />
       </PageBody>
 
-      {actions.confirm && (
+      {deleteIds && (
         <ConfirmDialog
           open
-          onOpenChange={(next) => !next && actions.setConfirm(null)}
-          title={actions.confirm.title}
-          description={actions.confirm.description}
-          confirmLabel={actions.confirm.confirmLabel}
-          destructive={actions.confirm.destructive}
+          onOpenChange={(next) => !next && setDeleteIds(null)}
+          title={
+            deleteIds.length === 1 ? "Delete this resource?" : `Delete ${deleteIds.length} resources?`
+          }
+          description="The resource is removed from GEOlibrary. This cannot be undone."
+          confirmLabel="Delete"
+          destructive
           onConfirm={() => {
-            actions.confirm?.onConfirm();
-            actions.setConfirm(null);
+            deleteIds.forEach((id) => mutations.remove.mutate(id));
+            setDeleteIds(null);
+            setSelectedIds([]);
           }}
         />
       )}

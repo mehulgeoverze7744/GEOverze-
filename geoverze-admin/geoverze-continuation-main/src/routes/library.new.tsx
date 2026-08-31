@@ -2,9 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { PageBody } from "@/components/shared/page-body";
 import { PageHeader } from "@/components/shared/page-header";
-import { libraryResources } from "@/features/library/data";
+import { useLibraryMutations } from "@/features/library/hooks/useLibraryMutations";
 import { ResourceEditor, createDraftResource } from "@/features/library/resource-editor";
-import { useLibraryActions } from "@/features/library/use-library-actions";
 
 export const Route = createFileRoute("/library/new")({
   head: () => ({
@@ -28,7 +27,7 @@ export const Route = createFileRoute("/library/new")({
 
 function NewResourcePage() {
   const navigate = useNavigate();
-  const actions = useLibraryActions(libraryResources);
+  const mutations = useLibraryMutations();
 
   return (
     <>
@@ -42,8 +41,11 @@ function NewResourcePage() {
           submitLabel="Create resource"
           onCancel={() => navigate({ to: "/library" })}
           onSave={(resource) => {
-            actions.save(resource);
-            navigate({ to: "/library" });
+            mutations.create.mutate(resource, {
+              onSuccess: (created) => {
+                navigate({ to: "/library/$resourceId", params: { resourceId: created.id } });
+              },
+            });
           }}
         />
       </PageBody>

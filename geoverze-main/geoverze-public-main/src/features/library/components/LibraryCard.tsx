@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { Bookmark, Clock, Eye, Heart } from "lucide-react";
 
-import { CoverArt } from "@/features/play/components/CoverArt";
 import { cn } from "@/lib/utils";
 
 import type { Article } from "../data/articles";
+import { LibraryMediaImage } from "./LibraryMediaImage";
 import { categoryIcon, categoryLabel, difficultyLabel } from "../data/taxonomy";
 import { creatorByHandle } from "../data/creators";
 
@@ -96,7 +96,12 @@ export function LibraryCard({
         )}
       >
         <div className="hidden w-28 shrink-0 overflow-hidden rounded-xl sm:block">
-          <CoverArt art={article.slug} icon={Icon} ratio="square" />
+          <LibraryMediaImage
+            storagePath={article.coverArtKey}
+            fallbackArt={article.slug}
+            icon={Icon}
+            ratio="square"
+          />
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-[0.6rem] uppercase tracking-[0.22em] text-bronze/90">
@@ -135,7 +140,7 @@ export function LibraryCard({
       )}
     >
       <div className="relative">
-        <CoverArt art={article.slug} icon={Icon} />
+        <LibraryMediaImage storagePath={article.coverArtKey} fallbackArt={article.slug} icon={Icon} />
         <span className="absolute right-3 top-3 rounded-full border border-bronze/35 bg-[oklch(0.12_0.006_60/0.85)] px-3 py-1 text-[0.58rem] uppercase tracking-[0.2em] text-bronze/85">
           {categoryLabel(article.category)}
         </span>

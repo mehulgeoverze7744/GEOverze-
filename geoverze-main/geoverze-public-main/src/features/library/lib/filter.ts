@@ -75,7 +75,9 @@ export function sortArticles(articles: readonly Article[], sort: SortId): Articl
       return list.sort((a, b) => a.minutes - b.minutes);
     case "popular":
     default:
-      return list.sort((a, b) => b.views - a.views);
+      return list.sort(
+        (a, b) => b.views - a.views || b.publishedAt.localeCompare(a.publishedAt),
+      );
   }
 }
 
@@ -84,22 +86,29 @@ export const readingTimeLabel = (id: ReadingTimeId) =>
   READING_TIMES.find((t) => t.id === id)?.label ?? "Any length";
 
 /** Newest first, for the "Recently added" rail. */
-export const recentArticles = (limit = 6) => sortArticles(ARTICLES, "newest").slice(0, limit);
+export const recentArticles = (limit = 6, source: readonly Article[] = ARTICLES) =>
+  sortArticles(source, "newest").slice(0, limit);
 
-/** Most viewed, for "Trending". */
-export const trendingArticles = (limit = 6) => sortArticles(ARTICLES, "popular").slice(0, limit);
+/** Most viewed, for "Trending". Falls back to recency when views are unavailable. */
+export const trendingArticles = (limit = 6, source: readonly Article[] = ARTICLES) =>
+  sortArticles(source, "popular").slice(0, limit);
 
 /** Quick, beginner-friendly entries used as the neutral recommendation source. */
-export function recommendedArticles(limit = 6, exclude: readonly string[] = []): Article[] {
+export function recommendedArticles(
+  limit = 6,
+  source: readonly Article[] = ARTICLES,
+  exclude: readonly string[] = [],
+): Article[] {
   const skip = new Set(exclude);
-  return ARTICLES.filter((a) => !skip.has(a.slug))
-    .sort((a, b) => b.bookmarks / b.minutes - a.bookmarks / a.minutes)
+  return source
+    .filter((a) => !skip.has(a.slug))
+    .sort((a, b) => b.bookmarks / b.minutes - a.bookmarks / a.minutes || b.publishedAt.localeCompare(a.publishedAt))
     .slice(0, limit);
 }
 
 /** Articles by a creator handle. */
-export const articlesByCreator = (handle: string) =>
+export const articlesByCreator = (handle: string, source: readonly Article[] = ARTICLES) =>
   sortArticles(
-    ARTICLES.filter((a) => a.creator === handle),
+    source.filter((a) => a.creator === handle),
     "newest",
   );

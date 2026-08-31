@@ -1,7 +1,5 @@
 import { HomeHero } from "./HomeHero";
 import { WhyGeoverze } from "./home/WhyGeoverze";
-import { ExploreWorld } from "./home/ExploreWorld";
-import { LearnThroughPlay } from "./home/LearnThroughPlay";
 import { Compete } from "./home/Compete";
 import { Ecosystem } from "./home/Ecosystem";
 import { WhyChoose } from "./home/WhyChoose";
@@ -15,8 +13,6 @@ export function HomePage() {
     <>
       <HomeHero />
       <WhyGeoverze />
-      <ExploreWorld />
-      <LearnThroughPlay />
       <Compete />
       <Ecosystem />
       <WhyChoose />

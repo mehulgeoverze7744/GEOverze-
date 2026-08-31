@@ -27,6 +27,11 @@ import {
 } from "@/stores/preferencesStore";
 import { useProgressionStore } from "@/stores/progressionStore";
 
+import {
+  hydrateLibraryState,
+  resetLibraryHydration,
+} from "@/features/library/data/sync-library-state";
+
 import { highestRole, supabase, type AppRole } from "./client";
 
 let initialized = false;
@@ -164,12 +169,15 @@ async function hydrateProfileAndRole(user: User) {
   void hydratePreferences(user);
   // Hydrate progression after profile is resolved (non-blocking).
   void hydrateProgression(user);
+  // Hydrate GEOlibrary bookmarks/progress/likes (non-blocking).
+  void hydrateLibraryState(user);
 }
 
 function applySession(session: Session | null) {
   const { setSession, setRole } = useAuthStore.getState();
 
   if (!session?.user) {
+    resetLibraryHydration();
     setSession(null);
     setRole(null);
     return;

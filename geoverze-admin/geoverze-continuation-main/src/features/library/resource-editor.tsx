@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
-import { Bold, Eye, Italic, List, Paperclip, Plus, Save, X } from "lucide-react";
+import { Bold, Eye, Italic, List, Plus, Save, X } from "lucide-react";
 
-import { SectionHeader } from "@/components/shared/section-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,6 +24,7 @@ import {
   type LibraryStatus,
 } from "@/features/library/types";
 import { formatDate } from "@/features/users/format";
+import { ResourceMediaPanel } from "@/features/library/components/ResourceMediaPanel";
 import {
   allCountries,
   catalogDaysAgo,
@@ -33,11 +33,10 @@ import {
   libraryCategories,
   regions,
 } from "@/lib/catalog";
-import { notReadyNow } from "@/lib/placeholder";
 
 export function createDraftResource(): LibraryResource {
   return {
-    id: `RES-${Math.floor(Math.random() * 9000) + 9000}`,
+    id: "",
     title: "",
     slug: "",
     category: "Article",
@@ -49,12 +48,14 @@ export function createDraftResource(): LibraryResource {
     author: libraryAuthors[0] ?? "Editorial",
     status: "draft",
     featured: false,
+    minAccessTier: null,
     views: 0,
     bookmarks: 0,
     readTime: 5,
     description: "",
     body: "",
     coverLabel: "",
+    coverArtKey: null,
     gallery: [],
     attachments: [],
     seo: {
@@ -193,6 +194,14 @@ export function ResourceEditor({
               onChange={(value) => set("difficulty", value as LibraryDifficulty)}
             />
             <EditorSelect
+              label="Access tier"
+              value={draft.minAccessTier ?? "free"}
+              options={["free", "basic", "pro", "advance"]}
+              onChange={(value) =>
+                set("minAccessTier", value === "free" ? null : value)
+              }
+            />
+            <EditorSelect
               label="Language"
               value={draft.language}
               options={languages}
@@ -296,83 +305,10 @@ export function ResourceEditor({
         </TabsContent>
 
         <TabsContent value="media" className="mt-4 space-y-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="res-cover">Cover image label</Label>
-            <Input
-              id="res-cover"
-              value={draft.coverLabel}
-              onChange={(event) => set("coverLabel", event.target.value)}
-              placeholder="Nile Delta · Africa"
-            />
-            <div className="flex h-36 items-center justify-center rounded-lg border border-dashed border-border-strong bg-muted/30 text-sm text-muted-foreground">
-              {draft.coverLabel || "Cover image upload available after backend integration"}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <SectionHeader title="Gallery" description="Figures rendered inside the article." />
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {draft.gallery.map((figure) => (
-                <div
-                  key={figure}
-                  className="flex h-20 items-center justify-center rounded-md border border-border bg-muted/30 px-2 text-center text-[11px] text-muted-foreground"
-                >
-                  {figure}
-                </div>
-              ))}
-              <Button
-                type="button"
-                variant="outline"
-                className="h-20"
-                onClick={() =>
-                  set("gallery", [...draft.gallery, `figure-${draft.gallery.length + 1}`])
-                }
-              >
-                <Plus className="size-4" aria-hidden="true" />
-                Add figure
-              </Button>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <SectionHeader title="Attachments" description="PDFs, datasets and printable maps." />
-            <ul className="divide-y divide-border rounded-lg border border-border">
-              {draft.attachments.length === 0 && (
-                <li className="p-3 text-sm text-muted-foreground">No attachments yet.</li>
-              )}
-              {draft.attachments.map((attachment) => (
-                <li key={attachment.id} className="flex items-center gap-2 p-3 text-sm">
-                  <Paperclip className="size-4 text-muted-foreground" aria-hidden="true" />
-                  <span className="min-w-0 flex-1 truncate">{attachment.name}</span>
-                  <Badge variant="secondary">{attachment.kind}</Badge>
-                  <span className="text-xs text-muted-foreground tabular">{attachment.size}</span>
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="ghost"
-                    aria-label={`Remove ${attachment.name}`}
-                    onClick={() =>
-                      set(
-                        "attachments",
-                        draft.attachments.filter((entry) => entry.id !== attachment.id),
-                      )
-                    }
-                  >
-                    <X className="size-4" aria-hidden="true" />
-                  </Button>
-                </li>
-              ))}
-            </ul>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => notReadyNow("File uploads are enabled once the backend is connected.")}
-            >
-              <Paperclip className="size-4" aria-hidden="true" />
-              Upload attachment
-            </Button>
-          </div>
+          <ResourceMediaPanel
+            draft={draft}
+            onChange={(patch) => setDraft((prev) => ({ ...prev, ...patch }))}
+          />
         </TabsContent>
 
         <TabsContent value="seo" className="mt-4 space-y-4">

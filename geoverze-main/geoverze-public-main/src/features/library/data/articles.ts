@@ -1,8 +1,8 @@
 /**
- * GEOlibrary articles.
+ * GEOlibrary articles — canonical seed fixture / development reference.
  *
- * Typed, block-based content so the reading experience renders from data. A
- * backend later returns the same shape — only this module is replaced.
+ * Production read paths use Supabase via fetchPublishedArticles.ts.
+ * This module remains the GL-4 seed source of truth.
  */
 import type { CategoryId, ContinentId, DifficultyId } from "./taxonomy";
 
@@ -11,7 +11,7 @@ export type ArticleBlock =
   | { kind: "paragraph"; text: string }
   | { kind: "list"; items: readonly string[]; ordered?: boolean }
   | { kind: "quote"; text: string; attribution?: string }
-  | { kind: "image"; art: string; caption: string }
+  | { kind: "image"; art: string; caption: string; storagePath?: string }
   | { kind: "map"; region: string; caption: string }
   | { kind: "facts"; title: string; facts: readonly { label: string; value: string }[] }
   | { kind: "didYouKnow"; text: string };
@@ -31,6 +31,8 @@ export type Article = {
   views: number;
   likes: number;
   bookmarks: number;
+  /** library-media cover object path */
+  coverArtKey?: string | null;
   blocks: readonly ArticleBlock[];
 };
 
@@ -705,8 +707,13 @@ const BY_SLUG = new Map(ARTICLES.map((a) => [a.slug, a]));
 export const articleBySlug = (slug: string): Article | undefined => BY_SLUG.get(slug);
 
 /** Articles sharing a category or continent, excluding the source article. */
-export function relatedArticles(article: Article, limit = 3): Article[] {
-  return ARTICLES.filter((a) => a.slug !== article.slug)
+export function relatedArticles(
+  article: Article,
+  limit = 3,
+  source: readonly Article[] = ARTICLES,
+): Article[] {
+  return source
+    .filter((a) => a.slug !== article.slug)
     .map((a) => ({
       a,
       score:

@@ -4,34 +4,55 @@ import { EmptyState, GeoButton, SectionContainer } from "@/components/shared";
 import { useLibraryStore } from "@/stores/libraryStore";
 
 import { LibraryCard } from "./LibraryCard";
-import { articleBySlug, articleHeadings, relatedArticles } from "../data/articles";
-import { creatorByHandle } from "../data/creators";
+import { LibraryMediaImage } from "./LibraryMediaImage";
+import { articleHeadings, relatedArticles } from "../data/articles";
 import { categoryLabel, difficultyLabel } from "../data/taxonomy";
+import { useArticleBySlug } from "../hooks/useArticleBySlug";
+import { useCreatorByHandle } from "../hooks/usePublishedCreators";
+import { usePublishedArticles } from "../hooks/usePublishedArticles";
 
 const routeApi = getRouteApi("/geolibrary/article/$slug");
 
 /** Reading surface for a single library entry. */
 export function ArticleScreen() {
   const { slug } = routeApi.useParams();
-  const article = articleBySlug(slug);
+  const { article, loading, error } = useArticleBySlug(slug);
+  const { creator } = useCreatorByHandle(article?.creator ?? "");
+  const { articles: catalogue } = usePublishedArticles();
   const bookmarks = useLibraryStore((s) => s.bookmarks);
   const likes = useLibraryStore((s) => s.likes);
   const toggleBookmark = useLibraryStore((s) => s.toggleBookmark);
   const toggleLike = useLibraryStore((s) => s.toggleLike);
   const markComplete = useLibraryStore((s) => s.markComplete);
 
+  if (loading) {
+    return (
+      <SectionContainer>
+        <p className="text-sm text-foreground/50">Loading entry…</p>
+      </SectionContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <SectionContainer>
+        <EmptyState title="Could not load this entry" description={error} />
+      </SectionContainer>
+    );
+  }
+
   if (!article) {
     return (
       <SectionContainer>
         <EmptyState
-          title="Entry not found"
-          description="That library entry has moved or never existed. Try browsing the library instead."
+          title="Entry unavailable"
+          description="This library entry may require a higher membership tier, or it may have moved. Browse the library for available reading."
         />
       </SectionContainer>
     );
   }
 
-  const author = creatorByHandle(article.creator);
+  const author = creator;
   const headings = articleHeadings(article);
 
   return (
@@ -153,10 +174,28 @@ export function ArticleScreen() {
                     <p className="mt-2">{block.text}</p>
                   </aside>
                 );
+              case "image":
+                return (
+                  <figure key={index} className="glass-panel surface-gradient overflow-hidden rounded-2xl">
+                    <LibraryMediaImage
+                      storagePath={block.storagePath}
+                      fallbackArt={block.art}
+                      alt={block.caption}
+                      ratio="wide"
+                    />
+                    {block.caption ? (
+                      <figcaption className="px-5 pb-5 pt-3 text-xs text-foreground/50">
+                        {block.caption}
+                      </figcaption>
+                    ) : null}
+                  </figure>
+                );
               default:
                 return (
                   <figure key={index} className="glass-panel surface-gradient rounded-2xl p-5">
-                    <figcaption className="text-xs text-foreground/50">{block.caption}</figcaption>
+                    <figcaption className="text-xs text-foreground/50">
+                      {"caption" in block ? block.caption : ""}
+                    </figcaption>
                   </figure>
                 );
             }
@@ -167,7 +206,7 @@ export function ArticleScreen() {
       <section className="mb-8 mt-16">
         <h2 className="text-lg font-light tracking-tight text-foreground">Related reading</h2>
         <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {relatedArticles(article, 3).map((related) => (
+          {relatedArticles(article, 3, catalogue).map((related) => (
             <LibraryCard
               key={related.slug}
               article={related}

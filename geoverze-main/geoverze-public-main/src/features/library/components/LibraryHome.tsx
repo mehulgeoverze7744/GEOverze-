@@ -1,15 +1,17 @@
 import { Link } from "@tanstack/react-router";
 import { BookOpen, Compass, Library, Users } from "lucide-react";
 
-import { AnimatedSection, GeoButton, PageHeader, SectionContainer } from "@/components/shared";
-import { CoverArt } from "@/features/play/components/CoverArt";
+import { AnimatedSection, EmptyState, GeoButton, PageHeader, SectionContainer } from "@/components/shared";
+
 import { useLibraryStore } from "@/stores/libraryStore";
 
 import { LibraryCard } from "./LibraryCard";
-import { ARTICLES, articleBySlug } from "../data/articles";
-import { COLLECTIONS } from "../data/collections";
-import { CREATORS } from "../data/creators";
+import { LibraryMediaImage } from "./LibraryMediaImage";
+import { articleBySlug } from "../data/articles";
 import { CATEGORIES } from "../data/taxonomy";
+import { usePublishedArticles } from "../hooks/usePublishedArticles";
+import { usePublishedCollections } from "../hooks/usePublishedCollections";
+import { usePublishedCreators } from "../hooks/usePublishedCreators";
 import { recentArticles, recommendedArticles, trendingArticles } from "../lib/filter";
 
 function Rail({ title, children }: { title: string; children: React.ReactNode }) {
@@ -27,13 +29,29 @@ export function LibraryHome() {
   const progress = useLibraryStore((s) => s.progress);
   const toggleBookmark = useLibraryStore((s) => s.toggleBookmark);
 
+  const { articles, loading: articlesLoading, error: articlesError } = usePublishedArticles();
+  const { collections, loading: collectionsLoading } = usePublishedCollections();
+  const { creators, loading: creatorsLoading } = usePublishedCreators();
+
   const continueReading = Object.keys(progress)
     .filter((slug) => (progress[slug] ?? 0) > 0 && (progress[slug] ?? 0) < 100)
-    .map(articleBySlug)
+    .map((slug) => articles.find((a) => a.slug === slug) ?? articleBySlug(slug))
     .filter((a): a is NonNullable<typeof a> => Boolean(a))
     .slice(0, 3);
 
-  const featured = COLLECTIONS.filter((c) => c.featured).slice(0, 3);
+  const featured = collections.filter((c) => c.featured).slice(0, 3);
+  const loading = articlesLoading || collectionsLoading || creatorsLoading;
+
+  if (articlesError) {
+    return (
+      <SectionContainer>
+        <EmptyState
+          title="GEOlibrary is unavailable"
+          description={articlesError}
+        />
+      </SectionContainer>
+    );
+  }
 
   return (
     <SectionContainer>
@@ -63,9 +81,9 @@ export function LibraryHome() {
 
       <AnimatedSection className="mt-12 grid gap-4 sm:grid-cols-3">
         {[
-          { label: "Entries", value: ARTICLES.length },
-          { label: "Collections", value: COLLECTIONS.length },
-          { label: "Creators", value: CREATORS.length },
+          { label: "Entries", value: loading ? "…" : articles.length },
+          { label: "Collections", value: loading ? "…" : collections.length },
+          { label: "Creators", value: loading ? "…" : creators.length },
         ].map((stat) => (
           <div key={stat.label} className="glass-panel surface-gradient rounded-2xl p-6">
             <p className="text-2xl font-light text-bronze-glow">{stat.value}</p>
@@ -100,7 +118,7 @@ export function LibraryHome() {
               params={{ slug: collection.slug }}
               className="glass-panel surface-gradient group overflow-hidden rounded-2xl transition-all motion-base hover:border-bronze/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
             >
-              <CoverArt art={collection.art} icon={Library} />
+              <LibraryMediaImage storagePath={collection.art} fallbackArt={collection.art} icon={Library} />
               <div className="p-5">
                 <h3 className="text-base font-light text-foreground">{collection.title}</h3>
                 <p className="mt-2 line-clamp-2 text-[0.8rem] text-foreground/50">
@@ -116,7 +134,7 @@ export function LibraryHome() {
       </AnimatedSection>
 
       <Rail title="Trending now">
-        {trendingArticles(3).map((article) => (
+        {trendingArticles(3, articles).map((article) => (
           <LibraryCard
             key={article.slug}
             article={article}
@@ -127,7 +145,7 @@ export function LibraryHome() {
       </Rail>
 
       <Rail title="Newly published">
-        {recentArticles(3).map((article) => (
+        {recentArticles(3, articles).map((article) => (
           <LibraryCard
             key={article.slug}
             article={article}
@@ -138,7 +156,7 @@ export function LibraryHome() {
       </Rail>
 
       <Rail title="Recommended for you">
-        {recommendedArticles(3).map((article) => (
+        {recommendedArticles(3, articles).map((article) => (
           <LibraryCard
             key={article.slug}
             article={article}

@@ -71,6 +71,18 @@ export const navigation: NavGroup[] = [
       { title: "Quizzes", url: "/quizzes", icon: ListChecks, keywords: "games rounds" },
       { title: "Question Bank", url: "/questions", icon: Database, keywords: "items" },
       { title: "GEOlibrary", url: "/library", icon: BookOpen, keywords: "articles posts" },
+      {
+        title: "Collections",
+        url: "/library/collections",
+        icon: BookOpen,
+        keywords: "shelves curated groups",
+      },
+      {
+        title: "Library Creators",
+        url: "/library/creators",
+        icon: UserCog,
+        keywords: "personas authors geolibrary",
+      },
       { title: "Achievements", url: "/achievements", icon: Trophy, keywords: "badges" },
     ],
   },

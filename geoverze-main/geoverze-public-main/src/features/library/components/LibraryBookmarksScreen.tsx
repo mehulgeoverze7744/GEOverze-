@@ -5,14 +5,18 @@ import { useLibraryStore } from "@/stores/libraryStore";
 
 import { LibraryCard } from "./LibraryCard";
 import { articleBySlug } from "../data/articles";
+import { usePublishedArticles } from "../hooks/usePublishedArticles";
 
 /** Saved reading list. */
 export function LibraryBookmarksScreen() {
   const bookmarks = useLibraryStore((s) => s.bookmarks);
   const progress = useLibraryStore((s) => s.progress);
   const toggleBookmark = useLibraryStore((s) => s.toggleBookmark);
+  const { articles } = usePublishedArticles();
 
-  const saved = bookmarks.map(articleBySlug).filter((a): a is NonNullable<typeof a> => Boolean(a));
+  const saved = bookmarks
+    .map((slug) => articles.find((a) => a.slug === slug) ?? articleBySlug(slug))
+    .filter((a): a is NonNullable<typeof a> => Boolean(a));
 
   return (
     <SectionContainer>

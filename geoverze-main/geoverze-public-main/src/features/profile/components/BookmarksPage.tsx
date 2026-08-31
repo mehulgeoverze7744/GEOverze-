@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedBadge } from "@/components/shared/AnimatedBadge";
@@ -7,14 +7,36 @@ import { EmptyState } from "@/components/shared/EmptyState";
 import { GlassCard } from "@/components/shared/GlassCard";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { SectionContainer } from "@/components/shared/SectionContainer";
-import { BOOKMARK_SECTIONS } from "@/features/profile/data/bookmarks";
+import { categoryLabel } from "@/features/library/data/taxonomy";
+import { usePublishedArticles } from "@/features/library/hooks/usePublishedArticles";
+import { BOOKMARK_SECTIONS, type BookmarkSection } from "@/features/profile/data/bookmarks";
+import { useLibraryStore } from "@/stores/libraryStore";
 import { cn } from "@/lib/utils";
 
 /** Saved articles, quizzes, maps and learning paths. */
 export function BookmarksPage() {
   const [activeId, setActiveId] = useState(BOOKMARK_SECTIONS[0]!.id);
-  const active =
-    BOOKMARK_SECTIONS.find((section) => section.id === activeId) ?? BOOKMARK_SECTIONS[0]!;
+  const libraryBookmarks = useLibraryStore((s) => s.bookmarks);
+  const { articles } = usePublishedArticles();
+
+  const sections = useMemo((): readonly BookmarkSection[] => {
+    const articleItems = libraryBookmarks
+      .map((slug) => articles.find((a) => a.slug === slug))
+      .filter((a): a is NonNullable<typeof a> => Boolean(a))
+      .map((article) => ({
+        id: article.slug,
+        title: article.title,
+        description: article.dek,
+        meta: `${article.minutes} min read`,
+        tag: categoryLabel(article.category),
+      }));
+
+    return BOOKMARK_SECTIONS.map((section) =>
+      section.id === "articles" ? { ...section, items: articleItems } : section,
+    );
+  }, [articles, libraryBookmarks]);
+
+  const active = sections.find((section) => section.id === activeId) ?? sections[0]!;
 
   return (
     <PageShell>
@@ -25,7 +47,7 @@ export function BookmarksPage() {
       />
       <SectionContainer>
         <div className="flex flex-wrap gap-2.5" role="tablist" aria-label="Bookmark categories">
-          {BOOKMARK_SECTIONS.map((section) => (
+          {sections.map((section) => (
             <button
               key={section.id}
               type="button"

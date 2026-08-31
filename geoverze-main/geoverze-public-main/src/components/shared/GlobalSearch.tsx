@@ -6,19 +6,26 @@ import { GeoButton } from "@/components/shared/GeoButton";
 import { GeoTooltip } from "@/components/shared/GeoTooltip";
 import { Modal } from "@/components/shared/Modal";
 import { SearchBar } from "@/components/shared/SearchBar";
+import { fetchLibrarySearchHits } from "@/features/library/data/fetchLibrarySearch";
+import {
+  SEARCH_SUGGESTIONS,
+  groupHits,
+  searchStaticAll,
+  type SearchHit,
+} from "@/features/search/data/index";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { SEARCH_SUGGESTIONS, groupHits, searchAll } from "@/features/search/data/index";
 
 /**
  * Global search overlay.
  *
- * Ranks results client-side over the placeholder index in
- * `src/features/search/data` — swapping in a server query later touches only
- * `searchAll`. Opens with ⌘K / Ctrl+K.
+ * GEOlibrary articles come from Supabase FTS; other groups remain placeholder
+ * until their backends exist. Opens with ⌘K / Ctrl+K.
  */
 export function GlobalSearch() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [libraryHits, setLibraryHits] = useState<SearchHit[]>([]);
+  const [libraryLoading, setLibraryLoading] = useState(false);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -31,12 +38,57 @@ export function GlobalSearch() {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  // Debounced so a future server-side query fires once per pause, not per key.
   const debounced = useDebouncedValue(query);
-  const hits = useMemo(() => searchAll(debounced), [debounced]);
+
+  useEffect(() => {
+    const q = debounced.trim();
+    if (q.length === 0) {
+      setLibraryHits([]);
+      setLibraryLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setLibraryLoading(true);
+    void fetchLibrarySearchHits(q, 8)
+      .then((hits) => {
+        if (cancelled) return;
+        setLibraryHits(
+          hits.map((hit) => ({
+            id: hit.id,
+            group: hit.group,
+            title: hit.title,
+            meta: hit.meta,
+            keywords: [],
+            to: hit.to,
+            score: hit.score,
+          })),
+        );
+      })
+      .catch((error) => {
+        console.error("Library search failed", error);
+        if (!cancelled) setLibraryHits([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLibraryLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [debounced]);
+
+  const staticHits = useMemo(() => searchStaticAll(debounced), [debounced]);
+  const hits = useMemo(
+    () =>
+      [...libraryHits, ...staticHits]
+        .sort((a, b) => b.score - a.score || a.title.localeCompare(b.title))
+        .slice(0, 12),
+    [libraryHits, staticHits],
+  );
   const grouped = useMemo(() => groupHits(hits), [hits]);
   const hasQuery = debounced.trim().length > 0;
-  const searching = query.trim() !== debounced.trim();
+  const searching = query.trim() !== debounced.trim() || libraryLoading;
 
   return (
     <>
@@ -72,7 +124,7 @@ export function GlobalSearch() {
             {hasQuery ? `${hits.length} results for ${query}` : "Type to search"}
           </p>
 
-          {hasQuery && hits.length === 0 ? (
+          {hasQuery && hits.length === 0 && !searching ? (
             <div className="rounded-2xl border border-bronze/15 bg-charcoal/40 p-6 text-center">
               <p className="text-sm text-foreground/60">Nothing found for “{query.trim()}”.</p>
               <p className="mt-2 text-xs leading-relaxed text-foreground/50">

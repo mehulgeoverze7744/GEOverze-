@@ -17,9 +17,10 @@ import { Widget } from "@/components/shared/widget";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { findResource, libraryResources } from "@/features/library/data";
 import { ResourceEditor } from "@/features/library/resource-editor";
-import { useLibraryActions } from "@/features/library/use-library-actions";
+import { ResourceMediaPanel } from "@/features/library/components/ResourceMediaPanel";
+import { useLibraryMutations } from "@/features/library/hooks/useLibraryMutations";
+import { useLibraryResourceDetail } from "@/features/library/hooks/useLibraryResourceDetail";
 import { formatDate } from "@/features/users/format";
 import { catalogMonths } from "@/lib/catalog";
 import { num } from "@/lib/format";
@@ -47,22 +48,34 @@ export const Route = createFileRoute("/library/$resourceId")({
 function ResourceDetailPage() {
   const { resourceId } = useParams({ from: "/library/$resourceId" });
   const navigate = useNavigate();
-  const actions = useLibraryActions(libraryResources);
+  const mutations = useLibraryMutations();
+  const { resource, loading, error } = useLibraryResourceDetail(resourceId);
   const [tab, setTab] = useState("overview");
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirmArchive, setConfirmArchive] = useState(false);
 
-  const resource = useMemo(
-    () => findResource(actions.resources, resourceId),
-    [actions.resources, resourceId],
+  const viewsSeries = useMemo(
+    () => resource?.viewsSeries ?? Array.from({ length: 12 }, () => 0),
+    [resource],
   );
 
-  if (!resource) {
+  if (loading) {
+    return (
+      <>
+        <PageHeader title="Loading resource…" />
+        <PageBody />
+      </>
+    );
+  }
+
+  if (error || !resource) {
     return (
       <>
         <PageHeader title="Resource not found" />
         <PageBody>
           <EmptyState
             title="This resource no longer exists"
-            description="It may have been deleted or the link is out of date."
+            description={error ?? "It may have been deleted or the link is out of date."}
             action={
               <Button size="sm" asChild>
                 <Link to="/library">Back to GEOlibrary</Link>
@@ -87,32 +100,28 @@ function ResourceDetailPage() {
                 Back
               </Link>
             </Button>
-            <Button size="sm" variant="outline" onClick={() => actions.toggleFeatured(resource.id)}>
-              <Star className="size-4" aria-hidden="true" />
-              {resource.featured ? "Unfeature" : "Feature"}
-            </Button>
             <Button
               size="sm"
               variant="outline"
-              onClick={() => actions.requestArchive([resource.id])}
+              onClick={() => mutations.feature.mutate({ id: resource.id, featured: !resource.featured })}
             >
+              <Star className="size-4" aria-hidden="true" />
+              {resource.featured ? "Unfeature" : "Feature"}
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => setConfirmArchive(true)}>
               <Archive className="size-4" aria-hidden="true" />
               Archive
             </Button>
-            <Button
-              size="sm"
-              variant="destructive"
-              onClick={() => actions.requestDelete([resource.id])}
-            >
+            <Button size="sm" variant="destructive" onClick={() => setConfirmDelete(true)}>
               <Trash2 className="size-4" aria-hidden="true" />
               Delete
             </Button>
             {resource.status === "published" ? (
-              <Button size="sm" onClick={() => actions.unpublish([resource.id])}>
+              <Button size="sm" onClick={() => mutations.unpublish.mutate(resource.id)}>
                 Unpublish
               </Button>
             ) : (
-              <Button size="sm" onClick={() => actions.publish([resource.id])}>
+              <Button size="sm" onClick={() => mutations.publish.mutate(resource.id)}>
                 Publish
               </Button>
             )}
@@ -188,37 +197,7 @@ function ResourceDetailPage() {
           </TabsContent>
 
           <TabsContent value="media" className="mt-4 space-y-3">
-            <Widget title="Cover">
-              <div className="flex h-36 items-center justify-center rounded-lg border border-dashed border-border-strong bg-muted/30 text-sm text-muted-foreground">
-                {resource.coverLabel}
-              </div>
-            </Widget>
-            <Widget title="Gallery">
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                {resource.gallery.map((figure) => (
-                  <div
-                    key={figure}
-                    className="flex h-20 items-center justify-center rounded-md border border-border bg-muted/30 px-2 text-center text-[11px] text-muted-foreground"
-                  >
-                    {figure}
-                  </div>
-                ))}
-              </div>
-            </Widget>
-            <Widget title="Attachments">
-              <ul className="divide-y divide-border">
-                {resource.attachments.length === 0 && (
-                  <li className="py-2 text-sm text-muted-foreground">No attachments.</li>
-                )}
-                {resource.attachments.map((attachment) => (
-                  <li key={attachment.id} className="flex items-center gap-2 py-2 text-sm">
-                    <span className="min-w-0 flex-1 truncate">{attachment.name}</span>
-                    <Badge variant="secondary">{attachment.kind}</Badge>
-                    <span className="text-xs text-muted-foreground tabular">{attachment.size}</span>
-                  </li>
-                ))}
-              </ul>
-            </Widget>
+            <ResourceMediaPanel draft={resource} onChange={() => undefined} readOnly />
           </TabsContent>
 
           <TabsContent value="seo" className="mt-4">
@@ -237,8 +216,8 @@ function ResourceDetailPage() {
           <TabsContent value="analytics" className="mt-4">
             <ChartCard
               title="Views over time"
-              description="Rolling 12 months"
-              series={resource.viewsSeries}
+              description="Analytics not connected — placeholder only"
+              series={viewsSeries}
               labels={catalogMonths}
             />
           </TabsContent>
@@ -247,62 +226,54 @@ function ResourceDetailPage() {
             <ResourceEditor
               resource={resource}
               onSave={(next) => {
-                actions.save(next);
-                setTab("overview");
+                mutations.update.mutate(next, {
+                  onSuccess: () => setTab("overview"),
+                });
               }}
               onCancel={() => setTab("overview")}
             />
           </TabsContent>
 
           <TabsContent value="versions" className="mt-4">
-            <ol className="divide-y divide-border rounded-lg border border-border">
-              {resource.versions.map((version) => (
-                <li key={version.id} className="flex flex-wrap items-center gap-2 p-3 text-sm">
-                  <Badge variant="secondary">v{version.version}</Badge>
-                  <span className="min-w-0 flex-1 truncate">{version.summary}</span>
-                  <span className="text-xs text-muted-foreground">{version.author}</span>
-                  <span className="text-xs text-muted-foreground tabular">
-                    {formatDate(version.at)}
-                  </span>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={actions.placeholder("Version restore arrives with the backend.")}
-                  >
-                    Restore
-                  </Button>
-                </li>
-              ))}
-            </ol>
+            <EmptyState
+              title="No version history yet"
+              description="Version history arrives in a later GEOlibrary phase."
+            />
           </TabsContent>
 
           <TabsContent value="activity" className="mt-4">
-            <ActivityTimeline
-              events={resource.activity.map((event) => ({
-                id: event.id,
-                actor: event.actor,
-                action: event.action,
-                target: event.target,
-                time: formatDate(event.time),
-              }))}
-            />
+            <ActivityTimeline events={[]} />
           </TabsContent>
         </Tabs>
       </PageBody>
 
-      {actions.confirm && (
+      {confirmDelete && (
         <ConfirmDialog
           open
-          onOpenChange={(next) => !next && actions.setConfirm(null)}
-          title={actions.confirm.title}
-          description={actions.confirm.description}
-          confirmLabel={actions.confirm.confirmLabel}
-          destructive={actions.confirm.destructive}
+          onOpenChange={(next) => !next && setConfirmDelete(false)}
+          title="Delete this resource?"
+          description="The resource is removed from GEOlibrary. This cannot be undone."
+          confirmLabel="Delete"
+          destructive
           onConfirm={() => {
-            const wasDelete = actions.confirm?.destructive;
-            actions.confirm?.onConfirm();
-            actions.setConfirm(null);
-            if (wasDelete) navigate({ to: "/library" });
+            mutations.remove.mutate(resource.id, {
+              onSuccess: () => navigate({ to: "/library" }),
+            });
+            setConfirmDelete(false);
+          }}
+        />
+      )}
+
+      {confirmArchive && (
+        <ConfirmDialog
+          open
+          onOpenChange={(next) => !next && setConfirmArchive(false)}
+          title="Archive this resource?"
+          description="Archived resources stay visible to admins but are hidden from readers."
+          confirmLabel="Archive"
+          onConfirm={() => {
+            mutations.archive.mutate(resource.id);
+            setConfirmArchive(false);
           }}
         />
       )}

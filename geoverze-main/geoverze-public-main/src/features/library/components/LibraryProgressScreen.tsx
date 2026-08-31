@@ -1,23 +1,30 @@
 import { PageHeader, SectionContainer } from "@/components/shared";
 import { useLibraryStore } from "@/stores/libraryStore";
 
-import { ARTICLES, articleBySlug } from "../data/articles";
-import { COLLECTIONS, collectionArticles } from "../data/collections";
+import { articleBySlug } from "../data/articles";
+import { usePublishedArticles } from "../hooks/usePublishedArticles";
+import { usePublishedCollections } from "../hooks/usePublishedCollections";
 
 /** Reading progress across entries and collections. */
 export function LibraryProgressScreen() {
   const completed = useLibraryStore((s) => s.completed);
   const progress = useLibraryStore((s) => s.progress);
+  const { articles } = usePublishedArticles();
+  const { collections } = usePublishedCollections();
 
-  const minutes = completed
-    .map(articleBySlug)
-    .reduce((total, article) => total + (article?.minutes ?? 0), 0);
+  const resolveArticle = (slug: string) =>
+    articles.find((a) => a.slug === slug) ?? articleBySlug(slug);
+
+  const minutes = completed.reduce(
+    (total, slug) => total + (resolveArticle(slug)?.minutes ?? 0),
+    0,
+  );
   const inProgress = Object.keys(progress).filter(
     (slug) => (progress[slug] ?? 0) > 0 && !completed.includes(slug),
   ).length;
 
   const stats = [
-    { label: "Entries finished", value: `${completed.length} / ${ARTICLES.length}` },
+    { label: "Entries finished", value: `${completed.length} / ${articles.length}` },
     { label: "Minutes read", value: `${minutes}` },
     { label: "In progress", value: `${inProgress}` },
   ];
@@ -43,16 +50,19 @@ export function LibraryProgressScreen() {
 
       <h2 className="mt-16 text-lg font-light tracking-tight text-foreground">Collections</h2>
       <div className="mb-8 mt-6 space-y-4">
-        {COLLECTIONS.map((collection) => {
-          const articles = collectionArticles(collection);
-          const done = articles.filter((a) => completed.includes(a.slug)).length;
-          const percent = articles.length === 0 ? 0 : Math.round((done / articles.length) * 100);
+        {collections.map((collection) => {
+          const collectionArticleSlugs = collection.articles;
+          const done = collectionArticleSlugs.filter((slug) => completed.includes(slug)).length;
+          const percent =
+            collectionArticleSlugs.length === 0
+              ? 0
+              : Math.round((done / collectionArticleSlugs.length) * 100);
           return (
             <div key={collection.slug} className="glass-panel surface-gradient rounded-2xl p-5">
               <div className="flex items-center justify-between gap-4">
                 <p className="min-w-0 truncate text-sm text-foreground/80">{collection.title}</p>
                 <p className="shrink-0 text-xs text-foreground/50">
-                  {done} / {articles.length}
+                  {done} / {collectionArticleSlugs.length}
                 </p>
               </div>
               <div

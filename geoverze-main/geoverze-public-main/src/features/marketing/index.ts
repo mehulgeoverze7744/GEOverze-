@@ -4,8 +4,6 @@ export { AboutPage } from "./components/AboutPage";
 export { ContactPage } from "./components/ContactPage";
 export {
   whyPillars,
-  exploreCategories,
-  learnConcepts,
   competeItems,
   ecosystem,
   valueProps,

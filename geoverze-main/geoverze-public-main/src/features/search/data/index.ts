@@ -186,7 +186,27 @@ export const SEARCH_INDEX: readonly SearchRecord[] = [
 
 export type SearchHit = SearchRecord & { score: number };
 
-/** Simple prefix + keyword ranking over the placeholder index. */
+/** Simple prefix + keyword ranking over non-library placeholder groups. */
+export function searchStaticAll(query: string, limit = 12): SearchHit[] {
+  const q = query.trim().toLowerCase();
+  if (q.length === 0) return [];
+
+  const hits: SearchHit[] = [];
+  for (const record of SEARCH_INDEX) {
+    if (record.group === "articles" || record.group === "creators") continue;
+    const title = record.title.toLowerCase();
+    let score = 0;
+    if (title.startsWith(q)) score = 100;
+    else if (title.includes(q)) score = 70;
+    else if (record.keywords.some((k) => k.includes(q))) score = 40;
+    else if (record.meta.toLowerCase().includes(q)) score = 20;
+    if (score > 0) hits.push({ ...record, score });
+  }
+
+  return hits.sort((a, b) => b.score - a.score || a.title.localeCompare(b.title)).slice(0, limit);
+}
+
+/** Legacy combined search — articles/creators use Supabase in GlobalSearch. */
 export function searchAll(query: string, limit = 12): SearchHit[] {
   const q = query.trim().toLowerCase();
   if (q.length === 0) return [];

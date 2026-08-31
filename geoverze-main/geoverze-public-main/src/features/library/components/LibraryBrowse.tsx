@@ -16,7 +16,8 @@ import {
   type ReadingTimeId,
   type SortId,
 } from "../data/taxonomy";
-import { filterArticles, sortArticles } from "../lib/filter";
+import { useBrowseArticles } from "../hooks/useBrowseArticles";
+import { sortArticles, type LibraryQuery } from "../lib/filter";
 
 const routeApi = getRouteApi("/geolibrary/browse");
 
@@ -63,22 +64,29 @@ export function LibraryBrowse() {
   const progress = useLibraryStore((s) => s.progress);
   const toggleBookmark = useLibraryStore((s) => s.toggleBookmark);
 
+  const browseQuery: LibraryQuery = {
+    q: search.q,
+    continent: search.continent as ContinentId | "all",
+    difficulty: search.difficulty as DifficultyId | "all",
+    time: search.time as ReadingTimeId | "all",
+    category: search.category as CategoryId | "all",
+    sort: search.sort as SortId,
+    saved: search.saved,
+  };
+
+  const { articles: browseResults, loading, error } = useBrowseArticles(browseQuery, bookmarks);
+  const results = sortArticles(browseResults, search.sort as SortId);
+
   const set = (patch: Partial<typeof search>) =>
     navigate({ search: (prev: typeof search) => ({ ...prev, ...patch }) });
 
-  const filtered = filterArticles(
-    {
-      q: search.q,
-      continent: search.continent as ContinentId | "all",
-      difficulty: search.difficulty as DifficultyId | "all",
-      time: search.time as ReadingTimeId | "all",
-      category: search.category as CategoryId | "all",
-      sort: search.sort as SortId,
-      saved: search.saved,
-    },
-    bookmarks,
-  );
-  const results = sortArticles(filtered, search.sort as SortId);
+  if (error) {
+    return (
+      <SectionContainer>
+        <EmptyState title="Could not load the library" description={error} />
+      </SectionContainer>
+    );
+  }
 
   return (
     <SectionContainer>
@@ -156,10 +164,10 @@ export function LibraryBrowse() {
       </div>
 
       <p className="mt-6 text-xs text-foreground/50" aria-live="polite">
-        {results.length} {results.length === 1 ? "entry" : "entries"}
+        {loading ? "Loading…" : `${results.length} ${results.length === 1 ? "entry" : "entries"}`}
       </p>
 
-      {results.length === 0 ? (
+      {!loading && results.length === 0 ? (
         <div className="mt-6">
           <EmptyState
             title="No entries match those filters"

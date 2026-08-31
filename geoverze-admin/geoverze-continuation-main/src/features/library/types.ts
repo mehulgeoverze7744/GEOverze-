@@ -15,6 +15,9 @@ export interface LibraryAttachment {
   name: string;
   kind: "PDF" | "Image" | "Dataset" | "Map";
   size: string;
+  /** library-media object path */
+  path?: string;
+  mimeType?: string;
 }
 
 export interface LibraryVersion {
@@ -44,14 +47,22 @@ export interface LibraryResource {
   tags: string[];
   language: string;
   author: string;
+  /** Canonical creator handle (Supabase). */
+  authorHandle?: string;
+  /** Public browse subject category id. */
+  subjectCategory?: string;
   status: LibraryStatus;
   featured: boolean;
+  /** Minimum subscription tier required to read (null = free). */
+  minAccessTier: string | null;
   views: number;
   bookmarks: number;
   readTime: number;
   description: string;
   body: string;
   coverLabel: string;
+  /** library-media object path for cover image */
+  coverArtKey: string | null;
   gallery: string[];
   attachments: LibraryAttachment[];
   seo: LibrarySeo;

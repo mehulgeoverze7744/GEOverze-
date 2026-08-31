@@ -230,7 +230,9 @@ export function libraryRegionSeries(list: LibraryResource[]) {
 }
 
 export function topArticles(list: LibraryResource[], limit = 5) {
-  return [...list].sort((a, b) => b.views - a.views).slice(0, limit);
+  return [...list]
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt) || b.views - a.views)
+    .slice(0, limit);
 }
 
 export function popularCategories(list: LibraryResource[], limit = 5) {
