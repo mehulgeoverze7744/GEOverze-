@@ -1,18 +1,26 @@
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Compass, Library, Users } from "lucide-react";
+import { BookOpen, Compass, Library, TrendingUp, Users } from "lucide-react";
 
-import { AnimatedSection, EmptyState, GeoButton, PageHeader, SectionContainer } from "@/components/shared";
+import {
+  AnimatedSection,
+  EmptyState,
+  GeoButton,
+  PageHeader,
+  SectionContainer,
+} from "@/components/shared";
 
 import { useLibraryStore } from "@/stores/libraryStore";
 
 import { LibraryCard } from "./LibraryCard";
 import { LibraryMediaImage } from "./LibraryMediaImage";
-import { articleBySlug } from "../data/articles";
 import { CATEGORIES } from "../data/taxonomy";
 import { usePublishedArticles } from "../hooks/usePublishedArticles";
 import { usePublishedCollections } from "../hooks/usePublishedCollections";
 import { usePublishedCreators } from "../hooks/usePublishedCreators";
-import { recentArticles, recommendedArticles, trendingArticles } from "../lib/filter";
+import { useLibrarySubscriptionTier } from "../hooks/useLibrarySubscriptionTier";
+import { getResourceAccessState } from "../lib/access-tier";
+import { recentArticles, trendingArticles } from "../lib/filter";
+import { useRecommendedArticles } from "../hooks/useRecommendedArticles";
 
 function Rail({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -28,27 +36,26 @@ export function LibraryHome() {
   const bookmarks = useLibraryStore((s) => s.bookmarks);
   const progress = useLibraryStore((s) => s.progress);
   const toggleBookmark = useLibraryStore((s) => s.toggleBookmark);
+  const { tier, signedIn } = useLibrarySubscriptionTier();
 
   const { articles, loading: articlesLoading, error: articlesError } = usePublishedArticles();
+  const { articles: recommended, loading: recommendedLoading } = useRecommendedArticles(3);
   const { collections, loading: collectionsLoading } = usePublishedCollections();
   const { creators, loading: creatorsLoading } = usePublishedCreators();
 
   const continueReading = Object.keys(progress)
     .filter((slug) => (progress[slug] ?? 0) > 0 && (progress[slug] ?? 0) < 100)
-    .map((slug) => articles.find((a) => a.slug === slug) ?? articleBySlug(slug))
+    .map((slug) => articles.find((a) => a.slug === slug))
     .filter((a): a is NonNullable<typeof a> => Boolean(a))
     .slice(0, 3);
 
   const featured = collections.filter((c) => c.featured).slice(0, 3);
-  const loading = articlesLoading || collectionsLoading || creatorsLoading;
+  const loading = articlesLoading || collectionsLoading || creatorsLoading || recommendedLoading;
 
   if (articlesError) {
     return (
       <SectionContainer>
-        <EmptyState
-          title="GEOlibrary is unavailable"
-          description={articlesError}
-        />
+        <EmptyState title="GEOlibrary is unavailable" description={articlesError} />
       </SectionContainer>
     );
   }
@@ -77,6 +84,11 @@ export function LibraryHome() {
             <BookOpen className="mr-2 h-4 w-4" /> Saved ({bookmarks.length})
           </Link>
         </GeoButton>
+        <GeoButton asChild variant="ghost">
+          <Link to="/geolibrary/progress">
+            <TrendingUp className="mr-2 h-4 w-4" /> Progress
+          </Link>
+        </GeoButton>
       </div>
 
       <AnimatedSection className="mt-12 grid gap-4 sm:grid-cols-3">
@@ -103,6 +115,7 @@ export function LibraryHome() {
               progress={progress[article.slug] ?? 0}
               saved={bookmarks.includes(article.slug)}
               onToggleBookmark={toggleBookmark}
+              accessState={getResourceAccessState(article.minAccessTier, tier, signedIn)}
             />
           ))}
         </Rail>
@@ -118,7 +131,11 @@ export function LibraryHome() {
               params={{ slug: collection.slug }}
               className="glass-panel surface-gradient group overflow-hidden rounded-2xl transition-all motion-base hover:border-bronze/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
             >
-              <LibraryMediaImage storagePath={collection.art} fallbackArt={collection.art} icon={Library} />
+              <LibraryMediaImage
+                storagePath={collection.art}
+                fallbackArt={collection.art}
+                icon={Library}
+              />
               <div className="p-5">
                 <h3 className="text-base font-light text-foreground">{collection.title}</h3>
                 <p className="mt-2 line-clamp-2 text-[0.8rem] text-foreground/50">
@@ -140,6 +157,7 @@ export function LibraryHome() {
             article={article}
             saved={bookmarks.includes(article.slug)}
             onToggleBookmark={toggleBookmark}
+            accessState={getResourceAccessState(article.minAccessTier, tier, signedIn)}
           />
         ))}
       </Rail>
@@ -151,17 +169,19 @@ export function LibraryHome() {
             article={article}
             saved={bookmarks.includes(article.slug)}
             onToggleBookmark={toggleBookmark}
+            accessState={getResourceAccessState(article.minAccessTier, tier, signedIn)}
           />
         ))}
       </Rail>
 
       <Rail title="Recommended for you">
-        {recommendedArticles(3, articles).map((article) => (
+        {recommended.map((article) => (
           <LibraryCard
             key={article.slug}
             article={article}
             saved={bookmarks.includes(article.slug)}
             onToggleBookmark={toggleBookmark}
+            accessState={getResourceAccessState(article.minAccessTier, tier, signedIn)}
           />
         ))}
       </Rail>
@@ -181,6 +201,8 @@ export function LibraryHome() {
                 category: category.id,
                 sort: "popular",
                 saved: false,
+                page: 1,
+                pageSize: 12,
                 view: "grid",
               }}
               className="glass-panel surface-gradient flex items-center gap-3 rounded-2xl p-4 text-sm text-foreground/75 transition-all motion-fast hover:border-bronze/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"

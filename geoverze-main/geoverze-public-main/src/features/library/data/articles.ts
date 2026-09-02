@@ -4,6 +4,8 @@
  * Production read paths use Supabase via fetchPublishedArticles.ts.
  * This module remains the GL-4 seed source of truth.
  */
+import type { LibraryAccessTier } from "@/features/library/lib/access-tier";
+
 import type { CategoryId, ContinentId, DifficultyId } from "./taxonomy";
 
 export type ArticleBlock =
@@ -18,6 +20,8 @@ export type ArticleBlock =
 
 export type Article = {
   slug: string;
+  /** Supabase library_resources.id when loaded from live data. */
+  resourceId?: string;
   title: string;
   dek: string;
   category: CategoryId;
@@ -33,6 +37,8 @@ export type Article = {
   bookmarks: number;
   /** library-media cover object path */
   coverArtKey?: string | null;
+  /** Minimum subscription tier when set; null means free/public. */
+  minAccessTier?: LibraryAccessTier | null;
   blocks: readonly ArticleBlock[];
 };
 
@@ -706,24 +712,18 @@ const BY_SLUG = new Map(ARTICLES.map((a) => [a.slug, a]));
 
 export const articleBySlug = (slug: string): Article | undefined => BY_SLUG.get(slug);
 
-/** Articles sharing a category or continent, excluding the source article. */
+import { compareRelated } from "../lib/engagement";
+
+/** Articles sharing taxonomy signals, ranked by match then engagement. */
 export function relatedArticles(
   article: Article,
   limit = 3,
   source: readonly Article[] = ARTICLES,
 ): Article[] {
   return source
-    .filter((a) => a.slug !== article.slug)
-    .map((a) => ({
-      a,
-      score:
-        (a.category === article.category ? 3 : 0) +
-        (a.continent === article.continent ? 2 : 0) +
-        a.tags.filter((t) => article.tags.includes(t)).length,
-    }))
-    .sort((x, y) => y.score - x.score || y.a.views - x.a.views)
-    .slice(0, limit)
-    .map((x) => x.a);
+    .filter((candidate) => candidate.slug !== article.slug)
+    .sort((a, b) => compareRelated(article, a, b))
+    .slice(0, limit);
 }
 
 /** Headings, used for the table of contents. */

@@ -1,35 +1,35 @@
 /**
  * GEOlibrary reading state.
  *
- * Anonymous users: persisted in localStorage only.
- * Authenticated users: synced with Supabase user_library_* tables on sign-in
- * and after each mutation (see sync-library-state.ts).
+ * Anonymous users: persisted under geoverze.library.v1.anon.
+ * Authenticated users: persisted under geoverze.library.v1.{userId} and synced with Supabase.
  */
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist, type StateStorage } from "zustand/middleware";
 
 import {
   syncBookmarkToggle,
   syncLikeToggle,
   syncProgressUpdate,
 } from "@/features/library/data/sync-library-state";
+import {
+  emptyLibraryState,
+  getActiveLibraryPersistScope,
+  libraryPersistKey,
+  persistActiveLibraryState,
+  switchLibraryPersistScope,
+} from "@/features/library/lib/library-store-persistence";
 import { useAuthStore } from "@/stores/authStore";
 
 type LibraryState = {
-  /** Article slugs saved for later. */
   bookmarks: string[];
-  /** Article slugs the reader liked. */
   likes: string[];
-  /** Article slug -> furthest scroll depth reached, 0–100. */
   progress: Record<string, number>;
-  /** Article slugs read to the end. */
   completed: string[];
   toggleBookmark: (slug: string) => void;
   toggleLike: (slug: string) => void;
-  /** Records progress, only ever moving forward. */
   setProgress: (slug: string, percent: number) => void;
   markComplete: (slug: string) => void;
-  /** Replace all fields after server merge (does not sync back). */
   replaceState: (state: {
     bookmarks: string[];
     likes: string[];
@@ -44,6 +44,25 @@ function maybeSync(userId: string | undefined, fn: () => Promise<void>) {
   void fn().catch((error) => console.error("GEOlibrary sync failed", error));
 }
 
+function snapshotFromState(state: LibraryState) {
+  return {
+    bookmarks: state.bookmarks,
+    likes: state.likes,
+    progress: state.progress,
+    completed: state.completed,
+  };
+}
+
+const scopedStorage: StateStorage = {
+  getItem: () => localStorage.getItem(libraryPersistKey(getActiveLibraryPersistScope())),
+  setItem: (_name, value) => {
+    localStorage.setItem(libraryPersistKey(getActiveLibraryPersistScope()), value);
+  },
+  removeItem: () => {
+    localStorage.removeItem(libraryPersistKey(getActiveLibraryPersistScope()));
+  },
+};
+
 export const useLibraryStore = create<LibraryState>()(
   persist(
     (set, get) => ({
@@ -56,6 +75,7 @@ export const useLibraryStore = create<LibraryState>()(
         set((s) => ({
           bookmarks: wasSaved ? s.bookmarks.filter((x) => x !== slug) : [slug, ...s.bookmarks],
         }));
+        persistActiveLibraryState(snapshotFromState(get()));
         const userId = useAuthStore.getState().user?.id;
         maybeSync(userId, () => syncBookmarkToggle(userId!, slug, !wasSaved));
       },
@@ -64,6 +84,7 @@ export const useLibraryStore = create<LibraryState>()(
         set((s) => ({
           likes: wasLiked ? s.likes.filter((x) => x !== slug) : [slug, ...s.likes],
         }));
+        persistActiveLibraryState(snapshotFromState(get()));
         const userId = useAuthStore.getState().user?.id;
         maybeSync(userId, () => syncLikeToggle(userId!, slug, !wasLiked));
       },
@@ -72,6 +93,7 @@ export const useLibraryStore = create<LibraryState>()(
         const nextPercent = Math.max(0, Math.min(100, Math.round(percent)));
         if (prev >= nextPercent) return;
         set((s) => ({ progress: { ...s.progress, [slug]: nextPercent } }));
+        persistActiveLibraryState(snapshotFromState(get()));
         const userId = useAuthStore.getState().user?.id;
         maybeSync(userId, () => syncProgressUpdate(userId!, slug, nextPercent, false));
       },
@@ -84,15 +106,65 @@ export const useLibraryStore = create<LibraryState>()(
                 progress: { ...s.progress, [slug]: 100 },
               },
         );
+        persistActiveLibraryState(snapshotFromState(get()));
         const userId = useAuthStore.getState().user?.id;
         maybeSync(userId, () => syncProgressUpdate(userId!, slug, 100, true));
       },
-      replaceState: (state) => set(state),
-      clear: () => set({ bookmarks: [], likes: [], progress: {}, completed: [] }),
+      replaceState: (state) => {
+        set(state);
+        persistActiveLibraryState(state);
+      },
+      clear: () => {
+        set(emptyLibraryState);
+        persistActiveLibraryState(emptyLibraryState);
+      },
     }),
-    { name: "geoverze.library" },
+    {
+      name: "geoverze.library",
+      storage: createJSONStorage(() => scopedStorage),
+      partialize: (state) => ({
+        bookmarks: state.bookmarks,
+        likes: state.likes,
+        progress: state.progress,
+        completed: state.completed,
+      }),
+    },
   ),
 );
+
+/** Switch persisted scope and load that user's local library snapshot. */
+export function activateLibraryPersistScope(nextScope: string) {
+  const current = snapshotFromState(useLibraryStore.getState());
+  switchLibraryPersistScope(nextScope, current);
+
+  let loaded = emptyLibraryState;
+  try {
+    const raw = localStorage.getItem(libraryPersistKey(nextScope));
+    if (raw) {
+      const parsed = JSON.parse(raw) as {
+        state?: {
+          bookmarks?: string[];
+          likes?: string[];
+          progress?: Record<string, number>;
+          completed?: string[];
+        };
+      };
+      const state = parsed.state;
+      if (state) {
+        loaded = {
+          bookmarks: Array.isArray(state.bookmarks) ? state.bookmarks : [],
+          likes: Array.isArray(state.likes) ? state.likes : [],
+          progress: state.progress && typeof state.progress === "object" ? state.progress : {},
+          completed: Array.isArray(state.completed) ? state.completed : [],
+        };
+      }
+    }
+  } catch {
+    // Keep empty state for corrupt storage entries.
+  }
+
+  useLibraryStore.getState().replaceState(loaded);
+}
 
 export const selectLibraryBookmarks = (s: LibraryState) => s.bookmarks;
 export const selectLibraryLikes = (s: LibraryState) => s.likes;

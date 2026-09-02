@@ -1,13 +1,33 @@
 import { isLibraryMediaPath } from "@/lib/supabase/library-media";
 import type { Article, ArticleBlock } from "@/features/library/data/articles";
+import { parseLibraryAccessTier } from "@/features/library/lib/access-tier";
 import type { Collection } from "@/features/library/data/collections";
 import type { Creator } from "@/features/library/data/creators";
 import type { CategoryId, ContinentId, DifficultyId } from "@/features/library/data/taxonomy";
 
+type CatalogueRow = Tables<"library_catalogue_resources">;
 type ResourceRow = Tables<"library_resources">;
 type BlockRow = Tables<"library_resource_blocks">;
 type CollectionRow = Tables<"library_collections">;
 type CreatorRow = Tables<"library_creators">;
+type ArticleSourceRow = ResourceRow | CatalogueRow;
+
+function aggregateCount(value: number | null | undefined): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : 0;
+}
+
+function readEngagement(row: ArticleSourceRow) {
+  const catalogue = row as CatalogueRow;
+  if ("view_count" in catalogue || "like_count" in catalogue || "bookmark_count" in catalogue) {
+    return {
+      views: aggregateCount(catalogue.view_count),
+      likes: aggregateCount(catalogue.like_count),
+      bookmarks: aggregateCount(catalogue.bookmark_count),
+    };
+  }
+
+  return { views: 0, likes: 0, bookmarks: 0 };
+}
 
 function asCategoryId(value: string): CategoryId {
   const allowed: CategoryId[] = [
@@ -102,24 +122,30 @@ export function mapBlockPayloadToArticleBlock(
 }
 
 export function mapResourceRowToArticle(
-  row: ResourceRow,
+  row: ArticleSourceRow,
   blocks: readonly BlockRow[] = [],
 ): Article {
+  const engagement = readEngagement(row);
+
   return {
     slug: row.slug,
+    resourceId: "id" in row && row.id ? row.id : undefined,
     title: row.title,
     dek: row.dek,
     category: asCategoryId(row.subject_category),
     continent: asContinentId(row.continent),
     difficulty: asDifficultyId(row.difficulty),
     minutes: row.read_time_minutes,
-    publishedAt: row.published_at?.slice(0, 10) ?? row.created_at.slice(0, 10),
+    publishedAt:
+      row.published_at?.slice(0, 10) ??
+      ("created_at" in row && row.created_at ? row.created_at.slice(0, 10) : ""),
     creator: row.author_handle,
     tags: row.tags ?? [],
-    views: 0,
-    likes: 0,
-    bookmarks: 0,
+    views: engagement.views,
+    likes: engagement.likes,
+    bookmarks: engagement.bookmarks,
     coverArtKey: row.cover_art_key,
+    minAccessTier: parseLibraryAccessTier(row.min_access_tier),
     blocks: blocks.map((block) =>
       mapBlockPayloadToArticleBlock(block.kind, (block.payload ?? {}) as Record<string, unknown>),
     ),
@@ -166,6 +192,5 @@ export type PublishedArticleRow = ResourceRow & {
 
 export type PublishedCollectionRow = CollectionRow & {
   library_collection_items?:
-    | { position: number; library_resources: Pick<ResourceRow, "slug"> | null }[]
-    | null;
+    { position: number; library_resources: Pick<ResourceRow, "slug"> | null }[] | null;
 };

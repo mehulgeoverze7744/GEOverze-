@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -10,260 +10,22 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.15"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
-      profile_preferences: {
+      credit_plan_rollover_config: {
         Row: {
-          interests: string[]
-          locale: string
-          motion_pref: string
-          skill_level: string | null
-          toggles: Json
-          units_pref: string
-          updated_at: string
-          user_id: string
+          plan_tier: string
+          rollover_months: number
         }
         Insert: {
-          interests?: string[]
-          locale?: string
-          motion_pref?: string
-          skill_level?: string | null
-          toggles?: Json
-          units_pref?: string
-          updated_at?: string
-          user_id: string
+          plan_tier: string
+          rollover_months: number
         }
         Update: {
-          interests?: string[]
-          locale?: string
-          motion_pref?: string
-          skill_level?: string | null
-          toggles?: Json
-          units_pref?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      profiles: {
-        Row: {
-          age_bracket: string
-          avatar_id: string | null
-          avatar_url: string | null
-          bio: string | null
-          country_code: string | null
-          created_at: string
-          date_of_birth: string | null
-          display_name: string | null
-          id: string
-          status: string
-          updated_at: string
-          username: string | null
-        }
-        Insert: {
-          age_bracket?: string
-          avatar_id?: string | null
-          avatar_url?: string | null
-          bio?: string | null
-          country_code?: string | null
-          created_at?: string
-          date_of_birth?: string | null
-          display_name?: string | null
-          id: string
-          status?: string
-          updated_at?: string
-          username?: string | null
-        }
-        Update: {
-          age_bracket?: string
-          avatar_id?: string | null
-          avatar_url?: string | null
-          bio?: string | null
-          country_code?: string | null
-          created_at?: string
-          date_of_birth?: string | null
-          display_name?: string | null
-          id?: string
-          status?: string
-          updated_at?: string
-          username?: string | null
-        }
-        Relationships: []
-      }
-      quiz_attempts: {
-        Row: {
-          attempt_id: string
-          best_streak: number
-          completed_at: string
-          correct: number
-          credits_earned: number
-          duration_ms: number
-          id: string
-          mode: string
-          quiz_id: string
-          score: number
-          total: number
-          user_id: string
-          xp_earned: number
-        }
-        Insert: {
-          attempt_id?: string
-          best_streak?: number
-          completed_at?: string
-          correct: number
-          credits_earned?: number
-          duration_ms: number
-          id?: string
-          mode: string
-          quiz_id: string
-          score: number
-          total: number
-          user_id: string
-          xp_earned?: number
-        }
-        Update: {
-          attempt_id?: string
-          best_streak?: number
-          completed_at?: string
-          correct?: number
-          credits_earned?: number
-          duration_ms?: number
-          id?: string
-          mode?: string
-          quiz_id?: string
-          score?: number
-          total?: number
-          user_id?: string
-          xp_earned?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "quiz_attempts_quiz_id_fkey"
-            columns: ["quiz_id"]
-            isOneToOne: false
-            referencedRelation: "quizzes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      quiz_questions: {
-        Row: {
-          accepted: string[] | null
-          answer_bool: boolean | null
-          answer_id: string | null
-          answer_ids: string[] | null
-          board_art: string | null
-          explanation: string | null
-          id: string
-          items: string[] | null
-          media: Json | null
-          options: Json | null
-          placeholder: string | null
-          position: number
-          prompt: string
-          quiz_id: string
-          regions: Json | null
-          targets: string[] | null
-          type: Database["public"]["Enums"]["question_type"]
-        }
-        Insert: {
-          accepted?: string[] | null
-          answer_bool?: boolean | null
-          answer_id?: string | null
-          answer_ids?: string[] | null
-          board_art?: string | null
-          explanation?: string | null
-          id?: string
-          items?: string[] | null
-          media?: Json | null
-          options?: Json | null
-          placeholder?: string | null
-          position: number
-          prompt: string
-          quiz_id: string
-          regions?: Json | null
-          targets?: string[] | null
-          type: Database["public"]["Enums"]["question_type"]
-        }
-        Update: {
-          accepted?: string[] | null
-          answer_bool?: boolean | null
-          answer_id?: string | null
-          answer_ids?: string[] | null
-          board_art?: string | null
-          explanation?: string | null
-          id?: string
-          items?: string[] | null
-          media?: Json | null
-          options?: Json | null
-          placeholder?: string | null
-          position?: number
-          prompt?: string
-          quiz_id?: string
-          regions?: Json | null
-          targets?: string[] | null
-          type?: Database["public"]["Enums"]["question_type"]
-        }
-        Relationships: [
-          {
-            foreignKeyName: "quiz_questions_quiz_id_fkey"
-            columns: ["quiz_id"]
-            isOneToOne: false
-            referencedRelation: "quizzes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      quizzes: {
-        Row: {
-          art: string
-          category_id: string
-          created_at: string
-          creator: string
-          description: string | null
-          difficulty: string
-          id: string
-          is_published: boolean
-          language: string
-          minutes: number
-          reward_credits: number
-          reward_xp: number
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          art: string
-          category_id: string
-          created_at?: string
-          creator: string
-          description?: string | null
-          difficulty: string
-          id: string
-          is_published?: boolean
-          language?: string
-          minutes?: number
-          reward_credits?: number
-          reward_xp?: number
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          art?: string
-          category_id?: string
-          created_at?: string
-          creator?: string
-          description?: string | null
-          difficulty?: string
-          id?: string
-          is_published?: boolean
-          language?: string
-          minutes?: number
-          reward_credits?: number
-          reward_xp?: number
-          title?: string
-          updated_at?: string
+          plan_tier?: string
+          rollover_months?: number
         }
         Relationships: []
       }
@@ -399,7 +161,15 @@ export type Database = {
           user_id?: string | null
           verified?: boolean
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "library_creators_featured_collection_slug_fkey"
+            columns: ["featured_collection_slug"]
+            isOneToOne: false
+            referencedRelation: "library_collections"
+            referencedColumns: ["slug"]
+          },
+        ]
       }
       library_resource_blocks: {
         Row: {
@@ -445,6 +215,7 @@ export type Database = {
           author_handle: string
           author_user_id: string | null
           continent: string
+          country: string | null
           cover_art_key: string | null
           cover_label: string | null
           created_at: string
@@ -459,8 +230,8 @@ export type Database = {
           published_at: string | null
           read_time_minutes: number
           region: string | null
-          country: string | null
           resource_kind: Database["public"]["Enums"]["library_resource_kind"]
+          search_vector: unknown
           seo_canonical_path: string | null
           seo_keywords: string[]
           seo_meta_description: string | null
@@ -480,6 +251,7 @@ export type Database = {
           author_handle: string
           author_user_id?: string | null
           continent?: string
+          country?: string | null
           cover_art_key?: string | null
           cover_label?: string | null
           created_at?: string
@@ -494,8 +266,8 @@ export type Database = {
           published_at?: string | null
           read_time_minutes?: number
           region?: string | null
-          country?: string | null
           resource_kind?: Database["public"]["Enums"]["library_resource_kind"]
+          search_vector?: unknown
           seo_canonical_path?: string | null
           seo_keywords?: string[]
           seo_meta_description?: string | null
@@ -515,6 +287,7 @@ export type Database = {
           author_handle?: string
           author_user_id?: string | null
           continent?: string
+          country?: string | null
           cover_art_key?: string | null
           cover_label?: string | null
           created_at?: string
@@ -529,8 +302,8 @@ export type Database = {
           published_at?: string | null
           read_time_minutes?: number
           region?: string | null
-          country?: string | null
           resource_kind?: Database["public"]["Enums"]["library_resource_kind"]
+          search_vector?: unknown
           seo_canonical_path?: string | null
           seo_keywords?: string[]
           seo_meta_description?: string | null
@@ -553,49 +326,255 @@ export type Database = {
             referencedRelation: "library_creators"
             referencedColumns: ["handle"]
           },
+          {
+            foreignKeyName: "library_resources_min_access_tier_fkey"
+            columns: ["min_access_tier"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["tier"]
+          },
         ]
       }
-      user_progression: {
+      plan_promotions: {
         Row: {
-          credits: number
-          current_streak: number
-          last_played_date: string | null
-          level: number
-          longest_streak: number
-          total_answered: number
-          total_correct: number
-          total_quizzes: number
+          active: boolean
+          billing_interval: string
+          created_at: string
+          ends_at: string | null
+          id: string
+          intro_period_months: number | null
+          label: string
+          metadata: Json
+          plan_tier: string
+          price_cents: number
+          starts_at: string | null
           updated_at: string
-          user_id: string
-          xp: number
         }
         Insert: {
-          credits?: number
-          current_streak?: number
-          last_played_date?: string | null
-          level?: number
-          longest_streak?: number
-          total_answered?: number
-          total_correct?: number
-          total_quizzes?: number
+          active?: boolean
+          billing_interval: string
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          intro_period_months?: number | null
+          label: string
+          metadata?: Json
+          plan_tier: string
+          price_cents: number
+          starts_at?: string | null
           updated_at?: string
-          user_id: string
-          xp?: number
         }
         Update: {
-          credits?: number
-          current_streak?: number
-          last_played_date?: string | null
-          level?: number
-          longest_streak?: number
-          total_answered?: number
-          total_correct?: number
-          total_quizzes?: number
+          active?: boolean
+          billing_interval?: string
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          intro_period_months?: number | null
+          label?: string
+          metadata?: Json
+          plan_tier?: string
+          price_cents?: number
+          starts_at?: string | null
           updated_at?: string
-          user_id?: string
-          xp?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_promotions_plan_tier_fkey"
+            columns: ["plan_tier"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["tier"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          country_code: string | null
+          created_at: string
+          date_of_birth: string | null
+          display_name: string | null
+          id: string
+          status: string
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          country_code?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          display_name?: string | null
+          id: string
+          status?: string
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          country_code?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          display_name?: string | null
+          id?: string
+          status?: string
+          updated_at?: string
+          username?: string | null
         }
         Relationships: []
+      }
+      subscription_plans: {
+        Row: {
+          active: boolean
+          annual_price_cents: number | null
+          created_at: string
+          credit_rollover_months: number
+          display_name: string
+          is_creator_plan: boolean
+          metadata: Json
+          monthly_credit_grant: number
+          monthly_price_cents: number
+          monthly_quiz_limit: number | null
+          multiplayer_limit: number | null
+          pvp_limit: number | null
+          rollover_tier_key: string
+          solo_quiz_limit: number | null
+          tier: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          annual_price_cents?: number | null
+          created_at?: string
+          credit_rollover_months?: number
+          display_name: string
+          is_creator_plan?: boolean
+          metadata?: Json
+          monthly_credit_grant?: number
+          monthly_price_cents?: number
+          monthly_quiz_limit?: number | null
+          multiplayer_limit?: number | null
+          pvp_limit?: number | null
+          rollover_tier_key: string
+          solo_quiz_limit?: number | null
+          tier: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          annual_price_cents?: number | null
+          created_at?: string
+          credit_rollover_months?: number
+          display_name?: string
+          is_creator_plan?: boolean
+          metadata?: Json
+          monthly_credit_grant?: number
+          monthly_price_cents?: number
+          monthly_quiz_limit?: number | null
+          multiplayer_limit?: number | null
+          pvp_limit?: number | null
+          rollover_tier_key?: string
+          solo_quiz_limit?: number | null
+          tier?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_plans_rollover_tier_key_fkey"
+            columns: ["rollover_tier_key"]
+            isOneToOne: false
+            referencedRelation: "credit_plan_rollover_config"
+            referencedColumns: ["plan_tier"]
+          },
+        ]
+      }
+      user_library_bookmarks: {
+        Row: {
+          created_at: string
+          resource_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          resource_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          resource_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_library_bookmarks_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "library_resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_library_likes: {
+        Row: {
+          created_at: string
+          resource_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          resource_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          resource_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_library_likes_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "library_resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_library_progress: {
+        Row: {
+          completed_at: string | null
+          progress_percent: number
+          resource_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          progress_percent?: number
+          resource_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          progress_percent?: number
+          resource_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_library_progress_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "library_resources"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -618,11 +597,82 @@ export type Database = {
         }
         Relationships: []
       }
+      user_subscriptions: {
+        Row: {
+          billing_interval: string
+          cancel_at_period_end: boolean
+          cancelled_at: string | null
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string
+          id: string
+          metadata: Json
+          plan_tier: string
+          provider_customer_id: string | null
+          provider_name: string | null
+          provider_subscription_id: string | null
+          started_at: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          billing_interval?: string
+          cancel_at_period_end?: boolean
+          cancelled_at?: string | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string
+          id?: string
+          metadata?: Json
+          plan_tier: string
+          provider_customer_id?: string | null
+          provider_name?: string | null
+          provider_subscription_id?: string | null
+          started_at?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          billing_interval?: string
+          cancel_at_period_end?: boolean
+          cancelled_at?: string | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string
+          id?: string
+          metadata?: Json
+          plan_tier?: string
+          provider_customer_id?: string | null
+          provider_name?: string | null
+          provider_subscription_id?: string | null
+          started_at?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_subscriptions_plan_tier_fkey"
+            columns: ["plan_tier"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["tier"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      compute_credit_expires_at: {
+        Args: { _earned_at: string; _plan_tier: string }
+        Returns: string
+      }
+      get_my_plan_tier: { Args: never; Returns: Json }
+      get_user_plan_tier: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -631,19 +681,73 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id?: string }; Returns: boolean }
-      submit_quiz_attempt: {
+      library_block_search_text: {
         Args: {
-          _answers: Json
-          _attempt_id: string
-          _duration_ms: number
-          _mode: string
-          _quiz_id: string
+          _kind: Database["public"]["Enums"]["library_block_kind"]
+          _payload: Json
         }
-        Returns: Json
+        Returns: string
       }
-      set_age_bracket: { Args: { _bracket: string }; Returns: undefined }
+      library_media_collection_slug_from_path: {
+        Args: { _object_name: string }
+        Returns: string
+      }
+      library_media_creator_handle_from_path: {
+        Args: { _object_name: string }
+        Returns: string
+      }
+      library_media_resource_slug_from_path: {
+        Args: { _object_name: string }
+        Returns: string
+      }
+      library_refresh_resource_search_vector: {
+        Args: { _resource_id: string }
+        Returns: undefined
+      }
+      library_storage_object_is_public: {
+        Args: { _object_name: string }
+        Returns: boolean
+      }
+      library_storage_user_can_manage: {
+        Args: { _object_name: string; _user_id?: string }
+        Returns: boolean
+      }
+      library_tier_rank: { Args: { _tier: string }; Returns: number }
+      library_user_can_access_resource: {
+        Args: { _resource_id: string; _user_id?: string }
+        Returns: boolean
+      }
+      library_user_curates_collection: {
+        Args: { _collection_id: string; _user_id?: string }
+        Returns: boolean
+      }
+      library_user_owns_creator_handle: {
+        Args: { _handle: string; _user_id?: string }
+        Returns: boolean
+      }
+      library_user_owns_resource: {
+        Args: { _resource_id: string; _user_id?: string }
+        Returns: boolean
+      }
+      map_plan_tier_to_rollover_key: {
+        Args: { _plan_tier: string }
+        Returns: string
+      }
+      resolve_user_subscription_tier: {
+        Args: { _user_id: string }
+        Returns: string
+      }
+      upsert_library_progress: {
+        Args: {
+          _completed?: boolean
+          _progress_percent: number
+          _resource_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
+      app_role: "user" | "creator" | "admin" | "super_admin"
       library_block_kind:
         | "heading"
         | "paragraph"
@@ -665,16 +769,6 @@ export type Database = {
         | "pdf"
         | "educational_resource"
       library_resource_status: "draft" | "pending" | "published" | "archived"
-      app_role: "user" | "creator" | "admin" | "super_admin"
-      question_type:
-        | "single"
-        | "multiple"
-        | "boolean"
-        | "image"
-        | "map"
-        | "typed"
-        | "order"
-        | "dragdrop"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -802,6 +896,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["user", "creator", "admin", "super_admin"],
       library_block_kind: [
         "heading",
         "paragraph",
@@ -825,17 +920,6 @@ export const Constants = {
         "educational_resource",
       ],
       library_resource_status: ["draft", "pending", "published", "archived"],
-      app_role: ["user", "creator", "admin", "super_admin"],
-      question_type: [
-        "single",
-        "multiple",
-        "boolean",
-        "image",
-        "map",
-        "typed",
-        "order",
-        "dragdrop",
-      ],
     },
   },
 } as const

@@ -2,6 +2,9 @@ import type { User } from "@supabase/supabase-js";
 
 import { useLibraryStore } from "@/stores/libraryStore";
 
+import { queuePendingProgressSync, retryPendingProgressSyncs } from "./library-progress-sync";
+import { invalidateLibraryCatalogueQueries } from "@/features/library/lib/library-query-scope";
+
 import {
   deleteBookmark,
   deleteLike,
@@ -18,6 +21,12 @@ export type MergedLibraryState = {
   progress: Record<string, number>;
   completed: string[];
 };
+
+function logHydrationDiagnostic(message: string, detail?: unknown) {
+  if (import.meta.env.DEV) {
+    console.warn(`[GEOlibrary hydrate] ${message}`, detail ?? "");
+  }
+}
 
 /** Merge local Zustand state with server rows. Preserves union + max progress. */
 export function mergeLibraryState(
@@ -58,33 +67,65 @@ async function pushMergedToServer(
   for (const slug of merged.bookmarks) {
     if (server.bookmarks.has(slug)) continue;
     const resourceId = slugToId.get(slug);
-    if (resourceId) await insertBookmark(userId, resourceId);
+    if (!resourceId) {
+      logHydrationDiagnostic(`Skipping bookmark sync for unresolved slug "${slug}"`);
+      continue;
+    }
+    try {
+      await insertBookmark(userId, resourceId);
+    } catch (error) {
+      logHydrationDiagnostic(`Failed to push bookmark for "${slug}"`, error);
+    }
   }
 
   for (const slug of merged.likes) {
     if (server.likes.has(slug)) continue;
     const resourceId = slugToId.get(slug);
-    if (resourceId) await insertLike(userId, resourceId);
+    if (!resourceId) {
+      logHydrationDiagnostic(`Skipping like sync for unresolved slug "${slug}"`);
+      continue;
+    }
+    try {
+      await insertLike(userId, resourceId);
+    } catch (error) {
+      logHydrationDiagnostic(`Failed to push like for "${slug}"`, error);
+    }
   }
 
   for (const slug of merged.completed) {
     const resourceId = slugToId.get(slug);
-    if (!resourceId) continue;
+    if (!resourceId) {
+      logHydrationDiagnostic(`Skipping completed progress sync for unresolved slug "${slug}"`);
+      continue;
+    }
     const serverEntry = server.progress.get(slug);
     const localPercent = merged.progress[slug] ?? 100;
     const serverPercent = serverEntry?.percent ?? 0;
     if (localPercent > serverPercent || !serverEntry?.completed) {
-      await upsertProgress(resourceId, Math.max(localPercent, 100), true);
+      try {
+        await upsertProgress(resourceId, Math.max(localPercent, 100), true);
+      } catch (error) {
+        logHydrationDiagnostic(`Failed to push completed progress for "${slug}"`, error);
+        queuePendingProgressSync(slug, Math.max(localPercent, 100), true);
+      }
     }
   }
 
   for (const [slug, percent] of Object.entries(merged.progress)) {
     if (merged.completed.includes(slug)) continue;
     const resourceId = slugToId.get(slug);
-    if (!resourceId) continue;
+    if (!resourceId) {
+      logHydrationDiagnostic(`Skipping progress sync for unresolved slug "${slug}"`);
+      continue;
+    }
     const serverPercent = server.progress.get(slug)?.percent ?? 0;
     if (percent > serverPercent) {
-      await upsertProgress(resourceId, percent, false);
+      try {
+        await upsertProgress(resourceId, percent, false);
+      } catch (error) {
+        logHydrationDiagnostic(`Failed to push progress for "${slug}"`, error);
+        queuePendingProgressSync(slug, percent, false);
+      }
     }
   }
 }
@@ -122,8 +163,10 @@ export async function hydrateLibraryState(user: User) {
     await pushMergedToServer(user.id, merged, server, slugToId);
     useLibraryStore.getState().replaceState(merged);
     lastHydratedUserId = user.id;
+    await retryPendingProgressSyncs(user.id);
   } catch (error) {
     console.error("Failed to hydrate GEOlibrary state", error);
+    await retryPendingProgressSyncs(user.id);
   }
 }
 
@@ -138,6 +181,7 @@ export async function syncBookmarkToggle(userId: string, slug: string, saved: bo
   if (!resourceId) return;
   if (saved) await insertBookmark(userId, resourceId);
   else await deleteBookmark(userId, resourceId);
+  invalidateLibraryCatalogueQueries();
 }
 
 export async function syncLikeToggle(userId: string, slug: string, liked: boolean) {
@@ -146,17 +190,7 @@ export async function syncLikeToggle(userId: string, slug: string, liked: boolea
   if (!resourceId) return;
   if (liked) await insertLike(userId, resourceId);
   else await deleteLike(userId, resourceId);
+  invalidateLibraryCatalogueQueries();
 }
 
-export async function syncProgressUpdate(
-  userId: string,
-  slug: string,
-  percent: number,
-  completed = false,
-) {
-  void userId;
-  const slugToId = await fetchResourceIdsBySlugs([slug]);
-  const resourceId = slugToId.get(slug);
-  if (!resourceId) return;
-  await upsertProgress(resourceId, percent, completed);
-}
+export { syncProgressUpdate } from "./library-progress-sync";

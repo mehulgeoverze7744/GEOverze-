@@ -5,6 +5,8 @@ import { useLibraryStore } from "@/stores/libraryStore";
 
 import { LibraryCard } from "./LibraryCard";
 import { useCollectionBySlug } from "../hooks/usePublishedCollections";
+import { useLibrarySubscriptionTier } from "../hooks/useLibrarySubscriptionTier";
+import { getResourceAccessState } from "../lib/access-tier";
 
 const routeApi = getRouteApi("/geolibrary/collections/$slug");
 
@@ -16,6 +18,7 @@ export function CollectionScreen() {
   const completed = useLibraryStore((s) => s.completed);
   const progress = useLibraryStore((s) => s.progress);
   const toggleBookmark = useLibraryStore((s) => s.toggleBookmark);
+  const { tier, signedIn } = useLibrarySubscriptionTier();
 
   if (loading) {
     return (
@@ -70,6 +73,7 @@ export function CollectionScreen() {
               saved={bookmarks.includes(article.slug)}
               progress={progress[article.slug] ?? 0}
               onToggleBookmark={toggleBookmark}
+              accessState={getResourceAccessState(article.minAccessTier, tier, signedIn)}
             />
           ))}
         </div>

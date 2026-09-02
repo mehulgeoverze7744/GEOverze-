@@ -8,6 +8,8 @@ import { useLibraryStore } from "@/stores/libraryStore";
 import { LibraryCard } from "./LibraryCard";
 import { LibraryMediaImage } from "./LibraryMediaImage";
 import { useCreatorByHandle } from "../hooks/usePublishedCreators";
+import { useLibrarySubscriptionTier } from "../hooks/useLibrarySubscriptionTier";
+import { getResourceAccessState } from "../lib/access-tier";
 
 const routeApi = getRouteApi("/geolibrary/creators/$handle");
 
@@ -17,6 +19,7 @@ export function CreatorScreen() {
   const { creator, articles, loading, error } = useCreatorByHandle(handle);
   const bookmarks = useLibraryStore((s) => s.bookmarks);
   const toggleBookmark = useLibraryStore((s) => s.toggleBookmark);
+  const { tier, signedIn } = useLibrarySubscriptionTier();
 
   if (loading) {
     return (
@@ -77,6 +80,7 @@ export function CreatorScreen() {
             article={article}
             saved={bookmarks.includes(article.slug)}
             onToggleBookmark={toggleBookmark}
+            accessState={getResourceAccessState(article.minAccessTier, tier, signedIn)}
           />
         ))}
       </div>

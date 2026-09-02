@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase/client";
 
+import { LIBRARY_CATALOGUE } from "../lib/library-catalogue";
 import { fetchBrowseCollections } from "./fetchBrowseCollections";
 import { mapCollectionRowToCollection, mapResourceRowToArticle } from "./library-mapper";
 import type { Article } from "./articles";
@@ -24,33 +25,42 @@ export async function fetchPublishedCollectionBySlug(
 
   const { data: items, error: itemsError } = await supabase
     .from("library_collection_items")
-    .select("position, library_resources!inner(*)")
+    .select("position, resource_id")
     .eq("collection_id", row.id)
-    .eq("library_resources.status", "published")
     .order("position", { ascending: true });
 
   if (itemsError) {
     throw new Error(`Failed to load collection items for "${slug}": ${itemsError.message}`);
   }
 
+  const resourceIds = (items ?? []).map((item) => item.resource_id);
+  const catalogueById = new Map<string, Parameters<typeof mapResourceRowToArticle>[0]>();
+
+  if (resourceIds.length > 0) {
+    const { data: catalogueRows, error: catalogueError } = await supabase
+      .from(LIBRARY_CATALOGUE)
+      .select("*")
+      .in("id", resourceIds);
+
+    if (catalogueError) {
+      throw new Error(
+        `Failed to load collection catalogue for "${slug}": ${catalogueError.message}`,
+      );
+    }
+
+    for (const catalogueRow of catalogueRows ?? []) {
+      catalogueById.set(catalogueRow.id, catalogueRow);
+    }
+  }
+
   const articles: Article[] = [];
   const slugs: string[] = [];
 
   for (const item of items ?? []) {
-    const resourceRow = item.library_resources as Parameters<typeof mapResourceRowToArticle>[0] | null;
-    if (!resourceRow) continue;
+    const catalogueRow = catalogueById.get(item.resource_id);
+    if (!catalogueRow) continue;
 
-    const { data: blockRows, error: blocksError } = await supabase
-      .from("library_resource_blocks")
-      .select("*")
-      .eq("resource_id", resourceRow.id)
-      .order("position", { ascending: true });
-
-    if (blocksError) {
-      throw new Error(`Failed to load blocks for collection article: ${blocksError.message}`);
-    }
-
-    const article = mapResourceRowToArticle(resourceRow, blockRows ?? []);
+    const article = mapResourceRowToArticle(catalogueRow);
     articles.push(article);
     slugs.push(article.slug);
   }

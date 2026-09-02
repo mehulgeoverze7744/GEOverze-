@@ -4,24 +4,27 @@ import {
   fetchPublishedCollectionBySlug,
   fetchPublishedCollections,
 } from "@/features/library/data/fetchPublishedCollections";
+import {
+  publishedCollectionsQueryKey,
+  useLibraryAuthScope,
+} from "@/features/library/lib/library-query-scope";
 
-export const publishedCollectionsQueryKey = ["publishedCollections"] as const;
+export { publishedCollectionsQueryKey };
 
 export function usePublishedCollections() {
+  const { scope, authReady } = useLibraryAuthScope();
+
   const query = useQuery({
-    queryKey: publishedCollectionsQueryKey,
+    queryKey: publishedCollectionsQueryKey(scope),
     queryFn: fetchPublishedCollections,
+    enabled: authReady,
   });
 
   return {
     collections: query.data ?? [],
-    loading: query.isPending,
+    loading: !authReady || query.isPending,
     error:
-      query.error instanceof Error
-        ? query.error.message
-        : query.error
-          ? String(query.error)
-          : null,
+      query.error instanceof Error ? query.error.message : query.error ? String(query.error) : null,
     refetch: () => {
       void query.refetch();
     },
@@ -29,21 +32,19 @@ export function usePublishedCollections() {
 }
 
 export function useCollectionBySlug(slug: string) {
+  const { scope, authReady } = useLibraryAuthScope();
+
   const query = useQuery({
-    queryKey: [...publishedCollectionsQueryKey, slug] as const,
+    queryKey: [...publishedCollectionsQueryKey(scope), slug] as const,
     queryFn: () => fetchPublishedCollectionBySlug(slug),
-    enabled: Boolean(slug),
+    enabled: authReady && Boolean(slug),
   });
 
   return {
     collection: query.data?.collection,
     articles: query.data?.articles ?? [],
-    loading: query.isPending,
+    loading: !authReady || query.isPending,
     error:
-      query.error instanceof Error
-        ? query.error.message
-        : query.error
-          ? String(query.error)
-          : null,
+      query.error instanceof Error ? query.error.message : query.error ? String(query.error) : null,
   };
 }

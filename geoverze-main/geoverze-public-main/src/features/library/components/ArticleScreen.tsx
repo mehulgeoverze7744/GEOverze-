@@ -3,29 +3,50 @@ import { getRouteApi } from "@tanstack/react-router";
 import { EmptyState, GeoButton, SectionContainer } from "@/components/shared";
 import { useLibraryStore } from "@/stores/libraryStore";
 
+import { ArticleUnavailableScreen } from "./ArticleUnavailableScreen";
+import { ArticleMapBlock } from "./ArticleMapBlock";
 import { LibraryCard } from "./LibraryCard";
 import { LibraryMediaImage } from "./LibraryMediaImage";
+import { LibraryTierBadge } from "./LibraryTierBadge";
 import { articleHeadings, relatedArticles } from "../data/articles";
 import { categoryLabel, difficultyLabel } from "../data/taxonomy";
 import { useArticleBySlug } from "../hooks/useArticleBySlug";
+import { useArticleReadingProgress } from "../hooks/useArticleReadingProgress";
+import { useRecordArticleView } from "../hooks/useRecordArticleView";
 import { useCreatorByHandle } from "../hooks/usePublishedCreators";
+import { useLibrarySubscriptionTier } from "../hooks/useLibrarySubscriptionTier";
 import { usePublishedArticles } from "../hooks/usePublishedArticles";
+import { getResourceAccessState } from "../lib/access-tier";
 
 const routeApi = getRouteApi("/geolibrary/article/$slug");
 
 /** Reading surface for a single library entry. */
 export function ArticleScreen() {
   const { slug } = routeApi.useParams();
-  const { article, loading, error } = useArticleBySlug(slug);
+  const { pageState, article, loading, error } = useArticleBySlug(slug);
+  const { tier, signedIn, authReady } = useLibrarySubscriptionTier();
   const { creator } = useCreatorByHandle(article?.creator ?? "");
   const { articles: catalogue } = usePublishedArticles();
   const bookmarks = useLibraryStore((s) => s.bookmarks);
   const likes = useLibraryStore((s) => s.likes);
+  const progress = useLibraryStore((s) => s.progress);
   const toggleBookmark = useLibraryStore((s) => s.toggleBookmark);
   const toggleLike = useLibraryStore((s) => s.toggleLike);
   const markComplete = useLibraryStore((s) => s.markComplete);
+  const completed = useLibraryStore((s) => s.completed.includes(slug));
 
-  if (loading) {
+  const readyArticle = pageState?.status === "ready" ? pageState.article : undefined;
+  const contentAccess =
+    readyArticle && !loading && authReady
+      ? getResourceAccessState(readyArticle.minAccessTier, tier, signedIn)
+      : null;
+  const canRecordView =
+    Boolean(readyArticle?.resourceId) && contentAccess?.kind === "open" && !error && signedIn;
+
+  useRecordArticleView(readyArticle?.resourceId, canRecordView);
+  const { contentRef } = useArticleReadingProgress(slug, Boolean(article) && !completed);
+
+  if (loading || !authReady) {
     return (
       <SectionContainer>
         <p className="text-sm text-foreground/50">Loading entry…</p>
@@ -41,27 +62,64 @@ export function ArticleScreen() {
     );
   }
 
-  if (!article) {
+  if (!pageState || pageState.status === "not_found") {
+    return <ArticleUnavailableScreen kind="not_found" slug={slug} />;
+  }
+
+  if (pageState.status === "restricted") {
+    const kind = !signedIn ? "sign_in_required" : "tier_restricted";
     return (
-      <SectionContainer>
-        <EmptyState
-          title="Entry unavailable"
-          description="This library entry may require a higher membership tier, or it may have moved. Browse the library for available reading."
-        />
-      </SectionContainer>
+      <ArticleUnavailableScreen
+        kind={kind}
+        slug={slug}
+        requiredTier={pageState.requiredTier}
+        title={pageState.title}
+      />
+    );
+  }
+
+  if (!article) {
+    return <ArticleUnavailableScreen kind="not_found" slug={slug} />;
+  }
+
+  const accessState = getResourceAccessState(article.minAccessTier, tier, signedIn);
+  if (accessState.kind === "sign_in_required") {
+    return (
+      <ArticleUnavailableScreen
+        kind="sign_in_required"
+        slug={slug}
+        requiredTier={accessState.requiredTier}
+        title={article.title}
+      />
+    );
+  }
+  if (accessState.kind === "tier_insufficient") {
+    return (
+      <ArticleUnavailableScreen
+        kind="tier_restricted"
+        slug={slug}
+        requiredTier={accessState.requiredTier}
+        title={article.title}
+      />
     );
   }
 
   const author = creator;
   const headings = articleHeadings(article);
+  const readPercent = progress[slug] ?? 0;
 
   return (
     <SectionContainer>
       <article className="mx-auto max-w-3xl">
-        <p className="text-[0.6rem] uppercase tracking-[0.22em] text-bronze/90">
-          {categoryLabel(article.category)} · {difficultyLabel(article.difficulty)} ·{" "}
-          {article.minutes} min
-        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-[0.6rem] uppercase tracking-[0.22em] text-bronze/90">
+            {categoryLabel(article.category)} · {difficultyLabel(article.difficulty)} ·{" "}
+            {article.minutes} min
+          </p>
+          {article.minAccessTier ? (
+            <LibraryTierBadge tier={article.minAccessTier} accessState={accessState} />
+          ) : null}
+        </div>
         <h1 className="mt-4 text-3xl font-light tracking-tight text-foreground sm:text-4xl">
           {article.title}
         </h1>
@@ -69,6 +127,25 @@ export function ArticleScreen() {
         <p className="mt-4 text-xs text-foreground/50">
           {author ? `${author.name} · ${author.role}` : "GEOverze editorial"}
         </p>
+
+        {readPercent > 0 ? (
+          <div className="mt-6">
+            <div className="flex items-center justify-between gap-3 text-[0.65rem] uppercase tracking-[0.18em] text-foreground/45">
+              <span>Reading progress</span>
+              <span>{completed ? "Completed" : `${readPercent}%`}</span>
+            </div>
+            <div
+              className="mt-2 h-1 overflow-hidden rounded-full bg-[oklch(0.2_0.008_60/0.7)]"
+              role="progressbar"
+              aria-valuenow={readPercent}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label="Article reading progress"
+            >
+              <span className="block h-full bg-bronze/70" style={{ width: `${readPercent}%` }} />
+            </div>
+          </div>
+        ) : null}
 
         <div className="mt-6 flex flex-wrap gap-3">
           <GeoButton type="button" variant="ghost" onClick={() => toggleBookmark(article.slug)}>
@@ -78,7 +155,7 @@ export function ArticleScreen() {
             {likes.includes(article.slug) ? "Liked" : "Like"}
           </GeoButton>
           <GeoButton type="button" onClick={() => markComplete(article.slug)}>
-            Mark as read
+            {completed ? "Marked as read" : "Mark as read"}
           </GeoButton>
         </div>
 
@@ -102,7 +179,7 @@ export function ArticleScreen() {
           </nav>
         ) : null}
 
-        <div className="mt-10 space-y-6">
+        <div ref={contentRef} className="mt-10 space-y-6">
           {article.blocks.map((block, index) => {
             switch (block.kind) {
               case "heading":
@@ -121,17 +198,23 @@ export function ArticleScreen() {
                     {block.text}
                   </p>
                 );
-              case "list":
+              case "list": {
+                const ListTag = block.ordered ? "ol" : "ul";
                 return (
-                  <ul
+                  <ListTag
                     key={index}
-                    className="ml-5 list-disc space-y-2 text-[0.95rem] text-foreground/70"
+                    className={
+                      block.ordered
+                        ? "ml-5 list-decimal space-y-2 text-[0.95rem] text-foreground/70"
+                        : "ml-5 list-disc space-y-2 text-[0.95rem] text-foreground/70"
+                    }
                   >
                     {block.items.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
-                  </ul>
+                  </ListTag>
                 );
+              }
               case "quote":
                 return (
                   <blockquote
@@ -176,7 +259,10 @@ export function ArticleScreen() {
                 );
               case "image":
                 return (
-                  <figure key={index} className="glass-panel surface-gradient overflow-hidden rounded-2xl">
+                  <figure
+                    key={index}
+                    className="glass-panel surface-gradient overflow-hidden rounded-2xl"
+                  >
                     <LibraryMediaImage
                       storagePath={block.storagePath}
                       fallbackArt={block.art}
@@ -189,6 +275,10 @@ export function ArticleScreen() {
                       </figcaption>
                     ) : null}
                   </figure>
+                );
+              case "map":
+                return (
+                  <ArticleMapBlock key={index} region={block.region} caption={block.caption} />
                 );
               default:
                 return (
@@ -212,6 +302,8 @@ export function ArticleScreen() {
               article={related}
               saved={bookmarks.includes(related.slug)}
               onToggleBookmark={toggleBookmark}
+              progress={progress[related.slug] ?? 0}
+              accessState={getResourceAccessState(related.minAccessTier, tier, signedIn)}
             />
           ))}
         </div>

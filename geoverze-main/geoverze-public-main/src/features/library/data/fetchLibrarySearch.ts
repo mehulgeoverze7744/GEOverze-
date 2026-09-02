@@ -2,6 +2,7 @@ import type { LinkProps } from "@tanstack/react-router";
 
 import { supabase } from "@/lib/supabase/client";
 
+import { LIBRARY_CATALOGUE } from "../lib/library-catalogue";
 import type { LibraryHit } from "../lib/search";
 import { kindIcon } from "../data/taxonomy";
 
@@ -23,9 +24,8 @@ export async function fetchLibrarySearchHits(
   if (q.length === 0) return [];
 
   const { data, error } = await supabase
-    .from("library_resources")
+    .from(LIBRARY_CATALOGUE)
     .select("slug, title, read_time_minutes, dek")
-    .eq("status", "published")
     .textSearch("search_vector", q, { type: "websearch", config: "english" })
     .limit(limit);
 
@@ -47,9 +47,8 @@ export async function fetchLibraryScopedHits(query: string, limit = 24): Promise
   if (q.length === 0) return [];
 
   const { data, error } = await supabase
-    .from("library_resources")
+    .from(LIBRARY_CATALOGUE)
     .select("slug, title, read_time_minutes")
-    .eq("status", "published")
     .textSearch("search_vector", q, { type: "websearch", config: "english" })
     .limit(limit);
 

@@ -2,6 +2,7 @@
  * Article filtering and sorting for the browse surface.
  * Pure functions over the local article list.
  */
+import { compareBookmarked, comparePopular, compareTrending } from "./engagement";
 import { ARTICLES, type Article } from "../data/articles";
 import {
   READING_TIMES,
@@ -68,16 +69,16 @@ export function sortArticles(articles: readonly Article[], sort: SortId): Articl
   const list = [...articles];
   switch (sort) {
     case "newest":
-      return list.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+      return list.sort(
+        (a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.slug.localeCompare(b.slug),
+      );
     case "bookmarked":
-      return list.sort((a, b) => b.bookmarks - a.bookmarks);
+      return list.sort(compareBookmarked);
     case "quickest":
-      return list.sort((a, b) => a.minutes - b.minutes);
+      return list.sort((a, b) => a.minutes - b.minutes || a.slug.localeCompare(b.slug));
     case "popular":
     default:
-      return list.sort(
-        (a, b) => b.views - a.views || b.publishedAt.localeCompare(a.publishedAt),
-      );
+      return list.sort(comparePopular);
   }
 }
 
@@ -89,21 +90,21 @@ export const readingTimeLabel = (id: ReadingTimeId) =>
 export const recentArticles = (limit = 6, source: readonly Article[] = ARTICLES) =>
   sortArticles(source, "newest").slice(0, limit);
 
-/** Most viewed, for "Trending". Falls back to recency when views are unavailable. */
+/** Engagement-weighted recency ranking for the Home Trending rail. */
 export const trendingArticles = (limit = 6, source: readonly Article[] = ARTICLES) =>
-  sortArticles(source, "popular").slice(0, limit);
+  [...source].sort(compareTrending).slice(0, limit);
 
-/** Quick, beginner-friendly entries used as the neutral recommendation source. */
+/** @deprecated Use rankRecommendedArticles via useRecommendedArticles instead. */
 export function recommendedArticles(
   limit = 6,
   source: readonly Article[] = ARTICLES,
   exclude: readonly string[] = [],
 ): Article[] {
   const skip = new Set(exclude);
-  return source
-    .filter((a) => !skip.has(a.slug))
-    .sort((a, b) => b.bookmarks / b.minutes - a.bookmarks / a.minutes || b.publishedAt.localeCompare(a.publishedAt))
-    .slice(0, limit);
+  return sortArticles(
+    source.filter((article) => !skip.has(article.slug)),
+    "popular",
+  ).slice(0, limit);
 }
 
 /** Articles by a creator handle. */

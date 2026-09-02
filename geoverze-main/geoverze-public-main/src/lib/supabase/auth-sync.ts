@@ -13,6 +13,7 @@
  * Phase 2C: hydrates progressionStore from `user_progression` so the player
  * snapshot shows real XP, level, credits, and streak data.
  */
+import type { QueryClient } from "@tanstack/react-query";
 import type { Session, User } from "@supabase/supabase-js";
 
 import type { SkillLevelId } from "@/features/auth/data/onboarding";
@@ -27,10 +28,18 @@ import {
 } from "@/stores/preferencesStore";
 import { useProgressionStore } from "@/stores/progressionStore";
 
+import { registerProgressSyncFlush } from "@/features/library/data/library-progress-sync";
 import {
   hydrateLibraryState,
   resetLibraryHydration,
 } from "@/features/library/data/sync-library-state";
+import {
+  libraryAuthScope,
+  registerLibraryQueryClient,
+  resetLibrarySubscriptionTierTracking,
+  syncLibraryQueryScope,
+} from "@/features/library/lib/library-query-scope";
+import { activateLibraryPersistScope } from "@/stores/libraryStore";
 
 import { highestRole, supabase, type AppRole } from "./client";
 
@@ -174,10 +183,20 @@ async function hydrateProfileAndRole(user: User) {
 }
 
 function applySession(session: Session | null) {
+  const prevScope = libraryAuthScope(useAuthStore.getState().user?.id);
+  const nextScope = libraryAuthScope(session?.user?.id);
+
+  syncLibraryQueryScope(nextScope);
+
+  if (nextScope !== prevScope) {
+    activateLibraryPersistScope(nextScope);
+    resetLibraryHydration();
+    resetLibrarySubscriptionTierTracking();
+  }
+
   const { setSession, setRole } = useAuthStore.getState();
 
   if (!session?.user) {
-    resetLibraryHydration();
     setSession(null);
     setRole(null);
     return;
@@ -187,9 +206,14 @@ function applySession(session: Session | null) {
   void hydrateProfileAndRole(session.user);
 }
 
-export function initAuthSync() {
+export function initAuthSync(queryClient?: QueryClient) {
+  if (queryClient) {
+    registerLibraryQueryClient(queryClient);
+  }
   if (initialized) return;
   initialized = true;
+
+  registerProgressSyncFlush();
 
   useAuthStore.getState().setStatus("unknown");
 

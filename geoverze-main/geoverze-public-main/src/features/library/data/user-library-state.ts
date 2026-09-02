@@ -1,12 +1,14 @@
 import { supabase } from "@/lib/supabase/client";
 
+import { LIBRARY_CATALOGUE } from "../lib/library-catalogue";
+
 export type ServerLibraryState = {
   bookmarks: Map<string, string>;
   likes: Map<string, string>;
   progress: Map<string, { percent: number; completed: boolean }>;
 };
 
-/** Slug → resource id for known slugs. */
+/** Slug → resource id via catalogue metadata (tier-independent). */
 export async function fetchResourceIdsBySlugs(
   slugs: readonly string[],
 ): Promise<Map<string, string>> {
@@ -14,7 +16,7 @@ export async function fetchResourceIdsBySlugs(
   if (unique.length === 0) return new Map();
 
   const { data, error } = await supabase
-    .from("library_resources")
+    .from(LIBRARY_CATALOGUE)
     .select("id, slug")
     .in("slug", unique);
 
@@ -23,20 +25,31 @@ export async function fetchResourceIdsBySlugs(
   return new Map((data ?? []).map((row) => [row.slug, row.id]));
 }
 
+/** Resource id → slug via catalogue metadata (tier-independent). */
+async function fetchResourceSlugsByIds(
+  resourceIds: readonly string[],
+): Promise<Map<string, string>> {
+  const unique = [...new Set(resourceIds.filter(Boolean))];
+  if (unique.length === 0) return new Map();
+
+  const { data, error } = await supabase
+    .from(LIBRARY_CATALOGUE)
+    .select("id, slug")
+    .in("id", unique);
+
+  if (error) throw new Error(`Failed to resolve library resource ids: ${error.message}`);
+
+  return new Map((data ?? []).map((row) => [row.id, row.slug]));
+}
+
 /** Fetch authenticated user's library state keyed by slug. */
 export async function fetchServerLibraryState(userId: string): Promise<ServerLibraryState> {
   const [bookmarksRes, likesRes, progressRes] = await Promise.all([
-    supabase
-      .from("user_library_bookmarks")
-      .select("resource_id, library_resources(slug)")
-      .eq("user_id", userId),
-    supabase
-      .from("user_library_likes")
-      .select("resource_id, library_resources(slug)")
-      .eq("user_id", userId),
+    supabase.from("user_library_bookmarks").select("resource_id").eq("user_id", userId),
+    supabase.from("user_library_likes").select("resource_id").eq("user_id", userId),
     supabase
       .from("user_library_progress")
-      .select("resource_id, progress_percent, completed_at, library_resources(slug)")
+      .select("resource_id, progress_percent, completed_at")
       .eq("user_id", userId),
   ]);
 
@@ -48,21 +61,31 @@ export async function fetchServerLibraryState(userId: string): Promise<ServerLib
     throw new Error(`Failed to load progress: ${progressRes.error.message}`);
   }
 
+  const allResourceIds = [
+    ...new Set([
+      ...(bookmarksRes.data ?? []).map((row) => row.resource_id),
+      ...(likesRes.data ?? []).map((row) => row.resource_id),
+      ...(progressRes.data ?? []).map((row) => row.resource_id),
+    ]),
+  ];
+
+  const slugByResourceId = await fetchResourceSlugsByIds(allResourceIds);
+
   const bookmarks = new Map<string, string>();
   for (const row of bookmarksRes.data ?? []) {
-    const slug = row.library_resources?.slug;
+    const slug = slugByResourceId.get(row.resource_id);
     if (slug) bookmarks.set(slug, row.resource_id);
   }
 
   const likes = new Map<string, string>();
   for (const row of likesRes.data ?? []) {
-    const slug = row.library_resources?.slug;
+    const slug = slugByResourceId.get(row.resource_id);
     if (slug) likes.set(slug, row.resource_id);
   }
 
   const progress = new Map<string, { percent: number; completed: boolean }>();
   for (const row of progressRes.data ?? []) {
-    const slug = row.library_resources?.slug;
+    const slug = slugByResourceId.get(row.resource_id);
     if (!slug) continue;
     progress.set(slug, {
       percent: row.progress_percent,

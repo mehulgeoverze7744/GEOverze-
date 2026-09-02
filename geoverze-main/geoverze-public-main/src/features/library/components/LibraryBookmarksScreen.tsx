@@ -4,18 +4,20 @@ import { EmptyState, PageHeader, SectionContainer } from "@/components/shared";
 import { useLibraryStore } from "@/stores/libraryStore";
 
 import { LibraryCard } from "./LibraryCard";
-import { articleBySlug } from "../data/articles";
 import { usePublishedArticles } from "../hooks/usePublishedArticles";
+import { useLibrarySubscriptionTier } from "../hooks/useLibrarySubscriptionTier";
+import { getResourceAccessState } from "../lib/access-tier";
 
 /** Saved reading list. */
 export function LibraryBookmarksScreen() {
   const bookmarks = useLibraryStore((s) => s.bookmarks);
   const progress = useLibraryStore((s) => s.progress);
   const toggleBookmark = useLibraryStore((s) => s.toggleBookmark);
+  const { tier, signedIn } = useLibrarySubscriptionTier();
   const { articles } = usePublishedArticles();
 
   const saved = bookmarks
-    .map((slug) => articles.find((a) => a.slug === slug) ?? articleBySlug(slug))
+    .map((slug) => articles.find((a) => a.slug === slug))
     .filter((a): a is NonNullable<typeof a> => Boolean(a));
 
   return (
@@ -58,6 +60,7 @@ export function LibraryBookmarksScreen() {
               saved
               progress={progress[article.slug] ?? 0}
               onToggleBookmark={toggleBookmark}
+              accessState={getResourceAccessState(article.minAccessTier, tier, signedIn)}
             />
           ))}
         </div>

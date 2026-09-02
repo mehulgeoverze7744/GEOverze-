@@ -2,10 +2,34 @@ import { Link } from "@tanstack/react-router";
 import { Library } from "lucide-react";
 
 import { EmptyState, PageHeader, SectionContainer } from "@/components/shared";
+import { CoverArt } from "@/features/play/components/CoverArt";
 
 import { LibraryMediaImage } from "./LibraryMediaImage";
 
+import { collectionCardImageSrc } from "../data/collection-card-images";
+import type { Collection } from "../data/collections";
 import { usePublishedCollections } from "../hooks/usePublishedCollections";
+
+function CollectionCardCover({ collection }: { collection: Collection }) {
+  const imageSrc = collectionCardImageSrc(collection.slug);
+
+  if (imageSrc) {
+    return (
+      <CoverArt
+        art={collection.art}
+        imageSrc={imageSrc}
+        imageAlt=""
+        ratio="video"
+        fit="cover"
+        overlay="subtle"
+      />
+    );
+  }
+
+  return (
+    <LibraryMediaImage storagePath={collection.art} fallbackArt={collection.art} icon={Library} />
+  );
+}
 
 /** All curated shelves. */
 export function CollectionsScreen() {
@@ -35,9 +59,9 @@ export function CollectionsScreen() {
               key={collection.slug}
               to="/geolibrary/collections/$slug"
               params={{ slug: collection.slug }}
-              className="glass-panel surface-gradient overflow-hidden rounded-2xl transition-all motion-base hover:border-bronze/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+              className="glass-panel surface-gradient group/card overflow-hidden rounded-2xl transition-all motion-base hover:border-bronze/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
             >
-              <LibraryMediaImage storagePath={collection.art} fallbackArt={collection.art} icon={Library} />
+              <CollectionCardCover collection={collection} />
               <div className="p-5">
                 <h2 className="text-base font-light text-foreground">{collection.title}</h2>
                 <p className="mt-2 line-clamp-2 text-[0.8rem] text-foreground/50">

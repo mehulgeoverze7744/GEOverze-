@@ -12,6 +12,8 @@ const searchSchema = z.object({
   category: fallback(z.string(), "all").default("all"),
   sort: fallback(z.string(), "popular").default("popular"),
   saved: fallback(z.boolean(), false).default(false),
+  page: fallback(z.coerce.number().int().min(1), 1).default(1),
+  pageSize: fallback(z.coerce.number().int().min(1).max(48), 12).default(12),
   view: fallback(z.string(), "grid").default("grid"),
 });
 

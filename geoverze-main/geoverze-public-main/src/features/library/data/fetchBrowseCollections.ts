@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase/client";
 
+import { LIBRARY_CATALOGUE } from "../lib/library-catalogue";
 import { mapCollectionRowToCollection } from "./library-mapper";
 import type { Collection } from "./collections";
 import type { CategoryId, ContinentId } from "./taxonomy";
@@ -41,19 +42,36 @@ export async function fetchBrowseCollections(
   const ids = rows.map((row) => row.id);
   const { data: items, error: itemsError } = await supabase
     .from("library_collection_items")
-    .select("collection_id, position, resource_id, library_resources!inner(slug, status)")
+    .select("collection_id, position, resource_id")
     .in("collection_id", ids)
-    .eq("library_resources.status", "published")
     .order("position", { ascending: true });
 
   if (itemsError) throw new Error(`Failed to load collection items: ${itemsError.message}`);
 
+  const resourceIds = [...new Set((items ?? []).map((item) => item.resource_id))];
+  const slugByResourceId = new Map<string, string>();
+
+  if (resourceIds.length > 0) {
+    const { data: catalogueRows, error: catalogueError } = await supabase
+      .from(LIBRARY_CATALOGUE)
+      .select("id, slug")
+      .in("id", resourceIds);
+
+    if (catalogueError) {
+      throw new Error(`Failed to load collection catalogue entries: ${catalogueError.message}`);
+    }
+
+    for (const row of catalogueRows ?? []) {
+      slugByResourceId.set(row.id, row.slug);
+    }
+  }
+
   const slugsByCollection = new Map<string, string[]>();
   for (const item of items ?? []) {
-    const resource = item.library_resources as { slug: string } | null;
-    if (!resource) continue;
+    const slug = slugByResourceId.get(item.resource_id);
+    if (!slug) continue;
     const list = slugsByCollection.get(item.collection_id) ?? [];
-    list.push(resource.slug);
+    list.push(slug);
     slugsByCollection.set(item.collection_id, list);
   }
 

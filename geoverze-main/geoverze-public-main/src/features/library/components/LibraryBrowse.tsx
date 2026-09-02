@@ -17,7 +17,9 @@ import {
   type SortId,
 } from "../data/taxonomy";
 import { useBrowseArticles } from "../hooks/useBrowseArticles";
+import { useLibrarySubscriptionTier } from "../hooks/useLibrarySubscriptionTier";
 import { sortArticles, type LibraryQuery } from "../lib/filter";
+import { getResourceAccessState } from "../lib/access-tier";
 
 const routeApi = getRouteApi("/geolibrary/browse");
 
@@ -63,6 +65,7 @@ export function LibraryBrowse() {
   const bookmarks = useLibraryStore((s) => s.bookmarks);
   const progress = useLibraryStore((s) => s.progress);
   const toggleBookmark = useLibraryStore((s) => s.toggleBookmark);
+  const { tier, signedIn } = useLibrarySubscriptionTier();
 
   const browseQuery: LibraryQuery = {
     q: search.q,
@@ -77,8 +80,22 @@ export function LibraryBrowse() {
   const { articles: browseResults, loading, error } = useBrowseArticles(browseQuery, bookmarks);
   const results = sortArticles(browseResults, search.sort as SortId);
 
-  const set = (patch: Partial<typeof search>) =>
-    navigate({ search: (prev: typeof search) => ({ ...prev, ...patch }) });
+  const pageSize = search.pageSize ?? 12;
+  const totalResults = results.length;
+  const totalPages = Math.max(1, Math.ceil(totalResults / pageSize));
+  const currentPage = Math.min(Math.max(1, search.page ?? 1), totalPages);
+  const pagedResults = results.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  const set = (patch: Partial<typeof search>) => {
+    const preservePage = "page" in patch || "pageSize" in patch;
+    navigate({
+      search: (prev: typeof search) => ({
+        ...prev,
+        ...patch,
+        ...(preservePage ? {} : { page: 1 }),
+      }),
+    });
+  };
 
   if (error) {
     return (
@@ -164,10 +181,12 @@ export function LibraryBrowse() {
       </div>
 
       <p className="mt-6 text-xs text-foreground/50" aria-live="polite">
-        {loading ? "Loading…" : `${results.length} ${results.length === 1 ? "entry" : "entries"}`}
+        {loading
+          ? "Loading…"
+          : `${totalResults} ${totalResults === 1 ? "entry" : "entries"}${totalPages > 1 ? ` · page ${currentPage} of ${totalPages}` : ""}`}
       </p>
 
-      {!loading && results.length === 0 ? (
+      {!loading && totalResults === 0 ? (
         <div className="mt-6">
           <EmptyState
             title="No entries match those filters"
@@ -183,6 +202,8 @@ export function LibraryBrowse() {
               category: "all",
               sort: "popular",
               saved: false,
+              page: 1,
+              pageSize: 12,
               view: "grid",
             }}
             className="mt-4 inline-block text-xs text-bronze hover:text-bronze-glow"
@@ -192,17 +213,45 @@ export function LibraryBrowse() {
         </div>
       ) : (
         <div className="mb-8 mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {results.map((article) => (
+          {pagedResults.map((article) => (
             <LibraryCard
               key={article.slug}
               article={article}
               saved={bookmarks.includes(article.slug)}
               progress={progress[article.slug] ?? 0}
               onToggleBookmark={toggleBookmark}
+              accessState={getResourceAccessState(article.minAccessTier, tier, signedIn)}
             />
           ))}
         </div>
       )}
+
+      {!loading && totalPages > 1 ? (
+        <nav
+          aria-label="Browse pagination"
+          className="mb-8 flex items-center justify-center gap-3 text-sm text-foreground/60"
+        >
+          <button
+            type="button"
+            disabled={currentPage <= 1}
+            onClick={() => set({ page: currentPage - 1 })}
+            className="rounded-full border border-bronze/20 px-4 py-2 transition-colors motion-fast hover:border-bronze/40 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Previous
+          </button>
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            type="button"
+            disabled={currentPage >= totalPages}
+            onClick={() => set({ page: currentPage + 1 })}
+            className="rounded-full border border-bronze/20 px-4 py-2 transition-colors motion-fast hover:border-bronze/40 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Next
+          </button>
+        </nav>
+      ) : null}
     </SectionContainer>
   );
 }

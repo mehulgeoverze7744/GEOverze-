@@ -5,24 +5,27 @@ import {
   fetchPublishedArticles,
   fetchRecentArticles,
 } from "@/features/library/data/fetchPublishedArticles";
+import {
+  publishedArticlesQueryKey,
+  useLibraryAuthScope,
+} from "@/features/library/lib/library-query-scope";
 
-export const publishedArticlesQueryKey = ["publishedArticles"] as const;
+export { publishedArticlesQueryKey };
 
 export function usePublishedArticles() {
+  const { scope, authReady } = useLibraryAuthScope();
+
   const query = useQuery({
-    queryKey: publishedArticlesQueryKey,
+    queryKey: publishedArticlesQueryKey(scope),
     queryFn: fetchPublishedArticles,
+    enabled: authReady,
   });
 
   return {
     articles: query.data ?? [],
-    loading: query.isPending,
+    loading: !authReady || query.isPending,
     error:
-      query.error instanceof Error
-        ? query.error.message
-        : query.error
-          ? String(query.error)
-          : null,
+      query.error instanceof Error ? query.error.message : query.error ? String(query.error) : null,
     refetch: () => {
       void query.refetch();
     },
@@ -30,37 +33,35 @@ export function usePublishedArticles() {
 }
 
 export function useFeaturedArticles(limit = 6) {
+  const { scope, authReady } = useLibraryAuthScope();
+
   const query = useQuery({
-    queryKey: [...publishedArticlesQueryKey, "featured", limit] as const,
+    queryKey: [...publishedArticlesQueryKey(scope), "featured", limit] as const,
     queryFn: () => fetchFeaturedArticles(limit),
+    enabled: authReady,
   });
 
   return {
     articles: query.data ?? [],
-    loading: query.isPending,
+    loading: !authReady || query.isPending,
     error:
-      query.error instanceof Error
-        ? query.error.message
-        : query.error
-          ? String(query.error)
-          : null,
+      query.error instanceof Error ? query.error.message : query.error ? String(query.error) : null,
   };
 }
 
 export function useRecentArticles(limit = 6) {
+  const { scope, authReady } = useLibraryAuthScope();
+
   const query = useQuery({
-    queryKey: [...publishedArticlesQueryKey, "recent", limit] as const,
+    queryKey: [...publishedArticlesQueryKey(scope), "recent", limit] as const,
     queryFn: () => fetchRecentArticles(limit),
+    enabled: authReady,
   });
 
   return {
     articles: query.data ?? [],
-    loading: query.isPending,
+    loading: !authReady || query.isPending,
     error:
-      query.error instanceof Error
-        ? query.error.message
-        : query.error
-          ? String(query.error)
-          : null,
+      query.error instanceof Error ? query.error.message : query.error ? String(query.error) : null,
   };
 }

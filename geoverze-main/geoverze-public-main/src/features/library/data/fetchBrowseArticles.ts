@@ -1,13 +1,14 @@
 import { supabase } from "@/lib/supabase/client";
 
+import { LIBRARY_CATALOGUE } from "../lib/library-catalogue";
 import type { Article } from "./articles";
 import { mapResourceRowToArticle } from "./library-mapper";
 import type { LibraryQuery } from "../lib/filter";
 import { readingTimeBucket } from "../data/taxonomy";
 
-/** Server-side browse query over published resources. RLS enforces tier access. */
+/** Server-side browse query over published catalogue metadata. */
 export async function fetchBrowseArticles(query: LibraryQuery): Promise<Article[]> {
-  let request = supabase.from("library_resources").select("*").eq("status", "published");
+  let request = supabase.from(LIBRARY_CATALOGUE).select("*");
 
   const q = query.q.trim();
   if (q.length > 0) {
