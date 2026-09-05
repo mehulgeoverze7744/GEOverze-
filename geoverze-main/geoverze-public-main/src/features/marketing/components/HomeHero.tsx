@@ -103,7 +103,7 @@ export function HomeHero() {
       {/* Scroll-synced copy */}
       <div
         ref={panel1}
-        className="pointer-events-none absolute inset-x-6 bottom-24 will-change-transform md:inset-x-auto md:left-12 md:top-1/2 md:bottom-auto md:max-w-[34rem] md:-translate-y-1/2"
+        className="pointer-events-none absolute inset-x-6 bottom-24 will-change-transform md:inset-x-auto md:left-12 md:bottom-auto md:max-w-[34rem] md:top-[calc(108px+150px+1.5rem)]"
       >
         <p className="eyebrow">Know Earth</p>
         <h1 className="mt-4 font-light leading-[0.98] tracking-tight text-foreground text-[clamp(2.2rem,5.4vw,4.4rem)]">
