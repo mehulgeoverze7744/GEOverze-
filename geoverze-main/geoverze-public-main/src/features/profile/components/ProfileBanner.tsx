@@ -13,10 +13,9 @@ export function ProfileBanner({ className }: { className?: string }) {
         decoding="async"
         draggable={false}
       />
-      {/* Subtle left shade for profile identity readability — keeps spacecraft visible */}
-      <div className="profile-banner-overlay absolute inset-0 bg-gradient-to-r from-background/55 via-background/15 to-transparent" />
-      {/* Bottom fade for avatar overlap transition */}
-      <div className="profile-banner-overlay-bottom absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-charcoal/45 to-transparent" />
+      {/* Seamless fade into the profile card — no hard banner edge */}
+      <div className="profile-banner-overlay-bottom absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-[oklch(0.11_0.006_58/0.98)] via-[oklch(0.10_0.006_58/0.72)] via-45% to-transparent" />
+      <div className="profile-banner-overlay-left absolute inset-0 bg-gradient-to-r from-background/60 via-background/20 to-transparent" />
     </div>
   );
 }

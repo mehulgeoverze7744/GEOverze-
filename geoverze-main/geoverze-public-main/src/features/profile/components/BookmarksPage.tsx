@@ -1,104 +1,181 @@
+import { Link } from "@tanstack/react-router";
+import { ArrowRight, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { PageShell } from "@/components/layout/PageShell";
-import { AnimatedBadge } from "@/components/shared/AnimatedBadge";
 import { AnimatedSection } from "@/components/shared/AnimatedSection";
-import { EmptyState } from "@/components/shared/EmptyState";
-import { GlassCard } from "@/components/shared/GlassCard";
-import { PageHeader } from "@/components/shared/PageHeader";
 import { SectionContainer } from "@/components/shared/SectionContainer";
-import { categoryLabel } from "@/features/library/data/taxonomy";
-import { usePublishedArticles } from "@/features/library/hooks/usePublishedArticles";
-import { BOOKMARK_SECTIONS, type BookmarkSection } from "@/features/profile/data/bookmarks";
-import { useLibraryStore } from "@/stores/libraryStore";
+import {
+  BOOKMARK_FILTER_LABELS,
+  type BookmarkFilterId,
+} from "@/features/profile/data/bookmarks";
+import { useBookmarksCollection } from "@/features/profile/lib/useBookmarksCollection";
 import { cn } from "@/lib/utils";
+
+import { BookmarkCard } from "./BookmarkCard";
+import "../styles/bookmarks.css";
+
+const FILTER_ORDER: readonly BookmarkFilterId[] = [
+  "all",
+  "articles",
+  "quizzes",
+  "maps",
+  "paths",
+];
+
+function matchesQuery(
+  item: ReturnType<ReturnType<typeof useBookmarksCollection>["itemsForFilter"]>[number],
+  query: string,
+) {
+  const haystack = `${item.title} ${item.category} ${item.typeLabel} ${item.description}`.toLowerCase();
+  return haystack.includes(query);
+}
 
 /** Saved articles, quizzes, maps and learning paths. */
 export function BookmarksPage() {
-  const [activeId, setActiveId] = useState(BOOKMARK_SECTIONS[0]!.id);
-  const libraryBookmarks = useLibraryStore((s) => s.bookmarks);
-  const { articles } = usePublishedArticles();
+  const [activeFilter, setActiveFilter] = useState<BookmarkFilterId>("all");
+  const [search, setSearch] = useState("");
+  const { sections, counts, loading, itemsForFilter, removeBookmark } = useBookmarksCollection();
 
-  const sections = useMemo((): readonly BookmarkSection[] => {
-    const articleItems = libraryBookmarks
-      .map((slug) => articles.find((a) => a.slug === slug))
-      .filter((a): a is NonNullable<typeof a> => Boolean(a))
-      .map((article) => ({
-        id: article.slug,
-        title: article.title,
-        description: article.dek,
-        meta: `${article.minutes} min read`,
-        tag: categoryLabel(article.category),
-      }));
+  const filteredItems = useMemo(() => {
+    const items = itemsForFilter(activeFilter);
+    const query = search.trim().toLowerCase();
+    if (!query) return items;
+    return items.filter((item) => matchesQuery(item, query));
+  }, [activeFilter, itemsForFilter, search]);
 
-    return BOOKMARK_SECTIONS.map((section) =>
-      section.id === "articles" ? { ...section, items: articleItems } : section,
-    );
-  }, [articles, libraryBookmarks]);
+  const activeSection =
+    activeFilter === "all"
+      ? null
+      : (sections.find((section) => section.id === activeFilter) ?? null);
 
-  const active = sections.find((section) => section.id === activeId) ?? sections[0]!;
+  const compactGrid = filteredItems.length > 0 && filteredItems.length <= 2;
 
   return (
     <PageShell>
-      <PageHeader
-        eyebrow="Bookmarks"
-        title="Your saved collection"
-        description="Anything you bookmark across GEOverze gathers here, grouped by where it came from."
-      />
-      <SectionContainer>
-        <div className="flex flex-wrap gap-2.5" role="tablist" aria-label="Bookmark categories">
-          {sections.map((section) => (
-            <button
-              key={section.id}
-              type="button"
-              role="tab"
-              id={`bookmark-tab-${section.id}`}
-              aria-selected={section.id === activeId}
-              aria-controls={`bookmark-panel-${section.id}`}
-              onClick={() => setActiveId(section.id)}
-              className={cn(
-                "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs transition-colors motion-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45",
-                section.id === activeId
-                  ? "border-bronze/55 bg-bronze/12 text-foreground"
-                  : "border-bronze/15 text-foreground/50 hover:border-bronze/35 hover:text-foreground/80",
-              )}
+      <SectionContainer size="default" className="bookmarks-page max-w-[78rem]">
+        <header className="bookmarks-header">
+          <AnimatedSection>
+            <p className="bookmarks-eyebrow">Bookmarks</p>
+            <h1 className="bookmarks-title">Your saved collection</h1>
+            <p className="bookmarks-description">
+              Your saved explorations, all in one place.
+            </p>
+          </AnimatedSection>
+        </header>
+
+        <div className="bookmarks-toolbar">
+          <div className="bookmarks-toolbar-meta">
+            {counts.all > 0 ? (
+              <p className="bookmarks-summary" aria-live="polite">
+                {counts.all} {counts.all === 1 ? "exploration saved" : "explorations saved"}
+              </p>
+            ) : null}
+
+            <div
+              className="bookmarks-filters"
+              role="tablist"
+              aria-label="Bookmark categories"
             >
-              <section.icon className="h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
-              {section.label}
-              <span className="text-bronze/90">{section.items.length}</span>
-            </button>
-          ))}
+              {FILTER_ORDER.map((filterId) => (
+                <button
+                  key={filterId}
+                  type="button"
+                  role="tab"
+                  id={`bookmark-tab-${filterId}`}
+                  aria-selected={activeFilter === filterId}
+                  aria-controls="bookmark-panel"
+                  data-active={activeFilter === filterId}
+                  onClick={() => setActiveFilter(filterId)}
+                  className="bookmarks-filter focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45"
+                >
+                  {BOOKMARK_FILTER_LABELS[filterId]}
+                  <span className="bookmarks-filter-count">{counts[filterId]}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="bookmarks-search-wrap">
+            <Search
+              className="bookmarks-search-icon h-3.5 w-3.5"
+              strokeWidth={1.75}
+              aria-hidden="true"
+            />
+            <input
+              id="bookmarks-search"
+              type="search"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search saved explorations"
+              aria-label="Search saved explorations"
+              className="bookmarks-search"
+            />
+          </div>
         </div>
 
         <div
           role="tabpanel"
-          id={`bookmark-panel-${active.id}`}
-          aria-labelledby={`bookmark-tab-${active.id}`}
-          className="mt-8"
+          id="bookmark-panel"
+          aria-labelledby={`bookmark-tab-${activeFilter}`}
         >
-          {active.items.length === 0 ? (
+          {loading ? (
+            <ul className={cn("bookmarks-grid", compactGrid && "bookmarks-grid--compact")}>
+              {Array.from({ length: 3 }).map((_, index) => (
+                <li
+                  key={index}
+                  className="h-56 animate-pulse rounded-[1.125rem] border border-bronze/10 bg-charcoal/35"
+                  aria-hidden="true"
+                />
+              ))}
+            </ul>
+          ) : filteredItems.length === 0 ? (
             <AnimatedSection>
-              <EmptyState
-                icon={active.icon}
-                title={active.emptyTitle}
-                description={active.emptyBody}
-              />
+              <div className="bookmarks-empty">
+                {search.trim() ? (
+                  <>
+                    <p className="bookmarks-empty-title">No matches</p>
+                    <p className="bookmarks-empty-body">
+                      Try a different search term or switch filters.
+                    </p>
+                  </>
+                ) : activeSection ? (
+                  <>
+                    <p className="bookmarks-empty-title">{activeSection.emptyTitle}</p>
+                    <p className="bookmarks-empty-body">{activeSection.emptyBody}</p>
+                    <Link
+                      to={activeSection.exploreTo}
+                      {...(activeSection.exploreSearch
+                        ? { search: activeSection.exploreSearch }
+                        : {})}
+                      className="bookmarks-empty-link"
+                    >
+                      {activeSection.exploreLabel}
+                      <ArrowRight className="h-3 w-3" strokeWidth={1.75} aria-hidden="true" />
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <p className="bookmarks-empty-title">Nothing saved yet</p>
+                    <p className="bookmarks-empty-body">
+                      Bookmark articles, quizzes and more across GEOverze to build your library.
+                    </p>
+                    <Link to="/geolibrary/browse" className="bookmarks-empty-link">
+                      Explore GEOlibrary
+                      <ArrowRight className="h-3 w-3" strokeWidth={1.75} aria-hidden="true" />
+                    </Link>
+                  </>
+                )}
+              </div>
             </AnimatedSection>
           ) : (
-            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {active.items.map((item, index) => (
+            <ul
+              className={cn("bookmarks-grid", compactGrid && "bookmarks-grid--compact mx-auto")}
+            >
+              {filteredItems.map((item, index) => (
                 <li key={item.id}>
-                  <AnimatedSection delay={index * 60}>
-                    <GlassCard className="flex h-full flex-col p-6">
-                      <AnimatedBadge>{item.tag}</AnimatedBadge>
-                      <h2 className="mt-5 text-sm text-foreground/85">{item.title}</h2>
-                      <p className="mt-2 flex-1 text-xs leading-relaxed text-foreground/50">
-                        {item.description}
-                      </p>
-                      <p className="mt-5 text-[0.62rem] uppercase tracking-[0.2em] text-foreground/50">
-                        {item.meta}
-                      </p>
-                    </GlassCard>
+                  <AnimatedSection delay={index * 40}>
+                    <BookmarkCard item={item} onRemove={() => removeBookmark(item)} />
                   </AnimatedSection>
                 </li>
               ))}

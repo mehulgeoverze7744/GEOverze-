@@ -114,7 +114,7 @@ export function DashboardHero({ className }: { className?: string }) {
               </Link>
             </GeoButton>
             <GeoButton asChild variant="secondary">
-              <Link to="/progress">View progress</Link>
+              <Link to="/profile">View progress</Link>
             </GeoButton>
             <GeoButton asChild variant="secondary">
               <Link to="/profile/edit">

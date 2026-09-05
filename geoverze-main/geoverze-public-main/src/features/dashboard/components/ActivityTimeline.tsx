@@ -68,6 +68,7 @@ export function ActivityTimeline({ className }: { className?: string }) {
                 {entry.to ? (
                   <Link
                     to={entry.to}
+                    {...(entry.search ? { search: entry.search } : {})}
                     className="group min-w-0 flex-1 rounded-xl border border-transparent px-3 py-2 transition-colors motion-fast hover:border-bronze/18 hover:bg-bronze/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45"
                   >
                     <TimelineRow icon={Icon} entry={entry} />
@@ -85,7 +86,9 @@ export function ActivityTimeline({ className }: { className?: string }) {
 
       <div className="mt-2 border-t border-bronze/10 pt-5">
         <GeoButton asChild variant="ghost" size="sm">
-          <Link to="/quiz-history">See full quiz history</Link>
+          <Link to="/quiz-history-and-rewards" search={{ tab: "history" }}>
+            See full quiz history
+          </Link>
         </GeoButton>
       </div>
     </section>

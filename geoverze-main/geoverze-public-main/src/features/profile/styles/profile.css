@@ -1,39 +1,60 @@
-/* Profile card — banner + overlapping explorer avatar */
+/* Profile card — cinematic banner + circular explorer avatar */
 
 .profile-card {
-  --profile-banner-height: 9rem;
-  --profile-avatar-overlap: 4.25rem;
-  --profile-avatar-display-width: 8.75rem;
+  --profile-banner-height: 6.5rem;
+  --profile-avatar-size: 11.25rem;
+  --profile-avatar-overlap: 5.1rem;
+  --profile-avatar-display-width: 12.75rem;
   position: relative;
   overflow: visible;
 }
 
 @media (min-width: 640px) {
   .profile-card {
-    --profile-banner-height: 11rem;
-    --profile-avatar-overlap: 5rem;
-    --profile-avatar-display-width: 9.5rem;
+    --profile-banner-height: 7.75rem;
+    --profile-avatar-overlap: 5.4rem;
+    --profile-avatar-display-width: 13.5rem;
   }
 }
 
 @media (min-width: 768px) {
   .profile-card {
-    --profile-banner-height: 13rem;
+    --profile-banner-height: 8.25rem;
   }
 }
 
 @media (min-width: 1024px) {
   .profile-card {
-    --profile-banner-height: 14rem;
-    --profile-avatar-overlap: 5.5rem;
+    --profile-banner-height: 8.75rem;
+    --profile-avatar-overlap: 5.65rem;
+    --profile-avatar-display-width: 14rem;
   }
 }
 
 .profile-banner-wrap {
+  position: relative;
+  z-index: 1;
   height: var(--profile-banner-height);
   overflow: hidden;
   border-top-left-radius: 1rem;
   border-top-right-radius: 1rem;
+}
+
+/* Soft continuation below the banner image edge */
+.profile-banner-wrap::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -1px;
+  z-index: 2;
+  height: 3.5rem;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    oklch(0.1 0.006 58 / 0),
+    oklch(0.11 0.006 58 / 0.55) 42%,
+    var(--glass-bg-strong) 100%
+  );
 }
 
 .profile-banner {
@@ -57,7 +78,7 @@
   }
 }
 
-/* Avatar sits above banner — never clipped by banner overflow */
+/* Circular avatar overlapping banner + card */
 .profile-avatar-layer {
   position: absolute;
   left: 1.75rem;
@@ -71,12 +92,67 @@
   pointer-events: auto;
 }
 
-.profile-avatar-slot {
+.profile-avatar-frame {
+  position: relative;
+  width: var(--profile-avatar-size);
+  height: var(--profile-avatar-size);
   overflow: visible;
 }
 
-.profile-avatar-slot .user-avatar-explorer {
-  transform: translateY(0.25rem);
+/* Premium bronze ring — decorative, does not clip the astronaut */
+.profile-avatar-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: 50%;
+  border: 1.5px solid color-mix(in oklab, var(--bronze) 52%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--bronze-glow) 22%, transparent),
+    0 0 0 1px color-mix(in oklab, var(--bronze) 10%, transparent),
+    0 0 28px color-mix(in oklab, var(--bronze) 14%, transparent);
+  pointer-events: none;
+}
+
+/* Default astronaut window artwork — circular presentation, hand may extend */
+.profile-avatar-frame .profile-avatar-image.user-avatar-explorer {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: calc(var(--profile-avatar-size) * 1.2) !important;
+  height: calc(var(--profile-avatar-size) * 1.2) !important;
+  overflow: visible;
+  transform: translate(-7%, -4%);
+  transform-origin: center center;
+}
+
+.profile-avatar-frame .profile-avatar-image.user-avatar-explorer img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  mix-blend-mode: lighten;
+  filter: drop-shadow(0 14px 32px oklch(0 0 0 / 0.55));
+}
+
+/* Uploaded photo avatars */
+.profile-avatar-frame > .profile-avatar-image.rounded-full,
+.profile-avatar-frame img.profile-avatar-image.rounded-full {
+  position: relative;
+  z-index: 1;
+  width: var(--profile-avatar-size);
+  height: var(--profile-avatar-size);
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 14px 32px oklch(0 0 0 / 0.55);
+}
+
+/* Preset glyph avatars */
+.profile-avatar-frame > .profile-avatar-image:not(.user-avatar-explorer):not(.rounded-full) {
+  position: relative;
+  z-index: 1;
+  border-radius: 50%;
 }
 
 @media (max-width: 639px) {
@@ -84,9 +160,10 @@
     left: 1.25rem;
   }
 
-  .profile-avatar-slot .user-avatar-explorer {
-    transform: translateY(0.1rem) scale(0.9);
-    transform-origin: bottom left;
+  .profile-avatar-frame .profile-avatar-image.user-avatar-explorer {
+    width: calc(var(--profile-avatar-size) * 1.12) !important;
+    height: calc(var(--profile-avatar-size) * 1.12) !important;
+    transform: translate(-5%, -3%);
   }
 }
 
@@ -96,19 +173,124 @@
   }
 }
 
+/* Explorer analytics section */
+.explorer-analytics-label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--bronze) 75%, transparent);
+}
+
+.explorer-analytics .dashboard-section-label {
+  color: color-mix(in oklab, var(--bronze) 75%, transparent);
+}
+
+.explorer-analytics-hero-metric {
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--bronze) 8%, transparent);
+}
+
+.explorer-analytics-empty {
+  background-image: radial-gradient(
+    ellipse 80% 60% at 50% 40%,
+    color-mix(in oklab, var(--bronze) 6%, transparent),
+    transparent 70%
+  );
+}
+
 .profile-content {
   position: relative;
   z-index: 10;
-  padding-top: calc(var(--profile-avatar-overlap) + 0.35rem);
+  padding: calc(var(--profile-avatar-overlap) + 0.1rem) 1.25rem 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .profile-content {
+    padding: calc(var(--profile-avatar-overlap) + 0.15rem) 1.75rem 1.5rem;
+  }
+}
+
+.profile-identity-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .profile-identity-actions {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
 }
 
 .profile-identity-row {
-  padding-left: calc(var(--profile-avatar-display-width) + 1.25rem);
+  padding-left: calc(var(--profile-avatar-display-width) + 0.65rem);
+  min-width: 0;
 }
 
 @media (max-width: 639px) {
   .profile-identity-row {
     padding-left: 0;
-    padding-top: calc(var(--profile-avatar-display-width) * 0.55);
+    padding-top: calc(var(--profile-avatar-size) * 0.48);
   }
+}
+
+.profile-display-name {
+  font-size: clamp(1.25rem, 2.4vw, 1.65rem);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--foreground);
+}
+
+.profile-handle {
+  margin-top: 0.15rem;
+  font-size: 0.72rem;
+  color: color-mix(in oklab, var(--foreground) 50%, transparent);
+}
+
+.profile-level-badge {
+  margin-top: 0.45rem;
+}
+
+.profile-action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .profile-action-buttons {
+    padding-top: 0.1rem;
+  }
+}
+
+.profile-bio {
+  margin-top: 0.85rem;
+  max-width: 42rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: color-mix(in oklab, var(--foreground) 55%, transparent);
+}
+
+.profile-meta {
+  margin-top: 0.65rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 1.25rem;
+  font-size: 0.68rem;
+  color: color-mix(in oklab, var(--foreground) 50%, transparent);
+}
+
+.profile-interests {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  list-style: none;
+  padding: 0;
 }

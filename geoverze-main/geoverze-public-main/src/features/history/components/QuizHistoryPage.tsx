@@ -137,7 +137,7 @@ export function QuizHistoryPage() {
             <Link to="/play">Play another</Link>
           </GeoButton>
           <GeoButton asChild variant="secondary">
-            <Link to="/progress">View progress</Link>
+            <Link to="/profile">View progress</Link>
           </GeoButton>
         </div>
       </SectionContainer>

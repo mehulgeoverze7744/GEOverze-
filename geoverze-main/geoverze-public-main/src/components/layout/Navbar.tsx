@@ -1,15 +1,13 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
-  Award,
   BookMarked,
   LayoutDashboard,
-  History,
   LifeBuoy,
   LogIn,
   LogOut,
   Menu,
   Settings,
-  TrendingUp,
+  Trophy,
   User,
   X,
 } from "lucide-react";
@@ -28,9 +26,7 @@ import { selectIsSignedIn, useAuthStore } from "@/stores/authStore";
 const accountLinks = [
   { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
   { label: "Profile", to: "/profile", icon: User },
-  { label: "Progress", to: "/progress", icon: TrendingUp },
-  { label: "Quiz history", to: "/quiz-history", icon: History },
-  { label: "Achievements and Rewards", to: "/achievements", icon: Award },
+  { label: "Quiz History & Rewards", to: "/quiz-history-and-rewards", icon: Trophy },
   { label: "Bookmarks", to: "/bookmarks", icon: BookMarked },
 
   { label: "Settings", to: "/settings", icon: Settings },

@@ -1,26 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import { AchievementsPage } from "@/features/profile";
-
+/** Legacy URL — achievements now live on the unified page. */
 export const Route = createFileRoute("/_app/achievements")({
-  head: () => ({
-    meta: [
-      { title: "Achievements and Rewards — GEOverze" },
-      {
-        name: "description",
-        content:
-          "Every GEOverze badge: what you have unlocked, what is in progress and what the planet still hides.",
-      },
-      { property: "og:title", content: "Achievements and Rewards — GEOverze" },
-      {
-        property: "og:description",
-        content: "Unlocked, in-progress and locked GEOverze explorer badges.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://geoverze.com/achievements" },
-    ],
-    links: [{ rel: "canonical", href: "https://geoverze.com/achievements" }],
-  }),
-  component: AchievementsPage,
+  beforeLoad: () => {
+    throw redirect({
+      to: "/quiz-history-and-rewards",
+      search: { tab: "achievements" },
+      replace: true,
+    });
+  },
 });

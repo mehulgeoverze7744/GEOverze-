@@ -1,26 +1,18 @@
 import { Link } from "@tanstack/react-router";
-import { Award, BookMarked, MapPin, Pencil, Settings2, Share2 } from "lucide-react";
+import { MapPin, Pencil, Settings2, Share2 } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedBadge } from "@/components/shared/AnimatedBadge";
-import { AnimatedCounter } from "@/components/shared/AnimatedCounter";
 import { AnimatedSection } from "@/components/shared/AnimatedSection";
 import { GeoButton } from "@/components/shared/GeoButton";
 import { GlassCard } from "@/components/shared/GlassCard";
-import { ProgressRing } from "@/components/shared/ProgressRing";
 import { SectionContainer } from "@/components/shared/SectionContainer";
-import { SectionHeading } from "@/components/shared/SectionHeading";
-import { StatGrid } from "@/components/shared/StatGrid";
-import { TimelineItem } from "@/components/shared/TimelineItem";
 import { UserAvatar } from "@/features/auth/components/UserAvatar";
-import { QUIZ_HISTORY } from "@/features/dashboard/data/dashboard";
-import { ACHIEVEMENTS } from "@/features/profile/data/achievements";
-import { PROFILE_STATS, RECORD_STATS, STREAK } from "@/features/profile/data/stats";
 import { formatJoinDate, useProfile } from "@/features/profile/lib/useProfile";
-import { ContinentMasteryList, StreakPanel } from "@/features/progress";
 import { LevelBadge } from "@/features/progression/components/LevelBadge";
 import { selectPlayer, useProgressionStore } from "@/stores/progressionStore";
 
+import { ExplorerAnalytics } from "./ExplorerAnalytics";
 import { ProfileBanner } from "./ProfileBanner";
 import "../styles/profile.css";
 
@@ -34,9 +26,6 @@ export function ProfilePage() {
   const profile = useProfile();
   const player = useProgressionStore(selectPlayer);
 
-  const unlocked = ACHIEVEMENTS.filter((item) => item.status === "unlocked");
-  const completion = Math.round((unlocked.length / ACHIEVEMENTS.length) * 100);
-
   return (
     <PageShell>
       <SectionContainer className="pt-[calc(var(--nav-height)+var(--space-section-sm))]">
@@ -47,41 +36,40 @@ export function ProfilePage() {
             </div>
 
             <div className="profile-avatar-layer">
-              <div className="profile-avatar-slot">
+              <div className="profile-avatar-frame">
                 <UserAvatar
                   avatarUrl={profile.avatarUrl}
                   avatarId={profile.avatarId}
-                  size={120}
-                  className="drop-shadow-[0_12px_32px_rgba(0,0,0,0.5)]"
+                  size={180}
+                  className="profile-avatar-image"
+                  alt={`${profile.displayName} avatar`}
                 />
               </div>
             </div>
 
-            <div className="profile-content px-7 pb-8 sm:px-9">
-              <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+            <div className="profile-content">
+              <div className="profile-identity-actions">
                 <div className="profile-identity-row min-w-0">
-                  <h1 className="truncate text-[clamp(1.5rem,3.2vw,2.2rem)] font-light tracking-tight text-foreground">
-                    {profile.displayName}
-                  </h1>
-                  <p className="mt-1 text-xs text-foreground/50">{profile.handle}</p>
+                  <h1 className="profile-display-name truncate">{profile.displayName}</h1>
+                  <p className="profile-handle">{profile.handle}</p>
                   <LevelBadge
-                    className="mt-4"
+                    className="profile-level-badge"
                     size="sm"
                     level={player.level}
                     title={player.levelTitle}
                   />
                 </div>
-                <div className="flex flex-wrap gap-3 sm:pb-2">
-                  <GeoButton asChild variant="primary">
+                <div className="profile-action-buttons">
+                  <GeoButton asChild variant="primary" size="sm">
                     <Link to="/profile/edit">
-                      <Pencil className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
+                      <Pencil className="mr-1.5 h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
                       Edit profile
                     </Link>
                   </GeoButton>
-                  <GeoButton asChild variant="secondary">
+                  <GeoButton asChild variant="secondary" size="sm">
                     <Link to="/settings">
                       <Settings2
-                        className="mr-2 h-3.5 w-3.5"
+                        className="mr-1.5 h-3.5 w-3.5"
                         strokeWidth={1.5}
                         aria-hidden="true"
                       />
@@ -91,11 +79,9 @@ export function ProfilePage() {
                 </div>
               </div>
 
-              <p className="mt-7 max-w-2xl text-sm leading-relaxed text-foreground/55">
-                {profile.bio}
-              </p>
+              <p className="profile-bio">{profile.bio}</p>
 
-              <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-foreground/50">
+              <div className="profile-meta">
                 {profile.country ? (
                   <span className="inline-flex items-center gap-2">
                     <MapPin
@@ -119,7 +105,7 @@ export function ProfilePage() {
               </div>
 
               {profile.interests.length > 0 ? (
-                <ul className="mt-7 flex flex-wrap gap-2">
+                <ul className="profile-interests">
                   {profile.interests.map((interest) => (
                     <li key={interest.id}>
                       <AnimatedBadge>{interest.label}</AnimatedBadge>
@@ -132,108 +118,8 @@ export function ProfilePage() {
         </AnimatedSection>
       </SectionContainer>
 
-      <SectionContainer className="mt-[var(--space-section-sm)]">
-        <AnimatedSection>
-          <SectionHeading
-            eyebrow="Statistics"
-            title="Your expedition record"
-            description="Illustrative figures until the quiz engine starts reporting."
-          />
-        </AnimatedSection>
-        <div className="mt-8">
-          <StatGrid stats={PROFILE_STATS} columns={3} />
-        </div>
-        <div className="mt-4">
-          <StatGrid stats={RECORD_STATS} columns={4} />
-        </div>
-      </SectionContainer>
-
-      <SectionContainer className="mt-[var(--space-section-sm)]">
-        <div className="grid gap-4 lg:grid-cols-2">
-          <AnimatedSection>
-            <GlassCard className="h-full p-7 sm:p-8">
-              <SectionHeading as="h2" eyebrow="Mastery" title="Continents" />
-              <div className="mt-8">
-                <ContinentMasteryList />
-              </div>
-              <div className="mt-8">
-                <GeoButton asChild variant="secondary">
-                  <Link to="/progress">Full progress breakdown</Link>
-                </GeoButton>
-              </div>
-            </GlassCard>
-          </AnimatedSection>
-          <AnimatedSection delay={80}>
-            <GlassCard className="h-full p-7 sm:p-8">
-              <SectionHeading as="h2" eyebrow="Consistency" title="Streak" />
-              <div className="mt-8">
-                <StreakPanel />
-              </div>
-            </GlassCard>
-          </AnimatedSection>
-        </div>
-      </SectionContainer>
-
-      <SectionContainer className="mt-[var(--space-section-sm)]">
-        <div className="grid gap-4 lg:grid-cols-3">
-          <AnimatedSection className="lg:col-span-2">
-            <GlassCard className="p-6 sm:p-8">
-              <SectionHeading
-                as="h3"
-                title="Recent activity"
-                action={
-                  <GeoButton asChild variant="ghost">
-                    <Link to="/dashboard">Open dashboard</Link>
-                  </GeoButton>
-                }
-              />
-              <ol className="mt-7 list-none">
-                {QUIZ_HISTORY.map((entry, index) => (
-                  <TimelineItem
-                    key={entry.id}
-                    icon={entry.icon}
-                    title={entry.title}
-                    meta={entry.when}
-                    last={index === QUIZ_HISTORY.length - 1}
-                  >
-                    Scored {entry.score} of {entry.total}
-                  </TimelineItem>
-                ))}
-              </ol>
-            </GlassCard>
-          </AnimatedSection>
-
-          <AnimatedSection delay={80}>
-            <GlassCard className="flex h-full flex-col items-center p-6 text-center sm:p-8">
-              <ProgressRing value={completion} label="Badge completion" size={120}>
-                <span className="text-2xl font-light text-gradient-bronze">{completion}%</span>
-                <span className="text-[0.55rem] uppercase tracking-[0.24em] text-foreground/50">
-                  badges
-                </span>
-              </ProgressRing>
-              <p className="mt-6 text-sm text-foreground/70">
-                {unlocked.length} of {ACHIEVEMENTS.length} badges unlocked
-              </p>
-              <p className="mt-2 text-xs text-foreground/50">
-                Longest streak {STREAK.longest} days
-              </p>
-              <div className="mt-7 flex w-full flex-col gap-3">
-                <GeoButton asChild variant="secondary">
-                  <Link to="/achievements">
-                    <Award className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
-                    Achievements and Rewards
-                  </Link>
-                </GeoButton>
-                <GeoButton asChild variant="ghost">
-                  <Link to="/bookmarks">
-                    <BookMarked className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
-                    Bookmarks
-                  </Link>
-                </GeoButton>
-              </div>
-            </GlassCard>
-          </AnimatedSection>
-        </div>
+      <SectionContainer className="mt-[var(--space-section-sm)] pb-[var(--space-section-sm)]">
+        <ExplorerAnalytics />
       </SectionContainer>
     </PageShell>
   );

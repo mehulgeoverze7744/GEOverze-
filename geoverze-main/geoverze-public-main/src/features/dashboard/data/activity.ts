@@ -18,6 +18,7 @@ export type ActivityEntry = {
   when: string;
   tone: ActivityTone;
   to?: NonNullable<LinkProps["to"]>;
+  search?: LinkProps["search"];
 };
 
 export const RECENT_ACTIVITY: readonly ActivityEntry[] = [
@@ -28,7 +29,8 @@ export const RECENT_ACTIVITY: readonly ActivityEntry[] = [
     detail: "Solo · scored 18 of 20",
     when: "2h ago",
     tone: "quiz",
-    to: "/quiz-history",
+    to: "/quiz-history-and-rewards",
+    search: { tab: "history" },
   },
   {
     id: "a2",
@@ -37,7 +39,8 @@ export const RECENT_ACTIVITY: readonly ActivityEntry[] = [
     detail: "Answered 100 capital questions correctly",
     when: "2h ago",
     tone: "achievement",
-    to: "/achievements",
+    to: "/quiz-history-and-rewards",
+    search: { tab: "achievements" },
   },
   {
     id: "a3",
@@ -46,7 +49,8 @@ export const RECENT_ACTIVITY: readonly ActivityEntry[] = [
     detail: "PvP · 11 of 12 correct",
     when: "4h ago",
     tone: "quiz",
-    to: "/quiz-history",
+    to: "/quiz-history-and-rewards",
+    search: { tab: "history" },
   },
   {
     id: "a4",
@@ -82,7 +86,8 @@ export const RECENT_ACTIVITY: readonly ActivityEntry[] = [
     detail: "Multiplayer · perfect 12 of 12",
     when: "2 days ago",
     tone: "quiz",
-    to: "/quiz-history",
+    to: "/quiz-history-and-rewards",
+    search: { tab: "history" },
   },
   {
     id: "a8",

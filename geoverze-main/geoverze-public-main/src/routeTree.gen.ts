@@ -37,6 +37,7 @@ import { Route as AppNotificationsRouteImport } from './routes/_app.notification
 import { Route as AppProfileRouteImport } from './routes/_app.profile'
 import { Route as AppProgressRouteImport } from './routes/_app.progress'
 import { Route as AppQuizHistoryRouteImport } from './routes/_app.quiz-history'
+import { Route as AppQuizHistoryAndRewardsRouteImport } from './routes/_app.quiz-history-and-rewards'
 import { Route as AppSettingsRouteImport } from './routes/_app.settings'
 import { Route as AuthAgeVerificationRouteImport } from './routes/auth.age-verification'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
@@ -270,6 +271,12 @@ const AppQuizHistoryRoute = AppQuizHistoryRouteImport.update({
   path: '/quiz-history',
   getParentRoute: () => AppRoute,
 } as any)
+const AppQuizHistoryAndRewardsRoute =
+  AppQuizHistoryAndRewardsRouteImport.update({
+    id: '/quiz-history-and-rewards',
+    path: '/quiz-history-and-rewards',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AppSettingsRoute = AppSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -767,6 +774,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AppProfileRouteWithChildren
   '/progress': typeof AppProgressRoute
   '/quiz-history': typeof AppQuizHistoryRoute
+  '/quiz-history-and-rewards': typeof AppQuizHistoryAndRewardsRoute
   '/settings': typeof AppSettingsRoute
   '/auth/age-verification': typeof AuthAgeVerificationRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -882,6 +890,7 @@ export interface FileRoutesByTo {
   '/notifications': typeof AppNotificationsRoute
   '/progress': typeof AppProgressRoute
   '/quiz-history': typeof AppQuizHistoryRoute
+  '/quiz-history-and-rewards': typeof AppQuizHistoryAndRewardsRoute
   '/settings': typeof AppSettingsRoute
   '/auth/age-verification': typeof AuthAgeVerificationRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -1003,6 +1012,7 @@ export interface FileRoutesById {
   '/_app/profile': typeof AppProfileRouteWithChildren
   '/_app/progress': typeof AppProgressRoute
   '/_app/quiz-history': typeof AppQuizHistoryRoute
+  '/_app/quiz-history-and-rewards': typeof AppQuizHistoryAndRewardsRoute
   '/_app/settings': typeof AppSettingsRoute
   '/auth/age-verification': typeof AuthAgeVerificationRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -1127,6 +1137,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/progress'
     | '/quiz-history'
+    | '/quiz-history-and-rewards'
     | '/settings'
     | '/auth/age-verification'
     | '/auth/forgot-password'
@@ -1242,6 +1253,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/progress'
     | '/quiz-history'
+    | '/quiz-history-and-rewards'
     | '/settings'
     | '/auth/age-verification'
     | '/auth/forgot-password'
@@ -1362,6 +1374,7 @@ export interface FileRouteTypes {
     | '/_app/profile'
     | '/_app/progress'
     | '/_app/quiz-history'
+    | '/_app/quiz-history-and-rewards'
     | '/_app/settings'
     | '/auth/age-verification'
     | '/auth/forgot-password'
@@ -1683,6 +1696,13 @@ declare module '@tanstack/react-router' {
       path: '/quiz-history'
       fullPath: '/quiz-history'
       preLoaderRoute: typeof AppQuizHistoryRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/quiz-history-and-rewards': {
+      id: '/_app/quiz-history-and-rewards'
+      path: '/quiz-history-and-rewards'
+      fullPath: '/quiz-history-and-rewards'
+      preLoaderRoute: typeof AppQuizHistoryAndRewardsRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/settings': {
@@ -2362,6 +2382,7 @@ interface AppRouteChildren {
   AppProfileRoute: typeof AppProfileRouteWithChildren
   AppProgressRoute: typeof AppProgressRoute
   AppQuizHistoryRoute: typeof AppQuizHistoryRoute
+  AppQuizHistoryAndRewardsRoute: typeof AppQuizHistoryAndRewardsRoute
   AppSettingsRoute: typeof AppSettingsRoute
 }
 
@@ -2374,6 +2395,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProfileRoute: AppProfileRouteWithChildren,
   AppProgressRoute: AppProgressRoute,
   AppQuizHistoryRoute: AppQuizHistoryRoute,
+  AppQuizHistoryAndRewardsRoute: AppQuizHistoryAndRewardsRoute,
   AppSettingsRoute: AppSettingsRoute,
 }
 

@@ -33,7 +33,8 @@ export function RecentQuizzesPanel({ className }: { className?: string }) {
           Recent quizzes
         </h2>
         <Link
-          to="/quiz-history"
+          to="/quiz-history-and-rewards"
+          search={{ tab: "history" }}
           className="text-[0.62rem] uppercase tracking-[0.2em] text-bronze/90 transition-colors hover:text-bronze"
         >
           All

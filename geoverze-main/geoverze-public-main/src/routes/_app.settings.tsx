@@ -1,8 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { SettingsPage } from "@/features/settings";
+import { isSettingsSection } from "@/features/settings/lib/settingsSections";
 
 export const Route = createFileRoute("/_app/settings")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    section:
+      typeof search.section === "string" && isSettingsSection(search.section)
+        ? search.section
+        : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Settings — GEOverze" },

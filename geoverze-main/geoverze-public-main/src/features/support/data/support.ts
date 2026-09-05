@@ -1,44 +1,82 @@
+import type { LinkProps } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
-import { BookOpen, CreditCard, Gamepad2, LifeBuoy, ShoppingBag, UserCog } from "lucide-react";
+import { BookOpen, CreditCard, Gamepad2, LifeBuoy, Mail, ShoppingBag, UserCog } from "lucide-react";
 
 export type SupportCategory = {
+  id: string;
   title: string;
   description: string;
   icon: LucideIcon;
+  to: NonNullable<LinkProps["to"]>;
 };
 
-export const supportCategories: SupportCategory[] = [
+export type SupportGroup = {
+  label: string;
+  categoryIds: readonly string[];
+};
+
+export const supportCategories: readonly SupportCategory[] = [
   {
+    id: "getting-started",
     title: "Getting started",
-    description: "What GEOverze is, how the universe is organised and where to begin exploring.",
+    description: "Learn how GEOverze works",
     icon: LifeBuoy,
+    to: "/",
   },
   {
+    id: "play",
     title: "Let's Play",
-    description: "Sessions, difficulty, scoring and how progress is tracked across the planet.",
+    description: "Quizzes, scoring, sessions and progress",
     icon: Gamepad2,
+    to: "/play",
   },
   {
+    id: "geolibrary",
     title: "GEOlibrary",
-    description: "Using the reference library, collections and how entries are sourced.",
+    description: "Articles, collections and topics",
     icon: BookOpen,
+    to: "/geolibrary",
   },
   {
+    id: "geostore",
     title: "GEOstore",
-    description: "Orders, digital packs, physical goods and delivery expectations.",
+    description: "Orders, products and delivery",
     icon: ShoppingBag,
+    to: "/geostore",
   },
   {
+    id: "account",
     title: "Account & access",
-    description: "Sign-in, email verification, devices and recovering your progress.",
+    description: "Sign-in, verification and account help",
     icon: UserCog,
+    to: "/settings",
   },
   {
+    id: "billing",
     title: "Plans & billing",
-    description: "What each plan includes, switching plans and institution licensing.",
+    description: "Plans, subscriptions and billing",
     icon: CreditCard,
+    to: "/pricing",
   },
-];
+] as const;
+
+export const supportGroups: readonly SupportGroup[] = [
+  {
+    label: "Explore GEOverze",
+    categoryIds: ["getting-started", "play", "geolibrary"],
+  },
+  {
+    label: "Account & membership",
+    categoryIds: ["account", "billing", "geostore"],
+  },
+] as const;
+
+export const supportContact = {
+  title: "Contact GEOverze Support",
+  description: "Still need help? We're here.",
+  icon: Mail,
+  to: "/contact" as const,
+};
 
 export const supportFaqs: { question: string; answer: string }[] = [
   {
@@ -72,3 +110,9 @@ export const supportFaqs: { question: string; answer: string }[] = [
       "Use the Contact page. Reports about a specific page help most when they mention the page name and what you expected to happen.",
   },
 ];
+
+const categoryById = new Map(supportCategories.map((category) => [category.id, category]));
+
+export function supportCategoryById(id: string): SupportCategory | undefined {
+  return categoryById.get(id);
+}

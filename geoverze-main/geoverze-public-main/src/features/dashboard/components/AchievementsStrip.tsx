@@ -8,7 +8,7 @@ import {
 } from "@/features/profile/data/achievements";
 import { cn } from "@/lib/utils";
 
-/** Dashboard preview cap — full catalogue remains on /achievements. */
+/** Dashboard preview cap — full catalogue on Quiz History & Rewards. */
 export const DASHBOARD_ACHIEVEMENT_LIMIT = 8;
 
 const STATUS_RANK: Record<AchievementStatus, number> = {
@@ -57,7 +57,8 @@ export function AchievementsStrip({ className }: { className?: string }) {
           Achievements
         </h2>
         <Link
-          to="/achievements"
+          to="/quiz-history-and-rewards"
+          search={{ tab: "achievements" }}
           className="text-[0.62rem] uppercase tracking-[0.2em] text-bronze/90 transition-colors hover:text-bronze"
         >
           View all
@@ -75,7 +76,8 @@ export function AchievementsStrip({ className }: { className?: string }) {
           return (
             <li key={item.id}>
               <Link
-                to="/achievements"
+                to="/quiz-history-and-rewards"
+                search={{ tab: "achievements" }}
                 className={cn(
                   "dashboard-achievement group flex h-full flex-col rounded-2xl border p-4 transition-all motion-base hover:-translate-y-0.5 hover:border-bronze/35 motion-reduce:transform-none",
                   STATUS_STYLE[item.status],
