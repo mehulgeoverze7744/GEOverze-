@@ -1,0 +1,254 @@
+/* Pricing — horizontal editorial benefits strip */
+
+.pricing-benefits-section {
+  padding-bottom: var(--space-section-sm);
+}
+
+.pricing-benefits-header {
+  margin-bottom: 2.25rem;
+}
+
+.pricing-benefits-header .eyebrow {
+  font-size: 0.58rem;
+  letter-spacing: 0.26em;
+}
+
+.pricing-benefits-header h2 {
+  margin-top: 0.5rem;
+  font-size: clamp(1.75rem, 2.8vw, 2.25rem);
+  line-height: 1.15;
+}
+
+.pricing-benefits-header p {
+  margin-top: 0.45rem;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: oklch(0.92 0.01 80 / 0.48);
+}
+
+.pricing-benefits-strip-wrap {
+  position: relative;
+  margin-inline: calc(var(--section-padding-inline, 0px) * -0.15);
+}
+
+@media (min-width: 1280px) {
+  .pricing-benefits-strip-wrap {
+    margin-inline: 0;
+  }
+}
+
+.pricing-benefits-strip {
+  --benefit-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --benefit-duration: 520ms;
+
+  display: flex;
+  min-width: 100%;
+  border-top: 1px solid color-mix(in oklab, var(--bronze) 14%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--bronze) 14%, transparent);
+  transition: opacity var(--benefit-duration) var(--benefit-ease);
+}
+
+.pricing-benefits-strip-cell {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.pricing-benefit {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 100%;
+  padding: 1.35rem 0.85rem 1.5rem;
+  cursor: default;
+  transition:
+    opacity var(--benefit-duration) var(--benefit-ease),
+    transform var(--benefit-duration) var(--benefit-ease);
+}
+
+.pricing-benefits-strip-cell:not(:last-child) .pricing-benefit {
+  border-right: 1px solid color-mix(in oklab, var(--bronze) 8%, transparent);
+}
+
+.pricing-benefit-glow {
+  position: absolute;
+  inset: 0.65rem 0.35rem 0.55rem;
+  border-radius: 0.35rem;
+  background: radial-gradient(
+    ellipse 80% 70% at 50% 100%,
+    color-mix(in oklab, var(--bronze) 10%, transparent),
+    transparent 72%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--benefit-duration) var(--benefit-ease);
+}
+
+.pricing-benefit-number {
+  margin: 0;
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: color-mix(in oklab, var(--bronze) 58%, oklch(0.48 0.02 68));
+  transition:
+    color var(--benefit-duration) var(--benefit-ease),
+    transform var(--benefit-duration) var(--benefit-ease);
+}
+
+.pricing-benefit-title {
+  position: relative;
+  z-index: 1;
+  margin: 0.55rem 0 0;
+  font-size: clamp(0.68rem, 0.95vw, 0.78rem);
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: oklch(0.92 0.02 78 / 0.88);
+  transition:
+    color var(--benefit-duration) var(--benefit-ease),
+    transform var(--benefit-duration) var(--benefit-ease);
+}
+
+.pricing-benefit-title-line {
+  display: block;
+}
+
+.pricing-benefit-title::after {
+  content: "";
+  display: block;
+  margin-top: 0.65rem;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--bronze) 82%, transparent),
+    color-mix(in oklab, var(--bronze) 42%, transparent)
+  );
+  transition: width var(--benefit-duration) var(--benefit-ease);
+}
+
+.pricing-benefit-arrow {
+  position: relative;
+  z-index: 1;
+  margin-top: 0.75rem;
+  height: 0.75rem;
+  width: 0.75rem;
+  color: color-mix(in oklab, var(--bronze) 72%, transparent);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition:
+    opacity var(--benefit-duration) var(--benefit-ease),
+    transform var(--benefit-duration) var(--benefit-ease),
+    color var(--benefit-duration) var(--benefit-ease);
+}
+
+/* Strip emphasis — dim siblings on hover */
+.pricing-benefits-strip:has(.pricing-benefit:hover) .pricing-benefit:not(:hover) {
+  opacity: 0.42;
+}
+
+.pricing-benefit:hover {
+  opacity: 1;
+}
+
+.pricing-benefit:hover .pricing-benefit-glow {
+  opacity: 1;
+}
+
+.pricing-benefit:hover .pricing-benefit-number {
+  color: color-mix(in oklab, var(--bronze) 92%, oklch(0.72 0.06 68));
+}
+
+.pricing-benefit:hover .pricing-benefit-title {
+  color: oklch(0.97 0.02 82 / 0.98);
+  transform: translateY(-3px);
+}
+
+.pricing-benefit:hover .pricing-benefit-title::after {
+  width: 1.75rem;
+}
+
+.pricing-benefit:hover .pricing-benefit-arrow {
+  opacity: 0.88;
+  transform: translateX(0);
+}
+
+/* Desktop — equal seven-column row */
+@media (min-width: 1280px) {
+  .pricing-benefits-strip {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+
+  .pricing-benefits-strip-cell {
+    min-width: 0;
+  }
+
+  .pricing-benefit {
+    padding: 1.5rem 1rem 1.65rem;
+  }
+
+  .pricing-benefit-title {
+    font-size: clamp(0.72rem, 0.82vw, 0.82rem);
+  }
+}
+
+/* Tablet / mobile — horizontal editorial rail */
+@media (max-width: 1279px) {
+  .pricing-benefits-strip-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+
+  .pricing-benefits-strip-wrap::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pricing-benefits-strip {
+    display: flex;
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .pricing-benefits-strip-cell {
+    flex: 0 0 auto;
+    width: clamp(7.5rem, 22vw, 9.5rem);
+  }
+
+  .pricing-benefit {
+    padding: 1.25rem 1rem 1.4rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .pricing-benefits-strip-cell {
+    width: clamp(7.25rem, 42vw, 8.75rem);
+  }
+
+  .pricing-benefit-title {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pricing-benefit,
+  .pricing-benefit-number,
+  .pricing-benefit-title,
+  .pricing-benefit-arrow,
+  .pricing-benefit-glow,
+  .pricing-benefit-title::after {
+    transition: none;
+  }
+
+  .pricing-benefits-strip:has(.pricing-benefit:hover) .pricing-benefit:not(:hover) {
+    opacity: 1;
+  }
+
+  .pricing-benefit:hover .pricing-benefit-title {
+    transform: none;
+  }
+}

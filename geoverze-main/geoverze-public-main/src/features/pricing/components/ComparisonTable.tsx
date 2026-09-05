@@ -1,13 +1,14 @@
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Check, Minus } from "lucide-react";
 
-import { AnimatedSection } from "@/components/shared/AnimatedSection";
-import { GlassCard } from "@/components/shared/GlassCard";
 import { SectionContainer } from "@/components/shared/SectionContainer";
-import { SectionHeading } from "@/components/shared/SectionHeading";
 import { cn } from "@/lib/utils";
 
 import type { ComparisonGroup, ComparisonValue } from "../data/comparison";
 import type { PricingPlan, TierId } from "../data/plans";
+import { PlanTierSelector } from "./PlanTierSelector";
+import { PricingSectionHeader } from "./PricingSectionHeader";
+import "../styles/pricing-editorial.css";
 
 function ValueCell({ value }: { value: ComparisonValue }) {
   if (value === true)
@@ -24,10 +25,19 @@ function ValueCell({ value }: { value: ComparisonValue }) {
         <span className="sr-only">Not included</span>
       </>
     );
-  return <span className="text-sm text-foreground/70">{value}</span>;
+  return <span>{value}</span>;
 }
 
-/** Desktop table + mobile per-plan stacks. */
+function tierDataAttr(id: TierId) {
+  if (id === "pro" || id === "advance") return id;
+  return undefined;
+}
+
+function defaultTier(plans: PricingPlan[]): TierId {
+  return plans.find((plan) => plan.id === "explorer")?.id ?? plans[0]?.id ?? "explorer";
+}
+
+/** Premium editorial membership comparison — spec sheet, not boxed table. */
 export function ComparisonTable({
   heading = true,
   plans,
@@ -41,13 +51,47 @@ export function ComparisonTable({
   loading?: boolean;
   error?: string | null;
 }) {
+  const [selectedTier, setSelectedTier] = useState<TierId>(() => defaultTier(plans));
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const columnRefs = useRef<Partial<Record<TierId, HTMLTableCellElement | null>>>({});
+
+  useEffect(() => {
+    if (plans.length === 0) return;
+    setSelectedTier((current) =>
+      plans.some((plan) => plan.id === current) ? current : defaultTier(plans),
+    );
+  }, [plans]);
+
+  const scrollToTier = useCallback((tier: TierId) => {
+    const column = columnRefs.current[tier];
+    const container = scrollRef.current;
+    if (!column || !container) return;
+
+    const targetLeft =
+      column.offsetLeft - container.clientWidth / 2 + column.offsetWidth / 2;
+    container.scrollTo({
+      left: Math.max(0, targetLeft),
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+    });
+  }, []);
+
+  const onTierChange = useCallback(
+    (tier: TierId) => {
+      setSelectedTier(tier);
+      scrollToTier(tier);
+    },
+    [scrollToTier],
+  );
+
+  useEffect(() => {
+    scrollToTier(selectedTier);
+  }, [selectedTier, scrollToTier, plans.length]);
+
   if (error) {
     return (
-      <section aria-labelledby="compare-heading" className="pb-[var(--space-section-sm)]">
+      <section aria-labelledby="compare-heading" className="pricing-compare-section">
         <SectionContainer size="wide">
-          <GlassCard className="p-8 text-center text-sm text-foreground/60">
-            Plan comparison could not be loaded. {error}
-          </GlassCard>
+          <p className="pricing-compare-state">{`Plan comparison could not be loaded. ${error}`}</p>
         </SectionContainer>
       </section>
     );
@@ -55,23 +99,23 @@ export function ComparisonTable({
 
   if (loading || plans.length === 0) {
     return (
-      <section aria-labelledby="compare-heading" className="pb-[var(--space-section-sm)]">
+      <section aria-labelledby="compare-heading" className="pricing-compare-section">
         <SectionContainer size="wide">
-          <GlassCard className="h-64 animate-pulse p-0" aria-hidden />
+          <div className="pricing-compare-state pricing-compare-state--loading" aria-hidden />
         </SectionContainer>
       </section>
     );
   }
 
   return (
-    <section aria-labelledby="compare-heading" className="pb-[var(--space-section-sm)]">
+    <section aria-labelledby="compare-heading" className="pricing-compare-section">
       <SectionContainer size="wide">
         {heading ? (
-          <SectionHeading
+          <PricingSectionHeader
+            id="compare-heading"
             eyebrow="Compare"
             title="What each membership includes"
             description="Every capability across the platform, plan by plan."
-            className="mb-12"
           />
         ) : (
           <h2 id="compare-heading" className="sr-only">
@@ -79,93 +123,68 @@ export function ComparisonTable({
           </h2>
         )}
 
-        {/* Desktop */}
-        <GlassCard strong className="hidden overflow-hidden p-0 lg:block">
-          <table className="w-full border-collapse text-left">
-            <caption className="sr-only">GEOverze membership feature comparison</caption>
-            <thead>
-              <tr className="border-b border-bronze/15">
-                <th
-                  scope="col"
-                  className="w-[30%] px-6 py-6 text-[0.62rem] uppercase tracking-[0.28em] text-foreground/50"
-                >
-                  Feature
-                </th>
-                {plans.map((plan) => (
-                  <th
-                    key={plan.id}
-                    scope="col"
-                    className={cn(
-                      "px-4 py-6 text-center text-[0.62rem] uppercase tracking-[0.24em]",
-                      plan.featured ? "text-bronze-glow" : "text-foreground/55",
-                    )}
-                  >
-                    {plan.name}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            {comparisonGroups.map((group) => (
-              <tbody key={group.title}>
-                <tr>
-                  <th
-                    scope="colgroup"
-                    colSpan={plans.length + 1}
-                    className="bg-bronze/[0.04] px-6 py-3 text-left text-[0.6rem] uppercase tracking-[0.3em] text-bronze"
-                  >
-                    {group.title}
-                  </th>
-                </tr>
-                {group.rows.map((row) => (
-                  <tr key={row.feature} className="border-t border-bronze/10">
-                    <th scope="row" className="px-6 py-5 align-top font-normal">
-                      <span className="block text-sm text-foreground/85">{row.feature}</span>
-                      <span className="mt-1 block text-xs leading-relaxed text-foreground/50">
-                        {row.detail}
-                      </span>
-                    </th>
-                    {plans.map((plan) => (
-                      <td
-                        key={plan.id}
-                        className={cn(
-                          "px-4 py-5 text-center align-middle",
-                          plan.featured && "bg-bronze/[0.03]",
-                        )}
-                      >
-                        <ValueCell value={row.values[plan.id as TierId]} />
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            ))}
-          </table>
-        </GlassCard>
+        <div ref={scrollRef} className="pricing-compare-scroll">
+          <div className="pricing-compare-sheet">
+            <div className="pricing-compare-controls">
+              <p className="pricing-compare-feature-heading" id="compare-feature-col">
+                Feature
+              </p>
+              <PlanTierSelector
+                plans={plans}
+                value={selectedTier}
+                onChange={onTierChange}
+                className="pricing-compare-selector"
+              />
+            </div>
 
-        {/* Tablet & mobile */}
-        <div className="grid gap-5 lg:hidden">
-          {plans.map((plan, i) => (
-            <AnimatedSection key={plan.id} delay={i * 80}>
-              <GlassCard strong={plan.featured} className="p-7">
-                <p className="text-[0.66rem] uppercase tracking-[0.3em] text-bronze">{plan.name}</p>
-                <dl className="mt-6 space-y-4">
-                  {comparisonGroups.flatMap((group) =>
-                    group.rows.map((row) => (
-                      <div
-                        key={`${plan.id}-${row.feature}`}
-                        className="flex items-start justify-between gap-6 border-t border-bronze/10 pt-4 first:border-0 first:pt-0"
-                      >
-                        <dt className="text-sm text-foreground/60">{row.feature}</dt>
-                        <dd className="shrink-0 text-right">
+            <table className="pricing-compare-table" aria-describedby="compare-feature-col">
+              <caption className="sr-only">GEOverze membership feature comparison</caption>
+              <thead className="sr-only">
+                <tr>
+                  <th scope="col">Feature</th>
+                  {plans.map((plan) => (
+                    <th key={plan.id} scope="col">
+                      {plan.name}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              {comparisonGroups.map((group, groupIndex) => (
+                <tbody key={group.title}>
+                  <tr className="pricing-compare-category">
+                    <th scope="colgroup" colSpan={plans.length + 1}>
+                      {group.title}
+                    </th>
+                  </tr>
+                  {group.rows.map((row, rowIndex) => (
+                    <tr key={row.feature} className="pricing-compare-row">
+                      <th scope="row" className="pricing-compare-sticky">
+                        <span className="pricing-compare-feature">{row.feature}</span>
+                        <span className="pricing-compare-detail">{row.detail}</span>
+                      </th>
+                      {plans.map((plan) => (
+                        <td
+                          key={plan.id}
+                          ref={
+                            groupIndex === 0 && rowIndex === 0
+                              ? (node) => {
+                                  columnRefs.current[plan.id] = node;
+                                }
+                              : undefined
+                          }
+                          className={cn("pricing-compare-cell")}
+                          data-tier={tierDataAttr(plan.id)}
+                          data-selected={plan.id === selectedTier || undefined}
+                        >
                           <ValueCell value={row.values[plan.id as TierId]} />
-                        </dd>
-                      </div>
-                    )),
-                  )}
-                </dl>
-              </GlassCard>
-            </AnimatedSection>
-          ))}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              ))}
+            </table>
+          </div>
         </div>
       </SectionContainer>
     </section>

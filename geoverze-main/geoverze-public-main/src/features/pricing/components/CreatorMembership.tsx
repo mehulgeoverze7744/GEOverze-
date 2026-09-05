@@ -1,56 +1,100 @@
+import { useCallback, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 
 import { AnimatedSection } from "@/components/shared/AnimatedSection";
 import { GeoButton } from "@/components/shared/GeoButton";
-import { GlassCard } from "@/components/shared/GlassCard";
 import { SectionContainer } from "@/components/shared/SectionContainer";
 
 import { creatorPerks } from "../data/rewards";
+import {
+  CreatorStudioPreview,
+  type CreatorPreviewView,
+} from "./CreatorStudioPreview";
+import { PricingSectionHeader } from "./PricingSectionHeader";
+import "../styles/pricing-editorial.css";
 
-/** Why creators take the Advance tier. */
+const FEATURE_VIEWS: CreatorPreviewView[] = [
+  "dashboard",
+  "analytics",
+  "publishing",
+  "monetization",
+  "review",
+];
+
+/** Creator membership — premium product showcase with interactive preview. */
 export function CreatorMembership() {
+  const [activeFeature, setActiveFeature] = useState(0);
+
+  const onFeatureEnter = useCallback((index: number) => {
+    setActiveFeature(index);
+  }, []);
+
   return (
-    <section aria-labelledby="creator-heading" className="pb-[var(--space-section-sm)]">
+    <section aria-labelledby="creator-heading" className="pricing-creator-section">
       <SectionContainer size="wide">
         <AnimatedSection>
-          <GlassCard strong className="overflow-hidden p-9 md:p-14">
-            <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr]">
-              <div className="min-w-0">
-                <p className="eyebrow">Creator membership</p>
-                <h2
+          <div className="pricing-creator-showcase">
+            <div className="pricing-creator-hero">
+              <div className="pricing-creator-copy">
+                <PricingSectionHeader
                   id="creator-heading"
-                  className="mt-5 max-w-md font-light leading-[1.08] tracking-tight text-foreground text-[clamp(1.6rem,3vw,2.4rem)]"
-                >
-                  Built for the people who make the questions
-                </h2>
-                <p className="mt-6 max-w-md text-sm leading-relaxed text-foreground/55">
+                  eyebrow="Creator membership"
+                  title="Built for the people who make the questions"
+                  className="pricing-section-header--compact"
+                />
+                <p className="pricing-creator-lead">
                   Advance opens the Creator Studio — a professional workspace, not a posting box.
-                  Publish into the same surfaces explorers already use, and see exactly how your
-                  work performs.
+                  Publish into the same surfaces explorers already use, and see exactly how your work
+                  performs.
                 </p>
-                <GeoButton asChild variant="primary" className="mt-10">
-                  <Link to="/studio">
-                    Open Creator Studio
-                    <ArrowUpRight className="h-4 w-4" strokeWidth={1.6} />
-                  </Link>
-                </GeoButton>
+                <div className="pricing-creator-cta">
+                  <GeoButton asChild variant="primary" className="pricing-creator-cta-button">
+                    <Link to="/studio">
+                      Open Creator Studio
+                      <ArrowUpRight className="pricing-creator-cta-icon" strokeWidth={1.6} aria-hidden="true" />
+                    </Link>
+                  </GeoButton>
+                </div>
               </div>
 
-              <ul className="grid gap-px self-start overflow-hidden rounded-xl border border-bronze/15 sm:grid-cols-2">
-                {creatorPerks.map((perk) => (
-                  <li key={perk.title} className="bg-bronze/[0.03] p-6">
-                    <h3 className="text-sm font-medium tracking-tight text-foreground">
-                      {perk.title}
-                    </h3>
-                    <p className="mt-2 text-xs leading-relaxed text-foreground/50">
-                      {perk.description}
-                    </p>
-                  </li>
-                ))}
-              </ul>
+              <AnimatedSection delay={120} className="pricing-creator-preview-wrap">
+                <CreatorStudioPreview view={FEATURE_VIEWS[activeFeature] ?? "dashboard"} />
+              </AnimatedSection>
             </div>
-          </GlassCard>
+
+            <div
+              className="pricing-creator-features"
+              role="tablist"
+              aria-label="Creator membership features"
+            >
+              {creatorPerks.map((perk, index) => {
+                const active = index === activeFeature;
+                return (
+                  <button
+                    key={perk.title}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    data-active={active}
+                    className="pricing-creator-feature"
+                    onMouseEnter={() => onFeatureEnter(index)}
+                    onFocus={() => onFeatureEnter(index)}
+                    onClick={() => setActiveFeature(index)}
+                  >
+                    <span className="pricing-creator-feature-number" aria-hidden="true">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="pricing-creator-feature-body">
+                      <span className="pricing-creator-feature-title">{perk.title}</span>
+                      <span className="pricing-creator-feature-description">{perk.description}</span>
+                    </span>
+                    <ArrowRight className="pricing-creator-feature-arrow" strokeWidth={1.6} aria-hidden="true" />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </AnimatedSection>
       </SectionContainer>
     </section>

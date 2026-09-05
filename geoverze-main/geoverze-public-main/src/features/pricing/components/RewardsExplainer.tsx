@@ -1,52 +1,87 @@
 import { Link } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 
-import { AnimatedSection } from "@/components/shared/AnimatedSection";
 import { GeoButton } from "@/components/shared/GeoButton";
-import { GlassCard } from "@/components/shared/GlassCard";
 import { SectionContainer } from "@/components/shared/SectionContainer";
-import { SectionHeading } from "@/components/shared/SectionHeading";
 
 import { rewardSteps } from "../data/rewards";
+import { PricingSectionHeader } from "./PricingSectionHeader";
+import "../styles/pricing-editorial.css";
 
-/** Credits, rewards, bonuses and offers explained. */
+/** Credits journey — horizontal timeline on desktop, vertical on mobile. */
 export function RewardsExplainer() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const items = section.querySelectorAll<HTMLElement>(".pricing-rewards-reveal");
+
+    if (reduced) {
+      items.forEach((item) => {
+        item.dataset.shown = "true";
+      });
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          (entry.target as HTMLElement).dataset.shown = "true";
+          observer.unobserve(entry.target);
+        });
+      },
+      { rootMargin: "-6% 0px", threshold: 0.15 },
+    );
+
+    items.forEach((item, index) => {
+      item.dataset.shown = "false";
+      item.style.transitionDelay = `${index * 60}ms`;
+      observer.observe(item);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section aria-labelledby="rewards-heading" className="pb-[var(--space-section-sm)]">
+    <section
+      ref={sectionRef}
+      aria-labelledby="rewards-heading"
+      className="pricing-rewards-section"
+    >
       <SectionContainer size="wide">
-        <SectionHeading
+        <PricingSectionHeader
+          id="rewards-heading"
           eyebrow="Rewards"
           title="How credits work"
           description="One currency across the platform. You earn it by exploring and spend it in the GEOstore."
-          className="mb-12"
           action={
             <GeoButton asChild variant="ghost" size="sm">
               <Link to="/geostore">Visit the GEOstore</Link>
             </GeoButton>
           }
         />
-        <div className="grid gap-px overflow-hidden rounded-2xl border border-bronze/15 md:grid-cols-2 lg:grid-cols-4">
-          {rewardSteps.map((step, i) => (
-            <AnimatedSection key={step.title} delay={i * 70} className="h-full">
-              <GlassCard className="h-full rounded-none border-0 p-8">
-                <span
-                  aria-hidden
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-bronze/25 bg-bronze/10 text-bronze"
-                >
-                  <step.icon className="h-4 w-4" strokeWidth={1.5} />
-                </span>
-                <p className="mt-6 text-[0.6rem] uppercase tracking-[0.28em] text-bronze/90">
-                  Step {i + 1}
-                </p>
-                <h3 className="mt-3 text-base font-medium tracking-tight text-foreground">
-                  {step.title}
-                </h3>
-                <p className="mt-3 text-sm leading-relaxed text-foreground/55">
-                  {step.description}
-                </p>
-              </GlassCard>
-            </AnimatedSection>
+
+        <ol className="pricing-rewards-timeline">
+          {rewardSteps.map((step, index) => (
+            <li
+              key={step.title}
+              className="pricing-rewards-step pricing-rewards-reveal"
+              data-shown="false"
+            >
+              <span className="pricing-rewards-marker" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <div>
+                <h3 className="pricing-rewards-step-title">{step.title}</h3>
+                <p className="pricing-rewards-step-body">{step.description}</p>
+              </div>
+            </li>
           ))}
-        </div>
+        </ol>
       </SectionContainer>
     </section>
   );

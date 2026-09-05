@@ -1,0 +1,344 @@
+/* GEOverze segmented control — shared capsule pattern (Quiz History + Pricing) */
+
+.geo-segmented {
+  --geo-seg-active-index: 0;
+  --geo-seg-count: 3;
+  --geo-seg-track: oklch(0.07 0.008 55 / 0.94);
+  --geo-seg-text-idle: color-mix(in oklab, var(--bronze) 34%, oklch(0.52 0.02 68));
+  --geo-seg-text-hover: color-mix(in oklab, var(--bronze) 58%, oklch(0.82 0.02 78));
+  --geo-seg-text-active: oklch(0.94 0.03 78);
+  --geo-seg-indicator-border: color-mix(in oklab, var(--bronze-glow) 48%, transparent);
+  --geo-seg-indicator-top: color-mix(in oklab, var(--bronze-glow) 86%, white 14%);
+  --geo-seg-indicator-mid: color-mix(in oklab, var(--bronze) 90%, black 10%);
+  --geo-seg-indicator-bottom: color-mix(in oklab, var(--bronze) 68%, black 32%);
+  --geo-seg-indicator-glow: color-mix(in oklab, var(--bronze) 16%, transparent);
+  --geo-seg-outer-border: color-mix(in oklab, var(--bronze) 36%, transparent);
+  --geo-seg-inset-highlight: color-mix(in oklab, var(--bronze-glow) 14%, transparent);
+
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--geo-seg-count), minmax(0, 1fr));
+  align-items: stretch;
+  gap: 0;
+  min-height: 3.25rem;
+  width: fit-content;
+  min-width: min(100%, 24rem);
+  max-width: 100%;
+  padding: 0.25rem;
+  border-radius: 9999px;
+  border: 1px solid var(--geo-seg-outer-border);
+  background: var(--geo-seg-track);
+  box-shadow:
+    inset 0 1px 0 var(--geo-seg-inset-highlight),
+    0 2px 14px oklch(0 0 0 / 0.42),
+    0 0 0 1px oklch(0 0 0 / 0.32);
+}
+
+.geo-segmented--full {
+  width: 100%;
+}
+
+.geo-segmented-indicator {
+  position: absolute;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  left: 0.25rem;
+  z-index: 0;
+  width: calc((100% - 0.5rem) / var(--geo-seg-count));
+  border-radius: 9999px;
+  border: 1px solid var(--geo-seg-indicator-border);
+  background: linear-gradient(
+    180deg,
+    var(--geo-seg-indicator-top) 0%,
+    var(--geo-seg-indicator-mid) 52%,
+    var(--geo-seg-indicator-bottom) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, white 22%, transparent),
+    inset 0 -1px 0 color-mix(in oklab, black 22%, transparent),
+    0 0 10px var(--geo-seg-indicator-glow);
+  transform: translateX(calc(var(--geo-seg-active-index) * 100%));
+  transition: transform 340ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.geo-segmented-option {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  background: transparent;
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--geo-seg-text-idle);
+  transition:
+    color 240ms ease,
+    background-color 240ms ease,
+    border-color 240ms ease;
+  white-space: nowrap;
+}
+
+.geo-segmented-option:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1px;
+  height: 44%;
+  transform: translateY(-50%);
+  background: color-mix(in oklab, var(--bronze) 26%, transparent);
+  pointer-events: none;
+  transition: opacity 200ms ease;
+}
+
+.geo-segmented-option[data-active="true"]::before,
+.geo-segmented-option[data-active="true"] + .geo-segmented-option::before,
+.geo-segmented-option:has(+ .geo-segmented-option[data-active="true"])::before {
+  opacity: 0;
+}
+
+.geo-segmented-option:hover:not([data-active="true"]) {
+  color: var(--geo-seg-text-hover);
+  background: oklch(0.1 0.006 58 / 0.72);
+  border-color: color-mix(in oklab, var(--bronze) 16%, transparent);
+}
+
+.geo-segmented-option[data-active="true"] {
+  color: var(--geo-seg-text-active);
+  font-weight: 600;
+  text-shadow: 0 1px 0 color-mix(in oklab, black 32%, transparent);
+}
+
+.geo-segmented-option:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--bronze) 42%, transparent);
+}
+
+/* Polished bronze / copper — pricing plan selector */
+.geo-segmented[data-variant="bronze"] {
+  --geo-seg-track: oklch(0.064 0.012 52 / 0.97);
+  --geo-seg-text-idle: color-mix(in oklab, oklch(0.52 0.06 58) 42%, oklch(0.46 0.02 68));
+  --geo-seg-text-hover: color-mix(in oklab, oklch(0.62 0.07 60) 68%, oklch(0.78 0.02 72));
+  --geo-seg-text-active: oklch(0.12 0.018 52);
+  --geo-seg-outer-border: oklch(0.46 0.07 58 / 0.46);
+  --geo-seg-inset-highlight: oklch(0.54 0.065 60 / 0.16);
+
+  background:
+    linear-gradient(180deg, oklch(0.1 0.014 54 / 0.28) 0%, transparent 42%),
+    var(--geo-seg-track);
+  border: 1px solid var(--geo-seg-outer-border);
+  box-shadow:
+    inset 0 1px 0 var(--geo-seg-inset-highlight),
+    inset 0 0 0 1px oklch(0.34 0.045 50 / 0.28),
+    0 3px 20px oklch(0 0 0 / 0.46),
+    0 0 0 1px oklch(0 0 0 / 0.34);
+}
+
+.geo-segmented[data-variant="bronze"] .geo-segmented-indicator {
+  overflow: hidden;
+  border: 1px solid oklch(0.62 0.085 60 / 0.52);
+  background:
+    radial-gradient(
+      ellipse 88% 62% at 22% 8%,
+      oklch(0.72 0.095 64 / 0.38),
+      transparent 58%
+    ),
+    linear-gradient(
+      168deg,
+      oklch(0.4 0.072 50) 0%,
+      oklch(0.5 0.088 56) 20%,
+      oklch(0.62 0.096 60) 46%,
+      oklch(0.54 0.09 57) 68%,
+      oklch(0.38 0.068 48) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 oklch(0.78 0.08 66 / 0.55),
+    inset 0 -1px 0 oklch(0.28 0.05 46 / 0.62),
+    inset 1px 0 0 oklch(0.66 0.08 62 / 0.18),
+    inset -1px 0 0 oklch(0.32 0.05 48 / 0.35),
+    0 2px 8px oklch(0.2 0.04 48 / 0.42),
+    0 0 18px oklch(0.48 0.07 56 / 0.12);
+  transition:
+    transform 340ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Upper metallic reflection band */
+.geo-segmented[data-variant="bronze"] .geo-segmented-indicator::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    oklch(0.82 0.09 68 / 0.34) 0%,
+    oklch(0.68 0.08 62 / 0.12) 22%,
+    transparent 46%
+  );
+  pointer-events: none;
+  transition: opacity 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* One-shot light sweep on active hover */
+.geo-segmented[data-variant="bronze"] .geo-segmented-indicator::after {
+  content: "";
+  position: absolute;
+  top: -8%;
+  bottom: -8%;
+  left: -45%;
+  width: 32%;
+  border-radius: 9999px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(0.84 0.1 70 / 0.22) 42%,
+    oklch(0.9 0.08 72 / 0.38) 50%,
+    oklch(0.84 0.1 70 / 0.22) 58%,
+    transparent 100%
+  );
+  opacity: 0;
+  transform: translateX(0);
+  pointer-events: none;
+}
+
+.geo-segmented[data-variant="bronze"]:has(.geo-segmented-option[data-active="true"]:hover)
+  .geo-segmented-indicator::before {
+  opacity: 1;
+}
+
+.geo-segmented[data-variant="bronze"]:has(.geo-segmented-option[data-active="true"]:hover)
+  .geo-segmented-indicator {
+  box-shadow:
+    inset 0 1px 0 oklch(0.86 0.085 68 / 0.62),
+    inset 0 -1px 0 oklch(0.26 0.048 46 / 0.58),
+    inset 1px 0 0 oklch(0.7 0.082 64 / 0.22),
+    inset -1px 0 0 oklch(0.3 0.05 48 / 0.32),
+    0 3px 10px oklch(0.18 0.04 48 / 0.48),
+    0 0 22px oklch(0.5 0.075 58 / 0.16);
+}
+
+.geo-segmented[data-variant="bronze"]:has(.geo-segmented-option[data-active="true"]:hover)
+  .geo-segmented-indicator::after {
+  animation: geo-seg-bronze-sweep 780ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes geo-seg-bronze-sweep {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 0.42;
+  }
+
+  100% {
+    transform: translateX(380%);
+    opacity: 0;
+  }
+}
+
+.geo-segmented[data-variant="bronze"] .geo-segmented-option:not(:first-child)::before {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    oklch(0.48 0.06 58 / 0.22) 48%,
+    transparent 100%
+  );
+  transition:
+    opacity 200ms ease,
+    background 240ms ease;
+}
+
+.geo-segmented[data-variant="bronze"]:has(.geo-segmented-option:hover:not([data-active="true"]))
+  .geo-segmented-option:not([data-active="true"]):hover::before,
+.geo-segmented[data-variant="bronze"]
+  .geo-segmented-option:hover:not([data-active="true"])::before {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    oklch(0.56 0.07 60 / 0.34) 48%,
+    transparent 100%
+  );
+}
+
+.geo-segmented[data-variant="bronze"] .geo-segmented-option:hover:not([data-active="true"]) {
+  color: var(--geo-seg-text-hover);
+  background: oklch(0.092 0.012 54 / 0.78);
+  border-color: oklch(0.44 0.06 58 / 0.18);
+  box-shadow: inset 0 1px 0 oklch(0.48 0.05 58 / 0.08);
+}
+
+.geo-segmented[data-variant="bronze"] .geo-segmented-option[data-active="true"] {
+  color: var(--geo-seg-text-active);
+  font-weight: 600;
+  text-shadow: none;
+}
+
+.geo-segmented[data-variant="bronze"] .geo-segmented-option:focus-visible {
+  box-shadow: 0 0 0 2px oklch(0.52 0.07 58 / 0.44);
+}
+
+/* Champagne gold — quiz history parity (optional reuse) */
+.geo-segmented[data-variant="gold"] {
+  --geo-seg-text-idle: color-mix(in oklab, var(--bronze-glow) 38%, oklch(0.52 0.02 68));
+  --geo-seg-text-hover: color-mix(in oklab, var(--bronze-glow) 72%, oklch(0.9 0.02 78));
+  --geo-seg-text-active: oklch(0.94 0.03 78);
+  --geo-seg-indicator-border: color-mix(in oklab, var(--bronze-glow) 48%, transparent);
+  --geo-seg-indicator-top: color-mix(in oklab, var(--bronze-glow) 86%, white 14%);
+  --geo-seg-indicator-mid: color-mix(in oklab, var(--bronze) 90%, black 10%);
+  --geo-seg-indicator-bottom: color-mix(in oklab, var(--bronze) 68%, black 32%);
+  --geo-seg-indicator-glow: color-mix(in oklab, var(--bronze) 16%, transparent);
+}
+
+@media (max-width: 640px) {
+  .geo-segmented {
+    width: 100%;
+  }
+
+  .geo-segmented-option {
+    padding: 0.5rem 0.45rem;
+    font-size: 0.52rem;
+    letter-spacing: 0.14em;
+  }
+
+  .geo-segmented[data-variant="bronze"] .geo-segmented-indicator {
+    box-shadow:
+      inset 0 1px 0 oklch(0.76 0.08 66 / 0.48),
+      inset 0 -1px 0 oklch(0.28 0.05 46 / 0.55),
+      0 2px 6px oklch(0.2 0.04 48 / 0.36),
+      0 0 12px oklch(0.46 0.065 56 / 0.08);
+  }
+
+  .geo-segmented[data-variant="bronze"]:has(.geo-segmented-option[data-active="true"]:hover)
+    .geo-segmented-indicator {
+    box-shadow:
+      inset 0 1px 0 oklch(0.82 0.08 66 / 0.52),
+      inset 0 -1px 0 oklch(0.26 0.048 46 / 0.52),
+      0 2px 8px oklch(0.18 0.04 48 / 0.4),
+      0 0 14px oklch(0.48 0.07 56 / 0.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .geo-segmented-indicator {
+    transition: none;
+  }
+
+  .geo-segmented[data-variant="bronze"] .geo-segmented-indicator {
+    transition: none;
+  }
+
+  .geo-segmented[data-variant="bronze"]:has(.geo-segmented-option[data-active="true"]:hover)
+    .geo-segmented-indicator::after {
+    animation: none;
+    opacity: 0;
+  }
+}

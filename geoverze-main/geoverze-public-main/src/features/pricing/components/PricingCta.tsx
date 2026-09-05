@@ -2,25 +2,28 @@ import { Link } from "@tanstack/react-router";
 
 import { AnimatedSection } from "@/components/shared/AnimatedSection";
 import { GeoButton } from "@/components/shared/GeoButton";
-import { GlassCard } from "@/components/shared/GlassCard";
 import { SectionContainer } from "@/components/shared/SectionContainer";
 
-/** Closing band — one confident invitation, plus the honest billing note. */
+import "../styles/pricing-editorial.css";
+
+/** Cinematic closing invitation — no card chrome. */
 export function PricingCta() {
   return (
-    <section className="pb-[var(--space-section)]">
+    <section className="pricing-cta-section" aria-labelledby="pricing-cta-heading">
+      <div className="pricing-cta-glow" aria-hidden="true" />
+      <div className="pricing-cta-horizon" aria-hidden="true" />
       <SectionContainer>
         <AnimatedSection>
-          <GlassCard strong className="p-10 text-center md:p-16">
-            <p className="eyebrow">Know Earth</p>
-            <h2 className="mx-auto mt-6 max-w-xl font-light leading-[1.08] tracking-tight text-foreground text-[clamp(1.6rem,3.2vw,2.5rem)]">
+          <div className="pricing-cta-inner">
+            <p className="pricing-section-eyebrow">Know Earth</p>
+            <h2 id="pricing-cta-heading" className="pricing-cta-title">
               Start free. Upgrade when the planet gets interesting.
             </h2>
-            <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-foreground/55">
+            <p className="pricing-cta-note">
               Nothing is billable while GEOverze is in development — plans describe intent, not a
               live checkout. Your account, credits and progress carry into launch.
             </p>
-            <div className="mt-10 flex flex-wrap justify-center gap-3">
+            <div className="pricing-cta-actions">
               <GeoButton asChild variant="primary" size="lg">
                 <Link to="/auth/signup">Create account</Link>
               </GeoButton>
@@ -28,7 +31,7 @@ export function PricingCta() {
                 <Link to="/pricing/compare">Compare plans</Link>
               </GeoButton>
             </div>
-          </GlassCard>
+          </div>
         </AnimatedSection>
       </SectionContainer>
     </section>
