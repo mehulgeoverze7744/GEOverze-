@@ -1,0 +1,545 @@
+.dashboard-section-label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--foreground) 50%, transparent);
+}
+
+/* ── Main dashboard card (hero panel) ─────────────────────────────────── */
+
+.dashboard-hero {
+  min-height: min(520px, 72vw);
+  background: color-mix(in oklab, var(--charcoal) 28%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--bronze) 14%, transparent),
+    0 28px 56px color-mix(in oklab, var(--background) 45%, transparent);
+}
+
+.dashboard-hero-atmosphere {
+  z-index: 0;
+}
+
+/* Earth — scoped inside the card, clipped by overflow:hidden on .dashboard-hero */
+
+.dashboard-earth-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.dashboard-earth-stage {
+  position: absolute;
+  right: -12%;
+  top: 50%;
+  width: 58%;
+  min-width: 340px;
+  max-width: 860px;
+  aspect-ratio: 1;
+  transform: translateY(-44%);
+}
+
+.dashboard-earth-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  opacity: 0.95;
+  mix-blend-mode: screen;
+  -webkit-mask-image: radial-gradient(
+    ellipse 66% 66% at 52% 48%,
+    #000 20%,
+    rgba(0, 0, 0, 0.94) 38%,
+    rgba(0, 0, 0, 0.5) 58%,
+    transparent 76%
+  );
+  mask-image: radial-gradient(
+    ellipse 66% 66% at 52% 48%,
+    #000 20%,
+    rgba(0, 0, 0, 0.94) 38%,
+    rgba(0, 0, 0, 0.5) 58%,
+    transparent 76%
+  );
+}
+
+/* Card surface: opaque left → transparent right (Earth shows through) */
+
+.dashboard-hero-surface {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    color-mix(in oklab, var(--charcoal) 92%, transparent) 0%,
+    color-mix(in oklab, var(--charcoal) 82%, transparent) 34%,
+    color-mix(in oklab, var(--charcoal) 58%, transparent) 52%,
+    color-mix(in oklab, var(--charcoal) 28%, transparent) 68%,
+    color-mix(in oklab, var(--charcoal) 8%, transparent) 82%,
+    transparent 100%
+  );
+  backdrop-filter: blur(1px);
+}
+
+/* Extra left-side shade so text stays crisp */
+
+.dashboard-hero-content-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    color-mix(in oklab, var(--background) 55%, transparent) 0%,
+    color-mix(in oklab, var(--background) 22%, transparent) 38%,
+    transparent 62%
+  );
+}
+
+.dashboard-hero-glow {
+  position: absolute;
+  right: 6%;
+  top: 28%;
+  width: min(280px, 34%);
+  height: min(280px, 34%);
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--bronze) 10%, transparent);
+  filter: blur(48px);
+  animation: dashboard-hero-pulse 8s ease-in-out infinite;
+}
+
+@keyframes dashboard-hero-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.06);
+  }
+}
+
+@media (max-width: 1023px) {
+  .dashboard-hero {
+    min-height: min(480px, 78vw);
+  }
+
+  .dashboard-earth-stage {
+    right: -18%;
+    width: 62%;
+    min-width: 300px;
+    transform: translateY(-40%);
+  }
+
+  .dashboard-earth-image {
+    opacity: 0.82;
+  }
+
+  .dashboard-hero-surface {
+    background: linear-gradient(
+      to right,
+      color-mix(in oklab, var(--charcoal) 94%, transparent) 0%,
+      color-mix(in oklab, var(--charcoal) 72%, transparent) 44%,
+      color-mix(in oklab, var(--charcoal) 32%, transparent) 66%,
+      transparent 100%
+    );
+  }
+}
+
+@media (max-width: 639px) {
+  .dashboard-hero {
+    min-height: auto;
+  }
+
+  .dashboard-hero-content {
+    max-width: 100% !important;
+  }
+
+  .dashboard-earth-stage {
+    right: -28%;
+    top: auto;
+    bottom: -28%;
+    width: 78%;
+    min-width: 260px;
+    transform: none;
+  }
+
+  .dashboard-earth-image {
+    opacity: 0.58;
+    -webkit-mask-image: radial-gradient(
+      ellipse 60% 60% at 54% 46%,
+      #000 18%,
+      rgba(0, 0, 0, 0.82) 36%,
+      transparent 70%
+    );
+    mask-image: radial-gradient(
+      ellipse 60% 60% at 54% 46%,
+      #000 18%,
+      rgba(0, 0, 0, 0.82) 36%,
+      transparent 70%
+    );
+  }
+
+  .dashboard-hero-surface {
+    background: linear-gradient(
+      to right,
+      color-mix(in oklab, var(--charcoal) 96%, transparent) 0%,
+      color-mix(in oklab, var(--charcoal) 78%, transparent) 58%,
+      color-mix(in oklab, var(--charcoal) 38%, transparent) 78%,
+      transparent 100%
+    );
+  }
+
+  .dashboard-hero-content-shade {
+    background: linear-gradient(
+      to right,
+      color-mix(in oklab, var(--background) 68%, transparent) 0%,
+      color-mix(in oklab, var(--background) 28%, transparent) 52%,
+      transparent 72%
+    );
+  }
+
+  .dashboard-hero-glow {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-hero-glow {
+    animation: none;
+  }
+
+  .dashboard-earth-image {
+    opacity: 0.8;
+  }
+}
+
+/* ── Hero CTAs & cards ─────────────────────────────────────────────────── */
+
+.dashboard-cta-expedition {
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--bronze) 35%, transparent),
+    0 0 24px color-mix(in oklab, var(--bronze) 12%, transparent);
+}
+
+.dashboard-cta-expedition:hover {
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--bronze) 55%, transparent),
+    0 0 32px color-mix(in oklab, var(--bronze) 18%, transparent);
+}
+
+.dashboard-featured,
+.dashboard-rec-card {
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--bronze) 8%, transparent);
+}
+
+.dashboard-rec-card:hover {
+  border-color: color-mix(in oklab, var(--bronze) 35%, transparent);
+}
+
+/* Mobile section ordering */
+.dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-section-sm);
+}
+
+.dashboard-order-hero {
+  order: 1;
+}
+.dashboard-order-streak {
+  order: 2;
+}
+.dashboard-order-progress {
+  order: 3;
+}
+.dashboard-order-learning {
+  order: 4;
+}
+.dashboard-order-rewards {
+  order: 6;
+}
+.dashboard-order-viewed {
+  order: 5;
+}
+.dashboard-order-upcoming {
+  order: 7;
+}
+
+@media (min-width: 1024px) {
+  .dashboard-order-hero {
+    order: 1;
+  }
+  .dashboard-order-streak {
+    order: 2;
+  }
+  .dashboard-order-progress {
+    order: 3;
+  }
+  .dashboard-order-learning {
+    order: 4;
+  }
+  .dashboard-order-viewed {
+    order: 5;
+  }
+  .dashboard-order-rewards {
+    order: 6;
+  }
+  .dashboard-order-upcoming {
+    order: 7;
+  }
+}
+
+/* ── Streak tracker ───────────────────────────────────────────────────── */
+
+.dashboard-streak {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.75rem;
+  border: 1px solid color-mix(in oklab, var(--bronze) 20%, transparent);
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in oklab, var(--charcoal) 52%, transparent) 0%,
+      color-mix(in oklab, var(--charcoal) 38%, transparent) 100%
+    );
+  padding: 1.35rem 1.5rem 1.5rem;
+  backdrop-filter: blur(10px);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--bronze) 10%, transparent),
+    0 20px 40px color-mix(in oklab, var(--background) 32%, transparent);
+}
+
+.dashboard-streak::before {
+  content: "";
+  position: absolute;
+  left: 8%;
+  top: 18%;
+  width: 140px;
+  height: 140px;
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--bronze) 7%, transparent);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.dashboard-streak-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dashboard-streak-header-icon {
+  width: 0.85rem;
+  height: 0.85rem;
+  color: color-mix(in oklab, var(--bronze) 75%, transparent);
+}
+
+.dashboard-streak-title {
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--foreground) 46%, transparent);
+}
+
+.dashboard-streak-stats {
+  position: relative;
+  margin-top: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 1rem 1.5rem;
+}
+
+.dashboard-streak-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: min(100%, 200px);
+  flex: 1;
+}
+
+.dashboard-streak-stat-icon {
+  display: inline-flex;
+  height: 2.25rem;
+  width: 2.25rem;
+  shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  border: 1px solid color-mix(in oklab, var(--bronze) 38%, transparent);
+  background: color-mix(in oklab, var(--bronze) 10%, transparent);
+  color: color-mix(in oklab, var(--bronze) 90%, transparent);
+  box-shadow: 0 0 18px color-mix(in oklab, var(--bronze) 8%, transparent);
+}
+
+.dashboard-streak-stat-icon--muted {
+  border-color: color-mix(in oklab, var(--bronze) 18%, transparent);
+  background: color-mix(in oklab, var(--charcoal) 55%, transparent);
+  color: color-mix(in oklab, var(--bronze) 70%, transparent);
+  box-shadow: none;
+}
+
+.dashboard-streak-stat-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.dashboard-streak-stat-value {
+  font-size: clamp(1.85rem, 3.6vw, 2.35rem);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.dashboard-streak-stat-value--muted {
+  color: color-mix(in oklab, var(--foreground) 78%, transparent);
+}
+
+.dashboard-streak-stat-label {
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--foreground) 46%, transparent);
+}
+
+.dashboard-streak-stat-divider {
+  display: none;
+  width: 1px;
+  align-self: stretch;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in oklab, var(--bronze) 22%, transparent) 35%,
+    color-mix(in oklab, var(--bronze) 22%, transparent) 65%,
+    transparent
+  );
+}
+
+@media (min-width: 640px) {
+  .dashboard-streak-stat-divider {
+    display: block;
+    min-height: 3.5rem;
+  }
+}
+
+.dashboard-streak-weekly {
+  margin-top: 1.35rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid color-mix(in oklab, var(--bronze) 12%, transparent);
+}
+
+.dashboard-streak-weekly-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.dashboard-streak-weekly-label {
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--foreground) 46%, transparent);
+}
+
+.dashboard-streak-weekly-goal {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: color-mix(in oklab, var(--foreground) 58%, transparent);
+}
+
+.dashboard-streak-days {
+  margin-top: 0.85rem;
+  display: flex;
+  gap: 0.4rem;
+}
+
+.dashboard-streak-day {
+  display: inline-flex;
+  height: 2.15rem;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.65rem;
+  border: 1px solid color-mix(in oklab, var(--bronze) 12%, transparent);
+  background: color-mix(in oklab, var(--charcoal) 42%, transparent);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: color-mix(in oklab, var(--foreground) 42%, transparent);
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.dashboard-streak-day--done {
+  border-color: color-mix(in oklab, var(--bronze) 42%, transparent);
+  background: color-mix(in oklab, var(--bronze) 14%, transparent);
+  color: color-mix(in oklab, var(--bronze) 92%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--bronze) 12%, transparent);
+}
+
+.dashboard-streak-day--current-done {
+  border-color: color-mix(in oklab, var(--bronze) 55%, transparent);
+  background: color-mix(in oklab, var(--bronze) 20%, transparent);
+  color: color-mix(in oklab, var(--bronze) 95%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--bronze) 16%, transparent),
+    0 0 14px color-mix(in oklab, var(--bronze) 10%, transparent);
+}
+
+.dashboard-streak-day--current {
+  border-color: color-mix(in oklab, var(--bronze) 48%, transparent);
+  background: color-mix(in oklab, var(--bronze) 8%, transparent);
+  color: color-mix(in oklab, var(--foreground) 72%, transparent);
+  box-shadow: 0 0 12px color-mix(in oklab, var(--bronze) 8%, transparent);
+}
+
+.dashboard-streak-progress {
+  margin-top: 0.85rem;
+  height: 0.3rem !important;
+  background: color-mix(in oklab, var(--background) 75%, transparent) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--bronze) 8%, transparent);
+}
+
+.dashboard-streak-progress > span {
+  box-shadow: 0 0 10px color-mix(in oklab, var(--bronze) 28%, transparent);
+}
+
+@media (max-width: 639px) {
+  .dashboard-streak {
+    padding: 1.15rem 1.15rem 1.25rem;
+  }
+
+  .dashboard-streak-stats {
+    gap: 0.85rem;
+  }
+
+  .dashboard-streak-stat {
+    min-width: calc(50% - 0.5rem);
+    flex: 1 1 calc(50% - 0.5rem);
+  }
+
+  .dashboard-streak-stat-value {
+    font-size: 1.65rem;
+  }
+
+  .dashboard-streak-days {
+    gap: 0.3rem;
+  }
+
+  .dashboard-streak-day {
+    height: 1.95rem;
+    font-size: 0.58rem;
+    border-radius: 0.55rem;
+  }
+
+  .dashboard-streak-weekly-goal {
+    font-size: 0.68rem;
+  }
+}

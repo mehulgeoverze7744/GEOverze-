@@ -42,7 +42,7 @@ export function ProfileEditPage() {
   const [username, setUsername] = useState(profile.username);
   const [bio, setBio] = useState(profile.bio);
   const [country, setCountry] = useState(profile.countryCode ?? "");
-  const [avatarId, setAvatar] = useState(profile.avatarId);
+  const [avatarId, setAvatar] = useState<string | null>(profile.avatarId);
   const [errors, setErrors] = useState<{ displayName?: string; username?: string }>({});
   const [saving, setSaving] = useState(false);
 
@@ -64,15 +64,22 @@ export function ProfileEditPage() {
       bio: bio.trim(),
       country: country || null,
     });
-    setAvatarId(avatarId);
+    if (avatarId) {
+      setAvatarId(avatarId);
+    }
     if (user) {
-      setSession({
+      const nextUser: typeof user = {
         ...user,
         displayName: displayName.trim(),
         username: username.trim().toLowerCase(),
-        avatarId,
         ...(country ? { country } : {}),
-      });
+      };
+      if (avatarId) {
+        nextUser.avatarId = avatarId;
+      } else {
+        delete nextUser.avatarId;
+      }
+      setSession(nextUser);
     }
 
     // Persist to database in parallel; errors are surfaced via toast without

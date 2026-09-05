@@ -139,18 +139,44 @@ export type LinkedItem = {
   title: string;
   meta: string;
   to: NonNullable<LinkProps["to"]>;
+  /** GEOlibrary article slug — thumbnail resolved via articleCardImageSrc. */
+  articleSlug?: string;
 };
 
 export const RECENTLY_VIEWED: readonly LinkedItem[] = [
-  { id: "r1", title: "The Sahel, explained", meta: "GEOlibrary · 8 min", to: "/geolibrary" },
+  {
+    id: "r1",
+    title: "The Sahel, explained",
+    meta: "GEOlibrary · 8 min",
+    to: "/geolibrary",
+    articleSlug: "the-sahel-explained",
+  },
   { id: "r2", title: "Bronze relief atlas", meta: "GEOstore · Plate", to: "/geostore" },
   { id: "r3", title: "Capitals sprint: Africa", meta: "Let's Play · Quiz", to: "/play" },
 ] as const;
 
 export const SAVED_ARTICLES: readonly LinkedItem[] = [
-  { id: "s1", title: "How the Himalayas keep growing", meta: "9 min read", to: "/bookmarks" },
-  { id: "s2", title: "Why some countries have two capitals", meta: "6 min read", to: "/bookmarks" },
-  { id: "s3", title: "The straightest borders on Earth", meta: "7 min read", to: "/bookmarks" },
+  {
+    id: "s1",
+    title: "How the Himalayas keep growing",
+    meta: "9 min read",
+    to: "/bookmarks",
+    articleSlug: "how-the-himalayas-keep-growing",
+  },
+  {
+    id: "s2",
+    title: "Why some countries have two capitals",
+    meta: "6 min read",
+    to: "/bookmarks",
+    articleSlug: "why-some-countries-have-two-capitals",
+  },
+  {
+    id: "s3",
+    title: "The straightest borders on Earth",
+    meta: "7 min read",
+    to: "/bookmarks",
+    articleSlug: "the-straightest-borders-on-earth",
+  },
 ] as const;
 
 export type Recommendation = {

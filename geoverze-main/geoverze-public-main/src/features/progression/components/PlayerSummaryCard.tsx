@@ -1,7 +1,7 @@
 import { Flame, Globe2, Sparkles, Target, Zap } from "lucide-react";
 
 import { AnimatedCounter } from "@/components/shared";
-import { AvatarMark } from "@/features/auth/components/AvatarMark";
+import { UserAvatar } from "@/features/auth/components/UserAvatar";
 import { MetaChip } from "@/features/play/components/Badges";
 import { GameCard } from "@/features/play/components/GameCard";
 import { useProfile } from "@/features/profile/lib/useProfile";
@@ -32,10 +32,11 @@ export function PlayerSummaryCard({ player }: { player: PlayerSnapshot }) {
       <div className="p-6 sm:p-8">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-center gap-5">
-            <AvatarMark
-              id={profile.avatarId}
+            <UserAvatar
+              avatarUrl={profile.avatarUrl}
+              avatarId={profile.avatarId}
               size={78}
-              className="border border-bronze/30 shadow-[var(--shadow-game)]"
+              className="drop-shadow-[0_8px_20px_rgba(0,0,0,0.45)]"
             />
             <div className="min-w-0">
               <h2 className="truncate text-xl font-semibold tracking-tight text-foreground">

@@ -1,12 +1,10 @@
 import { useEffect } from "react";
 
 import { COUNTRIES } from "@/features/auth/data/countries";
-import { AVATARS, INTERESTS, SKILL_LEVELS } from "@/features/auth/data/onboarding";
+import { INTERESTS, SKILL_LEVELS } from "@/features/auth/data/onboarding";
 import { useAuthStore } from "@/stores/authStore";
 import { useOnboardingStore } from "@/stores/onboardingStore";
 import { useProfileStore } from "@/stores/profileStore";
-
-const FALLBACK_AVATAR = AVATARS[0]!.id;
 
 /**
  * Resolved profile identity.
@@ -33,7 +31,8 @@ export function useProfile() {
     profile.username ?? user?.username ?? displayName.toLowerCase().replace(/[^a-z0-9]/g, "");
   const countryCode = profile.country ?? user?.country ?? null;
   const country = COUNTRIES.find((item) => item.code === countryCode) ?? null;
-  const avatarId = user?.avatarId ?? onboardingAvatar ?? FALLBACK_AVATAR;
+  const avatarUrl = user?.avatarUrl ?? null;
+  const avatarId = user?.avatarId ?? onboardingAvatar ?? null;
   const interests = INTERESTS.filter((interest) => interestIds.includes(interest.id));
   const skillLevel = SKILL_LEVELS.find((level) => level.id === skillLevelId) ?? null;
 
@@ -48,6 +47,7 @@ export function useProfile() {
     country,
     countryCode,
     avatarId,
+    avatarUrl,
     interests,
     skillLevel,
     joinedAt: profile.joinedAt ? new Date(profile.joinedAt) : new Date(),

@@ -8,7 +8,7 @@ export function SectionContainer({
   children,
   size = "default",
   ...props
-}: ComponentProps<"div"> & { children?: ReactNode; size?: "narrow" | "default" | "wide" }) {
+}: ComponentProps<"div"> & { children?: ReactNode; size?: "narrow" | "default" | "wide" | "dashboard" }) {
   return (
     <div
       className={cn(
@@ -16,6 +16,7 @@ export function SectionContainer({
         size === "narrow" && "max-w-3xl",
         size === "default" && "max-w-6xl",
         size === "wide" && "max-w-7xl",
+        size === "dashboard" && "max-w-[min(94vw,1500px)]",
         className,
       )}
       {...props}

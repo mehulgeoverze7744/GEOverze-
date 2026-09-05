@@ -146,7 +146,7 @@ async function hydrateProfileAndRole(user: User) {
     await Promise.all([
       supabase
         .from("profiles")
-        .select("username, display_name, country_code, avatar_id")
+        .select("username, display_name, country_code, avatar_id, avatar_url")
         .eq("id", user.id)
         .maybeSingle(),
       supabase.from("user_roles").select("role").eq("user_id", user.id),
@@ -169,6 +169,7 @@ async function hydrateProfileAndRole(user: User) {
     ...(profile?.username ? { username: profile.username } : {}),
     ...(profile?.country_code ? { country: profile.country_code } : {}),
     ...(profile?.avatar_id ? { avatarId: profile.avatar_id } : {}),
+    ...(profile?.avatar_url ? { avatarUrl: profile.avatar_url } : {}),
   });
 
   const roles = (roleRows ?? []).map((row) => row.role as AppRole);

@@ -9,7 +9,7 @@ export const ARTICLE_CARD_IMAGES: Readonly<Record<string, string>> = {
   "how-the-himalayas-keep-growing": `${ARTICLE_BASE}/how-the-himalayas-keep-growing.jpg`,
   "the-sahel-explained": `${ARTICLE_BASE}/the-sahel-explained.jpg`,
   "why-some-countries-have-two-capitals": `${ARTICLE_BASE}/why-some-countries-have-two-capitals.jpg`,
-  "the-straightest-borders-on-earth": `${ARTICLE_BASE}/languages-that-cross-the-most-borders.jpg`,
+  "the-straightest-borders-on-earth": `${ARTICLE_BASE}/the-straightest-borders-on-earth.jpg`,
   "the-nile-and-the-amazon": `${COLLECTION_BASE}/great-rivers.jpg`,
   "how-unesco-picks-a-world-heritage-site": `${COLLECTION_BASE}/unesco-heritage.jpg`,
   "why-there-are-five-oceans-now": `${COLLECTION_BASE}/climate-change.jpg`,

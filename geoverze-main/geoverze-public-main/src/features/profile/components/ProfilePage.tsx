@@ -12,7 +12,7 @@ import { SectionContainer } from "@/components/shared/SectionContainer";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { StatGrid } from "@/components/shared/StatGrid";
 import { TimelineItem } from "@/components/shared/TimelineItem";
-import { AvatarMark } from "@/features/auth/components/AvatarMark";
+import { UserAvatar } from "@/features/auth/components/UserAvatar";
 import { QUIZ_HISTORY } from "@/features/dashboard/data/dashboard";
 import { ACHIEVEMENTS } from "@/features/profile/data/achievements";
 import { PROFILE_STATS, RECORD_STATS, STREAK } from "@/features/profile/data/stats";
@@ -20,6 +20,9 @@ import { formatJoinDate, useProfile } from "@/features/profile/lib/useProfile";
 import { ContinentMasteryList, StreakPanel } from "@/features/progress";
 import { LevelBadge } from "@/features/progression/components/LevelBadge";
 import { selectPlayer, useProgressionStore } from "@/stores/progressionStore";
+
+import { ProfileBanner } from "./ProfileBanner";
+import "../styles/profile.css";
 
 /**
  * Public-facing explorer profile.
@@ -37,29 +40,36 @@ export function ProfilePage() {
   return (
     <PageShell>
       <SectionContainer className="pt-[calc(var(--nav-height)+var(--space-section-sm))]">
-        <AnimatedSection>
-          <GlassCard strong className="overflow-hidden">
-            <div aria-hidden="true" className="h-28 bg-gradient-bronze opacity-25 sm:h-36" />
-            <div className="px-7 pb-8 sm:px-9">
-              <div className="-mt-12 flex flex-col gap-6 sm:-mt-14 sm:flex-row sm:items-end sm:justify-between">
-                <div className="flex items-end gap-5">
-                  <AvatarMark
-                    id={profile.avatarId}
-                    size={104}
-                    className="border border-bronze/30 bg-charcoal shadow-[var(--glow-bronze)]"
+        <AnimatedSection className="overflow-visible">
+          <GlassCard strong className="profile-card">
+            <div className="profile-banner-wrap">
+              <ProfileBanner />
+            </div>
+
+            <div className="profile-avatar-layer">
+              <div className="profile-avatar-slot">
+                <UserAvatar
+                  avatarUrl={profile.avatarUrl}
+                  avatarId={profile.avatarId}
+                  size={120}
+                  className="drop-shadow-[0_12px_32px_rgba(0,0,0,0.5)]"
+                />
+              </div>
+            </div>
+
+            <div className="profile-content px-7 pb-8 sm:px-9">
+              <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+                <div className="profile-identity-row min-w-0">
+                  <h1 className="truncate text-[clamp(1.5rem,3.2vw,2.2rem)] font-light tracking-tight text-foreground">
+                    {profile.displayName}
+                  </h1>
+                  <p className="mt-1 text-xs text-foreground/50">{profile.handle}</p>
+                  <LevelBadge
+                    className="mt-4"
+                    size="sm"
+                    level={player.level}
+                    title={player.levelTitle}
                   />
-                  <div className="min-w-0 pb-1">
-                    <h1 className="truncate text-[clamp(1.5rem,3.2vw,2.2rem)] font-light tracking-tight text-foreground">
-                      {profile.displayName}
-                    </h1>
-                    <p className="mt-1 text-xs text-foreground/50">{profile.handle}</p>
-                    <LevelBadge
-                      className="mt-4"
-                      size="sm"
-                      level={player.level}
-                      title={player.levelTitle}
-                    />
-                  </div>
                 </div>
                 <div className="flex flex-wrap gap-3 sm:pb-2">
                   <GeoButton asChild variant="primary">

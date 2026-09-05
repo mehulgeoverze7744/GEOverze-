@@ -22,6 +22,7 @@ export type SessionUser = {
   username?: string;
   country?: string;
   avatarId?: string;
+  avatarUrl?: string;
 };
 
 type AuthState = {

@@ -1,0 +1,114 @@
+/* Profile card — banner + overlapping explorer avatar */
+
+.profile-card {
+  --profile-banner-height: 9rem;
+  --profile-avatar-overlap: 4.25rem;
+  --profile-avatar-display-width: 8.75rem;
+  position: relative;
+  overflow: visible;
+}
+
+@media (min-width: 640px) {
+  .profile-card {
+    --profile-banner-height: 11rem;
+    --profile-avatar-overlap: 5rem;
+    --profile-avatar-display-width: 9.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .profile-card {
+    --profile-banner-height: 13rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .profile-card {
+    --profile-banner-height: 14rem;
+    --profile-avatar-overlap: 5.5rem;
+  }
+}
+
+.profile-banner-wrap {
+  height: var(--profile-banner-height);
+  overflow: hidden;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+
+.profile-banner {
+  height: 100%;
+}
+
+/* Spacecraft left, Earth right — preserve full panoramic composition */
+.profile-banner-image {
+  object-position: 50% center;
+}
+
+@media (max-width: 639px) {
+  .profile-banner-image {
+    object-position: 42% center;
+  }
+}
+
+@media (min-width: 1024px) {
+  .profile-banner-image {
+    object-position: 52% center;
+  }
+}
+
+/* Avatar sits above banner — never clipped by banner overflow */
+.profile-avatar-layer {
+  position: absolute;
+  left: 1.75rem;
+  top: calc(var(--profile-banner-height) - var(--profile-avatar-overlap));
+  z-index: 20;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.profile-avatar-layer > * {
+  pointer-events: auto;
+}
+
+.profile-avatar-slot {
+  overflow: visible;
+}
+
+.profile-avatar-slot .user-avatar-explorer {
+  transform: translateY(0.25rem);
+}
+
+@media (max-width: 639px) {
+  .profile-avatar-layer {
+    left: 1.25rem;
+  }
+
+  .profile-avatar-slot .user-avatar-explorer {
+    transform: translateY(0.1rem) scale(0.9);
+    transform-origin: bottom left;
+  }
+}
+
+@media (min-width: 640px) {
+  .profile-avatar-layer {
+    left: 2.25rem;
+  }
+}
+
+.profile-content {
+  position: relative;
+  z-index: 10;
+  padding-top: calc(var(--profile-avatar-overlap) + 0.35rem);
+}
+
+.profile-identity-row {
+  padding-left: calc(var(--profile-avatar-display-width) + 1.25rem);
+}
+
+@media (max-width: 639px) {
+  .profile-identity-row {
+    padding-left: 0;
+    padding-top: calc(var(--profile-avatar-display-width) * 0.55);
+  }
+}
