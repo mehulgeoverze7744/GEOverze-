@@ -5,9 +5,38 @@ import { toast } from "sonner";
 import { useCommunityStore } from "@/stores/communityStore";
 
 import { memberByHandle } from "../data/members";
+import { COMMUNITY_LOCKED } from "./communityLocked";
+
+const noop = () => undefined;
 
 export function useCommunityActions() {
   const store = useCommunityStore();
+
+  if (COMMUNITY_LOCKED) {
+    return {
+      likedPosts: store.likedPosts,
+      bookmarks: store.bookmarks,
+      following: store.following,
+      pollVotes: store.pollVotes,
+      reactions: store.reactions,
+      likedComments: store.likedComments,
+      acceptedRequests: store.acceptedRequests,
+      declinedRequests: store.declinedRequests,
+      dismissedSuggestions: store.dismissedSuggestions,
+      like: noop,
+      likeComment: noop,
+      react: noop,
+      vote: noop,
+      bookmark: noop,
+      follow: noop,
+      share: noop,
+      report: noop,
+      invite: noop,
+      accept: noop,
+      decline: noop,
+      dismiss: noop,
+    };
+  }
 
   return {
     likedPosts: store.likedPosts,

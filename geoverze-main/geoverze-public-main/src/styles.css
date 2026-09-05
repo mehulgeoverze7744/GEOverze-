@@ -377,6 +377,43 @@
   }
 }
 
+@keyframes community-lock-glow {
+  0%,
+  100% {
+    opacity: 0.88;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes community-lock-heading {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 22px color-mix(in oklab, var(--bronze-glow) 28%, transparent))
+      drop-shadow(0 4px 28px rgba(0, 0, 0, 0.55));
+  }
+  50% {
+    filter: drop-shadow(0 0 36px color-mix(in oklab, var(--bronze-glow) 42%, transparent))
+      drop-shadow(0 4px 28px rgba(0, 0, 0, 0.55));
+  }
+}
+
+.community-lock-glow {
+  animation: community-lock-glow 9s var(--ease-soft) infinite;
+}
+
+.community-lock-heading {
+  animation: community-lock-heading 10s var(--ease-soft) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .community-lock-glow,
+  .community-lock-heading {
+    animation: none;
+  }
+}
+
 /* ---------------------------------------------------------------------------
  * Global accessibility + motion baselines.
  * ------------------------------------------------------------------------- */
