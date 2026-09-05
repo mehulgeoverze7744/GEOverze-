@@ -88,10 +88,6 @@ export function sortProducts(products: readonly Product[], sort: StoreSortId): P
   }
 }
 
-export function featuredProducts(products: readonly Product[], limit = 3): readonly Product[] {
-  return products.filter((p) => p.featured).slice(0, limit);
-}
-
 export function bestSellers(products: readonly Product[], limit = 4): readonly Product[] {
   return products.filter((p) => p.bestSeller).slice(0, limit);
 }

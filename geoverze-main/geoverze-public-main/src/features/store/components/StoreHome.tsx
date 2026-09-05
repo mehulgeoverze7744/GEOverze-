@@ -7,19 +7,17 @@ import { AnimatedSection, GeoButton, PageHeader, SectionContainer } from "@/comp
 import { useCartStore, selectCartCount } from "@/stores/cartStore";
 import { useStoreStore } from "@/stores/storeStore";
 
-import { BundleCard } from "./BundleCard";
 import { CategoryTile } from "./CategoryTile";
 import { ProductCard } from "./ProductCard";
 import { ProductRail } from "./ProductRail";
 import { QuickViewModal } from "./QuickViewModal";
-import { BUNDLES } from "../data/offers";
 import { PRODUCTS, productBySlug, type Product } from "../data/products";
 import { STORE_CATEGORIES, STORE_GROUPS } from "../data/taxonomy";
 import { useCreditPurchase } from "../hooks/useCreditPurchase";
 import { isProductOwned, useEntitlements } from "../hooks/useEntitlements";
 import { useStoreCatalogue } from "../hooks/useStoreCatalogue";
 import { catalogueProductBySlug, type StoreCatalogueProduct } from "../lib/mergeCatalogue";
-import { bestSellers, featuredProducts } from "../lib/filter";
+import { bestSellers } from "../lib/filter";
 import { money } from "../lib/format";
 import { useStoreActions } from "../lib/useStoreActions";
 import { useStoreCreditsState } from "../lib/useStoreCredits";
@@ -27,7 +25,7 @@ import { useStoreCreditsState } from "../lib/useStoreCredits";
 /** GEOstore front page: hero, credit balance, categories and merchandising rails. */
 export function StoreHome() {
   const [quickView, setQuickView] = useState<Product | null>(null);
-  const { addProduct, addBundle, wishlistToggle, wishlist } = useStoreActions();
+  const { addProduct, wishlistToggle, wishlist } = useStoreActions();
   const { balance, signedIn, authReady } = useStoreCreditsState();
   const entitlements = useEntitlements();
   const { rewardProducts, products: catalogueProducts } = useStoreCatalogue();
@@ -37,7 +35,6 @@ export function StoreHome() {
 
   const balanceDisplay = !authReady ? "…" : signedIn ? String(balance ?? 0) : "—";
 
-  const featured = featuredProducts(PRODUCTS, 3);
   const recent = recentlyViewed
     .map(productBySlug)
     .filter((p): p is Product => Boolean(p))
@@ -159,12 +156,12 @@ export function StoreHome() {
         </AnimatedSection>
 
         <ProductRail
-          title="Featured this month"
-          description="Chosen by the studio — the pieces that define the current collection."
+          title="Best sellers"
+          description="What most explorers take home."
           to="/geostore/browse"
           columns={3}
         >
-          {featured.map(card)}
+          {bestSellers(PRODUCTS, 3).map(card)}
         </ProductRail>
 
         <AnimatedSection className="mt-[var(--space-section-sm)]">
@@ -188,14 +185,6 @@ export function StoreHome() {
         </AnimatedSection>
 
         <ProductRail
-          title="Best sellers"
-          description="What most explorers take home."
-          to="/geostore/browse"
-        >
-          {bestSellers(PRODUCTS, 4).map(card)}
-        </ProductRail>
-
-        <ProductRail
           title="Claim with credits"
           description={
             signedIn
@@ -212,15 +201,6 @@ export function StoreHome() {
                 .slice(0, 4)
                 .map(rewardCard)}
         </ProductRail>
-
-        <AnimatedSection className="mt-[var(--space-section-sm)]">
-          <h2 className="text-lg font-light tracking-tight text-foreground">Bundles</h2>
-          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {BUNDLES.map((bundle) => (
-              <BundleCard key={bundle.id} bundle={bundle} onAdd={addBundle} />
-            ))}
-          </div>
-        </AnimatedSection>
 
         {recent.length > 0 ? (
           <ProductRail title="Recently viewed">{recent.map(card)}</ProductRail>

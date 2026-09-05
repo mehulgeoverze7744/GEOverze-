@@ -48,7 +48,7 @@ export const SEED_ORDERS: readonly Order[] = [
     status: "shipped",
     lines: [
       {
-        slug: "atlas-hoodie",
+        slug: "explore-the-unknown",
         name: "Atlas Hoodie",
         quantity: 1,
         amount: 7_800,

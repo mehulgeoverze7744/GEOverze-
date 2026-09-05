@@ -7,10 +7,12 @@ import expeditionKeychain from "@/assets/geostore/expedition-keychain.jpg";
 import explorersCompass from "@/assets/geostore/explorers-compass.jpg";
 import fieldNotebook from "@/assets/geostore/field-notebook.jpg";
 import flagStickerPack from "@/assets/geostore/flag-sticker-pack.jpg";
+import hoodieExploreTheUnknown from "@/assets/geostore/hoodie-explore-the-unknown.jpg";
 import latitudeLongitudeMug from "@/assets/geostore/latitude-longitude-mug.jpg";
 import navigatorCompassMug from "@/assets/geostore/navigator-compass-mug.jpg";
 import oldWorldMug from "@/assets/geostore/old-world-mug.jpg";
 import polarBeanie from "@/assets/geostore/polar-beanie.jpg";
+import tshirtKnowTheCapital from "@/assets/geostore/tshirt-i-know-the-capital.jpg";
 import vintageExpeditionStickerCollection from "@/assets/geostore/vintage-expedition-sticker-collection.jpg";
 import worldMapMug from "@/assets/geostore/world-map-mug.jpg";
 
@@ -80,6 +82,14 @@ const PRODUCT_IMAGES: Readonly<Record<string, ProductImage>> = {
   "explorers-compass": {
     src: explorersCompass,
     alt: "GEOverze Explorer's Compass — vintage-style pocket compass with an antique world map dial",
+  },
+  "i-know-the-capital-you-know-the-vibes": {
+    src: tshirtKnowTheCapital,
+    alt: "GEOverze I Know The Capital You Know The Vibes T-shirt — black tee with capital-city artwork",
+  },
+  "explore-the-unknown": {
+    src: hoodieExploreTheUnknown,
+    alt: "GEOverze Explore The Unknown Hoodie — black hoodie with world map and compass artwork",
   },
 };
 

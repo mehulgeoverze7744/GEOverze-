@@ -107,13 +107,12 @@ const APPAREL_COLOURS: ProductOption = {
 export const PRODUCTS: readonly Product[] = [
   // ---------------------------------------------------------------- merch
   make({
-    slug: "know-earth-tee",
-    name: "Know Earth Tee",
-    tagline: "The slogan, printed in bronze foil.",
+    slug: "i-know-the-capital-you-know-the-vibes",
+    name: "I KNOW THE CAPITAL, YOU KNOW THE VIBES.",
+    tagline: "A bold geography statement tee for explorers who know their capitals — and know the vibes.",
     category: "tshirts",
-    price: 3_200,
-    compareAt: 3_800,
-    credits: 320,
+    price: 3_600,
+    credits: 360,
     rating: 4.8,
     reviews: 214,
     popularity: 98,
@@ -122,7 +121,7 @@ export const PRODUCTS: readonly Product[] = [
     options: [APPAREL_SIZES, APPAREL_COLOURS],
     features: [
       "240 gsm combed organic cotton",
-      "Bronze foil emblem across the chest",
+      "Capital-city artwork across the back",
       "Pre-shrunk, garment dyed",
     ],
     specs: [
@@ -161,13 +160,13 @@ export const PRODUCTS: readonly Product[] = [
     tags: ["apparel", "continents"],
   }),
   make({
-    slug: "atlas-hoodie",
-    name: "Atlas Hoodie",
-    tagline: "Brushed fleece with an embroidered globe.",
+    slug: "explore-the-unknown",
+    name: "EXPLORE THE UNKNOWN",
+    tagline:
+      "Heavyweight explorer hoodie featuring a world map and compass-inspired design for the journey beyond the familiar.",
     category: "hoodies",
-    price: 7_800,
-    compareAt: 8_900,
-    credits: 780,
+    price: 8_200,
+    credits: 820,
     rating: 4.9,
     reviews: 178,
     popularity: 95,
@@ -176,7 +175,7 @@ export const PRODUCTS: readonly Product[] = [
     options: [APPAREL_SIZES, APPAREL_COLOURS],
     features: [
       "420 gsm brushed fleece",
-      "Embroidered bronze emblem, not printed",
+      "World map and compass artwork across the back",
       "Double-lined hood with metal tips",
     ],
     specs: [
