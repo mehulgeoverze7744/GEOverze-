@@ -19,7 +19,7 @@ import { useCreditPurchase } from "../hooks/useCreditPurchase";
 import { isProductOwned, useEntitlements } from "../hooks/useEntitlements";
 import { useStoreCatalogue } from "../hooks/useStoreCatalogue";
 import { catalogueProductBySlug, type StoreCatalogueProduct } from "../lib/mergeCatalogue";
-import { bestSellers, featuredProducts, newArrivals } from "../lib/filter";
+import { bestSellers, featuredProducts } from "../lib/filter";
 import { money } from "../lib/format";
 import { useStoreActions } from "../lib/useStoreActions";
 import { useStoreCreditsState } from "../lib/useStoreCredits";
@@ -221,14 +221,6 @@ export function StoreHome() {
             ))}
           </div>
         </AnimatedSection>
-
-        <ProductRail
-          title="New arrivals"
-          description="Fresh from production."
-          to="/geostore/browse"
-        >
-          {newArrivals(PRODUCTS, 4).map(card)}
-        </ProductRail>
 
         {recent.length > 0 ? (
           <ProductRail title="Recently viewed">{recent.map(card)}</ProductRail>

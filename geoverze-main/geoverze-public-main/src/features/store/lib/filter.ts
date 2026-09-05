@@ -96,10 +96,6 @@ export function bestSellers(products: readonly Product[], limit = 4): readonly P
   return products.filter((p) => p.bestSeller).slice(0, limit);
 }
 
-export function newArrivals(products: readonly Product[], limit = 4): readonly Product[] {
-  return [...products].sort((a, b) => b.releasedAt.localeCompare(a.releasedAt)).slice(0, limit);
-}
-
 /** Credit-claimable items ordered by cheapest first. */
 export function creditPicks(
   products: readonly Product[],
