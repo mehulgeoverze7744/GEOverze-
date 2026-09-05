@@ -12,6 +12,7 @@ import {
 } from "../lib/access-tier";
 import { LibraryMediaImage } from "./LibraryMediaImage";
 import { LibraryTierBadge } from "./LibraryTierBadge";
+import { articleCardImageSrc } from "../data/article-card-images";
 import { categoryIcon, categoryLabel, difficultyLabel } from "../data/taxonomy";
 import { creatorByHandle } from "../data/creators";
 import { usePublishedCreators } from "../hooks/usePublishedCreators";
@@ -54,6 +55,7 @@ export function LibraryCard({
     getResourceAccessState(article.minAccessTier, "explorer", !article.minAccessTier);
   const restricted = isResourceAccessRestricted(resolvedAccess);
   const showTierBadge = Boolean(article.minAccessTier);
+  const cardImageSrc = articleCardImageSrc(article.slug);
 
   const meta = (
     <>
@@ -133,6 +135,7 @@ export function LibraryCard({
           <LibraryMediaImage
             storagePath={article.coverArtKey}
             fallbackArt={article.slug}
+            staticImageSrc={cardImageSrc}
             icon={Icon}
             ratio="square"
           />
@@ -181,6 +184,7 @@ export function LibraryCard({
         <LibraryMediaImage
           storagePath={article.coverArtKey}
           fallbackArt={article.slug}
+          staticImageSrc={cardImageSrc}
           icon={Icon}
         />
         <span className="absolute right-3 top-3 rounded-full border border-bronze/35 bg-[oklch(0.12_0.006_60/0.85)] px-3 py-1 text-[0.58rem] uppercase tracking-[0.2em] text-bronze/85">

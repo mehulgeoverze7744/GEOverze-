@@ -5,13 +5,13 @@ import { AchievementsPage } from "@/features/profile";
 export const Route = createFileRoute("/_app/achievements")({
   head: () => ({
     meta: [
-      { title: "Achievements — GEOverze" },
+      { title: "Achievements and Rewards — GEOverze" },
       {
         name: "description",
         content:
           "Every GEOverze badge: what you have unlocked, what is in progress and what the planet still hides.",
       },
-      { property: "og:title", content: "Achievements — GEOverze" },
+      { property: "og:title", content: "Achievements and Rewards — GEOverze" },
       {
         property: "og:description",
         content: "Unlocked, in-progress and locked GEOverze explorer badges.",

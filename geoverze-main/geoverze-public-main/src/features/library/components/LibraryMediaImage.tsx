@@ -9,6 +9,8 @@ import { useLibraryMediaUrl } from "../hooks/useLibraryMediaUrl";
 type LibraryMediaImageProps = {
   storagePath?: string | null;
   fallbackArt: string;
+  /** Static public asset override (slug-keyed article/collection art). */
+  staticImageSrc?: string;
   icon?: LucideIcon;
   alt?: string;
   className?: string;
@@ -20,16 +22,32 @@ type LibraryMediaImageProps = {
 export function LibraryMediaImage({
   storagePath,
   fallbackArt,
+  staticImageSrc,
   icon,
   alt = "",
   className,
   ratio = "video",
   fit = "cover",
 }: LibraryMediaImageProps) {
+  const procedural = proceduralArtKey(fallbackArt);
+
+  if (staticImageSrc) {
+    return (
+      <CoverArt
+        art={procedural}
+        icon={icon}
+        imageSrc={staticImageSrc}
+        imageAlt={alt}
+        ratio={ratio}
+        fit={fit}
+        className={className}
+      />
+    );
+  }
+
   const resolvedPath =
     storagePath ?? (isLibraryMediaPath(fallbackArt) ? fallbackArt : null);
   const { url, loading, error } = useLibraryMediaUrl(resolvedPath);
-  const procedural = proceduralArtKey(fallbackArt);
 
   if (!resolvedPath || error) {
     return <CoverArt art={procedural} icon={icon} ratio={ratio} fit={fit} className={className} />;

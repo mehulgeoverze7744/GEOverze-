@@ -5,6 +5,7 @@ import { useLibraryStore } from "@/stores/libraryStore";
 
 import { LibraryMediaImage } from "./LibraryMediaImage";
 import { LibraryTierBadge } from "./LibraryTierBadge";
+import { articleCardImageSrc } from "../data/article-card-images";
 import type { Article } from "../data/articles";
 import { categoryIcon, categoryLabel } from "../data/taxonomy";
 import { useLibraryProgressEntries } from "../hooks/useLibraryProgressEntries";
@@ -37,6 +38,7 @@ function ProgressArticleRow({
         <LibraryMediaImage
           storagePath={article.coverArtKey}
           fallbackArt={article.slug}
+          staticImageSrc={articleCardImageSrc(article.slug)}
           icon={Icon}
           ratio="square"
         />

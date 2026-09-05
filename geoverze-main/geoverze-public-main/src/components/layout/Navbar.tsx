@@ -30,7 +30,7 @@ const accountLinks = [
   { label: "Profile", to: "/profile", icon: User },
   { label: "Progress", to: "/progress", icon: TrendingUp },
   { label: "Quiz history", to: "/quiz-history", icon: History },
-  { label: "Achievements", to: "/achievements", icon: Award },
+  { label: "Achievements and Rewards", to: "/achievements", icon: Award },
   { label: "Bookmarks", to: "/bookmarks", icon: BookMarked },
 
   { label: "Settings", to: "/settings", icon: Settings },

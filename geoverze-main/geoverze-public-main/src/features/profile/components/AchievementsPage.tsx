@@ -13,6 +13,7 @@ import {
   type Achievement,
   type AchievementFilterId,
 } from "@/features/profile/data/achievements";
+import { RewardsCategoryShelf } from "@/features/store/components/RewardsCategoryShelf";
 import { cn } from "@/lib/utils";
 
 const TIER_LABEL: Record<Achievement["tier"], string> = {
@@ -85,15 +86,16 @@ export function AchievementsPage() {
   return (
     <PageShell>
       <PageHeader
-        eyebrow="Achievements"
-        title="Badges of the explorer"
-        description="Eight milestones mark the journey from first quiz to full planetary mastery. Progress shown here is illustrative until the quiz engine ships."
+        eyebrow="Achievements and Rewards"
+        title="Achievements and Rewards"
+        description="Eight milestones mark the journey from first quiz to full planetary mastery. Claim profile rewards with credits below — progress shown here is illustrative until the quiz engine ships."
       />
       <SectionContainer>
         <AnimatedSection>
+          <h2 className="text-lg font-light tracking-tight text-foreground">Badges of the explorer</h2>
           <GlassCard
             strong
-            className="flex flex-col items-center gap-7 p-7 sm:flex-row sm:gap-10 sm:p-9"
+            className="mt-6 flex flex-col items-center gap-7 p-7 sm:flex-row sm:gap-10 sm:p-9"
           >
             <ProgressRing value={completion} label="Badge completion" size={120}>
               <span className="text-2xl font-light text-gradient-bronze">{completion}%</span>
@@ -139,6 +141,8 @@ export function AchievementsPage() {
             </AnimatedSection>
           ))}
         </div>
+
+        <RewardsCategoryShelf className="mt-[var(--space-section-sm)]" />
       </SectionContainer>
     </PageShell>
   );

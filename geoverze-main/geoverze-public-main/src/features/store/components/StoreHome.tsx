@@ -170,7 +170,7 @@ export function StoreHome() {
         <AnimatedSection className="mt-[var(--space-section-sm)]">
           <h2 className="text-lg font-light tracking-tight text-foreground">Shop by category</h2>
           <div className="mt-6 space-y-10">
-            {STORE_GROUPS.filter((g) => g.id !== "more").map((group) => (
+            {STORE_GROUPS.filter((g) => g.id !== "more" && g.id !== "rewards").map((group) => (
               <div key={group.id}>
                 <div className="flex items-center gap-3">
                   <group.icon className="h-4 w-4 text-bronze" strokeWidth={1.6} />

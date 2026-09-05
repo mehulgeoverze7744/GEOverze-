@@ -211,7 +211,7 @@ export function ProfilePage() {
                 <GeoButton asChild variant="secondary">
                   <Link to="/achievements">
                     <Award className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
-                    Achievements
+                    Achievements and Rewards
                   </Link>
                 </GeoButton>
                 <GeoButton asChild variant="ghost">

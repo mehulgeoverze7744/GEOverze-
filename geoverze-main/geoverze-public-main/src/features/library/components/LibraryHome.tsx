@@ -12,7 +12,7 @@ import {
 import { useLibraryStore } from "@/stores/libraryStore";
 
 import { LibraryCard } from "./LibraryCard";
-import { LibraryMediaImage } from "./LibraryMediaImage";
+import { CollectionCardCover } from "./CollectionCardCover";
 import { CATEGORIES } from "../data/taxonomy";
 import { usePublishedArticles } from "../hooks/usePublishedArticles";
 import { usePublishedCollections } from "../hooks/usePublishedCollections";
@@ -131,11 +131,7 @@ export function LibraryHome() {
               params={{ slug: collection.slug }}
               className="glass-panel surface-gradient group overflow-hidden rounded-2xl transition-all motion-base hover:border-bronze/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
             >
-              <LibraryMediaImage
-                storagePath={collection.art}
-                fallbackArt={collection.art}
-                icon={Library}
-              />
+              <CollectionCardCover collection={collection} />
               <div className="p-5">
                 <h3 className="text-base font-light text-foreground">{collection.title}</h3>
                 <p className="mt-2 line-clamp-2 text-[0.8rem] text-foreground/50">
