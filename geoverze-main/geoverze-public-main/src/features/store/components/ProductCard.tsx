@@ -9,6 +9,7 @@ import { PriceTag } from "./PriceTag";
 import { RatingStars } from "./RatingStars";
 import { StockPill } from "./StockPill";
 import type { Product } from "../data/products";
+import { productImageForSlug } from "../data/productImages";
 import { categoryIcon, categoryLabel } from "../data/taxonomy";
 
 /**
@@ -39,6 +40,7 @@ export function ProductCard({
   variant?: "grid" | "list";
 }) {
   const Icon = categoryIcon(product.category);
+  const productImage = productImageForSlug(product.slug);
   const soldOut = product.stock === "sold-out";
 
   return (
@@ -56,7 +58,9 @@ export function ProductCard({
       >
         <CoverArt
           art={product.slug}
-          icon={Icon}
+          {...(productImage
+            ? { imageSrc: productImage.src, imageAlt: productImage.alt }
+            : { icon: Icon })}
           ratio={variant === "list" ? "square" : "video"}
           className={cn(
             "transition-transform motion-slow group-hover:scale-[1.03]",
