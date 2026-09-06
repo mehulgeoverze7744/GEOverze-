@@ -13,8 +13,6 @@ import tshirtTooClosePerfect from "@/assets/geostore/tshirt-too-close-perfect.jp
 
 export type MerchCategory = "t-shirt" | "hoodie";
 
-export type MerchFilterId = "all" | "t-shirts" | "hoodies";
-
 export type GeostoreMerchProduct = {
   id: string;
   title: string;
@@ -123,21 +121,6 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     alt: "GEOverze black hoodie — front and back views with Know Earth Think Global bronze globe design",
   },
 ] as const;
-
-export const merchFilterOptions: readonly { id: MerchFilterId; label: string }[] = [
-  { id: "all", label: "All" },
-  { id: "t-shirts", label: "T-Shirts" },
-  { id: "hoodies", label: "Hoodies" },
-] as const;
-
-export function filterMerchProducts(
-  products: readonly GeostoreMerchProduct[],
-  filter: MerchFilterId,
-): GeostoreMerchProduct[] {
-  if (filter === "all") return [...products];
-  if (filter === "t-shirts") return products.filter((p) => p.category === "t-shirt");
-  return products.filter((p) => p.category === "hoodie");
-}
 
 /** GEOstore category route slugs backed by static merchandise. */
 export type MerchStoreCategorySlug = "tshirts" | "hoodies";

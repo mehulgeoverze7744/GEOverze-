@@ -1,0 +1,48 @@
+/* Hero CTA — solid metallic gold, scoped to HomeHero only */
+
+.home-hero-cta {
+  --hero-gold-mid: oklch(0.78 0.1 78);
+  --hero-gold-deep: oklch(0.62 0.09 62);
+  --hero-gold-highlight: oklch(0.86 0.08 82);
+  background-color: var(--hero-gold-mid);
+  background-image: linear-gradient(
+    102deg,
+    var(--hero-gold-deep) 0%,
+    var(--hero-gold-mid) 46%,
+    var(--hero-gold-highlight) 52%,
+    var(--hero-gold-mid) 58%,
+    var(--hero-gold-deep) 100%
+  ) !important;
+  border-color: oklch(0.72 0.1 72 / 0.55) !important;
+  color: oklch(0.12 0.01 60) !important;
+  box-shadow:
+    0 10px 24px -14px oklch(0 0 0 / 0.88),
+    inset 0 1px 0 oklch(0.92 0.06 84 / 0.35);
+  transition:
+    transform var(--dur-base) var(--ease-cinematic),
+    box-shadow var(--dur-base) var(--ease-cinematic),
+    filter var(--dur-base) var(--ease-cinematic);
+}
+
+.home-hero-cta:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow:
+    0 16px 36px -14px oklch(0.68 0.1 72 / 0.42),
+    0 10px 24px -14px oklch(0 0 0 / 0.88),
+    inset 0 1px 0 oklch(0.94 0.06 84 / 0.45);
+}
+
+.home-hero-cta:active {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-hero-cta {
+    transition: filter var(--dur-fast) var(--ease-soft);
+  }
+
+  .home-hero-cta:hover {
+    transform: none;
+  }
+}

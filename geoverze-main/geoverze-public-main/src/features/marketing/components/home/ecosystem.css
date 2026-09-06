@@ -1,0 +1,92 @@
+/* Scoped to THE ECOSYSTEM section cards only */
+
+.ecosystem-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 640px) {
+  .ecosystem-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .ecosystem-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.ecosystem-card {
+  aspect-ratio: 1 / 1;
+  transform: scale(1);
+  transform-origin: center center;
+  transition:
+    transform 220ms ease,
+    border-color 280ms ease,
+    box-shadow 280ms ease;
+}
+
+.ecosystem-card:hover {
+  animation: ecosystem-wobble 320ms ease-out forwards;
+  border-color: rgb(184 118 58 / 0.46);
+  box-shadow: 0 10px 32px rgb(0 0 0 / 0.26);
+}
+
+.ecosystem-card:not(:hover) {
+  animation: none;
+}
+
+@keyframes ecosystem-wobble {
+  0% {
+    transform: scale(1) rotate(0deg) translate3d(0, 0, 0);
+  }
+
+  18% {
+    transform: scale(1.018) rotate(-1.2deg) translate3d(-1px, 0.5px, 0);
+  }
+
+  38% {
+    transform: scale(1.02) rotate(1deg) translate3d(1px, -0.5px, 0);
+  }
+
+  58% {
+    transform: scale(1.014) rotate(-0.55deg) translate3d(-0.5px, 0.25px, 0);
+  }
+
+  78% {
+    transform: scale(1.012) rotate(0.35deg) translate3d(0.5px, 0, 0);
+  }
+
+  100% {
+    transform: scale(1.01) rotate(0deg) translate3d(0, 0, 0);
+  }
+}
+
+.ecosystem-card__media {
+  flex: 1.1 1 0;
+}
+
+.ecosystem-card__body {
+  flex: 1 1 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ecosystem-card,
+  .ecosystem-card:hover {
+    animation: none;
+    transform: none;
+  }
+
+  .ecosystem-card:hover {
+    border-color: rgb(184 118 58 / 0.42);
+    box-shadow: 0 6px 20px rgb(0 0 0 / 0.2);
+  }
+
+  .ecosystem-card__img {
+    transition: none;
+  }
+
+  .ecosystem-card:hover .ecosystem-card__img {
+    transform: none;
+  }
+}

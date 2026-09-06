@@ -1,0 +1,75 @@
+/* Scoped to Home page GEOstore showcase only */
+
+.geostore-showcase {
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
+@media (min-width: 768px) {
+  .geostore-showcase {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+}
+
+.geostore-showcase-intro {
+  max-width: 42rem;
+}
+
+.geostore-showcase-intro__eyebrow {
+  margin-bottom: 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.48em;
+  color: var(--bronze);
+}
+
+.geostore-showcase-intro__heading {
+  margin-bottom: 0.75rem;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 300;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+
+.geostore-showcase-intro__copy {
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+@media (min-width: 768px) {
+  .geostore-showcase-intro__copy {
+    font-size: 0.9375rem;
+  }
+}
+
+.geostore-showcase__row {
+  margin-top: 1.5rem;
+}
+
+.geostore-showcase__row--hoodies {
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .geostore-showcase__row {
+    margin-top: 1.75rem;
+  }
+
+  .geostore-showcase__row--hoodies {
+    margin-top: 1.75rem;
+  }
+}
+
+.geostore-showcase__cta {
+  margin-top: 2.5rem;
+}
+
+@media (min-width: 768px) {
+  .geostore-showcase__cta {
+    margin-top: 2.75rem;
+  }
+}

@@ -2,6 +2,7 @@ import { ClientOnly, Link } from "@tanstack/react-router";
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
 
 import { useScrollProgress } from "@/components/geoverze/useScrollProgress";
+import "./home-hero.css";
 import { skyLayer } from "@/components/layout/skyLayer";
 import { BrandMark, GeoButton, Modal } from "@/components/shared";
 import { hasWebGLSupport } from "@/lib/webgl";
@@ -106,12 +107,12 @@ export function HomeHero() {
         className="pointer-events-none absolute inset-x-6 bottom-24 will-change-transform md:inset-x-auto md:left-12 md:bottom-auto md:max-w-[34rem] md:top-[calc(108px+150px+1.5rem)]"
       >
         <p className="eyebrow">Know Earth</p>
-        <h1 className="mt-4 font-light leading-[0.98] tracking-tight text-foreground text-[clamp(2.2rem,5.4vw,4.4rem)]">
+        <h1 className="mt-6 font-semibold leading-[1.03] tracking-tight text-foreground text-[clamp(2.15rem,5.2vw,4.25rem)]">
           Discover Earth
           <br />
           Like Never Before
         </h1>
-        <p className="mt-5 max-w-lg text-sm leading-relaxed text-foreground/60 md:text-base">
+        <p className="mt-7 max-w-lg text-[0.9375rem] font-light leading-[1.7] text-foreground/65 md:text-base">
           Explore countries, flags, capitals, maps, cultures, landmarks and geography through
           beautifully designed interactive experiences, quizzes, challenges and a global community.
         </p>
@@ -140,9 +141,12 @@ export function HomeHero() {
             asChild
             variant="solid"
             size="lg"
-            className="min-w-40 px-10 font-bold uppercase tracking-[0.2em]"
+            className="home-hero-cta min-w-40 px-10 font-bold uppercase tracking-[0.2em]"
           >
-            <Link to="/play" className="flex flex-col items-center leading-none font-cta text-[1.37rem]">
+            <Link
+              to="/play"
+              className="flex flex-col items-center leading-none font-cta text-[1.37rem]"
+            >
               <span>LET'S PLAY</span>
             </Link>
           </GeoButton>
@@ -150,7 +154,7 @@ export function HomeHero() {
             variant="solid"
             size="lg"
             onClick={() => setDemoOpen(true)}
-            className="min-w-40 px-10 font-bold uppercase tracking-[0.2em]"
+            className="home-hero-cta min-w-40 px-10 font-bold uppercase tracking-[0.2em]"
           >
             <span className="font-cta text-[0.7rem]">Watch Demo</span>
           </GeoButton>

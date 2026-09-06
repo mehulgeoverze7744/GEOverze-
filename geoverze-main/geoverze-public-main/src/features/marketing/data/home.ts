@@ -1,18 +1,13 @@
 import {
   Award,
-  BookOpen,
-  Compass,
   CalendarDays,
   Crown,
   Gamepad2,
-  Globe2,
   Library,
   Radio,
   Store,
-  Target,
   Trophy,
   UserRound,
-  Users,
   Gift,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -25,85 +20,48 @@ export type HomeFeature = {
   imageSrc?: string;
 };
 
-/** Section 1 — Why GEOverze. */
-export const whyPillars: HomeFeature[] = [
-  {
-    icon: BookOpen,
-    title: "Learning",
-    description:
-      "Geography presented with the clarity of a great atlas and the pacing of a modern product — structured, precise, never dry.",
-    imageSrc: "/assets/home/learning.jpg",
-  },
-  {
-    icon: Compass,
-    title: "Discovery",
-    description:
-      "Every session surfaces something you did not know: a border, a basin, a capital, a culture worth remembering.",
-    imageSrc: "/assets/home/discovery.jpg",
-  },
-  {
-    icon: Globe2,
-    title: "Exploration",
-    description:
-      "Move across the planet in three dimensions. The world is the interface, not a list of chapters.",
-    imageSrc: "/assets/home/exploration.jpg",
-  },
-  {
-    icon: Target,
-    title: "Interactive quizzes",
-    description:
-      "Short, elegant rounds that ask you to recognise and reason rather than recite what you memorised.",
-    imageSrc: "/assets/home/interactive-quizzes.jpg",
-  },
-  {
-    icon: Trophy,
-    title: "Friendly competition",
-    description:
-      "Measure yourself against the world with standings designed to motivate curiosity, not anxiety.",
-    imageSrc: "/assets/home/friendly-competition.jpg",
-  },
-  {
-    icon: Users,
-    title: "Community",
-    description:
-      "A shared expedition — learners, travellers and map lovers exploring the same planet together.",
-    imageSrc: "/assets/home/community.jpg",
-  },
-];
+/** Section 1 — Why GEOverze carousel imagery (unchanged from original pillars). */
+const whyCarouselImages = [
+  "/assets/home/learning.jpg",
+  "/assets/home/discovery.jpg",
+  "/assets/home/exploration.jpg",
+  "/assets/home/interactive-quizzes.jpg",
+  "/assets/home/friendly-competition.jpg",
+] as const;
 
-/** Section 4 — Compete (roadmap framing). */
-export const competeItems: HomeFeature[] = [
+/** WHY GEOVERZE marquee — carousel copy on preserved pillar imagery. */
+const whyCarouselContent: Pick<HomeFeature, "icon" | "title" | "description">[] = [
   {
     icon: Trophy,
     title: "Leaderboards",
     description: "Global and regional standings that reward accuracy as much as speed.",
-    imageSrc: "/assets/home/compete/leaderboards.jpg",
   },
   {
     icon: CalendarDays,
     title: "Daily challenges",
     description: "One shared question set each day, played by the entire community.",
-    imageSrc: "/assets/home/compete/daily-challenges.jpg",
   },
   {
     icon: Award,
     title: "Tournaments",
     description: "Seasonal brackets where explorers advance round by round.",
-    imageSrc: "/assets/home/compete/tournaments.jpg",
   },
   {
     icon: Radio,
     title: "Live events",
     description: "Scheduled expeditions played together in real time.",
-    imageSrc: "/assets/home/compete/live-events.jpg",
   },
   {
     icon: Gift,
     title: "Rewards",
     description: "Recognition, credits and collectibles earned through participation.",
-    imageSrc: "/assets/home/compete/rewards.jpg",
   },
 ];
+
+export const whyCarouselCards: HomeFeature[] = whyCarouselContent.map((item, index) => ({
+  ...item,
+  imageSrc: whyCarouselImages[index],
+}));
 
 /** Section 5 — Ecosystem. */
 export const ecosystem: {
@@ -154,33 +112,5 @@ export const ecosystem: {
     description: "Your expedition log — progress, achievements and collections.",
     to: "/profile",
     imageSrc: "/assets/home/ecosystem/user-profiles.jpg",
-  },
-];
-
-/** Section 6 — Why choose GEOverze. */
-export const valueProps: { title: string; description: string }[] = [
-  {
-    title: "Beautifully designed learning",
-    description: "Every screen is composed with the care of a premium product, not a textbook.",
-  },
-  {
-    title: "Interactive 3D exploration",
-    description: "A real globe you can move around, used as the entry point to the whole platform.",
-  },
-  {
-    title: "Premium user interface",
-    description: "Bronze, glass and deep space — a consistent visual language throughout.",
-  },
-  {
-    title: "Community driven",
-    description: "Built around shared discovery, friendly competition and collective curiosity.",
-  },
-  {
-    title: "Continuously expanding",
-    description: "New regions, themes and modules arrive as the universe grows.",
-  },
-  {
-    title: "Learning made enjoyable",
-    description: "Understanding the world should feel like exploring it, not revising for it.",
   },
 ];

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import * as THREE from "three";
 
 import { BronzeGlobe } from "./BronzeGlobe";
+import { EARTH_SUN_POSITION } from "./earthGlobeAssets";
 
 function easeInOut(t: number) {
   return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
@@ -87,13 +88,13 @@ function Scene({ progress }: { progress: RefObject<number> }) {
   return (
     <>
       <CameraRig progress={progress} />
-      <ambientLight intensity={0.34} />
-      {/* soft key light */}
-      <directionalLight position={[4, 5, 6]} intensity={3.8} color="#ffe0b8" />
-      {/* bronze rim light */}
-      <directionalLight position={[-6, 2, -4]} intensity={2.4} color="#b8763a" />
-      {/* dim fill */}
-      <pointLight position={[0, -4, 4]} intensity={6} distance={22} color="#5a687a" />
+      <ambientLight intensity={0.28} />
+      {/* sun key — from logo/left (−X), shared with Earth day/night shader */}
+      <directionalLight position={[...EARTH_SUN_POSITION]} intensity={4.1} color="#fff6ea" />
+      {/* bronze rim — GEOverze brand accent, not planetary lighting */}
+      <directionalLight position={[-6, 2, -4]} intensity={1.65} color="#b8763a" />
+      {/* cool space fill */}
+      <pointLight position={[0, -4, 4]} intensity={4.5} distance={22} color="#5a687a" />
       <StudioEnvironment />
       <BronzeGlobe progress={progress} {...layout} />
     </>
@@ -147,7 +148,7 @@ export default function GlobeScene({ progress }: { progress: RefObject<number> }
     <div ref={host} aria-hidden className="absolute inset-0">
       <Canvas
         className="!absolute inset-0"
-        dpr={[1, 1.5]}
+        dpr={[1, 2]}
         frameloop={active ? "always" : "never"}
         gl={{
           antialias: true,
