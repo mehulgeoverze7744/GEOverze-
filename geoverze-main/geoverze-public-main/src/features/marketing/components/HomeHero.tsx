@@ -1,4 +1,5 @@
 import { ClientOnly, Link } from "@tanstack/react-router";
+import { ChevronDown } from "lucide-react";
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
 
 import { useScrollProgress } from "@/components/geoverze/useScrollProgress";
@@ -77,7 +78,7 @@ export function HomeHero() {
   });
 
   return (
-    <section ref={sectionRef} className="relative h-dvh w-full overflow-hidden">
+    <section ref={sectionRef} id="home-hero" className="relative h-dvh w-full overflow-hidden">
       {/* soft bronze bloom behind the globe */}
       <div
         aria-hidden
@@ -177,9 +178,10 @@ export function HomeHero() {
       <div
         ref={cueRef}
         aria-hidden
-        className="pointer-events-none absolute bottom-8 left-1/2 -translate-x-1/2 text-[0.62rem] uppercase tracking-[0.4em] text-foreground/50"
+        className="home-hero-scroll-cue pointer-events-none absolute bottom-8 left-1/2 -translate-x-1/2"
       >
-        Scroll
+        <span className="home-hero-scroll-cue__text">Scroll the experience</span>
+        <ChevronDown className="home-hero-scroll-cue__arrow" strokeWidth={1.75} aria-hidden />
       </div>
     </section>
   );

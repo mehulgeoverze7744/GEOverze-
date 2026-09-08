@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+
+import { scrollToHomeHero } from "@/lib/scrollToHomeHero";
 import { HomeHero } from "./HomeHero";
 import { WhyGeoverze } from "./home/WhyGeoverze";
 import { Ecosystem } from "./home/Ecosystem";
@@ -6,6 +9,10 @@ import { GeostoreShowcase } from "./home/GeostoreShowcase";
 
 /** Home page — the only route with the 3D globe. */
 export function HomePage() {
+  useEffect(() => {
+    scrollToHomeHero("auto");
+  }, []);
+
   return (
     <>
       <HomeHero />

@@ -11,7 +11,7 @@ import {
   User,
   X,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 
 import { BrandMark } from "@/components/shared/BrandMark";
 import { GeoButton } from "@/components/shared/GeoButton";
@@ -20,6 +20,7 @@ import { GeoDropdown, GeoDropdownItem } from "@/components/shared/GeoDropdown";
 import { GlobalSearch } from "@/components/shared/GlobalSearch";
 import { NotificationBell } from "@/components/shared/NotificationBell";
 import { mainNav, site } from "@/config/site";
+import { scrollToHomeHero } from "@/lib/scrollToHomeHero";
 import { signOut } from "@/lib/supabase/auth-sync";
 import { selectIsSignedIn, useAuthStore } from "@/stores/authStore";
 
@@ -42,8 +43,15 @@ export function Navbar() {
   const headerRef = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isHome = pathname === "/";
   const signedIn = useAuthStore(selectIsSignedIn);
   const navigate = useNavigate();
+
+  const handleLogoClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (!isHome) return;
+    event.preventDefault();
+    scrollToHomeHero();
+  };
 
   const handleSignOut = () => {
     setOpen(false);
@@ -83,6 +91,7 @@ export function Navbar() {
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-6 px-6 md:px-10">
         <Link
           to="/"
+          onClick={handleLogoClick}
           aria-label={`${site.name} home`}
           className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
         >

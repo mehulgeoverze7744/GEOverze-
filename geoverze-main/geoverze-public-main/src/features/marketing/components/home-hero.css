@@ -45,4 +45,41 @@
   .home-hero-cta:hover {
     transform: none;
   }
+
+  .home-hero-scroll-cue__arrow {
+    animation: none;
+  }
+}
+
+/* Hero scroll cue — replaces the legacy “Scroll” label */
+.home-hero-scroll-cue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.home-hero-scroll-cue__text {
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: oklch(0.68 0.09 62 / 0.72);
+}
+
+.home-hero-scroll-cue__arrow {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: oklch(0.72 0.1 72 / 0.78);
+  animation: home-hero-scroll-float 1.85s var(--ease-soft) infinite;
+}
+
+@keyframes home-hero-scroll-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
 }

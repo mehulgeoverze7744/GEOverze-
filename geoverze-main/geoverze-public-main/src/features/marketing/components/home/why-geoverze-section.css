@@ -1,14 +1,14 @@
 /* Scoped to WHY GEOVERZE section intro + vertical rhythm only */
 
 .why-geoverze-section {
-  padding-top: 2.75rem;
-  padding-bottom: 2.75rem;
+  padding-top: var(--space-section-sm);
+  padding-bottom: var(--space-section-sm);
 }
 
 @media (min-width: 768px) {
   .why-geoverze-section {
-    padding-top: 3.5rem;
-    padding-bottom: 3.5rem;
+    padding-top: var(--space-section);
+    padding-bottom: var(--space-section);
   }
 }
 

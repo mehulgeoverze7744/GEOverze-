@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Search, Sparkles } from "lucide-react";
+import { Lock, Search, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { GeoButton } from "@/components/shared/GeoButton";
@@ -105,15 +105,18 @@ export function GlobalSearch() {
 
       <Modal
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={(next) => {
+          setOpen(next);
+          if (!next) setQuery("");
+        }}
         title="Search GEOverze"
-        description="Quizzes, articles, creators, community threads and store items."
+        description="Find play modes, quizzes, articles and more."
       >
         <div className="space-y-6">
           <SearchBar
             id="global-search"
             label="Search GEOverze"
-            placeholder="Countries, capitals, oceans, packs…"
+            placeholder="Solo, PvP, emoji, country…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             loading={searching}
@@ -126,9 +129,9 @@ export function GlobalSearch() {
 
           {hasQuery && hits.length === 0 && !searching ? (
             <div className="rounded-2xl border border-bronze/15 bg-charcoal/40 p-6 text-center">
-              <p className="text-sm text-foreground/60">Nothing found for “{query.trim()}”.</p>
+              <p className="text-sm text-foreground/60">No results found for “{query.trim()}”.</p>
               <p className="mt-2 text-xs leading-relaxed text-foreground/50">
-                Try a country, a capital, a landform or a quiz name.
+                Try a play mode such as Solo, PvP, Multiplayer, or Emoji Quiz.
               </p>
             </div>
           ) : null}
@@ -144,20 +147,38 @@ export function GlobalSearch() {
                   <ul className="mt-3 space-y-1.5">
                     {items.map((hit) => (
                       <li key={hit.id}>
-                        <Link
-                          to={hit.to}
-                          onClick={() => setOpen(false)}
-                          className="flex items-center justify-between gap-4 rounded-xl border border-transparent px-3 py-2.5 motion-fast transition-colors hover:border-bronze/25 hover:bg-bronze/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45"
-                        >
-                          <span className="min-w-0">
-                            <span className="block truncate text-sm text-foreground/85">
-                              {hit.title}
+                        {hit.comingSoon ? (
+                          <div
+                            aria-disabled="true"
+                            className="flex items-center justify-between gap-4 rounded-xl border border-bronze/10 px-3 py-2.5 opacity-55"
+                          >
+                            <span className="min-w-0">
+                              <span className="flex items-center gap-2 truncate text-sm text-foreground/85">
+                                <Lock className="h-3.5 w-3.5 shrink-0 text-bronze/80" aria-hidden />
+                                {hit.title}
+                              </span>
+                              <span className="mt-0.5 block truncate text-xs text-foreground/50">
+                                {hit.meta}
+                              </span>
                             </span>
-                            <span className="mt-0.5 block truncate text-xs text-foreground/50">
-                              {hit.meta}
+                          </div>
+                        ) : (
+                          <Link
+                            to={hit.to}
+                            search={hit.search}
+                            onClick={() => setOpen(false)}
+                            className="flex items-center justify-between gap-4 rounded-xl border border-transparent px-3 py-2.5 motion-fast transition-colors hover:border-bronze/25 hover:bg-bronze/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45"
+                          >
+                            <span className="min-w-0">
+                              <span className="block truncate text-sm text-foreground/85">
+                                {hit.title}
+                              </span>
+                              <span className="mt-0.5 block truncate text-xs text-foreground/50">
+                                {hit.meta}
+                              </span>
                             </span>
-                          </span>
-                        </Link>
+                          </Link>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -180,7 +201,7 @@ export function GlobalSearch() {
                   className="w-full justify-start"
                   onClick={() => setOpen(false)}
                 >
-                  <Link to={item.to}>
+                  <Link to={item.to} search={item.search}>
                     <item.icon className="h-4 w-4" strokeWidth={1.5} />
                     {item.label}
                   </Link>

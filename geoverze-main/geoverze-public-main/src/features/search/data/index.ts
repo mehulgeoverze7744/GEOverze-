@@ -6,9 +6,11 @@
  */
 import type { LinkProps } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
-import { BookOpen, MessageSquare, ShoppingBag, Sparkles, Users, Zap } from "lucide-react";
+import { BookOpen, Gamepad2, MessageSquare, ShoppingBag, Sparkles, Users, Zap } from "lucide-react";
 
-export type SearchGroupId = "quizzes" | "articles" | "creators" | "posts" | "store";
+import { searchPlayModes } from "./playModeSearch";
+
+export type SearchGroupId = "playModes" | "quizzes" | "articles" | "creators" | "posts" | "store";
 
 export type SearchGroup = {
   id: SearchGroupId;
@@ -17,6 +19,7 @@ export type SearchGroup = {
 };
 
 export const SEARCH_GROUPS: readonly SearchGroup[] = [
+  { id: "playModes", label: "Play modes", icon: Gamepad2 },
   { id: "quizzes", label: "Quizzes", icon: Zap },
   { id: "articles", label: "Articles", icon: BookOpen },
   { id: "creators", label: "Creators", icon: Users },
@@ -31,48 +34,19 @@ export type SearchRecord = {
   meta: string;
   keywords: readonly string[];
   to: NonNullable<LinkProps["to"]>;
+  search?: LinkProps["search"];
+  comingSoon?: boolean;
 };
 
 export const SEARCH_INDEX: readonly SearchRecord[] = [
   {
-    id: "s-q1",
-    group: "quizzes",
-    title: "Capitals of Asia",
-    meta: "20 questions · Intermediate",
-    keywords: ["capital", "asia", "cities"],
-    to: "/play",
-  },
-  {
-    id: "s-q2",
-    group: "quizzes",
-    title: "Flags of South America",
-    meta: "12 questions · Beginner",
-    keywords: ["flag", "south america", "colours"],
-    to: "/play",
-  },
-  {
-    id: "s-q3",
-    group: "quizzes",
-    title: "Rivers & basins",
-    meta: "20 questions · Advanced",
-    keywords: ["river", "basin", "water", "physical"],
-    to: "/play",
-  },
-  {
-    id: "s-q4",
-    group: "quizzes",
-    title: "Landmarks of the world",
-    meta: "20 questions · Intermediate",
-    keywords: ["landmark", "monument", "ruins"],
-    to: "/play",
-  },
-  {
     id: "s-q5",
     group: "quizzes",
     title: "Daily challenge",
-    meta: "5 questions · Resets at midnight",
+    meta: "Play · Resets at midnight",
     keywords: ["daily", "challenge", "streak"],
-    to: "/play",
+    to: "/play/lobby",
+    search: { mode: "daily", quiz: undefined },
   },
 
   {
@@ -191,14 +165,16 @@ export function searchStaticAll(query: string, limit = 12): SearchHit[] {
   const q = query.trim().toLowerCase();
   if (q.length === 0) return [];
 
-  const hits: SearchHit[] = [];
+  const playHits = searchPlayModes(query, limit);
+  const hits: SearchHit[] = [...playHits];
+
   for (const record of SEARCH_INDEX) {
     if (record.group === "articles" || record.group === "creators") continue;
     const title = record.title.toLowerCase();
     let score = 0;
     if (title.startsWith(q)) score = 100;
     else if (title.includes(q)) score = 70;
-    else if (record.keywords.some((k) => k.includes(q))) score = 40;
+    else if (record.keywords.some((k) => k.includes(q) || q.includes(k))) score = 40;
     else if (record.meta.toLowerCase().includes(q)) score = 20;
     if (score > 0) hits.push({ ...record, score });
   }
@@ -236,9 +212,11 @@ export function groupHits(hits: readonly SearchHit[]) {
 export const SEARCH_SUGGESTIONS: readonly {
   label: string;
   to: NonNullable<LinkProps["to"]>;
+  search?: LinkProps["search"];
   icon: LucideIcon;
 }[] = [
+  { label: "Solo mode", to: "/play/lobby", search: { mode: "solo", quiz: undefined }, icon: Zap },
+  { label: "PvP duels", to: "/play/pvp", icon: Gamepad2 },
   { label: "Browse the GEOlibrary", to: "/geolibrary", icon: BookOpen },
-  { label: "Start a session in Let's Play", to: "/play", icon: Zap },
   { label: "See what's new in GEOstore", to: "/geostore", icon: Sparkles },
 ] as const;

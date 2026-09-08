@@ -8,6 +8,7 @@ import { GeostoreMerchCard } from "./GeostoreMerchCard";
 import { GeostoreShowcaseIntro } from "./GeostoreShowcaseIntro";
 import { GeostoreViewAllCard } from "./GeostoreViewAllCard";
 
+import "../home-hero.css";
 import "./geostore-showcase.css";
 
 /** Homepage GEOstore merchandise showcase — static frontend only. */
@@ -78,7 +79,7 @@ export const GeostoreShowcase = memo(function GeostoreShowcase() {
         </ul>
 
         <AnimatedSection className="geostore-showcase__cta text-center" delay={120}>
-          <GeoButton asChild variant="secondary" size="lg">
+          <GeoButton asChild variant="solid" size="lg" className="home-hero-cta">
             <Link to="/geostore">Explore GEOstore</Link>
           </GeoButton>
         </AnimatedSection>

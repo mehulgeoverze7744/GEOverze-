@@ -5,6 +5,15 @@
   isolation: isolate;
   width: 100%;
   overflow: hidden;
+  padding-top: var(--space-section-sm);
+  padding-bottom: var(--space-section-sm);
+}
+
+@media (min-width: 768px) {
+  .community-vision {
+    padding-top: var(--space-section);
+    padding-bottom: var(--space-section);
+  }
 }
 
 .community-vision__media {
@@ -38,13 +47,13 @@
   z-index: 1;
   margin-inline: auto;
   max-width: 56rem;
-  padding: 3.5rem 1.5rem;
+  padding: 2.25rem 1.5rem;
   text-align: center;
 }
 
 @media (min-width: 768px) {
   .community-vision__content {
-    padding: 5rem 2.5rem;
+    padding: 3rem 2.5rem;
   }
 }
 
