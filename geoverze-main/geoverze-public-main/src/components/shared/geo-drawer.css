@@ -1,0 +1,4 @@
+/* Mobile drawer scroll container — iOS Safari momentum scrolling */
+.geo-drawer-scroll {
+  -webkit-overflow-scrolling: touch;
+}

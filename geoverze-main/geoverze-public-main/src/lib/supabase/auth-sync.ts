@@ -39,7 +39,9 @@ import {
   resetLibrarySubscriptionTierTracking,
   syncLibraryQueryScope,
 } from "@/features/library/lib/library-query-scope";
+import { notificationSeeds } from "@/features/profile/data/notifications";
 import { activateLibraryPersistScope } from "@/stores/libraryStore";
+import { useNotificationsStore } from "@/stores/notificationsStore";
 
 import { highestRole, supabase, type AppRole } from "./client";
 
@@ -183,6 +185,12 @@ async function hydrateProfileAndRole(user: User) {
   void hydrateLibraryState(user);
 }
 
+function syncNotifications(userId: string | null) {
+  const { syncForUser, seed } = useNotificationsStore.getState();
+  syncForUser(userId);
+  if (userId) seed(notificationSeeds());
+}
+
 function applySession(session: Session | null) {
   const prevScope = libraryAuthScope(useAuthStore.getState().user?.id);
   const nextScope = libraryAuthScope(session?.user?.id);
@@ -200,10 +208,12 @@ function applySession(session: Session | null) {
   if (!session?.user) {
     setSession(null);
     setRole(null);
+    syncNotifications(null);
     return;
   }
 
   setSession(baseSessionUser(session.user));
+  syncNotifications(session.user.id);
   void hydrateProfileAndRole(session.user);
 }
 

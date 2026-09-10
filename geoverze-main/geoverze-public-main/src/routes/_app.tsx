@@ -1,9 +1,5 @@
 import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
 import { Lock } from "lucide-react";
-import { useEffect } from "react";
-
-import { notificationSeeds } from "@/features/profile/data/notifications";
-import { useNotificationsStore } from "@/stores/notificationsStore";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection } from "@/components/shared/AnimatedSection";
@@ -26,12 +22,6 @@ export const Route = createFileRoute("/_app")({
 
 function AccountArea() {
   const status = useAuthStore((s) => s.status);
-  const seed = useNotificationsStore((s) => s.seed);
-
-  // Placeholder notices so the centre and bell are populated before a backend.
-  useEffect(() => {
-    if (status === "signed-in") seed(notificationSeeds());
-  }, [status, seed]);
 
   if (status === "signed-in") return <Outlet />;
 

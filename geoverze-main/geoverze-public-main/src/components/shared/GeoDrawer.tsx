@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
+import "./geo-drawer.css";
+
 /**
  * Glass side panel. Used by mobile navigation and any future contextual panel
  * (filters, cart, notifications) so drawers never diverge in styling.
@@ -35,11 +37,11 @@ export function GeoDrawer({
       <SheetContent
         side={side}
         className={cn(
-          "glass-panel-strong rounded-none border-bronze/20 bg-transparent p-0 text-foreground",
+          "glass-panel-strong flex max-h-[100dvh] flex-col overflow-hidden rounded-none border-bronze/20 bg-transparent p-0 text-foreground",
           className,
         )}
       >
-        <SheetHeader className="border-b border-bronze/12 px-7 py-6 text-left">
+        <SheetHeader className="shrink-0 border-b border-bronze/12 px-7 py-6 text-left">
           <SheetTitle className="text-[0.68rem] uppercase tracking-[0.3em] text-bronze">
             {title}
           </SheetTitle>
@@ -49,7 +51,9 @@ export function GeoDrawer({
             </SheetDescription>
           ) : null}
         </SheetHeader>
-        <div className="px-7 py-7">{children}</div>
+        <div className="geo-drawer-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-7 py-7 pb-[max(1.75rem,env(safe-area-inset-bottom))]">
+          {children}
+        </div>
       </SheetContent>
     </Sheet>
   );
