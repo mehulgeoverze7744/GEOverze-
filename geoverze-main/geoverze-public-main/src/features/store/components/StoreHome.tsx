@@ -166,7 +166,9 @@ export function StoreHome() {
         </ProductRail>
 
         <AnimatedSection className="mt-[var(--space-section-sm)]">
-          <h2 className="text-lg font-light tracking-tight text-foreground">Shop by category</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-foreground md:text-2xl">
+            Shop by category
+          </h2>
           <div className="mt-6 space-y-10">
             {STORE_GROUPS.filter((g) => g.id === "merch").map((group) => (
               <div key={group.id}>
@@ -175,9 +177,11 @@ export function StoreHome() {
                   <p className="text-sm font-light text-foreground/80">{group.label}</p>
                   <p className="text-xs text-foreground/50">{group.blurb}</p>
                 </div>
-                <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                  {STORE_CATEGORIES.filter((c) => c.group === group.id).map((category) => (
-                    <CategoryTile key={category.id} category={category} />
+                <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {STORE_CATEGORIES.filter(
+                    (c) => c.group === group.id && c.id !== "posters",
+                  ).map((category) => (
+                    <CategoryTile key={category.id} category={category} compact />
                   ))}
                 </div>
               </div>

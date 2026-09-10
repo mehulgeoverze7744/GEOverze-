@@ -65,7 +65,7 @@ export function LibraryHome() {
       <PageHeader
         eyebrow="GEOlibrary"
         title="Know Earth, one entry at a time"
-        description="The knowledge centre of GEOverze. Read, save and revisit the geography behind every quiz — written by cartographers, not scraped."
+        description="The knowledge centre of GEOverze. Read, save and revisit the geography behind every quiz, written by cartographers, not scraped."
       />
 
       <div className="mt-8 flex flex-wrap gap-3">

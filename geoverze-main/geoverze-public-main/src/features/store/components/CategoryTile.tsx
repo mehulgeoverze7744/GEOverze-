@@ -20,7 +20,14 @@ function categoryItemCount(categoryId: string): number {
 }
 
 /** Category entry tile used on the store home and group shelves. */
-export function CategoryTile({ category }: { category: StoreCategory }) {
+export function CategoryTile({
+  category,
+  compact = false,
+}: {
+  category: StoreCategory;
+  /** ~25% smaller footprint for dense store home grids. */
+  compact?: boolean;
+}) {
   const count = categoryItemCount(category.id);
   const banner = categoryBannerForId(category.id);
 
@@ -36,13 +43,28 @@ export function CategoryTile({ category }: { category: StoreCategory }) {
         ratio={banner ? "banner" : "wide"}
         fit={banner ? "cover" : "contain"}
         overlay={banner ? "subtle" : "hero"}
+        className={compact ? "aspect-[8/2.25]" : undefined}
         {...(banner ? { imageSrc: banner.src, imageAlt: banner.alt } : {})}
       />
-      <div className="flex items-start justify-between gap-4 p-5">
+      <div
+        className={
+          compact
+            ? "flex items-start justify-between gap-3 p-3.5 sm:p-4"
+            : "flex items-start justify-between gap-4 p-5"
+        }
+      >
         <div className="min-w-0">
           <h3 className="text-sm font-light tracking-tight text-foreground">{category.label}</h3>
-          <p className="mt-1.5 text-xs text-foreground/50">{category.blurb}</p>
-          <p className="mt-3 text-[0.6rem] uppercase tracking-[0.2em] text-foreground/50">
+          <p className={compact ? "mt-1 text-xs text-foreground/50" : "mt-1.5 text-xs text-foreground/50"}>
+            {category.blurb}
+          </p>
+          <p
+            className={
+              compact
+                ? "mt-2 text-[0.6rem] uppercase tracking-[0.2em] text-foreground/50"
+                : "mt-3 text-[0.6rem] uppercase tracking-[0.2em] text-foreground/50"
+            }
+          >
             {count} {count === 1 ? "item" : "items"}
           </p>
         </div>

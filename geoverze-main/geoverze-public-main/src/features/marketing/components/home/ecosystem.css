@@ -17,13 +17,44 @@
 }
 
 .ecosystem-card {
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1.11 / 1;
+  background-color: transparent;
+  background-image: none;
+  backdrop-filter: none;
   transform: scale(1);
   transform-origin: center center;
   transition:
     transform 220ms ease,
     border-color 280ms ease,
     box-shadow 280ms ease;
+}
+
+.ecosystem-card__link {
+  isolation: isolate;
+}
+
+.ecosystem-card__overlay {
+  background: linear-gradient(
+    180deg,
+    rgb(8 10 14 / 0.04) 0%,
+    rgb(8 10 14 / 0.08) 40%,
+    rgb(8 10 14 / 0.42) 72%,
+    rgb(8 10 14 / 0.72) 100%
+  );
+}
+
+.ecosystem-card__content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.ecosystem-card__content h3 {
+  text-shadow: 0 1px 14px rgb(0 0 0 / 0.42);
+}
+
+.ecosystem-card__content p {
+  text-shadow: 0 1px 10px rgb(0 0 0 / 0.38);
 }
 
 .ecosystem-card:hover {
@@ -60,14 +91,6 @@
   100% {
     transform: scale(1.01) rotate(0deg) translate3d(0, 0, 0);
   }
-}
-
-.ecosystem-card__media {
-  flex: 1.1 1 0;
-}
-
-.ecosystem-card__body {
-  flex: 1 1 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

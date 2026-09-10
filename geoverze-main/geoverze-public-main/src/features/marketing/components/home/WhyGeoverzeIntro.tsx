@@ -12,7 +12,7 @@ export const WhyGeoverzeIntro = memo(function WhyGeoverzeIntro() {
         <span className="why-geoverze-intro__emphasis">worth exploring</span>
       </h2>
       <p className="why-geoverze-intro__copy text-foreground/50">
-        Learning, discovery, quizzes and community — all in one cinematic geography experience.
+        Learning, discovery, quizzes and community, all in one cinematic geography experience.
       </p>
     </AnimatedSection>
   );

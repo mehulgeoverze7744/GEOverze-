@@ -28,14 +28,16 @@ export function StreakTracker({ className }: { className?: string }) {
 
       <div className="dashboard-streak-stats">
         <div className="dashboard-streak-stat dashboard-streak-stat--active">
-          <span className="dashboard-streak-stat-icon" aria-hidden="true">
+          <span className="dashboard-streak-stat-icon dashboard-streak-stat-icon--active" aria-hidden="true">
             <Flame className="h-4 w-4" strokeWidth={1.5} />
           </span>
           <span className="dashboard-streak-stat-body">
-            <span className="dashboard-streak-stat-value text-gradient-bronze">
+            <span className="dashboard-streak-stat-value dashboard-streak-stat-value--active text-gradient-bronze">
               <AnimatedCounter value={STREAK.current} />
             </span>
-            <span className="dashboard-streak-stat-label">Day streak</span>
+            <span className="dashboard-streak-stat-label dashboard-streak-stat-label--active">
+              Day streak
+            </span>
           </span>
         </div>
 

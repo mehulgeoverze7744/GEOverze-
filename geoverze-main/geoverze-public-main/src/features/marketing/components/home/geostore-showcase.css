@@ -1,13 +1,13 @@
 /* Scoped to Home page GEOstore showcase only */
 
 .geostore-showcase {
-  padding-top: var(--space-section-sm);
+  padding-top: calc(var(--space-section-sm) * 0.65);
   padding-bottom: var(--space-section-sm);
 }
 
 @media (min-width: 768px) {
   .geostore-showcase {
-    padding-top: var(--space-section);
+    padding-top: calc(var(--space-section) * 0.55);
     padding-bottom: var(--space-section);
   }
 }

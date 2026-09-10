@@ -24,7 +24,9 @@ export function ProductRail({
     <AnimatedSection className="mt-[var(--space-section-sm)]">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
-          <h2 className="text-lg font-light tracking-tight text-foreground">{title}</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-foreground md:text-2xl">
+            {title}
+          </h2>
           {description ? (
             <p className="mt-2 max-w-xl text-xs leading-relaxed text-foreground/50">
               {description}

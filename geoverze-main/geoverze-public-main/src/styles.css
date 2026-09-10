@@ -291,6 +291,7 @@
 
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--nav-height) + 0.75rem);
   }
 }
 

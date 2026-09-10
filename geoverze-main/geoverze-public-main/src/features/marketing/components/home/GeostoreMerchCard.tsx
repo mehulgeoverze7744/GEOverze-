@@ -1,10 +1,12 @@
 import { memo } from "react";
+import { Coins } from "lucide-react";
 
+import { money, credits as formatCredits } from "@/features/store/lib/format";
 import { cn } from "@/lib/utils";
 
 import type { GeostoreMerchProduct } from "../../data/geostoreMerch";
 
-/** Editorial merchandise tile — image-first, no commerce chrome. */
+/** Editorial merchandise tile with concise commerce context. */
 export const GeostoreMerchCard = memo(function GeostoreMerchCard({
   product,
   className,
@@ -40,6 +42,18 @@ export const GeostoreMerchCard = memo(function GeostoreMerchCard({
         <h3 className="mt-2 text-sm font-light leading-snug tracking-tight text-foreground md:text-base">
           {product.title}
         </h3>
+        <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-foreground/55">
+          {product.tagline}
+        </p>
+        <div className="mt-3 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+          <span className="text-base font-light tracking-tight text-foreground">
+            {money(product.price)}
+          </span>
+          <span className="inline-flex items-center gap-1 text-xs text-bronze-glow">
+            <Coins className="h-3.5 w-3.5" strokeWidth={1.6} aria-hidden />
+            or {formatCredits(product.credits)}
+          </span>
+        </div>
       </div>
     </article>
   );

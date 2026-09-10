@@ -15,20 +15,20 @@ export function PricingHero({
   onCycleChange: (cycle: BillingCycle) => void;
 }) {
   return (
-    <header className="pt-[calc(var(--nav-height)+var(--space-section-sm))] pb-[var(--space-section-sm)]">
+    <header className="pricing-hero pt-[calc(var(--nav-height)+1.25rem)] pb-6 md:pb-8">
       <SectionContainer size="wide">
-        <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Pricing" }]} className="mb-10" />
-        <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
+        <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Pricing" }]} className="mb-5 md:mb-6" />
+        <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
           <AnimatedSection>
             <p className="eyebrow">Membership</p>
-            <h1 className="mt-5 max-w-xl font-light leading-[1.02] tracking-tight text-foreground text-[clamp(2.4rem,5.4vw,4.2rem)]">
+            <h1 className="mt-3 max-w-xl font-light leading-[1.02] tracking-tight text-foreground text-[clamp(2.2rem,5vw,3.75rem)]">
               Choose your journey
             </h1>
-            <p className="mt-7 max-w-xl text-sm leading-relaxed text-foreground/60 md:text-base">
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-foreground/60 md:mt-5 md:text-base">
               Unlock the complete GEOverze experience — unlimited play, the full library, live
               competition and the Creator Studio.
             </p>
-            <BillingToggle cycle={cycle} onChange={onCycleChange} className="mt-10" />
+            <BillingToggle cycle={cycle} onChange={onCycleChange} className="mt-6 md:mt-7" />
           </AnimatedSection>
 
           <AnimatedSection delay={120} className="flex justify-center lg:justify-end">

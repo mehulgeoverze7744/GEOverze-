@@ -104,12 +104,20 @@ const APPAREL_COLOURS: ProductOption = {
   values: ["Charcoal", "Deep space", "Bronze sand"],
 };
 
+/** Slugs hidden from browse/category shelves (data retained for direct links). */
+export const LISTING_HIDDEN_PRODUCT_SLUGS = new Set(["old-world-mug", "expedition-enamel-mug"]);
+
+export function isProductListed(product: Pick<Product, "slug">): boolean {
+  return !LISTING_HIDDEN_PRODUCT_SLUGS.has(product.slug);
+}
+
 export const PRODUCTS: readonly Product[] = [
   // ---------------------------------------------------------------- merch
   make({
     slug: "i-know-the-capital-you-know-the-vibes",
     name: "I KNOW THE CAPITAL, YOU KNOW THE VIBES.",
-    tagline: "A bold geography statement tee for explorers who know their capitals — and know the vibes.",
+    tagline:
+      "A bold geography statement tee for explorers who know their capitals — and know the vibes.",
     category: "tshirts",
     price: 3_600,
     credits: 360,
@@ -807,7 +815,7 @@ export function productById(id: string): Product | undefined {
 }
 
 export function productsInCategory(id: string): readonly Product[] {
-  return PRODUCTS.filter((p) => p.category === id);
+  return PRODUCTS.filter((p) => p.category === id && isProductListed(p));
 }
 
 export function productsInGroup(group: StoreGroupId): readonly Product[] {

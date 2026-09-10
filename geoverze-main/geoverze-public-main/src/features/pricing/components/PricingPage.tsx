@@ -11,7 +11,6 @@ import { PlanGrid } from "./PlanGrid";
 import { PricingCta } from "./PricingCta";
 import { PricingFaq } from "./PricingFaq";
 import { PricingHero } from "./PricingHero";
-import { RewardsExplainer } from "./RewardsExplainer";
 import { SuccessStories } from "./SuccessStories";
 import { WhyUpgrade } from "./WhyUpgrade";
 
@@ -32,7 +31,6 @@ export function PricingPage() {
         loading={loading}
         error={error}
       />
-      <RewardsExplainer />
       <CreatorMembership />
       <SuccessStories />
       <PricingFaq />

@@ -1,5 +1,6 @@
 /** Catalogue filtering, sorting and search for the GEOstore browse surfaces. */
 import type { Product } from "../data/products";
+import { isProductListed } from "../data/products";
 import {
   PRICE_BANDS,
   type AvailabilityId,
@@ -40,6 +41,7 @@ export function filterProducts(
   const query = filters.query.trim().toLowerCase();
 
   return products.filter((product) => {
+    if (!isProductListed(product)) return false;
     if (filters.group !== "all" && product.group !== filters.group) return false;
     if (filters.category !== "all" && product.category !== filters.category) return false;
     if (filters.price !== "all" && !matchesPrice(product, filters.price as PriceBandId))
@@ -89,7 +91,7 @@ export function sortProducts(products: readonly Product[], sort: StoreSortId): P
 }
 
 export function bestSellers(products: readonly Product[], limit = 4): readonly Product[] {
-  return products.filter((p) => p.bestSeller).slice(0, limit);
+  return products.filter((p) => p.bestSeller && isProductListed(p)).slice(0, limit);
 }
 
 /** Credit-claimable items ordered by cheapest first. */

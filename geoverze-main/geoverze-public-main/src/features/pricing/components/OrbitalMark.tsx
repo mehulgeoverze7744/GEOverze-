@@ -3,14 +3,14 @@ import { memo } from "react";
 import { BrandMark } from "@/components/shared/BrandMark";
 
 /**
- * Animated hero illustration placeholder: concentric bronze orbits drifting at
- * different speeds around the emblem. CSS + SVG only — the 3D globe stays on Home.
+ * Hero illustration: emblem with a single bronze orbit ring.
+ * CSS + SVG only — the 3D globe stays on Home.
  */
 export const OrbitalMark = memo(function OrbitalMark() {
   return (
     <div
       aria-hidden
-      className="relative flex aspect-square w-full max-w-[26rem] items-center justify-center"
+      className="relative flex aspect-square w-full max-w-[22rem] items-center justify-center md:max-w-[24rem]"
     >
       <div
         className="absolute inset-0 rounded-full opacity-70"
@@ -20,41 +20,29 @@ export const OrbitalMark = memo(function OrbitalMark() {
         }}
       />
 
-      {[
-        { inset: "6%", duration: "48s", dash: "2 10", opacity: 0.5 },
-        { inset: "18%", duration: "34s", dash: "1 14", opacity: 0.4 },
-        { inset: "30%", duration: "26s", dash: "3 8", opacity: 0.32 },
-      ].map((ring, i) => (
-        <svg
-          key={ring.inset}
-          viewBox="0 0 100 100"
-          className="absolute animate-spin motion-reduce:animate-none"
-          style={{
-            inset: ring.inset,
-            animationDuration: ring.duration,
-            animationTimingFunction: "linear",
-            animationDirection: i % 2 ? "reverse" : "normal",
-          }}
-        >
-          <circle
-            cx="50"
-            cy="50"
-            r="48"
-            fill="none"
-            stroke="var(--bronze)"
-            strokeWidth="0.4"
-            strokeDasharray={ring.dash}
-            opacity={ring.opacity}
-          />
-        </svg>
-      ))}
+      <svg
+        viewBox="0 0 100 100"
+        className="absolute inset-[8%] animate-spin motion-reduce:animate-none"
+        style={{ animationDuration: "42s", animationTimingFunction: "linear" }}
+      >
+        <circle
+          cx="50"
+          cy="50"
+          r="48"
+          fill="none"
+          stroke="var(--bronze)"
+          strokeWidth="0.45"
+          strokeDasharray="2 10"
+          opacity={0.42}
+        />
+      </svg>
 
       <div
-        className="absolute rounded-full border border-bronze/25"
-        style={{ inset: "40%", boxShadow: "var(--glow-bronze)" }}
+        className="absolute rounded-full border border-bronze/30"
+        style={{ inset: "18%", boxShadow: "var(--glow-bronze)" }}
       />
 
-      <span className="relative flex aspect-square w-[76%] items-center justify-center">
+      <span className="relative flex aspect-square w-[72%] items-center justify-center">
         <BrandMark size="fill" />
       </span>
     </div>

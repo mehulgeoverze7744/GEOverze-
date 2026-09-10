@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, ArrowUpRight, Layers } from "lucide-react";
 
@@ -22,8 +22,6 @@ const GESTURE_COOLDOWN_MS = 650;
 const HORIZONTAL_DELTA_THRESHOLD = 28;
 const SWIPE_THRESHOLD = 48;
 
-type SlotOffset = -2 | -1 | 0 | 1 | 2;
-
 type SlotLayout = {
   x: number;
   scale: number;
@@ -33,27 +31,122 @@ type SlotLayout = {
   y: number;
 };
 
-const DESKTOP_SLOTS: Record<SlotOffset, SlotLayout> = {
-  [-2]: { x: -310, scale: 0.74, width: 320, z: 10, opacity: 0.78, y: 14 },
-  [-1]: { x: -168, scale: 0.88, width: 400, z: 20, opacity: 0.92, y: 8 },
-  [0]: { x: 0, scale: 1, width: 500, z: 30, opacity: 1, y: 0 },
-  [1]: { x: 168, scale: 0.88, width: 400, z: 20, opacity: 0.92, y: 8 },
-  [2]: { x: 310, scale: 0.74, width: 320, z: 10, opacity: 0.78, y: 14 },
-};
+type SlotConfig = { scale: number; width: number; y: number };
 
-const TABLET_SLOTS: Record<SlotOffset, SlotLayout> = {
-  [-2]: { x: -240, scale: 0.76, width: 260, z: 10, opacity: 0.8, y: 12 },
-  [-1]: { x: -130, scale: 0.9, width: 320, z: 20, opacity: 0.92, y: 6 },
-  [0]: { x: 0, scale: 1, width: 400, z: 30, opacity: 1, y: 0 },
-  [1]: { x: 130, scale: 0.9, width: 320, z: 20, opacity: 0.92, y: 6 },
-  [2]: { x: 240, scale: 0.76, width: 260, z: 10, opacity: 0.8, y: 12 },
-};
+function scaledHalf(width: number, scale: number): number {
+  return (width * scale) / 2;
+}
 
-const MOBILE_SLOTS: Record<-1 | 0 | 1, SlotLayout> = {
-  [-1]: { x: -88, scale: 0.84, width: 240, z: 20, opacity: 0.82, y: 10 },
-  [0]: { x: 0, scale: 1, width: 300, z: 30, opacity: 1, y: 0 },
-  [1]: { x: 88, scale: 0.84, width: 240, z: 20, opacity: 0.82, y: 10 },
-};
+/** Center distance between two adjacent cards for a consistent overlap fraction. */
+function pairStep(
+  left: SlotConfig,
+  right: SlotConfig,
+  overlapFraction: number,
+): number {
+  const leftHalf = scaledHalf(left.width, left.scale);
+  const rightHalf = scaledHalf(right.width, right.scale);
+  const avgScaled = (left.width * left.scale + right.width * right.scale) / 2;
+  return leftHalf + rightHalf - overlapFraction * avgScaled;
+}
+
+function buildOverlapLayout(
+  offsets: number[],
+  configs: Record<number, SlotConfig>,
+  overlapFraction: number,
+  stageWidth: number,
+  edgeInset: number,
+): Map<number, SlotLayout> {
+  const xs = new Map<number, number>();
+  const layouts = new Map<number, SlotLayout>();
+  xs.set(0, 0);
+
+  for (const offset of offsets.filter((value) => value > 0).sort((a, b) => a - b)) {
+    const prev = offset - 1;
+    xs.set(
+      offset,
+      xs.get(prev)! + pairStep(configs[prev]!, configs[offset]!, overlapFraction),
+    );
+  }
+
+  for (const offset of offsets.filter((value) => value < 0).sort((a, b) => b - a)) {
+    const next = offset + 1;
+    xs.set(
+      offset,
+      xs.get(next)! - pairStep(configs[offset]!, configs[next]!, overlapFraction),
+    );
+  }
+
+  const maxExtent = Math.max(
+    ...offsets.map((offset) => {
+      const cfg = configs[offset]!;
+      return Math.abs(xs.get(offset)!) + scaledHalf(cfg.width, cfg.scale);
+    }),
+  );
+  const availableHalf = stageWidth / 2 - edgeInset;
+  const fit = maxExtent > availableHalf ? availableHalf / maxExtent : 1;
+
+  for (const offset of offsets) {
+    const cfg = configs[offset]!;
+    layouts.set(offset, {
+      x: xs.get(offset)! * fit,
+      scale: cfg.scale,
+      width: cfg.width,
+      z: 30 - Math.abs(offset) * 8,
+      opacity: 1 - Math.abs(offset) * 0.05,
+      y: cfg.y,
+    });
+  }
+
+  return layouts;
+}
+
+function computeOverlapSlots(
+  tier: "mobile" | "tablet" | "desktop",
+  stageWidth: number,
+): Map<number, SlotLayout> {
+  const edgeInset = tier === "mobile" ? 10 : tier === "tablet" ? 16 : 20;
+  const overlapFraction = tier === "mobile" ? 0.14 : tier === "tablet" ? 0.15 : 0.16;
+
+  if (tier === "mobile") {
+    const centerW = Math.min(280, Math.max(248, stageWidth * 0.76));
+    const sideW = centerW * 0.84;
+    const sideScale = 0.86;
+    return buildOverlapLayout(
+      [-1, 0, 1],
+      {
+        [-1]: { scale: sideScale, width: sideW, y: 8 },
+        [0]: { scale: 1, width: centerW, y: 0 },
+        [1]: { scale: sideScale, width: sideW, y: 8 },
+      },
+      overlapFraction,
+      stageWidth,
+      edgeInset,
+    );
+  }
+
+  const centerW =
+    tier === "tablet"
+      ? Math.min(300, Math.max(260, stageWidth * 0.22))
+      : Math.min(340, Math.max(300, stageWidth * 0.21));
+  const sideW = centerW * 0.86;
+  const outerW = centerW * 0.76;
+  const sideScale = tier === "tablet" ? 0.9 : 0.92;
+  const outerScale = tier === "tablet" ? 0.83 : 0.85;
+
+  return buildOverlapLayout(
+    [-2, -1, 0, 1, 2],
+    {
+      [-2]: { scale: outerScale, width: outerW, y: tier === "tablet" ? 10 : 12 },
+      [-1]: { scale: sideScale, width: sideW, y: tier === "tablet" ? 5 : 6 },
+      [0]: { scale: 1, width: centerW, y: 0 },
+      [1]: { scale: sideScale, width: sideW, y: tier === "tablet" ? 5 : 6 },
+      [2]: { scale: outerScale, width: outerW, y: tier === "tablet" ? 10 : 12 },
+    },
+    overlapFraction,
+    stageWidth,
+    edgeInset,
+  );
+}
 
 function categoryItemCount(categoryId: string): number {
   if (isMerchStoreCategory(categoryId)) {
@@ -96,14 +189,22 @@ function useViewportTier() {
   return tier;
 }
 
-function slotLayout(offset: number, tier: "mobile" | "tablet" | "desktop"): SlotLayout | null {
-  if (tier === "mobile") {
-    if (offset < -1 || offset > 1) return null;
-    return MOBILE_SLOTS[offset as -1 | 0 | 1];
-  }
-  const slots = tier === "tablet" ? TABLET_SLOTS : DESKTOP_SLOTS;
-  if (offset < -2 || offset > 2) return null;
-  return slots[offset as SlotOffset];
+function useStageWidth(ref: RefObject<HTMLDivElement | null>) {
+  const [width, setWidth] = useState(1280);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+
+    const update = () => setWidth(node.clientWidth);
+    update();
+
+    const observer = new ResizeObserver(update);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  return width;
 }
 
 function CarouselCard({
@@ -200,6 +301,8 @@ export function DigitalProductsCarousel() {
   const transitionMs = reducedMotion ? 0 : 550;
   const tier = useViewportTier();
   const regionRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const stageWidth = useStageWidth(stageRef);
   const activeIndexRef = useRef(INITIAL_ACTIVE >= 0 ? INITIAL_ACTIVE : 0);
   const gestureLockedUntilRef = useRef(0);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
@@ -307,9 +410,10 @@ export function DigitalProductsCarousel() {
   // Sized to the visual card footprint — avoids empty space above the indicators.
   const stageHeight =
     tier === "mobile" ? "min(280px, 56vw)" : tier === "tablet" ? "300px" : "330px";
+  const slotLayouts = computeOverlapSlots(tier, stageWidth);
 
   return (
-    <AnimatedSection className="mt-[var(--space-section-sm)]">
+    <AnimatedSection className="mt-[var(--space-section-sm)] overflow-x-clip">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
           <div className="flex items-center gap-3">
@@ -334,12 +438,12 @@ export function DigitalProductsCarousel() {
         aria-roledescription="carousel"
         aria-label="Digital product categories"
         tabIndex={0}
-        className="relative mt-8 outline-none"
+        className="relative left-1/2 mt-8 w-screen max-w-[100vw] -translate-x-1/2 outline-none"
       >
         {/* Subtle atmospheric depth */}
         <div
           aria-hidden
-          className="pointer-events-none absolute left-1/2 top-[42%] h-64 w-[min(100%,520px)] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+          className="pointer-events-none absolute left-1/2 top-[42%] h-64 w-[min(100%,720px)] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
           style={{
             background:
               "radial-gradient(circle, color-mix(in oklab, var(--bronze) 16%, transparent) 0%, transparent 70%)",
@@ -347,16 +451,17 @@ export function DigitalProductsCarousel() {
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-8 top-1/2 hidden h-px -translate-y-16 bg-gradient-to-r from-transparent via-bronze/15 to-transparent lg:block"
+          className="pointer-events-none absolute inset-x-[8%] top-1/2 hidden h-px -translate-y-16 bg-gradient-to-r from-transparent via-bronze/15 to-transparent lg:block"
         />
 
         <div
-          className="relative mx-auto w-full max-w-6xl overflow-hidden"
+          ref={stageRef}
+          className="relative w-full overflow-hidden"
           style={{ height: stageHeight }}
         >
           {DIGITAL_CATEGORIES.map((category, index) => {
             const offset = circularOffset(index, activeIndex, total);
-            const layout = slotLayout(offset, tier);
+            const layout = slotLayouts.get(offset) ?? null;
             if (!layout) return null;
 
             return (

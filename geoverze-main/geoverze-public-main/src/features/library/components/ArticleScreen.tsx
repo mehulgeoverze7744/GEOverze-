@@ -48,7 +48,7 @@ export function ArticleScreen() {
 
   if (loading || !authReady) {
     return (
-      <SectionContainer>
+      <SectionContainer className="pt-[calc(var(--nav-height)+1.25rem)] pb-12">
         <p className="text-sm text-foreground/50">Loading entry…</p>
       </SectionContainer>
     );
@@ -56,7 +56,7 @@ export function ArticleScreen() {
 
   if (error) {
     return (
-      <SectionContainer>
+      <SectionContainer className="pt-[calc(var(--nav-height)+1.25rem)] pb-12">
         <EmptyState title="Could not load this entry" description={error} />
       </SectionContainer>
     );
@@ -109,12 +109,15 @@ export function ArticleScreen() {
   const readPercent = progress[slug] ?? 0;
 
   return (
-    <SectionContainer>
+    <SectionContainer className="pt-[calc(var(--nav-height)+1.25rem)] pb-12 md:pt-[calc(var(--nav-height)+1.5rem)]">
       <article className="mx-auto max-w-3xl">
-        <div className="flex flex-wrap items-center gap-2">
-          <p className="text-[0.6rem] uppercase tracking-[0.22em] text-bronze/90">
-            {categoryLabel(article.category)} · {difficultyLabel(article.difficulty)} ·{" "}
-            {article.minutes} min
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.6rem] uppercase text-bronze/90">
+            <span className="tracking-[0.18em]">{categoryLabel(article.category)}</span>
+            <span aria-hidden="true">·</span>
+            <span className="tracking-[0.18em]">{difficultyLabel(article.difficulty)}</span>
+            <span aria-hidden="true">·</span>
+            <span className="tracking-[0.18em]">{article.minutes} min</span>
           </p>
           {article.minAccessTier ? (
             <LibraryTierBadge tier={article.minAccessTier} accessState={accessState} />
@@ -187,7 +190,7 @@ export function ArticleScreen() {
                   <h2
                     key={block.id}
                     id={block.id}
-                    className="pt-4 text-xl font-light tracking-tight text-foreground"
+                    className="scroll-mt-[calc(var(--nav-height)+1rem)] pt-4 text-xl font-light tracking-tight text-foreground"
                   >
                     {block.text}
                   </h2>

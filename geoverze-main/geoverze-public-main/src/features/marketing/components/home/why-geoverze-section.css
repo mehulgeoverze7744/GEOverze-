@@ -1,6 +1,7 @@
 /* Scoped to WHY GEOVERZE section intro + vertical rhythm only */
 
 .why-geoverze-section {
+  overflow-x: clip;
   padding-top: var(--space-section-sm);
   padding-bottom: var(--space-section-sm);
 }
@@ -35,7 +36,8 @@
 }
 
 .why-geoverze-intro__emphasis {
-  font-weight: 600;
+  font-weight: 700;
+  color: var(--bronze-glow);
 }
 
 .why-geoverze-intro__copy {
@@ -66,5 +68,7 @@
 }
 
 .why-geoverze-section .why-carousel-viewport {
+  width: 100%;
+  max-width: 100vw;
   margin-top: 0;
 }

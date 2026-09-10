@@ -27,7 +27,7 @@ export function ArticleUnavailableScreen({
 }: ArticleUnavailableScreenProps) {
   if (kind === "not_found") {
     return (
-      <SectionContainer>
+      <SectionContainer className="pt-[calc(var(--nav-height)+1.25rem)] pb-12">
         <EmptyState
           title="Entry not found"
           description="This library entry does not exist or is no longer published. Browse the library for available reading."
@@ -51,7 +51,7 @@ export function ArticleUnavailableScreen({
       : `Your current plan does not include this entry${requiredTier ? ` (${libraryTierRequiresLabel(requiredTier)})` : ""}. Upgrade to unlock it and the rest of the GEOlibrary catalogue.`;
 
   return (
-    <SectionContainer>
+    <SectionContainer className="pt-[calc(var(--nav-height)+1.25rem)] pb-12">
       <div className="glass-panel surface-gradient mx-auto max-w-xl rounded-2xl p-8 text-center">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-bronze/35 bg-bronze/10 text-bronze-glow">
           <Lock className="h-5 w-5" strokeWidth={1.6} aria-hidden />

@@ -43,8 +43,10 @@ function CarouselCard({ pillar }: { pillar: HomeFeature }) {
         <span aria-hidden className="why-carousel-card__icon">
           <Icon className="h-3.5 w-3.5" strokeWidth={1.4} />
         </span>
-        <h3 className="text-sm font-medium tracking-tight text-foreground">{pillar.title}</h3>
-        <p className="mt-1 line-clamp-2 text-xs leading-snug text-foreground/60">
+        <h3 className="text-sm font-medium leading-snug tracking-tight text-foreground">
+          {pillar.title}
+        </h3>
+        <p className="line-clamp-2 text-xs leading-snug text-foreground/60">
           {pillar.description}
         </p>
       </div>

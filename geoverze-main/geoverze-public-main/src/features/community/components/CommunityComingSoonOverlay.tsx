@@ -1,8 +1,13 @@
 import { useEffect, useRef } from "react";
+import { Link } from "@tanstack/react-router";
 import { BookOpen, Flag, Globe, Users } from "lucide-react";
 
+import { GeoButton } from "@/components/shared";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { selectIsSignedIn, useAuthStore } from "@/stores/authStore";
 import { cn } from "@/lib/utils";
+
+import "../../marketing/components/home-hero.css";
 
 const FEATURES = [
   { icon: Globe, label: "Discuss" },
@@ -34,6 +39,7 @@ function CompassStar({ className }: { className?: string }) {
 export function CommunityComingSoonOverlay() {
   const layerRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
+  const signedIn = useAuthStore(selectIsSignedIn);
 
   useEffect(() => {
     const el = layerRef.current;
@@ -163,6 +169,25 @@ export function CommunityComingSoonOverlay() {
         <div className="mt-6 space-y-1 text-[0.9rem] leading-relaxed text-foreground/72 sm:text-base">
           <p>The GEOverze community is taking shape.</p>
           <p>Stay tuned.</p>
+        </div>
+
+        <div className="pointer-events-auto mt-8">
+          <GeoButton
+            asChild
+            variant="solid"
+            size="lg"
+            className="home-hero-cta min-h-11 min-w-[11rem] px-8 font-bold uppercase tracking-[0.2em]"
+          >
+            {signedIn ? (
+              <Link to="/app/settings" search={{ section: "notifications" }}>
+                Notify me
+              </Link>
+            ) : (
+              <Link to="/auth/login" search={{ redirect: "/community" }}>
+                Notify me
+              </Link>
+            )}
+          </GeoButton>
         </div>
 
         {/* Bronze divider with compass star */}

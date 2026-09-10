@@ -18,7 +18,7 @@ export function PlanGrid({
   error?: string | null;
 }) {
   return (
-    <section aria-labelledby="tiers-heading" className="pb-[var(--space-section-sm)]">
+    <section aria-labelledby="tiers-heading" className="-mt-2 pb-[var(--space-section-sm)] md:-mt-6 lg:-mt-8">
       <SectionContainer size="wide">
         <h2 id="tiers-heading" className="sr-only">
           Membership tiers

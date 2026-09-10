@@ -2,6 +2,8 @@ import { cn } from "@/lib/utils";
 
 import type { BillingCycle } from "../data/plans";
 
+import "../../marketing/components/home-hero.css";
+
 const OPTIONS: { id: BillingCycle; label: string }[] = [
   { id: "monthly", label: "Monthly" },
   { id: "annual", label: "Annual" },
@@ -22,7 +24,7 @@ export function BillingToggle({
       <div
         role="group"
         aria-label="Billing frequency"
-        className="glass-panel inline-flex items-center gap-1 rounded-full p-1"
+        className="inline-flex items-center gap-1.5 rounded-full border border-bronze/15 bg-charcoal/40 p-1"
       >
         {OPTIONS.map((option) => {
           const active = option.id === cycle;
@@ -33,9 +35,9 @@ export function BillingToggle({
               aria-pressed={active}
               onClick={() => onChange(option.id)}
               className={cn(
-                "min-h-9 rounded-full px-5 text-[0.65rem] uppercase tracking-[var(--tracking-button)] transition-all motion-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
+                "min-h-10 min-w-[5.5rem] rounded-full px-5 text-[0.65rem] font-bold uppercase tracking-[var(--tracking-button)] transition-all motion-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
                 active
-                  ? "border border-bronze/45 bg-bronze/15 text-bronze-glow"
+                  ? "home-hero-cta shadow-none"
                   : "border border-transparent text-foreground/50 hover:text-foreground/80",
               )}
             >
