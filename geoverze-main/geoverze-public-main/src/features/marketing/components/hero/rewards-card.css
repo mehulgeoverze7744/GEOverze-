@@ -1,0 +1,612 @@
+/* GEOverze rewards card — real DOM content inside bronze frame + CSS 3D depth */
+
+.rewards-card {
+  position: absolute;
+  right: clamp(14px, 3.2vw, 42px);
+  top: 57%;
+  z-index: 15;
+  width: clamp(503px, 34.4vw, 688px);
+  transform: translateY(-48%);
+  pointer-events: none;
+}
+
+.rewards-card__perspective {
+  position: relative;
+  width: 100%;
+  perspective: 1200px;
+  perspective-origin: 50% 42%;
+}
+
+.rewards-card__stage {
+  position: relative;
+  width: 100%;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  pointer-events: auto;
+}
+
+.rewards-card__shadow {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -4%;
+  height: 18%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgb(0 0 0 / 0.42) 0%,
+    rgb(0 0 0 / 0.18) 42%,
+    transparent 72%
+  );
+  filter: blur(18px);
+  transform: translate3d(0, 28px, -48px);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.rewards-card__glow {
+  position: absolute;
+  inset: -2%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 50% 38%,
+    rgb(196 154 95 / 0.14) 0%,
+    rgb(108 201 216 / 0.06) 38%,
+    transparent 68%
+  );
+  transform: translateZ(-20px);
+  pointer-events: none;
+  will-change: opacity;
+}
+
+.rewards-card__shell {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  transform-style: preserve-3d;
+  container-type: inline-size;
+  /* Lower CTA footprint — ornate bronze button aligned to frame slot (ref. sizing) */
+  --slot-top: 72.8%;
+  --slot-width: 76cqi;
+  --slot-height: 24cqi;
+  --slot-lift-y: -2.8cqi;
+  /* Left-edge lift — pivot near right edge (~5–6px top-left rise at slot width) */
+  --cta-tilt-z: 2.1deg;
+  --cta-tilt-origin-y: 62%;
+  /* Shared inner content column — 54cqi shell ≈ 78cqi inside circular viewport */
+  --content-offset-x: -10px;
+}
+
+.rewards-card__frame-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  /* Opaque frame + lower slot above inner content; transparent viewport hole reveals inner UI */
+  transform: translateZ(0);
+  pointer-events: none;
+}
+
+.rewards-card__frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+/* Circular cosmic viewport — aligned to blank card artwork */
+.rewards-card__inner {
+  position: absolute;
+  top: 17.2%;
+  left: 15.4%;
+  width: 69.2%;
+  height: 69.2%;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: visible;
+  border-radius: 50%;
+  container-type: inline-size;
+  padding: 5.5% 7% 6%;
+  box-sizing: border-box;
+  background: transparent;
+  transform: translateZ(2px);
+  transform-style: preserve-3d;
+}
+
+.rewards-card__main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0;
+  min-height: 0;
+  overflow: visible;
+  transform: translateY(clamp(-10px, -2.2cqi, -6px));
+  transform-style: preserve-3d;
+}
+
+.rewards-card__footer {
+  position: absolute;
+  top: var(--slot-top);
+  left: 50%;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: clamp(200px, var(--slot-width), 78cqi);
+  max-width: none;
+  transform: translateX(-50%) translateZ(8px);
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  pointer-events: none;
+}
+
+/* Lower frame slot — golden CTA occupies this footprint */
+.rewards-card__slot-area {
+  position: relative;
+  width: 100%;
+  height: clamp(52px, var(--slot-height), 120px);
+  transform: translate(var(--content-offset-x), var(--slot-lift-y));
+  transform-style: preserve-3d;
+  pointer-events: auto;
+}
+
+.rewards-card__header {
+  flex: 0 0 auto;
+  text-align: center;
+  margin-bottom: 0;
+  transform: translateZ(4px);
+}
+
+.rewards-card__title {
+  margin: 0;
+  font-size: clamp(9px, 4.8cqi, 14px);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.15;
+  color: rgb(236 240 246 / 0.96);
+  text-transform: uppercase;
+}
+
+.rewards-card__subtitle {
+  display: inline-block;
+  margin: 0.35em 0 0;
+  padding: 0.22em 0.55em;
+  font-size: clamp(5px, 2.2cqi, 8px);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  color: rgb(220 228 236 / 0.88);
+  text-transform: uppercase;
+  border: 1px solid rgb(220 228 236 / 0.35);
+  border-radius: 9999px;
+}
+
+.rewards-card__grid {
+  --reward-slot-hover-scale: 2;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(2px, 0.85cqi, 5px);
+  flex: 0 0 auto;
+  min-height: 0;
+  max-height: 40%;
+  margin: clamp(8px, 2.6cqi, 14px) 0 0;
+  padding: 0;
+  list-style: none;
+  overflow: visible;
+  transform-style: preserve-3d;
+}
+
+.rewards-card__grid > li {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: visible;
+  transform-style: preserve-3d;
+}
+
+.rewards-card__grid > li:has(.rewards-card__tile:hover),
+.rewards-card__grid > li:has(.rewards-card__tile:focus-visible) {
+  z-index: 50;
+}
+
+.rewards-card__tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 4px;
+  border: 1px solid rgb(108 201 216 / 0.34);
+  background: rgb(8 14 22 / 0.55);
+  box-shadow: inset 0 0 8px rgb(108 201 216 / 0.08);
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transform: translateZ(8px) scale(1);
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.rewards-card__tile:hover,
+.rewards-card__tile:focus-visible {
+  transform: translateZ(8px) scale(var(--reward-slot-hover-scale));
+  outline: none;
+}
+
+.rewards-card__tile:focus-visible {
+  outline: 2px solid rgb(108 201 216 / 0.5);
+  outline-offset: 2px;
+}
+
+.rewards-card__tile-media {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  transform-style: preserve-3d;
+}
+
+.rewards-card__tile-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  -webkit-user-drag: none;
+  transform: scale(var(--reward-slot-hover-scale, 2));
+  transform-origin: center center;
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.rewards-card__tile:hover .rewards-card__tile-img,
+.rewards-card__tile:focus-visible .rewards-card__tile-img {
+  /* Match slot scale so the image is not upscaled from a low-res layer */
+  transform: scale(1);
+}
+
+.rewards-card__tile-label {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 2px 1px 3px;
+  font-size: clamp(4px, 1.85cqi, 7px);
+  font-weight: 500;
+  line-height: 1.15;
+  text-align: center;
+  color: rgb(230 236 242 / 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rewards-card__stats {
+  flex: 0 0 auto;
+  /* 98cqi inner content ≈ 54cqi shell — aligns with View All Rewards CTA */
+  width: min(100%, 98cqi);
+  max-width: 100%;
+  margin-top: clamp(10px, 3cqi, 16px);
+  margin-inline: auto;
+  margin-bottom: 0;
+  text-align: center;
+  transform: translateZ(5px) translateX(var(--content-offset-x)) translateY(20px);
+}
+
+.rewards-card__countdown,
+.rewards-card__credits {
+  width: 100%;
+  pointer-events: none;
+}
+
+.rewards-card__credits {
+  margin-top: 0.65em;
+}
+
+.rewards-card__stat-label {
+  margin: 0;
+  font-size: clamp(7px, 3.55cqi, 12px);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(196 154 95 / 0.94);
+  line-height: 1.2;
+}
+
+.rewards-card__stat-value {
+  margin: 0.2em 0 0;
+  font-size: clamp(16px, 4.9cqi, 24px);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rewards-card__countdown .rewards-card__stat-value {
+  color: rgb(236 240 246 / 0.94);
+  text-shadow: none;
+}
+
+.rewards-card__credits .rewards-card__stat-value {
+  color: rgb(228 194 132);
+  text-shadow: 0 0 8px rgb(212 175 130 / 0.2);
+}
+
+.rewards-card__cta {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: visible;
+  isolation: isolate;
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  backface-visibility: hidden;
+  transform-origin: 100% var(--cta-tilt-origin-y, 62%);
+  transform: translateZ(2px) rotateZ(var(--cta-tilt-z, 2.1deg));
+  transform-style: preserve-3d;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 220ms ease;
+}
+
+.rewards-card__cta-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.22));
+  transition: filter 220ms ease;
+}
+
+.rewards-card__cta::before {
+  content: "";
+  position: absolute;
+  inset: 8% 4%;
+  z-index: 1;
+  border-radius: 9999px;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgb(196 154 95 / 0.18) 49%,
+    rgb(220 180 120 / 0.1) 52%,
+    transparent 62%
+  );
+  transform: translateX(-130%);
+  transition:
+    opacity 220ms ease,
+    transform 680ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.rewards-card__cta:hover,
+.rewards-card__cta:focus-visible {
+  transform: translateZ(2px) rotateZ(var(--cta-tilt-z, 2.1deg)) scale(1.02);
+  filter: brightness(1.06) contrast(1.02) saturate(1.03);
+}
+
+.rewards-card__cta:hover::before,
+.rewards-card__cta:focus-visible::before {
+  opacity: 1;
+  transform: translateX(130%);
+}
+
+.rewards-card__cta:hover .rewards-card__cta-img,
+.rewards-card__cta:focus-visible .rewards-card__cta-img {
+  filter: drop-shadow(0 3px 6px rgb(0 0 0 / 0.3));
+}
+
+.rewards-card__cta:focus-visible {
+  outline: 2px solid rgb(117 74 46 / 0.36);
+  outline-offset: 2px;
+}
+
+.rewards-card__cta:active {
+  transform: translateZ(2px) rotateZ(var(--cta-tilt-z, 2.1deg)) scale(1.01);
+  filter: brightness(0.98) contrast(1.01);
+}
+
+.rewards-card__cta:active::before {
+  opacity: 0;
+}
+
+.rewards-card__conditions {
+  position: relative;
+  z-index: 2;
+  margin: 0.4em 0 0;
+  font-size: clamp(4px, 1.6cqi, 6px);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  text-align: center;
+  color: rgb(180 190 200 / 0.55);
+  transform: translateZ(2px);
+  pointer-events: none;
+}
+
+/* Lower-right frame emblem — covers baked-in watermark, links to Let's Play */
+.rewards-card__play-emblem {
+  position: absolute;
+  right: 3.1%;
+  bottom: 4.6%;
+  z-index: 4;
+  display: block;
+  width: clamp(52px, 18cqi, 94px);
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-decoration: none;
+  cursor: pointer;
+  transform: translateZ(10px);
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  transition:
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 260ms ease,
+    box-shadow 260ms ease;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rewards-card__play-emblem-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: saturate(0.94) brightness(0.9) contrast(1.02);
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  transition: filter 260ms ease;
+}
+
+.rewards-card__play-emblem:hover,
+.rewards-card__play-emblem:focus-visible {
+  transform: translateZ(12px) scale(1.06) translateY(-1px);
+  box-shadow: 0 0 14px rgb(196 154 95 / 0.22);
+}
+
+.rewards-card__play-emblem:hover .rewards-card__play-emblem-img,
+.rewards-card__play-emblem:focus-visible .rewards-card__play-emblem-img {
+  filter: saturate(1) brightness(0.98) contrast(1.04);
+}
+
+.rewards-card__play-emblem:focus-visible {
+  outline: 2px solid rgb(148 98 62 / 0.42);
+  outline-offset: 2px;
+}
+
+@media (max-width: 1279px) {
+  .rewards-card {
+    width: clamp(460px, 31.7vw, 635px);
+  }
+
+  .rewards-card__perspective {
+    perspective: 1000px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .rewards-card {
+    width: clamp(420px, 30.4vw, 555px);
+    top: 58%;
+  }
+
+  .rewards-card__perspective {
+    perspective: 900px;
+  }
+
+  .rewards-card__grid {
+    --reward-slot-hover-scale: 1.7;
+  }
+}
+
+@media (max-width: 767px) {
+  .rewards-card {
+    right: auto;
+    left: 50%;
+    top: 64%;
+    width: min(82vw, 503px);
+    transform: translate(-50%, -46%);
+  }
+
+  .rewards-card__perspective {
+    perspective: 800px;
+  }
+
+  .rewards-card__grid {
+    --reward-slot-hover-scale: 1.4;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .rewards-card__perspective {
+    perspective: 900px;
+  }
+
+  .rewards-card__tile:hover,
+  .rewards-card__tile:focus-visible {
+    transform: translateZ(8px) scale(1);
+  }
+
+  .rewards-card__grid > li:has(.rewards-card__tile:hover),
+  .rewards-card__grid > li:has(.rewards-card__tile:focus-visible) {
+    z-index: 1;
+  }
+
+  .rewards-card__tile:hover .rewards-card__tile-img,
+  .rewards-card__tile:focus-visible .rewards-card__tile-img {
+    transform: scale(var(--reward-slot-hover-scale, 2));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rewards-card__stage,
+  .rewards-card__shadow,
+  .rewards-card__glow {
+    will-change: auto;
+  }
+
+  .rewards-card__cta,
+  .rewards-card__tile,
+  .rewards-card__tile-img,
+  .rewards-card__play-emblem {
+    transition: none;
+  }
+
+  .rewards-card__tile:hover,
+  .rewards-card__tile:focus-visible {
+    transform: translateZ(8px) scale(1);
+  }
+
+  .rewards-card__grid > li:has(.rewards-card__tile:hover),
+  .rewards-card__grid > li:has(.rewards-card__tile:focus-visible) {
+    z-index: 1;
+  }
+
+  .rewards-card__tile:hover .rewards-card__tile-img,
+  .rewards-card__tile:focus-visible .rewards-card__tile-img {
+    transform: scale(var(--reward-slot-hover-scale, 2));
+  }
+
+  .rewards-card__cta:hover,
+  .rewards-card__cta:focus-visible {
+    transform: translateZ(2px) rotateZ(var(--cta-tilt-z, 2.1deg)) scale(1);
+    filter: none;
+  }
+
+  .rewards-card__cta:hover::before,
+  .rewards-card__cta:focus-visible::before {
+    opacity: 0;
+    transform: translateX(-130%);
+  }
+
+  .rewards-card__play-emblem:hover,
+  .rewards-card__play-emblem:focus-visible {
+    transform: translateZ(10px);
+    filter: none;
+    box-shadow: none;
+  }
+}

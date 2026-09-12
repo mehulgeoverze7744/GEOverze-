@@ -37,7 +37,7 @@ function EcosystemCardCopy({ node }: { node: (typeof ecosystem)[number] }) {
 /** Section 5 — GEOverze Ecosystem. */
 export const Ecosystem = memo(function Ecosystem() {
   return (
-    <section className="relative pb-[calc(var(--space-section-sm)*0.65)] pt-[var(--space-section-sm)] md:pb-[calc(var(--space-section)*0.55)] md:pt-[var(--space-section)]">
+    <section className="relative pb-[calc(var(--space-section-sm)*0.65)] pt-4 md:pb-[calc(var(--space-section)*0.55)] md:pt-6">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,var(--bloom-bronze),transparent_65%)]"

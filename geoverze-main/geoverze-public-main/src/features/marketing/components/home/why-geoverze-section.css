@@ -3,13 +3,14 @@
 .why-geoverze-section {
   overflow-x: clip;
   padding-top: var(--space-section-sm);
-  padding-bottom: var(--space-section-sm);
+  /* Tight rhythm into THE ECOSYSTEM — avoid double section padding */
+  padding-bottom: 1rem;
 }
 
 @media (min-width: 768px) {
   .why-geoverze-section {
     padding-top: var(--space-section);
-    padding-bottom: var(--space-section);
+    padding-bottom: 1.5rem;
   }
 }
 

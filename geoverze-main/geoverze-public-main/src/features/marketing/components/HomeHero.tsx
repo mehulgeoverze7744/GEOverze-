@@ -6,6 +6,7 @@ import { useScrollProgress } from "@/components/geoverze/useScrollProgress";
 import "./home-hero.css";
 import { skyLayer } from "@/components/layout/skyLayer";
 import { BrandMark, GeoButton, Modal } from "@/components/shared";
+import { RewardsCard } from "@/features/marketing/components/hero/RewardsCard";
 import { hasWebGLSupport } from "@/lib/webgl";
 
 /** The 3D scene is the only heavy chunk in the app and stays lazily loaded. */
@@ -101,6 +102,8 @@ export function HomeHero() {
           </Suspense>
         </ClientOnly>
       ) : null}
+
+      <RewardsCard scrollProgress={progress} />
 
       {/* Scroll-synced copy */}
       <div
