@@ -6,7 +6,13 @@ import { AnimatedSection } from "@/components/shared";
 import { cn } from "@/lib/utils";
 
 import { CATEGORIES, type CategoryId } from "../data/taxonomy";
-import { libraryCategoryTileClass } from "../lib/library-rail-layout";
+import {
+  libraryCategoryFilterActiveClass,
+  libraryCategoryFilterClass,
+  libraryCategoryFilterIconClass,
+  libraryCategoryFilterLabelClass,
+  libraryCategoryTileClass,
+} from "../lib/library-rail-layout";
 
 function categoryBrowseSearch(categoryId: CategoryId) {
   return {
@@ -56,7 +62,7 @@ export function LibraryCategoryRail({ className }: { className?: string }) {
     const el = railRef.current;
     if (!el) return;
     const tile = el.querySelector<HTMLElement>("[data-category-tile]");
-    const step = tile ? tile.offsetWidth + 16 : Math.max(240, el.clientWidth * 0.75);
+    const step = tile ? tile.offsetWidth + 12 : Math.max(200, el.clientWidth * 0.65);
     el.scrollBy({ left: dir * step, behavior: "smooth" });
   };
 
@@ -75,9 +81,7 @@ export function LibraryCategoryRail({ className }: { className?: string }) {
                 type="button"
                 disabled={disabled}
                 onClick={() => nudge(dir)}
-                aria-label={
-                  dir === -1 ? "Scroll categories left" : "Scroll categories right"
-                }
+                aria-label={dir === -1 ? "Scroll categories left" : "Scroll categories right"}
                 className={cn(
                   "inline-flex h-9 w-9 items-center justify-center rounded-full border border-bronze/25 bg-charcoal/45 text-foreground/75 backdrop-blur transition-all motion-fast hover:border-bronze/50 hover:text-bronze-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50 disabled:pointer-events-none disabled:opacity-35",
                 )}
@@ -93,20 +97,29 @@ export function LibraryCategoryRail({ className }: { className?: string }) {
         </div>
       </div>
 
-      <div ref={railRef} className="rail-scroll mt-6 flex gap-4 pb-1">
+      <div ref={railRef} className="rail-scroll mt-6 flex gap-2.5 pb-1 sm:gap-3">
         {CATEGORIES.map((category) => (
           <Link
             key={category.id}
             data-category-tile
             to="/geolibrary/browse"
             search={categoryBrowseSearch(category.id)}
-            className={cn(
-              "glass-panel surface-gradient flex items-center gap-3 rounded-2xl p-4 text-sm text-foreground/75 transition-all motion-fast hover:border-bronze/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
-              libraryCategoryTileClass,
-            )}
+            activeOptions={{ includeSearch: true }}
+            className={cn(libraryCategoryFilterClass, libraryCategoryTileClass)}
+            activeProps={{
+              className: cn(
+                libraryCategoryFilterClass,
+                libraryCategoryTileClass,
+                libraryCategoryFilterActiveClass,
+              ),
+            }}
           >
-            <category.icon className="h-4 w-4 shrink-0 text-bronze" strokeWidth={1.6} />
-            <span className="truncate">{category.label}</span>
+            <category.icon
+              className={cn(libraryCategoryFilterIconClass, "h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4")}
+              strokeWidth={1.6}
+              aria-hidden
+            />
+            <span className={libraryCategoryFilterLabelClass}>{category.label}</span>
           </Link>
         ))}
       </div>
