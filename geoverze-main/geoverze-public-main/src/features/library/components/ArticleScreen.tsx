@@ -12,6 +12,7 @@ import { articleHeadings, relatedArticles } from "../data/articles";
 import { categoryLabel, difficultyLabel } from "../data/taxonomy";
 import { useArticleBySlug } from "../hooks/useArticleBySlug";
 import { useArticleReadingProgress } from "../hooks/useArticleReadingProgress";
+import { useStartArticleReading } from "../hooks/useStartArticleReading";
 import { useRecordArticleView } from "../hooks/useRecordArticleView";
 import { useCreatorByHandle } from "../hooks/usePublishedCreators";
 import { useLibrarySubscriptionTier } from "../hooks/useLibrarySubscriptionTier";
@@ -44,6 +45,14 @@ export function ArticleScreen() {
     Boolean(readyArticle?.resourceId) && contentAccess?.kind === "open" && !error && signedIn;
 
   useRecordArticleView(readyArticle?.resourceId, canRecordView);
+  const canStartReading =
+    pageState?.status === "ready" &&
+    Boolean(article) &&
+    !loading &&
+    authReady &&
+    contentAccess?.kind === "open" &&
+    !completed;
+  useStartArticleReading(slug, canStartReading);
   const { contentRef } = useArticleReadingProgress(slug, Boolean(article) && !completed);
 
   if (loading || !authReady) {

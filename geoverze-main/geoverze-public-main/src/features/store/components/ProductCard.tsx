@@ -1,15 +1,19 @@
 import { Link } from "@tanstack/react-router";
 import { Coins, Eye, Heart, ShoppingBag } from "lucide-react";
+import { useMemo } from "react";
 
 import { GeoButton } from "@/components/shared";
 import { CoverArt } from "@/features/play/components/CoverArt";
 import { cn } from "@/lib/utils";
+import { useCartStore } from "@/stores/cartStore";
 
 import { PriceTag } from "./PriceTag";
 import { RatingStars } from "./RatingStars";
 import { StockPill } from "./StockPill";
 import type { Product } from "../data/products";
 import { productImageForSlug } from "../data/productImages";
+import { cartLineIdForProduct } from "../lib/cart";
+import { useStoreActions } from "../lib/useStoreActions";
 import { categoryIcon, categoryLabel } from "../data/taxonomy";
 
 /**
@@ -42,6 +46,18 @@ export function ProductCard({
   const Icon = categoryIcon(product.category);
   const productImage = productImageForSlug(product.slug);
   const soldOut = product.stock === "sold-out";
+  const cartLineId = useMemo(() => cartLineIdForProduct(product), [product]);
+  const inCart = useCartStore((state) => state.lines.some((line) => line.id === cartLineId));
+  const { removeProduct } = useStoreActions();
+
+  const handleCartAction = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    if (inCart) {
+      removeProduct(product);
+      return;
+    }
+    onAdd?.(product);
+  };
 
   return (
     <article
@@ -72,7 +88,10 @@ export function ProductCard({
       <div className="absolute right-3 top-3 flex gap-2">
         <button
           type="button"
-          onClick={() => onToggleWishlist(product.slug)}
+          onClick={(event) => {
+            event.stopPropagation();
+            onToggleWishlist(product.slug);
+          }}
           aria-pressed={saved}
           aria-label={saved ? `Remove ${product.name} from wishlist` : `Save ${product.name}`}
           className={cn(
@@ -87,7 +106,10 @@ export function ProductCard({
         {onQuickView ? (
           <button
             type="button"
-            onClick={() => onQuickView(product)}
+            onClick={(event) => {
+              event.stopPropagation();
+              onQuickView(product);
+            }}
             aria-label={`Quick view ${product.name}`}
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-bronze/20 bg-charcoal/70 text-foreground/55 backdrop-blur transition-colors motion-fast hover:text-bronze-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
           >
@@ -147,22 +169,27 @@ export function ProductCard({
         {onAdd ? (
           <div className="mt-5 flex gap-2">
             <GeoButton
-              variant="solid"
+              variant={inCart ? "ghost" : "solid"}
               size="sm"
-              className="flex-1"
-              disabled={soldOut || owned || purchasing}
-              onClick={() => onAdd(product)}
+              className={cn(
+                "min-w-0 flex-1 text-[0.62rem] leading-tight xs:text-[0.68rem] sm:text-xs",
+                inCart && "border border-bronze/35 text-bronze-glow hover:border-bronze/50",
+              )}
+              disabled={owned || purchasing || (!inCart && soldOut)}
+              onClick={handleCartAction}
             >
-              <ShoppingBag className="mr-2 h-3.5 w-3.5" />
-              {purchasing
-                ? "Claiming…"
-                : owned
-                  ? "In your library"
-                  : soldOut
-                    ? "Sold out"
-                    : product.price === null
-                      ? "Claim"
-                      : "Add to cart"}
+              <ShoppingBag className="mr-1.5 h-3.5 w-3.5 shrink-0 sm:mr-2" />
+              {inCart
+                ? "Remove from cart"
+                : purchasing
+                  ? "Claiming…"
+                  : owned
+                    ? "In your library"
+                    : soldOut
+                      ? "Sold out"
+                      : product.price === null
+                        ? "Claim"
+                        : "Add to cart"}
             </GeoButton>
           </div>
         ) : null}

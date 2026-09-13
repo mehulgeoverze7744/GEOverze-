@@ -21,8 +21,14 @@
   font-size: 0.6875rem;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.48em;
+  letter-spacing: 0.32em;
   color: var(--bronze);
+}
+
+@media (min-width: 640px) {
+  .geostore-showcase-intro__eyebrow {
+    letter-spacing: 0.48em;
+  }
 }
 
 .geostore-showcase-intro__heading {

@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Coins, Compass, Gift, Heart, Package, ShoppingBag } from "lucide-react";
+import { Coins, Compass, Gift, Heart, Library, Package, Truck } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, PageHeader, SectionContainer } from "@/components/shared";
-import { useCartStore, selectCartCount } from "@/stores/cartStore";
 import { useStoreStore } from "@/stores/storeStore";
 
 import { CategoryTile } from "./CategoryTile";
 import { DigitalProductsCarousel } from "./DigitalProductsCarousel";
 import { ProductCard } from "./ProductCard";
 import { ProductRail } from "./ProductRail";
+import { StoreSummaryCard } from "./StoreSummaryCard";
 import { QuickViewModal } from "./QuickViewModal";
 import { PRODUCTS, productBySlug, type Product } from "../data/products";
 import { STORE_CATEGORIES, STORE_GROUPS } from "../data/taxonomy";
@@ -31,7 +31,6 @@ export function StoreHome() {
   const entitlements = useEntitlements();
   const { rewardProducts, products: catalogueProducts } = useStoreCatalogue();
   const { purchase, isPurchasing } = useCreditPurchase();
-  const cartCount = useCartStore(selectCartCount);
   const recentlyViewed = useStoreStore((s) => s.recentlyViewed);
 
   const balanceDisplay = !authReady ? "…" : signedIn ? String(balance ?? 0) : "—";
@@ -107,85 +106,94 @@ export function StoreHome() {
               <Gift className="mr-2 h-4 w-4" /> Spend credits
             </Link>
           </GeoButton>
-          <GeoButton asChild variant="ghost">
-            <Link to="/geostore/cart">
-              <ShoppingBag className="mr-2 h-4 w-4" /> Cart ({cartCount})
-            </Link>
-          </GeoButton>
         </div>
       </PageHeader>
 
       <SectionContainer size="wide">
         <AnimatedSection className="grid gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border border-bronze/25 bg-charcoal/55 p-6">
-            <p className="inline-flex items-center gap-2 text-[0.62rem] uppercase tracking-[0.2em] text-foreground/50">
-              <Coins className="h-3.5 w-3.5 text-bronze" /> Credit balance
-            </p>
-            <p className="mt-3 text-3xl font-light text-bronze-glow">{balanceDisplay}</p>
-            {signedIn ? (
-              <Link
-                to="/play/credit-history"
-                className="mt-3 inline-block text-[0.64rem] uppercase tracking-[0.16em] text-bronze hover:text-bronze-glow"
-              >
-                Credit history
-              </Link>
-            ) : authReady ? (
-              <Link
-                to="/auth/login"
-                className="mt-3 inline-block text-[0.64rem] uppercase tracking-[0.16em] text-bronze hover:text-bronze-glow"
-              >
-                Sign in to view balance
-              </Link>
-            ) : null}
-          </div>
-          <div className="rounded-2xl border border-bronze/12 bg-charcoal/45 p-6">
-            <p className="text-[0.62rem] uppercase tracking-[0.2em] text-foreground/50">
-              Catalogue
-            </p>
-            <p className="mt-3 text-3xl font-light text-foreground">{PRODUCTS.length}</p>
-            <p className="mt-3 text-[0.64rem] text-foreground/50">
-              Across {STORE_CATEGORIES.length} categories
-            </p>
-          </div>
-          <div className="rounded-2xl border border-bronze/12 bg-charcoal/45 p-6">
-            <p className="text-[0.62rem] uppercase tracking-[0.2em] text-foreground/50">
-              Free shipping
-            </p>
-            <p className="mt-3 text-3xl font-light text-foreground">{money(7_500)}</p>
-            <p className="mt-3 text-[0.64rem] text-foreground/50">On physical orders above</p>
-          </div>
+          <StoreSummaryCard
+            featured
+            label="Credit balance"
+            icon={Coins}
+            value={balanceDisplay}
+            footer={
+              signedIn ? (
+                <Link
+                  to="/play/credit-history"
+                  className="inline-block text-[0.64rem] uppercase tracking-[0.16em] text-bronze transition-colors motion-fast hover:text-bronze-glow"
+                >
+                  Credit history
+                </Link>
+              ) : authReady ? (
+                <Link
+                  to="/auth/login"
+                  className="inline-block text-[0.64rem] uppercase tracking-[0.16em] text-bronze transition-colors motion-fast hover:text-bronze-glow"
+                >
+                  Sign in to view balance
+                </Link>
+              ) : null
+            }
+          />
+          <StoreSummaryCard
+            label="Catalogue"
+            icon={Library}
+            value={PRODUCTS.length}
+            footer={
+              <p className="text-[0.64rem] text-foreground/50">
+                Across {STORE_CATEGORIES.length} categories
+              </p>
+            }
+          />
+          <StoreSummaryCard
+            label="Free shipping"
+            icon={Truck}
+            value={money(7_500)}
+            footer={<p className="text-[0.64rem] text-foreground/50">On physical orders above</p>}
+          />
         </AnimatedSection>
 
         <ProductRail
           title="Best sellers"
           description="What most explorers take home."
+          titleClassName="text-2xl font-bold tracking-tight text-foreground md:text-3xl"
+          descriptionClassName="mt-2.5 max-w-xl text-sm leading-relaxed text-foreground/55 md:text-base"
           to="/geostore/browse"
-          columns={3}
+          layout="scroll"
         >
-          {bestSellers(PRODUCTS, 3).map(card)}
+          {bestSellers(PRODUCTS).map((product) => (
+            <div
+              key={product.slug}
+              data-rail-item
+              className="w-[min(82vw,18rem)] shrink-0 snap-start sm:w-[18rem]"
+            >
+              {card(product)}
+            </div>
+          ))}
         </ProductRail>
 
         <AnimatedSection className="mt-[var(--space-section-sm)]">
           <h2 className="text-xl font-semibold tracking-tight text-foreground md:text-2xl">
-            Shop by category
+            All categories
           </h2>
           <div className="mt-6 space-y-10">
-            {STORE_GROUPS.filter((g) => g.id === "merch").map((group) => (
+            {STORE_GROUPS.filter((group) => group.id !== "more" && group.id !== "digital").map(
+              (group) => (
               <div key={group.id}>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <group.icon className="h-4 w-4 text-bronze" strokeWidth={1.6} />
                   <p className="text-sm font-light text-foreground/80">{group.label}</p>
                   <p className="text-xs text-foreground/50">{group.blurb}</p>
                 </div>
                 <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {STORE_CATEGORIES.filter(
-                    (c) => c.group === group.id && c.id !== "posters",
-                  ).map((category) => (
-                    <CategoryTile key={category.id} category={category} compact />
-                  ))}
+                  {STORE_CATEGORIES.filter((category) => category.group === group.id).map(
+                    (category) => (
+                      <CategoryTile key={category.id} category={category} compact />
+                    ),
+                  )}
                 </div>
               </div>
-            ))}
+            ),
+            )}
           </div>
         </AnimatedSection>
 

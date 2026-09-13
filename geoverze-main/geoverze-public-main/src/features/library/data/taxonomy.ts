@@ -46,7 +46,7 @@ export type CategoryId =
 
 export type ReadingTimeId = "short" | "medium" | "long";
 
-export type SortId = "popular" | "newest" | "bookmarked" | "quickest";
+export type SortId = "popular" | "trending" | "newest" | "bookmarked" | "quickest";
 
 export type Facet<T extends string> = { id: T; label: string };
 
@@ -88,6 +88,7 @@ export const CATEGORIES: readonly (Facet<CategoryId> & { icon: LucideIcon })[] =
 
 export const SORTS: readonly Facet<SortId>[] = [
   { id: "popular", label: "Popularity" },
+  { id: "trending", label: "Trending" },
   { id: "newest", label: "Newest" },
   { id: "bookmarked", label: "Most saved" },
   { id: "quickest", label: "Quickest read" },

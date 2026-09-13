@@ -614,7 +614,7 @@
 
 @media (max-width: 1279px) {
   .rewards-card {
-    width: clamp(460px, 31.7vw, 635px);
+    width: min(calc(100vw - 2rem), clamp(360px, 31.7vw, 635px));
   }
 
   .rewards-card__perspective {
@@ -624,8 +624,11 @@
 
 @media (max-width: 1023px) {
   .rewards-card {
-    width: clamp(420px, 30.4vw, 555px);
+    right: auto;
+    left: 50%;
     top: 58%;
+    width: min(88vw, 460px);
+    transform: translate(-50%, -48%);
   }
 
   .rewards-card__perspective {
@@ -639,8 +642,6 @@
 
 @media (max-width: 767px) {
   .rewards-card {
-    right: auto;
-    left: 50%;
     top: 64%;
     width: min(82vw, 503px);
     transform: translate(-50%, -46%);

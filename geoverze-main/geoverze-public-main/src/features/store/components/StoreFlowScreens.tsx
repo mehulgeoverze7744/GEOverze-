@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Coins, Gift, Package, ShoppingBag, Sparkles } from "lucide-react";
+import { Coins, Gift, Heart, Package, ShoppingBag, Sparkles } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
 import {
@@ -104,7 +104,11 @@ export function CartScreen() {
                   <dd>{money(totals.total)}</dd>
                 </div>
               </dl>
-              <GeoButton asChild variant="solid" className="mt-6 w-full">
+              <GeoButton
+                asChild
+                variant="solid"
+                className="mt-6 w-full uppercase tracking-[0.14em]"
+              >
                 <Link to="/geostore/checkout">Checkout</Link>
               </GeoButton>
             </AnimatedSection>
@@ -350,19 +354,19 @@ export function WishlistScreen() {
     <PageShell>
       <PageHeader
         eyebrow="GEOstore"
-        title="Your wishlist"
-        description="Everything you've saved for later."
+        title="Wishlist"
+        description="Products you've saved for later."
         breadcrumb={crumbs("Wishlist")}
       />
       <SectionContainer size="wide">
         {items.length === 0 ? (
           <EmptyState
-            icon={Gift}
-            title="Nothing saved yet"
-            description="Tap the heart on any item to keep it here."
+            icon={Heart}
+            title="Wishlist is empty"
+            description="Tap the heart on any product to save it here. Wishlist and cart work independently."
             action={
               <GeoButton asChild variant="solid">
-                <Link to="/geostore/browse">Browse the catalogue</Link>
+                <Link to="/geostore">Explore GEOstore</Link>
               </GeoButton>
             }
           />

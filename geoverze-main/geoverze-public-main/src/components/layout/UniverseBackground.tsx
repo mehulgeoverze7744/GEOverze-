@@ -33,12 +33,12 @@ export function UniverseBackground({ className }: { className?: string }) {
         className="absolute inset-0 scale-[1.04] bg-cover bg-center bg-no-repeat will-change-transform"
         style={{
           backgroundImage: `url(${spaceAsset})`,
-          filter: "brightness(0.62) saturate(0.5) contrast(1.06)",
+          filter: "brightness(0.71) saturate(0.52) contrast(1.05)",
         }}
       />
       {/* dark overlay so the sky never competes with foreground content */}
-      <div className="absolute inset-0 bg-background/35" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0_0_0/0)_0%,oklch(0_0_0/0.35)_70%,oklch(0_0_0/0.6)_100%)]" />
+      <div className="absolute inset-0 bg-background/24" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0_0_0/0)_0%,oklch(0_0_0/0.28)_70%,oklch(0_0_0/0.5)_100%)]" />
       {/* film grain */}
       <div
         className="absolute inset-0 opacity-[0.055] mix-blend-soft-light"

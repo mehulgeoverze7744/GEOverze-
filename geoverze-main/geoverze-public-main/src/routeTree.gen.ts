@@ -59,7 +59,6 @@ import { Route as CommunityTopicsRouteImport } from './routes/community.topics'
 import { Route as GeolibraryIndexRouteImport } from './routes/geolibrary.index'
 import { Route as GeolibraryBookmarksRouteImport } from './routes/geolibrary.bookmarks'
 import { Route as GeolibraryBrowseRouteImport } from './routes/geolibrary.browse'
-import { Route as GeolibraryProgressRouteImport } from './routes/geolibrary.progress'
 import { Route as GeostoreIndexRouteImport } from './routes/geostore.index'
 import { Route as GeostoreBrowseRouteImport } from './routes/geostore.browse'
 import { Route as GeostoreCartRouteImport } from './routes/geostore.cart'
@@ -380,11 +379,6 @@ const GeolibraryBookmarksRoute = GeolibraryBookmarksRouteImport.update({
 const GeolibraryBrowseRoute = GeolibraryBrowseRouteImport.update({
   id: '/browse',
   path: '/browse',
-  getParentRoute: () => GeolibraryRoute,
-} as any)
-const GeolibraryProgressRoute = GeolibraryProgressRouteImport.update({
-  id: '/progress',
-  path: '/progress',
   getParentRoute: () => GeolibraryRoute,
 } as any)
 const GeostoreIndexRoute = GeostoreIndexRouteImport.update({
@@ -794,7 +788,6 @@ export interface FileRoutesByFullPath {
   '/community/topics': typeof CommunityTopicsRoute
   '/geolibrary/bookmarks': typeof GeolibraryBookmarksRoute
   '/geolibrary/browse': typeof GeolibraryBrowseRoute
-  '/geolibrary/progress': typeof GeolibraryProgressRoute
   '/geostore/browse': typeof GeostoreBrowseRoute
   '/geostore/cart': typeof GeostoreCartRoute
   '/geostore/checkout': typeof GeostoreCheckoutRoute
@@ -910,7 +903,6 @@ export interface FileRoutesByTo {
   '/community/topics': typeof CommunityTopicsRoute
   '/geolibrary/bookmarks': typeof GeolibraryBookmarksRoute
   '/geolibrary/browse': typeof GeolibraryBrowseRoute
-  '/geolibrary/progress': typeof GeolibraryProgressRoute
   '/geostore/browse': typeof GeostoreBrowseRoute
   '/geostore/cart': typeof GeostoreCartRoute
   '/geostore/checkout': typeof GeostoreCheckoutRoute
@@ -1032,7 +1024,6 @@ export interface FileRoutesById {
   '/community/topics': typeof CommunityTopicsRoute
   '/geolibrary/bookmarks': typeof GeolibraryBookmarksRoute
   '/geolibrary/browse': typeof GeolibraryBrowseRoute
-  '/geolibrary/progress': typeof GeolibraryProgressRoute
   '/geostore/browse': typeof GeostoreBrowseRoute
   '/geostore/cart': typeof GeostoreCartRoute
   '/geostore/checkout': typeof GeostoreCheckoutRoute
@@ -1157,7 +1148,6 @@ export interface FileRouteTypes {
     | '/community/topics'
     | '/geolibrary/bookmarks'
     | '/geolibrary/browse'
-    | '/geolibrary/progress'
     | '/geostore/browse'
     | '/geostore/cart'
     | '/geostore/checkout'
@@ -1273,7 +1263,6 @@ export interface FileRouteTypes {
     | '/community/topics'
     | '/geolibrary/bookmarks'
     | '/geolibrary/browse'
-    | '/geolibrary/progress'
     | '/geostore/browse'
     | '/geostore/cart'
     | '/geostore/checkout'
@@ -1394,7 +1383,6 @@ export interface FileRouteTypes {
     | '/community/topics'
     | '/geolibrary/bookmarks'
     | '/geolibrary/browse'
-    | '/geolibrary/progress'
     | '/geostore/browse'
     | '/geostore/cart'
     | '/geostore/checkout'
@@ -1850,13 +1838,6 @@ declare module '@tanstack/react-router' {
       path: '/browse'
       fullPath: '/geolibrary/browse'
       preLoaderRoute: typeof GeolibraryBrowseRouteImport
-      parentRoute: typeof GeolibraryRoute
-    }
-    '/geolibrary/progress': {
-      id: '/geolibrary/progress'
-      path: '/progress'
-      fullPath: '/geolibrary/progress'
-      preLoaderRoute: typeof GeolibraryProgressRouteImport
       parentRoute: typeof GeolibraryRoute
     }
     '/geostore/': {
@@ -2440,7 +2421,6 @@ const CommunityRouteWithChildren = CommunityRoute._addFileChildren(
 interface GeolibraryRouteChildren {
   GeolibraryBookmarksRoute: typeof GeolibraryBookmarksRoute
   GeolibraryBrowseRoute: typeof GeolibraryBrowseRoute
-  GeolibraryProgressRoute: typeof GeolibraryProgressRoute
   GeolibraryIndexRoute: typeof GeolibraryIndexRoute
   GeolibraryArticleSlugRoute: typeof GeolibraryArticleSlugRoute
   GeolibraryCollectionsSlugRoute: typeof GeolibraryCollectionsSlugRoute
@@ -2452,7 +2432,6 @@ interface GeolibraryRouteChildren {
 const GeolibraryRouteChildren: GeolibraryRouteChildren = {
   GeolibraryBookmarksRoute: GeolibraryBookmarksRoute,
   GeolibraryBrowseRoute: GeolibraryBrowseRoute,
-  GeolibraryProgressRoute: GeolibraryProgressRoute,
   GeolibraryIndexRoute: GeolibraryIndexRoute,
   GeolibraryArticleSlugRoute: GeolibraryArticleSlugRoute,
   GeolibraryCollectionsSlugRoute: GeolibraryCollectionsSlugRoute,

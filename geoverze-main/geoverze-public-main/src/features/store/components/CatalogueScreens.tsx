@@ -264,14 +264,7 @@ function MerchCategoryShelf({ slug }: { slug: "tshirts" | "hoodies" }) {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((product) => (
-              <Link
-                key={product.id}
-                to="/geostore/product/$slug"
-                params={{ slug: product.id }}
-                className="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
-              >
-                <GeostoreMerchCard product={product} />
-              </Link>
+              <GeostoreMerchCard key={product.id} product={product} />
             ))}
           </div>
         )}

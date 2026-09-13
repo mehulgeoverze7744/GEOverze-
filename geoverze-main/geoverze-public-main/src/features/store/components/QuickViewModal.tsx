@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ShoppingBag } from "lucide-react";
 
 import { GeoButton, Modal } from "@/components/shared";
 import { CoverArt } from "@/features/play/components/CoverArt";
+import { cn } from "@/lib/utils";
+import { useCartStore } from "@/stores/cartStore";
 
 import { PriceTag } from "./PriceTag";
 import { RatingStars } from "./RatingStars";
@@ -11,7 +13,8 @@ import { StockPill } from "./StockPill";
 import { VariantPicker } from "./VariantPicker";
 import type { Product } from "../data/products";
 import { categoryIcon, categoryLabel } from "../data/taxonomy";
-import { defaultOptions } from "../lib/cart";
+import { cartLineIdForProduct, defaultOptions } from "../lib/cart";
+import { useStoreActions } from "../lib/useStoreActions";
 
 /** Fast look at an item without leaving the grid. */
 export function QuickViewModal({
@@ -24,13 +27,24 @@ export function QuickViewModal({
   onAdd: (product: Product, options: Record<string, string>) => void;
 }) {
   const [options, setOptions] = useState<Record<string, string>>({});
+  const { removeProduct } = useStoreActions();
+  const selected = useMemo(() => {
+    if (!product) return {};
+    return Object.keys(options).length ? options : defaultOptions(product);
+  }, [product, options]);
+  const cartLineId = useMemo(
+    () => (product ? cartLineIdForProduct(product, selected) : ""),
+    [product, selected],
+  );
+  const inCart = useCartStore((state) =>
+    cartLineId ? state.lines.some((line) => line.id === cartLineId) : false,
+  );
 
   if (!product) return null;
-  const selected = Object.keys(options).length ? options : defaultOptions(product);
 
   return (
     <Modal
-      open={Boolean(product)}
+      open
       onOpenChange={(open) => {
         if (!open) {
           setOptions({});
@@ -59,20 +73,29 @@ export function QuickViewModal({
         <VariantPicker product={product} value={selected} onChange={setOptions} />
         <div className="flex flex-wrap gap-3">
           <GeoButton
-            variant="solid"
-            disabled={product.stock === "sold-out"}
+            variant={inCart ? "ghost" : "solid"}
+            className={cn(
+              inCart && "border border-bronze/35 text-bronze-glow hover:border-bronze/50",
+            )}
+            disabled={!inCart && product.stock === "sold-out"}
             onClick={() => {
-              onAdd(product, selected);
-              setOptions({});
-              onClose();
+              if (inCart) {
+                removeProduct(product, selected);
+              } else {
+                onAdd(product, selected);
+                setOptions({});
+                onClose();
+              }
             }}
           >
             <ShoppingBag className="mr-2 h-4 w-4" />
-            {product.stock === "sold-out"
-              ? "Sold out"
-              : product.price === null
-                ? "Claim with credits"
-                : "Add to cart"}
+            {inCart
+              ? "Remove from cart"
+              : product.stock === "sold-out"
+                ? "Sold out"
+                : product.price === null
+                  ? "Claim with credits"
+                  : "Add to cart"}
           </GeoButton>
           <GeoButton asChild variant="ghost">
             <Link to="/geostore/product/$slug" params={{ slug: product.slug }} onClick={onClose}>

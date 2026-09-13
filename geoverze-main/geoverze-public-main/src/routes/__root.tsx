@@ -136,7 +136,7 @@ function RootComponent() {
         >
           Skip to content
         </a>
-        <div className="relative flex min-h-dvh flex-col">
+        <div className="relative flex min-h-dvh flex-col overflow-x-clip">
           <Navbar />
           <main id="main" className="flex-1">
             {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}

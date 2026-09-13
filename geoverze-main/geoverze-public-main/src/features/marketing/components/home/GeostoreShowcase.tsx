@@ -36,7 +36,7 @@ export const GeostoreShowcase = memo(function GeostoreShowcase() {
         >
           {tshirts.map((product, index) => (
             <li key={product.id} className="min-w-0">
-              <AnimatedSection delay={80 + index * 40}>
+              <AnimatedSection delay={80 + index * 40} className="h-full">
                 <GeostoreMerchCard product={product} />
               </AnimatedSection>
             </li>
@@ -60,7 +60,7 @@ export const GeostoreShowcase = memo(function GeostoreShowcase() {
         >
           {hoodies.map((product, index) => (
             <li key={product.id} className="min-w-0">
-              <AnimatedSection delay={200 + index * 40}>
+              <AnimatedSection delay={200 + index * 40} className="h-full">
                 <GeostoreMerchCard product={product} />
               </AnimatedSection>
             </li>

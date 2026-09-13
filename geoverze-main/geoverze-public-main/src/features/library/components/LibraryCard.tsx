@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Bookmark, Clock, Eye, Heart } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -16,6 +16,7 @@ import { articleCardImageSrc } from "../data/article-card-images";
 import { categoryIcon, categoryLabel, difficultyLabel } from "../data/taxonomy";
 import { creatorByHandle } from "../data/creators";
 import { usePublishedCreators } from "../hooks/usePublishedCreators";
+import { libraryRailCardClass, libraryRailMediaClass } from "../lib/library-rail-layout";
 
 const compact = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(n >= 10_000 ? 0 : 1)}k` : `${n}`);
 
@@ -31,6 +32,8 @@ export function LibraryCard({
   progress = 0,
   onToggleBookmark,
   accessState,
+  inRail = false,
+  headerAction,
   className,
 }: {
   article: Article;
@@ -42,6 +45,9 @@ export function LibraryCard({
   onToggleBookmark?: (slug: string) => void;
   /** When omitted, derived from article tier + caller context is not applied. */
   accessState?: ResourceAccessState;
+  /** Marks card as a horizontal rail item with fixed width. */
+  inRail?: boolean;
+  headerAction?: ReactNode;
   className?: string;
 }) {
   const Icon = categoryIcon(article.category);
@@ -92,12 +98,18 @@ export function LibraryCard({
     </div>
   );
 
+  const articleTo = "/geolibrary/article/$slug" as const;
+  const articleParams = { slug: article.slug };
+
   const bookmarkButton = onToggleBookmark ? (
     <button
       type="button"
       aria-pressed={saved}
       aria-label={saved ? `Remove ${article.title} from bookmarks` : `Save ${article.title}`}
-      onClick={() => onToggleBookmark(article.slug)}
+      onClick={(event) => {
+        event.stopPropagation();
+        onToggleBookmark(article.slug);
+      }}
       className={cn(
         "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition-all motion-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
         saved
@@ -109,29 +121,31 @@ export function LibraryCard({
     </button>
   ) : null;
 
-  const titleLink = (
-    <Link
-      to="/geolibrary/article/$slug"
-      params={{ slug: article.slug }}
-      className={cn(
-        "transition-colors motion-fast hover:text-bronze-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
-        restricted && "text-foreground/85",
-      )}
-    >
+  const cardTitle = (
+    <span className={cn(!restricted && "transition-colors motion-fast group-hover:text-bronze-glow")}>
       {article.title}
-    </Link>
+    </span>
   );
 
   if (variant === "list") {
     return (
       <article
         className={cn(
-          "glass-panel surface-gradient group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 rounded-2xl p-4 transition-all motion-base hover:border-bronze/35 sm:flex sm:gap-5",
+          "glass-panel surface-gradient group relative grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 rounded-2xl p-4 transition-all motion-base hover:border-bronze/35 sm:flex sm:gap-5",
           restricted && "opacity-90",
+          !restricted && "cursor-pointer",
           className,
         )}
       >
-        <div className="hidden w-28 shrink-0 overflow-hidden rounded-xl sm:block">
+        {!restricted ? (
+          <Link
+            to={articleTo}
+            params={articleParams}
+            aria-label={`Open ${article.title}`}
+            className="absolute inset-0 z-0 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+          />
+        ) : null}
+        <div className="pointer-events-none relative z-[1] hidden w-28 shrink-0 overflow-hidden rounded-xl sm:block">
           <LibraryMediaImage
             storagePath={article.coverArtKey}
             fallbackArt={article.slug}
@@ -140,7 +154,7 @@ export function LibraryCard({
             ratio="square"
           />
         </div>
-        <div className="min-w-0 flex-1">
+        <div className="pointer-events-none relative z-[1] min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <p className="text-[0.6rem] uppercase tracking-[0.22em] text-bronze/90">
               {categoryLabel(article.category)}
@@ -154,7 +168,7 @@ export function LibraryCard({
             ) : null}
           </div>
           <h3 className="mt-2 truncate text-base font-light tracking-tight text-foreground">
-            {titleLink}
+            {cardTitle}
           </h3>
           <div className="mt-2 flex flex-wrap items-center gap-2 text-[0.68rem] text-foreground/50">
             {meta}
@@ -167,31 +181,49 @@ export function LibraryCard({
           </div>
           <div className="mt-3">{stats}</div>
         </div>
-        {bookmarkButton}
+        {bookmarkButton ? <div className="relative z-[2]">{bookmarkButton}</div> : null}
       </article>
     );
   }
 
   return (
     <article
+      {...(inRail ? { "data-rail-item": true } : {})}
       className={cn(
-        "glass-panel surface-gradient group relative flex h-full flex-col overflow-hidden rounded-2xl transition-all motion-base hover:-translate-y-1 hover:border-bronze/40 hover:shadow-[var(--glow-bronze)] motion-reduce:hover:translate-y-0",
-        restricted && "opacity-95",
+        "glass-panel surface-gradient group relative flex flex-col overflow-hidden rounded-2xl transition-all motion-base",
+        restricted
+          ? "opacity-95"
+          : "cursor-pointer hover:-translate-y-1 hover:border-bronze/40 hover:shadow-[var(--glow-bronze)] motion-reduce:hover:translate-y-0",
+        inRail && libraryRailCardClass,
         className,
       )}
     >
-      <div className="relative">
+      {!restricted ? (
+        <Link
+          to={articleTo}
+          params={articleParams}
+          aria-label={`Open ${article.title}`}
+          className="absolute inset-0 z-0 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+        />
+      ) : null}
+      <div className={cn("pointer-events-none relative z-[1]", inRail && libraryRailMediaClass)}>
         <LibraryMediaImage
           storagePath={article.coverArtKey}
           fallbackArt={article.slug}
           staticImageSrc={cardImageSrc}
           icon={Icon}
+          ratio="video"
+          fit="cover"
+          className="h-full w-full"
         />
         <span className="absolute right-3 top-3 rounded-full border border-bronze/35 bg-[oklch(0.12_0.006_60/0.85)] px-3 py-1 text-[0.58rem] uppercase tracking-[0.2em] text-bronze/85">
           {categoryLabel(article.category)}
         </span>
+        {headerAction ? (
+          <div className="pointer-events-auto absolute left-3 top-3 z-20">{headerAction}</div>
+        ) : null}
         {showTierBadge && article.minAccessTier ? (
-          <span className="absolute left-3 top-3">
+          <span className={cn("absolute top-3", headerAction ? "left-12" : "left-3")}>
             <LibraryTierBadge
               tier={article.minAccessTier}
               accessState={resolvedAccess}
@@ -214,31 +246,36 @@ export function LibraryCard({
         ) : null}
       </div>
 
-      <div className="flex flex-1 flex-col p-5">
+      <div className={cn("pointer-events-none relative z-[1] flex min-h-0 flex-1 flex-col p-5", inRail && "min-h-0")}>
         <div className="flex flex-wrap items-center gap-2 text-[0.68rem] text-foreground/50">
           {meta}
         </div>
-        <h3 className="mt-3 text-base font-light leading-snug tracking-tight text-foreground">
-          {titleLink}
+        <h3 className="mt-3 line-clamp-2 text-base font-light leading-snug tracking-tight text-foreground">
+          {cardTitle}
         </h3>
-        <p className="mt-2.5 line-clamp-2 text-[0.8rem] leading-relaxed text-foreground/50">
+        <p className="mt-2.5 line-clamp-2 flex-1 text-[0.8rem] leading-relaxed text-foreground/50">
           {article.dek}
         </p>
 
-        <div className="mt-5 flex items-end justify-between gap-3 border-t border-bronze/10 pt-4">
+        <div className="mt-auto flex items-end justify-between gap-3 border-t border-bronze/10 pt-4">
           <div className="min-w-0">
             {author ? (
-              <Link
-                to="/geolibrary/creators/$handle"
-                params={{ handle: author.handle }}
-                className="block truncate text-xs text-foreground/60 transition-colors motion-fast hover:text-bronze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
-              >
-                {author.name}
-              </Link>
+              restricted ? (
+                <span className="block truncate text-xs text-foreground/60">{author.name}</span>
+              ) : (
+                <Link
+                  to="/geolibrary/creators/$handle"
+                  params={{ handle: author.handle }}
+                  onClick={(event) => event.stopPropagation()}
+                  className="pointer-events-auto relative z-[2] block truncate text-xs text-foreground/60 transition-colors motion-fast hover:text-bronze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+                >
+                  {author.name}
+                </Link>
+              )
             ) : null}
             <div className="mt-2">{stats}</div>
           </div>
-          {bookmarkButton}
+          {bookmarkButton ? <div className="pointer-events-auto relative z-[2]">{bookmarkButton}</div> : null}
         </div>
       </div>
     </article>

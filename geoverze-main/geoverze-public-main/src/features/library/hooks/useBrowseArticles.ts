@@ -28,8 +28,8 @@ export function useBrowseArticles(query: LibraryQuery, savedSlugs: readonly stri
 
   if (query.sort === "bookmarked") {
     articles = sortArticles(articles, "bookmarked");
-  } else if (query.sort === "popular") {
-    articles = sortArticles(articles, "popular");
+  } else if (query.sort === "popular" || query.sort === "trending") {
+    articles = sortArticles(articles, query.sort);
   }
 
   return {

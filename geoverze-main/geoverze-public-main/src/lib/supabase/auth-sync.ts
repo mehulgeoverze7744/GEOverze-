@@ -40,8 +40,13 @@ import {
   syncLibraryQueryScope,
 } from "@/features/library/lib/library-query-scope";
 import { notificationSeeds } from "@/features/profile/data/notifications";
+import {
+  hydrateStoreWishlist,
+  resetStoreWishlistHydration,
+} from "@/features/store/data/sync-store-wishlist";
 import { activateLibraryPersistScope } from "@/stores/libraryStore";
 import { useNotificationsStore } from "@/stores/notificationsStore";
+import { activateStorePersistScope } from "@/stores/storeStore";
 
 import { highestRole, supabase, type AppRole } from "./client";
 
@@ -183,6 +188,8 @@ async function hydrateProfileAndRole(user: User) {
   void hydrateProgression(user);
   // Hydrate GEOlibrary bookmarks/progress/likes (non-blocking).
   void hydrateLibraryState(user);
+  // Hydrate GEOstore wishlist (non-blocking).
+  void hydrateStoreWishlist(user);
 }
 
 function syncNotifications(userId: string | null) {
@@ -191,9 +198,15 @@ function syncNotifications(userId: string | null) {
   if (userId) seed(notificationSeeds());
 }
 
+function storeAuthScope(userId: string | null | undefined) {
+  return userId ?? "anon";
+}
+
 function applySession(session: Session | null) {
   const prevScope = libraryAuthScope(useAuthStore.getState().user?.id);
   const nextScope = libraryAuthScope(session?.user?.id);
+  const prevStoreScope = storeAuthScope(useAuthStore.getState().user?.id);
+  const nextStoreScope = storeAuthScope(session?.user?.id);
 
   syncLibraryQueryScope(nextScope);
 
@@ -201,6 +214,11 @@ function applySession(session: Session | null) {
     activateLibraryPersistScope(nextScope);
     resetLibraryHydration();
     resetLibrarySubscriptionTierTracking();
+  }
+
+  if (nextStoreScope !== prevStoreScope) {
+    activateStorePersistScope(nextStoreScope);
+    resetStoreWishlistHydration();
   }
 
   const { setSession, setRole } = useAuthStore.getState();

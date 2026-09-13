@@ -7,6 +7,7 @@ const EMPTY_STATE: MergedLibraryState = {
   likes: [],
   progress: {},
   completed: [],
+  continueReadingDismissed: [],
 };
 
 export function libraryPersistKey(scope: string) {
@@ -31,6 +32,9 @@ function readPersistedState(scope: string): MergedLibraryState | null {
       likes: Array.isArray(state.likes) ? state.likes : [],
       progress: state.progress && typeof state.progress === "object" ? state.progress : {},
       completed: Array.isArray(state.completed) ? state.completed : [],
+      continueReadingDismissed: Array.isArray(state.continueReadingDismissed)
+        ? state.continueReadingDismissed
+        : [],
     };
   } catch {
     return null;

@@ -140,12 +140,12 @@ export function HomeHero() {
         <h2 className="mt-4 font-light leading-[1.05] tracking-tight text-foreground text-[clamp(1.7rem,3.4vw,2.7rem)]">
           Your expedition starts here
         </h2>
-        <div className="mt-7 flex flex-wrap gap-3">
+        <div className="mt-7 flex w-full max-w-sm flex-col gap-3 sm:max-w-none sm:flex-row sm:flex-wrap">
           <GeoButton
             asChild
             variant="solid"
             size="lg"
-            className="home-hero-cta min-w-40 px-10 font-bold uppercase tracking-[0.2em]"
+            className="home-hero-cta w-full px-8 font-bold uppercase tracking-[0.2em] sm:w-auto sm:min-w-36 sm:px-10"
           >
             <Link
               to="/play"
@@ -158,7 +158,7 @@ export function HomeHero() {
             variant="solid"
             size="lg"
             onClick={() => setDemoOpen(true)}
-            className="home-hero-cta min-w-40 px-10 font-bold uppercase tracking-[0.2em]"
+            className="home-hero-cta w-full px-8 font-bold uppercase tracking-[0.2em] sm:w-auto sm:min-w-36 sm:px-10"
           >
             <span className="font-cta text-[0.7rem]">Watch Demo</span>
           </GeoButton>

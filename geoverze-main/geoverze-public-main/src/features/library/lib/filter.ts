@@ -76,6 +76,8 @@ export function sortArticles(articles: readonly Article[], sort: SortId): Articl
       return list.sort(compareBookmarked);
     case "quickest":
       return list.sort((a, b) => a.minutes - b.minutes || a.slug.localeCompare(b.slug));
+    case "trending":
+      return list.sort(compareTrending);
     case "popular":
     default:
       return list.sort(comparePopular);

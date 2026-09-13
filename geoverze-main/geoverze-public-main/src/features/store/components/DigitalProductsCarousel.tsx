@@ -438,7 +438,7 @@ export function DigitalProductsCarousel() {
         aria-roledescription="carousel"
         aria-label="Digital product categories"
         tabIndex={0}
-        className="relative left-1/2 mt-8 w-screen max-w-[100vw] -translate-x-1/2 outline-none"
+        className="relative -mx-6 mt-8 w-[calc(100%+3rem)] max-w-none outline-none md:-mx-10 md:w-[calc(100%+5rem)]"
       >
         {/* Subtle atmospheric depth */}
         <div

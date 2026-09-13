@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { memo } from "react";
 import { Coins } from "lucide-react";
 
@@ -15,9 +16,12 @@ export const GeostoreMerchCard = memo(function GeostoreMerchCard({
   className?: string;
 }) {
   return (
-    <article
+    <Link
+      to="/geostore/product/$slug"
+      params={{ slug: product.id }}
+      aria-label={`${product.title}. ${product.tagline}`}
       className={cn(
-        "group overflow-hidden rounded-2xl border border-bronze/12 bg-charcoal/45 transition-all motion-base hover:border-bronze/35 hover:shadow-[0_12px_40px_-12px_oklch(0.55_0.08_55_/_0.35)]",
+        "group flex h-full flex-col overflow-hidden rounded-2xl border border-bronze/12 bg-charcoal/45 transition-all motion-base hover:border-bronze/35 hover:shadow-[0_12px_40px_-12px_oklch(0.55_0.08_55_/_0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
         className,
       )}
     >
@@ -55,6 +59,6 @@ export const GeostoreMerchCard = memo(function GeostoreMerchCard({
           </span>
         </div>
       </div>
-    </article>
+    </Link>
   );
 });

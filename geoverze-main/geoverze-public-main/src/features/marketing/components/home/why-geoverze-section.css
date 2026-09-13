@@ -23,8 +23,14 @@
   font-size: 0.6875rem;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.48em;
+  letter-spacing: 0.32em;
   color: var(--bronze);
+}
+
+@media (min-width: 640px) {
+  .why-geoverze-intro__eyebrow {
+    letter-spacing: 0.48em;
+  }
 }
 
 .why-geoverze-intro__heading {
@@ -70,6 +76,6 @@
 
 .why-geoverze-section .why-carousel-viewport {
   width: 100%;
-  max-width: 100vw;
+  max-width: 100%;
   margin-top: 0;
 }

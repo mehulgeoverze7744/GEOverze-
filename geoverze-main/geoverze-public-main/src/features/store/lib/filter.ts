@@ -90,8 +90,9 @@ export function sortProducts(products: readonly Product[], sort: StoreSortId): P
   }
 }
 
-export function bestSellers(products: readonly Product[], limit = 4): readonly Product[] {
-  return products.filter((p) => p.bestSeller && isProductListed(p)).slice(0, limit);
+export function bestSellers(products: readonly Product[], limit?: number): readonly Product[] {
+  const ranked = products.filter((p) => p.bestSeller && isProductListed(p));
+  return limit === undefined ? ranked : ranked.slice(0, limit);
 }
 
 /** Credit-claimable items ordered by cheapest first. */

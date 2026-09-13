@@ -783,6 +783,24 @@ export type Database = {
           },
         ]
       }
+      user_store_wishlist: {
+        Row: {
+          created_at: string
+          product_slug: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          product_slug: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          product_slug?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_library_progress: {
         Row: {
           completed_at: string | null

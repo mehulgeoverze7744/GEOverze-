@@ -26,15 +26,20 @@ type LibraryState = {
   likes: string[];
   progress: Record<string, number>;
   completed: string[];
+  continueReadingDismissed: string[];
   toggleBookmark: (slug: string) => void;
   toggleLike: (slug: string) => void;
   setProgress: (slug: string, percent: number) => void;
+  /** Mark article as started (0%) when opened — syncs to Supabase when signed in. */
+  startReading: (slug: string) => void;
   markComplete: (slug: string) => void;
+  dismissFromContinueReading: (slug: string) => void;
   replaceState: (state: {
     bookmarks: string[];
     likes: string[];
     progress: Record<string, number>;
     completed: string[];
+    continueReadingDismissed: string[];
   }) => void;
   clear: () => void;
 };
@@ -50,6 +55,7 @@ function snapshotFromState(state: LibraryState) {
     likes: state.likes,
     progress: state.progress,
     completed: state.completed,
+    continueReadingDismissed: state.continueReadingDismissed,
   };
 }
 
@@ -70,6 +76,7 @@ export const useLibraryStore = create<LibraryState>()(
       likes: [],
       progress: {},
       completed: [],
+      continueReadingDismissed: [],
       toggleBookmark: (slug) => {
         const wasSaved = get().bookmarks.includes(slug);
         set((s) => ({
@@ -97,6 +104,22 @@ export const useLibraryStore = create<LibraryState>()(
         const userId = useAuthStore.getState().user?.id;
         maybeSync(userId, () => syncProgressUpdate(userId!, slug, nextPercent, false));
       },
+      startReading: (slug) => {
+        const state = get();
+        if (state.completed.includes(slug)) return;
+
+        const hadProgress = state.progress[slug] !== undefined;
+        set((s) => ({
+          continueReadingDismissed: s.continueReadingDismissed.filter((entry) => entry !== slug),
+          progress: hadProgress ? s.progress : { ...s.progress, [slug]: 0 },
+        }));
+        persistActiveLibraryState(snapshotFromState(get()));
+
+        if (!hadProgress) {
+          const userId = useAuthStore.getState().user?.id;
+          maybeSync(userId, () => syncProgressUpdate(userId!, slug, 0, false));
+        }
+      },
       markComplete: (slug) => {
         set((s) =>
           s.completed.includes(slug)
@@ -109,6 +132,14 @@ export const useLibraryStore = create<LibraryState>()(
         persistActiveLibraryState(snapshotFromState(get()));
         const userId = useAuthStore.getState().user?.id;
         maybeSync(userId, () => syncProgressUpdate(userId!, slug, 100, true));
+      },
+      dismissFromContinueReading: (slug) => {
+        set((s) =>
+          s.continueReadingDismissed.includes(slug)
+            ? s
+            : { continueReadingDismissed: [...s.continueReadingDismissed, slug] },
+        );
+        persistActiveLibraryState(snapshotFromState(get()));
       },
       replaceState: (state) => {
         set(state);
@@ -127,6 +158,7 @@ export const useLibraryStore = create<LibraryState>()(
         likes: state.likes,
         progress: state.progress,
         completed: state.completed,
+        continueReadingDismissed: state.continueReadingDismissed,
       }),
     },
   ),
@@ -156,6 +188,9 @@ export function activateLibraryPersistScope(nextScope: string) {
           likes: Array.isArray(state.likes) ? state.likes : [],
           progress: state.progress && typeof state.progress === "object" ? state.progress : {},
           completed: Array.isArray(state.completed) ? state.completed : [],
+          continueReadingDismissed: Array.isArray(state.continueReadingDismissed)
+            ? state.continueReadingDismissed
+            : [],
         };
       }
     }

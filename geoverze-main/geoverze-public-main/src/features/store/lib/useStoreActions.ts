@@ -7,12 +7,13 @@ import { useStoreStore } from "@/stores/storeStore";
 
 import { BUNDLES, type Bundle } from "../data/offers";
 import { productBySlug, type Product } from "../data/products";
-import { defaultOptions, toCartLine } from "./cart";
+import { cartLineIdForProduct, defaultOptions, toCartLine } from "./cart";
 import { isProductionRewardSlug } from "./rewards";
 import { isMerchProductId } from "@/features/marketing/data/geostoreMerch";
 
 export function useStoreActions() {
   const add = useCartStore((s) => s.add);
+  const remove = useCartStore((s) => s.remove);
   const toggleWishlist = useStoreStore((s) => s.toggleWishlist);
   const wishlist = useStoreStore((s) => s.wishlist);
   const navigate = useNavigate();
@@ -50,6 +51,14 @@ export function useStoreActions() {
     });
   };
 
+  const removeProduct = (product: Product, options?: Record<string, string>) => {
+    const id = cartLineIdForProduct(product, options);
+    remove(id);
+    toast.message(`${product.name} removed`, {
+      description: "Removed from your cart.",
+    });
+  };
+
   const addBundle = (bundle: Bundle) => {
     const items = bundle.slugs.map(productBySlug).filter((p): p is Product => Boolean(p));
     for (const item of items) add(toCartLine(item, defaultOptions(item), 1));
@@ -64,5 +73,5 @@ export function useStoreActions() {
     });
   };
 
-  return { addProduct, addBundle, wishlistToggle, wishlist, bundles: BUNDLES };
+  return { addProduct, removeProduct, addBundle, wishlistToggle, wishlist, bundles: BUNDLES };
 }

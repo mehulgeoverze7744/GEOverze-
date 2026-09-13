@@ -39,3 +39,12 @@ export function defaultOptions(product: Product): Record<string, string> {
   }
   return out;
 }
+
+/** Cart line id for a catalogue product with optional variant selection. */
+export function cartLineIdForProduct(product: Product, options?: Record<string, string>): string {
+  return lineKey(product, options ?? defaultOptions(product));
+}
+
+export function isCartLinePresent(lines: CartLine[], lineId: string): boolean {
+  return lines.some((line) => line.id === lineId);
+}

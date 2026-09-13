@@ -20,6 +20,8 @@ export type MergedLibraryState = {
   likes: string[];
   progress: Record<string, number>;
   completed: string[];
+  /** Slugs hidden from Continue Reading — local preference, progress retained. */
+  continueReadingDismissed: string[];
 };
 
 function logHydrationDiagnostic(message: string, detail?: unknown) {
@@ -54,6 +56,7 @@ export function mergeLibraryState(
     likes: [...likeSet],
     progress,
     completed: [...completed],
+    continueReadingDismissed: [...new Set(local.continueReadingDismissed)],
   };
 }
 
@@ -142,6 +145,7 @@ export async function hydrateLibraryState(user: User) {
     likes: [...local.likes],
     progress: { ...local.progress },
     completed: [...local.completed],
+    continueReadingDismissed: [...local.continueReadingDismissed],
   };
 
   try {
