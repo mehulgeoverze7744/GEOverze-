@@ -15,10 +15,7 @@ export function SubscriptionCard({ className }: { className?: string }) {
       )}
       aria-labelledby="subscription-heading"
     >
-      <h2
-        id="subscription-heading"
-        className="dashboard-section-label flex items-center gap-2"
-      >
+      <h2 id="subscription-heading" className="dashboard-section-label flex items-center gap-2">
         <CreditCard className="h-3.5 w-3.5 text-bronze/90" strokeWidth={1.5} aria-hidden="true" />
         Your current expedition pass
       </h2>
@@ -36,14 +33,18 @@ export function SubscriptionCard({ className }: { className?: string }) {
       <ul className="mt-5 space-y-2.5">
         {SUBSCRIPTION.perks.map((perk) => (
           <li key={perk} className="flex items-center gap-2.5 text-xs text-foreground/60">
-            <Check className="h-3.5 w-3.5 shrink-0 text-bronze/90" strokeWidth={2} aria-hidden="true" />
+            <Check
+              className="h-3.5 w-3.5 shrink-0 text-bronze/90"
+              strokeWidth={2}
+              aria-hidden="true"
+            />
             {perk}
           </li>
         ))}
       </ul>
 
       <GeoButton asChild variant="secondary" className="mt-6 w-full">
-        <Link to="/pricing">Explore plans</Link>
+        <Link to="/pricing">Change plan</Link>
       </GeoButton>
     </section>
   );

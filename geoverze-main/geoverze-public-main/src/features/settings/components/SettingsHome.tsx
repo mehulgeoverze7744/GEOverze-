@@ -15,10 +15,7 @@ import {
 
 import { AnimatedSection } from "@/components/shared/AnimatedSection";
 import { SUBSCRIPTION } from "@/features/dashboard/data/dashboard";
-import {
-  LOCALE_LABELS,
-  type SettingsSection,
-} from "@/features/settings/lib/settingsSections";
+import { LOCALE_LABELS, type SettingsSection } from "@/features/settings/lib/settingsSections";
 import { usePreferencesStore } from "@/stores/preferencesStore";
 
 import { SettingsGroup, SettingsRow } from "./SettingsRow";
@@ -38,7 +35,7 @@ export function SettingsHome() {
         <SettingsRow
           icon={User}
           title="Profile"
-          subtitle="Your name, username, avatar and personal information"
+          subtitle="Your name, avatar and personal information"
           onClick={() => open("profile")}
         />
         <SettingsRow

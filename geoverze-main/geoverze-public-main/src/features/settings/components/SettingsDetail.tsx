@@ -1,5 +1,13 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ChevronLeft, Database, Lock, LockKeyhole, Mail, Shield, TriangleAlert, User } from "lucide-react";
+import {
+  ChevronLeft,
+  Database,
+  Lock,
+  LockKeyhole,
+  Mail,
+  Shield,
+  TriangleAlert,
+} from "lucide-react";
 
 import { AnimatedSection } from "@/components/shared/AnimatedSection";
 import { GeoButton } from "@/components/shared/GeoButton";
@@ -78,7 +86,6 @@ function AccountPanel({ profile }: { profile: ReturnType<typeof useProfile> }) {
     <>
       <SettingsGroup label="Details">
         <SettingsRow icon={Mail} title="Email" subtitle={profile.email} static />
-        <SettingsRow icon={User} title="Username" subtitle={`@${profile.username}`} static />
       </SettingsGroup>
       <SettingsGroup label="Actions">
         <SettingsRow
@@ -97,7 +104,7 @@ function AccountPanel({ profile }: { profile: ReturnType<typeof useProfile> }) {
         />
         <SettingsRow
           title="Edit explorer identity"
-          subtitle="Display name, username, bio, country, avatar and interests."
+          subtitle="Display name, bio, country, avatar and interests."
           control={
             <GeoButton asChild variant="secondary" size="sm">
               <Link to="/profile/edit">Open editor</Link>
