@@ -2,6 +2,8 @@
 
 .pricing-benefits-section {
   padding-bottom: var(--space-section-sm);
+  min-width: 0;
+  overflow-x: clip;
 }
 
 .pricing-benefits-header {
@@ -28,6 +30,7 @@
 
 .pricing-benefits-strip-wrap {
   position: relative;
+  max-width: 100%;
   margin-inline: calc(var(--section-padding-inline, 0px) * -0.15);
 }
 

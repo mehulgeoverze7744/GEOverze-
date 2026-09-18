@@ -112,7 +112,7 @@ export function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-2.5 lg:flex">
-          <GlobalSearch />
+          {pathname.startsWith("/geostore") ? null : <GlobalSearch />}
           <NotificationBell />
           <GeoDropdown
             label="Account"
@@ -163,7 +163,7 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-2 lg:hidden">
-          <GlobalSearch />
+          {pathname.startsWith("/geostore") ? null : <GlobalSearch />}
           <button
             type="button"
             onClick={() => setOpen(true)}

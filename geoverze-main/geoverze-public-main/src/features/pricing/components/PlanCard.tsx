@@ -24,8 +24,8 @@ export const PlanCard = memo(function PlanCard({
       strong={plan.featured}
       interactive
       className={cn(
-        "relative flex h-full flex-col p-8 md:p-9",
-        plan.featured && "border-bronze/45 bronze-glow",
+        "pricing-plan-card relative flex h-full min-w-0 flex-col p-7 sm:p-8 xl:p-9",
+        plan.featured && "pricing-plan-card--featured border-bronze/45 bronze-glow",
       )}
     >
       {plan.badge ? (

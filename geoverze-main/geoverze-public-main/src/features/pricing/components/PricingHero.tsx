@@ -16,8 +16,11 @@ export function PricingHero({
 }) {
   return (
     <header className="pricing-hero pt-[calc(var(--nav-height)+1.25rem)] pb-6 md:pb-8">
-      <SectionContainer size="wide">
-        <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Pricing" }]} className="mb-5 md:mb-6" />
+      <SectionContainer size="wide" className="min-w-0">
+        <Breadcrumb
+          items={[{ label: "Home", to: "/" }, { label: "Pricing" }]}
+          className="mb-5 md:mb-6"
+        />
         <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
           <AnimatedSection>
             <p className="eyebrow">Membership</p>

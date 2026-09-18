@@ -8,12 +8,6 @@ export const pricingFaq: FaqItem[] = [
       "Membership is a recurring plan billed monthly or annually. Annual plans cost the equivalent of ten months. Nothing is billable today — GEOverze is in development and every plan below describes intent, not a live checkout.",
   },
   {
-    id: "refund",
-    question: "What is the refund policy?",
-    answer:
-      "When billing goes live, a first payment can be refunded in full within fourteen days, and annual plans are refunded pro rata for unused months. This is a placeholder policy and will be restated in the terms before any charge is possible.",
-  },
-  {
     id: "upgrade",
     question: "Can I upgrade mid-cycle?",
     answer:

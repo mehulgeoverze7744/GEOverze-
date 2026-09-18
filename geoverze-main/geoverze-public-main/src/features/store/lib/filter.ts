@@ -107,3 +107,40 @@ export function creditPicks(
     .sort((a, b) => (a.credits ?? 0) - (b.credits ?? 0))
     .slice(0, limit);
 }
+
+export type ProductSearchHit = Product & { score: number };
+
+/** Ranked GEOstore product search over name, slug, tags, category and copy. */
+export function searchStoreProducts(
+  products: readonly Product[],
+  query: string,
+  limit = 12,
+): ProductSearchHit[] {
+  const q = query.trim().toLowerCase();
+  if (q.length === 0) return [];
+
+  const hits: ProductSearchHit[] = [];
+  for (const product of products) {
+    if (!isProductListed(product)) continue;
+
+    const name = product.name.toLowerCase();
+    const slug = product.slug.toLowerCase();
+    const id = product.id.toLowerCase();
+    const category = product.category.toLowerCase();
+    const tagline = product.tagline.toLowerCase();
+    const tags = product.tags.map((tag) => tag.toLowerCase());
+
+    let score = 0;
+    if (name === q || slug === q || id === q) score = 120;
+    else if (name.startsWith(q) || slug.startsWith(q)) score = 100;
+    else if (name.includes(q)) score = 80;
+    else if (slug.includes(q) || id.includes(q)) score = 70;
+    else if (tags.some((tag) => tag === q || tag.includes(q) || q.includes(tag))) score = 55;
+    else if (category.includes(q) || q.includes(category)) score = 45;
+    else if (tagline.includes(q) || product.description.toLowerCase().includes(q)) score = 30;
+
+    if (score > 0) hits.push({ ...product, score });
+  }
+
+  return hits.sort((a, b) => b.score - a.score || a.name.localeCompare(b.name)).slice(0, limit);
+}

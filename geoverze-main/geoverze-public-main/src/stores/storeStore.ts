@@ -2,7 +2,8 @@
  * GEOstore shopper state.
  *
  * Wishlist syncs to Supabase when authenticated; scoped localStorage caches per user.
- * Recently viewed remains local per scope. Credit balance and ownership are server-side.
+ * Recently viewed and recent searches remain local per scope.
+ * Credit balance and ownership are server-side.
  */
 import { create } from "zustand";
 import { createJSONStorage, persist, type StateStorage } from "zustand/middleware";
@@ -23,6 +24,7 @@ import { useAuthStore } from "@/stores/authStore";
 type PersistedStoreState = {
   wishlist: string[];
   recentlyViewed: string[];
+  recentSearches: string[];
 };
 
 type StoreState = PersistedStoreState & {
@@ -30,13 +32,18 @@ type StoreState = PersistedStoreState & {
   removeWishlist: (slug: string) => void;
   replaceWishlist: (slugs: string[]) => void;
   view: (slug: string) => void;
+  rememberSearch: (query: string) => void;
+  clearRecentSearches: () => void;
   reset: () => void;
 };
+
+const MAX_RECENT_SEARCHES = 8;
 
 function snapshotFromState(state: StoreState): PersistedStoreSnapshot {
   return {
     wishlist: state.wishlist,
     recentlyViewed: state.recentlyViewed,
+    recentSearches: state.recentSearches,
   };
 }
 
@@ -88,6 +95,24 @@ export const useStoreStore = create<StoreState>()(
             8,
           ),
         })),
+      rememberSearch: (query) => {
+        const normalized = query.trim().replace(/\s+/g, " ");
+        if (!normalized) return;
+        set((state) => {
+          const next = [
+            normalized,
+            ...state.recentSearches.filter(
+              (entry) => entry.toLowerCase() !== normalized.toLowerCase(),
+            ),
+          ].slice(0, MAX_RECENT_SEARCHES);
+          return { recentSearches: next };
+        });
+        persistActiveStoreSnapshot(snapshotFromState(get()));
+      },
+      clearRecentSearches: () => {
+        set({ recentSearches: [] });
+        persistActiveStoreSnapshot(snapshotFromState(get()));
+      },
       reset: () => {
         set(emptyStoreSnapshot);
         persistActiveStoreSnapshot(emptyStoreSnapshot);
@@ -99,6 +124,7 @@ export const useStoreStore = create<StoreState>()(
       partialize: (state) => ({
         wishlist: state.wishlist,
         recentlyViewed: state.recentlyViewed,
+        recentSearches: state.recentSearches,
       }),
     },
   ),
@@ -110,7 +136,12 @@ export function activateStorePersistScope(nextScope: string) {
   switchStorePersistScope(nextScope, current);
 
   let loaded = loadStoreSnapshotForActiveScope();
-  if (nextScope === "anon" && loaded.wishlist.length === 0 && loaded.recentlyViewed.length === 0) {
+  if (
+    nextScope === "anon" &&
+    loaded.wishlist.length === 0 &&
+    loaded.recentlyViewed.length === 0 &&
+    loaded.recentSearches.length === 0
+  ) {
     const legacy = readLegacyStoreSnapshot();
     if (legacy) loaded = legacy;
   }
@@ -118,6 +149,7 @@ export function activateStorePersistScope(nextScope: string) {
   useStoreStore.setState({
     wishlist: loaded.wishlist,
     recentlyViewed: loaded.recentlyViewed,
+    recentSearches: loaded.recentSearches,
   });
   persistActiveStoreSnapshot(loaded);
 }
@@ -125,19 +157,34 @@ export function activateStorePersistScope(nextScope: string) {
 export const selectWishlist = (s: StoreState) => s.wishlist;
 export const selectWishlistCount = (s: StoreState) => s.wishlist.length;
 export const selectRecentlyViewed = (s: StoreState) => s.recentlyViewed;
+export const selectRecentSearches = (s: StoreState) => s.recentSearches;
 
 /** Lift legacy single-key wishlist into scoped anon storage once. */
 function bootstrapLegacyStoreSnapshot() {
   const current = loadStoreSnapshotForActiveScope();
-  if (current.wishlist.length > 0 || current.recentlyViewed.length > 0) return;
+  if (
+    current.wishlist.length > 0 ||
+    current.recentlyViewed.length > 0 ||
+    current.recentSearches.length > 0
+  ) {
+    return;
+  }
 
   const legacy = readLegacyStoreSnapshot();
-  if (!legacy || (legacy.wishlist.length === 0 && legacy.recentlyViewed.length === 0)) return;
+  if (
+    !legacy ||
+    (legacy.wishlist.length === 0 &&
+      legacy.recentlyViewed.length === 0 &&
+      legacy.recentSearches.length === 0)
+  ) {
+    return;
+  }
 
   persistActiveStoreSnapshot(legacy);
   useStoreStore.setState({
     wishlist: legacy.wishlist,
     recentlyViewed: legacy.recentlyViewed,
+    recentSearches: legacy.recentSearches,
   });
 }
 

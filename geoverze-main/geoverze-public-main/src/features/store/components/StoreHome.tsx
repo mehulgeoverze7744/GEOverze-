@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Coins, Compass, Gift, Heart, Library, Package, Truck } from "lucide-react";
+import { Coins, Compass, Gift, Library, Truck } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, PageHeader, SectionContainer } from "@/components/shared";
@@ -178,21 +178,21 @@ export function StoreHome() {
           <div className="mt-6 space-y-10">
             {STORE_GROUPS.filter((group) => group.id !== "more" && group.id !== "digital").map(
               (group) => (
-              <div key={group.id}>
-                <div className="flex flex-wrap items-center gap-3">
-                  <group.icon className="h-4 w-4 text-bronze" strokeWidth={1.6} />
-                  <p className="text-sm font-light text-foreground/80">{group.label}</p>
-                  <p className="text-xs text-foreground/50">{group.blurb}</p>
+                <div key={group.id}>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <group.icon className="h-4 w-4 text-bronze" strokeWidth={1.6} />
+                    <p className="text-sm font-light text-foreground/80">{group.label}</p>
+                    <p className="text-xs text-foreground/50">{group.blurb}</p>
+                  </div>
+                  <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {STORE_CATEGORIES.filter((category) => category.group === group.id).map(
+                      (category) => (
+                        <CategoryTile key={category.id} category={category} compact />
+                      ),
+                    )}
+                  </div>
                 </div>
-                <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {STORE_CATEGORIES.filter((category) => category.group === group.id).map(
-                    (category) => (
-                      <CategoryTile key={category.id} category={category} compact />
-                    ),
-                  )}
-                </div>
-              </div>
-            ),
+              ),
             )}
           </div>
         </AnimatedSection>
@@ -220,35 +220,6 @@ export function StoreHome() {
         {recent.length > 0 ? (
           <ProductRail title="Recently viewed">{recent.map(card)}</ProductRail>
         ) : null}
-
-        <AnimatedSection className="mt-[var(--space-section-sm)] grid gap-5 sm:grid-cols-3">
-          {[
-            {
-              icon: Package,
-              title: "Made to last",
-              copy: "Heavyweight fabrics, archival inks, brass hardware.",
-            },
-            {
-              icon: Coins,
-              title: "Credits count",
-              copy: "Earn credits to unlock merchandise, digital rewards, and premium perks.",
-            },
-            {
-              icon: Heart,
-              title: "Wishlist anything",
-              copy: "Save now, decide later — your list follows your account.",
-            },
-          ].map((item) => (
-            <div
-              key={item.title}
-              className="rounded-2xl border border-bronze/12 bg-charcoal/45 p-6"
-            >
-              <item.icon className="h-4 w-4 text-bronze" strokeWidth={1.6} />
-              <p className="mt-4 text-sm font-light text-foreground">{item.title}</p>
-              <p className="mt-2 text-xs leading-relaxed text-foreground/50">{item.copy}</p>
-            </div>
-          ))}
-        </AnimatedSection>
       </SectionContainer>
 
       <QuickViewModal

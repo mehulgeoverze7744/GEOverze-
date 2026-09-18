@@ -1,5 +1,5 @@
 import { Loader2, Search, X } from "lucide-react";
-import type { ComponentProps } from "react";
+import { forwardRef, type ComponentProps } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -10,24 +10,21 @@ import { cn } from "@/lib/utils";
  * supports an async `loading` indicator and a clear affordance so a backend
  * search reuses the exact same component.
  */
-export function SearchBar({
-  id = "search",
-  label,
-  className,
-  wrapperClassName,
-  loading = false,
-  onClear,
-  value,
-  ...props
-}: ComponentProps<"input"> & {
-  id?: string;
-  label?: string;
-  wrapperClassName?: string;
-  /** Shows a spinner while a query is in flight. */
-  loading?: boolean;
-  /** Renders a clear button when a query is present. */
-  onClear?: () => void;
-}) {
+export const SearchBar = forwardRef<
+  HTMLInputElement,
+  ComponentProps<"input"> & {
+    id?: string;
+    label?: string;
+    wrapperClassName?: string;
+    /** Shows a spinner while a query is in flight. */
+    loading?: boolean;
+    /** Renders a clear button when a query is present. */
+    onClear?: () => void;
+  }
+>(function SearchBar(
+  { id = "search", label, className, wrapperClassName, loading = false, onClear, value, ...props },
+  ref,
+) {
   const hasValue = typeof value === "string" ? value.length > 0 : false;
   const showClear = Boolean(onClear) && hasValue && !loading;
 
@@ -44,6 +41,7 @@ export function SearchBar({
         aria-hidden
       />
       <input
+        ref={ref}
         id={id}
         type="search"
         value={value}
@@ -72,4 +70,4 @@ export function SearchBar({
       ) : null}
     </div>
   );
-}
+});

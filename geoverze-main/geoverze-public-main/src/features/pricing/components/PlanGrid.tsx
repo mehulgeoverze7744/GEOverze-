@@ -18,8 +18,11 @@ export function PlanGrid({
   error?: string | null;
 }) {
   return (
-    <section aria-labelledby="tiers-heading" className="-mt-2 pb-[var(--space-section-sm)] md:-mt-6 lg:-mt-8">
-      <SectionContainer size="wide">
+    <section
+      aria-labelledby="tiers-heading"
+      className="pricing-tiers-section -mt-2 pb-[var(--space-section-sm)] md:-mt-6 lg:-mt-8"
+    >
+      <SectionContainer size="wide" className="min-w-0">
         <h2 id="tiers-heading" className="sr-only">
           Membership tiers
         </h2>
@@ -31,7 +34,7 @@ export function PlanGrid({
         ) : null}
 
         {!error && loading ? (
-          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="pricing-tiers-grid">
             {Array.from({ length: 4 }, (_, i) => (
               <GlassCard key={i} className="h-[28rem] animate-pulse p-8" aria-hidden />
             ))}
@@ -39,9 +42,9 @@ export function PlanGrid({
         ) : null}
 
         {!error && !loading && plans.length > 0 ? (
-          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="pricing-tiers-grid">
             {plans.map((plan, i) => (
-              <AnimatedSection key={plan.id} delay={i * 90} className="h-full">
+              <AnimatedSection key={plan.id} delay={i * 90} className="h-full min-w-0">
                 <PlanCard plan={plan} cycle={cycle} />
               </AnimatedSection>
             ))}

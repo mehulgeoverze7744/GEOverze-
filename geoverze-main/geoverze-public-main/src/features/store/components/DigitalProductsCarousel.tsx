@@ -38,11 +38,7 @@ function scaledHalf(width: number, scale: number): number {
 }
 
 /** Center distance between two adjacent cards for a consistent overlap fraction. */
-function pairStep(
-  left: SlotConfig,
-  right: SlotConfig,
-  overlapFraction: number,
-): number {
+function pairStep(left: SlotConfig, right: SlotConfig, overlapFraction: number): number {
   const leftHalf = scaledHalf(left.width, left.scale);
   const rightHalf = scaledHalf(right.width, right.scale);
   const avgScaled = (left.width * left.scale + right.width * right.scale) / 2;
@@ -62,18 +58,12 @@ function buildOverlapLayout(
 
   for (const offset of offsets.filter((value) => value > 0).sort((a, b) => a - b)) {
     const prev = offset - 1;
-    xs.set(
-      offset,
-      xs.get(prev)! + pairStep(configs[prev]!, configs[offset]!, overlapFraction),
-    );
+    xs.set(offset, xs.get(prev)! + pairStep(configs[prev]!, configs[offset]!, overlapFraction));
   }
 
   for (const offset of offsets.filter((value) => value < 0).sort((a, b) => b - a)) {
     const next = offset + 1;
-    xs.set(
-      offset,
-      xs.get(next)! - pairStep(configs[offset]!, configs[next]!, overlapFraction),
-    );
+    xs.set(offset, xs.get(next)! - pairStep(configs[offset]!, configs[next]!, overlapFraction));
   }
 
   const maxExtent = Math.max(
@@ -189,6 +179,20 @@ function useViewportTier() {
   return tier;
 }
 
+/** Fixed card height per tier — stage matches center card at scale 1 (origin-top). */
+function digitalCarouselCardHeight(
+  tier: "mobile" | "tablet" | "desktop",
+  stageWidth: number,
+): number {
+  if (tier === "mobile") {
+    return Math.min(372, Math.max(320, Math.round(stageWidth * 0.9)));
+  }
+  if (tier === "tablet") {
+    return 400;
+  }
+  return Math.min(468, Math.max(420, Math.round(stageWidth * 0.36)));
+}
+
 function useStageWidth(ref: RefObject<HTMLDivElement | null>) {
   const [width, setWidth] = useState(1280);
 
@@ -211,12 +215,14 @@ function CarouselCard({
   category,
   active,
   layout,
+  cardHeightPx,
   transitionMs,
   onFocus,
 }: {
   category: StoreCategory;
   active: boolean;
   layout: SlotLayout;
+  cardHeightPx: number;
   transitionMs: number;
   onFocus: () => void;
 }) {
@@ -226,18 +232,23 @@ function CarouselCard({
 
   const cardBody = (
     <>
-      <CoverArt
-        art={`cat-${category.id}`}
-        icon={Icon}
-        ratio="banner"
-        fit="cover"
-        overlay="subtle"
-        {...(banner ? { imageSrc: banner.src, imageAlt: banner.alt } : {})}
-      />
-      <div className="flex items-start justify-between gap-3 p-4 sm:p-5">
-        <div className="min-w-0">
+      <div className="relative min-h-0 w-full flex-[1.72] overflow-hidden">
+        <CoverArt
+          art={`cat-${category.id}`}
+          icon={Icon}
+          ratio="video"
+          fit="cover"
+          overlay="subtle"
+          className="absolute inset-0 h-full w-full !aspect-auto"
+          {...(banner ? { imageSrc: banner.src, imageAlt: banner.alt } : {})}
+        />
+      </div>
+      <div className="flex shrink-0 items-start justify-between gap-3 p-4 sm:p-5">
+        <div className="min-w-0 flex-1">
           <h3 className="text-sm font-light tracking-tight text-foreground">{category.label}</h3>
-          <p className="mt-1.5 line-clamp-2 text-xs text-foreground/50">{category.blurb}</p>
+          <p className="mt-1.5 line-clamp-2 min-h-[2.5rem] text-xs leading-relaxed text-foreground/50">
+            {category.blurb}
+          </p>
           <p className="mt-3 text-[0.6rem] uppercase tracking-[0.2em] text-foreground/50">
             {count} {count === 1 ? "item" : "items"}
           </p>
@@ -253,7 +264,7 @@ function CarouselCard({
   );
 
   const shellClass = cn(
-    "group/card absolute left-1/2 top-0 origin-top overflow-hidden rounded-2xl border bg-charcoal/50 shadow-[0_24px_48px_rgba(0,0,0,0.35)] backdrop-blur-sm will-change-transform",
+    "group/card absolute left-1/2 top-0 flex origin-top flex-col overflow-hidden rounded-2xl border bg-charcoal/50 shadow-[0_24px_48px_rgba(0,0,0,0.35)] backdrop-blur-sm will-change-transform",
     active
       ? "border-bronze/35 bronze-glow hover:border-bronze/45"
       : "border-bronze/12 hover:border-bronze/28 hover:bronze-glow",
@@ -262,6 +273,7 @@ function CarouselCard({
 
   const style = {
     width: layout.width,
+    height: cardHeightPx,
     zIndex: layout.z,
     opacity: layout.opacity,
     transform: `translateX(calc(-50% + ${layout.x}px)) translateY(${layout.y}px) scale(${layout.scale})`,
@@ -407,9 +419,8 @@ export function DigitalProductsCarousel() {
     };
   }, [goNext, goPrev]);
 
-  // Sized to the visual card footprint — avoids empty space above the indicators.
-  const stageHeight =
-    tier === "mobile" ? "min(280px, 56vw)" : tier === "tablet" ? "300px" : "330px";
+  const cardHeightPx = digitalCarouselCardHeight(tier, stageWidth);
+  const stageHeight = `${cardHeightPx}px`;
   const slotLayouts = computeOverlapSlots(tier, stageWidth);
 
   return (
@@ -470,6 +481,7 @@ export function DigitalProductsCarousel() {
                 category={category}
                 active={offset === 0}
                 layout={layout}
+                cardHeightPx={cardHeightPx}
                 transitionMs={transitionMs}
                 onFocus={() => goTo(index)}
               />
@@ -477,7 +489,7 @@ export function DigitalProductsCarousel() {
           })}
         </div>
 
-        <div className="mt-1 flex items-center justify-center pt-1">
+        <div className="flex items-center justify-center pt-3 sm:pt-4">
           <div
             className="flex items-center gap-2"
             role="tablist"

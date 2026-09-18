@@ -1,6 +1,7 @@
 export type PersistedStoreSnapshot = {
   wishlist: string[];
   recentlyViewed: string[];
+  recentSearches: string[];
 };
 
 const STORAGE_PREFIX = "geoverze.store.v2";
@@ -8,6 +9,7 @@ const STORAGE_PREFIX = "geoverze.store.v2";
 const EMPTY_SNAPSHOT: PersistedStoreSnapshot = {
   wishlist: [],
   recentlyViewed: [],
+  recentSearches: [],
 };
 
 export function storePersistKey(scope: string) {
@@ -20,6 +22,15 @@ export function getActiveStorePersistScope() {
   return activeScope;
 }
 
+function normalizeRecentSearches(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((entry): entry is string => typeof entry === "string")
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+    .slice(0, 10);
+}
+
 function readPersistedSnapshot(scope: string): PersistedStoreSnapshot | null {
   try {
     const raw = localStorage.getItem(storePersistKey(scope));
@@ -30,6 +41,7 @@ function readPersistedSnapshot(scope: string): PersistedStoreSnapshot | null {
     return {
       wishlist: Array.isArray(state.wishlist) ? state.wishlist : [],
       recentlyViewed: Array.isArray(state.recentlyViewed) ? state.recentlyViewed : [],
+      recentSearches: normalizeRecentSearches(state.recentSearches),
     };
   } catch {
     return null;
@@ -41,7 +53,7 @@ function writePersistedSnapshot(scope: string, snapshot: PersistedStoreSnapshot)
     storePersistKey(scope),
     JSON.stringify({
       state: snapshot,
-      version: 2,
+      version: 3,
     }),
   );
 }
@@ -80,6 +92,7 @@ export function readLegacyStoreSnapshot(): PersistedStoreSnapshot | null {
     return {
       wishlist: Array.isArray(state.wishlist) ? state.wishlist : [],
       recentlyViewed: Array.isArray(state.recentlyViewed) ? state.recentlyViewed : [],
+      recentSearches: normalizeRecentSearches(state.recentSearches),
     };
   } catch {
     return null;

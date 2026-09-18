@@ -8,11 +8,11 @@ import { BenefitGrid } from "./BenefitGrid";
 import { ComparisonTable } from "./ComparisonTable";
 import { CreatorMembership } from "./CreatorMembership";
 import { PlanGrid } from "./PlanGrid";
-import { PricingCta } from "./PricingCta";
 import { PricingFaq } from "./PricingFaq";
 import { PricingHero } from "./PricingHero";
 import { SuccessStories } from "./SuccessStories";
 import { WhyUpgrade } from "./WhyUpgrade";
+import "../styles/pricing-layout.css";
 
 /** Pricing home — the full membership story. Nothing billable yet. */
 export function PricingPage() {
@@ -20,7 +20,7 @@ export function PricingPage() {
   const { plans, comparisonGroups, loading, error } = usePricingCatalog();
 
   return (
-    <PageShell>
+    <PageShell className="pricing-page">
       <PricingHero cycle={cycle} onCycleChange={setCycle} />
       <PlanGrid cycle={cycle} plans={plans} loading={loading} error={error} />
       <BenefitGrid />
@@ -34,7 +34,6 @@ export function PricingPage() {
       <CreatorMembership />
       <SuccessStories />
       <PricingFaq />
-      <PricingCta />
     </PageShell>
   );
 }
