@@ -28,7 +28,7 @@ export function StoreSummaryCard({
       className={cn(
         "group relative flex flex-col overflow-hidden rounded-xl border transition-all motion-base hover:-translate-y-0.5 hover:shadow-[var(--glow-bronze)] motion-reduce:hover:translate-y-0",
         compact
-          ? "min-h-[5.5rem] p-4"
+          ? "min-h-[3.75rem] rounded-lg px-3 py-2.5"
           : "min-h-[9.5rem] h-full rounded-2xl p-6",
         featured
           ? "border-bronze/35 bg-charcoal/60 hover:border-bronze/50"
@@ -53,21 +53,22 @@ export function StoreSummaryCard({
         <p
           className={cn(
             "font-semibold uppercase tracking-[0.22em] text-foreground/55",
-            compact ? "text-[0.55rem]" : "text-[0.62rem]",
+            compact ? "text-[0.5rem] tracking-[0.18em]" : "text-[0.62rem]",
           )}
         >
           {label}
         </p>
-        {!compact && Icon ? (
+        {Icon ? (
           <span
             className={cn(
-              "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition-colors motion-base",
+              "inline-flex shrink-0 items-center justify-center border transition-colors motion-base",
+              compact ? "h-6 w-6 rounded-md" : "h-9 w-9 rounded-xl",
               featured
                 ? "border-bronze/40 bg-bronze/12 text-bronze-glow group-hover:border-bronze/55 group-hover:bg-bronze/16"
                 : "border-bronze/22 bg-bronze/8 text-bronze/90 group-hover:border-bronze/40 group-hover:text-bronze-glow",
             )}
           >
-            <Icon className="h-4 w-4" strokeWidth={1.7} aria-hidden />
+            <Icon className={compact ? "h-3 w-3" : "h-4 w-4"} strokeWidth={1.7} aria-hidden />
           </span>
         ) : null}
       </div>
@@ -75,14 +76,16 @@ export function StoreSummaryCard({
       <p
         className={cn(
           "relative font-light tracking-tight",
-          compact ? "mt-2 text-xl" : "mt-4 text-3xl md:text-[2rem]",
+          compact ? "mt-1 text-base leading-none sm:text-lg" : "mt-4 text-3xl md:text-[2rem]",
           featured ? "text-bronze-glow" : "text-foreground",
         )}
       >
         {value}
       </p>
 
-      {footer ? <div className="relative mt-auto pt-4">{footer}</div> : null}
+      {footer ? (
+        <div className={cn("relative mt-auto", compact ? "pt-1.5" : "pt-4")}>{footer}</div>
+      ) : null}
     </div>
   );
 }

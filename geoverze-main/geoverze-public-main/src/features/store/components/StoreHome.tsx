@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Coins, Library, Truck } from "lucide-react";
-
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, SectionContainer } from "@/components/shared";
 import { useStoreStore } from "@/stores/storeStore";
@@ -10,7 +8,6 @@ import { CategoryTile } from "./CategoryTile";
 import { DigitalProductsCarousel } from "./DigitalProductsCarousel";
 import { ProductCard } from "./ProductCard";
 import { ProductRail } from "./ProductRail";
-import { StoreSummaryCard } from "./StoreSummaryCard";
 import { StoreHero } from "./StoreHero";
 import { QuickViewModal } from "./QuickViewModal";
 import { PRODUCTS, productBySlug, type Product } from "../data/products";
@@ -97,14 +94,14 @@ export function StoreHome() {
           signedIn ? (
             <Link
               to="/play/credit-history"
-              className="inline-block text-[0.6rem] uppercase tracking-[0.16em] text-bronze transition-colors motion-fast hover:text-bronze-glow"
+              className="inline-block text-[0.55rem] uppercase tracking-[0.16em] text-bronze transition-colors motion-fast hover:text-bronze-glow"
             >
               Credit history
             </Link>
           ) : authReady ? (
             <Link
               to="/auth/login"
-              className="inline-block text-[0.6rem] uppercase tracking-[0.16em] text-bronze transition-colors motion-fast hover:text-bronze-glow"
+              className="inline-block text-[0.55rem] uppercase tracking-[0.16em] text-bronze transition-colors motion-fast hover:text-bronze-glow"
             >
               Sign in
             </Link>

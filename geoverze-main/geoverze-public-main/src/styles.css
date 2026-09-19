@@ -772,64 +772,127 @@
 
 /* ---------------------------------------------------------------------------
  * GEOstore Hero — cinematic merchandise backdrop.
- * Only covers the hero section; page starfield continues below.
+ * Full source frame at native aspect (no cover crop / zoom / stretch).
+ * The last 100–180px of the laid-out frame dissolves into the starfield.
  * ------------------------------------------------------------------------- */
 
 @layer components {
   .geostore-hero {
+    --geostore-hero-aspect: 16 / 9;
+    --geostore-hero-h-over-w: 0.5625;
+    --geostore-hero-fade: clamp(6.25rem, 12vh, 11.25rem);
+    --geostore-hero-afterglow: 4.5rem;
     position: relative;
-    overflow: hidden;
+    z-index: 1;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+    overflow-y: hidden;
     isolation: isolate;
-    min-height: clamp(480px, 56vh, 640px);
     display: flex;
     flex-direction: column;
+    container-type: inline-size;
+    min-height: max(
+      36rem,
+      calc(
+        100cqi * var(--geostore-hero-h-over-w) + var(--geostore-hero-afterglow)
+      )
+    );
+    background: transparent;
   }
 
-  /* Background image fills the hero */
+  /* Native-aspect video band — full frame, bottom pixels fade (not cropped) */
   .geostore-hero__bg {
     position: absolute;
-    inset: 0;
-    z-index: 0;
-  }
-
-  .geostore-hero__bg-img {
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 30%;
-    display: block;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: var(--geostore-hero-aspect);
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 calc(100% - var(--geostore-hero-fade)),
+      rgb(0 0 0 / 0.94) calc(100% - var(--geostore-hero-fade) * 0.78),
+      rgb(0 0 0 / 0.78) calc(100% - var(--geostore-hero-fade) * 0.58),
+      rgb(0 0 0 / 0.55) calc(100% - var(--geostore-hero-fade) * 0.4),
+      rgb(0 0 0 / 0.3) calc(100% - var(--geostore-hero-fade) * 0.24),
+      rgb(0 0 0 / 0.12) calc(100% - var(--geostore-hero-fade) * 0.1),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 calc(100% - var(--geostore-hero-fade)),
+      rgb(0 0 0 / 0.94) calc(100% - var(--geostore-hero-fade) * 0.78),
+      rgb(0 0 0 / 0.78) calc(100% - var(--geostore-hero-fade) * 0.58),
+      rgb(0 0 0 / 0.55) calc(100% - var(--geostore-hero-fade) * 0.4),
+      rgb(0 0 0 / 0.3) calc(100% - var(--geostore-hero-fade) * 0.24),
+      rgb(0 0 0 / 0.12) calc(100% - var(--geostore-hero-fade) * 0.1),
+      transparent 100%
+    );
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
   }
 
-  /* Dark cinematic overlay — heavy left, lighter right so image shows */
+  .geostore-hero__bg-video {
+    position: relative;
+    z-index: 0;
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center top;
+    pointer-events: none;
+    filter: none;
+    transform: none;
+  }
+
+  /* Subtle cinematic overlay — left readable, merchandise still visible */
   .geostore-hero__overlay {
     position: absolute;
     inset: 0;
     z-index: 1;
+    pointer-events: none;
     background: linear-gradient(
       105deg,
-      oklch(0.04 0.004 60 / 0.95) 0%,
-      oklch(0.06 0.006 56 / 0.78) 35%,
-      oklch(0.08 0.008 54 / 0.50) 60%,
-      oklch(0.1 0.01 52 / 0.22) 80%,
-      oklch(0.1 0.01 52 / 0.08) 100%
+      oklch(0.04 0.004 60 / 0.58) 0%,
+      oklch(0.06 0.006 56 / 0.36) 34%,
+      oklch(0.08 0.008 54 / 0.18) 58%,
+      oklch(0.1 0.01 52 / 0.06) 80%,
+      transparent 100%
     );
   }
 
-  /* Bottom fade into starfield */
+  /* Soft veil over the dissolving edge — never an opaque band or hard line */
   .geostore-hero__fade {
     position: absolute;
-    bottom: 0;
+    top: calc(100cqi * var(--geostore-hero-h-over-w) - var(--geostore-hero-fade));
     left: 0;
     right: 0;
-    height: 8rem;
+    height: calc(var(--geostore-hero-fade) + var(--geostore-hero-afterglow));
     z-index: 2;
     background: linear-gradient(
       to bottom,
       transparent 0%,
-      oklch(0.06 0.004 60 / 0.6) 55%,
-      oklch(0.06 0.004 60) 100%
+      oklch(0.14 0.012 72 / 0.03) 28%,
+      oklch(0.1 0.01 68 / 0.06) 48%,
+      oklch(0.08 0.008 62 / 0.04) 68%,
+      transparent 100%
     );
     pointer-events: none;
+  }
+
+  /* Title → CTAs → cards as one group, tucked under the GEOSTORE label */
+  .geostore-hero__copy {
+    margin-top: 1.35rem;
   }
 
   /* Eyebrow */
@@ -931,23 +994,45 @@
     box-shadow: var(--focus-ring);
   }
 
+  @media (max-width: 1024px) {
+    .geostore-hero {
+      --geostore-hero-afterglow: 3.75rem;
+      min-height: max(
+        34rem,
+        calc(
+          100cqi * var(--geostore-hero-h-over-w) + var(--geostore-hero-afterglow)
+        )
+      );
+    }
+
+    .geostore-hero__copy {
+      margin-top: 1.15rem;
+    }
+  }
+
   /* Mobile */
   @media (max-width: 640px) {
     .geostore-hero {
-      min-height: clamp(460px, 60vh, 520px);
+      --geostore-hero-afterglow: 3.25rem;
+      min-height: max(
+        32rem,
+        calc(
+          100cqi * var(--geostore-hero-h-over-w) + var(--geostore-hero-afterglow)
+        )
+      );
+    }
+
+    .geostore-hero__copy {
+      margin-top: 0.95rem;
     }
 
     .geostore-hero__overlay {
       background: linear-gradient(
         180deg,
-        oklch(0.04 0.004 60 / 0.55) 0%,
-        oklch(0.05 0.005 58 / 0.85) 55%,
-        oklch(0.06 0.004 60 / 0.97) 100%
+        oklch(0.04 0.004 60 / 0.32) 0%,
+        oklch(0.05 0.005 58 / 0.4) 48%,
+        transparent 100%
       );
-    }
-
-    .geostore-hero__bg-img {
-      object-position: 70% 30%;
     }
   }
 }
