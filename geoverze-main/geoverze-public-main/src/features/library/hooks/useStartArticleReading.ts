@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 import { useLibraryStore } from "@/stores/libraryStore";
 
-/** Record that the user opened an article — creates Continue Reading entry at 0%. */
+/** Clears Continue Reading dismiss when the user opens an article (progress starts on scroll). */
 export function useStartArticleReading(slug: string, enabled: boolean) {
   const startReading = useLibraryStore((s) => s.startReading);
 

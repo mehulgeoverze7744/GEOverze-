@@ -12,6 +12,7 @@ import {
   syncLikeToggle,
   syncProgressUpdate,
 } from "@/features/library/data/sync-library-state";
+import { CONTINUE_READING_MIN_PERCENT } from "@/features/library/lib/article-reading-progress";
 import {
   emptyLibraryState,
   getActiveLibraryPersistScope,
@@ -25,12 +26,13 @@ type LibraryState = {
   bookmarks: string[];
   likes: string[];
   progress: Record<string, number>;
+  progressReadAt: Record<string, number>;
   completed: string[];
   continueReadingDismissed: string[];
   toggleBookmark: (slug: string) => void;
   toggleLike: (slug: string) => void;
   setProgress: (slug: string, percent: number) => void;
-  /** Mark article as started (0%) when opened — syncs to Supabase when signed in. */
+  /** Re-opens a dismissed Continue Reading row when the article is opened again. */
   startReading: (slug: string) => void;
   markComplete: (slug: string) => void;
   dismissFromContinueReading: (slug: string) => void;
@@ -38,6 +40,7 @@ type LibraryState = {
     bookmarks: string[];
     likes: string[];
     progress: Record<string, number>;
+    progressReadAt: Record<string, number>;
     completed: string[];
     continueReadingDismissed: string[];
   }) => void;
@@ -54,6 +57,7 @@ function snapshotFromState(state: LibraryState) {
     bookmarks: state.bookmarks,
     likes: state.likes,
     progress: state.progress,
+    progressReadAt: state.progressReadAt,
     completed: state.completed,
     continueReadingDismissed: state.continueReadingDismissed,
   };
@@ -75,6 +79,7 @@ export const useLibraryStore = create<LibraryState>()(
       bookmarks: [],
       likes: [],
       progress: {},
+      progressReadAt: {},
       completed: [],
       continueReadingDismissed: [],
       toggleBookmark: (slug) => {
@@ -99,7 +104,11 @@ export const useLibraryStore = create<LibraryState>()(
         const prev = get().progress[slug] ?? 0;
         const nextPercent = Math.max(0, Math.min(100, Math.round(percent)));
         if (prev >= nextPercent) return;
-        set((s) => ({ progress: { ...s.progress, [slug]: nextPercent } }));
+        if (nextPercent <= 0) return;
+        set((s) => ({
+          progress: { ...s.progress, [slug]: nextPercent },
+          progressReadAt: { ...s.progressReadAt, [slug]: Date.now() },
+        }));
         persistActiveLibraryState(snapshotFromState(get()));
         const userId = useAuthStore.getState().user?.id;
         maybeSync(userId, () => syncProgressUpdate(userId!, slug, nextPercent, false));
@@ -108,17 +117,15 @@ export const useLibraryStore = create<LibraryState>()(
         const state = get();
         if (state.completed.includes(slug)) return;
 
-        const hadProgress = state.progress[slug] !== undefined;
+        const percent = state.progress[slug];
+        const touchReadAt =
+          percent != null && percent > CONTINUE_READING_MIN_PERCENT && percent < 100;
+
         set((s) => ({
           continueReadingDismissed: s.continueReadingDismissed.filter((entry) => entry !== slug),
-          progress: hadProgress ? s.progress : { ...s.progress, [slug]: 0 },
+          ...(touchReadAt ? { progressReadAt: { ...s.progressReadAt, [slug]: Date.now() } } : null),
         }));
         persistActiveLibraryState(snapshotFromState(get()));
-
-        if (!hadProgress) {
-          const userId = useAuthStore.getState().user?.id;
-          maybeSync(userId, () => syncProgressUpdate(userId!, slug, 0, false));
-        }
       },
       markComplete: (slug) => {
         set((s) =>
@@ -127,6 +134,7 @@ export const useLibraryStore = create<LibraryState>()(
             : {
                 completed: [slug, ...s.completed],
                 progress: { ...s.progress, [slug]: 100 },
+                progressReadAt: { ...s.progressReadAt, [slug]: Date.now() },
               },
         );
         persistActiveLibraryState(snapshotFromState(get()));
@@ -157,6 +165,7 @@ export const useLibraryStore = create<LibraryState>()(
         bookmarks: state.bookmarks,
         likes: state.likes,
         progress: state.progress,
+        progressReadAt: state.progressReadAt,
         completed: state.completed,
         continueReadingDismissed: state.continueReadingDismissed,
       }),
@@ -187,6 +196,10 @@ export function activateLibraryPersistScope(nextScope: string) {
           bookmarks: Array.isArray(state.bookmarks) ? state.bookmarks : [],
           likes: Array.isArray(state.likes) ? state.likes : [],
           progress: state.progress && typeof state.progress === "object" ? state.progress : {},
+          progressReadAt:
+            state.progressReadAt && typeof state.progressReadAt === "object"
+              ? state.progressReadAt
+              : {},
           completed: Array.isArray(state.completed) ? state.completed : [],
           continueReadingDismissed: Array.isArray(state.continueReadingDismissed)
             ? state.continueReadingDismissed

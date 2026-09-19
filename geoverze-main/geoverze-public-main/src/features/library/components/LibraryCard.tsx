@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Bookmark, Clock, Eye, Heart } from "lucide-react";
+import { ArrowRight, Bookmark, Clock, Eye, Heart } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
@@ -16,7 +16,11 @@ import { articleCardImageSrc } from "../data/article-card-images";
 import { categoryIcon, categoryLabel, difficultyLabel } from "../data/taxonomy";
 import { creatorByHandle } from "../data/creators";
 import { usePublishedCreators } from "../hooks/usePublishedCreators";
-import { libraryRailCardClass, libraryRailMediaClass } from "../lib/library-rail-layout";
+import {
+  libraryRailCardClass,
+  libraryRailContinueReadingCardClass,
+  libraryRailMediaClass,
+} from "../lib/library-rail-layout";
 
 const compact = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(n >= 10_000 ? 0 : 1)}k` : `${n}`);
 
@@ -33,6 +37,7 @@ export function LibraryCard({
   onToggleBookmark,
   accessState,
   inRail = false,
+  continueReading = false,
   headerAction,
   className,
 }: {
@@ -47,6 +52,8 @@ export function LibraryCard({
   accessState?: ResourceAccessState;
   /** Marks card as a horizontal rail item with fixed width. */
   inRail?: boolean;
+  /** Continue Reading rail — show percent label, bar, and resume CTA. */
+  continueReading?: boolean;
   headerAction?: ReactNode;
   className?: string;
 }) {
@@ -122,7 +129,9 @@ export function LibraryCard({
   ) : null;
 
   const cardTitle = (
-    <span className={cn(!restricted && "transition-colors motion-fast group-hover:text-bronze-glow")}>
+    <span
+      className={cn(!restricted && "transition-colors motion-fast group-hover:text-bronze-glow")}
+    >
       {article.title}
     </span>
   );
@@ -186,15 +195,18 @@ export function LibraryCard({
     );
   }
 
+  const railCardClass =
+    inRail && continueReading ? libraryRailContinueReadingCardClass : libraryRailCardClass;
+
   return (
     <article
       {...(inRail ? { "data-rail-item": true } : {})}
       className={cn(
-        "glass-panel surface-gradient group relative flex flex-col overflow-hidden rounded-2xl transition-all motion-base",
+        "glass-panel surface-gradient group relative flex flex-col rounded-2xl transition-all motion-base",
         restricted
           ? "opacity-95"
           : "cursor-pointer hover:-translate-y-1 hover:border-bronze/40 hover:shadow-[var(--glow-bronze)] motion-reduce:hover:translate-y-0",
-        inRail && libraryRailCardClass,
+        inRail && railCardClass,
         className,
       )}
     >
@@ -206,7 +218,12 @@ export function LibraryCard({
           className="absolute inset-0 z-0 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
         />
       ) : null}
-      <div className={cn("pointer-events-none relative z-[1]", inRail && libraryRailMediaClass)}>
+      <div
+        className={cn(
+          "pointer-events-none relative z-[1] overflow-hidden rounded-t-2xl",
+          inRail && libraryRailMediaClass,
+        )}
+      >
         <LibraryMediaImage
           storagePath={article.coverArtKey}
           fallbackArt={article.slug}
@@ -246,37 +263,86 @@ export function LibraryCard({
         ) : null}
       </div>
 
-      <div className={cn("pointer-events-none relative z-[1] flex min-h-0 flex-1 flex-col p-5", inRail && "min-h-0")}>
+      <div
+        className={cn(
+          "pointer-events-none relative z-[1] flex flex-col px-5 pb-4 pt-4",
+          continueReading ? "shrink-0" : "min-h-0 flex-1",
+        )}
+      >
         <div className="flex flex-wrap items-center gap-2 text-[0.68rem] text-foreground/50">
           {meta}
         </div>
-        <h3 className="mt-3 line-clamp-2 text-base font-light leading-snug tracking-tight text-foreground">
+        <h3
+          className={cn(
+            "line-clamp-2 text-base font-light leading-snug tracking-tight text-foreground",
+            continueReading ? "mt-3" : "mt-2.5",
+          )}
+        >
           {cardTitle}
         </h3>
-        <p className="mt-2.5 line-clamp-2 flex-1 text-[0.8rem] leading-relaxed text-foreground/50">
-          {article.dek}
-        </p>
+        {!continueReading ? (
+          <p className="mt-2.5 line-clamp-2 flex-1 text-[0.8rem] leading-relaxed text-foreground/50">
+            {article.dek}
+          </p>
+        ) : null}
 
-        <div className="mt-auto flex items-end justify-between gap-3 border-t border-bronze/10 pt-4">
-          <div className="min-w-0">
-            {author ? (
-              restricted ? (
-                <span className="block truncate text-xs text-foreground/60">{author.name}</span>
-              ) : (
-                <Link
-                  to="/geolibrary/creators/$handle"
-                  params={{ handle: author.handle }}
-                  onClick={(event) => event.stopPropagation()}
-                  className="pointer-events-auto relative z-[2] block truncate text-xs text-foreground/60 transition-colors motion-fast hover:text-bronze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
-                >
-                  {author.name}
-                </Link>
-              )
-            ) : null}
-            <div className="mt-2">{stats}</div>
+        {continueReading && progress > 0 ? (
+          <div className="mt-4 space-y-1.5">
+            <p className="text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-bronze/90">
+              {Math.round(progress)}% read
+            </p>
+            <div
+              className="h-1 overflow-hidden rounded-full bg-charcoal/50"
+              role="progressbar"
+              aria-valuenow={Math.round(progress)}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={`Reading progress for ${article.title}`}
+            >
+              <span
+                className="block h-full rounded-full bg-gradient-to-r from-bronze/80 to-bronze-glow/90 transition-[width] motion-base"
+                style={{ width: `${Math.min(100, progress)}%` }}
+              />
+            </div>
           </div>
-          {bookmarkButton ? <div className="pointer-events-auto relative z-[2]">{bookmarkButton}</div> : null}
-        </div>
+        ) : null}
+
+        {continueReading ? (
+          <div className="mt-5 border-t border-bronze/10 pt-3">
+            <div className="flex items-center justify-between gap-3">
+              <p className="inline-flex min-w-0 items-center gap-1.5 text-[0.72rem] font-medium uppercase tracking-[0.14em] text-bronze-glow">
+                Continue reading
+                <ArrowRight className="h-3.5 w-3.5 shrink-0" strokeWidth={2} aria-hidden />
+              </p>
+              {bookmarkButton ? (
+                <div className="pointer-events-auto relative z-[2] shrink-0">{bookmarkButton}</div>
+              ) : null}
+            </div>
+          </div>
+        ) : (
+          <div className="mt-auto flex items-end justify-between gap-3 border-t border-bronze/10 pt-4">
+            <div className="min-w-0">
+              {author ? (
+                restricted ? (
+                  <span className="block truncate text-xs text-foreground/60">{author.name}</span>
+                ) : (
+                  <Link
+                    to="/geolibrary/creators/$handle"
+                    params={{ handle: author.handle }}
+                    onClick={(event) => event.stopPropagation()}
+                    className="pointer-events-auto relative z-[2] block truncate text-xs text-foreground/60 transition-colors motion-fast hover:text-bronze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+                  >
+                    {author.name}
+                  </Link>
+                )
+              ) : null}
+              <div className="mt-2">{stats}</div>
+            </div>
+            {bookmarkButton ? (
+              <div className="pointer-events-auto relative z-[2] shrink-0">{bookmarkButton}</div>
+            ) : null}
+          </div>
+        )}
       </div>
     </article>
   );

@@ -6,6 +6,7 @@ const EMPTY_STATE: MergedLibraryState = {
   bookmarks: [],
   likes: [],
   progress: {},
+  progressReadAt: {},
   completed: [],
   continueReadingDismissed: [],
 };
@@ -31,6 +32,10 @@ function readPersistedState(scope: string): MergedLibraryState | null {
       bookmarks: Array.isArray(state.bookmarks) ? state.bookmarks : [],
       likes: Array.isArray(state.likes) ? state.likes : [],
       progress: state.progress && typeof state.progress === "object" ? state.progress : {},
+      progressReadAt:
+        state.progressReadAt && typeof state.progressReadAt === "object"
+          ? state.progressReadAt
+          : {},
       completed: Array.isArray(state.completed) ? state.completed : [],
       continueReadingDismissed: Array.isArray(state.continueReadingDismissed)
         ? state.continueReadingDismissed

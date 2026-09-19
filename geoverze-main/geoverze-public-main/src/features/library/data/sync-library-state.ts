@@ -19,6 +19,8 @@ export type MergedLibraryState = {
   bookmarks: string[];
   likes: string[];
   progress: Record<string, number>;
+  /** Local timestamps (ms) for Continue Reading sort — not synced to Supabase. */
+  progressReadAt: Record<string, number>;
   completed: string[];
   /** Slugs hidden from Continue Reading — local preference, progress retained. */
   continueReadingDismissed: string[];
@@ -51,10 +53,18 @@ export function mergeLibraryState(
     completed.add(slug);
   }
 
+  const progressReadAt = { ...local.progressReadAt };
+  for (const slug of Object.keys(progress)) {
+    if (progressReadAt[slug] == null) {
+      progressReadAt[slug] = Date.now();
+    }
+  }
+
   return {
     bookmarks: [...bookmarkSet],
     likes: [...likeSet],
     progress,
+    progressReadAt,
     completed: [...completed],
     continueReadingDismissed: [...new Set(local.continueReadingDismissed)],
   };
@@ -144,6 +154,7 @@ export async function hydrateLibraryState(user: User) {
     bookmarks: [...local.bookmarks],
     likes: [...local.likes],
     progress: { ...local.progress },
+    progressReadAt: { ...local.progressReadAt },
     completed: [...local.completed],
     continueReadingDismissed: [...local.continueReadingDismissed],
   };

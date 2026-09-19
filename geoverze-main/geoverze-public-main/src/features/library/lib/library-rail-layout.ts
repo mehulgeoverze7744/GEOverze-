@@ -2,6 +2,10 @@
 export const libraryRailCardClass =
   "h-[22.5rem] w-[min(82vw,18rem)] shrink-0 snap-start sm:w-[18rem]";
 
+/** Continue Reading — content-driven height (no tall fixed shell). */
+export const libraryRailContinueReadingCardClass =
+  "h-auto w-[min(82vw,18rem)] shrink-0 snap-start sm:w-[18rem]";
+
 export const libraryRailMediaClass = "aspect-[16/10] shrink-0 overflow-hidden";
 
 /** Compact content-sized category filter chips — no fixed width/height. */

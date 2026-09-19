@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 type LibraryHorizontalRailProps = {
   title: string;
+  description?: string;
   className?: string;
   viewAllTo?: "/geolibrary/browse" | "/geolibrary/collections";
   viewAllSearch?: Record<string, unknown>;
@@ -18,6 +19,7 @@ type LibraryHorizontalRailProps = {
 /** Horizontally scrollable GEOlibrary section with bronze arrow controls. */
 export function LibraryHorizontalRail({
   title,
+  description,
   className,
   viewAllTo,
   viewAllSearch,
@@ -63,7 +65,10 @@ export function LibraryHorizontalRail({
   return (
     <AnimatedSection className={cn("mt-16 overflow-x-clip", className)}>
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 sm:gap-4">
-        <h2 className="text-lg font-light tracking-tight text-foreground">{title}</h2>
+        <div>
+          <h2 className="text-lg font-light tracking-tight text-foreground">{title}</h2>
+          {description ? <p className="mt-1 text-sm text-foreground/50">{description}</p> : null}
+        </div>
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           {viewAllTo ? (
             <Link

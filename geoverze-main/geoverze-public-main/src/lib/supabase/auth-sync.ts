@@ -44,6 +44,7 @@ import {
   hydrateStoreWishlist,
   resetStoreWishlistHydration,
 } from "@/features/store/data/sync-store-wishlist";
+import { mergeLibraryStoreFromDisk } from "@/features/library/lib/merge-library-store-from-disk";
 import { activateLibraryPersistScope } from "@/stores/libraryStore";
 import { useNotificationsStore } from "@/stores/notificationsStore";
 import { activateStorePersistScope } from "@/stores/storeStore";
@@ -243,6 +244,10 @@ export function initAuthSync(queryClient?: QueryClient) {
   initialized = true;
 
   registerProgressSyncFlush();
+
+  if (typeof window !== "undefined") {
+    queueMicrotask(() => mergeLibraryStoreFromDisk());
+  }
 
   useAuthStore.getState().setStatus("unknown");
 

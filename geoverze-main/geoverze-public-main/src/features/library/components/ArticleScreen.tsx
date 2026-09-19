@@ -24,7 +24,6 @@ export function ArticleScreen() {
   const { articles: catalogue } = usePublishedArticles();
   const bookmarks = useLibraryStore((s) => s.bookmarks);
   const likes = useLibraryStore((s) => s.likes);
-  const progress = useLibraryStore((s) => s.progress);
   const toggleBookmark = useLibraryStore((s) => s.toggleBookmark);
   const toggleLike = useLibraryStore((s) => s.toggleLike);
   const markComplete = useLibraryStore((s) => s.markComplete);
@@ -47,7 +46,11 @@ export function ArticleScreen() {
     contentAccess?.kind === "open" &&
     !completed;
   useStartArticleReading(slug, canStartReading);
-  const { contentRef } = useArticleReadingProgress(slug, Boolean(article) && !completed);
+  const progress = useLibraryStore((s) => s.progress);
+  const { contentRef, displayPercent } = useArticleReadingProgress(
+    slug,
+    Boolean(article) && !completed,
+  );
 
   if (loading || !authReady) {
     return (
@@ -108,7 +111,7 @@ export function ArticleScreen() {
   }
 
   const headings = articleHeadings(article);
-  const readPercent = progress[slug] ?? 0;
+  const readPercent = completed ? 100 : displayPercent;
   return (
     <ArticleAtlasParchmentScreen
       article={article}
