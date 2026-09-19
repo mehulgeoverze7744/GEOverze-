@@ -1,8 +1,10 @@
 import type { Article } from "@/features/library/data/articles";
+import { articleCardImageSrc } from "@/features/library/data/article-card-images";
+import { categoryLabel } from "@/features/library/data/taxonomy";
 
-export type ArticleThemeId = "default" | "atlas-parchment";
+export type ArticleThemeId = "atlas-parchment";
 
-export type AtlasParchmentPresentation = {
+export type ArticleReaderPresentation = {
   theme: "atlas-parchment";
   displayTitle: string;
   displayDek: string;
@@ -16,41 +18,47 @@ export type AtlasParchmentPresentation = {
   };
 };
 
-const ATLAS_PARCHMENT_BY_SLUG: Record<string, AtlasParchmentPresentation> = {
-  "europes-smallest-states": {
-    theme: "atlas-parchment",
-    displayTitle: "Europe's Smallest States",
-    displayDek:
-      "Six tiny countries, six very different stories of survival, sovereignty and identity.",
-    authorLine: "GEOlibrary · Geography & History",
-    topicTags: ["History", "Europe", "Microstates"],
-    heroImage: {
-      src: "/assets/geolibrary/collections/countries-of-europe.jpg",
-      alt: "Map of Europe highlighting Vatican City, Monaco, San Marino, Liechtenstein, Malta and Andorra",
-      caption:
-        "Six sovereign states whose territories are small enough to vanish on a continental map — yet each occupies a distinct place in European history.",
-      credit: "GEOlibrary editorial map art",
-    },
-  },
-};
+const DEFAULT_HERO = "/assets/geolibrary/collections/geography-basics.jpg";
 
-export function getArticleTheme(slug: string): ArticleThemeId {
-  return ATLAS_PARCHMENT_BY_SLUG[slug]?.theme ?? "default";
+function formatTag(tag: string): string {
+  return tag
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 }
 
-export function getAtlasParchmentPresentation(
-  slug: string,
-): AtlasParchmentPresentation | undefined {
-  return ATLAS_PARCHMENT_BY_SLUG[slug];
+/** All GEOlibrary articles use the atlas parchment reading experience. */
+export function getArticleTheme(_slug: string): ArticleThemeId {
+  return "atlas-parchment";
 }
 
-/** Optional catalogue overrides for themed articles (fixture / display). */
-export function applyArticleThemeCatalogueFields(article: Article): Article {
-  const presentation = ATLAS_PARCHMENT_BY_SLUG[article.slug];
-  if (!presentation) return article;
+export function getArticleReaderPresentation(article: Article): ArticleReaderPresentation {
+  const heroSrc = articleCardImageSrc(article.slug) ?? DEFAULT_HERO;
+  const tags = article.tags.length > 0 ? article.tags.slice(0, 4) : [article.category];
+
   return {
-    ...article,
-    title: presentation.displayTitle,
-    dek: presentation.displayDek,
+    theme: "atlas-parchment",
+    displayTitle: article.title,
+    displayDek: article.dek,
+    authorLine: `GEOlibrary · ${categoryLabel(article.category)}`,
+    topicTags: tags.map(formatTag),
+    heroImage: {
+      src: heroSrc,
+      alt: article.title,
+      caption: article.dek,
+      credit: "GEOlibrary editorial",
+    },
   };
+}
+
+/** @deprecated Use getArticleReaderPresentation */
+export function getAtlasParchmentPresentation(slug: string, article?: Article) {
+  if (article) return getArticleReaderPresentation(article);
+  return undefined;
+}
+
+/** Optional catalogue display sync — titles/deks already come from Supabase/seed. */
+export function applyArticleThemeCatalogueFields(article: Article): Article {
+  return article;
 }

@@ -1,45 +1,41 @@
-import { articleBySlug } from "@/features/library/data/articles";
+import { ARTICLES, articleBySlug } from "@/features/library/data/articles";
 import type { Article, ArticleBlock } from "@/features/library/data/articles";
-import { EUROPES_SMALLEST_STATES_BLOCKS } from "@/features/library/data/europes-smallest-states-blocks";
 
-/** Local block fixtures keyed by slug — used when Supabase still has legacy seed rows. */
-const BLOCK_FIXTURES_BY_SLUG: Record<string, readonly ArticleBlock[]> = {
-  "europes-smallest-states": EUROPES_SMALLEST_STATES_BLOCKS,
-};
+/** Canonical seed blocks keyed by slug (includes expanded editorial content). */
+const SEED_BLOCKS_BY_SLUG: Record<string, readonly ArticleBlock[]> = Object.fromEntries(
+  ARTICLES.map((a) => [a.slug, a.blocks]),
+);
 
-/** Legacy GL-4 seed shipped six blocks including a map placeholder. */
-const LEGACY_EUROPES_BLOCK_COUNT = 6;
+function looksLegacyRemoteBlocks(article: Article, seedBlocks: readonly ArticleBlock[]): boolean {
+  const remoteCount = article.blocks.length;
+  const seedCount = seedBlocks.length;
+  if (remoteCount === 0) return true;
+  if (remoteCount < seedCount - 3) return true;
+  if (remoteCount <= 8 && seedCount >= 20) return true;
+  if (article.blocks.some((b) => b.kind === "map") && seedCount >= 15) return true;
+  return false;
+}
 
 /**
- * Prefer expanded local blocks when remote content is still the old seed
- * (migration `20260919120000_europes_smallest_states_parchment.sql` not applied).
+ * Prefer expanded local seed blocks when Supabase still has legacy short seed rows.
  */
 export function applyPublishedArticleBlockFixtures(article: Article): Article {
-  const fixtureBlocks = BLOCK_FIXTURES_BY_SLUG[article.slug];
-  if (!fixtureBlocks?.length) return article;
+  const seedBlocks = SEED_BLOCKS_BY_SLUG[article.slug] ?? articleBySlug(article.slug)?.blocks;
+  if (!seedBlocks?.length) return article;
 
-  const remoteCount = article.blocks.length;
-  const fixtureCount = fixtureBlocks.length;
-  const looksLegacy =
-    article.slug === "europes-smallest-states" &&
-    (remoteCount <= LEGACY_EUROPES_BLOCK_COUNT ||
-      remoteCount < fixtureCount - 5 ||
-      article.blocks.some((b) => b.kind === "map"));
-
-  if (!looksLegacy) return article;
+  if (!looksLegacyRemoteBlocks(article, seedBlocks)) return article;
 
   if (import.meta.env.DEV) {
     console.info(
-      `[GEOlibrary] "${article.slug}": using local block fixture (${fixtureCount} blocks). ` +
-        `Remote Supabase had ${remoteCount} block(s). Apply migration ` +
-        `20260919120000_europes_smallest_states_parchment.sql for production parity.`,
+      `[GEOlibrary] "${article.slug}": using local seed blocks (${seedBlocks.length} blocks). ` +
+        `Remote had ${article.blocks.length} block(s).`,
     );
   }
 
   const seedMeta = articleBySlug(article.slug);
   return {
     ...article,
-    blocks: fixtureBlocks,
+    blocks: seedBlocks,
     minutes: seedMeta?.minutes ?? article.minutes,
     dek: seedMeta?.dek ?? article.dek,
     title: seedMeta?.title ?? article.title,

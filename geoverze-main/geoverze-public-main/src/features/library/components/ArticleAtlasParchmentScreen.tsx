@@ -4,7 +4,7 @@ import { SectionContainer } from "@/components/shared";
 import { getResourceAccessState, type LibraryAccessTier } from "@/features/library/lib/access-tier";
 import type { Article } from "@/features/library/data/articles";
 import { relatedArticles } from "@/features/library/data/articles";
-import { getAtlasParchmentPresentation } from "@/features/library/lib/article-themes";
+import { getArticleReaderPresentation } from "@/features/library/lib/article-themes";
 
 import { renderAtlasParchmentBlock } from "./atlas-parchment-block-render";
 import { ArticleExternalImage } from "./ArticleExternalImage";
@@ -46,8 +46,7 @@ export function ArticleAtlasParchmentScreen({
   signedIn,
   subscriptionTier,
 }: ArticleAtlasParchmentScreenProps) {
-  const presentation = getAtlasParchmentPresentation(slug);
-  if (!presentation) return null;
+  const presentation = getArticleReaderPresentation(article);
 
   const saved = bookmarks.includes(slug);
   const liked = likes.includes(slug);
