@@ -38,10 +38,7 @@ export function LibraryHero({ bookmarkCount }: LibraryHeroProps) {
 
         <div className="mt-8 flex flex-wrap items-center gap-3 sm:gap-4">
           {/* Primary CTA */}
-          <Link
-            to="/geolibrary/browse"
-            className="geolibrary-hero__cta-primary"
-          >
+          <Link to="/geolibrary/browse" className="geolibrary-hero__cta-primary">
             Browse Everything
             <ArrowRight className="ml-2 h-4 w-4 shrink-0" strokeWidth={1.8} aria-hidden />
           </Link>

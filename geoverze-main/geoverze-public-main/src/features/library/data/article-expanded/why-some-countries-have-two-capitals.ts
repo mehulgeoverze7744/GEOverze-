@@ -25,13 +25,18 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-pretoria-union-buildings",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/UnionBuildingsPretoria.jpg/1280px-UnionBuildingsPretoria.jpg",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/UnionBuildingsPretoria.jpg/1280px-UnionBuildingsPretoria.jpg",
     caption: "The Union Buildings in Pretoria — seat of South Africa's executive since 1913.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
   // Block 6
-  { kind: "heading", id: "south-africa-model", text: "South Africa: the three-way compromise of 1910" },
+  {
+    kind: "heading",
+    id: "south-africa-model",
+    text: "South Africa: the three-way compromise of 1910",
+  },
   // Block 7
   {
     kind: "paragraph",
@@ -63,13 +68,19 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-cape-town-parliament",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Parliament_of_South_Africa_-_Cape_Town.jpg/1280px-Parliament_of_South_Africa_-_Cape_Town.jpg",
-    caption: "The South African Parliament buildings in Cape Town, legislative home since the Union of 1910.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Parliament_of_South_Africa_-_Cape_Town.jpg/1280px-Parliament_of_South_Africa_-_Cape_Town.jpg",
+    caption:
+      "The South African Parliament buildings in Cape Town, legislative home since the Union of 1910.",
     credit: "Wikimedia Commons / CC BY-SA 4.0",
   },
 
   // Block 12
-  { kind: "heading", id: "south-africa-judicial", text: "Bloemfontein: the capital that gets overlooked" },
+  {
+    kind: "heading",
+    id: "south-africa-judicial",
+    text: "Bloemfontein: the capital that gets overlooked",
+  },
   // Block 13
   {
     kind: "paragraph",
@@ -77,7 +88,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
   },
 
   // Block 14
-  { kind: "heading", id: "bolivia-case", text: "Bolivia: constitutional memory and practical power" },
+  {
+    kind: "heading",
+    id: "bolivia-case",
+    text: "Bolivia: constitutional memory and practical power",
+  },
   // Block 15
   {
     kind: "paragraph",
@@ -98,7 +113,8 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-la-paz-aerial",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/La_Paz%2C_Bolivia_%28cropped%29.jpg/1280px-La_Paz%2C_Bolivia_%28cropped%29.jpg",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/La_Paz%2C_Bolivia_%28cropped%29.jpg/1280px-La_Paz%2C_Bolivia_%28cropped%29.jpg",
     caption: "La Paz spread across a canyon at 3,640 m — the world's highest seat of government.",
     credit: "Wikimedia Commons / Public Domain",
   },
@@ -146,10 +162,19 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "facts",
     title: "International legal institutions in The Hague",
     facts: [
-      { label: "International Court of Justice", value: "Founded 1945; 15 judges; main UN judicial organ" },
+      {
+        label: "International Court of Justice",
+        value: "Founded 1945; 15 judges; main UN judicial organ",
+      },
       { label: "International Criminal Court", value: "Founded 2002; 123 state parties" },
-      { label: "Permanent Court of Arbitration", value: "Founded 1899; oldest intergovernmental dispute body" },
-      { label: "Organisation for the Prohibition of Chemical Weapons", value: "HQ The Hague since 1997" },
+      {
+        label: "Permanent Court of Arbitration",
+        value: "Founded 1899; oldest intergovernmental dispute body",
+      },
+      {
+        label: "Organisation for the Prohibition of Chemical Weapons",
+        value: "HQ The Hague since 1997",
+      },
       { label: "Europol", value: "EU law enforcement agency, The Hague since 1994" },
     ],
   },
@@ -157,8 +182,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-the-hague-parliament",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Binnenhof_Hofvijver_2019.jpg/1280px-Binnenhof_Hofvijver_2019.jpg",
-    caption: "The Binnenhof in The Hague — home of the Dutch Parliament since the sixteenth century.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Binnenhof_Hofvijver_2019.jpg/1280px-Binnenhof_Hofvijver_2019.jpg",
+    caption:
+      "The Binnenhof in The Hague — home of the Dutch Parliament since the sixteenth century.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
@@ -171,7 +198,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
   },
 
   // Block 30
-  { kind: "heading", id: "ivory-coast-basilica", text: "Côte d'Ivoire: the village that became a capital" },
+  {
+    kind: "heading",
+    id: "ivory-coast-basilica",
+    text: "Côte d'Ivoire: the village that became a capital",
+  },
   // Block 31
   {
     kind: "paragraph",
@@ -181,8 +212,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-yamoussoukro-basilica",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Yamoussoukro_basilica.jpg/1280px-Yamoussoukro_basilica.jpg",
-    caption: "The Basilica of Our Lady of Peace in Yamoussoukro — the world's largest church by area, consecrated 1990.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Yamoussoukro_basilica.jpg/1280px-Yamoussoukro_basilica.jpg",
+    caption:
+      "The Basilica of Our Lady of Peace in Yamoussoukro — the world's largest church by area, consecrated 1990.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
   },
 
@@ -195,7 +228,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
   },
 
   // Block 35
-  { kind: "heading", id: "malaysia-putrajaya", text: "Malaysia: Putrajaya and the administrative relocation" },
+  {
+    kind: "heading",
+    id: "malaysia-putrajaya",
+    text: "Malaysia: Putrajaya and the administrative relocation",
+  },
   // Block 36
   {
     kind: "paragraph",
@@ -205,8 +242,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-putrajaya-perdana",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Perdana_Putra.jpg/1280px-Perdana_Putra.jpg",
-    caption: "Perdana Putra — Malaysia's Prime Minister's Department in Putrajaya, the purpose-built federal administrative capital.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Perdana_Putra.jpg/1280px-Perdana_Putra.jpg",
+    caption:
+      "Perdana Putra — Malaysia's Prime Minister's Department in Putrajaya, the purpose-built federal administrative capital.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
   },
 
@@ -230,7 +269,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
   },
 
   // Block 41
-  { kind: "heading", id: "capital-moves-history", text: "Countries that moved their capitals entirely" },
+  {
+    kind: "heading",
+    id: "capital-moves-history",
+    text: "Countries that moved their capitals entirely",
+  },
   // Block 42
   {
     kind: "paragraph",
@@ -251,8 +294,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-brasilia-congress",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Congresso_Nacional.jpg/1280px-Congresso_Nacional.jpg",
-    caption: "Oscar Niemeyer's National Congress in Brasília — symbol of Brazil's 1960 capital relocation from Rio de Janeiro.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Congresso_Nacional.jpg/1280px-Congresso_Nacional.jpg",
+    caption:
+      "Oscar Niemeyer's National Congress in Brasília — symbol of Brazil's 1960 capital relocation from Rio de Janeiro.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
   },
 
@@ -267,7 +312,8 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-nusantara-site",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/IKN_Nusantara_aerial.jpg/1280px-IKN_Nusantara_aerial.jpg",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/IKN_Nusantara_aerial.jpg/1280px-IKN_Nusantara_aerial.jpg",
     caption: "The Nusantara site in East Kalimantan, Borneo, during early construction phases.",
     credit: "Wikimedia Commons / Public Domain",
   },
@@ -278,17 +324,67 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "table",
     title: "Countries with divided capital functions (selected)",
-    columns: ["Country", "Constitutional / Official Capital", "Seat of Government / Legislature", "Reason for split"],
+    columns: [
+      "Country",
+      "Constitutional / Official Capital",
+      "Seat of Government / Legislature",
+      "Reason for split",
+    ],
     rows: [
-      ["South Africa", "Cape Town (legislature)", "Pretoria (executive) / Bloemfontein (judicial)", "1910 union compromise among four former colonies"],
-      ["Bolivia", "Sucre", "La Paz (executive + legislature)", "1898–99 Federal War; liberals moved congress north"],
-      ["Netherlands", "Amsterdam", "The Hague (parliament + ministries)", "Historical: States-General sat in The Hague since 1585"],
-      ["Malaysia", "Kuala Lumpur", "Putrajaya (federal administration)", "Purpose-built administrative capital from 1999"],
-      ["Côte d'Ivoire", "Yamoussoukro", "Abidjan (de facto seat of government)", "1983 designation by President Houphouët-Boigny"],
-      ["Benin", "Porto-Novo", "Cotonou (economic capital, most ministries)", "Colonial legacy; Cotonou grew as port hub"],
-      ["Sri Lanka", "Sri Jayawardenepura Kotte", "Colombo (commercial + most government)", "Parliament moved to Kotte in 1982"],
-      ["Tanzania", "Dodoma", "Dar es Salaam (commercial + diplomatic)", "Dodoma designated 1974; transition still incomplete"],
-      ["Myanmar", "Naypyidaw", "Naypyidaw (moved 2005)", "Full transfer, but Yangon remains commercial hub"],
+      [
+        "South Africa",
+        "Cape Town (legislature)",
+        "Pretoria (executive) / Bloemfontein (judicial)",
+        "1910 union compromise among four former colonies",
+      ],
+      [
+        "Bolivia",
+        "Sucre",
+        "La Paz (executive + legislature)",
+        "1898–99 Federal War; liberals moved congress north",
+      ],
+      [
+        "Netherlands",
+        "Amsterdam",
+        "The Hague (parliament + ministries)",
+        "Historical: States-General sat in The Hague since 1585",
+      ],
+      [
+        "Malaysia",
+        "Kuala Lumpur",
+        "Putrajaya (federal administration)",
+        "Purpose-built administrative capital from 1999",
+      ],
+      [
+        "Côte d'Ivoire",
+        "Yamoussoukro",
+        "Abidjan (de facto seat of government)",
+        "1983 designation by President Houphouët-Boigny",
+      ],
+      [
+        "Benin",
+        "Porto-Novo",
+        "Cotonou (economic capital, most ministries)",
+        "Colonial legacy; Cotonou grew as port hub",
+      ],
+      [
+        "Sri Lanka",
+        "Sri Jayawardenepura Kotte",
+        "Colombo (commercial + most government)",
+        "Parliament moved to Kotte in 1982",
+      ],
+      [
+        "Tanzania",
+        "Dodoma",
+        "Dar es Salaam (commercial + diplomatic)",
+        "Dodoma designated 1974; transition still incomplete",
+      ],
+      [
+        "Myanmar",
+        "Naypyidaw",
+        "Naypyidaw (moved 2005)",
+        "Full transfer, but Yangon remains commercial hub",
+      ],
     ],
   },
   // Block 51
@@ -296,18 +392,48 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "timeline",
     title: "A brief history of capital splits and moves",
     events: [
-      { date: "1585", text: "Dutch States-General establishes permanent seat in The Hague, while Amsterdam remains commercial hub." },
+      {
+        date: "1585",
+        text: "Dutch States-General establishes permanent seat in The Hague, while Amsterdam remains commercial hub.",
+      },
       { date: "1825", text: "Bolivia declares independence from Spain; Sucre named sole capital." },
-      { date: "1898–99", text: "Bolivia's Federal War: La Paz liberals defeat Sucre conservatives; Congress moves to La Paz." },
-      { date: "1910", text: "Union of South Africa formed; Pretoria, Cape Town and Bloemfontein each receive a capital function." },
-      { date: "1960", text: "Brazil transfers capital from Rio de Janeiro to newly built Brasília, 956 km inland." },
-      { date: "1974", text: "Tanzania designates Dodoma as future capital; gradual transfer begins." },
-      { date: "1982", text: "Sri Lanka's Parliament formally relocates to Sri Jayawardenepura Kotte." },
-      { date: "1983", text: "Côte d'Ivoire's Houphouët-Boigny designates his home village Yamoussoukro as official capital." },
-      { date: "1997", text: "Kazakhstan transfers capital from Almaty to Akmola (later Astana, then Nur-Sultan, then Astana again)." },
+      {
+        date: "1898–99",
+        text: "Bolivia's Federal War: La Paz liberals defeat Sucre conservatives; Congress moves to La Paz.",
+      },
+      {
+        date: "1910",
+        text: "Union of South Africa formed; Pretoria, Cape Town and Bloemfontein each receive a capital function.",
+      },
+      {
+        date: "1960",
+        text: "Brazil transfers capital from Rio de Janeiro to newly built Brasília, 956 km inland.",
+      },
+      {
+        date: "1974",
+        text: "Tanzania designates Dodoma as future capital; gradual transfer begins.",
+      },
+      {
+        date: "1982",
+        text: "Sri Lanka's Parliament formally relocates to Sri Jayawardenepura Kotte.",
+      },
+      {
+        date: "1983",
+        text: "Côte d'Ivoire's Houphouët-Boigny designates his home village Yamoussoukro as official capital.",
+      },
+      {
+        date: "1997",
+        text: "Kazakhstan transfers capital from Almaty to Akmola (later Astana, then Nur-Sultan, then Astana again).",
+      },
       { date: "1999", text: "Malaysia's Putrajaya inaugurated as federal administrative capital." },
-      { date: "2005", text: "Myanmar's military junta moves overnight from Yangon to purpose-built Naypyidaw." },
-      { date: "2022", text: "Indonesia designates Nusantara in East Kalimantan as new capital; construction under way." },
+      {
+        date: "2005",
+        text: "Myanmar's military junta moves overnight from Yangon to purpose-built Naypyidaw.",
+      },
+      {
+        date: "2022",
+        text: "Indonesia designates Nusantara in East Kalimantan as new capital; construction under way.",
+      },
     ],
   },
 

@@ -26,7 +26,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
       { label: "Only non-quadrilateral national flag", value: "Nepal (double pennant shape)" },
       { label: "Only square national flag", value: "Switzerland (1:1 ratio)" },
       { label: "Most stars on a national flag", value: "United States (50)" },
-      { label: "Nearly identical pair", value: "Monaco and Indonesia (red over white, different ratios)" },
+      {
+        label: "Nearly identical pair",
+        value: "Monaco and Indonesia (red over white, different ratios)",
+      },
       { label: "Only flag with map of country on it", value: "Cyprus (gold silhouette on white)" },
     ],
   },
@@ -61,8 +64,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "french-tricolour",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Flag_of_France.svg/1280px-Flag_of_France.svg.png",
-    caption: "The French tricolour (1794) — the design that propagated across five continents as the template for national flags during the age of nationalism.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Flag_of_France.svg/1280px-Flag_of_France.svg.png",
+    caption:
+      "The French tricolour (1794) — the design that propagated across five continents as the template for national flags during the age of nationalism.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
@@ -74,8 +79,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "nordic-cross-denmark",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Flag_of_Denmark.svg/1280px-Flag_of_Denmark.svg.png",
-    caption: "Denmark's Dannebrog — the original Nordic cross design, dating to at least 1370, making it the world's oldest national flag still in use.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Flag_of_Denmark.svg/1280px-Flag_of_Denmark.svg.png",
+    caption:
+      "Denmark's Dannebrog — the original Nordic cross design, dating to at least 1370, making it the world's oldest national flag still in use.",
     credit: "Wikimedia Commons / Public Domain",
   },
   {
@@ -87,7 +94,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
       { label: "Norway", value: "Red field, white-bordered blue cross — adopted 1821" },
       { label: "Finland", value: "White field, blue cross — adopted 1918 at independence" },
       { label: "Iceland", value: "Blue field, white-bordered red cross — adopted 1944" },
-      { label: "Faroe Islands", value: "White field, red-bordered blue cross — unofficial since 1919, official 1948" },
+      {
+        label: "Faroe Islands",
+        value: "White field, red-bordered blue cross — unofficial since 1919, official 1948",
+      },
     ],
   },
 
@@ -104,8 +114,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "ethiopia-flag",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Flag_of_Ethiopia.svg/1280px-Flag_of_Ethiopia.svg.png",
-    caption: "The flag of Ethiopia — whose green, gold, and red tricolour inspired the pan-African colour tradition adopted by more than 30 African nations after independence.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Flag_of_Ethiopia.svg/1280px-Flag_of_Ethiopia.svg.png",
+    caption:
+      "The flag of Ethiopia — whose green, gold, and red tricolour inspired the pan-African colour tradition adopted by more than 30 African nations after independence.",
     credit: "Wikimedia Commons / Public Domain",
   },
   {
@@ -127,12 +139,18 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "jordan-flag",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Flag_of_Jordan.svg/1280px-Flag_of_Jordan.svg.png",
-    caption: "The flag of Jordan — combining the pan-Arab colours (black, white, green horizontal stripes) with a red triangle and a white seven-pointed star representing the seven verses of Al-Fatiha.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Flag_of_Jordan.svg/1280px-Flag_of_Jordan.svg.png",
+    caption:
+      "The flag of Jordan — combining the pan-Arab colours (black, white, green horizontal stripes) with a red triangle and a white seven-pointed star representing the seven verses of Al-Fatiha.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
-  { kind: "heading", id: "star-and-crescent", text: "The star and crescent: symbol and misconception" },
+  {
+    kind: "heading",
+    id: "star-and-crescent",
+    text: "The star and crescent: symbol and misconception",
+  },
   {
     kind: "paragraph",
     text: "The star and crescent is the most widely recognised symbol associated with Islam on national flags, appearing on the flags of Turkey, Pakistan, Malaysia, Tunisia, Algeria, Libya, Mauritania, Comoros, Azerbaijan, Uzbekistan, and Turkmenistan. Yet the symbol is not intrinsically Islamic — it predates the religion by over a thousand years. The crescent and star appeared on coins of the Byzantine Empire and was the emblem of Constantinople. When the Ottoman Turks captured Constantinople in 1453, they adopted the city's symbols, and the Ottoman Empire's military and administrative use of the star and crescent gave it an Islamic association by historical accident rather than religious prescription. This is why many Muslim-majority nations — Indonesia, Bangladesh, Iran, Saudi Arabia, and others — do not use it.",
@@ -145,12 +163,18 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "turkey-flag",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Flag_of_Turkey.svg/1280px-Flag_of_Turkey.svg.png",
-    caption: "Turkey's flag — the star and crescent on a red field, derived from Ottoman imperial symbolism that itself inherited the emblem from Byzantine Constantinople.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Flag_of_Turkey.svg/1280px-Flag_of_Turkey.svg.png",
+    caption:
+      "Turkey's flag — the star and crescent on a red field, derived from Ottoman imperial symbolism that itself inherited the emblem from Byzantine Constantinople.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
-  { kind: "heading", id: "crosses-on-flags", text: "The cross on flags: Scandinavian, Crusader, and humanitarian" },
+  {
+    kind: "heading",
+    id: "crosses-on-flags",
+    text: "The cross on flags: Scandinavian, Crusader, and humanitarian",
+  },
   {
     kind: "paragraph",
     text: "The cross appears on national flags in several distinct traditions. The Nordic cross has already been discussed. The Greek cross — a plus-sign with equal arms — appears on the Swiss flag (white on red) and the Red Cross emblem, which was itself derived from the Swiss flag in 1863 as a tribute to Henri Dunant, the Swiss founder of the International Committee of the Red Cross. The St George's cross — a red cross on a white field — appears on the flag of England and the flag of Georgia, representing entirely different saints and traditions. Georgia's flag uses the St George's cross in combination with four smaller crosses in each quadrant — the 'Five Cross Flag' — representing the Five Holy Wounds of Christ in Georgian Orthodox tradition.",
@@ -158,8 +182,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "georgia-flag",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Flag_of_Georgia.svg/1280px-Flag_of_Georgia.svg.png",
-    caption: "The flag of Georgia — the 'Five Cross Flag' using the St George's cross with four additional crosses, representing the Five Holy Wounds in Georgian Orthodox tradition.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Flag_of_Georgia.svg/1280px-Flag_of_Georgia.svg.png",
+    caption:
+      "The flag of Georgia — the 'Five Cross Flag' using the St George's cross with four additional crosses, representing the Five Holy Wounds in Georgian Orthodox tradition.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
@@ -174,14 +200,28 @@ export const BLOCKS: readonly ArticleBlock[] = [
     facts: [
       { label: "United States", value: "50 stars — one per state, arranged in rows" },
       { label: "China", value: "5 stars — Communist Party + 4 social classes" },
-      { label: "Australia", value: "6 stars — Southern Cross (5) + Commonwealth Star (1, for 6 states + territories)" },
-      { label: "Brazil", value: "27 stars — each representing a state or federal district, forming constellation pattern" },
-      { label: "European Union", value: "12 stars — symbol of perfection/completeness, not member count" },
+      {
+        label: "Australia",
+        value: "6 stars — Southern Cross (5) + Commonwealth Star (1, for 6 states + territories)",
+      },
+      {
+        label: "Brazil",
+        value:
+          "27 stars — each representing a state or federal district, forming constellation pattern",
+      },
+      {
+        label: "European Union",
+        value: "12 stars — symbol of perfection/completeness, not member count",
+      },
       { label: "Israel", value: "Star of David — six-pointed, ancient Jewish symbol" },
     ],
   },
 
-  { kind: "heading", id: "animals-and-symbols", text: "Animals and emblems: what creatures say about nations" },
+  {
+    kind: "heading",
+    id: "animals-and-symbols",
+    text: "Animals and emblems: what creatures say about nations",
+  },
   {
     kind: "paragraph",
     text: "Animals appear on national flags as charges laden with historical and dynastic meaning. The eagle is the most common heraldic bird: the United States uses a bald eagle (coat of arms reflected on some uses), Germany's federal eagle (Bundesadler) descends from the Holy Roman Empire, Mexico's eagle devouring a serpent on a cactus comes from Aztec mythology, Poland's white eagle has been the national symbol since the 12th century, and Albania's double-headed black eagle on red derives from the seal of the Albanian hero Gjergj Kastrioti (Skanderbeg). The double-headed eagle — symbolising rule over East and West — also appears on Montenegro's flag. The dragon appears on the Welsh flag (red dragon on white and green) and the Bhutan flag (thunder dragon Druk), representing completely different cultural traditions. The sun appears on the flags of Bangladesh (red disc), Kyrgyzstan (40-rayed sun representing the 40 tribes), and Uruguay.",
@@ -209,7 +249,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "Antarctica has no official flag despite a number of proposed designs. The most widely used unofficial design — a white outline of the continent on a blue field — was created by Whitney Smith in 2002 and adopted by some research stations, but no international treaty designates an official flag for the continent.",
   },
 
-  { kind: "heading", id: "flags-that-changed", text: "Flags that changed: history written in cloth" },
+  {
+    kind: "heading",
+    id: "flags-that-changed",
+    text: "Flags that changed: history written in cloth",
+  },
   {
     kind: "paragraph",
     text: "Flag changes are political events. When Libya's Muammar Gaddafi in 1977 replaced the country's flag with a plain green rectangle — the only solid-colour national flag in the world — it was a statement of pure revolutionary ideology (green representing Islam and Gaddafi's political theories). The flag lasted 34 years, until the 2011 revolution restored the pre-Gaddafi tricolour. South Africa's 1994 flag — replacing the apartheid-era orange-white-blue — was designed in six weeks under extraordinary political pressure as a bridge between the old and new, combining ANC colours (black, green, gold) with the old South African colours (red, white, blue). The design was intended as a temporary measure but became permanent. Myanmar changed its flag in 2010, abandoning the socialist-era design for a green-yellow-red tricolour with a white star — then reverted after the 2021 military coup to the old design.",
@@ -218,19 +262,50 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "timeline",
     title: "Major flag changes in modern history",
     events: [
-      { date: "~1370", text: "Denmark adopts the Dannebrog — the oldest surviving national flag design still in use." },
-      { date: "1794", text: "France adopts the tricolour as the Revolutionary flag; the design begins spreading across Europe." },
-      { date: "1848", text: "Spring of Nations: Germany, Italy, Austria, Hungary, and others adopt tricolours during the wave of nationalist revolutions." },
-      { date: "1957", text: "Ghana's independence: first sub-Saharan African nation adopts the pan-African colours with a black star — the template for dozens of African flags." },
-      { date: "1977", text: "Libya adopts a completely plain green flag under Gaddafi — the world's only solid-colour national flag, lasting until 2011." },
-      { date: "1994", text: "South Africa adopts a new six-colour flag designed in six weeks to represent the post-apartheid transition." },
-      { date: "2011", text: "Libya's Gaddafi-era green flag is replaced by the pre-1969 tricolour following the Arab Spring revolution." },
-      { date: "2015–16", text: "New Zealand holds a two-stage referendum on replacing its flag; voters choose to retain the existing design with Union Jack." },
-      { date: "2017", text: "Mauritania adds red stripes at the top and bottom of its flag to symbolise the willingness to defend the country." },
+      {
+        date: "~1370",
+        text: "Denmark adopts the Dannebrog — the oldest surviving national flag design still in use.",
+      },
+      {
+        date: "1794",
+        text: "France adopts the tricolour as the Revolutionary flag; the design begins spreading across Europe.",
+      },
+      {
+        date: "1848",
+        text: "Spring of Nations: Germany, Italy, Austria, Hungary, and others adopt tricolours during the wave of nationalist revolutions.",
+      },
+      {
+        date: "1957",
+        text: "Ghana's independence: first sub-Saharan African nation adopts the pan-African colours with a black star — the template for dozens of African flags.",
+      },
+      {
+        date: "1977",
+        text: "Libya adopts a completely plain green flag under Gaddafi — the world's only solid-colour national flag, lasting until 2011.",
+      },
+      {
+        date: "1994",
+        text: "South Africa adopts a new six-colour flag designed in six weeks to represent the post-apartheid transition.",
+      },
+      {
+        date: "2011",
+        text: "Libya's Gaddafi-era green flag is replaced by the pre-1969 tricolour following the Arab Spring revolution.",
+      },
+      {
+        date: "2015–16",
+        text: "New Zealand holds a two-stage referendum on replacing its flag; voters choose to retain the existing design with Union Jack.",
+      },
+      {
+        date: "2017",
+        text: "Mauritania adds red stripes at the top and bottom of its flag to symbolise the willingness to defend the country.",
+      },
     ],
   },
 
-  { kind: "heading", id: "hardest-flags-to-distinguish", text: "Flags that look identical: the hardest pairs" },
+  {
+    kind: "heading",
+    id: "hardest-flags-to-distinguish",
+    text: "Flags that look identical: the hardest pairs",
+  },
   {
     kind: "paragraph",
     text: "Flag confusion is not a trivial problem — diplomatic incidents have arisen from misidentification. The Ireland–Ivory Coast pair is perhaps the most persistent: Ireland's tricolour (green-white-orange, vertical) and Ivory Coast's flag (orange-white-green, vertical) are mirror images of each other. At a distance, without knowing the orientation, they are indistinguishable. Romania and Chad produce an even closer match — both have nearly identical blue-yellow-red vertical tricolours, and Chad unsuccessfully complained to the United Nations about the similarity when Romania registered its design. The Australia–New Zealand confusion stems from both flags sharing the Union Jack canton and the Southern Cross constellation, but on different background colours (blue vs. dark blue vs. red ensign versions).",
@@ -240,16 +315,66 @@ export const BLOCKS: readonly ArticleBlock[] = [
     title: "Ten flag pairs that confuse even experts",
     columns: ["Flag A", "Flag B", "What's the same", "How to tell them apart"],
     rows: [
-      ["Ireland", "Ivory Coast", "Green, white, orange vertical tricolour", "Ireland: green on left (hoist); Ivory Coast: orange on left"],
-      ["Romania", "Chad", "Blue-yellow-red vertical tricolour", "Chad's blue is marginally darker; nearly impossible at distance"],
-      ["New Zealand", "Australia", "Union Jack canton + Southern Cross", "NZ: stars on blue; AUS: larger Commonwealth star, more stars"],
-      ["Monaco", "Indonesia", "Red over white horizontal bicolour", "Monaco ratio ~4:5; Indonesia ratio 2:3"],
-      ["Netherlands", "Luxembourg", "Red-white-blue horizontal tricolour", "Luxembourg's blue is paler; different proportions"],
-      ["Norway", "Iceland", "Nordic cross, red and blue", "Norway: red field, white-bordered blue cross; Iceland: blue field, white-bordered red cross"],
-      ["Colombia", "Ecuador", "Yellow-blue-red horizontal tricolour (same proportions)", "Ecuador has a coat of arms in the centre; Colombia does not"],
-      ["Mali", "Guinea", "Green-yellow-red vertical tricolour", "Mali: green on left; Guinea: red on left (mirror image)"],
-      ["Haiti", "Liechtenstein", "Blue over red horizontal bicolour", "Haiti has a coat of arms; Liechtenstein has a gold crown (added 1937)"],
-      ["Senegal", "Mali with star", "Green-yellow-red vertical tricolour", "Senegal has a green star in the yellow centre; Mali does not"],
+      [
+        "Ireland",
+        "Ivory Coast",
+        "Green, white, orange vertical tricolour",
+        "Ireland: green on left (hoist); Ivory Coast: orange on left",
+      ],
+      [
+        "Romania",
+        "Chad",
+        "Blue-yellow-red vertical tricolour",
+        "Chad's blue is marginally darker; nearly impossible at distance",
+      ],
+      [
+        "New Zealand",
+        "Australia",
+        "Union Jack canton + Southern Cross",
+        "NZ: stars on blue; AUS: larger Commonwealth star, more stars",
+      ],
+      [
+        "Monaco",
+        "Indonesia",
+        "Red over white horizontal bicolour",
+        "Monaco ratio ~4:5; Indonesia ratio 2:3",
+      ],
+      [
+        "Netherlands",
+        "Luxembourg",
+        "Red-white-blue horizontal tricolour",
+        "Luxembourg's blue is paler; different proportions",
+      ],
+      [
+        "Norway",
+        "Iceland",
+        "Nordic cross, red and blue",
+        "Norway: red field, white-bordered blue cross; Iceland: blue field, white-bordered red cross",
+      ],
+      [
+        "Colombia",
+        "Ecuador",
+        "Yellow-blue-red horizontal tricolour (same proportions)",
+        "Ecuador has a coat of arms in the centre; Colombia does not",
+      ],
+      [
+        "Mali",
+        "Guinea",
+        "Green-yellow-red vertical tricolour",
+        "Mali: green on left; Guinea: red on left (mirror image)",
+      ],
+      [
+        "Haiti",
+        "Liechtenstein",
+        "Blue over red horizontal bicolour",
+        "Haiti has a coat of arms; Liechtenstein has a gold crown (added 1937)",
+      ],
+      [
+        "Senegal",
+        "Mali with star",
+        "Green-yellow-red vertical tricolour",
+        "Senegal has a green star in the yellow centre; Mali does not",
+      ],
     ],
   },
   {
@@ -273,7 +398,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     ],
   },
 
-  { kind: "heading", id: "nepal-flag", text: "Nepal: the world's only non-rectangular national flag" },
+  {
+    kind: "heading",
+    id: "nepal-flag",
+    text: "Nepal: the world's only non-rectangular national flag",
+  },
   {
     kind: "paragraph",
     text: "Nepal's flag is the world's only national flag that is not a rectangle or square. It consists of two stacked pennants — a larger lower triangle surmounted by a smaller upper one — creating a double-pennant shape unique among sovereign nations. The flag's crimson field with blue border comes from the colours of ancient Nepalese kingdoms. The moon in the upper pennant represents the cool high Himalayas and the royal house; the sun in the lower pennant represents the heat of the lower regions and the warrior caste. The symbolism expresses the hope that Nepal will endure as long as the sun and moon exist in the sky. The flag's unique shape caused diplomatic complications when Nepal joined the United Nations in 1955, as standard flag-printing specifications assumed rectangular dimensions.",
@@ -281,8 +410,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "nepal-flag",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Flag_of_Nepal.svg/800px-Flag_of_Nepal.svg.png",
-    caption: "Nepal's flag — the world's only non-quadrilateral national flag, a double-pennant shape representing the union of Nepal's Himalayan and lowland regions.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Flag_of_Nepal.svg/800px-Flag_of_Nepal.svg.png",
+    caption:
+      "Nepal's flag — the world's only non-quadrilateral national flag, a double-pennant shape representing the union of Nepal's Himalayan and lowland regions.",
     credit: "Wikimedia Commons / Public Domain",
   },
   {
@@ -317,8 +448,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "australia-flag",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Flag_of_Australia_%28converted%29.svg/1280px-Flag_of_Australia_%28converted%29.svg.png",
-    caption: "Australia's flag — Union Jack in the canton, Commonwealth Star (seven-pointed) below it, and the Southern Cross on the fly half. The pattern identifies it as a British Pacific territory at a glance.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Flag_of_Australia_%28converted%29.svg/1280px-Flag_of_Australia_%28converted%29.svg.png",
+    caption:
+      "Australia's flag — Union Jack in the canton, Commonwealth Star (seven-pointed) below it, and the Southern Cross on the fly half. The pattern identifies it as a British Pacific territory at a glance.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
@@ -333,7 +466,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "The five principles of good flag design (NAVA, 2001): 1) Keep it simple; 2) Use meaningful symbolism; 3) Use two or three basic colours; 4) No lettering or seals; 5) Be distinctive. Most national flags violate at least one. The flags of San Marino, Ecuador, Andorra, Bolivia, and Haiti all include coats of arms that become invisible from any meaningful distance.",
   },
 
-  { kind: "heading", id: "supranational-flags", text: "Beyond nations: supranational and movement flags" },
+  {
+    kind: "heading",
+    id: "supranational-flags",
+    text: "Beyond nations: supranational and movement flags",
+  },
   {
     kind: "paragraph",
     text: "Not all significant flags belong to nation-states. The United Nations flag — a white world map on a light blue field, showing the globe centred on the North Pole and surrounded by olive branches — is among the most internationally recognised non-national flags. The European Union flag, 12 gold stars on a blue field, was designed by Arsène Heitz and Rémy Heitz in 1955 and adopted as the EU symbol in 1985; the 12 stars deliberately do not correspond to any number of member states, instead representing completeness and unity. The Olympic flag — five interlocked rings in blue, yellow, black, green, and red on white — was designed by Pierre de Coubertin in 1913, with the colours chosen because at least one of them appears in every national flag in the world. The Rainbow Pride flag, created by Gilbert Baker in 1978, has become one of the most widely recognised non-national flags globally, each colour carrying specific meaning: red (life), orange (healing), yellow (sunlight), green (nature), blue (serenity), and violet (spirit).",

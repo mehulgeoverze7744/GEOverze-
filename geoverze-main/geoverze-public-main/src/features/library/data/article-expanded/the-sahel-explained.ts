@@ -23,7 +23,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
       { label: "Length", value: "~5,400 km (Atlantic to Red Sea)" },
       { label: "Width", value: "~300–500 km" },
       { label: "Annual rainfall", value: "200–600 mm, single wet season" },
-      { label: "Countries in the core Sahel", value: "Senegal, Mauritania, Mali, Burkina Faso, Niger, Chad, Sudan" },
+      {
+        label: "Countries in the core Sahel",
+        value: "Senegal, Mauritania, Mali, Burkina Faso, Niger, Chad, Sudan",
+      },
       { label: "Estimated population", value: "~150 million (2024)" },
       { label: "Population growth rate", value: "Among highest globally, ~3%/year" },
     ],
@@ -32,8 +35,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-sahel-landscape",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Sahel_Belt.jpg/1280px-Sahel_Belt.jpg",
-    caption: "Typical Sahel vegetation — sparse acacia scrub between sandy patches, photographed in Niger.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Sahel_Belt.jpg/1280px-Sahel_Belt.jpg",
+    caption:
+      "Typical Sahel vegetation — sparse acacia scrub between sandy patches, photographed in Niger.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
@@ -58,8 +63,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-timbuktu-sankore-mosque",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Sankore_mosque2.jpg/1280px-Sankore_mosque2.jpg",
-    caption: "The Sankore Mosque in Timbuktu, Mali — centre of one of the medieval world's great universities, funded by Saharan trade wealth.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Sankore_mosque2.jpg/1280px-Sankore_mosque2.jpg",
+    caption:
+      "The Sankore Mosque in Timbuktu, Mali — centre of one of the medieval world's great universities, funded by Saharan trade wealth.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
   },
   // Block 11
@@ -67,25 +74,68 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "timeline",
     title: "The Sahel: from empire to crisis (600–2024)",
     events: [
-      { date: "~400 CE", text: "Ghana Empire emerges in the western Sahel; controls gold-salt trade routes." },
-      { date: "1068", text: "Arab geographer al-Bakri describes Ghana Empire's capital as one of the world's great cities." },
-      { date: "1235", text: "Mali Empire founded by Sundiata Keita after defeating the Ghana Empire at the Battle of Kirina." },
-      { date: "1324", text: "Mansa Musa's pilgrimage to Mecca; his gold distribution crashes Cairo's economy." },
-      { date: "1375", text: "Songhai Empire expands to become the largest state in African history under Sunni Ali." },
-      { date: "1591", text: "Moroccan invasion ends Songhai Empire; trans-Saharan trade networks fragment." },
-      { date: "1884–85", text: "Berlin Conference divides the Sahel among France, Britain, Portugal; borders ignore ethnic/ecological realities." },
-      { date: "1960", text: "Wave of Sahelian independence — Mali, Niger, Senegal, Burkina Faso, Chad, Mauritania." },
-      { date: "1968", text: "Start of catastrophic Sahel drought; rains fail for five consecutive years." },
-      { date: "1973", text: "~100,000 deaths; pastoral economies collapse; political crisis in Niger, Mali, Chad." },
-      { date: "1984–85", text: "Second major drought and famine; ~1 million deaths across Sahel and Ethiopia." },
+      {
+        date: "~400 CE",
+        text: "Ghana Empire emerges in the western Sahel; controls gold-salt trade routes.",
+      },
+      {
+        date: "1068",
+        text: "Arab geographer al-Bakri describes Ghana Empire's capital as one of the world's great cities.",
+      },
+      {
+        date: "1235",
+        text: "Mali Empire founded by Sundiata Keita after defeating the Ghana Empire at the Battle of Kirina.",
+      },
+      {
+        date: "1324",
+        text: "Mansa Musa's pilgrimage to Mecca; his gold distribution crashes Cairo's economy.",
+      },
+      {
+        date: "1375",
+        text: "Songhai Empire expands to become the largest state in African history under Sunni Ali.",
+      },
+      {
+        date: "1591",
+        text: "Moroccan invasion ends Songhai Empire; trans-Saharan trade networks fragment.",
+      },
+      {
+        date: "1884–85",
+        text: "Berlin Conference divides the Sahel among France, Britain, Portugal; borders ignore ethnic/ecological realities.",
+      },
+      {
+        date: "1960",
+        text: "Wave of Sahelian independence — Mali, Niger, Senegal, Burkina Faso, Chad, Mauritania.",
+      },
+      {
+        date: "1968",
+        text: "Start of catastrophic Sahel drought; rains fail for five consecutive years.",
+      },
+      {
+        date: "1973",
+        text: "~100,000 deaths; pastoral economies collapse; political crisis in Niger, Mali, Chad.",
+      },
+      {
+        date: "1984–85",
+        text: "Second major drought and famine; ~1 million deaths across Sahel and Ethiopia.",
+      },
       { date: "2007", text: "African Union launches the Great Green Wall initiative." },
-      { date: "2012", text: "Tuareg rebellion and jihadist takeover of northern Mali; ECOWAS and France intervene 2013." },
-      { date: "2020–2023", text: "Military coups in Mali, Guinea, Burkina Faso, Niger; French forces expelled from the Sahel." },
+      {
+        date: "2012",
+        text: "Tuareg rebellion and jihadist takeover of northern Mali; ECOWAS and France intervene 2013.",
+      },
+      {
+        date: "2020–2023",
+        text: "Military coups in Mali, Guinea, Burkina Faso, Niger; French forces expelled from the Sahel.",
+      },
     ],
   },
 
   // Block 12
-  { kind: "heading", id: "rainfall-variability", text: "Rainfall variability: the governing force" },
+  {
+    kind: "heading",
+    id: "rainfall-variability",
+    text: "Rainfall variability: the governing force",
+  },
   // Block 13
   {
     kind: "paragraph",
@@ -147,13 +197,19 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-great-green-wall-niger",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Zai_pits_Niger.jpg/1280px-Zai_pits_Niger.jpg",
-    caption: "Zaï pits in southern Niger — traditional water-harvesting technique scaled under the Great Green Wall programme.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Zai_pits_Niger.jpg/1280px-Zai_pits_Niger.jpg",
+    caption:
+      "Zaï pits in southern Niger — traditional water-harvesting technique scaled under the Great Green Wall programme.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
   // Block 26
-  { kind: "heading", id: "traditional-land-management", text: "Ancient solutions for modern problems" },
+  {
+    kind: "heading",
+    id: "traditional-land-management",
+    text: "Ancient solutions for modern problems",
+  },
   // Block 27
   {
     kind: "paragraph",
@@ -187,8 +243,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-niger-inland-delta",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/NigerInlandDelta.png/1280px-NigerInlandDelta.png",
-    caption: "The Niger Inland Delta (Macina) in central Mali — an 80,000 km² seasonal wetland supporting 1.5 million people.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/NigerInlandDelta.png/1280px-NigerInlandDelta.png",
+    caption:
+      "The Niger Inland Delta (Macina) in central Mali — an 80,000 km² seasonal wetland supporting 1.5 million people.",
     credit: "NASA / Wikimedia Commons / Public Domain",
   },
 
@@ -240,8 +298,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-lake-chad-decline",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Lake_Chad_by_NASA_1972-2001.jpg/1280px-Lake_Chad_by_NASA_1972-2001.jpg",
-    caption: "NASA satellite composites showing Lake Chad's dramatic contraction between 1972 and 2001.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Lake_Chad_by_NASA_1972-2001.jpg/1280px-Lake_Chad_by_NASA_1972-2001.jpg",
+    caption:
+      "NASA satellite composites showing Lake Chad's dramatic contraction between 1972 and 2001.",
     credit: "NASA Earth Observatory / Public Domain",
   },
   // Block 43
@@ -260,12 +320,21 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "facts",
     title: "Lake Chad: then and now",
     facts: [
-      { label: "Surface area in 1963", value: "~26,000 km² (larger than the US state of New Hampshire)" },
+      {
+        label: "Surface area in 1963",
+        value: "~26,000 km² (larger than the US state of New Hampshire)",
+      },
       { label: "Surface area in 2024", value: "~1,500 km² (~94% reduction)" },
       { label: "Countries sharing the lake", value: "Nigeria, Niger, Chad, Cameroon" },
       { label: "People dependent on the lake", value: "~40 million" },
-      { label: "Primary cause of shrinkage", value: "Reduced rainfall (~50%) + increased irrigation withdrawals (~50%)" },
-      { label: "Boko Haram deaths since 2009", value: ">35,000; 2.5 million displaced in Lake Chad Basin" },
+      {
+        label: "Primary cause of shrinkage",
+        value: "Reduced rainfall (~50%) + increased irrigation withdrawals (~50%)",
+      },
+      {
+        label: "Boko Haram deaths since 2009",
+        value: ">35,000; 2.5 million displaced in Lake Chad Basin",
+      },
     ],
   },
 
@@ -299,7 +368,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
   },
 
   // Block 49
-  { kind: "heading", id: "boko-haram-jnim", text: "The security crisis: armed groups and displacement" },
+  {
+    kind: "heading",
+    id: "boko-haram-jnim",
+    text: "The security crisis: armed groups and displacement",
+  },
   // Block 50
   {
     kind: "paragraph",
@@ -352,8 +425,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-sahel-regreening",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Farmer_managed_natural_regeneration.jpg/1280px-Farmer_managed_natural_regeneration.jpg",
-    caption: "Farmer-Managed Natural Regeneration (FMNR) in Niger — protected trees regrow on degraded farmland, restoring soil moisture and yields.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Farmer_managed_natural_regeneration.jpg/1280px-Farmer_managed_natural_regeneration.jpg",
+    caption:
+      "Farmer-Managed Natural Regeneration (FMNR) in Niger — protected trees regrow on degraded farmland, restoring soil moisture and yields.",
     credit: "World Vision / Wikimedia Commons / CC BY 2.0",
   },
 

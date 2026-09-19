@@ -15,8 +15,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-topographic-map-example",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Topographic_map_example.png/800px-Topographic_map_example.png",
-    caption: "A standard topographic map excerpt — concentric loops for hills, V-shapes for valleys, densely packed lines for steep faces, and wide spacing for gentle slopes.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Topographic_map_example.png/800px-Topographic_map_example.png",
+    caption:
+      "A standard topographic map excerpt — concentric loops for hills, V-shapes for valleys, densely packed lines for steep faces, and wide spacing for gentle slopes.",
     credit: "Wikimedia Commons / Public Domain",
   },
   {
@@ -25,7 +27,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "A topographic map differs from a satellite image in one crucial way: it encodes invisible information. A satellite image shows surface texture and colour. A topographic map shows elevation — a third dimension that no photograph captures. LiDAR and terrain models can now generate contour maps automatically from aerial data, but the underlying principle — joining equal-elevation points — is unchanged from 1750.",
   },
 
-  { kind: "heading", id: "the-contour-line", text: "The contour line: one rule that generates everything" },
+  {
+    kind: "heading",
+    id: "the-contour-line",
+    text: "The contour line: one rule that generates everything",
+  },
   {
     kind: "paragraph",
     text: "A contour line is an isoline — a line of constant value. On a topographic map, that value is elevation above sea level (or above a defined datum). Three rules govern contour lines absolutely. First: they never cross. If two lines shared a point, that point would be simultaneously at two different elevations — physically impossible. Second: they never branch. Third: they always form closed loops somewhere in the world, because any ridge or valley, followed far enough, returns to its starting point. These three rules mean that all the terrain complexity you can see on a topographic map — summits, valleys, ridges, cliffs, saddles, hollows — is generated entirely by how closed loops of equal elevation arrange themselves relative to each other.",
@@ -36,7 +42,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "The three absolute rules of contour lines: (1) they never cross; (2) they never branch or split; (3) they always form closed loops, either within the map or beyond its edge. Every terrain feature — hill, valley, cliff, saddle — is produced by how these loops are spaced and shaped.",
   },
 
-  { kind: "heading", id: "contour-interval", text: "Contour interval: reading the map's vertical resolution" },
+  {
+    kind: "heading",
+    id: "contour-interval",
+    text: "Contour interval: reading the map's vertical resolution",
+  },
   {
     kind: "paragraph",
     text: "The contour interval is the vertical distance between adjacent contour lines. It is fixed for a given map sheet and stated in the legend. Common intervals are 5 m for very flat country, 10 m for gently rolling terrain, 20 m for hilly landscapes, and 40 m or more for mountainous areas. The choice of interval reflects a compromise between detail and legibility: too small an interval on steep ground produces a sheet so densely lined it becomes unreadable; too large an interval on flat ground misses gentle features entirely. Every fifth contour line — at five times the contour interval — is drawn thicker and labelled with its elevation value. These are index contours, and they are the lines from which you read elevations directly. A point on an index contour labelled 300 m is at exactly 300 m; a point on the next unlabelled line above it (if the interval is 10 m) is at 310 m.",
@@ -45,12 +55,31 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "facts",
     title: "Topographic map essentials",
     facts: [
-      { label: "Standard hiking interval (UK OS 1:25,000)", value: "10 m between contours; index contour every 50 m" },
-      { label: "Standard hiking interval (USGS 1:24,000)", value: "20 ft (~6 m) in flat terrain; 40 ft (~12 m) in hilly terrain" },
-      { label: "Index contour frequency", value: "Every 5th contour line — darker, labelled with elevation" },
-      { label: "Form lines (dashed contours)", value: "Approximate or uncertain elevation — used where survey data is sparse" },
-      { label: "Hachured contour", value: "Depression (closed low, like a volcanic crater or sinkhole) — tick marks point inward" },
-      { label: "Grid square on OS 1:25,000", value: "1 km × 1 km (represented as 4 cm × 4 cm on paper)" },
+      {
+        label: "Standard hiking interval (UK OS 1:25,000)",
+        value: "10 m between contours; index contour every 50 m",
+      },
+      {
+        label: "Standard hiking interval (USGS 1:24,000)",
+        value: "20 ft (~6 m) in flat terrain; 40 ft (~12 m) in hilly terrain",
+      },
+      {
+        label: "Index contour frequency",
+        value: "Every 5th contour line — darker, labelled with elevation",
+      },
+      {
+        label: "Form lines (dashed contours)",
+        value: "Approximate or uncertain elevation — used where survey data is sparse",
+      },
+      {
+        label: "Hachured contour",
+        value:
+          "Depression (closed low, like a volcanic crater or sinkhole) — tick marks point inward",
+      },
+      {
+        label: "Grid square on OS 1:25,000",
+        value: "1 km × 1 km (represented as 4 cm × 4 cm on paper)",
+      },
     ],
   },
 
@@ -73,8 +102,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-contour-valley-ridge",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Contour-lines-ridge-and-valley.png/800px-Contour-lines-ridge-and-valley.png",
-    caption: "Contour V-shapes showing ridge (V opens toward higher ground) and valley (V tip points toward higher ground, upstream) — the essential diagnostic pair for terrain reading.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Contour-lines-ridge-and-valley.png/800px-Contour-lines-ridge-and-valley.png",
+    caption:
+      "Contour V-shapes showing ridge (V opens toward higher ground) and valley (V tip points toward higher ground, upstream) — the essential diagnostic pair for terrain reading.",
     credit: "Wikimedia Commons / Public Domain",
   },
   {
@@ -91,8 +122,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-trig-point-pillar",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Trig_point_on_Mynydd_Mawr.jpg/800px-Trig_point_on_Mynydd_Mawr.jpg",
-    caption: "A UK Ordnance Survey triangulation pillar — one of roughly 6,500 trig points placed on hilltops across Britain to establish the national survey network from the 1930s onward.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Trig_point_on_Mynydd_Mawr.jpg/800px-Trig_point_on_Mynydd_Mawr.jpg",
+    caption:
+      "A UK Ordnance Survey triangulation pillar — one of roughly 6,500 trig points placed on hilltops across Britain to establish the national survey network from the 1930s onward.",
     credit: "Wikimedia Commons / CC BY-SA 2.0",
   },
 
@@ -150,7 +183,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "The UK National Grid is entirely artificial: its origin point — the false origin — is an imaginary point southwest of the Isles of Scilly, chosen so that all grid coordinates across Britain are positive numbers. The true origin (0,0) is in the English Channel. This prevents negative coordinates anywhere on the British mainland.",
   },
 
-  { kind: "heading", id: "magnetic-declination", text: "Magnetic declination: the compass correction" },
+  {
+    kind: "heading",
+    id: "magnetic-declination",
+    text: "Magnetic declination: the compass correction",
+  },
   {
     kind: "paragraph",
     text: "A compass needle points toward magnetic north — the location of the Earth's magnetic pole, which currently sits in northern Canada and drifts by roughly 50 km per year. Grid north is the direction of the map's vertical grid lines, which point toward the geographic North Pole only along specific meridians. The difference between magnetic north and grid north at a given location is magnetic declination (sometimes called magnetic variation). In western Europe, magnetic declination is currently a few degrees east — meaning magnetic north is slightly east of grid north, and a compass bearing must be adjusted accordingly. In eastern North America, magnetic declination is several degrees west. The error introduced by ignoring declination is approximately 9 m per 100 m of travel per degree of error — small over a field, significant over a mountain range.",
@@ -170,19 +207,30 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "facts",
     title: "Map scale practical reference",
     facts: [
-      { label: "1:25,000 (OS Explorer)", value: "1 cm = 250 m; 4 cm grid square = 1 km; best for walking, hiking" },
-      { label: "1:50,000 (OS Landranger)", value: "1 cm = 500 m; 2 cm grid square = 1 km; walking, cycling, military" },
+      {
+        label: "1:25,000 (OS Explorer)",
+        value: "1 cm = 250 m; 4 cm grid square = 1 km; best for walking, hiking",
+      },
+      {
+        label: "1:50,000 (OS Landranger)",
+        value: "1 cm = 500 m; 2 cm grid square = 1 km; walking, cycling, military",
+      },
       { label: "1:100,000", value: "1 cm = 1 km; overview planning, cycle touring" },
       { label: "1:250,000 (OS Road)", value: "1 cm = 2.5 km; road driving, regional overview" },
       { label: "1:1,000,000 (ICAO air chart)", value: "1 cm = 10 km; aviation sectional charts" },
-      { label: "1:24,000 (USGS 7.5-minute)", value: "1 inch = 2,000 ft; US standard hiking/survey scale" },
+      {
+        label: "1:24,000 (USGS 7.5-minute)",
+        value: "1 inch = 2,000 ft; US standard hiking/survey scale",
+      },
     ],
   },
   {
     kind: "image",
     art: "article-os-map-landranger",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/OS_OpenData_Landranger_style_map.jpg/1280px-OS_OpenData_Landranger_style_map.jpg",
-    caption: "UK Ordnance Survey 1:50,000 Landranger-style map — one of the world's most recognisable and widely used topographic map traditions, in continuous production since the 1940s.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/OS_OpenData_Landranger_style_map.jpg/1280px-OS_OpenData_Landranger_style_map.jpg",
+    caption:
+      "UK Ordnance Survey 1:50,000 Landranger-style map — one of the world's most recognisable and widely used topographic map traditions, in continuous production since the 1940s.",
     credit: "Wikimedia Commons / OGL v3.0",
   },
 
@@ -219,12 +267,18 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-relief-shaded-map",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Switzerland_topographic_map.png/1280px-Switzerland_topographic_map.png",
-    caption: "Swiss topographic relief shading — the technique developed by Swiss cartographers in the 18th century, where light from the northwest casts shadows to reveal terrain intuitively.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Switzerland_topographic_map.png/1280px-Switzerland_topographic_map.png",
+    caption:
+      "Swiss topographic relief shading — the technique developed by Swiss cartographers in the 18th century, where light from the northwest casts shadows to reveal terrain intuitively.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
-  { kind: "heading", id: "digital-topo-maps", text: "Digital topographic maps: SRTM, LiDAR, and DEM" },
+  {
+    kind: "heading",
+    id: "digital-topo-maps",
+    text: "Digital topographic maps: SRTM, LiDAR, and DEM",
+  },
   {
     kind: "paragraph",
     text: "Digital elevation models (DEMs) are gridded data files storing elevation values for every cell across a geographic area. The Shuttle Radar Topography Mission (SRTM), conducted by NASA in February 2000, collected elevation data for virtually the entire Earth between 60°N and 56°S in 11 days using interferometric radar from the Space Shuttle Endeavour. The SRTM dataset, at 30 m horizontal resolution globally and 10 m in the US, is freely available and has become the foundation of most global terrain visualisations, including Google Earth's terrain layer. LiDAR (Light Detection And Ranging) produces much higher resolution DEMs — typically 0.5–2 m resolution — by firing laser pulses from aircraft and measuring return time. LiDAR can penetrate vegetation canopy and detect ground surface beneath forest, making it extraordinarily powerful for archaeological survey.",
@@ -232,8 +286,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-srtm-global-dem",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Srtm_ramp2.world.21600x10800.jpg/1280px-Srtm_ramp2.world.21600x10800.jpg",
-    caption: "NASA SRTM global digital elevation model — the entire Earth's terrain captured in 11 days in February 2000, now the foundation of most global terrain visualisations.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Srtm_ramp2.world.21600x10800.jpg/1280px-Srtm_ramp2.world.21600x10800.jpg",
+    caption:
+      "NASA SRTM global digital elevation model — the entire Earth's terrain captured in 11 days in February 2000, now the foundation of most global terrain visualisations.",
     credit: "Wikimedia Commons / Public Domain (NASA)",
   },
   {
@@ -251,16 +307,46 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "timeline",
     title: "History of topographic mapping",
     events: [
-      { date: "1750", text: "France begins Cassini national survey — first systematic topographic mapping of an entire country." },
-      { date: "1791", text: "British Ordnance Survey established — initially to map southern England against French invasion threat." },
-      { date: "1802", text: "Survey of India begins under William Lambton — the Great Trigonometrical Survey, covering the subcontinent." },
-      { date: "1865", text: "Peak XV (Himalayas) officially named Everest — height calculated from Survey of India triangulation data." },
-      { date: "1930s–1950s", text: "UK trig point network established — 6,500 concrete pillars on hilltops, forming national geodetic framework." },
-      { date: "1972", text: "First Landsat satellite launched — beginning of systematic satellite earth observation for terrain mapping." },
-      { date: "1984", text: "GPS system declared operational — beginning of the end for traditional ground triangulation surveys." },
-      { date: "2000", text: "NASA SRTM mission maps 80% of Earth's surface at 30 m resolution in 11 days." },
-      { date: "2010s", text: "LiDAR surveys reveal hidden archaeological landscapes beneath forest canopy worldwide." },
-      { date: "2020s", text: "AI-assisted contour generation and 1 m resolution national DEMs become standard in many countries." },
+      {
+        date: "1750",
+        text: "France begins Cassini national survey — first systematic topographic mapping of an entire country.",
+      },
+      {
+        date: "1791",
+        text: "British Ordnance Survey established — initially to map southern England against French invasion threat.",
+      },
+      {
+        date: "1802",
+        text: "Survey of India begins under William Lambton — the Great Trigonometrical Survey, covering the subcontinent.",
+      },
+      {
+        date: "1865",
+        text: "Peak XV (Himalayas) officially named Everest — height calculated from Survey of India triangulation data.",
+      },
+      {
+        date: "1930s–1950s",
+        text: "UK trig point network established — 6,500 concrete pillars on hilltops, forming national geodetic framework.",
+      },
+      {
+        date: "1972",
+        text: "First Landsat satellite launched — beginning of systematic satellite earth observation for terrain mapping.",
+      },
+      {
+        date: "1984",
+        text: "GPS system declared operational — beginning of the end for traditional ground triangulation surveys.",
+      },
+      {
+        date: "2000",
+        text: "NASA SRTM mission maps 80% of Earth's surface at 30 m resolution in 11 days.",
+      },
+      {
+        date: "2010s",
+        text: "LiDAR surveys reveal hidden archaeological landscapes beneath forest canopy worldwide.",
+      },
+      {
+        date: "2020s",
+        text: "AI-assisted contour generation and 1 m resolution national DEMs become standard in many countries.",
+      },
     ],
   },
 
@@ -275,7 +361,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "LiDAR surveys of the Amazon basin in Brazil have revealed large, geometrically complex earthwork enclosures beneath the forest — some covering several square kilometres — built by pre-Columbian civilisations over 2,000 years ago. These structures, invisible on satellite imagery and inaccessible on foot, fundamentally change understanding of pre-Columbian population density and cultural sophistication in the Amazon.",
   },
 
-  { kind: "heading", id: "real-world-applications", text: "Real-world applications of topographic maps" },
+  {
+    kind: "heading",
+    id: "real-world-applications",
+    text: "Real-world applications of topographic maps",
+  },
   {
     kind: "paragraph",
     text: "Topographic maps are the most practically versatile product of the surveying sciences. For walkers and mountaineers, they are the primary safety tool — enabling route planning, time estimation, emergency location identification, and terrain assessment before setting out. For engineers, they are the essential input for roads, pipelines, bridges, and buildings: every cut-and-fill calculation, every drainage plan, every foundation design begins with a topographic baseline. For flood risk assessment, detailed elevation models reveal which land lies within the floodplain of a river at various flow levels — information that drives insurance premiums, planning decisions, and emergency evacuation routes. For military planners, paper topographic maps remain in active use because digital systems fail under electronic warfare conditions.",
@@ -305,7 +395,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "The Ordnance Survey was founded in 1791 specifically because the British government needed accurate maps of southern England to plan coastal defences against French invasion. The word 'ordnance' refers to military artillery — reflecting that the survey's original purpose was to support artillery placement, not civilian walking routes. The recreational and civilian applications came much later.",
   },
 
-  { kind: "heading", id: "flood-risk-engineering", text: "Flood risk and engineering applications" },
+  {
+    kind: "heading",
+    id: "flood-risk-engineering",
+    text: "Flood risk and engineering applications",
+  },
   {
     kind: "paragraph",
     text: "Digital elevation models derived from LiDAR surveys are now the standard tool for flood risk mapping. By combining a high-resolution DEM with hydrological modelling — simulating how water moves across a landscape under various rainfall scenarios — planners can identify which properties lie within the 1-in-100-year or 1-in-1,000-year floodplain. A 1 m error in a DEM can determine whether a property is classified as flood-risk or not, with significant financial consequences. In the 2015 UK floods, post-event analysis showed that properties constructed in areas classified as low-risk had been built using outdated lower-resolution terrain data, and that the actual floodplain extended further than legacy mapping had indicated. LiDAR-based flood mapping has since been updated nationally in the UK to 25 cm resolution, the most detailed national flood risk dataset in the world.",

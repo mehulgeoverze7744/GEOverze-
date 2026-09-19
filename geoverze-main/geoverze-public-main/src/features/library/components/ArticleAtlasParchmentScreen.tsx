@@ -118,13 +118,13 @@ export function ArticleAtlasParchmentScreen({
               </div>
 
               <figure className="article-atlas-parchment__hero">
-            <ArticleExternalImage
-              src={presentation.heroImage.src}
-              alt={presentation.heroImage.alt}
-              fallbackArt="article-microstates-map"
-              staticFallbackSrc="/assets/geolibrary/collections/countries-of-europe.jpg"
-              ratio="video"
-            />
+                <ArticleExternalImage
+                  src={presentation.heroImage.src}
+                  alt={presentation.heroImage.alt}
+                  fallbackArt="article-microstates-map"
+                  staticFallbackSrc="/assets/geolibrary/collections/countries-of-europe.jpg"
+                  ratio="video"
+                />
                 <figcaption>
                   {presentation.heroImage.caption}
                   <span className="article-atlas-parchment__hero-credit">

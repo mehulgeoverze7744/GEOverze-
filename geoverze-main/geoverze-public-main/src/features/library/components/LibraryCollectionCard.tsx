@@ -4,10 +4,7 @@ import { cn } from "@/lib/utils";
 
 import type { Collection } from "../data/collections";
 import { categoryLabel } from "../data/taxonomy";
-import {
-  libraryRailCardClass,
-  libraryRailMediaClass,
-} from "../lib/library-rail-layout";
+import { libraryRailCardClass, libraryRailMediaClass } from "../lib/library-rail-layout";
 import { CollectionCardCover } from "./CollectionCardCover";
 
 type LibraryCollectionCardProps = {

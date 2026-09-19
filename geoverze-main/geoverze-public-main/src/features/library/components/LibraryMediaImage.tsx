@@ -45,8 +45,7 @@ export function LibraryMediaImage({
     );
   }
 
-  const resolvedPath =
-    storagePath ?? (isLibraryMediaPath(fallbackArt) ? fallbackArt : null);
+  const resolvedPath = storagePath ?? (isLibraryMediaPath(fallbackArt) ? fallbackArt : null);
   const { url, loading, error } = useLibraryMediaUrl(resolvedPath);
 
   if (!resolvedPath || error) {

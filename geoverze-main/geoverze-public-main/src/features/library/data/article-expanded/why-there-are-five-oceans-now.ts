@@ -34,8 +34,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-world-ocean-map",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/WorldMap-A_non-Frame.png/1280px-WorldMap-A_non-Frame.png",
-    caption: "The world's five named oceans — Pacific, Atlantic, Indian, Southern, and Arctic — are divisions of a single continuous body of water covering 71 percent of Earth's surface.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/WorldMap-A_non-Frame.png/1280px-WorldMap-A_non-Frame.png",
+    caption:
+      "The world's five named oceans — Pacific, Atlantic, Indian, Southern, and Arctic — are divisions of a single continuous body of water covering 71 percent of Earth's surface.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
@@ -61,7 +63,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "During the four-ocean era (1953–2000), the southern tip of South America officially 'met' all three southern oceans — the Atlantic to the east of Cape Horn, the Pacific to the west, and by some definitions the Indian beyond that. The Drake Passage, depending on which map you used, was simultaneously part of up to three different oceans.",
   },
 
-  { kind: "heading", id: "restoration-2021", text: "The Southern Ocean's Restoration in 2000 and 2021" },
+  {
+    kind: "heading",
+    id: "restoration-2021",
+    text: "The Southern Ocean's Restoration in 2000 and 2021",
+  },
   {
     kind: "paragraph",
     text: "In 2000, the IHO published a draft fourth edition of S-23 that reinstated the Southern Ocean as a distinct body, defined by the 60° south latitude boundary. But the revision required ratification by member states, and disagreements stalled the process. The draft remained unratified for two decades, officially proposed but not formally adopted. During this period, oceanographers consistently treated the Southern Ocean as a separate entity in their research — its distinct water mass properties, circulation patterns, and ecosystem made treating it as part of the other three oceans scientifically awkward — but the cartographic community lacked a formal mandate to change maps.",
@@ -75,13 +81,31 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "timeline",
     title: "The Southern Ocean's recognition timeline",
     events: [
-      { date: "1650s", text: "European geographers begin discussing a distinctive southern sea circling Antarctica in navigational literature." },
-      { date: "1928", text: "IHO's first S-23 publication defines the Southern Ocean as a distinct body of water." },
+      {
+        date: "1650s",
+        text: "European geographers begin discussing a distinctive southern sea circling Antarctica in navigational literature.",
+      },
+      {
+        date: "1928",
+        text: "IHO's first S-23 publication defines the Southern Ocean as a distinct body of water.",
+      },
       { date: "1937", text: "IHO second edition maintains Southern Ocean designation." },
-      { date: "1953", text: "Third edition of S-23 removes Southern Ocean; world reverts to four-ocean model for cartographic purposes." },
-      { date: "2000", text: "IHO draft fourth edition reinstates Southern Ocean at 60°S; ratification process stalls for two decades." },
-      { date: "June 2021", text: "National Geographic Society officially adds the Southern Ocean to its maps on World Ocean Day." },
-      { date: "Nov 2021", text: "IHO confirms majority member approval; Southern Ocean formally reinstated in international cartographic standards." },
+      {
+        date: "1953",
+        text: "Third edition of S-23 removes Southern Ocean; world reverts to four-ocean model for cartographic purposes.",
+      },
+      {
+        date: "2000",
+        text: "IHO draft fourth edition reinstates Southern Ocean at 60°S; ratification process stalls for two decades.",
+      },
+      {
+        date: "June 2021",
+        text: "National Geographic Society officially adds the Southern Ocean to its maps on World Ocean Day.",
+      },
+      {
+        date: "Nov 2021",
+        text: "IHO confirms majority member approval; Southern Ocean formally reinstated in international cartographic standards.",
+      },
     ],
   },
 
@@ -133,20 +157,64 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "table",
     title: "The five oceans: key comparative data (2024)",
-    columns: ["Ocean", "Area (km²)", "Avg Depth (m)", "Deepest Point", "% of World Ocean", "Distinctive Feature"],
+    columns: [
+      "Ocean",
+      "Area (km²)",
+      "Avg Depth (m)",
+      "Deepest Point",
+      "% of World Ocean",
+      "Distinctive Feature",
+    ],
     rows: [
-      ["Pacific", "165,250,000", "4,080", "Challenger Deep (10,935 m)", "46.0%", "Largest; Ring of Fire; most Pacific islands"],
-      ["Atlantic", "106,460,000", "3,332", "Puerto Rico Trench (8,376 m)", "29.6%", "S-shaped; major hurricane corridor; AMOC conveyor"],
-      ["Indian", "70,560,000", "3,890", "Java Trench (7,729 m)", "19.6%", "Monsoon-dominated; Persian Gulf oil routes"],
-      ["Southern", "21,960,000", "3,270", "South Sandwich Trench (8,428 m)", "6.1%", "Circumpolar current; largest carbon/heat sink per area"],
-      ["Arctic", "14,060,000", "1,205", "Molloy Deep (5,607 m)", "3.9%", "Shallowest; sea ice cover; fastest warming ocean"],
+      [
+        "Pacific",
+        "165,250,000",
+        "4,080",
+        "Challenger Deep (10,935 m)",
+        "46.0%",
+        "Largest; Ring of Fire; most Pacific islands",
+      ],
+      [
+        "Atlantic",
+        "106,460,000",
+        "3,332",
+        "Puerto Rico Trench (8,376 m)",
+        "29.6%",
+        "S-shaped; major hurricane corridor; AMOC conveyor",
+      ],
+      [
+        "Indian",
+        "70,560,000",
+        "3,890",
+        "Java Trench (7,729 m)",
+        "19.6%",
+        "Monsoon-dominated; Persian Gulf oil routes",
+      ],
+      [
+        "Southern",
+        "21,960,000",
+        "3,270",
+        "South Sandwich Trench (8,428 m)",
+        "6.1%",
+        "Circumpolar current; largest carbon/heat sink per area",
+      ],
+      [
+        "Arctic",
+        "14,060,000",
+        "1,205",
+        "Molloy Deep (5,607 m)",
+        "3.9%",
+        "Shallowest; sea ice cover; fastest warming ocean",
+      ],
     ],
   },
   {
     kind: "image",
     art: "article-southern-ocean-icebergs",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Iceberg_in_the_Southern_Ocean.jpg/1280px-Iceberg_in_the_Southern_Ocean.jpg",
-    caption: "Icebergs in the Southern Ocean — the largest icebergs on Earth calve from Antarctica and are carried north by the Circumpolar Current before gradually melting.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Iceberg_in_the_Southern_Ocean.jpg/1280px-Iceberg_in_the_Southern_Ocean.jpg",
+    caption:
+      "Icebergs in the Southern Ocean — the largest icebergs on Earth calve from Antarctica and are carried north by the Circumpolar Current before gradually melting.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
@@ -165,7 +233,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "The Atlantic Ocean is the saltiest of the five, with an average surface salinity of about 37 parts per thousand (ppt). The Arctic is the least salty at about 30 ppt, diluted by freshwater from river input and ice melt. The global ocean average is approximately 35 ppt.",
   },
 
-  { kind: "heading", id: "thermohaline", text: "The Thermohaline Circulation: The Ocean Conveyor Belt" },
+  {
+    kind: "heading",
+    id: "thermohaline",
+    text: "The Thermohaline Circulation: The Ocean Conveyor Belt",
+  },
   {
     kind: "paragraph",
     text: "The thermohaline circulation, sometimes called the ocean conveyor belt or the Global Ocean Conveyor, is a system of deep ocean currents driven by differences in water temperature (thermo) and salinity (haline). Cold, dense, salty water sinks in the North Atlantic near Greenland and Iceland, initiating a deep-water flow that travels south through the Atlantic, around Africa, into the Indian Ocean, into the Pacific, and eventually returns — warmed and less dense — through the surface Atlantic as the Gulf Stream. The complete circuit takes roughly 1,000 years. Without this circulation, the North Atlantic and Europe would be significantly colder — the Gulf Stream delivers the equivalent of about one million power stations' worth of heat to Europe annually.",
@@ -177,8 +249,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-thermohaline-circulation",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Thermohaline_Circulation_2.png/1280px-Thermohaline_Circulation_2.png",
-    caption: "The thermohaline circulation (global ocean conveyor belt) — connecting all five oceans, it distributes heat across the planet and drives climate patterns on every continent.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Thermohaline_Circulation_2.png/1280px-Thermohaline_Circulation_2.png",
+    caption:
+      "The thermohaline circulation (global ocean conveyor belt) — connecting all five oceans, it distributes heat across the planet and drives climate patterns on every continent.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
@@ -241,8 +315,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-southern-ocean-storm",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Southern_Ocean_storm.jpg/1280px-Southern_Ocean_storm.jpg",
-    caption: "A storm system over the Southern Ocean — with no land to interrupt the westerly winds at any longitude, wave heights regularly exceed 10 metres and storms form rapidly.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Southern_Ocean_storm.jpg/1280px-Southern_Ocean_storm.jpg",
+    caption:
+      "A storm system over the Southern Ocean — with no land to interrupt the westerly winds at any longitude, wave heights regularly exceed 10 metres and storms form rapidly.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
@@ -281,7 +357,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     ],
   },
 
-  { kind: "heading", id: "ocean-conservation", text: "Ocean Conservation and the High Seas Treaty" },
+  {
+    kind: "heading",
+    id: "ocean-conservation",
+    text: "Ocean Conservation and the High Seas Treaty",
+  },
   {
     kind: "paragraph",
     text: "In March 2023, after nearly two decades of negotiation, the United Nations reached agreement on the High Seas Treaty — officially the Treaty on the High Seas (Agreement Under UNCLOS) — which for the first time creates a legal framework for creating Marine Protected Areas in international waters. This is significant because approximately 64 percent of the ocean lies beyond national jurisdiction, in the high seas, where fishing, mining, and shipping have previously been subject only to fragmented sectoral agreements rather than a unified conservation instrument. The Southern Ocean is particularly relevant: vast areas of its waters are beyond any national jurisdiction, and the krill fishery that operates there is one of the most commercially significant high-seas fisheries in the world. Full ratification and implementation of the High Seas Treaty would give the Southern Ocean's MPA network a legal basis that extends beyond the Antarctic Treaty system.",
@@ -312,12 +392,14 @@ export const BLOCKS: readonly ArticleBlock[] = [
       {
         label: "How the Himalayas keep growing",
         href: "/geolibrary/article/how-the-himalayas-keep-growing",
-        description: "Tectonic processes that also shaped the Southern Ocean's formation via continental separation.",
+        description:
+          "Tectonic processes that also shaped the Southern Ocean's formation via continental separation.",
       },
       {
         label: "Megacities and the limits of growth",
         href: "/geolibrary/article/megacities-and-the-limits-of-growth",
-        description: "Sea-level rise from Southern Ocean ice melt processes directly threatens coastal megacities.",
+        description:
+          "Sea-level rise from Southern Ocean ice melt processes directly threatens coastal megacities.",
       },
     ],
   },

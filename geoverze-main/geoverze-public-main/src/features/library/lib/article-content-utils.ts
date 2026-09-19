@@ -32,10 +32,16 @@ export function estimateReadingMinutes(blocks: readonly ArticleBlock[]): number 
         words += block.text.split(/\s+/).length;
         break;
       case "facts":
-        words += block.facts.map((f) => `${f.label} ${f.value}`).join(" ").split(/\s+/).length;
+        words += block.facts
+          .map((f) => `${f.label} ${f.value}`)
+          .join(" ")
+          .split(/\s+/).length;
         break;
       case "timeline":
-        words += block.events.map((e) => `${e.date} ${e.text}`).join(" ").split(/\s+/).length;
+        words += block.events
+          .map((e) => `${e.date} ${e.text}`)
+          .join(" ")
+          .split(/\s+/).length;
         break;
       default:
         break;

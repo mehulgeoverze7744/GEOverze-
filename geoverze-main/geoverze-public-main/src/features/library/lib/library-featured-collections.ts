@@ -1,7 +1,9 @@
 import type { Collection } from "../data/collections";
 import { CATEGORIES, type CategoryId } from "../data/taxonomy";
 
-const categoryOrder = new Map<CategoryId, number>(CATEGORIES.map((category, index) => [category.id, index]));
+const categoryOrder = new Map<CategoryId, number>(
+  CATEGORIES.map((category, index) => [category.id, index]),
+);
 
 /** Featured collections sorted by existing taxonomy category order. */
 export function sortFeaturedCollectionsByTopic(collections: readonly Collection[]): Collection[] {

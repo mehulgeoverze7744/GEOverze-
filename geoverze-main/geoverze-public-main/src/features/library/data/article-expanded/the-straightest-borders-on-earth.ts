@@ -26,8 +26,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "berlin-conference-painting",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Kongokonferenz.jpg/1280px-Kongokonferenz.jpg",
-    caption: "The Berlin Conference of 1884–85. Fourteen European nations negotiated Africa's partition without a single African representative present at the table.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Kongokonferenz.jpg/1280px-Kongokonferenz.jpg",
+    caption:
+      "The Berlin Conference of 1884–85. Fourteen European nations negotiated Africa's partition without a single African representative present at the table.",
     credit: "Adolf Oberländer / Wikimedia Commons / Public Domain",
   },
   {
@@ -45,28 +47,74 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "facts",
     title: "The Scramble for Africa — key statistics",
     facts: [
-      { label: "Nations at Berlin Conference", value: "14 European + Ottoman Empire (no Africans)" },
-      { label: "African territory colonised by 1914", value: "~90% (Ethiopia and Liberia remained independent)" },
+      {
+        label: "Nations at Berlin Conference",
+        value: "14 European + Ottoman Empire (no Africans)",
+      },
+      {
+        label: "African territory colonised by 1914",
+        value: "~90% (Ethiopia and Liberia remained independent)",
+      },
       { label: "Estimated ethnic groups divided", value: "10,000+ across colonial boundaries" },
-      { label: "Proportion of Africa's borders that are geometric", value: "~44% follow straight lines (parallels/meridians)" },
-      { label: "African nations gained independence by 1975", value: "Most between 1956 and 1975; 17 in 1960 alone" },
+      {
+        label: "Proportion of Africa's borders that are geometric",
+        value: "~44% follow straight lines (parallels/meridians)",
+      },
+      {
+        label: "African nations gained independence by 1975",
+        value: "Most between 1956 and 1975; 17 in 1960 alone",
+      },
     ],
   },
 
-  { kind: "heading", id: "famous-straight-borders-table", text: "Eight famous straight borders compared" },
+  {
+    kind: "heading",
+    id: "famous-straight-borders-table",
+    text: "Eight famous straight borders compared",
+  },
   {
     kind: "table",
     title: "The world's most notable geometric borders",
     columns: ["Border", "Year Drawn", "Approx. Length", "Countries", "Colonial Power"],
     rows: [
-      ["49th Parallel (US–Canada)", "1818 / 1846", "~3,200 km", "USA / Canada", "Britain (Oregon Treaty)"],
-      ["Durand Line (Afghanistan–Pakistan)", "1893", "~2,640 km", "Afghanistan / Pakistan", "British India"],
+      [
+        "49th Parallel (US–Canada)",
+        "1818 / 1846",
+        "~3,200 km",
+        "USA / Canada",
+        "Britain (Oregon Treaty)",
+      ],
+      [
+        "Durand Line (Afghanistan–Pakistan)",
+        "1893",
+        "~2,640 km",
+        "Afghanistan / Pakistan",
+        "British India",
+      ],
       ["22°N Parallel (Egypt–Sudan)", "1899", "~1,100 km", "Egypt / Sudan", "Britain"],
       ["25°E Meridian (Libya–Egypt)", "1925", "~1,115 km", "Libya / Egypt", "Britain / Italy"],
-      ["Caprivi Strip borders (Namibia-Zambia)", "1890", "~450 km strip", "Namibia, Zambia, Botswana", "Germany / Britain"],
+      [
+        "Caprivi Strip borders (Namibia-Zambia)",
+        "1890",
+        "~450 km strip",
+        "Namibia, Zambia, Botswana",
+        "Germany / Britain",
+      ],
       ["Algeria–Mali border section", "1905", "~1,376 km", "Algeria / Mali", "France"],
-      ["Sudan–Central African Republic border", "1924", "~1,165 km", "Sudan / CAR", "Britain / France"],
-      ["Western Australia–NT border", "1863", "~1,862 km", "WA / NT (Australia)", "British Colonial Office"],
+      [
+        "Sudan–Central African Republic border",
+        "1924",
+        "~1,165 km",
+        "Sudan / CAR",
+        "Britain / France",
+      ],
+      [
+        "Western Australia–NT border",
+        "1863",
+        "~1,862 km",
+        "WA / NT (Australia)",
+        "British Colonial Office",
+      ],
     ],
   },
 
@@ -78,8 +126,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "canada-us-border-slash",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Canada_US_border_from_space.jpg/1280px-Canada_US_border_from_space.jpg",
-    caption: "The 49th parallel corridor — a six-metre cleared swath through Pacific Northwest forest, visible from space, marking the world's longest geometric border on a single parallel.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Canada_US_border_from_space.jpg/1280px-Canada_US_border_from_space.jpg",
+    caption:
+      "The 49th parallel corridor — a six-metre cleared swath through Pacific Northwest forest, visible from space, marking the world's longest geometric border on a single parallel.",
     credit: "NASA / Wikimedia Commons / Public Domain",
   },
   {
@@ -89,13 +139,23 @@ export const BLOCKS: readonly ArticleBlock[] = [
       { label: "Total length along the parallel", value: "~3,200 km" },
       { label: "Treaty establishing eastern section", value: "Convention of 1818" },
       { label: "Treaty establishing western section", value: "Oregon Treaty, 1846" },
-      { label: "Width of The Slash (cleared corridor)", value: "6 metres, continuously maintained" },
+      {
+        label: "Width of The Slash (cleared corridor)",
+        value: "6 metres, continuously maintained",
+      },
       { label: "Physical boundary monuments", value: "Over 900 markers" },
-      { label: "Notable exception to straight line", value: "Point Roberts, Washington (US territory south of the parallel)" },
+      {
+        label: "Notable exception to straight line",
+        value: "Point Roberts, Washington (US territory south of the parallel)",
+      },
     ],
   },
 
-  { kind: "heading", id: "libya-sudan-border", text: "The Libya–Sudan border: a line through the Libyan Desert" },
+  {
+    kind: "heading",
+    id: "libya-sudan-border",
+    text: "The Libya–Sudan border: a line through the Libyan Desert",
+  },
   {
     kind: "paragraph",
     text: "The border between Libya and Sudan follows the 25th meridian of longitude for much of its length — a perfectly straight line running north–south through some of the most inhospitable terrain on Earth. The line was established during British and Italian colonial negotiations in the 1920s. No joint survey of the territory was conducted. The diplomats working in Rome and London used French cartographic data from earlier expeditions and agreed that the 25th meridian was a convenient division. The Libyan Desert along this line receives less than 25 millimetres of rainfall per year; the few Tuareg and Tebu communities who moved seasonally across the region were not consulted. The border has been described by historians as a line drawn on a map of a place neither party had visited.",
@@ -120,12 +180,18 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "halaib-triangle-map",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Halaib_Triangle_map.png/800px-Halaib_Triangle_map.png",
-    caption: "The Hala'ib Triangle on the Red Sea coast — where the 22nd parallel (1899 treaty) and the 1902 administrative line diverge to create a contested zone between Egypt and Sudan.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Halaib_Triangle_map.png/800px-Halaib_Triangle_map.png",
+    caption:
+      "The Hala'ib Triangle on the Red Sea coast — where the 22nd parallel (1899 treaty) and the 1902 administrative line diverge to create a contested zone between Egypt and Sudan.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
-  { kind: "heading", id: "caprivi-strip", text: "The Caprivi Strip: Germany's finger to the Zambezi" },
+  {
+    kind: "heading",
+    id: "caprivi-strip",
+    text: "The Caprivi Strip: Germany's finger to the Zambezi",
+  },
   {
     kind: "paragraph",
     text: "The Caprivi Strip — now officially Namibia's Zambezi Region — is one of the most visually striking products of colonial map-making. It is a narrow finger of territory approximately 450 km long and between 32 and 100 km wide, protruding east from Namibia between Botswana and Zambia to reach the Zambezi River. It was created by the 1890 Heligoland-Zanzibar Treaty, in which Germany and Britain divided their African interests. Germany received the strip specifically to give German South-West Africa access to the Zambezi and thereby — in theory — a trade route across the continent to the Indian Ocean. The strategic rationale never materialised: the Zambezi's Victoria Falls, just downstream, made navigation impossible. The strip was named after the German chancellor Leo von Caprivi who negotiated the deal.",
@@ -138,8 +204,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "caprivi-strip-map",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Caprivi_Strip_%28Namibia%29.svg/1280px-Caprivi_Strip_%28Namibia%29.svg.png",
-    caption: "The Caprivi Strip — a narrow corridor of Namibian territory reaching east to the Zambezi River, created by the 1890 Heligoland-Zanzibar Treaty so Germany could reach the river.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Caprivi_Strip_%28Namibia%29.svg/1280px-Caprivi_Strip_%28Namibia%29.svg.png",
+    caption:
+      "The Caprivi Strip — a narrow corridor of Namibian territory reaching east to the Zambezi River, created by the 1890 Heligoland-Zanzibar Treaty so Germany could reach the river.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
@@ -156,8 +224,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "durand-line-map",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Durand_line_map_from_the_1906_imperial_gazetteer_of_India.jpg/1280px-Durand_line_map_from_the_1906_imperial_gazetteer_of_India.jpg",
-    caption: "The Durand Line as mapped in the 1906 Imperial Gazetteer of India. The boundary divided the Pashtun homeland and has never been accepted by Afghanistan as a permanent international border.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Durand_line_map_from_the_1906_imperial_gazetteer_of_India.jpg/1280px-Durand_line_map_from_the_1906_imperial_gazetteer_of_India.jpg",
+    caption:
+      "The Durand Line as mapped in the 1906 Imperial Gazetteer of India. The boundary divided the Pashtun homeland and has never been accepted by Afghanistan as a permanent international border.",
     credit: "Imperial Gazetteer of India / Wikimedia Commons / Public Domain",
   },
 
@@ -169,12 +239,18 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "nicosia-buffer-zone",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Nicosia_buffer_zone.jpg/1280px-Nicosia_buffer_zone.jpg",
-    caption: "The UN buffer zone running through Nicosia — the Green Line that has divided Cyprus's capital since 1974, patrolled by UN peacekeepers for over 50 years.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Nicosia_buffer_zone.jpg/1280px-Nicosia_buffer_zone.jpg",
+    caption:
+      "The UN buffer zone running through Nicosia — the Green Line that has divided Cyprus's capital since 1974, patrolled by UN peacekeepers for over 50 years.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
   },
 
-  { kind: "heading", id: "why-straight-borders-cause-conflicts", text: "Why straight borders cause conflicts today" },
+  {
+    kind: "heading",
+    id: "why-straight-borders-cause-conflicts",
+    text: "Why straight borders cause conflicts today",
+  },
   {
     kind: "paragraph",
     text: "The Sahel — the semi-arid belt stretching across Africa from Senegal to Sudan — has become the world's most active conflict zone in the early 21st century. Nearly every Sahel crisis has roots in the colonial border system. Mali's civil war involved Tuareg rebels whose territorial claims cross into Niger, Algeria, and Libya — nations created by lines that ignored Tuareg political structures entirely. Boko Haram's insurgency in the Lake Chad Basin operates across Nigeria, Niger, Chad, and Cameroon precisely because the porous geometric borders of the region cannot be effectively policed, and because the communities on either side share more in common with each other than with their respective national capitals. The Kurdish question similarly involves a people of roughly 30–40 million divided among Turkey, Iraq, Syria, and Iran by borders drawn after World War I without Kurdish representation.",
@@ -189,7 +265,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "The Kashmir dispute is another inheritance of geometric thinking. The 1947 Partition of British India was conducted by Cyril Radcliffe, a barrister who had never visited India, in just 36 days. The Radcliffe Line divided Punjab and Bengal along lines ostensibly based on religious demographics, but drawn under impossible time pressure and with massive humanitarian consequences. The resulting Line of Control in Kashmir has never become a formal international boundary and remains one of the world's most militarised borders, with nuclear-armed forces on both sides. India and Pakistan have fought three wars over territory whose borders were drawn by a man working from 1941 census maps in a New Delhi bungalow.",
   },
 
-  { kind: "heading", id: "natural-borders", text: "Natural borders: rivers, mountains, and coasts" },
+  {
+    kind: "heading",
+    id: "natural-borders",
+    text: "Natural borders: rivers, mountains, and coasts",
+  },
   {
     kind: "paragraph",
     text: "Natural borders are not necessarily more peaceful than geometric ones — rivers shift course, mountain passes change hands, and coastlines erode — but they tend to be more legible to the people living near them. The Rhine has served as a cultural boundary between Germanic and Romance-language populations for over 2,000 years. The Pyrenees divide France from Spain along a watershed that has served as a cultural boundary since Roman times. The Himalayas form the most formidable natural border in the world, separating the Indian subcontinent from the Tibetan Plateau along a range of peaks that reaches 8,000 metres. The Mekong River defines stretches of the borders between Laos and Thailand, and between Myanmar and Laos — a natural feature that simultaneously connects and divides the communities along its banks.",
@@ -217,7 +297,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     ],
   },
 
-  { kind: "heading", id: "when-straight-borders-work", text: "When straight borders actually work" },
+  {
+    kind: "heading",
+    id: "when-straight-borders-work",
+    text: "When straight borders actually work",
+  },
   {
     kind: "paragraph",
     text: "Australia's internal state borders are almost entirely geometric — and are almost entirely uncontested. The 129th meridian east forms the bulk of the Western Australia–Northern Territory border; the 26th parallel separates Western Australia from South Australia across hundreds of kilometres of desert. These lines have never been the cause of armed conflict because settlement patterns were established after the lines were drawn, meaning communities grew up on one side or the other rather than being divided by them. The same logic applies to most US state borders in the West: the straight lines between Nevada, Utah, and Arizona were drawn before significant non-indigenous settlement. The key variable is whether the line was imposed on an existing, organised population — as in Africa — or preceded the population it would govern.",
@@ -228,27 +312,65 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "Wyoming and Colorado are the only US states whose borders are entirely defined by geometric lines — parallels and meridians — with no natural features at all. Colorado's boundary was established in 1861, Wyoming's in 1868, both before significant Euro-American settlement. Their near-perfect rectangles are visible at a glance on any map of the United States.",
   },
 
-  { kind: "heading", id: "surveying-without-visiting", text: "Drawing borders without visiting them" },
+  {
+    kind: "heading",
+    id: "surveying-without-visiting",
+    text: "Drawing borders without visiting them",
+  },
   {
     kind: "paragraph",
     text: "Many of Africa's borders were drawn by officials who had never visited the territories they were dividing. The Anglo-French agreement of 1890 that fixed much of the boundary between what is now Mali, Niger, and Nigeria was negotiated in London and Paris by men working from incomplete explorers' maps. Some surveys were simply projected from known coastal points: if a line was established at the coast, it was assumed to continue at the same bearing or coordinate inland without field verification. When boundary commissions later tried to demarcate these lines on the ground, they frequently discovered that the 'line' crossed impassable terrain, split settlements, or simply could not be located precisely. Several borders in the central Sahara have segments that were never formally demarcated on the ground at all.",
   },
 
-  { kind: "heading", id: "timeline-berlin-to-independence", text: "From Berlin to independence: a timeline" },
+  {
+    kind: "heading",
+    id: "timeline-berlin-to-independence",
+    text: "From Berlin to independence: a timeline",
+  },
   {
     kind: "timeline",
     title: "The colonial partition of Africa and its aftermath",
     events: [
-      { date: "1884–85", text: "Berlin Conference establishes rules for European colonisation of Africa; 14 nations negotiate territorial spheres of influence with no African representation." },
-      { date: "1890", text: "Heligoland-Zanzibar Treaty between Britain and Germany creates the Caprivi Strip and adjusts East African borders." },
-      { date: "1893", text: "Mortimer Durand draws the Durand Line between British India and Afghanistan, dividing the Pashtun homeland." },
-      { date: "1899", text: "Anglo-Egyptian Condominium establishes the 22nd parallel as the Egypt–Sudan boundary; a 1902 adjustment later creates the Hala'ib Triangle dispute." },
-      { date: "1910–1914", text: "Most of Africa is fully incorporated into European empires following the Scramble; formal border surveys, where conducted at all, proceed under colonial administration." },
-      { date: "1947", text: "Radcliffe Line partitions British India into India and Pakistan in 36 days; triggers the largest forced migration in human history and sets up three future wars." },
-      { date: "1957", text: "Ghana's independence begins the era of African decolonisation; 17 African nations gain independence in 1960 alone." },
-      { date: "1964", text: "OAU Cairo Declaration: African states agree to respect colonial-era borders as inherited — enshrining uti possidetis as continental policy." },
-      { date: "1974", text: "Turkish invasion of Cyprus freezes the Green Line as a UN-patrolled buffer, dividing Nicosia." },
-      { date: "1990s–present", text: "Sahel conflict intensifies along colonial borders: Mali, Burkina Faso, Niger, Chad all face insurgencies whose geography follows the partition map." },
+      {
+        date: "1884–85",
+        text: "Berlin Conference establishes rules for European colonisation of Africa; 14 nations negotiate territorial spheres of influence with no African representation.",
+      },
+      {
+        date: "1890",
+        text: "Heligoland-Zanzibar Treaty between Britain and Germany creates the Caprivi Strip and adjusts East African borders.",
+      },
+      {
+        date: "1893",
+        text: "Mortimer Durand draws the Durand Line between British India and Afghanistan, dividing the Pashtun homeland.",
+      },
+      {
+        date: "1899",
+        text: "Anglo-Egyptian Condominium establishes the 22nd parallel as the Egypt–Sudan boundary; a 1902 adjustment later creates the Hala'ib Triangle dispute.",
+      },
+      {
+        date: "1910–1914",
+        text: "Most of Africa is fully incorporated into European empires following the Scramble; formal border surveys, where conducted at all, proceed under colonial administration.",
+      },
+      {
+        date: "1947",
+        text: "Radcliffe Line partitions British India into India and Pakistan in 36 days; triggers the largest forced migration in human history and sets up three future wars.",
+      },
+      {
+        date: "1957",
+        text: "Ghana's independence begins the era of African decolonisation; 17 African nations gain independence in 1960 alone.",
+      },
+      {
+        date: "1964",
+        text: "OAU Cairo Declaration: African states agree to respect colonial-era borders as inherited — enshrining uti possidetis as continental policy.",
+      },
+      {
+        date: "1974",
+        text: "Turkish invasion of Cyprus freezes the Green Line as a UN-patrolled buffer, dividing Nicosia.",
+      },
+      {
+        date: "1990s–present",
+        text: "Sahel conflict intensifies along colonial borders: Mali, Burkina Faso, Niger, Chad all face insurgencies whose geography follows the partition map.",
+      },
     ],
   },
 
@@ -260,18 +382,28 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "africa-partition-map-1913",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Scramble_for_Africa_1880_to_1913.png/800px-Scramble_for_Africa_1880_to_1913.png",
-    caption: "The Scramble for Africa from 1880 to 1913 — European colonisation of the continent proceeded with extraordinary speed, leaving almost no territory outside colonial control within three decades.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Scramble_for_Africa_1880_to_1913.png/800px-Scramble_for_Africa_1880_to_1913.png",
+    caption:
+      "The Scramble for Africa from 1880 to 1913 — European colonisation of the continent proceeded with extraordinary speed, leaving almost no territory outside colonial control within three decades.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
-  { kind: "heading", id: "sahel-fragility", text: "The Sahel: where straight lines meet human fragility" },
+  {
+    kind: "heading",
+    id: "sahel-fragility",
+    text: "The Sahel: where straight lines meet human fragility",
+  },
   {
     kind: "paragraph",
     text: "No region illustrates the long-term consequences of geometric borders more starkly than the Sahel. Stretching from Senegal to Eritrea, the Sahel is home to approximately 150 million people from dozens of ethnic and linguistic communities, most of whose traditional territories cross modern national borders. The Tuareg of the central Sahara are perhaps the most dramatic example: their customary territory encompasses parts of Mali, Niger, Algeria, Libya, and Burkina Faso — five separate nations, none of which considers Tuareg interests central to its national identity. The 2012 Tuareg rebellion in northern Mali, which precipitated a military coup in Bamako and eventually drew French military intervention that lasted a decade, can be traced directly to the mismatch between political geography and cultural geography that the Berlin Conference set in motion.",
   },
 
-  { kind: "heading", id: "colonial-powers-profiles", text: "The colonial powers and their border legacies" },
+  {
+    kind: "heading",
+    id: "colonial-powers-profiles",
+    text: "The colonial powers and their border legacies",
+  },
   {
     kind: "profileStrip",
     title: "Who drew which lines",
@@ -294,7 +426,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     ],
   },
 
-  { kind: "heading", id: "future-of-borders", text: "The future of borders: dissolving and hardening" },
+  {
+    kind: "heading",
+    id: "future-of-borders",
+    text: "The future of borders: dissolving and hardening",
+  },
   {
     kind: "paragraph",
     text: "The European Union represents the most ambitious attempt in human history to dissolve the significance of national borders between sovereign states. The Schengen Area, now covering 27 countries, has eliminated passport controls across most of Europe, enabling 400 million people to move freely across borders that were, within living memory, fortified and deadly. The border between Germany and France — which twice in the 20th century was the front line of world wars — is now marked by a sign and a change in road markings. At the same time, the world has seen a proliferation of walls and barriers: the US–Mexico barrier, Hungary's border fence, India's line of control fencing, Morocco's sand wall in the Sahara. The straight line drawn on a map is becoming, in many places, a physical structure on the ground.",

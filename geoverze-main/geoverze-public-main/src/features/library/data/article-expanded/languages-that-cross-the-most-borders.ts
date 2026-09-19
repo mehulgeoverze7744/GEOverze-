@@ -19,8 +19,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-arabic-speaking-world",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Arabic_speaking_world.svg/1280px-Arabic_speaking_world.svg.png",
-    caption: "The Arabic-speaking world — 22 countries across North Africa and the Middle East share Arabic as an official language, though spoken dialects diverge substantially across the region.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Arabic_speaking_world.svg/1280px-Arabic_speaking_world.svg.png",
+    caption:
+      "The Arabic-speaking world — 22 countries across North Africa and the Middle East share Arabic as an official language, though spoken dialects diverge substantially across the region.",
     credit: "Wikimedia Commons / Public Domain",
   },
   {
@@ -56,8 +58,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-francophonie-map",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Francophonie_map_2014.png/1280px-Francophonie_map_2014.png",
-    caption: "Member states and observers of the Organisation internationale de la Francophonie — French is official or co-official in 29 countries across five continents.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Francophonie_map_2014.png/1280px-Francophonie_map_2014.png",
+    caption:
+      "Member states and observers of the Organisation internationale de la Francophonie — French is official or co-official in 29 countries across five continents.",
     credit: "Wikimedia Commons / Public Domain",
   },
   {
@@ -118,8 +122,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-swahili-coast",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Lamu_Old_Town_aerial.jpg/1280px-Lamu_Old_Town_aerial.jpg",
-    caption: "Lamu Old Town, Kenya — a UNESCO World Heritage Site and historic centre of Swahili culture, where Arabic, Persian, and Bantu languages met the Indian Ocean trade network.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Lamu_Old_Town_aerial.jpg/1280px-Lamu_Old_Town_aerial.jpg",
+    caption:
+      "Lamu Old Town, Kenya — a UNESCO World Heritage Site and historic centre of Swahili culture, where Arabic, Persian, and Bantu languages met the Indian Ocean trade network.",
     credit: "Wikimedia Commons / CC BY 2.0",
   },
 
@@ -127,22 +133,61 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "table",
     title: "Major cross-border languages: countries, speakers, and reach (2024)",
-    columns: ["Language", "Official Countries", "Continents", "Native Speakers", "Total Speakers (incl. L2)", "Primary Spread Mechanism"],
+    columns: [
+      "Language",
+      "Official Countries",
+      "Continents",
+      "Native Speakers",
+      "Total Speakers (incl. L2)",
+      "Primary Spread Mechanism",
+    ],
     rows: [
-      ["English", "58", "6", "~380 million", "~1.5 billion", "British Empire + US cultural dominance"],
+      [
+        "English",
+        "58",
+        "6",
+        "~380 million",
+        "~1.5 billion",
+        "British Empire + US cultural dominance",
+      ],
       ["French", "29", "5", "~80 million", "~320 million", "French colonial empire"],
       ["Arabic", "22", "2", "~310 million", "~420 million", "Islamic expansion + Arab empires"],
       ["Spanish", "21", "4", "~500 million", "~590 million", "Spanish colonial empire in Americas"],
       ["Portuguese", "9", "4", "~250 million", "~280 million", "Portuguese maritime empire"],
-      ["Russian", "4 (official)", "2 (functional)", "~170 million", "~370 million", "Soviet Union / Russification"],
-      ["Swahili", "~14 (functional)", "1", "~20 million", "~230 million", "Indian Ocean trade + post-colonial policy"],
-      ["Malay/Indonesian", "4", "1", "~80 million", "~270 million", "Maritime trade + political unification"],
+      [
+        "Russian",
+        "4 (official)",
+        "2 (functional)",
+        "~170 million",
+        "~370 million",
+        "Soviet Union / Russification",
+      ],
+      [
+        "Swahili",
+        "~14 (functional)",
+        "1",
+        "~20 million",
+        "~230 million",
+        "Indian Ocean trade + post-colonial policy",
+      ],
+      [
+        "Malay/Indonesian",
+        "4",
+        "1",
+        "~80 million",
+        "~270 million",
+        "Maritime trade + political unification",
+      ],
       ["Dutch", "5", "3", "~24 million", "~30 million", "Dutch colonial empire"],
       ["German", "6", "2", "~95 million", "~130 million", "Central European influence + diaspora"],
     ],
   },
 
-  { kind: "heading", id: "borders-split-languages", text: "When Borders Split Language Communities" },
+  {
+    kind: "heading",
+    id: "borders-split-languages",
+    text: "When Borders Split Language Communities",
+  },
   {
     kind: "paragraph",
     text: "Colonial borders — particularly the straight lines drawn across Africa at the 1884–85 Berlin Conference — divided existing language communities with no regard for linguistic, ethnic, or cultural geography. The Kurds are the most cited example globally: an estimated 30 to 40 million Kurds form one of the world's largest ethnic and linguistic groups without a sovereign state. Kurdish speakers are distributed across Turkey (15–20 million), Iran (8–12 million), Iraq (6–8 million), and Syria (2–3 million), in a historical homeland that colonial and post-Ottoman borders divided among four states — none of which initially recognised Kurdish as an official language and several of which actively suppressed it. Kurdish itself divides into several distinct dialects — Kurmanji (dominant in Turkey, Syria, and northern Iraq), Sorani (dominant in southern Iraqi Kurdistan and Iran), and Zazaki and Gorani — reflecting the long period of geographic separation.",
@@ -159,12 +204,18 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-kurdish-homeland-map",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Kurdish-inhabited_area_by_CIA_%281992%29.jpg/1280px-Kurdish-inhabited_area_by_CIA_%281992%29.jpg",
-    caption: "Kurdish-inhabited areas across Turkey, Iraq, Iran, and Syria — the Kurdish people represent one of the world's largest ethnic groups without a sovereign state, their homeland divided among four countries.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Kurdish-inhabited_area_by_CIA_%281992%29.jpg/1280px-Kurdish-inhabited_area_by_CIA_%281992%29.jpg",
+    caption:
+      "Kurdish-inhabited areas across Turkey, Iraq, Iran, and Syria — the Kurdish people represent one of the world's largest ethnic groups without a sovereign state, their homeland divided among four countries.",
     credit: "Wikimedia Commons / Public Domain (CIA, 1992)",
   },
 
-  { kind: "heading", id: "mutual-intelligibility", text: "Mutual Intelligibility: Language or Dialect?" },
+  {
+    kind: "heading",
+    id: "mutual-intelligibility",
+    text: "Mutual Intelligibility: Language or Dialect?",
+  },
   {
     kind: "paragraph",
     text: "The distinction between a language and a dialect has no linguistic definition that holds universally. The line is political. Linguist Max Weinreich's 1945 remark — 'a language is a dialect with an army and a navy' — remains the most accurate description of how the distinction is made in practice. Two speech varieties may be mutually intelligible yet be called separate languages for political reasons; conversely, two varieties may be mutually incomprehensible yet be grouped as dialects of the same language for political reasons. Norwegian and Swedish are mutually intelligible but considered separate languages because Norway and Sweden are separate countries. Mandarin and Cantonese are both called 'Chinese' but speakers cannot understand each other in speech, only in writing through shared characters.",
@@ -194,20 +245,51 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "Papua New Guinea has over 840 living languages in a country of roughly 10 million people — approximately one language per 12,000 residents. This density of linguistic diversity results from the country's mountainous topography, which isolated communities in separate valleys over thousands of years and allowed languages to diverge independently. Papua New Guinea alone accounts for over 12 percent of all languages currently spoken on Earth.",
   },
 
-  { kind: "heading", id: "colonial-language-timeline", text: "The Spread of Colonial Languages: A Timeline" },
+  {
+    kind: "heading",
+    id: "colonial-language-timeline",
+    text: "The Spread of Colonial Languages: A Timeline",
+  },
   {
     kind: "timeline",
     title: "Major milestones in the global spread of colonial languages",
     events: [
-      { date: "1415", text: "Portugal captures Ceuta, beginning its African expansion. Portuguese begins spreading along the West African coast through trade." },
-      { date: "1492", text: "Spain completes the Reconquista and Columbus reaches the Caribbean; Spanish begins its rapid spread across the Americas." },
-      { date: "1498", text: "Vasco da Gama reaches India via the Cape of Good Hope; Portuguese trading posts established across the Indian Ocean." },
-      { date: "1534", text: "France establishes its first North American colony in Canada; French expansion into the Americas and later Africa begins." },
-      { date: "1600s", text: "English colonisation of North America, the Caribbean, and India establishes English as an administrative language across future British territories." },
-      { date: "1750–1850", text: "British Empire expands across India, Southeast Asia, Australasia, and East and West Africa; English becomes the language of administration in territories with hundreds of millions of speakers." },
-      { date: "1884–85", text: "Berlin Conference divides Africa among European powers with borders that split language communities and installed European languages as administrative defaults." },
-      { date: "1945–1975", text: "African and Asian independence movements. Former colonies retain colonial languages as official languages despite ethnic and linguistic diversity. English and French entrench as post-colonial defaults." },
-      { date: "2000s", text: "Internet, social media, and global commerce accelerate English dominance in digital communication while providing new platforms for indigenous language content." },
+      {
+        date: "1415",
+        text: "Portugal captures Ceuta, beginning its African expansion. Portuguese begins spreading along the West African coast through trade.",
+      },
+      {
+        date: "1492",
+        text: "Spain completes the Reconquista and Columbus reaches the Caribbean; Spanish begins its rapid spread across the Americas.",
+      },
+      {
+        date: "1498",
+        text: "Vasco da Gama reaches India via the Cape of Good Hope; Portuguese trading posts established across the Indian Ocean.",
+      },
+      {
+        date: "1534",
+        text: "France establishes its first North American colony in Canada; French expansion into the Americas and later Africa begins.",
+      },
+      {
+        date: "1600s",
+        text: "English colonisation of North America, the Caribbean, and India establishes English as an administrative language across future British territories.",
+      },
+      {
+        date: "1750–1850",
+        text: "British Empire expands across India, Southeast Asia, Australasia, and East and West Africa; English becomes the language of administration in territories with hundreds of millions of speakers.",
+      },
+      {
+        date: "1884–85",
+        text: "Berlin Conference divides Africa among European powers with borders that split language communities and installed European languages as administrative defaults.",
+      },
+      {
+        date: "1945–1975",
+        text: "African and Asian independence movements. Former colonies retain colonial languages as official languages despite ethnic and linguistic diversity. English and French entrench as post-colonial defaults.",
+      },
+      {
+        date: "2000s",
+        text: "Internet, social media, and global commerce accelerate English dominance in digital communication while providing new platforms for indigenous language content.",
+      },
     ],
   },
 
@@ -282,8 +364,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-language-families-world",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Human_Language_Families_%28wikicolors%29.png/1280px-Human_Language_Families_%28wikicolors%29.png",
-    caption: "The world's major language families — approximately 7,000 languages are grouped into about 140 language families, with Indo-European, Sino-Tibetan, and Niger-Congo being the three largest by speaker count.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Human_Language_Families_%28wikicolors%29.png/1280px-Human_Language_Families_%28wikicolors%29.png",
+    caption:
+      "The world's major language families — approximately 7,000 languages are grouped into about 140 language families, with Indo-European, Sino-Tibetan, and Niger-Congo being the three largest by speaker count.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
   },
 
@@ -302,17 +386,20 @@ export const BLOCKS: readonly ArticleBlock[] = [
       {
         label: "The straightest borders on Earth",
         href: "/geolibrary/article/the-straightest-borders-on-earth",
-        description: "How geometric colonial borders divided language communities now spread across several countries.",
+        description:
+          "How geometric colonial borders divided language communities now spread across several countries.",
       },
       {
         label: "Reading a flag in thirty seconds",
         href: "/geolibrary/article/reading-a-flag-in-thirty-seconds",
-        description: "Flags and languages are parallel systems of national identity that rarely perfectly align.",
+        description:
+          "Flags and languages are parallel systems of national identity that rarely perfectly align.",
       },
       {
         label: "What a currency tells you about a country",
         href: "/geolibrary/article/what-a-currency-tells-you-about-a-country",
-        description: "Currency unions, like language spheres, reveal the geography of shared political trust.",
+        description:
+          "Currency unions, like language spheres, reveal the geography of shared political trust.",
       },
     ],
   },

@@ -25,13 +25,19 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-himalaya-north-face",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg/1280px-Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg",
-    caption: "Mount Everest's north face from the Tibetan Plateau — summit limestone began as seafloor sediment.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg/1280px-Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg",
+    caption:
+      "Mount Everest's north face from the Tibetan Plateau — summit limestone began as seafloor sediment.",
     credit: "Luca Galuzzi / Wikimedia Commons / CC BY-SA 2.5",
   },
 
   // Block 6
-  { kind: "heading", id: "collision-mechanics", text: "Why the collision produced mountains rather than trenches" },
+  {
+    kind: "heading",
+    id: "collision-mechanics",
+    text: "Why the collision produced mountains rather than trenches",
+  },
   // Block 7
   {
     kind: "paragraph",
@@ -96,9 +102,15 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "facts",
     title: "Major rivers originating in the Hindu Kush-Himalayan system",
     facts: [
-      { label: "Indus", value: "3,180 km; feeds Pakistan, India (Punjab); basin pop. ~215 million" },
+      {
+        label: "Indus",
+        value: "3,180 km; feeds Pakistan, India (Punjab); basin pop. ~215 million",
+      },
       { label: "Ganges", value: "2,525 km; sacred river; basin pop. ~500 million" },
-      { label: "Brahmaputra / Yarlung Tsangpo", value: "2,900 km; highest river discharge in Asia" },
+      {
+        label: "Brahmaputra / Yarlung Tsangpo",
+        value: "2,900 km; highest river discharge in Asia",
+      },
       { label: "Yangtze", value: "6,300 km; rises on Tibetan Plateau; longest river in Asia" },
       { label: "Mekong", value: "4,350 km; rises in Tibet; feeds Southeast Asia" },
       { label: "Irrawaddy", value: "2,170 km; Myanmar's main artery; rises in eastern Himalayas" },
@@ -109,8 +121,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-gangotri-glacier",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Gangotri_Glacier.jpg/1280px-Gangotri_Glacier.jpg",
-    caption: "Gangotri Glacier in Uttarakhand — the principal source of the Ganges, which has retreated over 22 km since 1780.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Gangotri_Glacier.jpg/1280px-Gangotri_Glacier.jpg",
+    caption:
+      "Gangotri Glacier in Uttarakhand — the principal source of the Ganges, which has retreated over 22 km since 1780.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
   },
 
@@ -125,8 +139,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-monsoon-clouds-himalaya",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Monsoon_clouds_over_Darjeeling.jpg/1280px-Monsoon_clouds_over_Darjeeling.jpg",
-    caption: "Monsoon clouds banked against the foothills of the eastern Himalayas near Darjeeling.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Monsoon_clouds_over_Darjeeling.jpg/1280px-Monsoon_clouds_over_Darjeeling.jpg",
+    caption:
+      "Monsoon clouds banked against the foothills of the eastern Himalayas near Darjeeling.",
     credit: "Wikimedia Commons / Public Domain",
   },
   // Block 23
@@ -164,21 +180,44 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "timeline",
     title: "Selected observations of Himalayan change",
     events: [
-      { date: "1953", text: "First ascent of Everest by Hillary and Tenzing; early glacier surveys begin." },
-      { date: "1970s", text: "Systematic satellite monitoring establishes baseline glacier extent across the HKH region." },
-      { date: "2000s", text: "GRACE satellite data shows net mass loss from Himalayan glaciers accelerating significantly." },
-      { date: "2015", text: "Nepal earthquake (Mw 7.8) triggers hundreds of avalanches and GLOFs; 8,900 deaths." },
-      { date: "2019", text: "IPCC Special Report on Cryosphere warns of cascading water-security risks for 2 billion people." },
-      { date: "2023", text: "Gangotri Glacier has retreated ~22 km since 1780; retreat rate has doubled since 1990." },
-      { date: "2024", text: "New survey confirms Everest summit elevation at 8,848.86 m, resolving earlier discrepancies." },
+      {
+        date: "1953",
+        text: "First ascent of Everest by Hillary and Tenzing; early glacier surveys begin.",
+      },
+      {
+        date: "1970s",
+        text: "Systematic satellite monitoring establishes baseline glacier extent across the HKH region.",
+      },
+      {
+        date: "2000s",
+        text: "GRACE satellite data shows net mass loss from Himalayan glaciers accelerating significantly.",
+      },
+      {
+        date: "2015",
+        text: "Nepal earthquake (Mw 7.8) triggers hundreds of avalanches and GLOFs; 8,900 deaths.",
+      },
+      {
+        date: "2019",
+        text: "IPCC Special Report on Cryosphere warns of cascading water-security risks for 2 billion people.",
+      },
+      {
+        date: "2023",
+        text: "Gangotri Glacier has retreated ~22 km since 1780; retreat rate has doubled since 1990.",
+      },
+      {
+        date: "2024",
+        text: "New survey confirms Everest summit elevation at 8,848.86 m, resolving earlier discrepancies.",
+      },
     ],
   },
   // Block 30
   {
     kind: "image",
     art: "article-himalaya-range-panorama",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Himalaya_composite.jpg/1280px-Himalaya_composite.jpg",
-    caption: "The Himalayan range seen from the south — ten of the world's fourteen 8,000 m peaks lie in this arc.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Himalaya_composite.jpg/1280px-Himalaya_composite.jpg",
+    caption:
+      "The Himalayan range seen from the south — ten of the world's fourteen 8,000 m peaks lie in this arc.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
@@ -263,8 +302,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-snow-leopard-himalaya",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Schneeleopard_1.jpg/1280px-Schneeleopard_1.jpg",
-    caption: "The snow leopard ranges across the Himalayas and Central Asian ranges — IUCN Vulnerable with around 4,000–6,500 individuals remaining.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Schneeleopard_1.jpg/1280px-Schneeleopard_1.jpg",
+    caption:
+      "The snow leopard ranges across the Himalayas and Central Asian ranges — IUCN Vulnerable with around 4,000–6,500 individuals remaining.",
     credit: "Wikimedia Commons / CC BY-SA 2.5",
   },
 
@@ -290,8 +331,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-potala-palace-lhasa",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Potala_palace_34.jpg/1280px-Potala_palace_34.jpg",
-    caption: "The Potala Palace in Lhasa, Tibet — seat of Dalai Lama governance for three centuries, at 3,650 m elevation.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Potala_palace_34.jpg/1280px-Potala_palace_34.jpg",
+    caption:
+      "The Potala Palace in Lhasa, Tibet — seat of Dalai Lama governance for three centuries, at 3,650 m elevation.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
   },
 
@@ -358,12 +401,21 @@ export const BLOCKS: readonly ArticleBlock[] = [
     title: "World's highest peaks by range",
     facts: [
       { label: "Everest — Himalayas (Nepal/China)", value: "8,848.86 m — highest on Earth" },
-      { label: "K2 — Karakoram (Pakistan/China)", value: "8,611 m — most dangerous, ~1 in 4 fatality ratio" },
+      {
+        label: "K2 — Karakoram (Pakistan/China)",
+        value: "8,611 m — most dangerous, ~1 in 4 fatality ratio",
+      },
       { label: "Aconcagua — Andes (Argentina)", value: "6,961 m — highest peak outside Asia" },
       { label: "Denali — Alaska Range (USA)", value: "6,190 m — highest in North America" },
       { label: "Kilimanjaro — East Africa (Tanzania)", value: "5,895 m — highest in Africa" },
-      { label: "Mont Blanc — Alps (France/Italy)", value: "4,808 m — highest in Europe (excl. Caucasus)" },
-      { label: "Elbrus — Caucasus (Russia)", value: "5,642 m — highest in Europe by broader definition" },
+      {
+        label: "Mont Blanc — Alps (France/Italy)",
+        value: "4,808 m — highest in Europe (excl. Caucasus)",
+      },
+      {
+        label: "Elbrus — Caucasus (Russia)",
+        value: "5,642 m — highest in Europe by broader definition",
+      },
     ],
   },
   {
@@ -385,16 +437,46 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "timeline",
     title: "From Gondwana to today: the making of the Himalayas",
     events: [
-      { date: "~180 million years ago", text: "Gondwana supercontinent begins breaking up; Indian plate begins to separate." },
-      { date: "~120 million years ago", text: "Indian plate fully detaches and begins northward drift, initially at ~15–20 cm/year." },
-      { date: "~66 million years ago", text: "India crosses the equator; the Tethys Ocean begins to close." },
-      { date: "~50–55 million years ago", text: "India-Eurasia collision begins; crust buckles and the first Himalayan uplift starts." },
-      { date: "~25 million years ago", text: "Tibetan Plateau reaches substantial elevation; Asian monsoon begins to intensify." },
-      { date: "~5–10 million years ago", text: "Himalayas reach near-modern heights; major rivers establish antecedent courses." },
-      { date: "~30,000 years ago", text: "Earliest human settlements on the Tibetan Plateau despite glacial conditions." },
-      { date: "1856", text: "Survey of India computes Everest's height at 8,840 m from the plains of India." },
-      { date: "1953", text: "First summit of Everest; systematic scientific study of the range begins." },
-      { date: "Present", text: "Himalayas rise ~5 mm/year net; glaciers retreating; 2 billion people depend on HKH rivers." },
+      {
+        date: "~180 million years ago",
+        text: "Gondwana supercontinent begins breaking up; Indian plate begins to separate.",
+      },
+      {
+        date: "~120 million years ago",
+        text: "Indian plate fully detaches and begins northward drift, initially at ~15–20 cm/year.",
+      },
+      {
+        date: "~66 million years ago",
+        text: "India crosses the equator; the Tethys Ocean begins to close.",
+      },
+      {
+        date: "~50–55 million years ago",
+        text: "India-Eurasia collision begins; crust buckles and the first Himalayan uplift starts.",
+      },
+      {
+        date: "~25 million years ago",
+        text: "Tibetan Plateau reaches substantial elevation; Asian monsoon begins to intensify.",
+      },
+      {
+        date: "~5–10 million years ago",
+        text: "Himalayas reach near-modern heights; major rivers establish antecedent courses.",
+      },
+      {
+        date: "~30,000 years ago",
+        text: "Earliest human settlements on the Tibetan Plateau despite glacial conditions.",
+      },
+      {
+        date: "1856",
+        text: "Survey of India computes Everest's height at 8,840 m from the plains of India.",
+      },
+      {
+        date: "1953",
+        text: "First summit of Everest; systematic scientific study of the range begins.",
+      },
+      {
+        date: "Present",
+        text: "Himalayas rise ~5 mm/year net; glaciers retreating; 2 billion people depend on HKH rivers.",
+      },
     ],
   },
 

@@ -113,7 +113,9 @@ export const ARTICLES: readonly Article[] = [
     category: "capitals",
     continent: "global",
     difficulty: "beginner",
-    minutes: estimateReadingMinutes(EXPANDED_ARTICLE_BLOCKS["why-some-countries-have-two-capitals"]),
+    minutes: estimateReadingMinutes(
+      EXPANDED_ARTICLE_BLOCKS["why-some-countries-have-two-capitals"],
+    ),
     publishedAt: "2026-08-01",
     creator: "atlas-studio",
     tags: ["capitals", "government", "politics"],
@@ -209,7 +211,9 @@ export const ARTICLES: readonly Article[] = [
     category: "heritage",
     continent: "global",
     difficulty: "beginner",
-    minutes: estimateReadingMinutes(EXPANDED_ARTICLE_BLOCKS["how-unesco-picks-a-world-heritage-site"]),
+    minutes: estimateReadingMinutes(
+      EXPANDED_ARTICLE_BLOCKS["how-unesco-picks-a-world-heritage-site"],
+    ),
     publishedAt: "2026-06-25",
     creator: "heritage-desk",
     tags: ["unesco", "heritage", "conservation"],
@@ -241,7 +245,9 @@ export const ARTICLES: readonly Article[] = [
     category: "culture",
     continent: "global",
     difficulty: "intermediate",
-    minutes: estimateReadingMinutes(EXPANDED_ARTICLE_BLOCKS["languages-that-cross-the-most-borders"]),
+    minutes: estimateReadingMinutes(
+      EXPANDED_ARTICLE_BLOCKS["languages-that-cross-the-most-borders"],
+    ),
     publishedAt: "2026-06-10",
     creator: "terra-lingua",
     tags: ["languages", "culture", "linguistics"],
@@ -257,7 +263,9 @@ export const ARTICLES: readonly Article[] = [
     category: "culture",
     continent: "global",
     difficulty: "advanced",
-    minutes: estimateReadingMinutes(EXPANDED_ARTICLE_BLOCKS["what-a-currency-tells-you-about-a-country"]),
+    minutes: estimateReadingMinutes(
+      EXPANDED_ARTICLE_BLOCKS["what-a-currency-tells-you-about-a-country"],
+    ),
     publishedAt: "2026-06-03",
     creator: "terra-lingua",
     tags: ["currencies", "economics", "trade"],

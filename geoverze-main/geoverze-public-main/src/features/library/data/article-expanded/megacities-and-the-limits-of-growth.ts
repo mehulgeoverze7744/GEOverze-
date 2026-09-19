@@ -26,7 +26,13 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "table",
     title: "Top 15 urban agglomerations by population (2024 estimates)",
-    columns: ["Rank", "City / Agglomeration", "Country", "Population (millions)", "Primary geographic challenge"],
+    columns: [
+      "Rank",
+      "City / Agglomeration",
+      "Country",
+      "Population (millions)",
+      "Primary geographic challenge",
+    ],
     rows: [
       ["1", "Tokyo–Yokohama", "Japan", "~37.4", "Earthquake / tsunami risk; ageing population"],
       ["2", "Delhi", "India", "~33.0", "Air quality, groundwater depletion, heat stress"],
@@ -54,8 +60,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-tokyo-shinjuku-skyline",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Skyscrapers_of_Shinjuku_2009_January.jpg/1280px-Skyscrapers_of_Shinjuku_2009_January.jpg",
-    caption: "Shinjuku district, Tokyo — the world's largest urban agglomeration at ~37.4 million people, and a model of high-density, transit-oriented urban function.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Skyscrapers_of_Shinjuku_2009_January.jpg/1280px-Skyscrapers_of_Shinjuku_2009_January.jpg",
+    caption:
+      "Shinjuku district, Tokyo — the world's largest urban agglomeration at ~37.4 million people, and a model of high-density, transit-oriented urban function.",
     credit: "Wikimedia Commons / CC BY 2.0",
   },
   {
@@ -72,8 +80,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-tokyo-flood-tunnel",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/G-Cans_Project.jpg/1280px-G-Cans_Project.jpg",
-    caption: "Tokyo's Metropolitan Area Outer Underground Discharge Channel — one of the world's largest flood control systems, diverting excess river water through underground tunnels to prevent urban flooding.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/G-Cans_Project.jpg/1280px-G-Cans_Project.jpg",
+    caption:
+      "Tokyo's Metropolitan Area Outer Underground Discharge Channel — one of the world's largest flood control systems, diverting excess river water through underground tunnels to prevent urban flooding.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
   },
   {
@@ -90,8 +100,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-delhi-smog",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Delhi_smog.jpg/1280px-Delhi_smog.jpg",
-    caption: "Smog over Delhi — the combination of vehicle emissions, industrial pollution, and agricultural burning creates some of the world's worst urban air quality, particularly in winter.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Delhi_smog.jpg/1280px-Delhi_smog.jpg",
+    caption:
+      "Smog over Delhi — the combination of vehicle emissions, industrial pollution, and agricultural burning creates some of the world's worst urban air quality, particularly in winter.",
     credit: "Wikimedia Commons / CC BY 2.0",
   },
   {
@@ -119,8 +131,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-sao-paulo-skyline",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Sao_Paulo_-_Bela_Vista.jpg/1280px-Sao_Paulo_-_Bela_Vista.jpg",
-    caption: "São Paulo's Bela Vista district — South America's largest city, with some of the world's most extreme wealth inequality visible in the contrast between high-rises and favelas.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Sao_Paulo_-_Bela_Vista.jpg/1280px-Sao_Paulo_-_Bela_Vista.jpg",
+    caption:
+      "São Paulo's Bela Vista district — South America's largest city, with some of the world's most extreme wealth inequality visible in the contrast between high-rises and favelas.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
   },
   {
@@ -137,8 +151,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-dhaka-density",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Dhaka_City.jpg/1280px-Dhaka_City.jpg",
-    caption: "Dhaka from above — the world's most densely populated megacity at approximately 44,000 people per km², at severe risk from sea-level rise and river flooding.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Dhaka_City.jpg/1280px-Dhaka_City.jpg",
+    caption:
+      "Dhaka from above — the world's most densely populated megacity at approximately 44,000 people per km², at severe risk from sea-level rise and river flooding.",
     credit: "Wikimedia Commons / CC BY-SA 2.0",
   },
   {
@@ -166,8 +182,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-urban-heat-island",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Urban_heat_island.svg/1280px-Urban_heat_island.svg",
-    caption: "Urban heat island profile — cities are measurably warmer than surrounding countryside due to dark surfaces, buildings, vehicles, and reduced vegetation, typically by 2–5°C.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Urban_heat_island.svg/1280px-Urban_heat_island.svg",
+    caption:
+      "Urban heat island profile — cities are measurably warmer than surrounding countryside due to dark surfaces, buildings, vehicles, and reduced vegetation, typically by 2–5°C.",
     credit: "Wikimedia Commons / Public Domain",
   },
   {
@@ -176,7 +194,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "At wet-bulb temperatures above 35°C — where the combination of heat and humidity prevents the human body from cooling by sweating — outdoor activity is physiologically impossible for more than a few hours. Wet-bulb temperatures approaching this limit have been recorded in Karachi, Mumbai, Dhaka, and parts of the Persian Gulf. Climate models suggest that without significant emissions reduction, several megacities may experience regular wet-bulb critical temperatures by the 2050s.",
   },
 
-  { kind: "heading", id: "urban-geography-models", text: "Urban geography models: how megacities break the rules" },
+  {
+    kind: "heading",
+    id: "urban-geography-models",
+    text: "Urban geography models: how megacities break the rules",
+  },
   {
     kind: "paragraph",
     text: "Classic urban geography models were developed for mid-20th-century North American and European cities. The Burgess Concentric Zone Model (1925) proposed a central business district surrounded by rings of decreasing affluence — industry, then working-class housing, then middle-class suburbs. The Hoyt Sector Model (1939) modified this to allow affluent and industrial zones to develop in wedge-shaped sectors along transport corridors. The Harris and Ullman Multiple Nuclei Model (1945) recognised that large cities have several distinct centres — business, industrial, and residential — rather than one. Megacities in the developing world largely break all three models. Delhi, Lagos, and Dhaka have informal settlements that do not conform to any ring or sector pattern; wealthy enclaves sit adjacent to extreme poverty; transport corridors often follow colonial infrastructure rather than modern economic logic. These cities are better understood through the lens of geographic opportunity (access to water, flat land) and infrastructure investment than through models built for Chicago in 1925.",
@@ -202,7 +224,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     ],
   },
 
-  { kind: "heading", id: "smart-city-attempts", text: "Smart city attempts: top-down vs. organic growth" },
+  {
+    kind: "heading",
+    id: "smart-city-attempts",
+    text: "Smart city attempts: top-down vs. organic growth",
+  },
   {
     kind: "paragraph",
     text: "The appeal of building a city from scratch — avoiding the accumulated problems of existing megacities — has generated several high-profile planned city projects. Songdo International Business District in South Korea was built on 600 hectares of reclaimed land from 2003 onward, with fibre optic cables to every building, pneumatic waste disposal, integrated traffic management, and CCTV coverage. It remains well under-populated relative to its designed capacity: 300,000 residents were planned; fewer than 100,000 live there two decades on. NEOM in Saudi Arabia, announced in 2017 and including The Line — a proposed 170 km linear city 200 m wide and 500 m tall — has attracted attention for its ambition and scepticism about its feasibility. The consistent lesson from planned megacities is that top-down design struggles to replicate the organic attractors — economic opportunity, social networks, cultural anchors — that make existing cities function as human habitats.",
@@ -213,7 +239,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "Brasília, Brazil's purpose-built capital, was constructed from 1956–60 and is the most successful large planned city in the developing world. Yet Brasília's planned zones were immediately surrounded by satellite cities of lower-income residents who built the capital and could not afford to live in it — a pattern that has since grown to produce a metropolitan area of 4.8 million, with the informal periphery dwarfing the planned centre.",
   },
 
-  { kind: "heading", id: "slums-informal", text: "Slums and informal settlements: a billion people" },
+  {
+    kind: "heading",
+    id: "slums-informal",
+    text: "Slums and informal settlements: a billion people",
+  },
   {
     kind: "paragraph",
     text: "Approximately one billion people globally live in informal settlements — areas characterised by insecure tenure, inadequate infrastructure, and substandard housing. These settlements are not random: they cluster in flood-prone, steep, or otherwise undesirable land that the formal housing market did not develop, typically at the urban periphery or in geographic features (riverbanks, hillsides, industrial zones) that wealthier residents avoided. Dharavi in Mumbai, with an estimated 700,000–1 million residents packed into 2.1 km², is Asia's most densely populated informal settlement and also one of its most economically active: Dharavi generates an estimated $1 billion annually in informal economic output, from leather working and recycling to textile and pottery industries. Kibera in Nairobi, Rocinha in Rio de Janeiro, and Orangi Town in Karachi are similarly characterised by high economic activity and social cohesion alongside severe infrastructure deficits.",
@@ -221,8 +251,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-dharavi-settlement",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Mumbai_India_Dharavi-Slum.jpg/1280px-Mumbai_India_Dharavi-Slum.jpg",
-    caption: "Dharavi, Mumbai — one of Asia's largest informal settlements at 700,000–1 million residents in 2.1 km², and one of its most economically active, generating an estimated $1 billion annually.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Mumbai_India_Dharavi-Slum.jpg/1280px-Mumbai_India_Dharavi-Slum.jpg",
+    caption:
+      "Dharavi, Mumbai — one of Asia's largest informal settlements at 700,000–1 million residents in 2.1 km², and one of its most economically active, generating an estimated $1 billion annually.",
     credit: "Wikimedia Commons / CC BY-SA 2.0",
   },
   {
@@ -239,8 +271,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-jakarta-flooding",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Jakarta_flood_2020.jpg/1280px-Jakarta_flood_2020.jpg",
-    caption: "Flooding in North Jakarta — the result of land subsidence from groundwater extraction combined with seasonal monsoon flooding and gradual sea-level rise.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Jakarta_flood_2020.jpg/1280px-Jakarta_flood_2020.jpg",
+    caption:
+      "Flooding in North Jakarta — the result of land subsidence from groundwater extraction combined with seasonal monsoon flooding and gradual sea-level rise.",
     credit: "Wikimedia Commons / CC BY 2.0",
   },
   {
@@ -249,7 +283,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "North Jakarta subsidence rate: up to 25 cm per year in the fastest-sinking areas — among the fastest urban land subsidence rates in the world. Total subsidence since the 1970s in parts of North Jakarta: over 4 metres. At current rates, approximately 95% of North Jakarta could be below sea level by 2050, making it permanently vulnerable to tidal and storm flooding.",
   },
 
-  { kind: "heading", id: "jakarta-nusantara", text: "Jakarta to Nusantara: the world's largest capital relocation" },
+  {
+    kind: "heading",
+    id: "jakarta-nusantara",
+    text: "Jakarta to Nusantara: the world's largest capital relocation",
+  },
   {
     kind: "paragraph",
     text: "Indonesia announced in 2019 that it would relocate its national capital from Jakarta to a newly built city called Nusantara in the East Kalimantan province of Borneo. The decision reflected multiple pressures: Jakarta's subsidence and flooding risk, its chronic traffic congestion (among the worst in the world), its dependence on Java — an island with 57% of Indonesia's 275 million people on just 6.8% of its land area — and a desire to more equitably develop the eastern islands of the archipelago. Nusantara is being built in jungle on Borneo at an estimated cost of $32–35 billion. Construction began in 2022. The first government functions were planned to relocate by 2024, with a full capital transfer target of 2045 — Indonesia's centenary of independence. Whether Nusantara will succeed where previous planned capitals (Brasília, Canberra, Naypyidaw) have partially succeeded and partially struggled remains to be seen.",
@@ -260,7 +298,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "The world's most notable purpose-built capital cities include Brasília (Brazil, 1960), Canberra (Australia, 1927), Islamabad (Pakistan, 1967), Naypyidaw (Myanmar, 2006), and now Nusantara (Indonesia, in progress). Naypyidaw, built by Myanmar's military junta, is the starkest cautionary tale: it has wide boulevards, ministerial compounds, and official residences — but minimal organic economic or cultural life, with an estimated population of 1 million against an original plan for 10 million.",
   },
 
-  { kind: "heading", id: "mexico-city-geology", text: "Mexico City: built on a drained lake, sinking on clay" },
+  {
+    kind: "heading",
+    id: "mexico-city-geology",
+    text: "Mexico City: built on a drained lake, sinking on clay",
+  },
   {
     kind: "paragraph",
     text: "Mexico City was built on the drained bed of Lake Texcoco, which the Aztec capital Tenochtitlán occupied as an island. After the Spanish conquest, the lake was progressively drained from the 17th century onward to create building land. The problem: the former lakebed consists of highly compressible lacustrine clay that settles and compacts as water is extracted from it. Mexico City is sinking at rates of up to 50 cm per year in some districts — the fastest urban subsidence rate in the world. Since 1900, parts of the city have sunk by more than 9 metres. The subsidence is highly uneven, causing buildings to tilt relative to each other and damaging the water, sewage, and drainage infrastructure that runs through the settled soils. The city's 22 million people depend on the same overextracted aquifer that is causing the subsidence, creating a self-reinforcing crisis.",
@@ -271,7 +313,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "The total subsidence in parts of Mexico City since 1900 exceeds 9 metres — meaning some districts are now 9 m lower than they were 120 years ago. The Metropolitan Cathedral in the historic centre has sunk unevenly, with one end subsiding faster than the other, requiring the injection of concrete under the less-sunk end to level it out. Mexico City's geology is one of the reasons the 1985 earthquake (magnitude 8.1) was so destructive: soft lake sediments amplified seismic waves dramatically.",
   },
 
-  { kind: "heading", id: "future-megacities", text: "The future of megacities: climate threats and limits" },
+  {
+    kind: "heading",
+    id: "future-megacities",
+    text: "The future of megacities: climate threats and limits",
+  },
   {
     kind: "paragraph",
     text: "Climate change threatens megacities along multiple vectors simultaneously. Coastal megacities — Bangkok, Jakarta, Shanghai, Miami, Dhaka, Mumbai — face combined threats of sea-level rise, increased storm surge, and land subsidence. Bangkok and Shanghai are already measurably closer to sea level than they were in the 1980s due to combined subsidence and sea-level rise. Inland megacities face heat stress, water scarcity, and food system disruption as agricultural productivity in surrounding regions declines under drought and extreme heat. The seismic risk of Istanbul, Tokyo, and Tehran adds another dimension: a major earthquake in any of these cities would cause casualties and economic disruption at a scale that would affect global supply chains for years. The pandemic of 2020–21 introduced a new consideration: the same density that makes megacities economically productive also makes them disproportionately vulnerable to airborne disease, and the remote work revolution it accelerated has produced measurable population shifts away from the very largest cities in the wealthiest countries.",
@@ -303,15 +349,42 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "timeline",
     title: "The history and future of megacities",
     events: [
-      { date: "~1820s", text: "London becomes the first city in history to reach approximately 1 million residents — and the first megacity (by some definitions, using metro-area population) around 10 million by 1900." },
-      { date: "1900", text: "Only London and New York exceed 5 million residents. Industrialisation is concentrating population in cities for the first time in history." },
-      { date: "1950", text: "New York and Tokyo are the first 10-million megacities. Global urban population is 30% of world total." },
-      { date: "1975", text: "Three megacities: Tokyo, New York, Mexico City. Global urban population reaches 38%." },
-      { date: "2000", text: "Eighteen megacities. Global urban population: 47% — near parity with rural population for first time." },
-      { date: "2007", text: "Tipping point: for the first time in history, more than half the world's population lives in urban areas." },
-      { date: "2024", text: "Approximately 35 megacities. Two thirds in Asia. Tokyo leads at 37.4 million. Global urban population: ~57%." },
-      { date: "2030 (projected)", text: "Approximately 43 megacities. African cities entering the top tier for the first time (Lagos, Kinshasa, Dar es Salaam)." },
-      { date: "2050 (projected)", text: "Approximately 50 megacities. Africa hosts the most by number. Global urban population: ~68%." },
+      {
+        date: "~1820s",
+        text: "London becomes the first city in history to reach approximately 1 million residents — and the first megacity (by some definitions, using metro-area population) around 10 million by 1900.",
+      },
+      {
+        date: "1900",
+        text: "Only London and New York exceed 5 million residents. Industrialisation is concentrating population in cities for the first time in history.",
+      },
+      {
+        date: "1950",
+        text: "New York and Tokyo are the first 10-million megacities. Global urban population is 30% of world total.",
+      },
+      {
+        date: "1975",
+        text: "Three megacities: Tokyo, New York, Mexico City. Global urban population reaches 38%.",
+      },
+      {
+        date: "2000",
+        text: "Eighteen megacities. Global urban population: 47% — near parity with rural population for first time.",
+      },
+      {
+        date: "2007",
+        text: "Tipping point: for the first time in history, more than half the world's population lives in urban areas.",
+      },
+      {
+        date: "2024",
+        text: "Approximately 35 megacities. Two thirds in Asia. Tokyo leads at 37.4 million. Global urban population: ~57%.",
+      },
+      {
+        date: "2030 (projected)",
+        text: "Approximately 43 megacities. African cities entering the top tier for the first time (Lagos, Kinshasa, Dar es Salaam).",
+      },
+      {
+        date: "2050 (projected)",
+        text: "Approximately 50 megacities. Africa hosts the most by number. Global urban population: ~68%.",
+      },
     ],
   },
 
@@ -320,12 +393,27 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "facts",
     title: "Records and milestones in megacity geography",
     facts: [
-      { label: "World's largest megacity (2024)", value: "Greater Tokyo: ~37.4 million — largest urban agglomeration in history" },
-      { label: "World's most densely populated megacity", value: "Dhaka: ~44,000 people per km² in the agglomeration" },
-      { label: "Fastest-growing megacity (2020s)", value: "Delhi — adding roughly 500,000 residents per year" },
+      {
+        label: "World's largest megacity (2024)",
+        value: "Greater Tokyo: ~37.4 million — largest urban agglomeration in history",
+      },
+      {
+        label: "World's most densely populated megacity",
+        value: "Dhaka: ~44,000 people per km² in the agglomeration",
+      },
+      {
+        label: "Fastest-growing megacity (2020s)",
+        value: "Delhi — adding roughly 500,000 residents per year",
+      },
       { label: "City sinking fastest", value: "Mexico City: up to 50 cm/year in some districts" },
-      { label: "First million-person city in history", value: "Rome — approximately 1 million at the height of the empire, ~100 AD" },
-      { label: "First 10-million megacity", value: "New York and Tokyo — both crossed threshold ~1950" },
+      {
+        label: "First million-person city in history",
+        value: "Rome — approximately 1 million at the height of the empire, ~100 AD",
+      },
+      {
+        label: "First 10-million megacity",
+        value: "New York and Tokyo — both crossed threshold ~1950",
+      },
     ],
   },
 

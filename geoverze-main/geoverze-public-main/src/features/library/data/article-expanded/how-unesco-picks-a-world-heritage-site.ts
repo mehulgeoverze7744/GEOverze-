@@ -9,8 +9,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-abu-simbel-temples",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Panorama_Abu_Simbel_Oct_2007.jpg/1280px-Panorama_Abu_Simbel_Oct_2007.jpg",
-    caption: "Abu Simbel temples, Egypt — the international campaign to save them from the Aswan Dam reservoir directly inspired the 1972 World Heritage Convention.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Panorama_Abu_Simbel_Oct_2007.jpg/1280px-Panorama_Abu_Simbel_Oct_2007.jpg",
+    caption:
+      "Abu Simbel temples, Egypt — the international campaign to save them from the Aswan Dam reservoir directly inspired the 1972 World Heritage Convention.",
     credit: "Wikimedia Commons / CC BY-SA 2.0",
   },
 
@@ -156,8 +158,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-great-barrier-reef",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Great_Barrier_Reef_2090_Nevit.jpg/1280px-Great_Barrier_Reef_2090_Nevit.jpg",
-    caption: "The Great Barrier Reef, Australia — inscribed 1981, meeting all four natural criteria (vii–x), it is the world's largest coral reef system and faces severe threat from climate-driven bleaching.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Great_Barrier_Reef_2090_Nevit.jpg/1280px-Great_Barrier_Reef_2090_Nevit.jpg",
+    caption:
+      "The Great Barrier Reef, Australia — inscribed 1981, meeting all four natural criteria (vii–x), it is the world's largest coral reef system and faces severe threat from climate-driven bleaching.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
   },
 
@@ -208,8 +212,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-liverpool-albert-dock",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Albert_Dock%2C_Liverpool.jpg/1280px-Albert_Dock%2C_Liverpool.jpg",
-    caption: "Liverpool's Albert Dock — part of the Maritime Mercantile City that was removed from the World Heritage List in 2021, one of only three sites ever delisted.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Albert_Dock%2C_Liverpool.jpg/1280px-Albert_Dock%2C_Liverpool.jpg",
+    caption:
+      "Liverpool's Albert Dock — part of the Maritime Mercantile City that was removed from the World Heritage List in 2021, one of only three sites ever delisted.",
     credit: "Wikimedia Commons / CC BY 2.0",
   },
 
@@ -225,8 +231,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-machu-picchu",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Machu_Picchu%2C_Peru.jpg/1280px-Machu_Picchu%2C_Peru.jpg",
-    caption: "Machu Picchu, Peru — inscribed in 1983 and now receiving over one million visitors per year, it is the paradigm case of the inscription-driven tourism paradox.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Machu_Picchu%2C_Peru.jpg/1280px-Machu_Picchu%2C_Peru.jpg",
+    caption:
+      "Machu Picchu, Peru — inscribed in 1983 and now receiving over one million visitors per year, it is the paradigm case of the inscription-driven tourism paradox.",
     credit: "Wikimedia Commons / CC BY 2.0",
   },
   {
@@ -243,8 +251,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-great-wall-china",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/The_Great_Wall_of_China_at_Jinshanling-edit.jpg/1280px-The_Great_Wall_of_China_at_Jinshanling-edit.jpg",
-    caption: "The Great Wall at Jinshanling, China — inscribed 1987 under five criteria, spanning over 21,000 kilometres of fortifications built across two millennia of Chinese history.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/The_Great_Wall_of_China_at_Jinshanling-edit.jpg/1280px-The_Great_Wall_of_China_at_Jinshanling-edit.jpg",
+    caption:
+      "The Great Wall at Jinshanling, China — inscribed 1987 under five criteria, spanning over 21,000 kilometres of fortifications built across two millennia of Chinese history.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
   },
 
@@ -277,7 +287,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "The Liangzhu Archaeological Site in China (inscribed 2019) illustrates the opposite: an initially unsuccessful nomination that eventually succeeded after years of additional research. China's first attempts to nominate Liangzhu — a Neolithic city site dating to 3300–2300 BC with evidence of advanced rice farming, jade culture, and urban planning — were deferred partly because comparative analysis with other early urban sites in the region was insufficient. The eventual successful dossier incorporated years of additional excavation and academic comparison. The lesson was that a nomination deferred is not necessarily a nomination denied; it is an invitation to strengthen the argument.",
   },
 
-  { kind: "heading", id: "intangible-heritage", text: "Intangible Cultural Heritage vs. World Heritage" },
+  {
+    kind: "heading",
+    id: "intangible-heritage",
+    text: "Intangible Cultural Heritage vs. World Heritage",
+  },
   {
     kind: "paragraph",
     text: "The World Heritage Convention protects physical places and monuments. A parallel UNESCO instrument — the 2003 Convention for the Safeguarding of the Intangible Cultural Heritage (ICH) — protects practices, expressions, knowledge, and skills. The two systems operate separately. Tango (Argentina and Uruguay), the Mediterranean diet, Noh theatre (Japan), Mongolian traditional ger craftsmanship, and Falconry across multiple countries all appear on the ICH Representative List. A cultural practice associated with a World Heritage Site — the rituals performed at Angkor, the music played in Vienna's coffee houses, the fishing techniques of the Galápagos — may be separately protected under ICH without having any formal link to the site's inscription.",
@@ -303,24 +317,56 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "timeline",
     title: "Key moments in World Heritage history",
     events: [
-      { date: "1960", text: "UNESCO launches international campaign to save Abu Simbel temples threatened by Aswan High Dam reservoir." },
-      { date: "1968", text: "Relocation of Abu Simbel temples completed after nine years at a cost of USD 80 million, setting the model for international heritage cooperation." },
-      { date: "1972", text: "World Heritage Convention adopted at UNESCO General Conference in Paris; enters into force 1975." },
-      { date: "1978", text: "First twelve sites inscribed, including Galápagos Islands, Simien National Park, Kraków Old Town, and the Quito colonial city." },
-      { date: "1981", text: "Jerusalem's Old City inscribed by Jordan and immediately placed on the Danger List — still there today." },
-      { date: "1994", text: "Global Strategy launched to address Eurocentric imbalance; under-represented regions and heritage types actively encouraged to nominate." },
-      { date: "2007", text: "Arabian Oryx Sanctuary (Oman) becomes the first site ever removed from the World Heritage List." },
-      { date: "2009", text: "Dresden Elbe Valley (Germany) delisted after a four-lane bridge was built through the protected landscape over Committee objections." },
-      { date: "2021", text: "Liverpool Maritime Mercantile City (UK) delisted due to waterfront development; National Geographic officially recognises Southern Ocean as fifth ocean." },
-      { date: "2024", text: "Total sites reaches 1,223 across 167 countries, with 56 currently on the List of World Heritage in Danger." },
+      {
+        date: "1960",
+        text: "UNESCO launches international campaign to save Abu Simbel temples threatened by Aswan High Dam reservoir.",
+      },
+      {
+        date: "1968",
+        text: "Relocation of Abu Simbel temples completed after nine years at a cost of USD 80 million, setting the model for international heritage cooperation.",
+      },
+      {
+        date: "1972",
+        text: "World Heritage Convention adopted at UNESCO General Conference in Paris; enters into force 1975.",
+      },
+      {
+        date: "1978",
+        text: "First twelve sites inscribed, including Galápagos Islands, Simien National Park, Kraków Old Town, and the Quito colonial city.",
+      },
+      {
+        date: "1981",
+        text: "Jerusalem's Old City inscribed by Jordan and immediately placed on the Danger List — still there today.",
+      },
+      {
+        date: "1994",
+        text: "Global Strategy launched to address Eurocentric imbalance; under-represented regions and heritage types actively encouraged to nominate.",
+      },
+      {
+        date: "2007",
+        text: "Arabian Oryx Sanctuary (Oman) becomes the first site ever removed from the World Heritage List.",
+      },
+      {
+        date: "2009",
+        text: "Dresden Elbe Valley (Germany) delisted after a four-lane bridge was built through the protected landscape over Committee objections.",
+      },
+      {
+        date: "2021",
+        text: "Liverpool Maritime Mercantile City (UK) delisted due to waterfront development; National Geographic officially recognises Southern Ocean as fifth ocean.",
+      },
+      {
+        date: "2024",
+        text: "Total sites reaches 1,223 across 167 countries, with 56 currently on the List of World Heritage in Danger.",
+      },
     ],
   },
 
   {
     kind: "image",
     art: "article-stonehenge-wiltshire",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Stonehenge2007_07_30.jpg/1280px-Stonehenge2007_07_30.jpg",
-    caption: "Stonehenge, England — inscribed 1986 as part of the Stonehenge, Avebury and Associated Sites serial property, meeting criteria i, ii, and iii for its Neolithic ceremonial landscape.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Stonehenge2007_07_30.jpg/1280px-Stonehenge2007_07_30.jpg",
+    caption:
+      "Stonehenge, England — inscribed 1986 as part of the Stonehenge, Avebury and Associated Sites serial property, meeting criteria i, ii, and iii for its Neolithic ceremonial landscape.",
     credit: "Wikimedia Commons / CC BY-SA 2.0",
   },
   {
@@ -344,17 +390,20 @@ export const BLOCKS: readonly ArticleBlock[] = [
       {
         label: "The landmarks everyone misplaces",
         href: "/geolibrary/article/the-landmarks-everyone-misplaces",
-        description: "Many mislocated landmarks are World Heritage Sites — knowing their actual geography sharpens quiz accuracy.",
+        description:
+          "Many mislocated landmarks are World Heritage Sites — knowing their actual geography sharpens quiz accuracy.",
       },
       {
         label: "The Nile and the Amazon: which is longest?",
         href: "/geolibrary/article/the-nile-and-the-amazon",
-        description: "Both river basins contain multiple World Heritage Sites — and both face threats.",
+        description:
+          "Both river basins contain multiple World Heritage Sites — and both face threats.",
       },
       {
         label: "How the Himalayas keep growing",
         href: "/geolibrary/article/how-the-himalayas-keep-growing",
-        description: "The Himalayan parks include several World Heritage natural sites tied to active tectonic processes.",
+        description:
+          "The Himalayan parks include several World Heritage natural sites tied to active tectonic processes.",
       },
     ],
   },

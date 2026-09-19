@@ -2,12 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { useMemo } from "react";
 
-import {
-  AnimatedSection,
-  EmptyState,
-  GeoButton,
-  SectionContainer,
-} from "@/components/shared";
+import { AnimatedSection, EmptyState, GeoButton, SectionContainer } from "@/components/shared";
 
 import { useLibraryStore } from "@/stores/libraryStore";
 

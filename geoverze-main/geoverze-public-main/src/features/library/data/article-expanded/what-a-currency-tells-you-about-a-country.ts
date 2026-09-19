@@ -20,8 +20,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-currency-banknotes-world",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Banknotes_of_various_currencies.jpg/1280px-Banknotes_of_various_currencies.jpg",
-    caption: "A selection of world currency banknotes — each one a statement of national identity, political history, and economic aspiration.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Banknotes_of_various_currencies.jpg/1280px-Banknotes_of_various_currencies.jpg",
+    caption:
+      "A selection of world currency banknotes — each one a statement of national identity, political history, and economic aspiration.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
@@ -34,16 +36,46 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "timeline",
     title: "From gold standard to digital currencies",
     events: [
-      { date: "1871–1914", text: "Classical gold standard: major currencies fixed to gold, enabling stable international trade across the British Empire." },
-      { date: "1944", text: "Bretton Woods Agreement: dollar pegged to gold at $35/oz; all other currencies pegged to dollar. IMF and World Bank created." },
-      { date: "1971", text: "Nixon Shock: US ends dollar-gold convertibility unilaterally. Bretton Woods effectively collapses." },
-      { date: "1973–74", text: "OPEC oil shock; petrodollar system formalised — oil priced globally in USD, cementing dollar reserve status." },
-      { date: "1999", text: "Euro launched as accounting currency for 11 nations, replacing franc, mark, lira, peseta, escudo, and others." },
-      { date: "2002", text: "Euro banknotes and coins enter circulation; fictional architectural imagery unveiled to avoid national disputes." },
-      { date: "2008–09", text: "Global financial crisis; dollar strengthens as safe-haven currency despite the US being the epicentre." },
-      { date: "2020", text: "Bahamas launches Sand Dollar — world's first fully deployed central bank digital currency (CBDC)." },
-      { date: "2021", text: "El Salvador makes Bitcoin legal tender — first country in history to do so. China's e-CNY trials expand." },
-      { date: "2023", text: "BRICS nations discuss creating a common currency or settlement mechanism to reduce dollar dependence." },
+      {
+        date: "1871–1914",
+        text: "Classical gold standard: major currencies fixed to gold, enabling stable international trade across the British Empire.",
+      },
+      {
+        date: "1944",
+        text: "Bretton Woods Agreement: dollar pegged to gold at $35/oz; all other currencies pegged to dollar. IMF and World Bank created.",
+      },
+      {
+        date: "1971",
+        text: "Nixon Shock: US ends dollar-gold convertibility unilaterally. Bretton Woods effectively collapses.",
+      },
+      {
+        date: "1973–74",
+        text: "OPEC oil shock; petrodollar system formalised — oil priced globally in USD, cementing dollar reserve status.",
+      },
+      {
+        date: "1999",
+        text: "Euro launched as accounting currency for 11 nations, replacing franc, mark, lira, peseta, escudo, and others.",
+      },
+      {
+        date: "2002",
+        text: "Euro banknotes and coins enter circulation; fictional architectural imagery unveiled to avoid national disputes.",
+      },
+      {
+        date: "2008–09",
+        text: "Global financial crisis; dollar strengthens as safe-haven currency despite the US being the epicentre.",
+      },
+      {
+        date: "2020",
+        text: "Bahamas launches Sand Dollar — world's first fully deployed central bank digital currency (CBDC).",
+      },
+      {
+        date: "2021",
+        text: "El Salvador makes Bitcoin legal tender — first country in history to do so. China's e-CNY trials expand.",
+      },
+      {
+        date: "2023",
+        text: "BRICS nations discuss creating a common currency or settlement mechanism to reduce dollar dependence.",
+      },
     ],
   },
   {
@@ -54,12 +86,18 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-bretton-woods-conference",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Bretton_Woods_Conference%2C_1944.jpg/1280px-Bretton_Woods_Conference%2C_1944.jpg",
-    caption: "The Bretton Woods Conference, July 1944 — 44 nations established the post-war international monetary order that gave the US dollar its global primacy.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Bretton_Woods_Conference%2C_1944.jpg/1280px-Bretton_Woods_Conference%2C_1944.jpg",
+    caption:
+      "The Bretton Woods Conference, July 1944 — 44 nations established the post-war international monetary order that gave the US dollar its global primacy.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
-  { kind: "heading", id: "de-dollarization", text: "De-dollarization: why it is so hard to dislodge the dollar" },
+  {
+    kind: "heading",
+    id: "de-dollarization",
+    text: "De-dollarization: why it is so hard to dislodge the dollar",
+  },
   {
     kind: "paragraph",
     text: "BRICS nations — Brazil, Russia, India, China, and South Africa, later joined by additional members — have periodically discussed creating a common currency or settling bilateral trade in national currencies to reduce dollar exposure. The difficulty is that the dollar's dominance is self-reinforcing: oil is priced in dollars, most commodity contracts are in dollars, the deepest and most liquid government bond market in the world is US Treasuries, and the SWIFT financial messaging system routes through dollar-clearing infrastructure. A country wishing to reduce dollar exposure must simultaneously find trading partners willing to accept alternatives, develop liquid alternative bond markets, and persuade commodity sellers to reprice. Russia's exclusion from SWIFT following its 2022 invasion of Ukraine demonstrated both the power of dollar infrastructure as a sanction mechanism and the urgency others feel about building alternatives.",
@@ -70,7 +108,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "China's CIPS (Cross-border Interbank Payment System) handles yuan-denominated transactions and saw significant use increases after 2022. However, CIPS processes roughly 1% of SWIFT's daily transaction volume. The yuan accounts for approximately 2.5% of global foreign exchange reserves — compared to 59% for the US dollar — despite China being the world's second-largest economy.",
   },
 
-  { kind: "heading", id: "euro-fictional-architecture", text: "The euro: fictional architecture and real compromises" },
+  {
+    kind: "heading",
+    id: "euro-fictional-architecture",
+    text: "The euro: fictional architecture and real compromises",
+  },
   {
     kind: "paragraph",
     text: "The euro banknotes, introduced in 2002, depict windows, gateways, and bridges — but none of them are real. They represent architectural styles from different periods of European history: Classical, Romanesque, Gothic, Renaissance, Baroque, Art Nouveau, and Modern. The choice of fictional buildings was a deliberate political compromise: when twelve nations were negotiating design, every actual building or bridge suggested by one country was objected to by another. Paris objected to German monuments. Germany objected to French ones. The compromise — fictional but plausible European architecture — is a remarkable document of political necessity rendered in everyday objects. The coins, however, do show real national imagery: each country mints its own design on the coin's reverse, producing a eurozone where the same denomination looks different depending on where it was minted.",
@@ -78,8 +120,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-euro-banknotes-series",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Euro_banknotes_2013.jpg/1280px-Euro_banknotes_2013.jpg",
-    caption: "Euro banknotes depict fictional European architectural styles — a compromise that prevented endless disputes about whose real buildings should appear on a shared currency.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Euro_banknotes_2013.jpg/1280px-Euro_banknotes_2013.jpg",
+    caption:
+      "Euro banknotes depict fictional European architectural styles — a compromise that prevented endless disputes about whose real buildings should appear on a shared currency.",
     credit: "Wikimedia Commons / Public Domain",
   },
   {
@@ -88,7 +132,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "Sweden held a referendum on the euro in 2003 and voted No by 55.9% to 42.0%. Sweden remains legally required to adopt the euro as an EU member but has deliberately maintained an exchange rate mechanism that prevents eurozone entry — a legalistic work-around. Denmark negotiated a formal opt-out in the 1992 Maastricht Treaty. The UK's opt-out was used for its entire EU membership until Brexit removed the question.",
   },
 
-  { kind: "heading", id: "hyperinflation", text: "Hyperinflation: when currency becomes worthless" },
+  {
+    kind: "heading",
+    id: "hyperinflation",
+    text: "Hyperinflation: when currency becomes worthless",
+  },
   {
     kind: "paragraph",
     text: "Hyperinflation — technically defined as inflation exceeding 50% per month — is one of the most destructive economic events a country can experience, and the currency is both its symptom and its record. Weimar Germany (1921–1923) is the most famous case: at the peak, the exchange rate reached 4.2 trillion marks to one US dollar, and workers were reportedly paid twice daily so they could spend their wages before they lost value. Hungary in 1946 produced the highest inflation rate ever recorded: prices doubled every 15 hours at the peak. The 1946 Hungarian pengő became so worthless that a new currency — the forint — was introduced at 400 octillion (4 × 10²⁹) pengős to one forint. Zimbabwe's 2008–09 crisis produced the famous 100 trillion dollar note — worth less than US$0.40 at the time of issue, and now worth far more as a collector's item.",
@@ -97,19 +145,39 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "facts",
     title: "The worst hyperinflations in recorded history",
     facts: [
-      { label: "Hungary 1946 (worst ever)", value: "Peak rate: 4.19 × 10¹⁶% per month; prices doubled every 15 hours" },
-      { label: "Zimbabwe 2008", value: "Peak rate: 79.6 billion % per month; 100 trillion dollar note issued" },
-      { label: "Yugoslavia 1994", value: "Peak rate: 313 million% per month; prices doubled every 34 hours" },
-      { label: "Weimar Germany 1923", value: "4.2 trillion marks = 1 US dollar at peak in November 1923" },
-      { label: "Venezuela 2018", value: "1,370,000% annual inflation; bolivar replaced by bolivar soberano (cut 5 zeros)" },
-      { label: "Zimbabwe resolution 2009", value: "Abandoned own dollar; adopted multi-currency basket (USD, ZAR, EUR, GBP)" },
+      {
+        label: "Hungary 1946 (worst ever)",
+        value: "Peak rate: 4.19 × 10¹⁶% per month; prices doubled every 15 hours",
+      },
+      {
+        label: "Zimbabwe 2008",
+        value: "Peak rate: 79.6 billion % per month; 100 trillion dollar note issued",
+      },
+      {
+        label: "Yugoslavia 1994",
+        value: "Peak rate: 313 million% per month; prices doubled every 34 hours",
+      },
+      {
+        label: "Weimar Germany 1923",
+        value: "4.2 trillion marks = 1 US dollar at peak in November 1923",
+      },
+      {
+        label: "Venezuela 2018",
+        value: "1,370,000% annual inflation; bolivar replaced by bolivar soberano (cut 5 zeros)",
+      },
+      {
+        label: "Zimbabwe resolution 2009",
+        value: "Abandoned own dollar; adopted multi-currency basket (USD, ZAR, EUR, GBP)",
+      },
     ],
   },
   {
     kind: "image",
     art: "article-zimbabwe-100-trillion",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Zimbabwe_100_trillion_2009_Obverse.jpg/1280px-Zimbabwe_100_trillion_2009_Obverse.jpg",
-    caption: "Zimbabwe's 100 trillion dollar note (2008) — the most iconic physical symbol of hyperinflation, now a collector's item worth far more than its original face value.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Zimbabwe_100_trillion_2009_Obverse.jpg/1280px-Zimbabwe_100_trillion_2009_Obverse.jpg",
+    caption:
+      "Zimbabwe's 100 trillion dollar note (2008) — the most iconic physical symbol of hyperinflation, now a collector's item worth far more than its original face value.",
     credit: "Wikimedia Commons / Public Domain",
   },
   {
@@ -171,7 +239,11 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "A dollarised country loses what economists call the 'lender of last resort' function: when banks fail, the government cannot print money to bail them out. Ecuador's banking system remained fragile for years after dollarisation. Panama's banks, however, are notably well-regulated and stable — suggesting that dollarisation alone does not determine banking health; the quality of regulation matters more.",
   },
 
-  { kind: "heading", id: "what-on-banknotes", text: "What's on the banknotes: national identity in circulation" },
+  {
+    kind: "heading",
+    id: "what-on-banknotes",
+    text: "What's on the banknotes: national identity in circulation",
+  },
   {
     kind: "paragraph",
     text: "The imagery on banknotes follows predictable patterns across political systems. Monarchies feature the reigning sovereign — the UK's notes have shown the monarch's profile since the 1960s, updated with each accession. Republican governments favour founding fathers or independence heroes. The US dollar's Washington, Lincoln, Hamilton, and Franklin represent a deliberate canon of the republic's origins. China's renminbi features Mao Zedong on every denomination — a choice that combines political symbolism with the practical benefit of making counterfeiting detectable by face familiarity. Some countries have moved in a different direction entirely: the new Norwegian krone series (2017) uses abstract pixelated imagery inspired by the sea on its reverse, while the UK's new polymer notes feature scientists and artists — Alan Turing, Jane Austen, J.M.W. Turner — rather than political figures.",
@@ -190,8 +262,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-new-zealand-kiwi-coin",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/New_Zealand_one_dollar_coin.jpg/800px-New_Zealand_one_dollar_coin.jpg",
-    caption: "New Zealand's one-dollar coin featuring the kiwi — a globally recognised use of endemic wildlife on national currency, reflecting New Zealand's ecological identity.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/New_Zealand_one_dollar_coin.jpg/800px-New_Zealand_one_dollar_coin.jpg",
+    caption:
+      "New Zealand's one-dollar coin featuring the kiwi — a globally recognised use of endemic wildlife on national currency, reflecting New Zealand's ecological identity.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
@@ -214,8 +288,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-digital-yuan-ecny",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Digital_RMB_app.jpg/800px-Digital_RMB_app.jpg",
-    caption: "China's digital yuan (e-CNY) wallet interface — the most widely tested central bank digital currency in a major economy, trialled across multiple Chinese cities.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Digital_RMB_app.jpg/800px-Digital_RMB_app.jpg",
+    caption:
+      "China's digital yuan (e-CNY) wallet interface — the most widely tested central bank digital currency in a major economy, trialled across multiple Chinese cities.",
     credit: "Wikimedia Commons / CC BY-SA 4.0",
   },
   {
@@ -224,13 +300,21 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "CBDCs differ from cryptocurrencies in one fundamental way: they are issued and controlled by a central bank, making them inherently centralised. Bitcoin's value proposition is decentralisation — no single authority controls it. A CBDC is the opposite: it gives governments potentially greater surveillance and control over financial transactions than physical cash, which is anonymous by design.",
   },
 
-  { kind: "heading", id: "exchange-rates-geography", text: "Exchange rates and the geography of tourism" },
+  {
+    kind: "heading",
+    id: "exchange-rates-geography",
+    text: "Exchange rates and the geography of tourism",
+  },
   {
     kind: "paragraph",
     text: "Exchange rates shape travel patterns as much as visa policies or flight routes. When a currency is strong — as the US dollar was against the pound and euro in 2022–2023 — American tourists find European prices relatively cheap; Europeans visiting the US face elevated real costs. The practical geography of tourism responds to exchange rate cycles: Thailand's baht, Turkey's lira, and Argentina's peso have all at various times been so undervalued against hard currencies that they attracted price-sensitive visitors despite other barriers. The concept of Purchasing Power Parity (PPP) corrects for this by asking how much a standardised basket of goods costs in different countries: it consistently shows that poorer countries are cheaper in absolute terms, meaning currency strength understates the real living standards of citizens in high-income countries and overstates them in low-income ones.",
   },
 
-  { kind: "heading", id: "big-mac-index", text: "The Big Mac Index: a popular economics benchmark" },
+  {
+    kind: "heading",
+    id: "big-mac-index",
+    text: "The Big Mac Index: a popular economics benchmark",
+  },
   {
     kind: "paragraph",
     text: "The Big Mac Index, created by The Economist magazine in 1986, compares the price of a McDonald's Big Mac in different countries converted to US dollars at market exchange rates. Because the Big Mac is a standardised product produced using local labour and local ingredients, its price in different countries reflects local costs — wages, rent, farming — rather than international commodity markets. When the index shows a Big Mac costs $5.58 in the US and $7.73 in Switzerland, it suggests the Swiss franc is significantly overvalued in purchasing power terms. When it costs $1.66 in Indonesia, the rupiah is significantly undervalued. The index is not rigorous economics — service prices notoriously vary more across countries than traded-goods prices — but it has proven durable as a simple, memorable illustration of exchange rate misalignment.",
@@ -250,16 +334,26 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "facts",
     title: "Currency strength at a glance (2024)",
     facts: [
-      { label: "World's strongest (by exchange rate)", value: "Kuwaiti dinar (KWD): ~$3.26 per 1 KWD" },
+      {
+        label: "World's strongest (by exchange rate)",
+        value: "Kuwaiti dinar (KWD): ~$3.26 per 1 KWD",
+      },
       { label: "Bahraini dinar", value: "~$2.65 per 1 BHD — oil-backed Gulf currency" },
       { label: "Swiss franc safe-haven", value: "~$1.13 per 1 CHF; strengthens in global crises" },
       { label: "Iranian rial (weakest)", value: "~$0.000024 per 1 IRR — under heavy sanctions" },
       { label: "Most stable peg", value: "Hong Kong dollar at 7.8:1 USD — maintained since 1983" },
-      { label: "Most volatile major currency (2023)", value: "Turkish lira — lost ~30% vs USD in one calendar year" },
+      {
+        label: "Most volatile major currency (2023)",
+        value: "Turkish lira — lost ~30% vs USD in one calendar year",
+      },
     ],
   },
 
-  { kind: "heading", id: "colonial-currency-legacies", text: "Colonial currency legacies: the CFA franc" },
+  {
+    kind: "heading",
+    id: "colonial-currency-legacies",
+    text: "Colonial currency legacies: the CFA franc",
+  },
   {
     kind: "paragraph",
     text: "Some of the most revealing currency stories concern what was kept after independence. The CFA franc — Communauté Financière Africaine — is used by 14 African states across two zones: eight in West Africa (WAEMU) and six in Central Africa (CEMAC). Created by France in 1945 for its African territories, the CFA franc was pegged to the French franc and is now pegged to the euro at a fixed rate. In exchange for France's guarantee of convertibility, member countries historically deposited 50% of their foreign exchange reserves at the French Treasury in Paris. Critics argue this arrangement gives France ongoing influence over the monetary policy of 14 sovereign nations and extracts African reserves to Paris. Supporters argue it provides price stability and credibility that West African countries would struggle to achieve independently, pointing to inflation rates that are consistently lower in CFA zones than in neighbouring non-CFA countries.",
@@ -267,8 +361,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-cfa-franc-notes",
-    externalSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/CFA_franc_BCEAO.jpg/1280px-CFA_franc_BCEAO.jpg",
-    caption: "West African CFA franc banknotes — the currency of 8 countries, pegged to the euro at 655.96 XOF per euro, and subject to ongoing political debate about French oversight.",
+    externalSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/CFA_franc_BCEAO.jpg/1280px-CFA_franc_BCEAO.jpg",
+    caption:
+      "West African CFA franc banknotes — the currency of 8 countries, pegged to the euro at 655.96 XOF per euro, and subject to ongoing political debate about French oversight.",
     credit: "Wikimedia Commons / Public Domain",
   },
   {
@@ -305,16 +401,61 @@ export const BLOCKS: readonly ArticleBlock[] = [
     title: "Selected world currencies: exchange rates and notable imagery (2024)",
     columns: ["Currency", "Code", "Approx. units per USD", "Notable banknote imagery"],
     rows: [
-      ["US Dollar", "USD", "1.00 (baseline)", "Founding fathers (Washington, Lincoln, Hamilton); Great Seal"],
-      ["Euro", "EUR", "0.92 EUR per USD", "Fictional European architectural styles — no real buildings"],
-      ["Kuwaiti Dinar", "KWD", "0.31 KWD per USD (~$3.26 per KWD)", "Traditional dhow, oil refinery, national coat of arms"],
-      ["Swiss Franc", "CHF", "0.88 CHF per USD (~$1.13 per CHF)", "Cultural figures: Le Corbusier, Euler, Ramuz, Kirchner"],
-      ["Japanese Yen", "JPY", "149 JPY per USD", "Fukuzawa Yukichi; Mt Fuji and cherry blossoms on ¥1,000"],
-      ["Chinese Renminbi", "CNY", "7.24 CNY per USD", "Mao Zedong on all notes; national landmarks on reverses"],
-      ["British Pound", "GBP", "0.79 GBP per USD (~$1.27 per GBP)", "King Charles III; scientists and artists on reverse"],
-      ["Indian Rupee", "INR", "83 INR per USD", "Mahatma Gandhi; rotating national development imagery"],
+      [
+        "US Dollar",
+        "USD",
+        "1.00 (baseline)",
+        "Founding fathers (Washington, Lincoln, Hamilton); Great Seal",
+      ],
+      [
+        "Euro",
+        "EUR",
+        "0.92 EUR per USD",
+        "Fictional European architectural styles — no real buildings",
+      ],
+      [
+        "Kuwaiti Dinar",
+        "KWD",
+        "0.31 KWD per USD (~$3.26 per KWD)",
+        "Traditional dhow, oil refinery, national coat of arms",
+      ],
+      [
+        "Swiss Franc",
+        "CHF",
+        "0.88 CHF per USD (~$1.13 per CHF)",
+        "Cultural figures: Le Corbusier, Euler, Ramuz, Kirchner",
+      ],
+      [
+        "Japanese Yen",
+        "JPY",
+        "149 JPY per USD",
+        "Fukuzawa Yukichi; Mt Fuji and cherry blossoms on ¥1,000",
+      ],
+      [
+        "Chinese Renminbi",
+        "CNY",
+        "7.24 CNY per USD",
+        "Mao Zedong on all notes; national landmarks on reverses",
+      ],
+      [
+        "British Pound",
+        "GBP",
+        "0.79 GBP per USD (~$1.27 per GBP)",
+        "King Charles III; scientists and artists on reverse",
+      ],
+      [
+        "Indian Rupee",
+        "INR",
+        "83 INR per USD",
+        "Mahatma Gandhi; rotating national development imagery",
+      ],
       ["Nigerian Naira", "NGN", "1,500 NGN per USD", "National independence heroes; CBN building"],
-      ["West African CFA Franc", "XOF", "600 XOF per USD (pegged to EUR)", "African cultural scenes; development imagery"],
+      [
+        "West African CFA Franc",
+        "XOF",
+        "600 XOF per USD (pegged to EUR)",
+        "African cultural scenes; development imagery",
+      ],
     ],
   },
 
@@ -323,12 +464,30 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "facts",
     title: "Records in the world of currencies",
     facts: [
-      { label: "Oldest continuously used currency", value: "British pound sterling (~775 AD to present — over 1,200 years)" },
-      { label: "Most inflated banknote ever circulated", value: "Hungarian 100 quintillion pengő (1946) — worst hyperinflation ever recorded" },
-      { label: "Largest nominal denomination", value: "Zimbabwe $100 trillion (2009); worth less than US$0.40 at time of issue" },
-      { label: "Most traded currency", value: "US dollar — involved in 88% of all forex trades globally (2022)" },
-      { label: "Most countries on one currency", value: "Euro — 20 EU member states plus several non-EU territories" },
-      { label: "First paper money in history", value: "Chinese 'jiaozi' (交子), approximately 7th century AD under Tang Dynasty" },
+      {
+        label: "Oldest continuously used currency",
+        value: "British pound sterling (~775 AD to present — over 1,200 years)",
+      },
+      {
+        label: "Most inflated banknote ever circulated",
+        value: "Hungarian 100 quintillion pengő (1946) — worst hyperinflation ever recorded",
+      },
+      {
+        label: "Largest nominal denomination",
+        value: "Zimbabwe $100 trillion (2009); worth less than US$0.40 at time of issue",
+      },
+      {
+        label: "Most traded currency",
+        value: "US dollar — involved in 88% of all forex trades globally (2022)",
+      },
+      {
+        label: "Most countries on one currency",
+        value: "Euro — 20 EU member states plus several non-EU territories",
+      },
+      {
+        label: "First paper money in history",
+        value: "Chinese 'jiaozi' (交子), approximately 7th century AD under Tang Dynasty",
+      },
     ],
   },
 
