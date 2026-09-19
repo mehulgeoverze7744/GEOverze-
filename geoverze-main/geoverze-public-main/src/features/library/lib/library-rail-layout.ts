@@ -1,6 +1,6 @@
-/** Shared dimensions for GEOlibrary horizontal rail cards. */
+/** Shared dimensions for GEOlibrary horizontal rail cards (Trending, collections, etc.). */
 export const libraryRailCardClass =
-  "h-[22.5rem] w-[min(82vw,18rem)] shrink-0 snap-start sm:w-[18rem]";
+  "flex h-[26rem] w-[min(82vw,18rem)] shrink-0 snap-start flex-col sm:w-[18rem]";
 
 /** Continue Reading — content-driven height (no tall fixed shell). */
 export const libraryRailContinueReadingCardClass =

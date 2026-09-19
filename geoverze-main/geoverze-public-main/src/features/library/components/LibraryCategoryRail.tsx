@@ -67,7 +67,7 @@ export function LibraryCategoryRail({ className }: { className?: string }) {
   };
 
   return (
-    <AnimatedSection className={cn("overflow-x-clip", className ?? "mt-12")}>
+    <AnimatedSection className={cn("min-w-0", className ?? "mt-12")}>
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 sm:gap-4">
         <div>
           <h2 className="text-lg font-light uppercase tracking-[0.12em] text-foreground">
@@ -102,7 +102,8 @@ export function LibraryCategoryRail({ className }: { className?: string }) {
         </div>
       </div>
 
-      <div ref={railRef} className="rail-scroll mt-6 flex gap-2.5 pb-1 sm:gap-3">
+      <div className="min-w-0 max-w-full">
+        <div ref={railRef} className="rail-scroll mt-6 flex w-full min-w-0 gap-2.5 pb-1 sm:gap-3">
         {CATEGORIES.map((category) => (
           <Link
             key={category.id}
@@ -127,6 +128,7 @@ export function LibraryCategoryRail({ className }: { className?: string }) {
             <span className={libraryCategoryFilterLabelClass}>{category.label}</span>
           </Link>
         ))}
+        </div>
       </div>
     </AnimatedSection>
   );

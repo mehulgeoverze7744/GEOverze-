@@ -281,7 +281,12 @@ export function LibraryCard({
           {cardTitle}
         </h3>
         {!continueReading ? (
-          <p className="mt-2.5 line-clamp-2 flex-1 text-[0.8rem] leading-relaxed text-foreground/50">
+          <p
+            className={cn(
+              "mt-2.5 line-clamp-2 text-[0.8rem] leading-relaxed text-foreground/50",
+              inRail ? "shrink-0" : "flex-1",
+            )}
+          >
             {article.dek}
           </p>
         ) : null}
@@ -320,8 +325,9 @@ export function LibraryCard({
             </div>
           </div>
         ) : (
-          <div className="mt-auto flex items-end justify-between gap-3 border-t border-bronze/10 pt-4">
-            <div className="min-w-0">
+          <div className="mt-auto shrink-0 border-t border-bronze/10 pt-4">
+            <div className="flex items-end justify-between gap-3">
+            <div className="min-w-0 flex-1">
               {author ? (
                 restricted ? (
                   <span className="block truncate text-xs text-foreground/60">{author.name}</span>
@@ -341,6 +347,7 @@ export function LibraryCard({
             {bookmarkButton ? (
               <div className="pointer-events-auto relative z-[2] shrink-0">{bookmarkButton}</div>
             ) : null}
+            </div>
           </div>
         )}
       </div>

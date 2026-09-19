@@ -58,7 +58,7 @@ export function LibraryHome() {
       <LibraryHero bookmarkCount={bookmarks.length} />
 
       {/* ── Content sections (starfield background continues here) ───────── */}
-      <SectionContainer className="pt-10 pb-4">
+      <SectionContainer className="min-w-0 pt-10 pb-4">
         {/* Browse by Category / Explore by Subject */}
         <LibraryCategoryRail className="" />
 

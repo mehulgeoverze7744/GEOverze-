@@ -63,7 +63,7 @@ export function LibraryHorizontalRail({
   };
 
   return (
-    <AnimatedSection className={cn("mt-16 overflow-x-clip", className)}>
+    <AnimatedSection className={cn("mt-16 min-w-0", className)}>
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 sm:gap-4">
         <div>
           <h2 className="text-lg font-light tracking-tight text-foreground">{title}</h2>
@@ -103,8 +103,10 @@ export function LibraryHorizontalRail({
         </div>
       </div>
 
-      <div ref={railRef} className="rail-scroll mt-6 flex items-stretch gap-4 pb-1">
-        {children}
+      <div className="min-w-0 max-w-full">
+        <div ref={railRef} className="rail-scroll mt-6 flex w-full min-w-0 items-stretch gap-4 pb-1">
+          {children}
+        </div>
       </div>
     </AnimatedSection>
   );
