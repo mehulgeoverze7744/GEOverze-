@@ -22,6 +22,7 @@ export function UniverseBackground({ className }: { className?: string }) {
 
   return (
     <div
+      id="geoverze-universe-background"
       aria-hidden
       className={cn(
         "pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-background",

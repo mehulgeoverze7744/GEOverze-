@@ -95,11 +95,14 @@ export function mapBlockPayloadToArticleBlock(
         : isLibraryMediaPath(String(payload.art ?? ""))
           ? String(payload.art)
           : undefined;
+      const externalSrc = payload.external_src ? String(payload.external_src) : undefined;
       return {
         kind: "image",
         art: String(payload.art ?? ""),
         caption: String(payload.caption ?? ""),
         ...(storagePath ? { storagePath } : {}),
+        ...(externalSrc ? { externalSrc } : {}),
+        ...(payload.credit ? { credit: String(payload.credit) } : {}),
       };
     }
     case "map":
@@ -113,9 +116,87 @@ export function mapBlockPayloadToArticleBlock(
         kind: "facts",
         title: String(payload.title ?? ""),
         facts: (payload.facts as { label: string; value: string }[] | undefined) ?? [],
+        ...(payload.layout === "survival-cards" ? { layout: "survival-cards" as const } : {}),
+      };
+    case "table":
+      return {
+        kind: "table",
+        ...(payload.title ? { title: String(payload.title) } : {}),
+        columns: (payload.columns as string[] | undefined) ?? [],
+        rows: (payload.rows as string[][] | undefined) ?? [],
       };
     case "didYouKnow":
-      return { kind: "didYouKnow", text: String(payload.text ?? "") };
+      return {
+        kind: "didYouKnow",
+        ...(payload.text ? { text: String(payload.text) } : {}),
+        ...(payload.items ? { items: payload.items as string[] } : {}),
+      };
+    case "reference":
+      return mapReferencePayloadToArticleBlock(payload);
+    default:
+      return { kind: "paragraph", text: JSON.stringify(payload) };
+  }
+}
+
+function mapReferencePayloadToArticleBlock(payload: Record<string, unknown>): ArticleBlock {
+  const blockType = String(payload.blockType ?? payload.block ?? "");
+  switch (blockType) {
+    case "callout":
+      return {
+        kind: "callout",
+        variant: payload.variant as Extract<ArticleBlock, { kind: "callout" }>["variant"],
+        text: String(payload.text ?? ""),
+      };
+    case "sizeComparison":
+      return {
+        kind: "sizeComparison",
+        ...(payload.title ? { title: String(payload.title) } : {}),
+        items: (payload.items as { label: string; areaKm2: number }[] | undefined) ?? [],
+      };
+    case "timeline":
+      return {
+        kind: "timeline",
+        ...(payload.title ? { title: String(payload.title) } : {}),
+        events: (payload.events as { date: string; text: string }[] | undefined) ?? [],
+      };
+    case "stateGlance":
+      return {
+        kind: "stateGlance",
+        ...(payload.title ? { title: String(payload.title) } : {}),
+        states:
+          (payload.states as
+            { name: string; fields: { label: string; value: string }[] }[] | undefined) ?? [],
+      };
+    case "geoDiagram":
+      return {
+        kind: "geoDiagram",
+        ...(payload.title ? { title: String(payload.title) } : {}),
+        nodes: (payload.nodes as string[] | undefined) ?? [],
+      };
+    case "dualCompare":
+      return {
+        kind: "dualCompare",
+        title: String(payload.title ?? ""),
+        leftTitle: String(payload.leftTitle ?? ""),
+        leftItems: (payload.leftItems as string[] | undefined) ?? [],
+        rightTitle: String(payload.rightTitle ?? ""),
+        rightItems: (payload.rightItems as string[] | undefined) ?? [],
+      };
+    case "profileStrip":
+      return {
+        kind: "profileStrip",
+        ...(payload.title ? { title: String(payload.title) } : {}),
+        profiles:
+          (payload.profiles as { name: string; theme: string; text: string }[] | undefined) ?? [],
+      };
+    case "crossLinks":
+      return {
+        kind: "crossLinks",
+        ...(payload.title ? { title: String(payload.title) } : {}),
+        links:
+          (payload.links as { label: string; href: string; description?: string }[] | undefined) ??
+          [],
+      };
     default:
       return { kind: "paragraph", text: JSON.stringify(payload) };
   }

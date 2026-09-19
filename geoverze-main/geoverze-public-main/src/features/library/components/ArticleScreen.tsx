@@ -18,6 +18,8 @@ import { useCreatorByHandle } from "../hooks/usePublishedCreators";
 import { useLibrarySubscriptionTier } from "../hooks/useLibrarySubscriptionTier";
 import { usePublishedArticles } from "../hooks/usePublishedArticles";
 import { getResourceAccessState } from "../lib/access-tier";
+import { getArticleTheme } from "../lib/article-themes";
+import { ArticleAtlasParchmentScreen } from "./ArticleAtlasParchmentScreen";
 
 const routeApi = getRouteApi("/geolibrary/article/$slug");
 
@@ -116,6 +118,29 @@ export function ArticleScreen() {
   const author = creator;
   const headings = articleHeadings(article);
   const readPercent = progress[slug] ?? 0;
+  const theme = getArticleTheme(slug);
+
+  if (theme === "atlas-parchment") {
+    return (
+      <ArticleAtlasParchmentScreen
+        article={article}
+        slug={slug}
+        headings={headings}
+        readPercent={readPercent}
+        completed={completed}
+        bookmarks={bookmarks}
+        likes={likes}
+        progress={progress}
+        toggleBookmark={toggleBookmark}
+        toggleLike={toggleLike}
+        markComplete={markComplete}
+        contentRef={contentRef}
+        catalogue={catalogue}
+        signedIn={signedIn}
+        subscriptionTier={tier}
+      />
+    );
+  }
 
   return (
     <SectionContainer className="pt-[calc(var(--nav-height)+1.25rem)] pb-12 md:pt-[calc(var(--nav-height)+1.5rem)]">

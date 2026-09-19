@@ -7,16 +7,77 @@
 import type { LibraryAccessTier } from "@/features/library/lib/access-tier";
 
 import type { CategoryId, ContinentId, DifficultyId } from "./taxonomy";
+import { EUROPES_SMALLEST_STATES_BLOCKS } from "./europes-smallest-states-blocks";
 
 export type ArticleBlock =
   | { kind: "heading"; id: string; text: string }
   | { kind: "paragraph"; text: string }
   | { kind: "list"; items: readonly string[]; ordered?: boolean }
   | { kind: "quote"; text: string; attribution?: string }
-  | { kind: "image"; art: string; caption: string; storagePath?: string }
+  | {
+      kind: "image";
+      art: string;
+      caption: string;
+      storagePath?: string;
+      externalSrc?: string;
+      credit?: string;
+    }
   | { kind: "map"; region: string; caption: string }
-  | { kind: "facts"; title: string; facts: readonly { label: string; value: string }[] }
-  | { kind: "didYouKnow"; text: string };
+  | {
+      kind: "facts";
+      title: string;
+      facts: readonly { label: string; value: string }[];
+      layout?: "default" | "survival-cards";
+    }
+  | {
+      kind: "table";
+      title?: string;
+      columns: readonly string[];
+      rows: readonly (readonly string[])[];
+    }
+  | { kind: "didYouKnow"; text?: string; items?: readonly string[] }
+  | {
+      kind: "callout";
+      variant: "key-idea" | "did-you-know" | "geography-note" | "history-note" | "by-the-numbers";
+      text: string;
+    }
+  | {
+      kind: "sizeComparison";
+      title?: string;
+      items: readonly { label: string; areaKm2: number }[];
+    }
+  | {
+      kind: "timeline";
+      title?: string;
+      events: readonly { date: string; text: string }[];
+    }
+  | {
+      kind: "stateGlance";
+      title?: string;
+      states: readonly {
+        name: string;
+        fields: readonly { label: string; value: string }[];
+      }[];
+    }
+  | { kind: "geoDiagram"; title?: string; nodes: readonly string[] }
+  | {
+      kind: "dualCompare";
+      title: string;
+      leftTitle: string;
+      leftItems: readonly string[];
+      rightTitle: string;
+      rightItems: readonly string[];
+    }
+  | {
+      kind: "profileStrip";
+      title?: string;
+      profiles: readonly { name: string; theme: string; text: string }[];
+    }
+  | {
+      kind: "crossLinks";
+      title?: string;
+      links: readonly { label: string; href: string; description?: string }[];
+    };
 
 export type Article = {
   slug: string;
@@ -624,40 +685,19 @@ export const ARTICLES: readonly Article[] = [
   },
   {
     slug: "europes-smallest-states",
-    title: "Europe's smallest states",
-    dek: "Six microstates, six very different reasons for surviving the age of empires intact.",
+    title: "Europe's Smallest States",
+    dek: "Six tiny countries, six very different stories of survival, sovereignty and identity.",
     category: "countries",
     continent: "europe",
     difficulty: "beginner",
-    minutes: 6,
+    minutes: 26,
     publishedAt: "2026-05-12",
     creator: "atlas-studio",
-    tags: ["europe", "microstates", "countries", "vatican"],
+    tags: ["europe", "microstates", "countries", "vatican", "history"],
     views: 35_480,
     likes: 2_620,
     bookmarks: 1_140,
-    blocks: [
-      {
-        kind: "paragraph",
-        text: "Vatican City, Monaco, San Marino, Liechtenstein, Malta and Andorra together would fit inside a mid-sized city. Each survived by being useful, defensible or simply too small to bother annexing.",
-      },
-      {
-        kind: "facts",
-        title: "By area",
-        facts: [
-          { label: "Vatican City", value: "0.49 km²" },
-          { label: "Monaco", value: "2.02 km²" },
-          { label: "San Marino", value: "61 km²" },
-          { label: "Liechtenstein", value: "160 km²" },
-        ],
-      },
-      { kind: "heading", id: "how", text: "How they held on" },
-      {
-        kind: "paragraph",
-        text: "San Marino claims continuous independence since 301 CE by staying strategically irrelevant on a defensible mountain. Liechtenstein was bought as a package of estates specifically to qualify for a seat in the Imperial Diet.",
-      },
-      ...closing("Countries"),
-    ],
+    blocks: EUROPES_SMALLEST_STATES_BLOCKS,
   },
   {
     slug: "megacities-and-the-limits-of-growth",

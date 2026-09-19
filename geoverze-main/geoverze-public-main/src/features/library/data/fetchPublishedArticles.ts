@@ -4,6 +4,7 @@ import { parseLibraryAccessTier, type LibraryAccessTier } from "@/features/libra
 
 import { LIBRARY_CATALOGUE } from "../lib/library-catalogue";
 
+import { applyPublishedArticleBlockFixtures } from "../lib/library-article-fixtures";
 import { mapResourceRowToArticle } from "./library-mapper";
 import type { Article } from "./articles";
 
@@ -98,7 +99,7 @@ export async function fetchPublishedArticleBySlug(slug: string): Promise<Article
     throw new Error(`Failed to load blocks for "${slug}": ${blocksError.message}`);
   }
 
-  return mapResourceRowToArticle(row, blockRows ?? []);
+  return applyPublishedArticleBlockFixtures(mapResourceRowToArticle(row, blockRows ?? []));
 }
 
 /**
