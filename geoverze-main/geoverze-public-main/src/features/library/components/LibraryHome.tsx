@@ -1,27 +1,26 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, BookOpen, Compass, Library, Users } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useMemo } from "react";
 
 import {
   AnimatedSection,
   EmptyState,
   GeoButton,
-  PageHeader,
   SectionContainer,
 } from "@/components/shared";
 
 import { useLibraryStore } from "@/stores/libraryStore";
 
-import { ContinueReadingCardMenu } from "./ContinueReadingCardMenu";
+import { ContinueReadingSection } from "./ContinueReadingSection";
 import { LibraryCard } from "./LibraryCard";
 import { LibraryCategoryRail } from "./LibraryCategoryRail";
 import { LibraryCollectionCard } from "./LibraryCollectionCard";
+import { LibraryHero } from "./LibraryHero";
 import { LibraryHorizontalRail } from "./LibraryHorizontalRail";
 import { usePublishedArticles } from "../hooks/usePublishedArticles";
 import { usePublishedCollections } from "../hooks/usePublishedCollections";
 import { useLibrarySubscriptionTier } from "../hooks/useLibrarySubscriptionTier";
 import { getResourceAccessState } from "../lib/access-tier";
-import { isContinueReadingSlug } from "../lib/continue-reading";
 import { sortFeaturedCollectionsByTopic } from "../lib/library-featured-collections";
 import { trendingArticles } from "../lib/filter";
 
@@ -38,30 +37,14 @@ const trendingBrowseSearch = {
   view: "grid" as const,
 };
 
-/** GEOlibrary home: categories, continue reading, trending, featured collections and creators. */
+/** GEOlibrary home: hero, categories, continue reading, trending, featured collections. */
 export function LibraryHome() {
   const bookmarks = useLibraryStore((s) => s.bookmarks);
-  const progress = useLibraryStore((s) => s.progress);
-  const completed = useLibraryStore((s) => s.completed);
-  const continueReadingDismissed = useLibraryStore((s) => s.continueReadingDismissed);
   const toggleBookmark = useLibraryStore((s) => s.toggleBookmark);
-  const dismissFromContinueReading = useLibraryStore((s) => s.dismissFromContinueReading);
   const { tier, signedIn } = useLibrarySubscriptionTier();
 
   const { articles, error: articlesError } = usePublishedArticles();
   const { collections } = usePublishedCollections();
-
-  const continueReading = useMemo(
-    () =>
-      Object.keys(progress)
-        .filter((slug) =>
-          isContinueReadingSlug(slug, progress, completed, continueReadingDismissed),
-        )
-        .map((slug) => articles.find((article) => article.slug === slug))
-        .filter((article): article is NonNullable<typeof article> => Boolean(article))
-        .sort((a, b) => (progress[b.slug] ?? 0) - (progress[a.slug] ?? 0)),
-    [articles, completed, continueReadingDismissed, progress],
-  );
 
   const trending = useMemo(() => trendingArticles(articles.length, articles), [articles]);
   const featured = useMemo(() => sortFeaturedCollectionsByTopic(collections), [collections]);
@@ -75,120 +58,87 @@ export function LibraryHome() {
   }
 
   return (
-    <SectionContainer>
-      <PageHeader
-        eyebrow="GEOlibrary"
-        title="Know Earth, one entry at a time"
-        description="The knowledge centre of GEOverze. Read, save and revisit the geography behind every quiz, written by cartographers, not scraped."
-      />
+    <>
+      {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      <LibraryHero bookmarkCount={bookmarks.length} />
 
-      <div className="mt-8 flex flex-wrap gap-3">
-        <GeoButton asChild>
-          <Link to="/geolibrary/browse">
-            <Compass className="mr-2 h-4 w-4" /> Browse everything
-          </Link>
-        </GeoButton>
-        <GeoButton asChild variant="ghost">
-          <Link to="/geolibrary/collections">
-            <Library className="mr-2 h-4 w-4" /> Collections
-          </Link>
-        </GeoButton>
-        <GeoButton asChild variant="ghost">
-          <Link to="/geolibrary/bookmarks">
-            <BookOpen className="mr-2 h-4 w-4" /> Saved ({bookmarks.length})
-          </Link>
-        </GeoButton>
-      </div>
+      {/* ── Content sections (starfield background continues here) ───────── */}
+      <SectionContainer className="pt-10 pb-4">
+        {/* Browse by Category / Explore by Subject */}
+        <LibraryCategoryRail className="" />
 
-      <LibraryCategoryRail className="mt-12" />
+        {/* Continue Reading — only when user has active progress */}
+        <ContinueReadingSection catalogue={articles} />
 
-      {continueReading.length > 0 ? (
-        <LibraryHorizontalRail title="Continue reading">
-          {continueReading.map((article) => (
+        {/* Trending Now */}
+        <LibraryHorizontalRail
+          title="Trending now"
+          viewAllTo="/geolibrary/browse"
+          viewAllSearch={trendingBrowseSearch}
+        >
+          {trending.map((article) => (
             <LibraryCard
               key={article.slug}
               article={article}
               inRail
-              progress={progress[article.slug] ?? 0}
               saved={bookmarks.includes(article.slug)}
               onToggleBookmark={toggleBookmark}
               accessState={getResourceAccessState(article.minAccessTier, tier, signedIn)}
-              headerAction={
-                <ContinueReadingCardMenu
-                  articleTitle={article.title}
-                  onRemove={() => dismissFromContinueReading(article.slug)}
-                />
-              }
             />
           ))}
         </LibraryHorizontalRail>
-      ) : null}
 
-      <LibraryHorizontalRail
-        title="Trending now"
-        viewAllTo="/geolibrary/browse"
-        viewAllSearch={trendingBrowseSearch}
-      >
-        {trending.map((article) => (
-          <LibraryCard
-            key={article.slug}
-            article={article}
-            inRail
-            saved={bookmarks.includes(article.slug)}
-            onToggleBookmark={toggleBookmark}
-            accessState={getResourceAccessState(article.minAccessTier, tier, signedIn)}
-          />
-        ))}
-      </LibraryHorizontalRail>
+        {/* Featured Collections */}
+        <LibraryHorizontalRail title="Featured collections" viewAllTo="/geolibrary/collections">
+          {featured.map((collection) => (
+            <LibraryCollectionCard key={collection.slug} collection={collection} />
+          ))}
+        </LibraryHorizontalRail>
 
-      <LibraryHorizontalRail title="Featured collections" viewAllTo="/geolibrary/collections">
-        {featured.map((collection) => (
-          <LibraryCollectionCard key={collection.slug} collection={collection} />
-        ))}
-      </LibraryHorizontalRail>
+        {/* Meet the Creators callout */}
+        <AnimatedSection className="mt-16 mb-8">
+          <div className="group relative overflow-hidden rounded-2xl border border-bronze/25 bg-charcoal/40 p-6 transition-all motion-base hover:border-bronze/45 hover:shadow-[var(--glow-bronze)] sm:p-8">
+            <div
+              className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-bronze/10 blur-3xl transition-opacity motion-base opacity-60 group-hover:opacity-100"
+              aria-hidden
+            />
+            <div
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,oklch(0.72_0.08_65/0.08),transparent_55%)]"
+              aria-hidden
+            />
 
-      <AnimatedSection className="mt-16 mb-8">
-        <div className="group relative overflow-hidden rounded-2xl border border-bronze/25 bg-charcoal/40 p-6 transition-all motion-base hover:border-bronze/45 hover:shadow-[var(--glow-bronze)] sm:p-8">
-          <div
-            className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-bronze/10 blur-3xl transition-opacity motion-base opacity-60 group-hover:opacity-100"
-            aria-hidden
-          />
-          <div
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,oklch(0.72_0.08_65/0.08),transparent_55%)]"
-            aria-hidden
-          />
+            <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="max-w-xl">
+                <p className="text-[0.62rem] font-semibold uppercase tracking-[0.24em] text-bronze/85">
+                  Behind every entry
+                </p>
+                <h2 className="mt-2 text-xl font-light tracking-tight text-foreground sm:text-2xl">
+                  Meet the creators
+                </h2>
+                <p className="mt-3 text-sm leading-relaxed text-foreground/55">
+                  Cartographers, writers and researchers shaping GEOlibrary — explore their
+                  profiles, specialties and latest work.
+                </p>
+              </div>
 
-          <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-            <div className="max-w-xl">
-              <p className="text-[0.62rem] font-semibold uppercase tracking-[0.24em] text-bronze/85">
-                Behind every entry
-              </p>
-              <h2 className="mt-2 text-xl font-light tracking-tight text-foreground sm:text-2xl">
-                Meet the creators
-              </h2>
-              <p className="mt-3 text-sm leading-relaxed text-foreground/55">
-                Cartographers, writers and researchers shaping GEOlibrary — explore their profiles,
-                specialties and latest work.
-              </p>
+              <GeoButton
+                asChild
+                variant="ghost"
+                className="group/btn shrink-0 border border-bronze/30 bg-bronze/8 px-5 hover:border-bronze/55 hover:bg-bronze/14"
+              >
+                <Link to="/geolibrary/creators">
+                  View creators
+                  <ArrowRight
+                    className="ml-2 h-4 w-4 transition-transform motion-fast group-hover/btn:translate-x-0.5"
+                    strokeWidth={1.8}
+                    aria-hidden
+                  />
+                </Link>
+              </GeoButton>
             </div>
-
-            <GeoButton
-              asChild
-              variant="ghost"
-              className="group/btn shrink-0 border border-bronze/30 bg-bronze/8 px-5 hover:border-bronze/55 hover:bg-bronze/14"
-            >
-              <Link to="/geolibrary/creators">
-                View creators
-                <ArrowRight
-                  className="ml-2 h-4 w-4 transition-transform motion-fast group-hover/btn:translate-x-0.5"
-                  strokeWidth={1.8}
-                  aria-hidden
-                />
-              </Link>
-            </GeoButton>
           </div>
-        </div>
-      </AnimatedSection>
-    </SectionContainer>
+        </AnimatedSection>
+      </SectionContainer>
+    </>
   );
 }

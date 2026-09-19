@@ -69,9 +69,14 @@ export function LibraryCategoryRail({ className }: { className?: string }) {
   return (
     <AnimatedSection className={cn("overflow-x-clip", className ?? "mt-12")}>
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 sm:gap-4">
-        <h2 className="text-lg font-light uppercase tracking-[0.12em] text-foreground">
-          Browse by category
-        </h2>
+        <div>
+          <h2 className="text-lg font-light uppercase tracking-[0.12em] text-foreground">
+            Explore by Subject
+          </h2>
+          <p className="mt-0.5 text-xs text-foreground/45 tracking-wide">
+            Start with a place, a people, or a phenomenon.
+          </p>
+        </div>
         <div className="flex shrink-0 items-center gap-2">
           {([-1, 1] as const).map((dir) => {
             const disabled = dir === -1 ? !canScrollLeft : !canScrollRight;
