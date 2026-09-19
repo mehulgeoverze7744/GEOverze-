@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Coins, Compass, Gift, Library, Truck } from "lucide-react";
+import { Coins, Library, Truck } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
-import { AnimatedSection, GeoButton, PageHeader, SectionContainer } from "@/components/shared";
+import { AnimatedSection, SectionContainer } from "@/components/shared";
 import { useStoreStore } from "@/stores/storeStore";
 
 import { CategoryTile } from "./CategoryTile";
@@ -11,6 +11,7 @@ import { DigitalProductsCarousel } from "./DigitalProductsCarousel";
 import { ProductCard } from "./ProductCard";
 import { ProductRail } from "./ProductRail";
 import { StoreSummaryCard } from "./StoreSummaryCard";
+import { StoreHero } from "./StoreHero";
 import { QuickViewModal } from "./QuickViewModal";
 import { PRODUCTS, productBySlug, type Product } from "../data/products";
 import { STORE_CATEGORIES, STORE_GROUPS } from "../data/taxonomy";
@@ -89,69 +90,33 @@ export function StoreHome() {
 
   return (
     <PageShell>
-      <PageHeader
-        eyebrow="GEOstore"
-        title="Where progress becomes collection"
-        description="Redeem credits, unlock question packs, or take the bronze home. Everything here shares the material language of the platform."
-        breadcrumb={[{ label: "Home", to: "/" }, { label: "GEOstore" }]}
-      >
-        <div className="flex flex-wrap gap-3">
-          <GeoButton asChild variant="solid">
-            <Link to="/geostore/browse">
-              <Compass className="mr-2 h-4 w-4" /> Browse the catalogue
+      {/* ── Cinematic hero ─────────────────────────────────────────── */}
+      <StoreHero
+        balanceDisplay={balanceDisplay}
+        creditHistoryLink={
+          signedIn ? (
+            <Link
+              to="/play/credit-history"
+              className="inline-block text-[0.6rem] uppercase tracking-[0.16em] text-bronze transition-colors motion-fast hover:text-bronze-glow"
+            >
+              Credit history
             </Link>
-          </GeoButton>
-          <GeoButton asChild variant="ghost">
-            <Link to="/geostore/rewards">
-              <Gift className="mr-2 h-4 w-4" /> Spend credits
+          ) : authReady ? (
+            <Link
+              to="/auth/login"
+              className="inline-block text-[0.6rem] uppercase tracking-[0.16em] text-bronze transition-colors motion-fast hover:text-bronze-glow"
+            >
+              Sign in
             </Link>
-          </GeoButton>
-        </div>
-      </PageHeader>
+          ) : null
+        }
+        catalogueCount={PRODUCTS.length}
+        categoryCount={STORE_CATEGORIES.length}
+        freeShippingThreshold={money(7_500)}
+      />
 
+      {/* ── Merchandising sections ──────────────────────────────────── */}
       <SectionContainer size="wide">
-        <AnimatedSection className="grid gap-4 sm:grid-cols-3">
-          <StoreSummaryCard
-            featured
-            label="Credit balance"
-            icon={Coins}
-            value={balanceDisplay}
-            footer={
-              signedIn ? (
-                <Link
-                  to="/play/credit-history"
-                  className="inline-block text-[0.64rem] uppercase tracking-[0.16em] text-bronze transition-colors motion-fast hover:text-bronze-glow"
-                >
-                  Credit history
-                </Link>
-              ) : authReady ? (
-                <Link
-                  to="/auth/login"
-                  className="inline-block text-[0.64rem] uppercase tracking-[0.16em] text-bronze transition-colors motion-fast hover:text-bronze-glow"
-                >
-                  Sign in to view balance
-                </Link>
-              ) : null
-            }
-          />
-          <StoreSummaryCard
-            label="Catalogue"
-            icon={Library}
-            value={PRODUCTS.length}
-            footer={
-              <p className="text-[0.64rem] text-foreground/50">
-                Across {STORE_CATEGORIES.length} categories
-              </p>
-            }
-          />
-          <StoreSummaryCard
-            label="Free shipping"
-            icon={Truck}
-            value={money(7_500)}
-            footer={<p className="text-[0.64rem] text-foreground/50">On physical orders above</p>}
-          />
-        </AnimatedSection>
-
         <ProductRail
           title="Best sellers"
           description="What most explorers take home."

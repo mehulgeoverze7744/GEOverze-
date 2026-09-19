@@ -7,9 +7,11 @@ type StoreSummaryCardProps = {
   label: string;
   value: ReactNode;
   footer?: ReactNode;
-  icon: LucideIcon;
+  icon?: LucideIcon;
   /** Stronger bronze accent — used for Credit Balance. */
   featured?: boolean;
+  /** Compact mode: no icon, smaller padding/type — for use inside the hero. */
+  compact?: boolean;
 };
 
 /** Premium GEOstore stat tile shared by Credit Balance, Catalogue and Free Shipping. */
@@ -19,11 +21,15 @@ export function StoreSummaryCard({
   footer,
   icon: Icon,
   featured = false,
+  compact = false,
 }: StoreSummaryCardProps) {
   return (
     <div
       className={cn(
-        "group relative flex h-full min-h-[9.5rem] flex-col overflow-hidden rounded-2xl border p-6 transition-all motion-base hover:-translate-y-0.5 hover:shadow-[var(--glow-bronze)] motion-reduce:hover:translate-y-0",
+        "group relative flex flex-col overflow-hidden rounded-xl border transition-all motion-base hover:-translate-y-0.5 hover:shadow-[var(--glow-bronze)] motion-reduce:hover:translate-y-0",
+        compact
+          ? "min-h-[5.5rem] p-4"
+          : "min-h-[9.5rem] h-full rounded-2xl p-6",
         featured
           ? "border-bronze/35 bg-charcoal/60 hover:border-bronze/50"
           : "border-bronze/18 bg-charcoal/48 hover:border-bronze/38",
@@ -44,24 +50,32 @@ export function StoreSummaryCard({
       />
 
       <div className="relative flex items-start justify-between gap-3">
-        <p className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-foreground/55">
-          {label}
-        </p>
-        <span
+        <p
           className={cn(
-            "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition-colors motion-base",
-            featured
-              ? "border-bronze/40 bg-bronze/12 text-bronze-glow group-hover:border-bronze/55 group-hover:bg-bronze/16"
-              : "border-bronze/22 bg-bronze/8 text-bronze/90 group-hover:border-bronze/40 group-hover:text-bronze-glow",
+            "font-semibold uppercase tracking-[0.22em] text-foreground/55",
+            compact ? "text-[0.55rem]" : "text-[0.62rem]",
           )}
         >
-          <Icon className="h-4 w-4" strokeWidth={1.7} aria-hidden />
-        </span>
+          {label}
+        </p>
+        {!compact && Icon ? (
+          <span
+            className={cn(
+              "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition-colors motion-base",
+              featured
+                ? "border-bronze/40 bg-bronze/12 text-bronze-glow group-hover:border-bronze/55 group-hover:bg-bronze/16"
+                : "border-bronze/22 bg-bronze/8 text-bronze/90 group-hover:border-bronze/40 group-hover:text-bronze-glow",
+            )}
+          >
+            <Icon className="h-4 w-4" strokeWidth={1.7} aria-hidden />
+          </span>
+        ) : null}
       </div>
 
       <p
         className={cn(
-          "relative mt-4 text-3xl font-light tracking-tight md:text-[2rem]",
+          "relative font-light tracking-tight",
+          compact ? "mt-2 text-xl" : "mt-4 text-3xl md:text-[2rem]",
           featured ? "text-bronze-glow" : "text-foreground",
         )}
       >

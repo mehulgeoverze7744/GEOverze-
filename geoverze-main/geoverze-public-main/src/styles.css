@@ -771,6 +771,188 @@
 }
 
 /* ---------------------------------------------------------------------------
+ * GEOstore Hero — cinematic merchandise backdrop.
+ * Only covers the hero section; page starfield continues below.
+ * ------------------------------------------------------------------------- */
+
+@layer components {
+  .geostore-hero {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    min-height: clamp(480px, 56vh, 640px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Background image fills the hero */
+  .geostore-hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .geostore-hero__bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    display: block;
+  }
+
+  /* Dark cinematic overlay — heavy left, lighter right so image shows */
+  .geostore-hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      105deg,
+      oklch(0.04 0.004 60 / 0.95) 0%,
+      oklch(0.06 0.006 56 / 0.78) 35%,
+      oklch(0.08 0.008 54 / 0.50) 60%,
+      oklch(0.1 0.01 52 / 0.22) 80%,
+      oklch(0.1 0.01 52 / 0.08) 100%
+    );
+  }
+
+  /* Bottom fade into starfield */
+  .geostore-hero__fade {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 8rem;
+    z-index: 2;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      oklch(0.06 0.004 60 / 0.6) 55%,
+      oklch(0.06 0.004 60) 100%
+    );
+    pointer-events: none;
+  }
+
+  /* Eyebrow */
+  .geostore-hero__eyebrow {
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.46em;
+    text-transform: uppercase;
+    color: oklch(0.82 0.08 78 / 0.82);
+  }
+
+  /* Main heading */
+  .geostore-hero__title {
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    font-weight: 300;
+    line-height: 1.0;
+    letter-spacing: -0.015em;
+    color: oklch(0.96 0.012 65);
+  }
+
+  /* Bronze accent on "merch" */
+  .geostore-hero__title-accent {
+    color: oklch(0.78 0.09 68);
+  }
+
+  /* Subtitle dek */
+  .geostore-hero__dek {
+    margin-top: 1rem;
+    font-size: clamp(0.82rem, 1.4vw, 0.96rem);
+    line-height: 1.6;
+    color: oklch(0.82 0.02 65 / 0.68);
+    max-width: 30rem;
+  }
+
+  /* Primary CTA */
+  .geostore-hero__cta-primary {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.65rem 1.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: oklch(0.1 0.005 60);
+    background: linear-gradient(
+      105deg,
+      oklch(0.62 0.09 56) 0%,
+      oklch(0.75 0.09 72) 48%,
+      oklch(0.62 0.09 56) 100%
+    );
+    border: 1px solid oklch(0.82 0.08 75 / 0.4);
+    box-shadow:
+      inset 0 1px 0 oklch(0.9 0.06 78 / 0.28),
+      0 2px 14px -4px oklch(0.68 0.09 62 / 0.5);
+    transition:
+      transform 200ms var(--ease-soft),
+      box-shadow 200ms var(--ease-soft),
+      filter 200ms var(--ease-soft);
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .geostore-hero__cta-primary:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.07);
+    box-shadow:
+      inset 0 1px 0 oklch(0.9 0.06 78 / 0.35),
+      0 6px 24px -4px oklch(0.68 0.09 62 / 0.55);
+  }
+
+  .geostore-hero__cta-primary:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  /* Secondary CTA */
+  .geostore-hero__cta-secondary {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: oklch(0.88 0.03 68 / 0.88);
+    border-bottom: 1px solid oklch(0.68 0.09 62 / 0.4);
+    padding-bottom: 0.1rem;
+    transition: color 200ms var(--ease-soft), border-color 200ms var(--ease-soft);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .geostore-hero__cta-secondary:hover {
+    color: oklch(0.82 0.08 72);
+    border-color: oklch(0.82 0.08 72 / 0.65);
+  }
+
+  .geostore-hero__cta-secondary:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  /* Mobile */
+  @media (max-width: 640px) {
+    .geostore-hero {
+      min-height: clamp(460px, 60vh, 520px);
+    }
+
+    .geostore-hero__overlay {
+      background: linear-gradient(
+        180deg,
+        oklch(0.04 0.004 60 / 0.55) 0%,
+        oklch(0.05 0.005 58 / 0.85) 55%,
+        oklch(0.06 0.004 60 / 0.97) 100%
+      );
+    }
+
+    .geostore-hero__bg-img {
+      object-position: 70% 30%;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
  * Global accessibility + motion baselines.
  * ------------------------------------------------------------------------- */
 
