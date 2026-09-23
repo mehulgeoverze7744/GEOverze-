@@ -113,7 +113,7 @@ export function StoreHome() {
       />
 
       {/* ── Merchandising sections ──────────────────────────────────── */}
-      <SectionContainer size="wide">
+      <SectionContainer size="wide" className="[&>:first-child]:mt-0">
         <ProductRail
           title="Best sellers"
           description="What most explorers take home."

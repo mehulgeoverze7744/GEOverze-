@@ -2,8 +2,10 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight, Coins, Gift, Library, Truck } from "lucide-react";
 
 import { SectionContainer } from "@/components/shared";
+import heroAvif from "@/assets/geostore/geostore-hero.avif";
+import heroJpg from "@/assets/geostore/geostore-hero.jpg";
+import heroWebp from "@/assets/geostore/geostore-hero.webp";
 
-import { GEOSTORE_HERO_VIDEO_SRC, useGeostoreHeroMedia } from "../hooks/useGeostoreHeroMedia";
 import { StoreSummaryCard } from "./StoreSummaryCard";
 import type { ReactNode } from "react";
 
@@ -23,25 +25,22 @@ export function StoreHero({
   categoryCount,
   freeShippingThreshold,
 }: StoreHeroProps) {
-  const { visualRef, heroRef } = useGeostoreHeroMedia();
-
   return (
-    <header ref={heroRef} className="geostore-hero">
+    <header className="geostore-hero">
       <div className="geostore-hero__bg" aria-hidden>
-        <video
-          ref={visualRef}
-          className="geostore-hero__bg-video"
-          src={GEOSTORE_HERO_VIDEO_SRC}
-          autoPlay
-          muted
-          playsInline
-          preload="auto"
-          disablePictureInPicture
-          disableRemotePlayback
-          tabIndex={-1}
-        >
-          <source src={GEOSTORE_HERO_VIDEO_SRC} type="video/mp4" />
-        </video>
+        <picture>
+          <source srcSet={heroAvif} type="image/avif" />
+          <source srcSet={heroWebp} type="image/webp" />
+          <img
+            src={heroJpg}
+            alt=""
+            width={1280}
+            height={720}
+            fetchPriority="high"
+            decoding="async"
+            className="geostore-hero__bg-image"
+          />
+        </picture>
       </div>
 
       {/* Cinematic left-to-right gradient overlay */}
@@ -58,9 +57,7 @@ export function StoreHero({
         <div className="geostore-hero__copy">
           <div className="max-w-xl">
             <h1 className="geostore-hero__title">
-              More than
-              <br />
-              <span className="geostore-hero__title-accent">merch</span>
+              More than <span className="geostore-hero__title-accent">merch</span>
             </h1>
 
             <p className="geostore-hero__dek">Gear for curious minds.</p>
@@ -106,7 +103,6 @@ export function StoreHero({
         </div>
       </SectionContainer>
 
-      {/* Fade after the full source frame — does not crop the video */}
       <div className="geostore-hero__fade" aria-hidden />
     </header>
   );

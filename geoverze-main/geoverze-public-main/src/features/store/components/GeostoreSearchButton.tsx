@@ -14,7 +14,7 @@ import { categoryIcon, categoryLabel } from "../data/taxonomy";
 import { searchStoreProducts } from "../lib/filter";
 import { credits as formatCredits, money } from "../lib/format";
 
-/** Fixed GEOstore search control — opens a product search panel below cart/wishlist. */
+/** Fixed GEOstore search icon — opens the product search panel. */
 export function GeostoreSearchButton({ className }: { className?: string }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -67,9 +67,6 @@ export function GeostoreSearchButton({ className }: { className?: string }) {
         className={cn(geostoreActionLinkClass(open), className)}
       >
         <Search className="h-4 w-4" strokeWidth={1.8} aria-hidden />
-        <span className="hidden text-[0.62rem] font-semibold uppercase tracking-[0.18em] sm:inline">
-          Search
-        </span>
       </button>
 
       <Modal
