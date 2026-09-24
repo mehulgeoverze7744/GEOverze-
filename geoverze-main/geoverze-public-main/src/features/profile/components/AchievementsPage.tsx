@@ -13,7 +13,6 @@ import {
   type Achievement,
   type AchievementFilterId,
 } from "@/features/profile/data/achievements";
-import { RewardsCategoryShelf } from "@/features/store/components/RewardsCategoryShelf";
 import { cn } from "@/lib/utils";
 
 const TIER_LABEL: Record<Achievement["tier"], string> = {
@@ -92,7 +91,9 @@ export function AchievementsPage() {
       />
       <SectionContainer>
         <AnimatedSection>
-          <h2 className="text-lg font-light tracking-tight text-foreground">Badges of the explorer</h2>
+          <h2 className="text-lg font-light tracking-tight text-foreground">
+            Badges of the explorer
+          </h2>
           <GlassCard
             strong
             className="mt-6 flex flex-col items-center gap-7 p-7 sm:flex-row sm:gap-10 sm:p-9"
@@ -141,8 +142,6 @@ export function AchievementsPage() {
             </AnimatedSection>
           ))}
         </div>
-
-        <RewardsCategoryShelf className="mt-[var(--space-section-sm)]" />
       </SectionContainer>
     </PageShell>
   );

@@ -5,6 +5,7 @@ import { AnimatedCounter } from "@/components/shared/AnimatedCounter";
 import { CreditProgressBar } from "@/features/progression/components/CreditProgressBar";
 import { REDEMPTION } from "@/features/progression/data/player";
 import { useCreditHistory } from "@/features/progression/hooks/useCreditHistory";
+import { RewardsCategoryShelf } from "@/features/store/components/RewardsCategoryShelf";
 import { selectPlayer, useProgressionStore } from "@/stores/progressionStore";
 
 /** Rewards tab — credits balance and monthly redemption progress. */
@@ -45,6 +46,8 @@ export function RewardSummary() {
         Browse redeemable rewards
         <ArrowRight className="h-3 w-3" strokeWidth={1.75} aria-hidden="true" />
       </Link>
+
+      <RewardsCategoryShelf className="mt-8 min-w-0 overflow-x-clip" />
     </div>
   );
 }

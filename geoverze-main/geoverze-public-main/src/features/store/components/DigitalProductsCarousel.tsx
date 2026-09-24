@@ -232,14 +232,14 @@ function CarouselCard({
 
   const cardBody = (
     <>
-      <div className="relative min-h-0 w-full flex-[1.72] overflow-hidden">
+      <div className="relative min-h-0 w-full flex-1 overflow-hidden">
         <CoverArt
           art={`cat-${category.id}`}
           icon={Icon}
-          ratio="video"
+          ratio="fill"
           fit="cover"
           overlay="subtle"
-          className="absolute inset-0 h-full w-full !aspect-auto"
+          className="absolute inset-0 h-full w-full"
           {...(banner ? { imageSrc: banner.src, imageAlt: banner.alt } : {})}
         />
       </div>
@@ -264,7 +264,7 @@ function CarouselCard({
   );
 
   const shellClass = cn(
-    "group/card absolute left-1/2 top-0 flex origin-top flex-col overflow-hidden rounded-2xl border bg-charcoal/50 shadow-[0_24px_48px_rgba(0,0,0,0.35)] backdrop-blur-sm will-change-transform",
+    "group/card absolute left-1/2 top-0 flex h-full min-h-0 origin-top flex-col overflow-hidden rounded-2xl border bg-charcoal/50 shadow-[0_24px_48px_rgba(0,0,0,0.35)] backdrop-blur-sm will-change-transform",
     active
       ? "border-bronze/35 bronze-glow hover:border-bronze/45"
       : "border-bronze/12 hover:border-bronze/28 hover:bronze-glow",

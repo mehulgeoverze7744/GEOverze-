@@ -22,7 +22,7 @@ export function CoverArt({
   imageSrc?: string;
   imageAlt?: string;
   className?: string;
-  ratio?: "video" | "wide" | "square" | "banner";
+  ratio?: "video" | "wide" | "square" | "banner" | "fill";
   /** `contain` for label thumbnails; `cover` for cinematic hero banners. */
   fit?: "contain" | "cover";
   /** Image overlay when `fit="cover"`. `subtle` = bottom blend only. */
@@ -44,6 +44,7 @@ export function CoverArt({
         ratio === "wide" && "aspect-[21/8]",
         ratio === "banner" && "aspect-[8/3]",
         ratio === "square" && "aspect-square",
+        ratio === "fill" && "h-full",
         imageSrc && "bg-[oklch(0.12_0.006_62)]",
         className,
       )}

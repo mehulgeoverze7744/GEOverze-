@@ -138,24 +138,24 @@ export function StoreHome() {
             All categories
           </h2>
           <div className="mt-6 space-y-10">
-            {STORE_GROUPS.filter((group) => group.id !== "more" && group.id !== "digital").map(
-              (group) => (
-                <div key={group.id}>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <group.icon className="h-4 w-4 text-bronze" strokeWidth={1.6} />
-                    <p className="text-sm font-light text-foreground/80">{group.label}</p>
-                    <p className="text-xs text-foreground/50">{group.blurb}</p>
-                  </div>
-                  <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {STORE_CATEGORIES.filter((category) => category.group === group.id).map(
-                      (category) => (
-                        <CategoryTile key={category.id} category={category} compact />
-                      ),
-                    )}
-                  </div>
+            {STORE_GROUPS.filter(
+              (group) => group.id !== "more" && group.id !== "digital" && group.id !== "rewards",
+            ).map((group) => (
+              <div key={group.id}>
+                <div className="flex flex-wrap items-center gap-3">
+                  <group.icon className="h-4 w-4 text-bronze" strokeWidth={1.6} />
+                  <p className="text-sm font-light text-foreground/80">{group.label}</p>
+                  <p className="text-xs text-foreground/50">{group.blurb}</p>
                 </div>
-              ),
-            )}
+                <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {STORE_CATEGORIES.filter(
+                    (category) => category.group === group.id && category.id !== "posters",
+                  ).map((category) => (
+                    <CategoryTile key={category.id} category={category} compact />
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </AnimatedSection>
 
