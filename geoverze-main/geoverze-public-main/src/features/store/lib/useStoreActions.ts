@@ -19,6 +19,13 @@ export function useStoreActions() {
   const navigate = useNavigate();
 
   const addProduct = (product: Product, options?: Record<string, string>, quantity = 1) => {
+    if (product.comingSoon) {
+      toast.message("Coming soon", {
+        description: `${product.name} isn’t available to purchase yet.`,
+      });
+      return;
+    }
+
     if (isMerchProductId(product.slug)) {
       toast.message("Available soon", {
         description: "Merchandise checkout is not live yet.",

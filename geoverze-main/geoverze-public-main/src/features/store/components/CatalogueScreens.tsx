@@ -407,17 +407,25 @@ export function ProductScreen() {
 
           <AnimatedSection delay={80} className="space-y-6">
             <div className="flex flex-wrap items-center gap-3">
-              <RatingStars rating={product.rating} reviews={product.reviews} />
-              <StockPill stock={product.stock} />
-              {product.limited ? (
-                <span className="rounded-full border border-bronze/40 px-2.5 py-0.5 text-[0.6rem] uppercase tracking-[0.16em] text-bronze">
-                  Limited run
+              {product.comingSoon ? (
+                <span className="text-[0.62rem] uppercase tracking-[0.22em] text-bronze-glow">
+                  Coming soon
                 </span>
-              ) : null}
+              ) : (
+                <>
+                  <RatingStars rating={product.rating} reviews={product.reviews} />
+                  <StockPill stock={product.stock} />
+                  {product.limited ? (
+                    <span className="rounded-full border border-bronze/40 px-2.5 py-0.5 text-[0.6rem] uppercase tracking-[0.16em] text-bronze">
+                      Limited run
+                    </span>
+                  ) : null}
+                </>
+              )}
             </div>
 
-            <PriceTag product={product} size="lg" />
-            {product.credits !== null ? (
+            {product.comingSoon ? null : <PriceTag product={product} size="lg" />}
+            {!product.comingSoon && product.credits !== null ? (
               <p className="inline-flex items-center gap-2 text-xs text-foreground/50">
                 <Coins className="h-3.5 w-3.5 text-bronze" strokeWidth={1.6} />
                 {balanceLabel === null ? (
@@ -435,56 +443,62 @@ export function ProductScreen() {
 
             <p className="text-sm leading-relaxed text-foreground/60">{product.description}</p>
 
-            <VariantPicker product={product} value={selected} onChange={setOptions} />
+            {product.comingSoon ? null : (
+              <VariantPicker product={product} value={selected} onChange={setOptions} />
+            )}
 
             <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-2 rounded-xl border border-bronze/15 px-3 py-2">
-                <button
-                  type="button"
-                  aria-label="Decrease quantity"
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="text-foreground/55 hover:text-bronze-glow"
-                >
-                  −
-                </button>
-                <span className="w-6 text-center text-sm">{quantity}</span>
-                <button
-                  type="button"
-                  aria-label="Increase quantity"
-                  onClick={() => setQuantity((q) => Math.min(10, q + 1))}
-                  className="text-foreground/55 hover:text-bronze-glow"
-                >
-                  +
-                </button>
-              </div>
-              <GeoButton
-                variant="solid"
-                disabled={product.stock === "sold-out" || isOwned || isPurchasing(product.slug)}
-                onClick={() => {
-                  if (canPurchaseProduction && catalogueProduct?.serverProductId) {
-                    void purchase({
-                      slug: product.slug,
-                      name: product.name,
-                      serverProductId: catalogueProduct.serverProductId,
-                    });
-                    return;
-                  }
-                  addProduct(product, selected, quantity);
-                }}
-              >
-                <ShoppingBag className="mr-2 h-4 w-4" />
-                {isPurchasing(product.slug)
-                  ? "Claiming…"
-                  : isOwned
-                    ? "Already yours"
-                    : product.stock === "sold-out"
-                      ? "Sold out"
-                      : product.price === null
-                        ? canPurchaseProduction
-                          ? "Claim with credits"
-                          : "Unavailable"
-                        : "Add to cart"}
-              </GeoButton>
+              {product.comingSoon ? null : (
+                <>
+                  <div className="flex items-center gap-2 rounded-xl border border-bronze/15 px-3 py-2">
+                    <button
+                      type="button"
+                      aria-label="Decrease quantity"
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      className="text-foreground/55 hover:text-bronze-glow"
+                    >
+                      −
+                    </button>
+                    <span className="w-6 text-center text-sm">{quantity}</span>
+                    <button
+                      type="button"
+                      aria-label="Increase quantity"
+                      onClick={() => setQuantity((q) => Math.min(10, q + 1))}
+                      className="text-foreground/55 hover:text-bronze-glow"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <GeoButton
+                    variant="solid"
+                    disabled={product.stock === "sold-out" || isOwned || isPurchasing(product.slug)}
+                    onClick={() => {
+                      if (canPurchaseProduction && catalogueProduct?.serverProductId) {
+                        void purchase({
+                          slug: product.slug,
+                          name: product.name,
+                          serverProductId: catalogueProduct.serverProductId,
+                        });
+                        return;
+                      }
+                      addProduct(product, selected, quantity);
+                    }}
+                  >
+                    <ShoppingBag className="mr-2 h-4 w-4" />
+                    {isPurchasing(product.slug)
+                      ? "Claiming…"
+                      : isOwned
+                        ? "Already yours"
+                        : product.stock === "sold-out"
+                          ? "Sold out"
+                          : product.price === null
+                            ? canPurchaseProduction
+                              ? "Claim with credits"
+                              : "Unavailable"
+                            : "Add to cart"}
+                  </GeoButton>
+                </>
+              )}
               <GeoButton variant="ghost" onClick={() => wishlistToggle(product.slug)}>
                 <Heart className={saved ? "mr-2 h-4 w-4 fill-current" : "mr-2 h-4 w-4"} />
                 {saved ? "Saved" : "Save"}
@@ -514,10 +528,12 @@ export function ProductScreen() {
               </dl>
             ) : null}
 
-            <p className="inline-flex items-center gap-2 border-t border-bronze/10 pt-6 text-[0.66rem] uppercase tracking-[0.16em] text-foreground/50">
-              <Truck className="h-3.5 w-3.5" />
-              {product.group === "merch" ? "Ships worldwide in 4 – 12 days" : "Instant delivery"}
-            </p>
+            {product.comingSoon ? null : (
+              <p className="inline-flex items-center gap-2 border-t border-bronze/10 pt-6 text-[0.66rem] uppercase tracking-[0.16em] text-foreground/50">
+                <Truck className="h-3.5 w-3.5" />
+                {product.group === "merch" ? "Ships worldwide in 4 – 12 days" : "Instant delivery"}
+              </p>
+            )}
           </AnimatedSection>
         </div>
 

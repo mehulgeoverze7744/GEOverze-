@@ -42,6 +42,8 @@ export type Product = {
   features: readonly string[];
   specs: readonly { label: string; value: string }[];
   tags: readonly string[];
+  /** Hidden from purchase until the item is released. */
+  comingSoon: boolean;
 };
 
 type Draft = Partial<Product> & {
@@ -56,10 +58,17 @@ let seq = 0;
 function make(draft: Draft): Product {
   seq += 1;
   const group = categoryById(draft.category)?.group ?? "merch";
-  const price = draft.price ?? null;
-  const credits = draft.credits ?? null;
+  const comingSoon = draft.comingSoon ?? false;
+  const price = comingSoon ? null : (draft.price ?? null);
+  const credits = comingSoon ? null : (draft.credits ?? null);
   const mode: PriceMode =
-    price !== null && credits !== null ? "hybrid" : price !== null ? "money" : "credits";
+    price !== null && credits !== null
+      ? "hybrid"
+      : price !== null
+        ? "money"
+        : credits !== null
+          ? "credits"
+          : "money";
 
   return {
     id: `p-${String(seq).padStart(3, "0")}`,
@@ -91,6 +100,7 @@ function make(draft: Draft): Product {
     ],
     specs: draft.specs ?? [],
     tags: draft.tags ?? [],
+    comingSoon,
   };
 }
 
@@ -395,16 +405,20 @@ export const PRODUCTS: readonly Product[] = [
   }),
   make({
     slug: "field-notebook",
-    name: "Field Notebook",
-    tagline: "Dot-grid field notebook with a bronze GEOverze emblem.",
+    name: "Atlas Encyclopedia",
+    tagline:
+      "A premium illustrated atlas featuring detailed maps, geography and the world’s most fascinating places.",
+    description:
+      "A premium illustrated atlas featuring detailed maps, geography and the world’s most fascinating places.",
     category: "accessories",
-    price: 1_900,
-    credits: 190,
-    rating: 4.7,
-    reviews: 112,
+    comingSoon: true,
     popularity: 76,
-    features: ["A5, 192 dot-grid pages", "Lay-flat binding", "Elastic closure"],
-    tags: ["desk", "study"],
+    features: [
+      "Illustrated world maps",
+      "Premium hardcover binding",
+      "Studio photography forthcoming",
+    ],
+    tags: ["desk", "study", "atlas"],
   }),
   make({
     slug: "desk-globe-mini",
@@ -423,26 +437,6 @@ export const PRODUCTS: readonly Product[] = [
       { label: "Base", value: "Solid brass" },
     ],
     tags: ["collectible", "desk", "limited"],
-  }),
-  make({
-    slug: "expedition-keychain",
-    name: "Expedition Keychain",
-    tagline: "Bronze-finished explorer keychain with a compass and globe emblem.",
-    category: "accessories",
-    price: 1_600,
-    credits: 160,
-    popularity: 68,
-    tags: ["gift", "collectible"],
-  }),
-  make({
-    slug: "explorers-compass",
-    name: "Explorer's Compass",
-    tagline: "Vintage-style pocket compass with an antique world map dial.",
-    category: "accessories",
-    price: 3_200,
-    credits: 320,
-    popularity: 65,
-    tags: ["gift", "collectible"],
   }),
   // -------------------------------------------------------------- digital
   make({

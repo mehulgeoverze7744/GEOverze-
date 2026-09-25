@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 
 import { categoryIcon } from "../data/taxonomy";
 import type { Product } from "../data/products";
+import { productImageForSlug } from "../data/productImages";
 
 /**
  * Product imagery. Four procedural views derived from the slug stand in for
@@ -19,11 +20,23 @@ export function ProductGallery({ product }: { product: Product }) {
   ];
   const [active, setActive] = useState(0);
   const Icon = categoryIcon(product.category);
+  const productImage = productImageForSlug(product.slug);
 
   return (
     <div>
       <div className="overflow-hidden rounded-3xl border border-bronze/15 bg-charcoal/40">
-        <CoverArt art={views[active] ?? product.slug} icon={Icon} ratio="video" />
+        <CoverArt
+          art={views[active] ?? product.slug}
+          icon={Icon}
+          ratio="video"
+          {...(productImage && active === 0
+            ? {
+                imageSrc: productImage.src,
+                imageAlt: productImage.alt,
+                ...(product.comingSoon ? { fit: "cover" as const } : {}),
+              }
+            : {})}
+        />
       </div>
       <div className="mt-4 grid grid-cols-4 gap-3" role="group" aria-label="Product views">
         {views.map((view, i) => (

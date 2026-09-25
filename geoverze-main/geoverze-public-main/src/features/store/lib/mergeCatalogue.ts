@@ -46,6 +46,7 @@ export function mergeServerCatalogue(
         features: [],
         specs: [],
         tags: [],
+        comingSoon: false,
         serverProductId: row.id,
         purchasable: row.active && row.fulfillment_type === "digital",
       };

@@ -2,10 +2,8 @@ import antiqueExpeditionMug from "@/assets/geostore/antique-expedition-mug.jpg";
 import cartographerCap from "@/assets/geostore/cartographer-cap.jpg";
 import continentStickerSet from "@/assets/geostore/continent-sticker-set.jpg";
 import deskGlobeMini from "@/assets/geostore/desk-globe-mini.jpg";
+import atlasEncyclopedia from "@/assets/geostore/atlas-encyclopedia.jpg";
 import expeditionEnamelMug from "@/assets/geostore/expedition-enamel-mug.jpg";
-import expeditionKeychain from "@/assets/geostore/expedition-keychain.jpg";
-import explorersCompass from "@/assets/geostore/explorers-compass.jpg";
-import fieldNotebook from "@/assets/geostore/field-notebook.jpg";
 import flagStickerPack from "@/assets/geostore/flag-sticker-pack.jpg";
 import hoodieExploreTheUnknown from "@/assets/geostore/hoodie-explore-the-unknown.jpg";
 import latitudeLongitudeMug from "@/assets/geostore/latitude-longitude-mug.jpg";
@@ -68,20 +66,12 @@ const PRODUCT_IMAGES: Readonly<Record<string, ProductImage>> = {
     alt: "GEOverze Vintage Expedition Sticker Collection — explorer badges, maps and navigation emblems",
   },
   "field-notebook": {
-    src: fieldNotebook,
-    alt: "GEOverze Field Notebook — dot-grid field notebook with a bronze GEOverze emblem",
+    src: atlasEncyclopedia,
+    alt: "GEOverze Atlas Encyclopedia — black hardcover atlas with gold world map",
   },
   "desk-globe-mini": {
     src: deskGlobeMini,
     alt: "GEOverze Mini Desk Globe — 12 cm desk globe with a bronze meridian",
-  },
-  "expedition-keychain": {
-    src: expeditionKeychain,
-    alt: "GEOverze Expedition Keychain — bronze-finished explorer keychain with compass and globe emblem",
-  },
-  "explorers-compass": {
-    src: explorersCompass,
-    alt: "GEOverze Explorer's Compass — vintage-style pocket compass with an antique world map dial",
   },
   "i-know-the-capital-you-know-the-vibes": {
     src: tshirtKnowTheCapital,

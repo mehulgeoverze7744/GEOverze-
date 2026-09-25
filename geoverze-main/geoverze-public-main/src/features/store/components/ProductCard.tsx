@@ -75,7 +75,11 @@ export function ProductCard({
         <CoverArt
           art={product.slug}
           {...(productImage
-            ? { imageSrc: productImage.src, imageAlt: productImage.alt }
+            ? {
+                imageSrc: productImage.src,
+                imageAlt: productImage.alt,
+                ...(product.comingSoon ? { fit: "cover" as const } : {}),
+              }
             : { icon: Icon })}
           ratio={variant === "list" ? "square" : "video"}
           className={cn(
@@ -153,20 +157,28 @@ export function ProductCard({
           {product.tagline}
         </p>
 
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          <RatingStars rating={product.rating} reviews={product.reviews} />
-          <StockPill stock={product.stock} />
-        </div>
-
-        <PriceTag product={product} className="mt-4" />
-
-        {affordable && product.price === null ? (
-          <p className="mt-2 inline-flex items-center gap-1.5 text-[0.66rem] text-bronze-glow">
-            <Coins className="h-3 w-3" strokeWidth={1.6} /> You can claim this now
+        {product.comingSoon ? (
+          <p className="mt-4 text-[0.62rem] uppercase tracking-[0.22em] text-bronze-glow">
+            Coming soon
           </p>
-        ) : null}
+        ) : (
+          <>
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <RatingStars rating={product.rating} reviews={product.reviews} />
+              <StockPill stock={product.stock} />
+            </div>
 
-        {onAdd ? (
+            <PriceTag product={product} className="mt-4" />
+
+            {affordable && product.price === null ? (
+              <p className="mt-2 inline-flex items-center gap-1.5 text-[0.66rem] text-bronze-glow">
+                <Coins className="h-3 w-3" strokeWidth={1.6} /> You can claim this now
+              </p>
+            ) : null}
+          </>
+        )}
+
+        {onAdd && !product.comingSoon ? (
           <div className="mt-5 flex gap-2">
             <GeoButton
               variant={inCart ? "ghost" : "solid"}

@@ -12,6 +12,7 @@ import { RatingStars } from "./RatingStars";
 import { StockPill } from "./StockPill";
 import { VariantPicker } from "./VariantPicker";
 import type { Product } from "../data/products";
+import { productImageForSlug } from "../data/productImages";
 import { categoryIcon, categoryLabel } from "../data/taxonomy";
 import { cartLineIdForProduct, defaultOptions } from "../lib/cart";
 import { useStoreActions } from "../lib/useStoreActions";
@@ -42,6 +43,8 @@ export function QuickViewModal({
 
   if (!product) return null;
 
+  const productImage = productImageForSlug(product.slug);
+
   return (
     <Modal
       open
@@ -60,43 +63,62 @@ export function QuickViewModal({
           icon={categoryIcon(product.category)}
           ratio="wide"
           className="rounded-xl"
+          {...(productImage
+            ? {
+                imageSrc: productImage.src,
+                imageAlt: productImage.alt,
+                ...(product.comingSoon ? { fit: "cover" as const } : {}),
+              }
+            : {})}
         />
         <div className="flex flex-wrap items-center gap-3">
           <span className="text-[0.6rem] uppercase tracking-[0.2em] text-foreground/50">
             {categoryLabel(product.category)}
           </span>
-          <RatingStars rating={product.rating} reviews={product.reviews} />
-          <StockPill stock={product.stock} />
+          {product.comingSoon ? (
+            <span className="text-[0.62rem] uppercase tracking-[0.22em] text-bronze-glow">
+              Coming soon
+            </span>
+          ) : (
+            <>
+              <RatingStars rating={product.rating} reviews={product.reviews} />
+              <StockPill stock={product.stock} />
+            </>
+          )}
         </div>
         <p className="text-sm leading-relaxed text-foreground/60">{product.description}</p>
-        <PriceTag product={product} size="lg" />
-        <VariantPicker product={product} value={selected} onChange={setOptions} />
+        {product.comingSoon ? null : <PriceTag product={product} size="lg" />}
+        {product.comingSoon ? null : (
+          <VariantPicker product={product} value={selected} onChange={setOptions} />
+        )}
         <div className="flex flex-wrap gap-3">
-          <GeoButton
-            variant={inCart ? "ghost" : "solid"}
-            className={cn(
-              inCart && "border border-bronze/35 text-bronze-glow hover:border-bronze/50",
-            )}
-            disabled={!inCart && product.stock === "sold-out"}
-            onClick={() => {
-              if (inCart) {
-                removeProduct(product, selected);
-              } else {
-                onAdd(product, selected);
-                setOptions({});
-                onClose();
-              }
-            }}
-          >
-            <ShoppingBag className="mr-2 h-4 w-4" />
-            {inCart
-              ? "Remove from cart"
-              : product.stock === "sold-out"
-                ? "Sold out"
-                : product.price === null
-                  ? "Claim with credits"
-                  : "Add to cart"}
-          </GeoButton>
+          {product.comingSoon ? null : (
+            <GeoButton
+              variant={inCart ? "ghost" : "solid"}
+              className={cn(
+                inCart && "border border-bronze/35 text-bronze-glow hover:border-bronze/50",
+              )}
+              disabled={!inCart && product.stock === "sold-out"}
+              onClick={() => {
+                if (inCart) {
+                  removeProduct(product, selected);
+                } else {
+                  onAdd(product, selected);
+                  setOptions({});
+                  onClose();
+                }
+              }}
+            >
+              <ShoppingBag className="mr-2 h-4 w-4" />
+              {inCart
+                ? "Remove from cart"
+                : product.stock === "sold-out"
+                  ? "Sold out"
+                  : product.price === null
+                    ? "Claim with credits"
+                    : "Add to cart"}
+            </GeoButton>
+          )}
           <GeoButton asChild variant="ghost">
             <Link to="/geostore/product/$slug" params={{ slug: product.slug }} onClick={onClose}>
               Full details
