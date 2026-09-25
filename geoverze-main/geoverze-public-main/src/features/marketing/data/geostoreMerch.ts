@@ -3,15 +3,23 @@ import hoodieEarthIntelligence from "@/assets/geostore/hoodie-earth-intelligence
 import hoodieExploreUnknown from "@/assets/geostore/hoodie-explore-the-unknown.jpg";
 import hoodieFragmentsOfEarth from "@/assets/geostore/hoodie-fragments-of-earth.jpg";
 import hoodieKnowEarthThinkGlobal from "@/assets/geostore/hoodie-know-earth-think-global.jpg";
+import hoodieEveryPointHasAStory from "@/assets/geostore/hoodie-every-point-has-a-story-black.png";
+import hoodieDoodle from "@/assets/geostore/hoodie-doodle-black.png";
+import hoodieGeoverzeTypo from "@/assets/geostore/hoodie-geoverze-typo-black.png";
+import hoodieSamePlanet from "@/assets/geostore/hoodie-same-planet-black.png";
+import hoodieWorldUnfiltered from "@/assets/geostore/hoodie-world-unfiltered-black.png";
 import tshirtBornToRoam from "@/assets/geostore/tshirt-born-to-roam.jpg";
 import tshirtCommonSense from "@/assets/geostore/tshirt-common-sense-geography.jpg";
-import tshirtGpsTrustIssues from "@/assets/geostore/tshirt-gps-trust-issues.jpg";
-import tshirtKnowTheCapital from "@/assets/geostore/tshirt-i-know-the-capital.jpg";
+import tshirtGpsTrustIssues from "@/assets/geostore/tshirt-gps-trust-issues-blue.png";
+import tshirtKnowTheCapital from "@/assets/geostore/tshirt-know-the-capital-off-white.png";
 import tshirtMyCountryIsBetter from "@/assets/geostore/tshirt-my-country-is-better.jpg";
-import tshirtRecalculating from "@/assets/geostore/tshirt-recalculating-since-2024.jpg";
-import tshirtTooClosePerfect from "@/assets/geostore/tshirt-too-close-perfect.jpg";
+import tshirtRecalculating from "@/assets/geostore/tshirt-recalculating-burgundy.png";
+import tshirtTooClosePerfect from "@/assets/geostore/tshirt-too-close-perfect-olive-green.png";
 
 export type MerchCategory = "t-shirt" | "hoodie";
+
+/** Established default colour for merch cards and product-page first paint. */
+export type MerchColorId = "black" | "blue" | "burgundy" | "olive" | "offwhite";
 
 export type GeostoreMerchProduct = {
   id: string;
@@ -28,7 +36,18 @@ export type GeostoreMerchProduct = {
   credits: number;
   /** Hidden from storefront listings but retained in catalogue data. */
   listed?: boolean;
+  /** Initial colour on the PDP and the colour shown on category cards. */
+  defaultColor?: MerchColorId;
 };
+
+export function initialMerchColorIndex(
+  colors: readonly { id: string }[],
+  defaultColor?: MerchColorId,
+): number {
+  if (!defaultColor) return 0;
+  const index = colors.findIndex((color) => color.id === defaultColor);
+  return index >= 0 ? index : 0;
+}
 
 /** Merch IDs hidden from visible shelves (V2 catalog curation). */
 const HIDDEN_MERCH_IDS = new Set(["tshirt-my-country-is-better", "tshirt-common-sense"]);
@@ -45,6 +64,7 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     tagline: "For explorers who treat every border as an invitation.",
     price: 3_700,
     credits: 300,
+    defaultColor: "black",
   },
   {
     id: "tshirt-common-sense",
@@ -64,10 +84,11 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     category: "t-shirt",
     categoryLabel: "T-SHIRT",
     image: tshirtKnowTheCapital,
-    alt: "GEOverze black T-shirt — front and back views with I Know The Capital. You Know The Vibes. design",
+    alt: "GEOverze off-white T-shirt — front and back views with I Know The Capital. You Know The Vibes. design",
     tagline: "Capital cities, confident energy.",
     price: 3_700,
     credits: 300,
+    defaultColor: "offwhite",
   },
   {
     id: "tshirt-my-country-is-better",
@@ -87,10 +108,11 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     category: "t-shirt",
     categoryLabel: "T-SHIRT",
     image: tshirtRecalculating,
-    alt: "GEOverze black T-shirt — front and back views with Recalculating Since 2024 navigation design",
+    alt: "GEOverze burgundy T-shirt — front and back views with Recalculating Since 2024 navigation design",
     tagline: "Navigation humor for the eternally rerouting.",
     price: 3_700,
     credits: 300,
+    defaultColor: "burgundy",
   },
   {
     id: "tshirt-too-close-perfect",
@@ -98,10 +120,11 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     category: "t-shirt",
     categoryLabel: "T-SHIRT",
     image: tshirtTooClosePerfect,
-    alt: "GEOverze black T-shirt — front and back views with Too Close? Perfect. radar design",
+    alt: "GEOverze olive-green T-shirt — front and back views with Too Close? Perfect. radar design",
     tagline: "Radar-close detail for map obsessives.",
     price: 3_700,
     credits: 300,
+    defaultColor: "olive",
   },
   {
     id: "tshirt-gps-trust-issues",
@@ -109,10 +132,11 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     category: "t-shirt",
     categoryLabel: "T-SHIRT",
     image: tshirtGpsTrustIssues,
-    alt: "GEOverze black T-shirt — front and back views with Your GPS Has Trust Issues. map design",
+    alt: "GEOverze blue T-shirt — front and back views with Your GPS Has Trust Issues. map design",
     tagline: "When the route and reality disagree.",
     price: 3_700,
     credits: 300,
+    defaultColor: "blue",
   },
   {
     id: "hoodie-earth-from-space",
@@ -124,6 +148,7 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     tagline: "Orbital perspective on heavyweight fleece.",
     price: 6_800,
     credits: 680,
+    listed: false,
   },
   {
     id: "hoodie-explore-unknown",
@@ -135,6 +160,7 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     tagline: "World-map warmth for long sessions.",
     price: 6_800,
     credits: 680,
+    listed: false,
   },
   {
     id: "hoodie-fragments-of-earth",
@@ -146,6 +172,7 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     tagline: "Low-poly globe art on brushed fleece.",
     price: 6_800,
     credits: 680,
+    listed: false,
   },
   {
     id: "hoodie-earth-intelligence",
@@ -157,6 +184,7 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     tagline: "Orbital intelligence, everyday comfort.",
     price: 6_800,
     credits: 680,
+    listed: false,
   },
   {
     id: "hoodie-know-earth-think-global",
@@ -168,6 +196,67 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     tagline: "Signature bronze globe on premium fleece.",
     price: 6_800,
     credits: 680,
+    listed: false,
+  },
+  {
+    id: "hoodie-every-point-has-a-story",
+    title: "EVERY POINT HAS A STORY",
+    category: "hoodie",
+    categoryLabel: "HOODIE",
+    image: hoodieEveryPointHasAStory,
+    alt: "GEOverze black hoodie lookbook — Every Point Has A Story design",
+    tagline: "Every mapped point carries a story.",
+    price: 7_400,
+    credits: 700,
+    defaultColor: "black",
+  },
+  {
+    id: "hoodie-doodle",
+    title: "GEOVERZE DOODLE",
+    category: "hoodie",
+    categoryLabel: "HOODIE",
+    image: hoodieDoodle,
+    alt: "GEOverze black hoodie lookbook — doodle design",
+    tagline: "Loose doodle graphics for everyday wear.",
+    price: 7_400,
+    credits: 700,
+    defaultColor: "black",
+  },
+  {
+    id: "hoodie-geoverze-typo",
+    title: "GEOVERZE",
+    category: "hoodie",
+    categoryLabel: "HOODIE",
+    image: hoodieGeoverzeTypo,
+    alt: "GEOverze black hoodie lookbook — typographic wordmark design",
+    tagline: "Typographic wordmark on a black hoodie.",
+    price: 7_400,
+    credits: 700,
+    defaultColor: "black",
+  },
+  {
+    id: "hoodie-same-planet",
+    title: "SAME PLANET. DIFFERENT PERSPECTIVES.",
+    category: "hoodie",
+    categoryLabel: "HOODIE",
+    image: hoodieSamePlanet,
+    alt: "GEOverze black hoodie lookbook — Same Planet Different Perspectives design",
+    tagline: "One planet, many viewpoints.",
+    price: 7_400,
+    credits: 700,
+    defaultColor: "black",
+  },
+  {
+    id: "hoodie-world-unfiltered",
+    title: "THE WORLD, UNFILTERED.",
+    category: "hoodie",
+    categoryLabel: "HOODIE",
+    image: hoodieWorldUnfiltered,
+    alt: "GEOverze black hoodie lookbook — The World Unfiltered design",
+    tagline: "A straightforward take on the world.",
+    price: 7_400,
+    credits: 700,
+    defaultColor: "black",
   },
 ] as const;
 

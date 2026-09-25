@@ -1,4 +1,4 @@
-import { memo, useState, type ReactNode } from "react";
+import { memo, useMemo, useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   ChevronDown,
@@ -26,32 +26,18 @@ import {
   initialMerchColorIndex,
   type GeostoreMerchProduct,
 } from "@/features/marketing/data/geostoreMerch";
+import { useCartStore } from "@/stores/cartStore";
 import { cn } from "@/lib/utils";
 
+import {
+  hoodieColorsWithImages,
+  type HoodieColorVariant,
+  type HoodieMerchSpec,
+} from "../data/hoodieMerchSpecs";
+import { credits as formatCredits, money } from "../lib/format";
 import { useStoreActions } from "../lib/useStoreActions";
 
-import tshirtBlack from "@/assets/geostore/tshirt-too-close-perfect-black.jpg";
-import tshirtBlue from "@/assets/geostore/tshirt-too-close-perfect-blue.png";
-import tshirtBurgundy from "@/assets/geostore/tshirt-too-close-perfect-burgundy.png";
-import tshirtOliveGreen from "@/assets/geostore/tshirt-too-close-perfect-olive-green.png";
-import tshirtOffWhite from "@/assets/geostore/tshirt-too-close-perfect-off-white.png";
-
-type ColorVariant = {
-  id: string;
-  label: string;
-  hex: string;
-  image: string;
-};
-
 type Size = "S" | "M" | "L" | "XXL";
-
-const COLOR_VARIANTS: ColorVariant[] = [
-  { id: "black", label: "Black", hex: "#111111", image: tshirtBlack },
-  { id: "blue", label: "Blue", hex: "#2d4a6e", image: tshirtBlue },
-  { id: "burgundy", label: "Burgundy", hex: "#6b1f2a", image: tshirtBurgundy },
-  { id: "olive", label: "Olive Green", hex: "#4a5240", image: tshirtOliveGreen },
-  { id: "offwhite", label: "Off White", hex: "#e8e4dc", image: tshirtOffWhite },
-];
 
 const SIZES: Size[] = ["S", "M", "L", "XXL"];
 
@@ -98,35 +84,61 @@ function AccordionRow({
   );
 }
 
-export const TooClosePerfectProductPage = memo(function TooClosePerfectProductPage({
+export const HoodieMerchProductPage = memo(function HoodieMerchProductPage({
   product,
+  spec,
 }: {
   product: GeostoreMerchProduct;
+  spec: HoodieMerchSpec;
 }) {
+  const colors = spec.colors;
+  const available = useMemo(() => hoodieColorsWithImages(colors), [colors]);
   const [variantIndex, setVariantIndex] = useState(() =>
-    initialMerchColorIndex(COLOR_VARIANTS, product.defaultColor),
+    initialMerchColorIndex(available, product.defaultColor),
   );
   const [selectedSize, setSelectedSize] = useState<Size | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
+  const addToCart = useCartStore((s) => s.add);
   const { wishlistToggle, wishlist } = useStoreActions();
 
-  const selectedVariant = COLOR_VARIANTS[variantIndex];
+  const selectedVariant = available[variantIndex] ?? available[0];
   const wishlisted = wishlist.includes(product.id);
 
-  const selectVariant = (variant: ColorVariant) => {
-    const next = COLOR_VARIANTS.findIndex((v) => v.id === variant.id);
+  if (!selectedVariant?.image) return null;
+
+  const selectVariant = (variant: HoodieColorVariant) => {
+    if (!variant.image) return;
+    const next = available.findIndex((v) => v.id === variant.id);
     if (next >= 0) setVariantIndex(next);
   };
 
   const stepVariant = (dir: -1 | 1) => {
-    setVariantIndex((i) => (i + dir + COLOR_VARIANTS.length) % COLOR_VARIANTS.length);
+    if (available.length < 2) return;
+    setVariantIndex((i) => (i + dir + available.length) % available.length);
   };
 
   const handleAddToCart = () => {
+    const options: Record<string, string> = { Colour: selectedVariant.label };
+    if (selectedSize) options.Size = selectedSize;
+    const signature = Object.entries(options)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([key, value]) => `${key}:${value}`)
+      .join("|");
+    addToCart({
+      id: `${product.id}#${signature}`,
+      productId: product.id,
+      slug: product.id,
+      name: spec.title,
+      unitAmount: product.price,
+      unitCredits: product.credits,
+      quantity,
+      options,
+      category: "hoodies",
+    });
     toast.message("Available soon", {
-      description: "Merchandise checkout is not live yet.",
+      description: `${selectedVariant.label} is in your cart. Merchandise checkout is not live yet.`,
     });
   };
 
@@ -152,104 +164,115 @@ export const TooClosePerfectProductPage = memo(function TooClosePerfectProductPa
           </span>
           <Link
             to="/geostore/category/$slug"
-            params={{ slug: "tshirts" }}
+            params={{ slug: "hoodies" }}
             className="transition-colors hover:text-bronze"
           >
-            T-Shirts
+            Hoodies
           </Link>
           <span className="text-foreground/25" aria-hidden>
             &gt;
           </span>
-          <span className="text-foreground/70">Too Close? Perfect.</span>
+          <span className="text-foreground/70">{spec.breadcrumb}</span>
         </nav>
 
         <div className="grid min-w-0 items-start gap-8 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] md:gap-8 lg:gap-10">
           <div className="min-w-0 space-y-4">
-            <div className="space-y-4">
-              <div className="relative overflow-hidden rounded-2xl border border-bronze/15 bg-[oklch(0.12_0.006_62)]">
-                <div className="aspect-[16/8] w-full">
+            <div className="relative overflow-hidden rounded-2xl border border-bronze/15 bg-[oklch(0.12_0.006_62)]">
+              <div className="aspect-[16/8] w-full">
+                <img
+                  key={selectedVariant.id}
+                  src={selectedVariant.image}
+                  alt={`${product.alt} — ${selectedVariant.label.toLowerCase()} colourway`}
+                  className="h-full w-full object-contain object-center"
+                />
+              </div>
+
+              <button
+                type="button"
+                onClick={() => stepVariant(-1)}
+                aria-label="Previous colour"
+                disabled={available.length < 2}
+                className="absolute left-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-bronze/20 bg-background/40 text-foreground/70 backdrop-blur-sm transition-colors hover:border-bronze/45 hover:text-foreground disabled:cursor-default disabled:opacity-35"
+              >
+                <ChevronLeft className="h-4 w-4" strokeWidth={1.6} />
+              </button>
+              <button
+                type="button"
+                onClick={() => stepVariant(1)}
+                aria-label="Next colour"
+                disabled={available.length < 2}
+                className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-bronze/20 bg-background/40 text-foreground/70 backdrop-blur-sm transition-colors hover:border-bronze/45 hover:text-foreground disabled:cursor-default disabled:opacity-35"
+              >
+                <ChevronRight className="h-4 w-4" strokeWidth={1.6} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setGalleryOpen(true)}
+                aria-label="View gallery fullscreen"
+                className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full border border-bronze/20 bg-background/40 text-foreground/70 backdrop-blur-sm transition-colors hover:border-bronze/45 hover:text-foreground"
+              >
+                <Maximize2 className="h-3.5 w-3.5" strokeWidth={1.6} />
+              </button>
+            </div>
+
+            <div className="flex gap-2 overflow-x-auto pb-0.5">
+              {available.map((variant) => (
+                <button
+                  key={variant.id}
+                  type="button"
+                  onClick={() => selectVariant(variant)}
+                  aria-label={`View ${variant.label} colourway`}
+                  aria-pressed={selectedVariant.id === variant.id}
+                  className={cn(
+                    "h-14 w-14 shrink-0 overflow-hidden rounded-xl border bg-[oklch(0.12_0.006_62)] transition-all duration-200 sm:h-16 sm:w-16",
+                    selectedVariant.id === variant.id
+                      ? "border-bronze ring-1 ring-bronze/50"
+                      : "border-bronze/12 opacity-55 hover:opacity-90",
+                  )}
+                >
                   <img
-                    key={selectedVariant.id}
-                    src={selectedVariant.image}
-                    alt={`${product.alt} — ${selectedVariant.label.toLowerCase()} colourway`}
+                    src={variant.image}
+                    alt={variant.label}
                     className="h-full w-full object-contain object-center"
                   />
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => stepVariant(-1)}
-                  aria-label="Previous colour"
-                  className="absolute left-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-bronze/20 bg-background/40 text-foreground/70 backdrop-blur-sm transition-colors hover:border-bronze/45 hover:text-foreground"
-                >
-                  <ChevronLeft className="h-4 w-4" strokeWidth={1.6} />
                 </button>
-                <button
-                  type="button"
-                  onClick={() => stepVariant(1)}
-                  aria-label="Next colour"
-                  className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-bronze/20 bg-background/40 text-foreground/70 backdrop-blur-sm transition-colors hover:border-bronze/45 hover:text-foreground"
-                >
-                  <ChevronRight className="h-4 w-4" strokeWidth={1.6} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setGalleryOpen(true)}
-                  aria-label="View gallery fullscreen"
-                  className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full border border-bronze/20 bg-background/40 text-foreground/70 backdrop-blur-sm transition-colors hover:border-bronze/45 hover:text-foreground"
-                >
-                  <Maximize2 className="h-3.5 w-3.5" strokeWidth={1.6} />
-                </button>
-              </div>
-
-              <div className="flex gap-2 overflow-x-auto pb-0.5">
-                {COLOR_VARIANTS.map((variant) => (
-                  <button
-                    key={variant.id}
-                    type="button"
-                    onClick={() => selectVariant(variant)}
-                    aria-label={`View ${variant.label} colourway`}
-                    aria-pressed={selectedVariant.id === variant.id}
-                    className={cn(
-                      "h-14 w-14 shrink-0 overflow-hidden rounded-xl border bg-[oklch(0.12_0.006_62)] transition-all duration-200 sm:h-16 sm:w-16",
-                      selectedVariant.id === variant.id
-                        ? "border-bronze ring-1 ring-bronze/50"
-                        : "border-bronze/12 opacity-55 hover:opacity-90",
-                    )}
-                  >
-                    <img
-                      src={variant.image}
-                      alt={variant.label}
-                      className="h-full w-full object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
+              ))}
             </div>
 
             <div>
               <AccordionRow title="Description" icon={FileText}>
-                <p>{product.tagline} Front and back print: TOO CLOSE? PERFECT.</p>
+                <p>
+                  {product.tagline} Graphic: {spec.printLine}
+                </p>
               </AccordionRow>
               <AccordionRow title="Details" icon={LayoutGrid}>
                 <ul className="space-y-1">
-                  <li>GEOverze merch collection T-shirt</li>
-                  <li>Five colourways: Black, Blue, Burgundy, Olive Green, Off White</li>
+                  <li>GEOverze merch collection hoodie</li>
+                  <li>
+                    Colourways:{" "}
+                    {colors
+                      .filter((color) => color.image)
+                      .map((color) => color.label)
+                      .join(", ")}
+                  </li>
                   <li>Sizes S, M, L, XXL</li>
-                  <li>Price $37.00 or 300 credits when checkout opens</li>
+                  <li>
+                    Price {money(product.price)} or {formatCredits(product.credits)} when checkout
+                    opens
+                  </li>
                 </ul>
               </AccordionRow>
               <AccordionRow title="Care" icon={Shirt}>
                 <p>
-                  Care notes will ship with the garment. Treat printed tees as you would other
-                  screen-printed cotton: wash inside-out, cool, and avoid high heat until we publish
+                  Care notes will ship with the garment. Treat printed hoodies as you would other
+                  screen-printed fleece: wash inside-out, cool, and avoid high heat until we publish
                   the full care card.
                 </p>
               </AccordionRow>
               <AccordionRow title="Shipping" icon={Truck}>
                 <p>
                   Physical fulfilment is not live yet. Shipping options and delivery windows will be
-                  listed here when this tee becomes available to order.
+                  listed here when this hoodie becomes available to order.
                 </p>
               </AccordionRow>
             </div>
@@ -257,49 +280,53 @@ export const TooClosePerfectProductPage = memo(function TooClosePerfectProductPa
 
           <div className="min-w-0 space-y-5 md:sticky md:top-[calc(var(--nav-height)+1.25rem)]">
             <p className="text-[0.62rem] uppercase tracking-[0.22em] text-bronze/70">
-              T-SHIRT · GEOVERZE COLLECTION
+              HOODIE · GEOVERZE COLLECTION
             </p>
 
             <div>
               <h1 className="text-[1.85rem] font-light leading-tight tracking-tight text-foreground sm:text-[2.1rem]">
-                Too Close? Perfect.
+                {spec.title}
               </h1>
               <p className="mt-2 max-w-md text-sm leading-relaxed text-foreground/50">
-                A precision-inspired GEOverze tee featuring the GEOverze emblem on the front and a
-                bold target-style graphic on the back.
+                {spec.description}
               </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-              <span className="text-xl font-light text-foreground">$37.00</span>
+              <span className="text-xl font-light text-foreground">{money(product.price)}</span>
               <span className="flex items-center gap-1.5 text-sm text-bronze/80">
                 <Coins className="h-3.5 w-3.5 shrink-0" strokeWidth={1.6} />
-                300 credits
+                {formatCredits(product.credits)}
               </span>
             </div>
 
             <div className="space-y-2">
               <p className="text-[0.62rem] uppercase tracking-[0.18em] text-foreground/40">
-                Colour <span className="text-foreground/75">{selectedVariant.label}</span>
+                Colour · <span className="text-foreground/75">{selectedVariant.label}</span>
               </p>
               <div className="flex flex-wrap gap-2.5">
-                {COLOR_VARIANTS.map((variant) => (
-                  <button
-                    key={variant.id}
-                    type="button"
-                    onClick={() => selectVariant(variant)}
-                    title={variant.label}
-                    aria-label={variant.label}
-                    aria-pressed={selectedVariant.id === variant.id}
-                    className={cn(
-                      "h-7 w-7 rounded-full border-2 transition-all duration-150",
-                      selectedVariant.id === variant.id
-                        ? "border-bronze ring-2 ring-bronze/30 ring-offset-2 ring-offset-background"
-                        : "border-white/10 hover:border-white/25",
-                    )}
-                    style={{ backgroundColor: variant.hex }}
-                  />
-                ))}
+                {colors.map((variant) => {
+                  const ready = Boolean(variant.image);
+                  return (
+                    <button
+                      key={variant.id}
+                      type="button"
+                      onClick={() => selectVariant(variant)}
+                      title={ready ? variant.label : `${variant.label} — coming soon`}
+                      aria-label={ready ? variant.label : `${variant.label}, coming soon`}
+                      aria-pressed={selectedVariant.id === variant.id}
+                      disabled={!ready}
+                      className={cn(
+                        "h-7 w-7 rounded-full border-2 transition-all duration-150",
+                        selectedVariant.id === variant.id
+                          ? "border-bronze ring-2 ring-bronze/30 ring-offset-2 ring-offset-background"
+                          : "border-white/10 hover:border-white/25",
+                        !ready && "cursor-not-allowed opacity-30 hover:border-white/10",
+                      )}
+                      style={{ backgroundColor: variant.hex }}
+                    />
+                  );
+                })}
               </div>
             </div>
 
@@ -418,7 +445,7 @@ export const TooClosePerfectProductPage = memo(function TooClosePerfectProductPa
         open={sizeGuideOpen}
         onOpenChange={setSizeGuideOpen}
         title="Size Guide"
-        description="This tee is offered in S, M, L and XXL. A full measurement chart will be published when fulfilment opens."
+        description="This hoodie is offered in S, M, L and XXL. A full measurement chart will be published when fulfilment opens."
       >
         <ul className="mt-2 space-y-1.5 text-sm text-foreground/65">
           {SIZES.map((size) => (
@@ -431,7 +458,7 @@ export const TooClosePerfectProductPage = memo(function TooClosePerfectProductPa
         open={galleryOpen}
         onOpenChange={setGalleryOpen}
         title={`${selectedVariant.label} colourway`}
-        description="Front and back views — Too Close? Perfect."
+        description={spec.title}
       >
         <img
           src={selectedVariant.image}

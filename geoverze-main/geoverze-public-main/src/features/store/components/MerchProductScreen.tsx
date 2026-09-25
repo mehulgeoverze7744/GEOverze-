@@ -10,7 +10,9 @@ import { BornToRoamProductPage } from "./BornToRoamProductPage";
 import { KnowTheCapitalProductPage } from "./KnowTheCapitalProductPage";
 import { TooClosePerfectProductPage } from "./TooClosePerfectProductPage";
 import { ApparelMerchProductPage } from "./ApparelMerchProductPage";
+import { HoodieMerchProductPage } from "./HoodieMerchProductPage";
 import { APPAREL_MERCH_SPECS } from "../data/apparelMerchSpecs";
+import { HOODIE_MERCH_SPECS } from "../data/hoodieMerchSpecs";
 
 /** Presentation-only merchandise detail — no credits or checkout. */
 export const MerchProductScreen = memo(function MerchProductScreen({
@@ -33,7 +35,12 @@ export const MerchProductScreen = memo(function MerchProductScreen({
 
   const apparelSpec = APPAREL_MERCH_SPECS[product.id];
   if (apparelSpec) {
-    return <ApparelMerchProductPage product={product} spec={apparelSpec} />;
+    return <ApparelMerchProductPage key={product.id} product={product} spec={apparelSpec} />;
+  }
+
+  const hoodieSpec = HOODIE_MERCH_SPECS[product.id];
+  if (hoodieSpec) {
+    return <HoodieMerchProductPage key={product.id} product={product} spec={hoodieSpec} />;
   }
 
   const categorySlug = product.category === "t-shirt" ? "tshirts" : "hoodies";

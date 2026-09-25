@@ -22,7 +22,10 @@ import { toast } from "sonner";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { GeoButton, Modal, SectionContainer } from "@/components/shared";
-import type { GeostoreMerchProduct } from "@/features/marketing/data/geostoreMerch";
+import {
+  initialMerchColorIndex,
+  type GeostoreMerchProduct,
+} from "@/features/marketing/data/geostoreMerch";
 import { cn } from "@/lib/utils";
 
 import { useStoreActions } from "../lib/useStoreActions";
@@ -100,7 +103,9 @@ export const BornToRoamProductPage = memo(function BornToRoamProductPage({
 }: {
   product: GeostoreMerchProduct;
 }) {
-  const [variantIndex, setVariantIndex] = useState(0);
+  const [variantIndex, setVariantIndex] = useState(() =>
+    initialMerchColorIndex(COLOR_VARIANTS, product.defaultColor),
+  );
   const [selectedSize, setSelectedSize] = useState<Size | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
