@@ -7,6 +7,10 @@ import { AnimatedSection, GeoButton, PageHeader, SectionContainer } from "@/comp
 import type { GeostoreMerchProduct } from "@/features/marketing/data/geostoreMerch";
 import { categoryById } from "../data/taxonomy";
 import { BornToRoamProductPage } from "./BornToRoamProductPage";
+import { KnowTheCapitalProductPage } from "./KnowTheCapitalProductPage";
+import { TooClosePerfectProductPage } from "./TooClosePerfectProductPage";
+import { ApparelMerchProductPage } from "./ApparelMerchProductPage";
+import { APPAREL_MERCH_SPECS } from "../data/apparelMerchSpecs";
 
 /** Presentation-only merchandise detail — no credits or checkout. */
 export const MerchProductScreen = memo(function MerchProductScreen({
@@ -17,6 +21,19 @@ export const MerchProductScreen = memo(function MerchProductScreen({
   // The Born to Roam tee gets its own premium product page.
   if (product.id === "tshirt-born-to-roam") {
     return <BornToRoamProductPage product={product} />;
+  }
+
+  if (product.id === "tshirt-know-the-capital") {
+    return <KnowTheCapitalProductPage product={product} />;
+  }
+
+  if (product.id === "tshirt-too-close-perfect") {
+    return <TooClosePerfectProductPage product={product} />;
+  }
+
+  const apparelSpec = APPAREL_MERCH_SPECS[product.id];
+  if (apparelSpec) {
+    return <ApparelMerchProductPage product={product} spec={apparelSpec} />;
   }
 
   const categorySlug = product.category === "t-shirt" ? "tshirts" : "hoodies";

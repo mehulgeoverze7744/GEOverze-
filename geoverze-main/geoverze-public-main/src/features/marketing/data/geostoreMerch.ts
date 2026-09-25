@@ -66,8 +66,8 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     image: tshirtKnowTheCapital,
     alt: "GEOverze black T-shirt — front and back views with I Know The Capital. You Know The Vibes. design",
     tagline: "Capital cities, confident energy.",
-    price: 3_600,
-    credits: 360,
+    price: 3_700,
+    credits: 300,
   },
   {
     id: "tshirt-my-country-is-better",
@@ -89,8 +89,8 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     image: tshirtRecalculating,
     alt: "GEOverze black T-shirt — front and back views with Recalculating Since 2024 navigation design",
     tagline: "Navigation humor for the eternally rerouting.",
-    price: 3_600,
-    credits: 360,
+    price: 3_700,
+    credits: 300,
   },
   {
     id: "tshirt-too-close-perfect",
@@ -100,8 +100,8 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     image: tshirtTooClosePerfect,
     alt: "GEOverze black T-shirt — front and back views with Too Close? Perfect. radar design",
     tagline: "Radar-close detail for map obsessives.",
-    price: 3_600,
-    credits: 360,
+    price: 3_700,
+    credits: 300,
   },
   {
     id: "tshirt-gps-trust-issues",
@@ -111,8 +111,8 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     image: tshirtGpsTrustIssues,
     alt: "GEOverze black T-shirt — front and back views with Your GPS Has Trust Issues. map design",
     tagline: "When the route and reality disagree.",
-    price: 3_600,
-    credits: 360,
+    price: 3_700,
+    credits: 300,
   },
   {
     id: "hoodie-earth-from-space",
