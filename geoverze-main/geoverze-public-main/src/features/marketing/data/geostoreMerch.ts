@@ -43,8 +43,8 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     image: tshirtBornToRoam,
     alt: "GEOverze black T-shirt — front and back views with 0% LOCAL. 100% GLOBAL. BORN TO ROAM. design",
     tagline: "For explorers who treat every border as an invitation.",
-    price: 3_600,
-    credits: 360,
+    price: 3_700,
+    credits: 300,
   },
   {
     id: "tshirt-common-sense",

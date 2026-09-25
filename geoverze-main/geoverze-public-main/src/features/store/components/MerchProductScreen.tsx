@@ -6,6 +6,7 @@ import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, PageHeader, SectionContainer } from "@/components/shared";
 import type { GeostoreMerchProduct } from "@/features/marketing/data/geostoreMerch";
 import { categoryById } from "../data/taxonomy";
+import { BornToRoamProductPage } from "./BornToRoamProductPage";
 
 /** Presentation-only merchandise detail — no credits or checkout. */
 export const MerchProductScreen = memo(function MerchProductScreen({
@@ -13,6 +14,11 @@ export const MerchProductScreen = memo(function MerchProductScreen({
 }: {
   product: GeostoreMerchProduct;
 }) {
+  // The Born to Roam tee gets its own premium product page.
+  if (product.id === "tshirt-born-to-roam") {
+    return <BornToRoamProductPage product={product} />;
+  }
+
   const categorySlug = product.category === "t-shirt" ? "tshirts" : "hoodies";
   const category = categoryById(categorySlug);
 
