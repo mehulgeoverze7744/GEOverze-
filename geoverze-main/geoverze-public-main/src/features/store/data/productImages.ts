@@ -73,6 +73,18 @@ const PRODUCT_IMAGES: Readonly<Record<string, ProductImage>> = {
     src: deskGlobeMini,
     alt: "GEOverze Mini Desk Globe — 12 cm desk globe with a bronze meridian",
   },
+  "crystal-earth-globe": {
+    src: "/assets/store/Accessories/Globes/arcylic%20globe%20image.png",
+    alt: "GEOverze Crystal Earth Globe — acrylic globe with detailed world map and golden meridian",
+  },
+  "vintage-world-globe": {
+    src: "/assets/store/Accessories/Globes/classic%20desk%20globe%20image.png",
+    alt: "GEOverze Vintage World Globe — classic political globe with wooden base",
+  },
+  "blue-ocean-globe": {
+    src: "/assets/store/Accessories/Globes/Floating%20Globe%20image.png",
+    alt: "GEOverze Blue Ocean Globe — modern blue ocean globe with wooden base",
+  },
   "i-know-the-capital-you-know-the-vibes": {
     src: tshirtKnowTheCapital,
     alt: "GEOverze I Know The Capital You Know The Vibes T-shirt — black tee with capital-city artwork",

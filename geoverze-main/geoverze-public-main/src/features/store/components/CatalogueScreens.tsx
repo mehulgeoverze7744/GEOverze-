@@ -276,6 +276,62 @@ function MerchCategoryShelf({ slug }: { slug: "tshirts" | "hoodies" }) {
   );
 }
 
+const ACCESSORIES_GLOBE_SLUGS = [
+  "crystal-earth-globe",
+  "vintage-world-globe",
+  "blue-ocean-globe",
+] as const;
+
+const ACCESSORIES_PUBLICATION_SLUG = "field-notebook";
+
+/** Accessories lookbook — labelled shelves, same product cards as the catalogue. */
+function AccessoriesCategoryShelf() {
+  const [quickView, setQuickView] = useState<Product | null>(null);
+  const card = useCardFactory(setQuickView);
+  const { addProduct } = useStoreActions();
+  const category = categoryById("accessories");
+  const globes = ACCESSORIES_GLOBE_SLUGS.map(productBySlug).filter((product): product is Product =>
+    Boolean(product),
+  );
+  const publication = productBySlug(ACCESSORIES_PUBLICATION_SLUG);
+
+  return (
+    <PageShell>
+      <PageHeader
+        eyebrow="GEOstore"
+        title={category?.label ?? "Accessories"}
+        description={category?.blurb ?? "Totes, pins and desk pieces."}
+        breadcrumb={[
+          { label: "GEOstore", to: "/geostore" },
+          { label: "Browse", to: "/geostore/browse" },
+          { label: category?.label ?? "Accessories" },
+        ]}
+      />
+      <SectionContainer size="wide">
+        <section>
+          <h2 className="mb-3 text-[0.58rem] font-medium uppercase tracking-[0.3em] text-bronze">
+            Globes
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{globes.map(card)}</div>
+        </section>
+        {publication ? (
+          <section className="mt-10">
+            <h2 className="mb-3 text-[0.58rem] font-medium uppercase tracking-[0.3em] text-bronze">
+              Publications
+            </h2>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{card(publication)}</div>
+          </section>
+        ) : null}
+      </SectionContainer>
+      <QuickViewModal
+        product={quickView}
+        onClose={() => setQuickView(null)}
+        onAdd={(product, options) => addProduct(product, options)}
+      />
+    </PageShell>
+  );
+}
+
 /** Mock catalogue category shelf (rewards, accessories, etc.). */
 function CatalogCategoryShelf({ slug }: { slug: string }) {
   const [quickView, setQuickView] = useState<Product | null>(null);
@@ -340,6 +396,10 @@ export function CategoryScreen() {
 
   if (isMerchStoreCategory(slug)) {
     return <MerchCategoryShelf slug={slug} />;
+  }
+
+  if (slug === "accessories") {
+    return <AccessoriesCategoryShelf />;
   }
 
   return <CatalogCategoryShelf slug={slug} />;

@@ -120,7 +120,11 @@ const APPAREL_COLOURS: ProductOption = {
 };
 
 /** Slugs hidden from browse/category shelves (data retained for direct links). */
-export const LISTING_HIDDEN_PRODUCT_SLUGS = new Set(["old-world-mug", "expedition-enamel-mug"]);
+export const LISTING_HIDDEN_PRODUCT_SLUGS = new Set([
+  "old-world-mug",
+  "expedition-enamel-mug",
+  "desk-globe-mini",
+]);
 
 export function isProductListed(product: Pick<Product, "slug">): boolean {
   return !LISTING_HIDDEN_PRODUCT_SLUGS.has(product.slug);
@@ -338,9 +342,8 @@ export const PRODUCTS: readonly Product[] = [
     rating: 4.8,
     reviews: 302,
     popularity: 90,
-    bestSeller: true,
     features: ["50 die-cut vinyl stickers", "UV and water resistant", "Laptop-safe adhesive"],
-    tags: ["flags", "gift", "bestseller"],
+    tags: ["flags", "gift"],
   }),
   make({
     slug: "continent-sticker-set",
@@ -361,8 +364,12 @@ export const PRODUCTS: readonly Product[] = [
     category: "stickers",
     price: 1_800,
     credits: 180,
+    rating: 4.6,
+    reviews: 48,
     popularity: 80,
-    tags: ["exploration", "gift"],
+    stock: "in-stock",
+    bestSeller: true,
+    tags: ["exploration", "gift", "bestseller"],
   }),
   make({
     slug: "bronze-world-map-poster",
@@ -446,6 +453,42 @@ export const PRODUCTS: readonly Product[] = [
       { label: "Base", value: "Solid brass" },
     ],
     tags: ["collectible", "desk", "limited"],
+  }),
+  make({
+    slug: "crystal-earth-globe",
+    name: "Crystal Earth Globe",
+    tagline: "A premium acrylic globe with detailed world map and golden meridian.",
+    category: "accessories",
+    price: 7_700,
+    credits: 770,
+    rating: 4.8,
+    reviews: 34,
+    popularity: 88,
+    tags: ["collectible", "desk", "globe"],
+  }),
+  make({
+    slug: "vintage-world-globe",
+    name: "Vintage World Globe",
+    tagline: "A classic world globe with detailed political map and wooden base.",
+    category: "accessories",
+    price: 4_700,
+    credits: 470,
+    rating: 4.7,
+    reviews: 41,
+    popularity: 84,
+    tags: ["collectible", "desk", "globe"],
+  }),
+  make({
+    slug: "blue-ocean-globe",
+    name: "Blue Ocean Globe",
+    tagline: "A modern blue ocean globe with premium detailing and wooden base.",
+    category: "accessories",
+    price: 4_700,
+    credits: 470,
+    rating: 4.7,
+    reviews: 29,
+    popularity: 82,
+    tags: ["collectible", "desk", "globe"],
   }),
   // -------------------------------------------------------------- digital
   make({

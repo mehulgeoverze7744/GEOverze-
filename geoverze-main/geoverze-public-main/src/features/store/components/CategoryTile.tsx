@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, Lock } from "lucide-react";
+import type { ReactNode } from "react";
 
 import {
   isMerchStoreCategory,
@@ -7,6 +8,7 @@ import {
   type MerchStoreCategorySlug,
 } from "@/features/marketing/data/geostoreMerch";
 import { CoverArt } from "@/features/play/components/CoverArt";
+import { cn } from "@/lib/utils";
 
 import { ComingSoonLockChip } from "./ComingSoonLockChip";
 import type { StoreCategory } from "../data/taxonomy";
@@ -20,37 +22,39 @@ function categoryItemCount(categoryId: string): number {
   return productsInCategory(categoryId).length;
 }
 
-/** Category entry tile used on the store home and group shelves. */
-export function CategoryTile({
+function CategoryTileBody({
   category,
-  compact = false,
+  compact,
+  comingSoon,
 }: {
   category: StoreCategory;
-  /** ~25% smaller footprint for dense store home grids. */
-  compact?: boolean;
+  compact: boolean;
+  comingSoon: boolean;
 }) {
   const count = categoryItemCount(category.id);
   const banner = categoryBannerForId(category.id);
-  const comingSoon = category.comingSoon === true;
 
   return (
-    <Link
-      to="/geostore/category/$slug"
-      params={{ slug: category.id }}
-      className="group/card group block overflow-hidden rounded-2xl border border-bronze/12 bg-charcoal/45 transition-all motion-base hover:border-bronze/35 hover:bronze-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
-    >
+    <>
       <div className="relative">
-        <CoverArt
-          art={`cat-${category.id}`}
-          icon={category.icon}
-          ratio={banner ? "banner" : "wide"}
-          fit={banner ? "cover" : "contain"}
-          overlay={banner ? "subtle" : "hero"}
-          {...(compact ? { className: "aspect-[8/2.25]" } : {})}
-          {...(banner ? { imageSrc: banner.src, imageAlt: banner.alt } : {})}
-        />
+        <div className={cn(comingSoon && "pointer-events-none overflow-hidden")}>
+          <div className={cn(comingSoon && "origin-center scale-[1.03] blur-[2.5px]")}>
+            <CoverArt
+              art={`cat-${category.id}`}
+              icon={category.icon}
+              ratio={banner ? "banner" : "wide"}
+              fit={banner ? "cover" : "contain"}
+              overlay={banner ? "subtle" : "hero"}
+              {...(compact ? { className: "aspect-[8/2.25]" } : {})}
+              {...(banner ? { imageSrc: banner.src, imageAlt: banner.alt } : {})}
+            />
+          </div>
+          {comingSoon ? (
+            <div aria-hidden className="absolute inset-0 bg-charcoal/25 backdrop-blur-[1px]" />
+          ) : null}
+        </div>
         {comingSoon ? (
-          <div className="absolute right-3 top-3">
+          <div className="absolute right-3 top-3 z-10">
             <ComingSoonLockChip compact={compact} />
           </div>
         ) : null}
@@ -87,6 +91,43 @@ export function CategoryTile({
           <ArrowUpRight className="h-4 w-4 shrink-0 text-bronze/90 transition-transform motion-fast group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         )}
       </div>
+    </>
+  );
+}
+
+/** Category entry tile used on the store home and group shelves. */
+export function CategoryTile({
+  category,
+  compact = false,
+}: {
+  category: StoreCategory;
+  /** ~25% smaller footprint for dense store home grids. */
+  compact?: boolean;
+}) {
+  const comingSoon = category.comingSoon === true;
+  const body: ReactNode = (
+    <CategoryTileBody category={category} compact={compact} comingSoon={comingSoon} />
+  );
+
+  if (comingSoon) {
+    return (
+      <article
+        aria-disabled="true"
+        aria-label={`${category.label}, coming soon`}
+        className="block cursor-default overflow-hidden rounded-2xl border border-bronze/12 bg-charcoal/45 select-none"
+      >
+        {body}
+      </article>
+    );
+  }
+
+  return (
+    <Link
+      to="/geostore/category/$slug"
+      params={{ slug: category.id }}
+      className="group/card group block cursor-pointer overflow-hidden rounded-2xl border border-bronze/12 bg-charcoal/45 transition-all motion-base hover:border-bronze/35 hover:bronze-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+    >
+      {body}
     </Link>
   );
 }
