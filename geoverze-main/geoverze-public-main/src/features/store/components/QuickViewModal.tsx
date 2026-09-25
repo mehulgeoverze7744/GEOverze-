@@ -1,17 +1,18 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ShoppingBag } from "lucide-react";
+import { Lock, ShoppingBag } from "lucide-react";
 
 import { GeoButton, Modal } from "@/components/shared";
 import { CoverArt } from "@/features/play/components/CoverArt";
 import { cn } from "@/lib/utils";
 import { useCartStore } from "@/stores/cartStore";
 
+import { ComingSoonLockChip } from "./ComingSoonLockChip";
 import { PriceTag } from "./PriceTag";
 import { RatingStars } from "./RatingStars";
 import { StockPill } from "./StockPill";
 import { VariantPicker } from "./VariantPicker";
-import type { Product } from "../data/products";
+import { isPurchaseLocked, type Product } from "../data/products";
 import { productImageForSlug } from "../data/productImages";
 import { categoryIcon, categoryLabel } from "../data/taxonomy";
 import { cartLineIdForProduct, defaultOptions } from "../lib/cart";
@@ -44,6 +45,7 @@ export function QuickViewModal({
   if (!product) return null;
 
   const productImage = productImageForSlug(product.slug);
+  const purchaseLocked = isPurchaseLocked(product);
 
   return (
     <Modal
@@ -75,10 +77,8 @@ export function QuickViewModal({
           <span className="text-[0.6rem] uppercase tracking-[0.2em] text-foreground/50">
             {categoryLabel(product.category)}
           </span>
-          {product.comingSoon ? (
-            <span className="text-[0.62rem] uppercase tracking-[0.22em] text-bronze-glow">
-              Coming soon
-            </span>
+          {product.comingSoon || purchaseLocked ? (
+            <ComingSoonLockChip />
           ) : (
             <>
               <RatingStars rating={product.rating} reviews={product.reviews} />
@@ -88,11 +88,16 @@ export function QuickViewModal({
         </div>
         <p className="text-sm leading-relaxed text-foreground/60">{product.description}</p>
         {product.comingSoon ? null : <PriceTag product={product} size="lg" />}
-        {product.comingSoon ? null : (
+        {product.comingSoon || purchaseLocked ? null : (
           <VariantPicker product={product} value={selected} onChange={setOptions} />
         )}
         <div className="flex flex-wrap gap-3">
-          {product.comingSoon ? null : (
+          {purchaseLocked ? (
+            <GeoButton variant="dark" disabled>
+              <Lock className="mr-2 h-4 w-4" />
+              Coming soon
+            </GeoButton>
+          ) : product.comingSoon ? null : (
             <GeoButton
               variant={inCart ? "ghost" : "solid"}
               className={cn(
@@ -100,6 +105,7 @@ export function QuickViewModal({
               )}
               disabled={!inCart && product.stock === "sold-out"}
               onClick={() => {
+                if (isPurchaseLocked(product)) return;
                 if (inCart) {
                   removeProduct(product, selected);
                 } else {

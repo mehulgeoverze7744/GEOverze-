@@ -86,6 +86,8 @@ export type StoreCategory = {
   group: StoreGroupId;
   blurb: string;
   icon: LucideIcon;
+  /** Hidden from purchase while the shelf is still a lookbook. */
+  comingSoon?: boolean;
 };
 
 export const STORE_CATEGORIES: readonly StoreCategory[] = [
@@ -109,6 +111,7 @@ export const STORE_CATEGORIES: readonly StoreCategory[] = [
     group: "merch",
     blurb: "Embroidered emblems, low profile.",
     icon: Crown,
+    comingSoon: true,
   },
   {
     id: "mugs",
@@ -116,6 +119,7 @@ export const STORE_CATEGORIES: readonly StoreCategory[] = [
     group: "merch",
     blurb: "Enamel and ceramic, map glazed.",
     icon: Coffee,
+    comingSoon: true,
   },
   {
     id: "stickers",
@@ -206,6 +210,10 @@ export const STORE_CATEGORIES: readonly StoreCategory[] = [
 
 export function categoryById(id: string): StoreCategory | undefined {
   return STORE_CATEGORIES.find((c) => c.id === id);
+}
+
+export function isComingSoonCategory(id: string): boolean {
+  return categoryById(id)?.comingSoon === true;
 }
 
 export function categoryLabel(id: string): string {

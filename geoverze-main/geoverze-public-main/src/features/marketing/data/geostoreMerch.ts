@@ -4,10 +4,10 @@ import hoodieExploreUnknown from "@/assets/geostore/hoodie-explore-the-unknown.j
 import hoodieFragmentsOfEarth from "@/assets/geostore/hoodie-fragments-of-earth.jpg";
 import hoodieKnowEarthThinkGlobal from "@/assets/geostore/hoodie-know-earth-think-global.jpg";
 import hoodieEveryPointHasAStory from "@/assets/geostore/hoodie-every-point-has-a-story-black.png";
-import hoodieDoodle from "@/assets/geostore/hoodie-doodle-black.png";
-import hoodieGeoverzeTypo from "@/assets/geostore/hoodie-geoverze-typo-black.png";
-import hoodieSamePlanet from "@/assets/geostore/hoodie-same-planet-black.png";
-import hoodieWorldUnfiltered from "@/assets/geostore/hoodie-world-unfiltered-black.png";
+import hoodieDoodle from "@/assets/geostore/hoodie-doodle-burgundy.png";
+import hoodieGeoverzeTypo from "@/assets/geostore/hoodie-geoverze-typo-white.png";
+import hoodieSamePlanet from "@/assets/geostore/hoodie-same-planet-brown.png";
+import hoodieWorldUnfiltered from "@/assets/geostore/hoodie-world-unfiltered-pink.png";
 import tshirtBornToRoam from "@/assets/geostore/tshirt-born-to-roam.jpg";
 import tshirtCommonSense from "@/assets/geostore/tshirt-common-sense-geography.jpg";
 import tshirtGpsTrustIssues from "@/assets/geostore/tshirt-gps-trust-issues-blue.png";
@@ -19,7 +19,8 @@ import tshirtTooClosePerfect from "@/assets/geostore/tshirt-too-close-perfect-ol
 export type MerchCategory = "t-shirt" | "hoodie";
 
 /** Established default colour for merch cards and product-page first paint. */
-export type MerchColorId = "black" | "blue" | "burgundy" | "olive" | "offwhite";
+export type MerchColorId =
+  "black" | "blue" | "brown" | "burgundy" | "olive" | "offwhite" | "pink" | "white";
 
 export type GeostoreMerchProduct = {
   id: string;
@@ -216,11 +217,11 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     category: "hoodie",
     categoryLabel: "HOODIE",
     image: hoodieDoodle,
-    alt: "GEOverze black hoodie lookbook — doodle design",
+    alt: "GEOverze burgundy hoodie lookbook — doodle design",
     tagline: "Loose doodle graphics for everyday wear.",
     price: 7_400,
     credits: 700,
-    defaultColor: "black",
+    defaultColor: "burgundy",
   },
   {
     id: "hoodie-geoverze-typo",
@@ -228,11 +229,11 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     category: "hoodie",
     categoryLabel: "HOODIE",
     image: hoodieGeoverzeTypo,
-    alt: "GEOverze black hoodie lookbook — typographic wordmark design",
-    tagline: "Typographic wordmark on a black hoodie.",
+    alt: "GEOverze white hoodie lookbook — typographic wordmark design",
+    tagline: "Typographic wordmark on a white hoodie.",
     price: 7_400,
     credits: 700,
-    defaultColor: "black",
+    defaultColor: "white",
   },
   {
     id: "hoodie-same-planet",
@@ -240,11 +241,11 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     category: "hoodie",
     categoryLabel: "HOODIE",
     image: hoodieSamePlanet,
-    alt: "GEOverze black hoodie lookbook — Same Planet Different Perspectives design",
+    alt: "GEOverze brown hoodie lookbook — Same Planet Different Perspectives design",
     tagline: "One planet, many viewpoints.",
     price: 7_400,
     credits: 700,
-    defaultColor: "black",
+    defaultColor: "brown",
   },
   {
     id: "hoodie-world-unfiltered",
@@ -252,11 +253,11 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     category: "hoodie",
     categoryLabel: "HOODIE",
     image: hoodieWorldUnfiltered,
-    alt: "GEOverze black hoodie lookbook — The World Unfiltered design",
+    alt: "GEOverze pink hoodie lookbook — The World Unfiltered design",
     tagline: "A straightforward take on the world.",
     price: 7_400,
     credits: 700,
-    defaultColor: "black",
+    defaultColor: "pink",
   },
 ] as const;
 

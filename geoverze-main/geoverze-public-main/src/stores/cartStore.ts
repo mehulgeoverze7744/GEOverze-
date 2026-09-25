@@ -8,6 +8,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import { isComingSoonCategory } from "@/features/store/data/taxonomy";
+
 export type CartLine = {
   /** Line key: product id plus the chosen option signature. */
   id: string;
@@ -43,6 +45,7 @@ export const useCartStore = create<CartState>()(
       saved: [],
       add: (line) =>
         set((state) => {
+          if (isComingSoonCategory(line.category)) return state;
           const existing = state.lines.find((l) => l.id === line.id);
           if (!existing) return { lines: [...state.lines, line] };
           return {
@@ -71,7 +74,7 @@ export const useCartStore = create<CartState>()(
       moveToCart: (id) =>
         set((state) => {
           const line = state.saved.find((l) => l.id === id);
-          if (!line) return state;
+          if (!line || isComingSoonCategory(line.category)) return state;
           const existing = state.lines.find((l) => l.id === id);
           return {
             saved: state.saved.filter((l) => l.id !== id),

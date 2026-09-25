@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "@tanstack/react-router";
-import { Coins, Heart, ShoppingBag, Truck } from "lucide-react";
+import { Coins, Heart, Lock, ShoppingBag, Truck } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
 import {
@@ -19,6 +19,7 @@ import {
   merchProductsForStoreCategory,
 } from "@/features/marketing/data/geostoreMerch";
 
+import { ComingSoonLockChip } from "./ComingSoonLockChip";
 import { MerchProductScreen } from "./MerchProductScreen";
 import { ProductCard } from "./ProductCard";
 import { ProductGallery } from "./ProductGallery";
@@ -30,6 +31,7 @@ import { PriceTag } from "./PriceTag";
 import { VariantPicker } from "./VariantPicker";
 import {
   PRODUCTS,
+  isPurchaseLocked,
   productBySlug,
   productsInCategory,
   relatedProducts,
@@ -43,6 +45,7 @@ import {
   STORE_GROUPS,
   STORE_SORTS,
   categoryById,
+  isComingSoonCategory,
   type StoreSortId,
 } from "../data/taxonomy";
 import { filterProducts, sortProducts } from "../lib/filter";
@@ -280,6 +283,7 @@ function CatalogCategoryShelf({ slug }: { slug: string }) {
   const { addProduct } = useStoreActions();
   const category = categoryById(slug);
   const items = sortProducts(productsInCategory(slug), "popular");
+  const locked = isComingSoonCategory(slug);
 
   return (
     <PageShell>
@@ -294,6 +298,18 @@ function CatalogCategoryShelf({ slug }: { slug: string }) {
         ]}
       />
       <SectionContainer size="wide">
+        {locked ? (
+          <div className="mb-8 flex items-start gap-3 rounded-2xl border border-bronze/20 bg-charcoal/50 px-5 py-4">
+            <Lock className="mt-0.5 h-4 w-4 shrink-0 text-bronze" strokeWidth={1.6} />
+            <div>
+              <ComingSoonLockChip />
+              <p className="mt-2 text-sm leading-relaxed text-foreground/55">
+                This collection is on the way. You can browse the lookbook — purchasing opens when
+                we launch.
+              </p>
+            </div>
+          </div>
+        ) : null}
         {items.length === 0 ? (
           <EmptyState
             icon={ShoppingBag}
@@ -380,6 +396,7 @@ export function ProductScreen() {
 
   const selected = Object.keys(options).length ? options : defaultOptions(product);
   const saved = wishlist.includes(product.slug);
+  const purchaseLocked = isPurchaseLocked(product);
   const isOwned = isProductOwned(entitlements, product.slug);
   const canPurchaseProduction =
     isProductionReward &&
@@ -406,11 +423,20 @@ export function ProductScreen() {
           </AnimatedSection>
 
           <AnimatedSection delay={80} className="space-y-6">
+            {purchaseLocked ? (
+              <div className="flex items-start gap-3 rounded-2xl border border-bronze/20 bg-charcoal/50 px-4 py-3">
+                <Lock className="mt-0.5 h-4 w-4 shrink-0 text-bronze" strokeWidth={1.6} />
+                <div>
+                  <ComingSoonLockChip />
+                  <p className="mt-1.5 text-xs leading-relaxed text-foreground/55">
+                    This item is not available to purchase yet.
+                  </p>
+                </div>
+              </div>
+            ) : null}
             <div className="flex flex-wrap items-center gap-3">
               {product.comingSoon ? (
-                <span className="text-[0.62rem] uppercase tracking-[0.22em] text-bronze-glow">
-                  Coming soon
-                </span>
+                <ComingSoonLockChip />
               ) : (
                 <>
                   <RatingStars rating={product.rating} reviews={product.reviews} />
@@ -425,7 +451,7 @@ export function ProductScreen() {
             </div>
 
             {product.comingSoon ? null : <PriceTag product={product} size="lg" />}
-            {!product.comingSoon && product.credits !== null ? (
+            {!product.comingSoon && !purchaseLocked && product.credits !== null ? (
               <p className="inline-flex items-center gap-2 text-xs text-foreground/50">
                 <Coins className="h-3.5 w-3.5 text-bronze" strokeWidth={1.6} />
                 {balanceLabel === null ? (
@@ -443,12 +469,17 @@ export function ProductScreen() {
 
             <p className="text-sm leading-relaxed text-foreground/60">{product.description}</p>
 
-            {product.comingSoon ? null : (
+            {product.comingSoon || purchaseLocked ? null : (
               <VariantPicker product={product} value={selected} onChange={setOptions} />
             )}
 
             <div className="flex flex-wrap items-center gap-3">
-              {product.comingSoon ? null : (
+              {purchaseLocked ? (
+                <GeoButton variant="dark" disabled>
+                  <Lock className="mr-2 h-4 w-4" />
+                  Coming soon
+                </GeoButton>
+              ) : product.comingSoon ? null : (
                 <>
                   <div className="flex items-center gap-2 rounded-xl border border-bronze/15 px-3 py-2">
                     <button
@@ -473,6 +504,7 @@ export function ProductScreen() {
                     variant="solid"
                     disabled={product.stock === "sold-out" || isOwned || isPurchasing(product.slug)}
                     onClick={() => {
+                      if (isPurchaseLocked(product)) return;
                       if (canPurchaseProduction && catalogueProduct?.serverProductId) {
                         void purchase({
                           slug: product.slug,
@@ -528,7 +560,7 @@ export function ProductScreen() {
               </dl>
             ) : null}
 
-            {product.comingSoon ? null : (
+            {product.comingSoon || purchaseLocked ? null : (
               <p className="inline-flex items-center gap-2 border-t border-bronze/10 pt-6 text-[0.66rem] uppercase tracking-[0.16em] text-foreground/50">
                 <Truck className="h-3.5 w-3.5" />
                 {product.group === "merch" ? "Ships worldwide in 4 – 12 days" : "Instant delivery"}

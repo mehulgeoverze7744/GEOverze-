@@ -6,7 +6,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { useStoreStore } from "@/stores/storeStore";
 
 import { BUNDLES, type Bundle } from "../data/offers";
-import { productBySlug, type Product } from "../data/products";
+import { isPurchaseLocked, productBySlug, type Product } from "../data/products";
 import { cartLineIdForProduct, defaultOptions, toCartLine } from "./cart";
 import { isProductionRewardSlug } from "./rewards";
 import { isMerchProductId } from "@/features/marketing/data/geostoreMerch";
@@ -19,7 +19,7 @@ export function useStoreActions() {
   const navigate = useNavigate();
 
   const addProduct = (product: Product, options?: Record<string, string>, quantity = 1) => {
-    if (product.comingSoon) {
+    if (isPurchaseLocked(product)) {
       toast.message("Coming soon", {
         description: `${product.name} isn’t available to purchase yet.`,
       });
@@ -67,7 +67,16 @@ export function useStoreActions() {
   };
 
   const addBundle = (bundle: Bundle) => {
-    const items = bundle.slugs.map(productBySlug).filter((p): p is Product => Boolean(p));
+    const items = bundle.slugs.map(productBySlug).filter((p): p is Product => {
+      if (!p) return false;
+      return !isPurchaseLocked(p);
+    });
+    if (items.length === 0) {
+      toast.message("Coming soon", {
+        description: `${bundle.name} isn’t available to purchase yet.`,
+      });
+      return;
+    }
     for (const item of items) add(toCartLine(item, defaultOptions(item), 1));
     toast.success(`${bundle.name} added`, { description: `${items.length} items in your cart.` });
   };

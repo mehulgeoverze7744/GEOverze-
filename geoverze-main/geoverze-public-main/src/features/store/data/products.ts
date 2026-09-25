@@ -5,7 +5,12 @@
  * return. Money is stored in minor units (cents) and credits are whole GEO
  * credits, so a product can be money-only, credits-only or hybrid.
  */
-import { categoryById, type StoreCategoryId, type StoreGroupId } from "./taxonomy";
+import {
+  categoryById,
+  isComingSoonCategory,
+  type StoreCategoryId,
+  type StoreGroupId,
+} from "./taxonomy";
 
 export type StockState = "in-stock" | "low" | "preorder" | "sold-out";
 export type PriceMode = "money" | "credits" | "hybrid";
@@ -119,6 +124,10 @@ export const LISTING_HIDDEN_PRODUCT_SLUGS = new Set(["old-world-mug", "expeditio
 
 export function isProductListed(product: Pick<Product, "slug">): boolean {
   return !LISTING_HIDDEN_PRODUCT_SLUGS.has(product.slug);
+}
+
+export function isPurchaseLocked(product: Pick<Product, "comingSoon" | "category">): boolean {
+  return product.comingSoon || isComingSoonCategory(product.category);
 }
 
 export const PRODUCTS: readonly Product[] = [

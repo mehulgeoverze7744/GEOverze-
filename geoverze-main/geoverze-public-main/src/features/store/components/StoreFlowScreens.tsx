@@ -16,6 +16,7 @@ import { OrderCard } from "./OrderCard";
 import { BundleCard } from "./BundleCard";
 import { ProductCard } from "./ProductCard";
 import { productBySlug } from "../data/products";
+import { isComingSoonCategory } from "../data/taxonomy";
 import { SEED_ORDERS } from "../data/orders";
 import { BUNDLES, DEALS } from "../data/offers";
 import { useCreditPurchase } from "../hooks/useCreditPurchase";
@@ -190,6 +191,12 @@ export function CheckoutScreen() {
               <GeoButton
                 variant="solid"
                 onClick={() => {
+                  if (lines.some((line) => isComingSoonCategory(line.category))) {
+                    toast.message("Coming soon", {
+                      description: "Locked collections cannot be checked out yet.",
+                    });
+                    return;
+                  }
                   clear();
                   toast.message("Demo checkout complete", {
                     description:

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Lock } from "lucide-react";
 
 import {
   isMerchStoreCategory,
@@ -8,6 +8,7 @@ import {
 } from "@/features/marketing/data/geostoreMerch";
 import { CoverArt } from "@/features/play/components/CoverArt";
 
+import { ComingSoonLockChip } from "./ComingSoonLockChip";
 import type { StoreCategory } from "../data/taxonomy";
 import { categoryBannerForId } from "../data/categoryBanners";
 import { productsInCategory } from "../data/products";
@@ -30,6 +31,7 @@ export function CategoryTile({
 }) {
   const count = categoryItemCount(category.id);
   const banner = categoryBannerForId(category.id);
+  const comingSoon = category.comingSoon === true;
 
   return (
     <Link
@@ -37,15 +39,22 @@ export function CategoryTile({
       params={{ slug: category.id }}
       className="group/card group block overflow-hidden rounded-2xl border border-bronze/12 bg-charcoal/45 transition-all motion-base hover:border-bronze/35 hover:bronze-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
     >
-      <CoverArt
-        art={`cat-${category.id}`}
-        icon={category.icon}
-        ratio={banner ? "banner" : "wide"}
-        fit={banner ? "cover" : "contain"}
-        overlay={banner ? "subtle" : "hero"}
-        className={compact ? "aspect-[8/2.25]" : undefined}
-        {...(banner ? { imageSrc: banner.src, imageAlt: banner.alt } : {})}
-      />
+      <div className="relative">
+        <CoverArt
+          art={`cat-${category.id}`}
+          icon={category.icon}
+          ratio={banner ? "banner" : "wide"}
+          fit={banner ? "cover" : "contain"}
+          overlay={banner ? "subtle" : "hero"}
+          {...(compact ? { className: "aspect-[8/2.25]" } : {})}
+          {...(banner ? { imageSrc: banner.src, imageAlt: banner.alt } : {})}
+        />
+        {comingSoon ? (
+          <div className="absolute right-3 top-3">
+            <ComingSoonLockChip compact={compact} />
+          </div>
+        ) : null}
+      </div>
       <div
         className={
           compact
@@ -55,7 +64,11 @@ export function CategoryTile({
       >
         <div className="min-w-0">
           <h3 className="text-sm font-light tracking-tight text-foreground">{category.label}</h3>
-          <p className={compact ? "mt-1 text-xs text-foreground/50" : "mt-1.5 text-xs text-foreground/50"}>
+          <p
+            className={
+              compact ? "mt-1 text-xs text-foreground/50" : "mt-1.5 text-xs text-foreground/50"
+            }
+          >
             {category.blurb}
           </p>
           <p
@@ -68,7 +81,11 @@ export function CategoryTile({
             {count} {count === 1 ? "item" : "items"}
           </p>
         </div>
-        <ArrowUpRight className="h-4 w-4 shrink-0 text-bronze/90 transition-transform motion-fast group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+        {comingSoon ? (
+          <Lock className="h-4 w-4 shrink-0 text-bronze/80" strokeWidth={1.6} aria-hidden />
+        ) : (
+          <ArrowUpRight className="h-4 w-4 shrink-0 text-bronze/90 transition-transform motion-fast group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+        )}
       </div>
     </Link>
   );

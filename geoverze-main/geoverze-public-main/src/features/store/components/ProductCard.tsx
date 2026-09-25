@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Coins, Eye, Heart, ShoppingBag } from "lucide-react";
+import { Coins, Eye, Heart, Lock, ShoppingBag } from "lucide-react";
 import { useMemo } from "react";
 
 import { GeoButton } from "@/components/shared";
@@ -7,10 +7,11 @@ import { CoverArt } from "@/features/play/components/CoverArt";
 import { cn } from "@/lib/utils";
 import { useCartStore } from "@/stores/cartStore";
 
+import { ComingSoonLockChip } from "./ComingSoonLockChip";
 import { PriceTag } from "./PriceTag";
 import { RatingStars } from "./RatingStars";
 import { StockPill } from "./StockPill";
-import type { Product } from "../data/products";
+import { isPurchaseLocked, type Product } from "../data/products";
 import { productImageForSlug } from "../data/productImages";
 import { cartLineIdForProduct } from "../lib/cart";
 import { useStoreActions } from "../lib/useStoreActions";
@@ -46,12 +47,14 @@ export function ProductCard({
   const Icon = categoryIcon(product.category);
   const productImage = productImageForSlug(product.slug);
   const soldOut = product.stock === "sold-out";
+  const purchaseLocked = isPurchaseLocked(product);
   const cartLineId = useMemo(() => cartLineIdForProduct(product), [product]);
   const inCart = useCartStore((state) => state.lines.some((line) => line.id === cartLineId));
   const { removeProduct } = useStoreActions();
 
   const handleCartAction = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
+    if (purchaseLocked) return;
     if (inCart) {
       removeProduct(product);
       return;
@@ -123,6 +126,7 @@ export function ProductCard({
       </div>
 
       <div className="absolute left-3 top-3 flex flex-wrap gap-2">
+        {purchaseLocked ? <ComingSoonLockChip compact /> : null}
         {product.bestSeller ? (
           <span className="rounded-full border border-bronze/50 bg-charcoal/80 px-2.5 py-0.5 text-[0.58rem] uppercase tracking-[0.18em] text-bronze-glow backdrop-blur">
             Best seller
@@ -165,12 +169,12 @@ export function ProductCard({
           <>
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <RatingStars rating={product.rating} reviews={product.reviews} />
-              <StockPill stock={product.stock} />
+              {purchaseLocked ? null : <StockPill stock={product.stock} />}
             </div>
 
             <PriceTag product={product} className="mt-4" />
 
-            {affordable && product.price === null ? (
+            {affordable && product.price === null && !purchaseLocked ? (
               <p className="mt-2 inline-flex items-center gap-1.5 text-[0.66rem] text-bronze-glow">
                 <Coins className="h-3 w-3" strokeWidth={1.6} /> You can claim this now
               </p>
@@ -178,7 +182,14 @@ export function ProductCard({
           </>
         )}
 
-        {onAdd && !product.comingSoon ? (
+        {onAdd && purchaseLocked ? (
+          <div className="mt-5 flex gap-2">
+            <GeoButton variant="dark" size="sm" className="min-w-0 flex-1" disabled>
+              <Lock className="mr-1.5 h-3.5 w-3.5 shrink-0 sm:mr-2" />
+              Coming soon
+            </GeoButton>
+          </div>
+        ) : onAdd && !product.comingSoon ? (
           <div className="mt-5 flex gap-2">
             <GeoButton
               variant={inCart ? "ghost" : "solid"}
