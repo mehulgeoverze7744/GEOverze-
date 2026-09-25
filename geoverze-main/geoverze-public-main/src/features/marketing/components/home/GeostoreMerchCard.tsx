@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { memo } from "react";
+import { memo, useState, type SyntheticEvent } from "react";
 import { Coins } from "lucide-react";
 
 import { money, credits as formatCredits } from "@/features/store/lib/format";
@@ -11,10 +11,23 @@ import type { GeostoreMerchProduct } from "../../data/geostoreMerch";
 export const GeostoreMerchCard = memo(function GeostoreMerchCard({
   product,
   className,
+  fitNaturalImage = false,
 }: {
   product: GeostoreMerchProduct;
   className?: string;
+  /** Size the media frame from the loaded image so letterbox bars do not appear. */
+  fitNaturalImage?: boolean;
 }) {
+  const [imageAspect, setImageAspect] = useState<number | null>(null);
+
+  const handleImageLoad = (event: SyntheticEvent<HTMLImageElement>) => {
+    if (!fitNaturalImage) return;
+    const { naturalWidth, naturalHeight } = event.currentTarget;
+    if (naturalWidth > 0 && naturalHeight > 0) {
+      setImageAspect(naturalWidth / naturalHeight);
+    }
+  };
+
   return (
     <Link
       to="/geostore/product/$slug"
@@ -25,13 +38,27 @@ export const GeostoreMerchCard = memo(function GeostoreMerchCard({
         className,
       )}
     >
-      <div className="relative aspect-[16/10] overflow-hidden bg-[oklch(0.14_0.006_62)]">
+      <div
+        className={cn(
+          "relative overflow-hidden",
+          fitNaturalImage ? undefined : "aspect-[16/10] bg-[oklch(0.14_0.006_62)]",
+        )}
+        style={fitNaturalImage && imageAspect ? { aspectRatio: `${imageAspect}` } : undefined}
+      >
         <img
           src={product.image}
           alt={product.alt}
           loading="lazy"
           decoding="async"
-          className="h-full w-full object-contain transition-transform motion-slow group-hover:scale-[1.03]"
+          onLoad={handleImageLoad}
+          className={cn(
+            "transition-transform motion-slow group-hover:scale-[1.03]",
+            fitNaturalImage
+              ? imageAspect
+                ? "h-full w-full object-contain"
+                : "block h-auto w-full"
+              : "h-full w-full object-contain",
+          )}
         />
         <div
           aria-hidden

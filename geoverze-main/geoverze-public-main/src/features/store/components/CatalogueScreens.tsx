@@ -12,7 +12,9 @@ import {
   SectionContainer,
 } from "@/components/shared";
 import { useStoreStore } from "@/stores/storeStore";
+import { cn } from "@/lib/utils";
 import { GeostoreMerchCard } from "@/features/marketing/components/home/GeostoreMerchCard";
+import { TshirtsCategoryBackground } from "./TshirtsCategoryBackground";
 import {
   isMerchStoreCategory,
   merchProductById,
@@ -240,38 +242,45 @@ function MerchCategoryShelf({ slug }: { slug: "tshirts" | "hoodies" }) {
   const category = categoryById(slug);
   const items = merchProductsForStoreCategory(slug);
 
+  const isTshirts = slug === "tshirts";
+
   return (
     <PageShell>
-      <PageHeader
-        eyebrow="GEOstore"
-        title={category?.label ?? "Merchandise"}
-        description={category?.blurb ?? "Premium GEOverze apparel."}
-        breadcrumb={[
-          { label: "GEOstore", to: "/geostore" },
-          { label: "Browse", to: "/geostore/browse" },
-          { label: category?.label ?? "Merchandise" },
-        ]}
-      />
-      <SectionContainer size="wide">
-        {items.length === 0 ? (
-          <EmptyState
-            icon={ShoppingBag}
-            title="Nothing on this shelf yet"
-            description="New pieces land here first — check the full catalogue in the meantime."
-            action={
-              <GeoButton asChild variant="ghost">
-                <Link to="/geostore/browse">Browse everything</Link>
-              </GeoButton>
-            }
-          />
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((product) => (
-              <GeostoreMerchCard key={product.id} product={product} />
-            ))}
-          </div>
-        )}
-      </SectionContainer>
+      {isTshirts ? <TshirtsCategoryBackground /> : null}
+      <div className={isTshirts ? "relative z-10" : undefined}>
+        <PageHeader
+          eyebrow="GEOstore"
+          title={category?.label ?? "Merchandise"}
+          description={category?.blurb ?? "Premium GEOverze apparel."}
+          breadcrumb={[
+            { label: "GEOstore", to: "/geostore" },
+            { label: "Browse", to: "/geostore/browse" },
+            { label: category?.label ?? "Merchandise" },
+          ]}
+        />
+        <SectionContainer size="wide">
+          {items.length === 0 ? (
+            <EmptyState
+              icon={ShoppingBag}
+              title="Nothing on this shelf yet"
+              description="New pieces land here first — check the full catalogue in the meantime."
+              action={
+                <GeoButton asChild variant="ghost">
+                  <Link to="/geostore/browse">Browse everything</Link>
+                </GeoButton>
+              }
+            />
+          ) : (
+            <div
+              className={cn("grid gap-6 sm:grid-cols-2 lg:grid-cols-3", isTshirts && "items-start")}
+            >
+              {items.map((product) => (
+                <GeostoreMerchCard key={product.id} product={product} fitNaturalImage={isTshirts} />
+              ))}
+            </div>
+          )}
+        </SectionContainer>
+      </div>
     </PageShell>
   );
 }
