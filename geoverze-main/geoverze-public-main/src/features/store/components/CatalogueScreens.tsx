@@ -246,8 +246,8 @@ function MerchCategoryShelf({ slug }: { slug: "tshirts" | "hoodies" }) {
 
   return (
     <PageShell>
-      {isTshirts ? <TshirtsCategoryBackground /> : null}
-      <div className={isTshirts ? "relative z-10" : undefined}>
+      <TshirtsCategoryBackground />
+      <div className="relative z-10">
         <PageHeader
           eyebrow="GEOstore"
           title={category?.label ?? "Merchandise"}
@@ -306,32 +306,35 @@ function AccessoriesCategoryShelf() {
 
   return (
     <PageShell>
-      <PageHeader
-        eyebrow="GEOstore"
-        title={category?.label ?? "Accessories"}
-        description={category?.blurb ?? "Totes, pins and desk pieces."}
-        breadcrumb={[
-          { label: "GEOstore", to: "/geostore" },
-          { label: "Browse", to: "/geostore/browse" },
-          { label: category?.label ?? "Accessories" },
-        ]}
-      />
-      <SectionContainer size="wide">
-        <section>
-          <h2 className="mb-3 text-[0.58rem] font-medium uppercase tracking-[0.3em] text-bronze">
-            Globes
-          </h2>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{globes.map(card)}</div>
-        </section>
-        {publication ? (
-          <section className="mt-10">
+      <TshirtsCategoryBackground />
+      <div className="relative z-10">
+        <PageHeader
+          eyebrow="GEOstore"
+          title={category?.label ?? "Accessories"}
+          description={category?.blurb ?? "Totes, pins and desk pieces."}
+          breadcrumb={[
+            { label: "GEOstore", to: "/geostore" },
+            { label: "Browse", to: "/geostore/browse" },
+            { label: category?.label ?? "Accessories" },
+          ]}
+        />
+        <SectionContainer size="wide">
+          <section>
             <h2 className="mb-3 text-[0.58rem] font-medium uppercase tracking-[0.3em] text-bronze">
-              Publications
+              Globes
             </h2>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{card(publication)}</div>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{globes.map(card)}</div>
           </section>
-        ) : null}
-      </SectionContainer>
+          {publication ? (
+            <section className="mt-10">
+              <h2 className="mb-3 text-[0.58rem] font-medium uppercase tracking-[0.3em] text-bronze">
+                Publications
+              </h2>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{card(publication)}</div>
+            </section>
+          ) : null}
+        </SectionContainer>
+      </div>
       <QuickViewModal
         product={quickView}
         onClose={() => setQuickView(null)}
@@ -349,47 +352,51 @@ function CatalogCategoryShelf({ slug }: { slug: string }) {
   const category = categoryById(slug);
   const items = sortProducts(productsInCategory(slug), "popular");
   const locked = isComingSoonCategory(slug);
+  const useClothBackground = slug === "mugs" || slug === "stickers";
 
   return (
     <PageShell>
-      <PageHeader
-        eyebrow="GEOstore"
-        title={category?.label ?? "Category"}
-        description={category?.blurb ?? "This shelf is still being filled."}
-        breadcrumb={[
-          { label: "GEOstore", to: "/geostore" },
-          { label: "Browse", to: "/geostore/browse" },
-          { label: category?.label ?? "Category" },
-        ]}
-      />
-      <SectionContainer size="wide">
-        {locked ? (
-          <div className="mb-8 flex items-start gap-3 rounded-2xl border border-bronze/20 bg-charcoal/50 px-5 py-4">
-            <Lock className="mt-0.5 h-4 w-4 shrink-0 text-bronze" strokeWidth={1.6} />
-            <div>
-              <ComingSoonLockChip />
-              <p className="mt-2 text-sm leading-relaxed text-foreground/55">
-                This collection is on the way. You can browse the lookbook — purchasing opens when
-                we launch.
-              </p>
+      {useClothBackground ? <TshirtsCategoryBackground /> : null}
+      <div className={useClothBackground ? "relative z-10" : undefined}>
+        <PageHeader
+          eyebrow="GEOstore"
+          title={category?.label ?? "Category"}
+          description={category?.blurb ?? "This shelf is still being filled."}
+          breadcrumb={[
+            { label: "GEOstore", to: "/geostore" },
+            { label: "Browse", to: "/geostore/browse" },
+            { label: category?.label ?? "Category" },
+          ]}
+        />
+        <SectionContainer size="wide">
+          {locked ? (
+            <div className="mb-8 flex items-start gap-3 rounded-2xl border border-bronze/20 bg-charcoal/50 px-5 py-4">
+              <Lock className="mt-0.5 h-4 w-4 shrink-0 text-bronze" strokeWidth={1.6} />
+              <div>
+                <ComingSoonLockChip />
+                <p className="mt-2 text-sm leading-relaxed text-foreground/55">
+                  This collection is on the way. You can browse the lookbook — purchasing opens when
+                  we launch.
+                </p>
+              </div>
             </div>
-          </div>
-        ) : null}
-        {items.length === 0 ? (
-          <EmptyState
-            icon={ShoppingBag}
-            title="Nothing on this shelf yet"
-            description="New pieces land here first — check the full catalogue in the meantime."
-            action={
-              <GeoButton asChild variant="ghost">
-                <Link to="/geostore/browse">Browse everything</Link>
-              </GeoButton>
-            }
-          />
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{items.map(card)}</div>
-        )}
-      </SectionContainer>
+          ) : null}
+          {items.length === 0 ? (
+            <EmptyState
+              icon={ShoppingBag}
+              title="Nothing on this shelf yet"
+              description="New pieces land here first — check the full catalogue in the meantime."
+              action={
+                <GeoButton asChild variant="ghost">
+                  <Link to="/geostore/browse">Browse everything</Link>
+                </GeoButton>
+              }
+            />
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{items.map(card)}</div>
+          )}
+        </SectionContainer>
+      </div>
       <QuickViewModal
         product={quickView}
         onClose={() => setQuickView(null)}

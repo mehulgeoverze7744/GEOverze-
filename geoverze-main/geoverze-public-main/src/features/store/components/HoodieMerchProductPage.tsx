@@ -30,6 +30,11 @@ import { useCartStore } from "@/stores/cartStore";
 import { cn } from "@/lib/utils";
 
 import {
+  hoodieLookbookCropForVariant,
+  hoodieLookbookPhotoAspect,
+  hoodieLookbookThumbHeight,
+} from "../data/hoodieLookbookCrop";
+import {
   hoodieColorsWithImages,
   type HoodieColorVariant,
   type HoodieMerchSpec,
@@ -105,6 +110,10 @@ export const HoodieMerchProductPage = memo(function HoodieMerchProductPage({
 
   const selectedVariant = available[variantIndex] ?? available[0];
   const wishlisted = wishlist.includes(product.id);
+  const lookbook = selectedVariant
+    ? hoodieLookbookCropForVariant(product.id, selectedVariant.id)
+    : undefined;
+  const lookbookPhotoAspect = lookbook ? hoodieLookbookPhotoAspect(lookbook) : undefined;
 
   if (!selectedVariant?.image) return null;
 
@@ -177,13 +186,25 @@ export const HoodieMerchProductPage = memo(function HoodieMerchProductPage({
 
         <div className="grid min-w-0 items-start gap-8 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] md:gap-8 lg:gap-10">
           <div className="min-w-0 space-y-4">
-            <div className="relative overflow-hidden rounded-2xl border border-bronze/15 bg-[oklch(0.12_0.006_62)]">
-              <div className="aspect-[16/8] w-full">
+            <div
+              className={cn(
+                "relative overflow-hidden rounded-2xl border border-bronze/15",
+                !lookbook && "bg-[oklch(0.12_0.006_62)]",
+              )}
+            >
+              <div
+                className={cn("w-full", !lookbook && "aspect-[16/8]")}
+                style={lookbookPhotoAspect ? { aspectRatio: lookbookPhotoAspect } : undefined}
+              >
                 <img
                   key={selectedVariant.id}
                   src={selectedVariant.image}
                   alt={`${product.alt} — ${selectedVariant.label.toLowerCase()} colourway`}
-                  className="h-full w-full object-contain object-center"
+                  className={
+                    lookbook
+                      ? "h-full w-full object-cover object-top"
+                      : "h-full w-full object-contain object-center"
+                  }
                 />
               </div>
 
@@ -216,27 +237,42 @@ export const HoodieMerchProductPage = memo(function HoodieMerchProductPage({
             </div>
 
             <div className="flex gap-2 overflow-x-auto pb-0.5">
-              {available.map((variant) => (
-                <button
-                  key={variant.id}
-                  type="button"
-                  onClick={() => selectVariant(variant)}
-                  aria-label={`View ${variant.label} colourway`}
-                  aria-pressed={selectedVariant.id === variant.id}
-                  className={cn(
-                    "h-14 w-14 shrink-0 overflow-hidden rounded-xl border bg-[oklch(0.12_0.006_62)] transition-all duration-200 sm:h-16 sm:w-16",
-                    selectedVariant.id === variant.id
-                      ? "border-bronze ring-1 ring-bronze/50"
-                      : "border-bronze/12 opacity-55 hover:opacity-90",
-                  )}
-                >
-                  <img
-                    src={variant.image}
-                    alt={variant.label}
-                    className="h-full w-full object-contain object-center"
-                  />
-                </button>
-              ))}
+              {available.map((variant) => {
+                const variantCrop = hoodieLookbookCropForVariant(product.id, variant.id);
+                return (
+                  <button
+                    key={variant.id}
+                    type="button"
+                    onClick={() => selectVariant(variant)}
+                    aria-label={`View ${variant.label} colourway`}
+                    aria-pressed={selectedVariant.id === variant.id}
+                    className={cn(
+                      "h-14 w-14 shrink-0 overflow-hidden rounded-xl border transition-all duration-200 sm:h-16 sm:w-16",
+                      !variantCrop && "bg-[oklch(0.12_0.006_62)]",
+                      selectedVariant.id === variant.id
+                        ? "border-bronze ring-1 ring-bronze/50"
+                        : "border-bronze/12 opacity-55 hover:opacity-90",
+                    )}
+                  >
+                    {variantCrop ? (
+                      <span className="block h-full w-full overflow-hidden">
+                        <img
+                          src={variant.image ?? undefined}
+                          alt={variant.label}
+                          className="block w-full object-cover object-top"
+                          style={{ height: hoodieLookbookThumbHeight(variantCrop) }}
+                        />
+                      </span>
+                    ) : (
+                      <img
+                        src={variant.image ?? undefined}
+                        alt={variant.label}
+                        className="h-full w-full object-contain object-center"
+                      />
+                    )}
+                  </button>
+                );
+              })}
             </div>
 
             <div>
@@ -460,11 +496,20 @@ export const HoodieMerchProductPage = memo(function HoodieMerchProductPage({
         title={`${selectedVariant.label} colourway`}
         description={spec.title}
       >
-        <img
-          src={selectedVariant.image}
-          alt={`${product.alt} — ${selectedVariant.label.toLowerCase()} colourway, expanded`}
-          className="mt-2 max-h-[70vh] w-full object-contain"
-        />
+        <div
+          className="mt-2 overflow-hidden"
+          style={lookbookPhotoAspect ? { aspectRatio: lookbookPhotoAspect } : undefined}
+        >
+          <img
+            src={selectedVariant.image}
+            alt={`${product.alt} — ${selectedVariant.label.toLowerCase()} colourway, expanded`}
+            className={
+              lookbook
+                ? "h-full max-h-[70vh] w-full object-cover object-top"
+                : "max-h-[70vh] w-full object-contain"
+            }
+          />
+        </div>
       </Modal>
     </PageShell>
   );

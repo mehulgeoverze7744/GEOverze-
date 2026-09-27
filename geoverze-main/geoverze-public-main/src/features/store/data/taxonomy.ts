@@ -119,7 +119,6 @@ export const STORE_CATEGORIES: readonly StoreCategory[] = [
     group: "merch",
     blurb: "Enamel and ceramic, map glazed.",
     icon: Coffee,
-    comingSoon: true,
   },
   {
     id: "stickers",

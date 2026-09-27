@@ -3,6 +3,10 @@ import { memo, useState, type SyntheticEvent } from "react";
 import { Coins } from "lucide-react";
 
 import { money, credits as formatCredits } from "@/features/store/lib/format";
+import {
+  hoodieLookbookCropForProduct,
+  hoodieLookbookThumbHeight,
+} from "@/features/store/data/hoodieLookbookCrop";
 import { cn } from "@/lib/utils";
 
 import type { GeostoreMerchProduct } from "../../data/geostoreMerch";
@@ -19,9 +23,10 @@ export const GeostoreMerchCard = memo(function GeostoreMerchCard({
   fitNaturalImage?: boolean;
 }) {
   const [imageAspect, setImageAspect] = useState<number | null>(null);
+  const lookbook = hoodieLookbookCropForProduct(product.id);
 
   const handleImageLoad = (event: SyntheticEvent<HTMLImageElement>) => {
-    if (!fitNaturalImage) return;
+    if (!fitNaturalImage || lookbook) return;
     const { naturalWidth, naturalHeight } = event.currentTarget;
     if (naturalWidth > 0 && naturalHeight > 0) {
       setImageAspect(naturalWidth / naturalHeight);
@@ -41,9 +46,14 @@ export const GeostoreMerchCard = memo(function GeostoreMerchCard({
       <div
         className={cn(
           "relative overflow-hidden",
-          fitNaturalImage ? undefined : "aspect-[16/10] bg-[oklch(0.14_0.006_62)]",
+          lookbook || !fitNaturalImage ? "aspect-[16/10]" : undefined,
+          !lookbook && !fitNaturalImage && "bg-[oklch(0.14_0.006_62)]",
         )}
-        style={fitNaturalImage && imageAspect ? { aspectRatio: `${imageAspect}` } : undefined}
+        style={
+          fitNaturalImage && !lookbook && imageAspect
+            ? { aspectRatio: `${imageAspect}` }
+            : undefined
+        }
       >
         <img
           src={product.image}
@@ -53,12 +63,15 @@ export const GeostoreMerchCard = memo(function GeostoreMerchCard({
           onLoad={handleImageLoad}
           className={cn(
             "transition-transform motion-slow group-hover:scale-[1.03]",
-            fitNaturalImage
-              ? imageAspect
-                ? "h-full w-full object-contain"
-                : "block h-auto w-full"
-              : "h-full w-full object-contain",
+            lookbook
+              ? "block w-full object-cover object-top"
+              : fitNaturalImage
+                ? imageAspect
+                  ? "h-full w-full object-contain"
+                  : "block h-auto w-full"
+                : "h-full w-full object-contain",
           )}
+          style={lookbook ? { height: hoodieLookbookThumbHeight(lookbook) } : undefined}
         />
         <div
           aria-hidden
