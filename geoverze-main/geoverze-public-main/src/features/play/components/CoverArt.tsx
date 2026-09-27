@@ -16,6 +16,7 @@ export function CoverArt({
   ratio = "video",
   fit = "contain",
   overlay = "hero",
+  objectPosition,
 }: {
   art: string;
   icon?: LucideIcon | undefined;
@@ -27,6 +28,7 @@ export function CoverArt({
   fit?: "contain" | "cover";
   /** Image overlay when `fit="cover"`. `subtle` = bottom blend only. */
   overlay?: "none" | "subtle" | "hero";
+  objectPosition?: string;
 }) {
   const cover = coverArt(art);
   const pattern = patternLayer(cover.pattern);
@@ -62,11 +64,13 @@ export function CoverArt({
             loading="lazy"
             decoding="async"
             className={cn(
-              "absolute inset-0 h-full w-full object-center transition-transform duration-700 ease-out motion-reduce:transition-none",
+              "absolute inset-0 h-full w-full transition-transform duration-700 ease-out motion-reduce:transition-none",
+              !objectPosition && "object-center",
               fit === "cover"
                 ? "object-cover group-hover/card:scale-[1.04] motion-reduce:group-hover/card:scale-100"
                 : "object-contain group-hover/card:scale-[1.03]",
             )}
+            style={objectPosition ? { objectPosition } : undefined}
           />
           {resolvedOverlay === "hero" ? (
             <span

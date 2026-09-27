@@ -16,7 +16,7 @@ import {
   hoodieLookbookThumbHeight,
 } from "../data/hoodieLookbookCrop";
 import { isPurchaseLocked, type Product } from "../data/products";
-import { productImageForSlug } from "../data/productImages";
+import { isGlobeProductSlug, productImageForSlug } from "../data/productImages";
 import { cartLineIdForProduct } from "../lib/cart";
 import { useStoreActions } from "../lib/useStoreActions";
 import { categoryIcon, categoryLabel } from "../data/taxonomy";
@@ -67,17 +67,23 @@ export function ProductCard({
     onAdd?.(product);
   };
 
+  const seamlessBlend =
+    product.category === "mugs" ||
+    product.category === "stickers" ||
+    isGlobeProductSlug(product.slug);
+
   return (
     <article
       className={cn(
-        "group relative overflow-hidden rounded-2xl border border-bronze/12 bg-charcoal/45 transition-all motion-base hover:border-bronze/35 hover:bronze-glow",
+        "group relative overflow-hidden rounded-2xl border border-bronze/12 transition-all motion-base hover:border-bronze/35 hover:bronze-glow",
+        seamlessBlend ? "bg-charcoal" : "bg-charcoal/45",
         variant === "list" && "sm:flex",
       )}
     >
       <Link
         to="/geostore/product/$slug"
         params={{ slug: product.slug }}
-        className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+        className="relative block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
         aria-label={product.name}
       >
         {lookbook && productImage ? (
@@ -97,21 +103,47 @@ export function ProductCard({
             />
           </div>
         ) : (
-          <CoverArt
-            art={product.slug}
-            {...(productImage
-              ? {
-                  imageSrc: productImage.src,
-                  imageAlt: productImage.alt,
-                  ...(product.comingSoon ? { fit: "cover" as const } : {}),
-                }
-              : { icon: Icon })}
-            ratio={variant === "list" ? "square" : "video"}
+          <div
             className={cn(
-              "transition-transform motion-slow group-hover:scale-[1.03]",
-              variant === "list" && "sm:w-44",
+              "relative overflow-hidden",
+              seamlessBlend && "transition-transform motion-slow group-hover:scale-[1.03]",
             )}
-          />
+          >
+            <CoverArt
+              art={product.slug}
+              {...(productImage
+                ? {
+                    imageSrc: productImage.src,
+                    imageAlt: productImage.alt,
+                    ...(product.comingSoon || productImage.fillFrame
+                      ? { fit: "cover" as const }
+                      : {}),
+                    ...(productImage.objectPosition
+                      ? { objectPosition: productImage.objectPosition }
+                      : {}),
+                    ...(seamlessBlend ? { overlay: "none" as const } : {}),
+                  }
+                : { icon: Icon })}
+              ratio={variant === "list" ? "square" : "video"}
+              className={cn(
+                !seamlessBlend && "transition-transform motion-slow group-hover:scale-[1.03]",
+                variant === "list" && "sm:w-44",
+                seamlessBlend && "bg-transparent",
+                isGlobeProductSlug(product.slug) && "!bg-[#0b0a09]",
+              )}
+            />
+            {seamlessBlend ? (
+              <span
+                aria-hidden
+                className={cn(
+                  "pointer-events-none absolute z-[1]",
+                  variant === "list"
+                    ? "inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-charcoal to-transparent sm:inset-y-0 sm:left-auto sm:right-0 sm:h-full sm:w-2/5 sm:bg-gradient-to-l"
+                    : "inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-charcoal to-transparent",
+                )}
+              />
+            ) : null}
+          </div>
         )}
       </Link>
 
@@ -167,7 +199,12 @@ export function ProductCard({
         ) : null}
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col p-5">
+      <div
+        className={cn(
+          "flex min-w-0 flex-1 flex-col p-5",
+          seamlessBlend && "relative z-[2] -mt-5 pt-2",
+        )}
+      >
         <p className="text-[0.6rem] uppercase tracking-[0.2em] text-foreground/50">
           {categoryLabel(product.category)}
         </p>

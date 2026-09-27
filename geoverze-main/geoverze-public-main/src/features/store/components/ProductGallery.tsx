@@ -3,10 +3,42 @@ import { useState } from "react";
 import { CoverArt } from "@/features/play/components/CoverArt";
 import { cn } from "@/lib/utils";
 
-import { mugGalleryForSlug } from "../data/mugGalleries";
+import {
+  mugGalleryFillsFrame,
+  mugGalleryFrameAspect,
+  mugGalleryForSlug,
+} from "../data/mugGalleries";
 import { categoryIcon } from "../data/taxonomy";
 import type { Product } from "../data/products";
-import { productImageForSlug } from "../data/productImages";
+import { isGlobeProductSlug, productImageForSlug } from "../data/productImages";
+
+function MugPhoto({
+  src,
+  alt,
+  fillsFrame,
+  square,
+  objectPosition,
+}: {
+  src: string;
+  alt: string;
+  fillsFrame: boolean;
+  square?: boolean;
+  objectPosition?: string;
+}) {
+  const fit = fillsFrame ? "object-cover" : "object-contain";
+  const img = (
+    <img
+      src={src}
+      alt={alt}
+      className={cn("absolute inset-0 h-full w-full", fit, !objectPosition && "object-center")}
+      style={objectPosition ? { objectPosition } : undefined}
+    />
+  );
+  if (square) {
+    return <span className="relative block aspect-square w-full">{img}</span>;
+  }
+  return img;
+}
 
 /**
  * Product imagery. Catalogue items use four procedural views; mug PDPs use
@@ -17,32 +49,61 @@ export function ProductGallery({ product }: { product: Product }) {
   const mugGallery = mugGalleryForSlug(product.slug);
   const productImage = productImageForSlug(product.slug);
   const stickerSheet = product.category === "stickers" && productImage ? productImage : undefined;
+  const globePhoto = isGlobeProductSlug(product.slug) && productImage ? productImage : undefined;
   const views = mugGallery
     ? mugGallery.map((view) => view.src)
     : stickerSheet
       ? [stickerSheet.src]
-      : [product.slug, `${product.slug}-detail`, `${product.slug}-angle`, `${product.slug}-macro`];
+      : globePhoto
+        ? [globePhoto.src, globePhoto.src, globePhoto.src, globePhoto.src]
+        : [
+            product.slug,
+            `${product.slug}-detail`,
+            `${product.slug}-angle`,
+            `${product.slug}-macro`,
+          ];
   const [active, setActive] = useState(0);
   const Icon = categoryIcon(product.category);
   const activeMug = mugGallery?.[active];
+  const mugFillsFrame = mugGalleryFillsFrame(product.slug);
 
   return (
     <div>
       <div className="overflow-hidden rounded-3xl border border-bronze/15 bg-charcoal/40">
         {activeMug ? (
-          <div className="relative aspect-[16/10] w-full bg-[oklch(0.12_0.006_62)]">
-            <img
+          <div
+            className={cn(
+              "relative w-full bg-[oklch(0.12_0.006_62)]",
+              mugGalleryFrameAspect(product.slug),
+            )}
+          >
+            <MugPhoto
               src={activeMug.src}
               alt={activeMug.alt}
+              fillsFrame={mugFillsFrame}
+              objectPosition={activeMug.objectPosition}
+            />
+          </div>
+        ) : globePhoto ? (
+          <div className="relative aspect-[16/10] w-full bg-[#0b0a09]">
+            <img
+              src={globePhoto.src}
+              alt={globePhoto.alt}
               className="absolute inset-0 h-full w-full object-contain"
+              style={{ objectPosition: globePhoto.objectPosition ?? "50% 50%" }}
             />
           </div>
         ) : stickerSheet ? (
-          <div className="relative aspect-[16/10] w-full bg-[oklch(0.12_0.006_62)]">
+          <div className="relative aspect-[16/10] w-full bg-[#f6f4ef]">
             <img
               src={stickerSheet.src}
               alt={stickerSheet.alt}
-              className="absolute inset-0 h-full w-full object-contain"
+              className={cn(
+                "absolute inset-0 h-full w-full",
+                stickerSheet.fillFrame
+                  ? "object-cover object-center"
+                  : "object-contain object-center",
+              )}
             />
           </div>
         ) : (
@@ -50,11 +111,16 @@ export function ProductGallery({ product }: { product: Product }) {
             art={views[active] ?? product.slug}
             icon={Icon}
             ratio="video"
-            {...(productImage && active === 0
+            {...(productImage && (active === 0 || globePhoto)
               ? {
                   imageSrc: productImage.src,
                   imageAlt: productImage.alt,
-                  ...(product.comingSoon ? { fit: "cover" as const } : {}),
+                  ...(product.comingSoon || productImage.fillFrame
+                    ? { fit: "cover" as const }
+                    : {}),
+                  ...(productImage.objectPosition
+                    ? { objectPosition: productImage.objectPosition }
+                    : {}),
                 }
               : {})}
           />
@@ -74,11 +140,40 @@ export function ProductGallery({ product }: { product: Product }) {
               aria-label={view.label}
               onClick={() => setActive(i)}
               className={cn(
-                "overflow-hidden rounded-xl border bg-[oklch(0.12_0.006_62)] transition-colors motion-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
+                "relative overflow-hidden rounded-xl border bg-[oklch(0.12_0.006_62)] transition-colors motion-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
                 i === active ? "border-bronze/60" : "border-bronze/12 hover:border-bronze/35",
               )}
             >
-              <img src={view.src} alt="" className="aspect-square h-full w-full object-contain" />
+              <MugPhoto
+                src={view.src}
+                alt=""
+                fillsFrame={mugFillsFrame}
+                objectPosition={view.objectPosition}
+                square
+              />
+            </button>
+          ))
+        ) : globePhoto ? (
+          views.map((_, i) => (
+            <button
+              key={`globe-view-${i}`}
+              type="button"
+              aria-pressed={i === active}
+              aria-label={`View ${i + 1}`}
+              onClick={() => setActive(i)}
+              className={cn(
+                "relative overflow-hidden rounded-xl border bg-[#0b0a09] transition-colors motion-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
+                i === active ? "border-bronze/60" : "border-bronze/12 hover:border-bronze/35",
+              )}
+            >
+              <span className="relative block aspect-square w-full">
+                <img
+                  src={globePhoto.src}
+                  alt=""
+                  className="absolute inset-0 h-full w-full object-contain"
+                  style={{ objectPosition: globePhoto.objectPosition ?? "50% 50%" }}
+                />
+              </span>
             </button>
           ))
         ) : stickerSheet ? (
@@ -86,12 +181,12 @@ export function ProductGallery({ product }: { product: Product }) {
             type="button"
             aria-pressed
             aria-label="Collection view"
-            className="overflow-hidden rounded-xl border border-bronze/60 bg-[oklch(0.12_0.006_62)]"
+            className="overflow-hidden rounded-xl border border-bronze/60 bg-[#f6f4ef]"
           >
             <img
               src={stickerSheet.src}
               alt=""
-              className="aspect-square h-full w-full object-contain"
+              className="aspect-square h-full w-full object-contain object-center"
             />
           </button>
         ) : (

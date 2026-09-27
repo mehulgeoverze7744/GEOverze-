@@ -69,7 +69,10 @@ export function QuickViewModal({
             ? {
                 imageSrc: productImage.src,
                 imageAlt: productImage.alt,
-                ...(product.comingSoon ? { fit: "cover" as const } : {}),
+                ...(product.comingSoon || productImage.fillFrame ? { fit: "cover" as const } : {}),
+                ...(productImage.objectPosition
+                  ? { objectPosition: productImage.objectPosition }
+                  : {}),
               }
             : {})}
         />

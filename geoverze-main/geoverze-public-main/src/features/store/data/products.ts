@@ -493,6 +493,7 @@ export const PRODUCTS: readonly Product[] = [
     price: 700,
     credits: 120,
     popularity: 82,
+    bestSeller: true,
     features: [],
     specs: [],
     tags: ["cartography"],
@@ -614,6 +615,7 @@ export const PRODUCTS: readonly Product[] = [
     rating: 4.7,
     reviews: 29,
     popularity: 82,
+    bestSeller: true,
     tags: ["collectible", "desk", "globe"],
   }),
   // -------------------------------------------------------------- digital
@@ -627,7 +629,6 @@ export const PRODUCTS: readonly Product[] = [
     rating: 4.8,
     reviews: 421,
     popularity: 97,
-    bestSeller: true,
     featured: true,
     features: ["600 curated questions", "Adaptive difficulty", "Unlocks instantly, yours forever"],
     specs: [
@@ -647,7 +648,6 @@ export const PRODUCTS: readonly Product[] = [
     rating: 4.9,
     reviews: 388,
     popularity: 96,
-    bestSeller: true,
     tags: ["flags", "instant"],
   }),
   make({
