@@ -131,6 +131,9 @@ export const LISTING_HIDDEN_PRODUCT_SLUGS = new Set([
   "expedition-enamel-mug",
   "desk-globe-mini",
   "explore-the-unknown",
+  "flag-sticker-pack",
+  "continent-sticker-set",
+  "vintage-expedition-sticker-collection",
 ]);
 
 export function isProductListed(product: Pick<Product, "slug">): boolean {
@@ -433,6 +436,66 @@ export const PRODUCTS: readonly Product[] = [
     stock: "in-stock",
     bestSeller: true,
     tags: ["exploration", "gift", "bestseller"],
+  }),
+  make({
+    slug: "the-explorers-trail",
+    name: "THE EXPLORER'S TRAIL",
+    tagline:
+      "A rugged collection of GEOverze exploration stickers inspired by mountains, coordinates, terrain and the spirit of discovery.",
+    description:
+      "A rugged collection of GEOverze exploration stickers inspired by mountains, coordinates, terrain and the spirit of discovery.",
+    category: "stickers",
+    price: 700,
+    credits: 120,
+    popularity: 88,
+    features: [],
+    specs: [],
+    tags: ["exploration"],
+  }),
+  make({
+    slug: "beyond-the-horizon",
+    name: "BEYOND THE HORIZON",
+    tagline:
+      "An adventurous sticker collection featuring globes, routes, mountains and navigation-inspired designs for curious explorers.",
+    description:
+      "An adventurous sticker collection featuring globes, routes, mountains and navigation-inspired designs for curious explorers.",
+    category: "stickers",
+    price: 700,
+    credits: 120,
+    popularity: 86,
+    features: [],
+    specs: [],
+    tags: ["exploration"],
+  }),
+  make({
+    slug: "the-atlas-archive",
+    name: "THE ATLAS ARCHIVE",
+    tagline:
+      "A vintage-inspired collection of maps, globes, expedition graphics and classic geographic exploration.",
+    description:
+      "A vintage-inspired collection of maps, globes, expedition graphics and classic geographic exploration.",
+    category: "stickers",
+    price: 700,
+    credits: 120,
+    popularity: 84,
+    features: [],
+    specs: [],
+    tags: ["exploration"],
+  }),
+  make({
+    slug: "the-cartographers-collection",
+    name: "THE CARTOGRAPHER'S COLLECTION",
+    tagline:
+      "A refined collection of cartography-inspired stickers featuring maps, compasses, coordinates and expedition imagery.",
+    description:
+      "A refined collection of cartography-inspired stickers featuring maps, compasses, coordinates and expedition imagery.",
+    category: "stickers",
+    price: 700,
+    credits: 120,
+    popularity: 82,
+    features: [],
+    specs: [],
+    tags: ["cartography"],
   }),
   make({
     slug: "bronze-world-map-poster",
@@ -934,10 +997,14 @@ export function productsInGroup(group: StoreGroupId): readonly Product[] {
 /** Same-category neighbours, falling back to the same group. */
 export function relatedProducts(product: Product, limit = 4): readonly Product[] {
   const sameCategory = PRODUCTS.filter(
-    (p) => p.slug !== product.slug && p.category === product.category,
+    (p) => p.slug !== product.slug && p.category === product.category && isProductListed(p),
   );
   const sameGroup = PRODUCTS.filter(
-    (p) => p.slug !== product.slug && p.group === product.group && p.category !== product.category,
+    (p) =>
+      p.slug !== product.slug &&
+      p.group === product.group &&
+      p.category !== product.category &&
+      isProductListed(p),
   );
   return [...sameCategory, ...sameGroup].slice(0, limit);
 }

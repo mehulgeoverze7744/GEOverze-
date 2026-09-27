@@ -3,6 +3,7 @@ import celestialMeridianMug from "@/assets/geostore/celestial-meridian-mug.jpg";
 import continentStickerSet from "@/assets/geostore/continent-sticker-set.jpg";
 import deskGlobeMini from "@/assets/geostore/desk-globe-mini.jpg";
 import atlasEncyclopedia from "@/assets/geostore/atlas-encyclopedia.jpg";
+import beyondTheHorizon from "@/assets/geostore/beyond-the-horizon.jpg";
 import expeditionEnamelMug from "@/assets/geostore/expedition-enamel-mug.jpg";
 import flagStickerPack from "@/assets/geostore/flag-sticker-pack.jpg";
 import goldenAtlasMug from "@/assets/geostore/golden-atlas-mug.jpg";
@@ -11,6 +12,9 @@ import oldWorldMug from "@/assets/geostore/old-world-mug.jpg";
 import orbitalHorizonMug from "@/assets/geostore/orbital-horizon-mug.jpg";
 import polarBeanie from "@/assets/geostore/polar-beanie.jpg";
 import terraContourMug from "@/assets/geostore/terra-contour-mug.jpg";
+import theAtlasArchive from "@/assets/geostore/the-atlas-archive.jpg";
+import theCartographersCollection from "@/assets/geostore/the-cartographers-collection.jpg";
+import theExplorersTrail from "@/assets/geostore/the-explorers-trail.jpg";
 import vintageExpeditionStickerCollection from "@/assets/geostore/vintage-expedition-sticker-collection.jpg";
 
 import { merchProductById } from "@/features/marketing/data/geostoreMerch";
@@ -65,6 +69,22 @@ const PRODUCT_IMAGES: Readonly<Record<string, ProductImage>> = {
   "vintage-expedition-sticker-collection": {
     src: vintageExpeditionStickerCollection,
     alt: "GEOverze Vintage Expedition Sticker Collection — explorer badges, maps and navigation emblems",
+  },
+  "the-explorers-trail": {
+    src: theExplorersTrail,
+    alt: "GEOverze THE EXPLORER'S TRAIL sticker collection",
+  },
+  "beyond-the-horizon": {
+    src: beyondTheHorizon,
+    alt: "GEOverze BEYOND THE HORIZON sticker collection",
+  },
+  "the-atlas-archive": {
+    src: theAtlasArchive,
+    alt: "GEOverze THE ATLAS ARCHIVE sticker collection",
+  },
+  "the-cartographers-collection": {
+    src: theCartographersCollection,
+    alt: "GEOverze THE CARTOGRAPHER'S COLLECTION sticker collection",
   },
   "field-notebook": {
     src: atlasEncyclopedia,

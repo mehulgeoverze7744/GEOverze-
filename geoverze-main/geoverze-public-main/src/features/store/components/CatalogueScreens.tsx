@@ -639,36 +639,70 @@ export function ProductScreen() {
                 </GeoButton>
               </div>
 
-              {product.features.length > 0 ? (
-                <ul className="space-y-2 border-t border-bronze/10 pt-6">
-                  {product.features.map((feature) => (
-                    <li key={feature} className="text-xs text-foreground/60">
-                      · {feature}
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-
-              {product.specs.length > 0 ? (
-                <dl className="grid grid-cols-2 gap-4 border-t border-bronze/10 pt-6">
-                  {product.specs.map((spec) => (
-                    <div key={spec.label}>
-                      <dt className="text-[0.58rem] uppercase tracking-[0.2em] text-foreground/50">
-                        {spec.label}
-                      </dt>
-                      <dd className="mt-1 text-xs text-foreground/70">{spec.value}</dd>
+              {product.category === "stickers" ? (
+                <div className="space-y-6 border-t border-bronze/10 pt-6">
+                  <div>
+                    <h3 className="text-[0.58rem] uppercase tracking-[0.2em] text-foreground/50">
+                      Description
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-foreground/60">
+                      {product.description}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="text-[0.58rem] uppercase tracking-[0.2em] text-foreground/50">
+                      Collection Details
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-foreground/60">
+                      A GEOverze sticker collection.
+                    </p>
+                  </div>
+                  {product.comingSoon || purchaseLocked ? null : (
+                    <div>
+                      <h3 className="text-[0.58rem] uppercase tracking-[0.2em] text-foreground/50">
+                        Shipping
+                      </h3>
+                      <p className="mt-2 inline-flex items-center gap-2 text-[0.66rem] uppercase tracking-[0.16em] text-foreground/50">
+                        <Truck className="h-3.5 w-3.5" />
+                        Ships worldwide in 4 – 12 days
+                      </p>
                     </div>
-                  ))}
-                </dl>
-              ) : null}
+                  )}
+                </div>
+              ) : (
+                <>
+                  {product.features.length > 0 ? (
+                    <ul className="space-y-2 border-t border-bronze/10 pt-6">
+                      {product.features.map((feature) => (
+                        <li key={feature} className="text-xs text-foreground/60">
+                          · {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
 
-              {product.comingSoon || purchaseLocked ? null : (
-                <p className="inline-flex items-center gap-2 border-t border-bronze/10 pt-6 text-[0.66rem] uppercase tracking-[0.16em] text-foreground/50">
-                  <Truck className="h-3.5 w-3.5" />
-                  {product.group === "merch"
-                    ? "Ships worldwide in 4 – 12 days"
-                    : "Instant delivery"}
-                </p>
+                  {product.specs.length > 0 ? (
+                    <dl className="grid grid-cols-2 gap-4 border-t border-bronze/10 pt-6">
+                      {product.specs.map((spec) => (
+                        <div key={spec.label}>
+                          <dt className="text-[0.58rem] uppercase tracking-[0.2em] text-foreground/50">
+                            {spec.label}
+                          </dt>
+                          <dd className="mt-1 text-xs text-foreground/70">{spec.value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  ) : null}
+
+                  {product.comingSoon || purchaseLocked ? null : (
+                    <p className="inline-flex items-center gap-2 border-t border-bronze/10 pt-6 text-[0.66rem] uppercase tracking-[0.16em] text-foreground/50">
+                      <Truck className="h-3.5 w-3.5" />
+                      {product.group === "merch"
+                        ? "Ships worldwide in 4 – 12 days"
+                        : "Instant delivery"}
+                    </p>
+                  )}
+                </>
               )}
             </AnimatedSection>
           </div>
