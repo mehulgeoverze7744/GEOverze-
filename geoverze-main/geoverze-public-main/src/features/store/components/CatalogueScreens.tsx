@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link, useParams } from "@tanstack/react-router";
 import { Coins, Heart, Lock, ShoppingBag, Truck } from "lucide-react";
 
@@ -22,6 +22,7 @@ import {
 } from "@/features/marketing/data/geostoreMerch";
 
 import { ComingSoonLockChip } from "./ComingSoonLockChip";
+import { GeostoreProductPageBackground } from "./GeostoreProductPageBackground";
 import { MerchProductScreen } from "./MerchProductScreen";
 import { ProductCard } from "./ProductCard";
 import { ProductGallery } from "./ProductGallery";
@@ -279,7 +280,7 @@ function MerchCategoryShelf({ slug }: { slug: "tshirts" | "hoodies" }) {
                   key={product.id}
                   product={product}
                   fitNaturalImage={isTshirts}
-                  seamlessSurface={slug === "hoodies"}
+                  seamlessSurface
                 />
               ))}
             </div>
@@ -426,6 +427,15 @@ export function CategoryScreen() {
   return <CatalogCategoryShelf slug={slug} />;
 }
 
+function ProductPageFrame({ children }: { children: ReactNode }) {
+  return (
+    <>
+      <GeostoreProductPageBackground />
+      <div className="relative z-10">{children}</div>
+    </>
+  );
+}
+
 /** Product detail: gallery, variants, pricing and related items. */
 export function ProductScreen() {
   const { slug } = useParams({ from: "/geostore/product/$slug" });
@@ -449,29 +459,37 @@ export function ProductScreen() {
     if (product) view(product.slug);
   }, [product, view]);
 
-  if (merch) return <MerchProductScreen product={merch} />;
+  if (merch) {
+    return (
+      <ProductPageFrame>
+        <MerchProductScreen product={merch} />
+      </ProductPageFrame>
+    );
+  }
 
   if (!product) {
     return (
-      <PageShell>
-        <PageHeader
-          eyebrow="GEOstore"
-          title="We couldn't find that item"
-          description="It may have sold out or been retired from the collection."
-          breadcrumb={[{ label: "GEOstore", to: "/geostore" }, { label: "Not found" }]}
-        />
-        <SectionContainer>
-          <EmptyState
-            icon={ShoppingBag}
-            title="Item unavailable"
-            action={
-              <GeoButton asChild variant="solid">
-                <Link to="/geostore/browse">Browse the catalogue</Link>
-              </GeoButton>
-            }
+      <ProductPageFrame>
+        <PageShell>
+          <PageHeader
+            eyebrow="GEOstore"
+            title="We couldn't find that item"
+            description="It may have sold out or been retired from the collection."
+            breadcrumb={[{ label: "GEOstore", to: "/geostore" }, { label: "Not found" }]}
           />
-        </SectionContainer>
-      </PageShell>
+          <SectionContainer>
+            <EmptyState
+              icon={ShoppingBag}
+              title="Item unavailable"
+              action={
+                <GeoButton asChild variant="solid">
+                  <Link to="/geostore/browse">Browse the catalogue</Link>
+                </GeoButton>
+              }
+            />
+          </SectionContainer>
+        </PageShell>
+      </ProductPageFrame>
     );
   }
 
@@ -486,179 +504,185 @@ export function ProductScreen() {
   const balanceLabel = !authReady ? "…" : signedIn ? String(balance ?? 0) : null;
 
   return (
-    <PageShell>
-      <PageHeader
-        eyebrow={categoryById(product.category)?.label ?? "GEOstore"}
-        title={product.name}
-        description={product.tagline}
-        breadcrumb={[
-          { label: "GEOstore", to: "/geostore" },
-          { label: "Browse", to: "/geostore/browse" },
-          { label: product.name },
-        ]}
-      />
-      <SectionContainer size="wide">
-        <div className="grid gap-10 lg:grid-cols-2">
-          <AnimatedSection>
-            <ProductGallery product={product} />
-          </AnimatedSection>
+    <ProductPageFrame>
+      <PageShell>
+        <PageHeader
+          eyebrow={categoryById(product.category)?.label ?? "GEOstore"}
+          title={product.name}
+          description={product.tagline}
+          breadcrumb={[
+            { label: "GEOstore", to: "/geostore" },
+            { label: "Browse", to: "/geostore/browse" },
+            { label: product.name },
+          ]}
+        />
+        <SectionContainer size="wide">
+          <div className="grid gap-10 lg:grid-cols-2">
+            <AnimatedSection>
+              <ProductGallery product={product} />
+            </AnimatedSection>
 
-          <AnimatedSection delay={80} className="space-y-6">
-            {purchaseLocked ? (
-              <div className="flex items-start gap-3 rounded-2xl border border-bronze/20 bg-charcoal/50 px-4 py-3">
-                <Lock className="mt-0.5 h-4 w-4 shrink-0 text-bronze" strokeWidth={1.6} />
-                <div>
-                  <ComingSoonLockChip />
-                  <p className="mt-1.5 text-xs leading-relaxed text-foreground/55">
-                    This item is not available to purchase yet.
-                  </p>
+            <AnimatedSection delay={80} className="space-y-6">
+              {purchaseLocked ? (
+                <div className="flex items-start gap-3 rounded-2xl border border-bronze/20 bg-charcoal/50 px-4 py-3">
+                  <Lock className="mt-0.5 h-4 w-4 shrink-0 text-bronze" strokeWidth={1.6} />
+                  <div>
+                    <ComingSoonLockChip />
+                    <p className="mt-1.5 text-xs leading-relaxed text-foreground/55">
+                      This item is not available to purchase yet.
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ) : null}
-            <div className="flex flex-wrap items-center gap-3">
-              {product.comingSoon ? (
-                <ComingSoonLockChip />
-              ) : (
-                <>
-                  <RatingStars rating={product.rating} reviews={product.reviews} />
-                  <StockPill stock={product.stock} />
-                  {product.limited ? (
-                    <span className="rounded-full border border-bronze/40 px-2.5 py-0.5 text-[0.6rem] uppercase tracking-[0.16em] text-bronze">
-                      Limited run
-                    </span>
-                  ) : null}
-                </>
-              )}
-            </div>
-
-            {product.comingSoon ? null : <PriceTag product={product} size="lg" />}
-            {!product.comingSoon && !purchaseLocked && product.credits !== null ? (
-              <p className="inline-flex items-center gap-2 text-xs text-foreground/50">
-                <Coins className="h-3.5 w-3.5 text-bronze" strokeWidth={1.6} />
-                {balanceLabel === null ? (
-                  <>Sign in to see your credit balance.</>
+              ) : null}
+              <div className="flex flex-wrap items-center gap-3">
+                {product.comingSoon ? (
+                  <ComingSoonLockChip />
                 ) : (
                   <>
-                    You hold {balanceLabel} credits
-                    {balance !== null && product.credits <= balance
-                      ? " — enough to claim this now."
-                      : "."}
+                    <RatingStars rating={product.rating} reviews={product.reviews} />
+                    <StockPill stock={product.stock} />
+                    {product.limited ? (
+                      <span className="rounded-full border border-bronze/40 px-2.5 py-0.5 text-[0.6rem] uppercase tracking-[0.16em] text-bronze">
+                        Limited run
+                      </span>
+                    ) : null}
                   </>
                 )}
-              </p>
-            ) : null}
+              </div>
 
-            <p className="text-sm leading-relaxed text-foreground/60">{product.description}</p>
+              {product.comingSoon ? null : <PriceTag product={product} size="lg" />}
+              {!product.comingSoon && !purchaseLocked && product.credits !== null ? (
+                <p className="inline-flex items-center gap-2 text-xs text-foreground/50">
+                  <Coins className="h-3.5 w-3.5 text-bronze" strokeWidth={1.6} />
+                  {balanceLabel === null ? (
+                    <>Sign in to see your credit balance.</>
+                  ) : (
+                    <>
+                      You hold {balanceLabel} credits
+                      {balance !== null && product.credits <= balance
+                        ? " — enough to claim this now."
+                        : "."}
+                    </>
+                  )}
+                </p>
+              ) : null}
 
-            {product.comingSoon || purchaseLocked ? null : (
-              <VariantPicker product={product} value={selected} onChange={setOptions} />
-            )}
+              <p className="text-sm leading-relaxed text-foreground/60">{product.description}</p>
 
-            <div className="flex flex-wrap items-center gap-3">
-              {purchaseLocked ? (
-                <GeoButton variant="dark" disabled>
-                  <Lock className="mr-2 h-4 w-4" />
-                  Coming soon
-                </GeoButton>
-              ) : product.comingSoon ? null : (
-                <>
-                  <div className="flex items-center gap-2 rounded-xl border border-bronze/15 px-3 py-2">
-                    <button
-                      type="button"
-                      aria-label="Decrease quantity"
-                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                      className="text-foreground/55 hover:text-bronze-glow"
-                    >
-                      −
-                    </button>
-                    <span className="w-6 text-center text-sm">{quantity}</span>
-                    <button
-                      type="button"
-                      aria-label="Increase quantity"
-                      onClick={() => setQuantity((q) => Math.min(10, q + 1))}
-                      className="text-foreground/55 hover:text-bronze-glow"
-                    >
-                      +
-                    </button>
-                  </div>
-                  <GeoButton
-                    variant="solid"
-                    disabled={product.stock === "sold-out" || isOwned || isPurchasing(product.slug)}
-                    onClick={() => {
-                      if (isPurchaseLocked(product)) return;
-                      if (canPurchaseProduction && catalogueProduct?.serverProductId) {
-                        void purchase({
-                          slug: product.slug,
-                          name: product.name,
-                          serverProductId: catalogueProduct.serverProductId,
-                        });
-                        return;
-                      }
-                      addProduct(product, selected, quantity);
-                    }}
-                  >
-                    <ShoppingBag className="mr-2 h-4 w-4" />
-                    {isPurchasing(product.slug)
-                      ? "Claiming…"
-                      : isOwned
-                        ? "Already yours"
-                        : product.stock === "sold-out"
-                          ? "Sold out"
-                          : product.price === null
-                            ? canPurchaseProduction
-                              ? "Claim with credits"
-                              : "Unavailable"
-                            : "Add to cart"}
-                  </GeoButton>
-                </>
+              {product.comingSoon || purchaseLocked ? null : (
+                <VariantPicker product={product} value={selected} onChange={setOptions} />
               )}
-              <GeoButton variant="ghost" onClick={() => wishlistToggle(product.slug)}>
-                <Heart className={saved ? "mr-2 h-4 w-4 fill-current" : "mr-2 h-4 w-4"} />
-                {saved ? "Saved" : "Save"}
-              </GeoButton>
-            </div>
 
-            {product.features.length > 0 ? (
-              <ul className="space-y-2 border-t border-bronze/10 pt-6">
-                {product.features.map((feature) => (
-                  <li key={feature} className="text-xs text-foreground/60">
-                    · {feature}
-                  </li>
-                ))}
-              </ul>
-            ) : null}
+              <div className="flex flex-wrap items-center gap-3">
+                {purchaseLocked ? (
+                  <GeoButton variant="dark" disabled>
+                    <Lock className="mr-2 h-4 w-4" />
+                    Coming soon
+                  </GeoButton>
+                ) : product.comingSoon ? null : (
+                  <>
+                    <div className="flex items-center gap-2 rounded-xl border border-bronze/15 px-3 py-2">
+                      <button
+                        type="button"
+                        aria-label="Decrease quantity"
+                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                        className="text-foreground/55 hover:text-bronze-glow"
+                      >
+                        −
+                      </button>
+                      <span className="w-6 text-center text-sm">{quantity}</span>
+                      <button
+                        type="button"
+                        aria-label="Increase quantity"
+                        onClick={() => setQuantity((q) => Math.min(10, q + 1))}
+                        className="text-foreground/55 hover:text-bronze-glow"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <GeoButton
+                      variant="solid"
+                      disabled={
+                        product.stock === "sold-out" || isOwned || isPurchasing(product.slug)
+                      }
+                      onClick={() => {
+                        if (isPurchaseLocked(product)) return;
+                        if (canPurchaseProduction && catalogueProduct?.serverProductId) {
+                          void purchase({
+                            slug: product.slug,
+                            name: product.name,
+                            serverProductId: catalogueProduct.serverProductId,
+                          });
+                          return;
+                        }
+                        addProduct(product, selected, quantity);
+                      }}
+                    >
+                      <ShoppingBag className="mr-2 h-4 w-4" />
+                      {isPurchasing(product.slug)
+                        ? "Claiming…"
+                        : isOwned
+                          ? "Already yours"
+                          : product.stock === "sold-out"
+                            ? "Sold out"
+                            : product.price === null
+                              ? canPurchaseProduction
+                                ? "Claim with credits"
+                                : "Unavailable"
+                              : "Add to cart"}
+                    </GeoButton>
+                  </>
+                )}
+                <GeoButton variant="ghost" onClick={() => wishlistToggle(product.slug)}>
+                  <Heart className={saved ? "mr-2 h-4 w-4 fill-current" : "mr-2 h-4 w-4"} />
+                  {saved ? "Saved" : "Save"}
+                </GeoButton>
+              </div>
 
-            {product.specs.length > 0 ? (
-              <dl className="grid grid-cols-2 gap-4 border-t border-bronze/10 pt-6">
-                {product.specs.map((spec) => (
-                  <div key={spec.label}>
-                    <dt className="text-[0.58rem] uppercase tracking-[0.2em] text-foreground/50">
-                      {spec.label}
-                    </dt>
-                    <dd className="mt-1 text-xs text-foreground/70">{spec.value}</dd>
-                  </div>
-                ))}
-              </dl>
-            ) : null}
+              {product.features.length > 0 ? (
+                <ul className="space-y-2 border-t border-bronze/10 pt-6">
+                  {product.features.map((feature) => (
+                    <li key={feature} className="text-xs text-foreground/60">
+                      · {feature}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
 
-            {product.comingSoon || purchaseLocked ? null : (
-              <p className="inline-flex items-center gap-2 border-t border-bronze/10 pt-6 text-[0.66rem] uppercase tracking-[0.16em] text-foreground/50">
-                <Truck className="h-3.5 w-3.5" />
-                {product.group === "merch" ? "Ships worldwide in 4 – 12 days" : "Instant delivery"}
-              </p>
-            )}
-          </AnimatedSection>
-        </div>
+              {product.specs.length > 0 ? (
+                <dl className="grid grid-cols-2 gap-4 border-t border-bronze/10 pt-6">
+                  {product.specs.map((spec) => (
+                    <div key={spec.label}>
+                      <dt className="text-[0.58rem] uppercase tracking-[0.2em] text-foreground/50">
+                        {spec.label}
+                      </dt>
+                      <dd className="mt-1 text-xs text-foreground/70">{spec.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              ) : null}
 
-        <ProductRail title="You might also like" columns={4}>
-          {relatedProducts(product, 4).map(card)}
-        </ProductRail>
-      </SectionContainer>
-      <QuickViewModal
-        product={quickView}
-        onClose={() => setQuickView(null)}
-        onAdd={(p, o) => addProduct(p, o)}
-      />
-    </PageShell>
+              {product.comingSoon || purchaseLocked ? null : (
+                <p className="inline-flex items-center gap-2 border-t border-bronze/10 pt-6 text-[0.66rem] uppercase tracking-[0.16em] text-foreground/50">
+                  <Truck className="h-3.5 w-3.5" />
+                  {product.group === "merch"
+                    ? "Ships worldwide in 4 – 12 days"
+                    : "Instant delivery"}
+                </p>
+              )}
+            </AnimatedSection>
+          </div>
+
+          <ProductRail title="You might also like" columns={4}>
+            {relatedProducts(product, 4).map(card)}
+          </ProductRail>
+        </SectionContainer>
+        <QuickViewModal
+          product={quickView}
+          onClose={() => setQuickView(null)}
+          onAdd={(p, o) => addProduct(p, o)}
+        />
+      </PageShell>
+    </ProductPageFrame>
   );
 }

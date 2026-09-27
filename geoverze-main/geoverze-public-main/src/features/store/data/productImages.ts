@@ -1,18 +1,19 @@
-import antiqueExpeditionMug from "@/assets/geostore/antique-expedition-mug.jpg";
 import cartographerCap from "@/assets/geostore/cartographer-cap.jpg";
+import celestialMeridianMug from "@/assets/geostore/celestial-meridian-mug.jpg";
 import continentStickerSet from "@/assets/geostore/continent-sticker-set.jpg";
 import deskGlobeMini from "@/assets/geostore/desk-globe-mini.jpg";
 import atlasEncyclopedia from "@/assets/geostore/atlas-encyclopedia.jpg";
 import expeditionEnamelMug from "@/assets/geostore/expedition-enamel-mug.jpg";
 import flagStickerPack from "@/assets/geostore/flag-sticker-pack.jpg";
+import goldenAtlasMug from "@/assets/geostore/golden-atlas-mug.jpg";
 import hoodieExploreTheUnknown from "@/assets/geostore/hoodie-explore-the-unknown.jpg";
-import latitudeLongitudeMug from "@/assets/geostore/latitude-longitude-mug.jpg";
-import navigatorCompassMug from "@/assets/geostore/navigator-compass-mug.jpg";
 import oldWorldMug from "@/assets/geostore/old-world-mug.jpg";
+import orbitalHorizonMug from "@/assets/geostore/orbital-horizon-mug.jpg";
 import polarBeanie from "@/assets/geostore/polar-beanie.jpg";
-import tshirtKnowTheCapital from "@/assets/geostore/tshirt-i-know-the-capital.jpg";
+import terraContourMug from "@/assets/geostore/terra-contour-mug.jpg";
 import vintageExpeditionStickerCollection from "@/assets/geostore/vintage-expedition-sticker-collection.jpg";
-import worldMapMug from "@/assets/geostore/world-map-mug.jpg";
+
+import { merchProductById } from "@/features/marketing/data/geostoreMerch";
 
 /** Product photography overrides for GEOstore cards (slug-keyed). */
 export type ProductImage = {
@@ -37,21 +38,21 @@ const PRODUCT_IMAGES: Readonly<Record<string, ProductImage>> = {
     src: expeditionEnamelMug,
     alt: "GEOverze Expedition Enamel Mug — camp-grade enamel with bronze rim",
   },
-  "navigator-compass-mug": {
-    src: navigatorCompassMug,
-    alt: "GEOverze Navigator Compass Mug — dark ceramic with bronze compass emblem",
+  "orbital-horizon-mug": {
+    src: orbitalHorizonMug,
+    alt: "GEOverze Orbital Horizon Mug — deep charcoal ceramic with a planetary arc and orbital lines",
   },
-  "world-map-mug": {
-    src: worldMapMug,
-    alt: "GEOverze World Map Mug — antique bronze world map on deep charcoal ceramic",
+  "celestial-meridian-mug": {
+    src: celestialMeridianMug,
+    alt: "GEOverze Celestial Meridian Mug — charcoal ceramic with sweeping orbital lines and a star motif",
   },
-  "latitude-longitude-mug": {
-    src: latitudeLongitudeMug,
-    alt: "GEOverze Latitude Longitude Mug — bronze geographic grid on matte charcoal ceramic",
+  "terra-contour-mug": {
+    src: terraContourMug,
+    alt: "GEOverze Terra Contour Mug — dark ceramic with topographic contour lines and bronze detailing",
   },
-  "antique-expedition-mug": {
-    src: antiqueExpeditionMug,
-    alt: "GEOverze Antique Expedition Mug — vintage map glaze inspired by old-world exploration",
+  "golden-atlas-mug": {
+    src: goldenAtlasMug,
+    alt: "GEOverze Golden Atlas Mug — bronze world map on deep charcoal ceramic",
   },
   "flag-sticker-pack": {
     src: flagStickerPack,
@@ -85,10 +86,6 @@ const PRODUCT_IMAGES: Readonly<Record<string, ProductImage>> = {
     src: "/assets/store/Accessories/Globes/Floating%20Globe%20image.png",
     alt: "GEOverze Blue Ocean Globe — modern blue ocean globe with wooden base",
   },
-  "i-know-the-capital-you-know-the-vibes": {
-    src: tshirtKnowTheCapital,
-    alt: "GEOverze I Know The Capital You Know The Vibes T-shirt — black tee with capital-city artwork",
-  },
   "explore-the-unknown": {
     src: hoodieExploreTheUnknown,
     alt: "GEOverze Explore The Unknown Hoodie — black hoodie with world map and compass artwork",
@@ -96,5 +93,9 @@ const PRODUCT_IMAGES: Readonly<Record<string, ProductImage>> = {
 };
 
 export function productImageForSlug(slug: string): ProductImage | undefined {
-  return PRODUCT_IMAGES[slug];
+  const mapped = PRODUCT_IMAGES[slug];
+  if (mapped) return mapped;
+  const merch = merchProductById(slug);
+  if (merch) return { src: merch.image, alt: merch.alt };
+  return undefined;
 }

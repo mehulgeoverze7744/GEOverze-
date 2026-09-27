@@ -5,12 +5,18 @@
  * return. Money is stored in minor units (cents) and credits are whole GEO
  * credits, so a product can be money-only, credits-only or hybrid.
  */
+import { merchProductById } from "@/features/marketing/data/geostoreMerch";
+
 import {
   categoryById,
   isComingSoonCategory,
   type StoreCategoryId,
   type StoreGroupId,
 } from "./taxonomy";
+
+/** Shared with merch shelves — do not duplicate listing fields. */
+const knowTheCapitalMerch = merchProductById("tshirt-know-the-capital");
+const everyPointHoodieMerch = merchProductById("hoodie-every-point-has-a-story");
 
 export type StockState = "in-stock" | "low" | "preorder" | "sold-out";
 export type PriceMode = "money" | "credits" | "hybrid";
@@ -124,6 +130,7 @@ export const LISTING_HIDDEN_PRODUCT_SLUGS = new Set([
   "old-world-mug",
   "expedition-enamel-mug",
   "desk-globe-mini",
+  "explore-the-unknown",
 ]);
 
 export function isProductListed(product: Pick<Product, "slug">): boolean {
@@ -137,13 +144,13 @@ export function isPurchaseLocked(product: Pick<Product, "comingSoon" | "category
 export const PRODUCTS: readonly Product[] = [
   // ---------------------------------------------------------------- merch
   make({
-    slug: "i-know-the-capital-you-know-the-vibes",
-    name: "I KNOW THE CAPITAL, YOU KNOW THE VIBES.",
-    tagline:
-      "A bold geography statement tee for explorers who know their capitals — and know the vibes.",
+    slug: knowTheCapitalMerch?.id ?? "tshirt-know-the-capital",
+    name: knowTheCapitalMerch?.title ?? "I KNOW THE CAPITAL. YOU KNOW THE VIBES.",
+    tagline: knowTheCapitalMerch?.tagline ?? "Capital cities, confident energy.",
+    description: knowTheCapitalMerch?.tagline ?? "Capital cities, confident energy.",
     category: "tshirts",
-    price: 3_600,
-    credits: 360,
+    price: knowTheCapitalMerch?.price ?? 3_700,
+    credits: knowTheCapitalMerch?.credits ?? 300,
     rating: 4.8,
     reviews: 214,
     popularity: 98,
@@ -191,6 +198,32 @@ export const PRODUCTS: readonly Product[] = [
     tags: ["apparel", "continents"],
   }),
   make({
+    slug: everyPointHoodieMerch?.id ?? "hoodie-every-point-has-a-story",
+    name: everyPointHoodieMerch?.title ?? "EVERY POINT HAS A STORY",
+    tagline: everyPointHoodieMerch?.tagline ?? "Every mapped point carries a story.",
+    description: everyPointHoodieMerch?.tagline ?? "Every mapped point carries a story.",
+    category: "hoodies",
+    price: everyPointHoodieMerch?.price ?? 7_400,
+    credits: everyPointHoodieMerch?.credits ?? 700,
+    rating: 4.9,
+    reviews: 178,
+    popularity: 95,
+    bestSeller: true,
+    featured: true,
+    options: [APPAREL_SIZES, APPAREL_COLOURS],
+    features: [
+      "420 gsm brushed fleece",
+      "Lookbook print across the garment",
+      "Double-lined hood with metal tips",
+    ],
+    specs: [
+      { label: "Material", value: "80% cotton / 20% recycled polyester" },
+      { label: "Weight", value: "420 gsm" },
+      { label: "Fit", value: "Oversized" },
+    ],
+    tags: ["apparel", "winter", "bestseller"],
+  }),
+  make({
     slug: "explore-the-unknown",
     name: "EXPLORE THE UNKNOWN",
     tagline:
@@ -201,8 +234,6 @@ export const PRODUCTS: readonly Product[] = [
     rating: 4.9,
     reviews: 178,
     popularity: 95,
-    bestSeller: true,
-    featured: true,
     options: [APPAREL_SIZES, APPAREL_COLOURS],
     features: [
       "420 gsm brushed fleece",
@@ -285,51 +316,83 @@ export const PRODUCTS: readonly Product[] = [
     tags: ["desk", "outdoor"],
   }),
   make({
-    slug: "navigator-compass-mug",
-    name: "Navigator Compass Mug",
-    tagline: "Dark ceramic with a bronze compass emblem.",
+    slug: "orbital-horizon-mug",
+    name: "Orbital Horizon Mug",
+    tagline:
+      "A deep charcoal mug featuring an elegant planetary arc, fine orbital lines and a subtle GEOverze mark.",
+    description:
+      "A deep charcoal mug featuring an elegant planetary arc, fine orbital lines and a subtle GEOverze mark.",
     category: "mugs",
-    price: 2_400,
-    credits: 240,
+    price: 1_500,
+    credits: 200,
     rating: 4.6,
     reviews: 72,
     popularity: 80,
+    features: ["350 ml stoneware", "Dishwasher and microwave safe", "Bronze rim detailing"],
+    specs: [
+      { label: "Capacity", value: "350 ml" },
+      { label: "Material", value: "Stoneware" },
+    ],
     tags: ["desk", "gift"],
   }),
   make({
-    slug: "world-map-mug",
-    name: "World Map Mug",
-    tagline: "Antique bronze world map on deep charcoal ceramic.",
+    slug: "celestial-meridian-mug",
+    name: "Celestial Meridian Mug",
+    tagline:
+      "A refined celestial design with sweeping orbital lines, a central star motif and the GEOverze mark.",
+    description:
+      "A refined celestial design with sweeping orbital lines, a central star motif and the GEOverze mark.",
     category: "mugs",
-    price: 2_800,
-    credits: 280,
+    price: 1_500,
+    credits: 200,
     rating: 4.7,
     reviews: 96,
     popularity: 75,
+    features: ["350 ml stoneware", "Dishwasher and microwave safe", "Bronze rim detailing"],
+    specs: [
+      { label: "Capacity", value: "350 ml" },
+      { label: "Material", value: "Stoneware" },
+    ],
     tags: ["desk", "gift"],
   }),
   make({
-    slug: "latitude-longitude-mug",
-    name: "Latitude Longitude Mug",
-    tagline: "Geographic grid lines in bronze on matte charcoal ceramic.",
+    slug: "terra-contour-mug",
+    name: "Terra Contour Mug",
+    tagline:
+      "A dark, sophisticated mug inspired by topographic contours, with flowing terrain lines and bronze detailing.",
+    description:
+      "A dark, sophisticated mug inspired by topographic contours, with flowing terrain lines and bronze detailing.",
     category: "mugs",
-    price: 2_700,
-    credits: 270,
+    price: 1_500,
+    credits: 200,
     rating: 4.5,
     reviews: 64,
     popularity: 70,
+    features: ["350 ml stoneware", "Dishwasher and microwave safe", "Bronze rim detailing"],
+    specs: [
+      { label: "Capacity", value: "350 ml" },
+      { label: "Material", value: "Stoneware" },
+    ],
     tags: ["desk", "gift"],
   }),
   make({
-    slug: "antique-expedition-mug",
-    name: "Antique Expedition Mug",
-    tagline: "Vintage map glaze inspired by old-world exploration.",
+    slug: "golden-atlas-mug",
+    name: "Golden Atlas Mug",
+    tagline:
+      "A premium world-map design featuring detailed continents in warm bronze against a deep charcoal finish.",
+    description:
+      "A premium world-map design featuring detailed continents in warm bronze against a deep charcoal finish.",
     category: "mugs",
-    price: 3_000,
-    credits: 300,
+    price: 1_500,
+    credits: 200,
     rating: 4.8,
     reviews: 88,
     popularity: 65,
+    features: ["350 ml stoneware", "Dishwasher and microwave safe", "Bronze rim detailing"],
+    specs: [
+      { label: "Capacity", value: "350 ml" },
+      { label: "Material", value: "Stoneware" },
+    ],
     tags: ["desk", "gift"],
   }),
   make({

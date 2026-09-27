@@ -29,7 +29,6 @@ import {
 import { cn } from "@/lib/utils";
 
 import { useStoreActions } from "../lib/useStoreActions";
-import { TshirtMerchPageBackground } from "./TshirtMerchPageBackground";
 
 import tshirtBlack from "@/assets/geostore/tshirt-born-to-roam-black.jpg";
 import tshirtBlue from "@/assets/geostore/tshirt-born-to-roam-blue.png";
@@ -145,7 +144,6 @@ export const BornToRoamProductPage = memo(function BornToRoamProductPage({
 
   return (
     <PageShell>
-      <TshirtMerchPageBackground />
       <div className="relative z-10">
         <SectionContainer
           size="wide"

@@ -27,7 +27,6 @@ import { cn } from "@/lib/utils";
 
 import { useStoreActions } from "../lib/useStoreActions";
 import { MerchProductGallery } from "./MerchProductGallery";
-import { TshirtMerchPageBackground } from "./TshirtMerchPageBackground";
 
 import tshirtBlack from "@/assets/geostore/tshirt-too-close-perfect-black.jpg";
 import tshirtBlue from "@/assets/geostore/tshirt-too-close-perfect-blue.png";
@@ -131,7 +130,6 @@ export const TooClosePerfectProductPage = memo(function TooClosePerfectProductPa
 
   return (
     <PageShell>
-      <TshirtMerchPageBackground />
       <div className="relative z-10">
         <SectionContainer
           size="wide"

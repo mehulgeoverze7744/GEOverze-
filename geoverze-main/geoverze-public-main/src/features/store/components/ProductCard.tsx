@@ -11,6 +11,10 @@ import { ComingSoonLockChip } from "./ComingSoonLockChip";
 import { PriceTag } from "./PriceTag";
 import { RatingStars } from "./RatingStars";
 import { StockPill } from "./StockPill";
+import {
+  hoodieLookbookCropForProduct,
+  hoodieLookbookThumbHeight,
+} from "../data/hoodieLookbookCrop";
 import { isPurchaseLocked, type Product } from "../data/products";
 import { productImageForSlug } from "../data/productImages";
 import { cartLineIdForProduct } from "../lib/cart";
@@ -46,6 +50,7 @@ export function ProductCard({
 }) {
   const Icon = categoryIcon(product.category);
   const productImage = productImageForSlug(product.slug);
+  const lookbook = hoodieLookbookCropForProduct(product.slug);
   const soldOut = product.stock === "sold-out";
   const purchaseLocked = isPurchaseLocked(product);
   const cartLineId = useMemo(() => cartLineIdForProduct(product), [product]);
@@ -75,21 +80,39 @@ export function ProductCard({
         className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
         aria-label={product.name}
       >
-        <CoverArt
-          art={product.slug}
-          {...(productImage
-            ? {
-                imageSrc: productImage.src,
-                imageAlt: productImage.alt,
-                ...(product.comingSoon ? { fit: "cover" as const } : {}),
-              }
-            : { icon: Icon })}
-          ratio={variant === "list" ? "square" : "video"}
-          className={cn(
-            "transition-transform motion-slow group-hover:scale-[1.03]",
-            variant === "list" && "sm:w-44",
-          )}
-        />
+        {lookbook && productImage ? (
+          <div
+            className={cn(
+              "relative overflow-hidden",
+              variant === "list" ? "aspect-square sm:w-44" : "aspect-[16/10]",
+            )}
+          >
+            <img
+              src={productImage.src}
+              alt={productImage.alt}
+              loading="lazy"
+              decoding="async"
+              className="block w-full object-cover object-top transition-transform motion-slow group-hover:scale-[1.03]"
+              style={{ height: hoodieLookbookThumbHeight(lookbook) }}
+            />
+          </div>
+        ) : (
+          <CoverArt
+            art={product.slug}
+            {...(productImage
+              ? {
+                  imageSrc: productImage.src,
+                  imageAlt: productImage.alt,
+                  ...(product.comingSoon ? { fit: "cover" as const } : {}),
+                }
+              : { icon: Icon })}
+            ratio={variant === "list" ? "square" : "video"}
+            className={cn(
+              "transition-transform motion-slow group-hover:scale-[1.03]",
+              variant === "list" && "sm:w-44",
+            )}
+          />
+        )}
       </Link>
 
       <div className="absolute right-3 top-3 flex gap-2">

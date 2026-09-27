@@ -26,7 +26,7 @@ export function useStoreActions() {
       return;
     }
 
-    if (isMerchProductId(product.slug)) {
+    if (isMerchProductId(product.slug) && !productBySlug(product.slug)) {
       toast.message("Available soon", {
         description: "Merchandise checkout is not live yet.",
       });

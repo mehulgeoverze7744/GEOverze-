@@ -22,7 +22,7 @@ export const GeostoreMerchCard = memo(function GeostoreMerchCard({
   className?: string;
   /** Size the media frame from the loaded image so letterbox bars do not appear. */
   fitNaturalImage?: boolean;
-  /** Hoodies category: one continuous card with no image/copy divider. */
+  /** Hoodies / T-shirts category: one continuous card with no image/copy divider. */
   seamlessSurface?: boolean;
 }) {
   const [imageAspect, setImageAspect] = useState<number | null>(null);

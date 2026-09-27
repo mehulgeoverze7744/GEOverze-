@@ -28,7 +28,6 @@ import { cn } from "@/lib/utils";
 import type { ApparelColorVariant, ApparelMerchSpec } from "../data/apparelMerchSpecs";
 import { useStoreActions } from "../lib/useStoreActions";
 import { MerchProductGallery } from "./MerchProductGallery";
-import { TshirtMerchPageBackground } from "./TshirtMerchPageBackground";
 
 type Size = "S" | "M" | "L" | "XXL";
 
@@ -110,7 +109,6 @@ export const ApparelMerchProductPage = memo(function ApparelMerchProductPage({
 
   return (
     <PageShell>
-      <TshirtMerchPageBackground />
       <div className="relative z-10">
         <SectionContainer
           size="wide"
