@@ -275,7 +275,12 @@ function MerchCategoryShelf({ slug }: { slug: "tshirts" | "hoodies" }) {
               className={cn("grid gap-6 sm:grid-cols-2 lg:grid-cols-3", isTshirts && "items-start")}
             >
               {items.map((product) => (
-                <GeostoreMerchCard key={product.id} product={product} fitNaturalImage={isTshirts} />
+                <GeostoreMerchCard
+                  key={product.id}
+                  product={product}
+                  fitNaturalImage={isTshirts}
+                  seamlessSurface={slug === "hoodies"}
+                />
               ))}
             </div>
           )}

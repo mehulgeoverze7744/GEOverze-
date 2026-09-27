@@ -16,11 +16,14 @@ export const GeostoreMerchCard = memo(function GeostoreMerchCard({
   product,
   className,
   fitNaturalImage = false,
+  seamlessSurface = false,
 }: {
   product: GeostoreMerchProduct;
   className?: string;
   /** Size the media frame from the loaded image so letterbox bars do not appear. */
   fitNaturalImage?: boolean;
+  /** Hoodies category: one continuous card with no image/copy divider. */
+  seamlessSurface?: boolean;
 }) {
   const [imageAspect, setImageAspect] = useState<number | null>(null);
   const lookbook = hoodieLookbookCropForProduct(product.id);
@@ -39,7 +42,8 @@ export const GeostoreMerchCard = memo(function GeostoreMerchCard({
       params={{ slug: product.id }}
       aria-label={`${product.title}. ${product.tagline}`}
       className={cn(
-        "group flex h-full flex-col overflow-hidden rounded-2xl border border-bronze/12 bg-charcoal/45 transition-all motion-base hover:border-bronze/35 hover:shadow-[0_12px_40px_-12px_oklch(0.55_0.08_55_/_0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
+        "group flex h-full flex-col overflow-hidden rounded-2xl bg-charcoal/45 transition-all motion-base hover:shadow-[0_12px_40px_-12px_oklch(0.55_0.08_55_/_0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
+        seamlessSurface ? "border-0" : "border border-bronze/12 hover:border-bronze/35",
         className,
       )}
     >
@@ -75,11 +79,20 @@ export const GeostoreMerchCard = memo(function GeostoreMerchCard({
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-charcoal/40 via-transparent to-transparent opacity-0 transition-opacity motion-base group-hover:opacity-100"
+          className={cn(
+            "pointer-events-none absolute inset-0 bg-gradient-to-t from-charcoal/40 via-transparent to-transparent transition-opacity motion-base",
+            seamlessSurface ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+          )}
         />
+        {seamlessSurface ? (
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-charcoal/80 via-charcoal/25 to-transparent"
+          />
+        ) : null}
       </div>
 
-      <div className="border-t border-bronze/10 px-5 py-5">
+      <div className={cn("px-5 py-5", !seamlessSurface && "border-t border-bronze/10")}>
         <p className="text-[0.58rem] uppercase tracking-[0.22em] text-bronze/80">
           {product.categoryLabel}
         </p>
