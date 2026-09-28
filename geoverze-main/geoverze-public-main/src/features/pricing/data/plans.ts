@@ -34,6 +34,8 @@ export type PricingPlan = {
   featured: boolean;
   badge?: string;
   cta: string;
+  /** Bronze callout rendered above the feature list (GEOstore member discount). */
+  storePerk?: string;
   prices: Record<BillingCycle, PlanPrice>;
 };
 
@@ -43,6 +45,7 @@ type TierPresentation = {
   cta: string;
   featured: boolean;
   badge?: string;
+  storePerk?: string;
   /** Non-limit marketing bullets appended after DB-backed limits. */
   extraFeatures: string[];
 };
@@ -66,8 +69,9 @@ export const TIER_PRESENTATION: Record<TierId, TierPresentation> = {
     summary: "A full month of quizzes and a steady credit grant without going unlimited.",
     cta: "Choose Basic",
     featured: false,
+    storePerk: "3% OFF on any GEOstore purchase",
     extraFeatures: [
-      "GEOlibrary browsing",
+      "Limited GEOlibrary access",
       "Global leaderboard entry",
       "Daily streak tracking",
       "Standard credit earning",
@@ -79,7 +83,9 @@ export const TIER_PRESENTATION: Record<TierId, TierPresentation> = {
     cta: "Choose Pro",
     featured: true,
     badge: "Most chosen",
+    storePerk: "10% OFF on any GEOstore purchase",
     extraFeatures: [
+      "Full GEOlibrary access",
       "PvP duels and multiplayer rooms",
       "All atlases and question packs",
       "Advanced progress analytics",

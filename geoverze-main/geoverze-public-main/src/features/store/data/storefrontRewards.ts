@@ -16,6 +16,16 @@ export const STOREFRONT_REWARD_SLUGS = [
   "avatar-astronomer",
 ] as const;
 
+/** Display order for the GEOstore Claim with credits carousel. */
+export const STOREFRONT_REWARD_CAROUSEL_ORDER = [
+  "ps5",
+  "iphone-duo",
+  "theme-deep-space",
+  "theme-sandstone",
+  "avatar-astronomer",
+  "avatar-navigator",
+] as const satisfies readonly StorefrontRewardSlug[];
+
 export type StorefrontRewardSlug = (typeof STOREFRONT_REWARD_SLUGS)[number];
 
 export const STOREFRONT_REWARD_CATEGORY_IDS = ["prizes", "themes", "avatars"] as const;
@@ -24,6 +34,20 @@ export type StorefrontRewardCategoryId = (typeof STOREFRONT_REWARD_CATEGORY_IDS)
 
 export function isStorefrontRewardSlug(slug: string): slug is StorefrontRewardSlug {
   return (STOREFRONT_REWARD_SLUGS as readonly string[]).includes(slug);
+}
+
+/** Listed rewards in the Claim with credits carousel order. */
+export function listStorefrontRewards<T extends Product>(products: readonly T[]): T[] {
+  const bySlug = new Map(
+    products
+      .filter((product) => isStorefrontRewardSlug(product.slug))
+      .map((product) => [product.slug, product] as const),
+  );
+
+  return STOREFRONT_REWARD_CAROUSEL_ORDER.flatMap((slug) => {
+    const product = bySlug.get(slug);
+    return product ? [product] : [];
+  });
 }
 
 export function isStorefrontRewardCategory(id: string): id is StorefrontRewardCategoryId {

@@ -41,6 +41,7 @@ import {
 } from "../data/hoodieMerchSpecs";
 import { credits as formatCredits, money } from "../lib/format";
 import { useStoreActions } from "../lib/useStoreActions";
+import { ProStorePerkPill } from "./ProStorePerkPill";
 
 type Size = "S" | "M" | "L" | "XXL";
 
@@ -328,8 +329,9 @@ export const HoodieMerchProductPage = memo(function HoodieMerchProductPage({
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
               <span className="text-xl font-light text-foreground">{money(product.price)}</span>
+              <ProStorePerkPill />
               <span className="flex items-center gap-1.5 text-sm text-bronze/80">
                 <Coins className="h-3.5 w-3.5 shrink-0" strokeWidth={1.6} />
                 {formatCredits(product.credits)}

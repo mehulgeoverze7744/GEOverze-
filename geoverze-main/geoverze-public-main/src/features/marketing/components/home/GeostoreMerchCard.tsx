@@ -17,6 +17,7 @@ export const GeostoreMerchCard = memo(function GeostoreMerchCard({
   className,
   fitNaturalImage = false,
   seamlessSurface = false,
+  coverMedia = false,
 }: {
   product: GeostoreMerchProduct;
   className?: string;
@@ -24,12 +25,15 @@ export const GeostoreMerchCard = memo(function GeostoreMerchCard({
   fitNaturalImage?: boolean;
   /** Hoodies / T-shirts category: one continuous card with no image/copy divider. */
   seamlessSurface?: boolean;
+  /** Fill the media frame (cover) instead of letterboxing. */
+  coverMedia?: boolean | undefined;
 }) {
   const [imageAspect, setImageAspect] = useState<number | null>(null);
   const lookbook = hoodieLookbookCropForProduct(product.id);
+  const fillFrame = Boolean(coverMedia);
 
   const handleImageLoad = (event: SyntheticEvent<HTMLImageElement>) => {
-    if (!fitNaturalImage || lookbook) return;
+    if (!fitNaturalImage || lookbook || fillFrame) return;
     const { naturalWidth, naturalHeight } = event.currentTarget;
     if (naturalWidth > 0 && naturalHeight > 0) {
       setImageAspect(naturalWidth / naturalHeight);
@@ -42,19 +46,23 @@ export const GeostoreMerchCard = memo(function GeostoreMerchCard({
       params={{ slug: product.id }}
       aria-label={`${product.title}. ${product.tagline}`}
       className={cn(
-        "group flex h-full flex-col overflow-hidden rounded-2xl bg-charcoal/45 transition-all motion-base hover:shadow-[0_12px_40px_-12px_oklch(0.55_0.08_55_/_0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
-        seamlessSurface ? "border-0" : "border border-bronze/12 hover:border-bronze/35",
+        "group flex h-full flex-col overflow-hidden rounded-2xl transition-all motion-base hover:shadow-[0_12px_40px_-12px_oklch(0.55_0.08_55_/_0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
+        fillFrame || seamlessSurface ? "bg-charcoal" : "bg-charcoal/45",
+        seamlessSurface && !fillFrame
+          ? "border-0"
+          : "border border-bronze/12 hover:border-bronze/35 hover:bronze-glow",
         className,
       )}
     >
       <div
         className={cn(
           "relative overflow-hidden",
-          lookbook || !fitNaturalImage ? "aspect-[16/10]" : undefined,
+          lookbook || fillFrame || !fitNaturalImage ? "aspect-[16/10]" : undefined,
           !lookbook && !fitNaturalImage && "bg-[oklch(0.14_0.006_62)]",
+          fillFrame && "transition-transform motion-slow group-hover:scale-[1.03]",
         )}
         style={
-          fitNaturalImage && !lookbook && imageAspect
+          fitNaturalImage && !lookbook && !fillFrame && imageAspect
             ? { aspectRatio: `${imageAspect}` }
             : undefined
         }
@@ -67,32 +75,50 @@ export const GeostoreMerchCard = memo(function GeostoreMerchCard({
           onLoad={handleImageLoad}
           className={cn(
             "transition-transform motion-slow group-hover:scale-[1.03]",
-            lookbook
-              ? "block w-full object-cover object-top"
-              : fitNaturalImage
-                ? imageAspect
-                  ? "h-full w-full object-contain"
-                  : "block h-auto w-full"
-                : "h-full w-full object-contain",
+            fillFrame
+              ? "absolute inset-0 h-full w-full object-cover object-center"
+              : lookbook
+                ? "block w-full object-cover object-top"
+                : fitNaturalImage
+                  ? imageAspect
+                    ? "h-full w-full object-contain"
+                    : "block h-auto w-full"
+                  : "h-full w-full object-contain",
           )}
-          style={lookbook ? { height: hoodieLookbookThumbHeight(lookbook) } : undefined}
+          style={
+            lookbook && !fillFrame ? { height: hoodieLookbookThumbHeight(lookbook) } : undefined
+          }
         />
-        <div
-          aria-hidden
-          className={cn(
-            "pointer-events-none absolute inset-0 bg-gradient-to-t from-charcoal/40 via-transparent to-transparent transition-opacity motion-base",
-            seamlessSurface ? "opacity-100" : "opacity-0 group-hover:opacity-100",
-          )}
-        />
-        {seamlessSurface ? (
-          <div
+        {fillFrame ? (
+          <span
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-charcoal/80 via-charcoal/25 to-transparent"
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-2/5 bg-gradient-to-t from-charcoal to-transparent"
           />
-        ) : null}
+        ) : (
+          <>
+            <div
+              aria-hidden
+              className={cn(
+                "pointer-events-none absolute inset-0 bg-gradient-to-t from-charcoal/40 via-transparent to-transparent transition-opacity motion-base",
+                seamlessSurface ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+              )}
+            />
+            {seamlessSurface ? (
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-charcoal/80 via-charcoal/25 to-transparent"
+              />
+            ) : null}
+          </>
+        )}
       </div>
 
-      <div className={cn("px-5 py-5", !seamlessSurface && "border-t border-bronze/10")}>
+      <div
+        className={cn(
+          fillFrame ? "relative z-[2] -mt-5 px-5 pb-5 pt-2" : "px-5 py-5",
+          !seamlessSurface && !fillFrame && "border-t border-bronze/10",
+        )}
+      >
         <p className="text-[0.58rem] uppercase tracking-[0.22em] text-bronze/80">
           {product.categoryLabel}
         </p>

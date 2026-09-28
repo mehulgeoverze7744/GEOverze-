@@ -29,6 +29,7 @@ import {
 import { cn } from "@/lib/utils";
 
 import { useStoreActions } from "../lib/useStoreActions";
+import { ProStorePerkPill } from "./ProStorePerkPill";
 
 import tshirtBlack from "@/assets/geostore/tshirt-born-to-roam-black.jpg";
 import tshirtBlue from "@/assets/geostore/tshirt-born-to-roam-blue.png";
@@ -289,8 +290,9 @@ export const BornToRoamProductPage = memo(function BornToRoamProductPage({
                 </p>
               </div>
 
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
                 <span className="text-xl font-light text-foreground">$37.00</span>
+                <ProStorePerkPill />
                 <span className="flex items-center gap-1.5 text-sm text-bronze/80">
                   <Coins className="h-3.5 w-3.5 shrink-0" strokeWidth={1.6} />
                   300 credits

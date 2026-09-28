@@ -5,5 +5,11 @@ import { useStoreCatalogue } from "../hooks/useStoreCatalogue";
 export function RewardsCategoryShelf({ className }: { className?: string | undefined }) {
   const { rewardProducts } = useStoreCatalogue();
 
-  return <StorefrontRewardsCatalog className={className} products={rewardProducts} />;
+  return (
+    <StorefrontRewardsCatalog
+      className={className}
+      presentation="categories"
+      products={rewardProducts}
+    />
+  );
 }

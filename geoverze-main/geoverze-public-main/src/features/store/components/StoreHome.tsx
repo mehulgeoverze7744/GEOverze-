@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, SectionContainer } from "@/components/shared";
 import { useStoreStore } from "@/stores/storeStore";
@@ -11,6 +10,7 @@ import { ProductCard } from "./ProductCard";
 import { ProductRail } from "./ProductRail";
 import { StorefrontRewardsCatalog } from "./StorefrontRewardsCatalog";
 import { StoreHero } from "./StoreHero";
+import { ProStorePerkPill } from "./ProStorePerkPill";
 import { QuickViewModal } from "./QuickViewModal";
 import { PRODUCTS, productBySlug, type Product } from "../data/products";
 import { STORE_CATEGORIES, STORE_GROUPS } from "../data/taxonomy";
@@ -90,6 +90,7 @@ export function StoreHome() {
           description="What most explorers take home."
           titleClassName="text-2xl font-bold tracking-tight text-foreground md:text-3xl"
           descriptionClassName="mt-2.5 max-w-xl text-sm leading-relaxed text-foreground/55 md:text-base"
+          titleAccessory={<ProStorePerkPill />}
           to="/geostore/browse"
           layout="scroll"
         >
@@ -105,9 +106,12 @@ export function StoreHome() {
         </ProductRail>
 
         <AnimatedSection className="mt-[var(--space-section-sm)]">
-          <h2 className="text-xl font-semibold tracking-tight text-foreground md:text-2xl">
-            All categories
-          </h2>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <h2 className="text-xl font-semibold tracking-tight text-foreground md:text-2xl">
+              All categories
+            </h2>
+            <ProStorePerkPill />
+          </div>
           <div className="mt-6 space-y-10">
             {STORE_GROUPS.filter(
               (group) => group.id !== "more" && group.id !== "digital" && group.id !== "rewards",
@@ -132,27 +136,19 @@ export function StoreHome() {
 
         <DigitalProductsCarousel />
 
-        <AnimatedSection className="mt-[var(--space-section-sm)]">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div className="min-w-0">
-              <h2 className="text-xl font-semibold tracking-tight text-foreground md:text-2xl">
-                Claim with credits
-              </h2>
-              <p className="mt-2 max-w-xl text-xs leading-relaxed text-foreground/50">
-                {signedIn
-                  ? `Rewards you can claim with your ${balanceDisplay} credits.`
-                  : "Sign in to claim digital rewards with credits."}
-              </p>
-            </div>
-            <Link
-              to="/geostore/rewards"
-              className="inline-flex items-center gap-2 text-[0.66rem] uppercase tracking-[0.18em] text-bronze transition-colors motion-fast hover:text-bronze-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
-            >
-              All rewards <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-          <StorefrontRewardsCatalog className="mt-6" products={rewardProducts} />
-        </AnimatedSection>
+        <ProductRail
+          title="Claim with credits"
+          description={
+            signedIn
+              ? `Rewards you can claim with your ${balanceDisplay} credits.`
+              : "Sign in to claim digital rewards with credits."
+          }
+          to="/geostore/rewards"
+          linkLabel="All rewards"
+          layout="scroll"
+        >
+          <StorefrontRewardsCatalog presentation="carousel" products={rewardProducts} />
+        </ProductRail>
 
         {recent.length > 0 ? (
           <ProductRail title="Recently viewed">

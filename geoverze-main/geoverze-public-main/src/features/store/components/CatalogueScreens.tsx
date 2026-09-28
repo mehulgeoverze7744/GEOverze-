@@ -27,6 +27,7 @@ import { MerchProductScreen } from "./MerchProductScreen";
 import { ProductCard } from "./ProductCard";
 import { ProductGallery } from "./ProductGallery";
 import { ProductRail } from "./ProductRail";
+import { ProStorePerkPill } from "./ProStorePerkPill";
 import { QuickViewModal } from "./QuickViewModal";
 import { RatingStars } from "./RatingStars";
 import { StockPill } from "./StockPill";
@@ -68,7 +69,10 @@ import { isPurchasableRewardSlug } from "../lib/rewards";
 
 const ALL = { id: "all", label: "All" } as const;
 
-function useCardFactory(onQuickView: (p: Product) => void) {
+function useCardFactory(
+  onQuickView: (p: Product) => void,
+  options?: { blendCoverFor?: ((product: Product) => boolean) | undefined },
+) {
   const { addProduct, wishlistToggle, wishlist } = useStoreActions();
   const balance = useStoreCredits();
   const entitlements = useEntitlements();
@@ -76,6 +80,7 @@ function useCardFactory(onQuickView: (p: Product) => void) {
 
   return (product: Product) => {
     const display = catalogueProductBySlug(catalogueProducts, product.slug) ?? product;
+    const blendCover = options?.blendCoverFor?.(product) === true;
 
     return (
       <ProductCard
@@ -87,6 +92,7 @@ function useCardFactory(onQuickView: (p: Product) => void) {
         onToggleWishlist={wishlistToggle}
         onQuickView={onQuickView}
         onAdd={(p) => addProduct(p)}
+        {...(blendCover ? { blendCover: true } : {})}
       />
     );
   };
@@ -95,7 +101,9 @@ function useCardFactory(onQuickView: (p: Product) => void) {
 /** Faceted catalogue browse. */
 export function StoreBrowse() {
   const [quickView, setQuickView] = useState<Product | null>(null);
-  const card = useCardFactory(setQuickView);
+  const card = useCardFactory(setQuickView, {
+    blendCoverFor: (product) => product.category === "tshirts" || product.category === "hoodies",
+  });
   const { addProduct } = useStoreActions();
   const balance = useStoreCredits();
 
@@ -234,8 +242,13 @@ export function StoreBrowse() {
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {results.map((product) => {
               const merch = browseMerchForSlug(product.slug);
+              const blendMerch = merch?.category === "t-shirt" || merch?.category === "hoodie";
               return merch ? (
-                <GeostoreMerchCard key={product.slug} product={merch} />
+                <GeostoreMerchCard
+                  key={product.slug}
+                  product={merch}
+                  {...(blendMerch ? { seamlessSurface: true, coverMedia: true } : {})}
+                />
               ) : (
                 card(product)
               );
@@ -564,7 +577,12 @@ export function ProductScreen() {
                 )}
               </div>
 
-              {product.comingSoon ? null : <PriceTag product={product} size="lg" />}
+              {product.comingSoon ? null : (
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                  <PriceTag product={product} size="lg" />
+                  <ProStorePerkPill />
+                </div>
+              )}
               {!product.comingSoon && !purchaseLocked && product.credits !== null ? (
                 <p className="inline-flex items-center gap-2 text-xs text-foreground/50">
                   <Coins className="h-3.5 w-3.5 text-bronze" strokeWidth={1.6} />

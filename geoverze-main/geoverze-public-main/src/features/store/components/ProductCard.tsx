@@ -37,6 +37,7 @@ export function ProductCard({
   variant = "grid",
   equalizeHeight = false,
   image,
+  blendCover = false,
 }: {
   product: Product;
   saved: boolean;
@@ -53,6 +54,8 @@ export function ProductCard({
   equalizeHeight?: boolean;
   /** Surface-specific artwork; covers the frame and blends into the copy. */
   image?: ProductImage | undefined;
+  /** Cover the media frame and fade into the copy (Browse T-shirts). */
+  blendCover?: boolean | undefined;
 }) {
   const Icon = categoryIcon(product.category);
   const productImage = image ?? productImageForSlug(product.slug);
@@ -75,6 +78,7 @@ export function ProductCard({
 
   const seamlessBlend =
     Boolean(image) ||
+    blendCover ||
     product.category === "mugs" ||
     product.category === "stickers" ||
     isGlobeProductSlug(product.slug) ||

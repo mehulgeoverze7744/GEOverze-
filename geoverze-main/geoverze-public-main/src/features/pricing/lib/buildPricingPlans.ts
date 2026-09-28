@@ -135,6 +135,7 @@ export function buildPricingPlans(
         featured: presentation.featured,
         badge: presentation.badge,
         cta: presentation.cta,
+        ...(presentation.storePerk ? { storePerk: presentation.storePerk } : {}),
         prices: {
           monthly: buildMonthlyPrice(plan, promotions),
           annual: buildAnnualPrice(plan),

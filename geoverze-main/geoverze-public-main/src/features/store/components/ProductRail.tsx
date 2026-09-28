@@ -16,6 +16,7 @@ export function ProductRail({
   columns = 4,
   titleClassName,
   descriptionClassName,
+  titleAccessory,
   layout = "grid",
   scrollStepSelector = "[data-rail-item]",
 }: {
@@ -27,6 +28,8 @@ export function ProductRail({
   columns?: 3 | 4;
   titleClassName?: string;
   descriptionClassName?: string;
+  /** Compact mark rendered beside the section heading. */
+  titleAccessory?: ReactNode | undefined;
   /** Horizontal carousel with bronze arrow controls. */
   layout?: "grid" | "scroll";
   scrollStepSelector?: string;
@@ -100,19 +103,20 @@ export function ProductRail({
     >
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 sm:gap-4">
         <div className="min-w-0">
-          <h2
-            className={
-              titleClassName ??
-              "text-xl font-semibold tracking-tight text-foreground md:text-2xl"
-            }
-          >
-            {title}
-          </h2>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <h2
+              className={
+                titleClassName ?? "text-xl font-semibold tracking-tight text-foreground md:text-2xl"
+              }
+            >
+              {title}
+            </h2>
+            {titleAccessory}
+          </div>
           {description ? (
             <p
               className={
-                descriptionClassName ??
-                "mt-2 max-w-xl text-xs leading-relaxed text-foreground/50"
+                descriptionClassName ?? "mt-2 max-w-xl text-xs leading-relaxed text-foreground/50"
               }
             >
               {description}
