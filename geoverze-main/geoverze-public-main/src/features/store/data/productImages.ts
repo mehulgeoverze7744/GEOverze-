@@ -1,9 +1,11 @@
 import cartographerCap from "@/assets/geostore/cartographer-cap.jpg";
 import celestialMeridianMug from "@/assets/geostore/celestial-meridian-mug-studio-main.jpg";
 import continentStickerSet from "@/assets/geostore/continent-sticker-set.jpg";
+import crystalEarthGlobe from "@/assets/geostore/crystal-earth-globe-studio.jpg";
 import deskGlobeMini from "@/assets/geostore/desk-globe-mini.jpg";
 import atlasEncyclopedia from "@/assets/geostore/atlas-encyclopedia.jpg";
 import beyondTheHorizon from "@/assets/geostore/beyond-the-horizon.jpg";
+import blueOceanGlobe from "@/assets/geostore/blue-ocean-globe-studio.jpg";
 import expeditionEnamelMug from "@/assets/geostore/expedition-enamel-mug.jpg";
 import flagStickerPack from "@/assets/geostore/flag-sticker-pack.jpg";
 import goldenAtlasMug from "@/assets/geostore/golden-atlas-mug-studio-main.jpg";
@@ -16,6 +18,7 @@ import theAtlasArchive from "@/assets/geostore/the-atlas-archive.jpg";
 import theCartographersCollection from "@/assets/geostore/the-cartographers-collection.jpg";
 import theExplorersTrail from "@/assets/geostore/the-explorers-trail.jpg";
 import vintageExpeditionStickerCollection from "@/assets/geostore/vintage-expedition-sticker-collection.jpg";
+import vintageWorldGlobe from "@/assets/geostore/vintage-world-globe-studio.jpg";
 
 import { merchProductById } from "@/features/marketing/data/geostoreMerch";
 
@@ -119,19 +122,22 @@ const PRODUCT_IMAGES: Readonly<Record<string, ProductImage>> = {
     alt: "GEOverze Mini Desk Globe — 12 cm desk globe with a bronze meridian",
   },
   "crystal-earth-globe": {
-    src: "/assets/store/Accessories/Globes/arcylic%20globe%20image.png",
+    src: crystalEarthGlobe,
     alt: "GEOverze Crystal Earth Globe — acrylic globe with detailed world map and golden meridian",
-    objectPosition: "50% 48%",
+    fillFrame: true,
+    objectPosition: "50% 50%",
   },
   "vintage-world-globe": {
-    src: "/assets/store/Accessories/Globes/classic%20desk%20globe%20image.png",
+    src: vintageWorldGlobe,
     alt: "GEOverze Vintage World Globe — classic political globe with wooden base",
+    fillFrame: true,
     objectPosition: "50% 50%",
   },
   "blue-ocean-globe": {
-    src: "/assets/store/Accessories/Globes/Floating%20Globe%20image.png",
+    src: blueOceanGlobe,
     alt: "GEOverze Blue Ocean Globe — modern blue ocean globe with wooden base",
-    objectPosition: "50% 46%",
+    fillFrame: true,
+    objectPosition: "50% 50%",
   },
   "explore-the-unknown": {
     src: hoodieExploreTheUnknown,
