@@ -915,18 +915,6 @@
   box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--bronze) 32%, transparent);
 }
 
-.pricing-creator-section--soon .pricing-creator-locked-surface,
-.pricing-creator-section--soon .pricing-creator-preview-wrap,
-.pricing-creator-section--soon .pricing-creator-features {
-  pointer-events: none;
-  user-select: none;
-}
-
-.pricing-creator-section--soon .pricing-creator-features,
-.pricing-creator-section--soon .pricing-creator-feature {
-  cursor: default;
-}
-
 .pricing-creator-soon {
   margin: 0;
   font-size: 0.58rem;
