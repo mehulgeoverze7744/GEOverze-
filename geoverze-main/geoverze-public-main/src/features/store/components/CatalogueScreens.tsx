@@ -33,7 +33,12 @@ import { StockPill } from "./StockPill";
 import { PriceTag } from "./PriceTag";
 import { VariantPicker } from "./VariantPicker";
 import {
-  PRODUCTS,
+  BROWSE_CATEGORY_IDS,
+  BROWSE_GROUP_IDS,
+  BROWSE_PRODUCTS,
+  browseMerchForSlug,
+} from "../data/browseCatalogue";
+import {
   isPurchaseLocked,
   productBySlug,
   productsInCategory,
@@ -105,7 +110,7 @@ export function StoreBrowse() {
   const results = useMemo(
     () =>
       sortProducts(
-        filterProducts(PRODUCTS, {
+        filterProducts(BROWSE_PRODUCTS, {
           group,
           category,
           price,
@@ -124,7 +129,7 @@ export function StoreBrowse() {
       <PageHeader
         eyebrow="GEOstore"
         title="Browse the catalogue"
-        description="Merchandise, digital packs and credit rewards — filtered any way you like."
+        description="GEOverze merchandise — filtered any way you like."
         breadcrumb={[{ label: "GEOstore", to: "/geostore" }, { label: "Browse" }]}
       />
       <SectionContainer size="wide">
@@ -136,7 +141,7 @@ export function StoreBrowse() {
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Hoodie, capitals, poster…"
+              placeholder="Hoodie, capitals, globe…"
               className="mt-2 w-full rounded-xl border border-bronze/15 bg-charcoal/60 px-4 py-3 text-sm text-foreground placeholder:text-foreground/50 focus:border-bronze/45 focus:outline-none"
             />
           </label>
@@ -145,7 +150,7 @@ export function StoreBrowse() {
               label="Group"
               options={[
                 ALL,
-                ...STORE_GROUPS.filter((g) => g.id !== "more").map((g) => ({
+                ...STORE_GROUPS.filter((g) => BROWSE_GROUP_IDS.has(g.id)).map((g) => ({
                   id: g.id,
                   label: g.label,
                 })),
@@ -160,12 +165,12 @@ export function StoreBrowse() {
               label="Category"
               options={[
                 ALL,
-                ...STORE_CATEGORIES.filter((c) => group === "all" || c.group === group).map(
-                  (c) => ({
-                    id: c.id,
-                    label: c.label,
-                  }),
-                ),
+                ...STORE_CATEGORIES.filter(
+                  (c) => BROWSE_CATEGORY_IDS.has(c.id) && (group === "all" || c.group === group),
+                ).map((c) => ({
+                  id: c.id,
+                  label: c.label,
+                })),
               ]}
               value={category}
               onChange={setCategory}
@@ -226,7 +231,16 @@ export function StoreBrowse() {
             }
           />
         ) : (
-          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{results.map(card)}</div>
+          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {results.map((product) => {
+              const merch = browseMerchForSlug(product.slug);
+              return merch ? (
+                <GeostoreMerchCard key={product.slug} product={merch} />
+              ) : (
+                card(product)
+              );
+            })}
+          </div>
         )}
       </SectionContainer>
       <QuickViewModal

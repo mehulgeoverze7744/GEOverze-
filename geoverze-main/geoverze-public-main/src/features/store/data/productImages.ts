@@ -13,6 +13,12 @@ import hoodieExploreTheUnknown from "@/assets/geostore/hoodie-explore-the-unknow
 import oldWorldMug from "@/assets/geostore/old-world-mug.jpg";
 import orbitalHorizonMug from "@/assets/geostore/orbital-horizon-mug-studio-front.jpg";
 import polarBeanie from "@/assets/geostore/polar-beanie.jpg";
+import rewardAstronomerAvatar from "@/assets/geostore/reward-astronomer-avatar.jpg";
+import rewardDeepSpaceTheme from "@/assets/geostore/reward-deep-space-theme.jpg";
+import rewardIphoneDuo from "@/assets/geostore/reward-iphone-duo.jpg";
+import rewardNavigatorAvatar from "@/assets/geostore/reward-navigator-avatar.jpg";
+import rewardPs5 from "@/assets/geostore/reward-ps5.jpg";
+import rewardSandstoneTheme from "@/assets/geostore/reward-sandstone-theme.jpg";
 import terraContourMug from "@/assets/geostore/terra-contour-mug-studio-main.jpg";
 import theAtlasArchive from "@/assets/geostore/the-atlas-archive.jpg";
 import theCartographersCollection from "@/assets/geostore/the-cartographers-collection.jpg";
@@ -144,6 +150,44 @@ const PRODUCT_IMAGES: Readonly<Record<string, ProductImage>> = {
     alt: "GEOverze Explore The Unknown Hoodie — black hoodie with world map and compass artwork",
   },
 };
+
+/** Artwork for the GEOstore Rewards shelf cards only. */
+const REWARD_SHELF_IMAGES: Readonly<Record<string, ProductImage>> = {
+  "avatar-navigator": {
+    src: rewardNavigatorAvatar,
+    alt: "Navigator Avatar — astronaut on a rocky ridge watching Earth rise at sunset",
+    fillFrame: true,
+  },
+  "avatar-astronomer": {
+    src: rewardAstronomerAvatar,
+    alt: "Astronomer Avatar — astronaut beneath the Milky Way above a sea of clouds",
+    fillFrame: true,
+  },
+  "theme-deep-space": {
+    src: rewardDeepSpaceTheme,
+    alt: "Deep Space Theme — night-side Earth, moon and asteroid field against the Milky Way",
+    fillFrame: true,
+  },
+  "theme-sandstone": {
+    src: rewardSandstoneTheme,
+    alt: "Sandstone Theme — desert rock spires glowing in warm sunset light",
+    fillFrame: true,
+  },
+  "iphone-duo": {
+    src: rewardIphoneDuo,
+    alt: "iPhone Duo — paired midnight devices against a concrete studio wall",
+    fillFrame: true,
+  },
+  ps5: {
+    src: rewardPs5,
+    alt: "PS5 Black Edition — console and DualSense in a bronze-lit studio field",
+    fillFrame: true,
+  },
+};
+
+export function rewardShelfImageForSlug(slug: string): ProductImage | undefined {
+  return REWARD_SHELF_IMAGES[slug];
+}
 
 export function productImageForSlug(slug: string): ProductImage | undefined {
   const mapped = PRODUCT_IMAGES[slug];

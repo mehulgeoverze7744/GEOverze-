@@ -57,6 +57,19 @@ function CategoryTileBody({
           <div className="absolute right-3 top-3 z-10">
             <ComingSoonLockChip compact={compact} />
           </div>
+        ) : category.id === "hoodies" ? (
+          <div className="pointer-events-none absolute right-3 top-3 z-10">
+            <span
+              className={cn(
+                "inline-flex whitespace-nowrap rounded-full border border-bronze/45 bg-charcoal/80 text-bronze-glow backdrop-blur-sm",
+                compact
+                  ? "px-2 py-0.5 text-[0.55rem] uppercase tracking-[0.18em]"
+                  : "px-2.5 py-1 text-[0.58rem] uppercase tracking-[0.2em]",
+              )}
+            >
+              Available soon
+            </span>
+          </div>
         ) : null}
       </div>
       <div

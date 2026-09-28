@@ -16,7 +16,7 @@ import {
   hoodieLookbookThumbHeight,
 } from "../data/hoodieLookbookCrop";
 import { isPurchaseLocked, type Product } from "../data/products";
-import { isGlobeProductSlug, productImageForSlug } from "../data/productImages";
+import { isGlobeProductSlug, productImageForSlug, type ProductImage } from "../data/productImages";
 import { cartLineIdForProduct } from "../lib/cart";
 import { useStoreActions } from "../lib/useStoreActions";
 import { categoryIcon, categoryLabel } from "../data/taxonomy";
@@ -36,6 +36,7 @@ export function ProductCard({
   onAdd,
   variant = "grid",
   equalizeHeight = false,
+  image,
 }: {
   product: Product;
   saved: boolean;
@@ -50,9 +51,11 @@ export function ProductCard({
   variant?: "grid" | "list";
   /** Stretch to the rail row height and pin the cart action to the bottom. */
   equalizeHeight?: boolean;
+  /** Surface-specific artwork; covers the frame and blends into the copy. */
+  image?: ProductImage | undefined;
 }) {
   const Icon = categoryIcon(product.category);
-  const productImage = productImageForSlug(product.slug);
+  const productImage = image ?? productImageForSlug(product.slug);
   const lookbook = hoodieLookbookCropForProduct(product.slug);
   const soldOut = product.stock === "sold-out";
   const purchaseLocked = isPurchaseLocked(product);
@@ -71,6 +74,7 @@ export function ProductCard({
   };
 
   const seamlessBlend =
+    Boolean(image) ||
     product.category === "mugs" ||
     product.category === "stickers" ||
     isGlobeProductSlug(product.slug) ||

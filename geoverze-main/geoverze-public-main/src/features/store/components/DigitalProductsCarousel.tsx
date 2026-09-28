@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, ArrowUpRight, Layers } from "lucide-react";
+import { ArrowRight, Layers, Lock } from "lucide-react";
 
 import { AnimatedSection } from "@/components/shared";
 import {
@@ -12,6 +12,7 @@ import { CoverArt } from "@/features/play/components/CoverArt";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 
+import { ComingSoonLockChip } from "./ComingSoonLockChip";
 import { categoryBannerForId } from "../data/categoryBanners";
 import { productsInCategory } from "../data/products";
 import { categoriesInGroup, type StoreCategory } from "../data/taxonomy";
@@ -217,58 +218,20 @@ function CarouselCard({
   layout,
   cardHeightPx,
   transitionMs,
-  onFocus,
 }: {
   category: StoreCategory;
   active: boolean;
   layout: SlotLayout;
   cardHeightPx: number;
   transitionMs: number;
-  onFocus: () => void;
 }) {
   const count = categoryItemCount(category.id);
   const banner = categoryBannerForId(category.id);
   const Icon = category.icon;
 
-  const cardBody = (
-    <>
-      <div className="relative min-h-0 w-full flex-1 overflow-hidden">
-        <CoverArt
-          art={`cat-${category.id}`}
-          icon={Icon}
-          ratio="fill"
-          fit="cover"
-          overlay="subtle"
-          className="absolute inset-0 h-full w-full"
-          {...(banner ? { imageSrc: banner.src, imageAlt: banner.alt } : {})}
-        />
-      </div>
-      <div className="flex shrink-0 items-start justify-between gap-3 p-4 sm:p-5">
-        <div className="min-w-0 flex-1">
-          <h3 className="text-sm font-light tracking-tight text-foreground">{category.label}</h3>
-          <p className="mt-1.5 line-clamp-2 min-h-[2.5rem] text-xs leading-relaxed text-foreground/50">
-            {category.blurb}
-          </p>
-          <p className="mt-3 text-[0.6rem] uppercase tracking-[0.2em] text-foreground/50">
-            {count} {count === 1 ? "item" : "items"}
-          </p>
-        </div>
-        <ArrowUpRight
-          className={cn(
-            "h-4 w-4 shrink-0 text-bronze/90 transition-transform motion-fast",
-            active && "group-hover/card:-translate-y-0.5 group-hover/card:translate-x-0.5",
-          )}
-        />
-      </div>
-    </>
-  );
-
   const shellClass = cn(
-    "group/card absolute left-1/2 top-0 flex h-full min-h-0 origin-top flex-col overflow-hidden rounded-2xl border bg-charcoal/50 shadow-[0_24px_48px_rgba(0,0,0,0.35)] backdrop-blur-sm will-change-transform",
-    active
-      ? "border-bronze/35 bronze-glow hover:border-bronze/45"
-      : "border-bronze/12 hover:border-bronze/28 hover:bronze-glow",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
+    "pointer-events-none absolute left-1/2 top-0 flex h-full min-h-0 origin-top select-none flex-col overflow-hidden rounded-2xl border bg-charcoal shadow-[0_24px_48px_rgba(0,0,0,0.35)] backdrop-blur-sm will-change-transform",
+    active ? "border-bronze/35 bronze-glow" : "border-bronze/12",
   );
 
   const style = {
@@ -280,30 +243,45 @@ function CarouselCard({
     transition: `transform ${transitionMs}ms var(--ease-cinematic), opacity ${transitionMs}ms var(--ease-cinematic), width ${transitionMs}ms var(--ease-cinematic), box-shadow ${transitionMs}ms var(--ease-cinematic)`,
   };
 
-  if (active) {
-    return (
-      <Link
-        to="/geostore/category/$slug"
-        params={{ slug: category.id }}
-        className={shellClass}
-        style={style}
-        aria-label={`${category.label} — view category`}
-      >
-        {cardBody}
-      </Link>
-    );
-  }
-
   return (
-    <button
-      type="button"
+    <article
+      aria-disabled="true"
+      aria-label={`${category.label}, coming soon`}
       className={shellClass}
       style={style}
-      onClick={onFocus}
-      aria-label={`Focus ${category.label}`}
     >
-      {cardBody}
-    </button>
+      <div className="relative min-h-0 w-full flex-1 overflow-hidden">
+        <CoverArt
+          art={`cat-${category.id}`}
+          icon={Icon}
+          ratio="fill"
+          fit="cover"
+          overlay="none"
+          className="absolute inset-0 h-full w-full origin-center scale-[1.03] bg-transparent blur-[2.5px]"
+          {...(banner ? { imageSrc: banner.src, imageAlt: banner.alt } : {})}
+        />
+        <span aria-hidden className="absolute inset-0 bg-charcoal/25" />
+        <span
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 z-[1] h-2/5 bg-gradient-to-t from-charcoal to-transparent"
+        />
+        <div className="absolute right-3 top-3 z-10">
+          <ComingSoonLockChip compact />
+        </div>
+      </div>
+      <div className="relative z-[2] -mt-5 flex shrink-0 items-start justify-between gap-3 p-4 pt-2 sm:p-5 sm:pt-2">
+        <div className="min-w-0 flex-1">
+          <h3 className="text-sm font-light tracking-tight text-foreground">{category.label}</h3>
+          <p className="mt-1.5 line-clamp-2 min-h-[2.5rem] text-xs leading-relaxed text-foreground/50">
+            {category.blurb}
+          </p>
+          <p className="mt-3 text-[0.6rem] uppercase tracking-[0.2em] text-foreground/50">
+            {count} {count === 1 ? "item" : "items"}
+          </p>
+        </div>
+        <Lock className="h-4 w-4 shrink-0 text-bronze/80" strokeWidth={1.6} aria-hidden />
+      </div>
+    </article>
   );
 }
 
@@ -483,7 +461,6 @@ export function DigitalProductsCarousel() {
                 layout={layout}
                 cardHeightPx={cardHeightPx}
                 transitionMs={transitionMs}
-                onFocus={() => goTo(index)}
               />
             );
           })}

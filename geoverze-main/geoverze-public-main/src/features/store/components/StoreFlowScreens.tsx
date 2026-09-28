@@ -15,11 +15,11 @@ import { CartLineRow } from "./CartLineRow";
 import { OrderCard } from "./OrderCard";
 import { BundleCard } from "./BundleCard";
 import { ProductCard } from "./ProductCard";
+import { StorefrontRewardsCatalog } from "./StorefrontRewardsCatalog";
 import { productBySlug } from "../data/products";
 import { isComingSoonCategory } from "../data/taxonomy";
 import { SEED_ORDERS } from "../data/orders";
 import { BUNDLES, DEALS } from "../data/offers";
-import { useCreditPurchase } from "../hooks/useCreditPurchase";
 import { isProductOwned, useEntitlements } from "../hooks/useEntitlements";
 import { useStoreCatalogue } from "../hooks/useStoreCatalogue";
 import { money } from "../lib/format";
@@ -247,10 +247,7 @@ export function OrdersScreen() {
 /** Credit-only rewards shelf — production-backed purchase flow. */
 export function RewardsScreen() {
   const { balance, signedIn, authReady } = useStoreCreditsState();
-  const { wishlistToggle, wishlist } = useStoreActions();
   const { rewardProducts, loading: catalogueLoading, error: catalogueError } = useStoreCatalogue();
-  const entitlements = useEntitlements();
-  const { purchase, isPurchasing } = useCreditPurchase();
 
   const balanceLabel = !authReady
     ? "…"
@@ -271,40 +268,15 @@ export function RewardsScreen() {
         breadcrumb={crumbs("Rewards")}
       />
       <SectionContainer size="wide">
-        {catalogueLoading ? (
+        {catalogueError ? (
+          <p className="mb-6 text-sm text-foreground/50">{catalogueError}</p>
+        ) : null}
+        {catalogueLoading && rewardProducts.length === 0 ? (
           <EmptyState icon={Gift} title="Loading rewards…" />
-        ) : catalogueError ? (
-          <EmptyState icon={Gift} title="Could not load rewards" description={catalogueError} />
         ) : rewardProducts.length === 0 ? (
           <EmptyState icon={Gift} title="No rewards available" />
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {rewardProducts.map((product) => {
-              const owned = isProductOwned(entitlements, product.slug);
-              const affordable =
-                balance !== null && product.credits !== null && product.credits <= balance;
-
-              return (
-                <ProductCard
-                  key={product.slug}
-                  product={product}
-                  saved={wishlist.includes(product.slug)}
-                  owned={owned}
-                  affordable={affordable}
-                  purchasing={isPurchasing(product.slug)}
-                  onToggleWishlist={wishlistToggle}
-                  onAdd={() => {
-                    if (!product.purchasable || !product.serverProductId) return;
-                    void purchase({
-                      slug: product.slug,
-                      name: product.name,
-                      serverProductId: product.serverProductId,
-                    });
-                  }}
-                />
-              );
-            })}
-          </div>
+          <StorefrontRewardsCatalog products={rewardProducts} />
         )}
       </SectionContainer>
     </PageShell>

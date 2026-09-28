@@ -44,7 +44,8 @@ export type StoreCategoryId =
   | "badges"
   | "frames"
   | "themes"
-  | "boosts";
+  | "boosts"
+  | "prizes";
 
 export type StoreGroup = {
   id: StoreGroupId;
@@ -204,6 +205,13 @@ export const STORE_CATEGORIES: readonly StoreCategory[] = [
     group: "rewards",
     blurb: "Score multipliers — arriving soon.",
     icon: Zap,
+  },
+  {
+    id: "prizes",
+    label: "Special Rewards",
+    group: "rewards",
+    blurb: "Signature hardware claimed with credits.",
+    icon: Package,
   },
 ] as const;
 

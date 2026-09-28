@@ -1,5 +1,6 @@
 import type { StoreProductRow } from "../data/fetchStoreProducts";
 import { productBySlug, type Product, type StockState } from "../data/products";
+import { isStorefrontRewardSlug, staticStorefrontRewardProducts } from "../data/storefrontRewards";
 
 /** Presentation product merged with server-authoritative catalogue fields. */
 export type StoreCatalogueProduct = Product & {
@@ -64,24 +65,23 @@ export function mergeServerCatalogue(
   });
 }
 
-/** Rewards shelf: active server products plus inactive boost from static catalogue. */
+/** Listed storefront rewards: server rows plus any static prizes not yet seeded. */
 export function rewardShelfProducts(
   catalogue: readonly StoreCatalogueProduct[],
 ): StoreCatalogueProduct[] {
   const items = [...catalogue];
   const serverSlugs = new Set(catalogue.map((p) => p.slug));
-  const boost = productBySlug("boost-double-xp");
 
-  if (boost && !serverSlugs.has(boost.slug)) {
+  for (const prize of staticStorefrontRewardProducts()) {
+    if (serverSlugs.has(prize.slug)) continue;
     items.push({
-      ...boost,
-      stock: "sold-out",
+      ...prize,
       serverProductId: null,
       purchasable: false,
     });
   }
 
-  return items.sort((a, b) => (a.credits ?? 0) - (b.credits ?? 0));
+  return items.filter((product) => isStorefrontRewardSlug(product.slug));
 }
 
 export function catalogueProductBySlug(

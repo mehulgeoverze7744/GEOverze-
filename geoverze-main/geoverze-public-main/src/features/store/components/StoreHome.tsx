@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, SectionContainer } from "@/components/shared";
 import { useStoreStore } from "@/stores/storeStore";
@@ -8,14 +9,14 @@ import { CategoryTile } from "./CategoryTile";
 import { DigitalProductsCarousel } from "./DigitalProductsCarousel";
 import { ProductCard } from "./ProductCard";
 import { ProductRail } from "./ProductRail";
+import { StorefrontRewardsCatalog } from "./StorefrontRewardsCatalog";
 import { StoreHero } from "./StoreHero";
 import { QuickViewModal } from "./QuickViewModal";
 import { PRODUCTS, productBySlug, type Product } from "../data/products";
 import { STORE_CATEGORIES, STORE_GROUPS } from "../data/taxonomy";
-import { useCreditPurchase } from "../hooks/useCreditPurchase";
 import { isProductOwned, useEntitlements } from "../hooks/useEntitlements";
 import { useStoreCatalogue } from "../hooks/useStoreCatalogue";
-import { catalogueProductBySlug, type StoreCatalogueProduct } from "../lib/mergeCatalogue";
+import { catalogueProductBySlug } from "../lib/mergeCatalogue";
 import { bestSellers } from "../lib/filter";
 import { money } from "../lib/format";
 import { useStoreActions } from "../lib/useStoreActions";
@@ -28,7 +29,6 @@ export function StoreHome() {
   const { balance, signedIn, authReady } = useStoreCreditsState();
   const entitlements = useEntitlements();
   const { rewardProducts, products: catalogueProducts } = useStoreCatalogue();
-  const { purchase, isPurchasing } = useCreditPurchase();
   const recentlyViewed = useStoreStore((s) => s.recentlyViewed);
 
   const balanceDisplay = !authReady ? "…" : signedIn ? String(balance ?? 0) : "—";
@@ -37,16 +37,6 @@ export function StoreHome() {
     .map(productBySlug)
     .filter((p): p is Product => Boolean(p))
     .slice(0, 4);
-
-  const affordableRewards =
-    balance === null
-      ? []
-      : rewardProducts
-          .filter(
-            (p) =>
-              p.purchasable && p.credits !== null && p.credits <= balance && p.stock !== "sold-out",
-          )
-          .slice(0, 4);
 
   const card = (product: Product, equalizeHeight = false) => {
     const display = catalogueProductBySlug(catalogueProducts, product.slug) ?? product;
@@ -65,26 +55,6 @@ export function StoreHome() {
       />
     );
   };
-
-  const rewardCard = (product: StoreCatalogueProduct) => (
-    <ProductCard
-      key={product.slug}
-      product={product}
-      saved={wishlist.includes(product.slug)}
-      owned={isProductOwned(entitlements, product.slug)}
-      affordable={balance !== null && product.credits !== null && product.credits <= balance}
-      purchasing={isPurchasing(product.slug)}
-      onToggleWishlist={wishlistToggle}
-      onAdd={() => {
-        if (!product.purchasable || !product.serverProductId) return;
-        void purchase({
-          slug: product.slug,
-          name: product.name,
-          serverProductId: product.serverProductId,
-        });
-      }}
-    />
-  );
 
   return (
     <PageShell>
@@ -162,26 +132,32 @@ export function StoreHome() {
 
         <DigitalProductsCarousel />
 
-        <ProductRail
-          title="Claim with credits"
-          description={
-            signedIn
-              ? `Rewards you can claim with your ${balanceDisplay} credits.`
-              : "Sign in to claim digital rewards with credits."
-          }
-          to="/geostore/rewards"
-          linkLabel="All rewards"
-        >
-          {affordableRewards.length > 0
-            ? affordableRewards.map(rewardCard)
-            : rewardProducts
-                .filter((p) => p.purchasable)
-                .slice(0, 4)
-                .map(rewardCard)}
-        </ProductRail>
+        <AnimatedSection className="mt-[var(--space-section-sm)]">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div className="min-w-0">
+              <h2 className="text-xl font-semibold tracking-tight text-foreground md:text-2xl">
+                Claim with credits
+              </h2>
+              <p className="mt-2 max-w-xl text-xs leading-relaxed text-foreground/50">
+                {signedIn
+                  ? `Rewards you can claim with your ${balanceDisplay} credits.`
+                  : "Sign in to claim digital rewards with credits."}
+              </p>
+            </div>
+            <Link
+              to="/geostore/rewards"
+              className="inline-flex items-center gap-2 text-[0.66rem] uppercase tracking-[0.18em] text-bronze transition-colors motion-fast hover:text-bronze-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+            >
+              All rewards <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+          <StorefrontRewardsCatalog className="mt-6" products={rewardProducts} />
+        </AnimatedSection>
 
         {recent.length > 0 ? (
-          <ProductRail title="Recently viewed">{recent.map(card)}</ProductRail>
+          <ProductRail title="Recently viewed">
+            {recent.map((product) => card(product))}
+          </ProductRail>
         ) : null}
       </SectionContainer>
 

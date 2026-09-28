@@ -22,19 +22,16 @@ export function useStoreCatalogue(): UseStoreCatalogueResult {
   const query = useQuery({
     queryKey: storeCatalogueQueryKey,
     queryFn: fetchStoreProducts,
-    select: (rows) => {
-      const products = mergeServerCatalogue(rows);
-      return {
-        products,
-        rewardProducts: rewardShelfProducts(products),
-      };
-    },
+    select: (rows) => ({ products: mergeServerCatalogue(rows) }),
     staleTime: 60_000,
   });
 
+  const products = query.data?.products ?? [];
+
   return {
-    products: query.data?.products ?? [],
-    rewardProducts: query.data?.rewardProducts ?? [],
+    products,
+    // Static prizes stay visible even while the server catalogue is loading or empty.
+    rewardProducts: rewardShelfProducts(products),
     loading: query.isPending,
     error:
       query.error instanceof Error ? query.error.message : query.error ? String(query.error) : null,
