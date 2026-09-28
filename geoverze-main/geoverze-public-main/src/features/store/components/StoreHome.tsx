@@ -48,7 +48,7 @@ export function StoreHome() {
           )
           .slice(0, 4);
 
-  const card = (product: Product) => {
+  const card = (product: Product, equalizeHeight = false) => {
     const display = catalogueProductBySlug(catalogueProducts, product.slug) ?? product;
 
     return (
@@ -61,6 +61,7 @@ export function StoreHome() {
         onToggleWishlist={wishlistToggle}
         onQuickView={setQuickView}
         onAdd={(p) => addProduct(p)}
+        equalizeHeight={equalizeHeight}
       />
     );
   };
@@ -128,7 +129,7 @@ export function StoreHome() {
               data-rail-item
               className="w-[min(82vw,18rem)] shrink-0 snap-start sm:w-[18rem]"
             >
-              {card(product)}
+              {card(product, true)}
             </div>
           ))}
         </ProductRail>

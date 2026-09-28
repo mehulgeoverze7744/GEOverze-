@@ -35,6 +35,7 @@ export function ProductCard({
   onQuickView,
   onAdd,
   variant = "grid",
+  equalizeHeight = false,
 }: {
   product: Product;
   saved: boolean;
@@ -47,6 +48,8 @@ export function ProductCard({
   onQuickView?: (product: Product) => void;
   onAdd?: (product: Product) => void;
   variant?: "grid" | "list";
+  /** Stretch to the rail row height and pin the cart action to the bottom. */
+  equalizeHeight?: boolean;
 }) {
   const Icon = categoryIcon(product.category);
   const productImage = productImageForSlug(product.slug);
@@ -70,13 +73,16 @@ export function ProductCard({
   const seamlessBlend =
     product.category === "mugs" ||
     product.category === "stickers" ||
-    isGlobeProductSlug(product.slug);
+    isGlobeProductSlug(product.slug) ||
+    (equalizeHeight && (product.category === "tshirts" || product.category === "hoodies"));
+  const useLookbook = Boolean(lookbook && productImage && !seamlessBlend);
 
   return (
     <article
       className={cn(
         "group relative overflow-hidden rounded-2xl border border-bronze/12 transition-all motion-base hover:border-bronze/35 hover:bronze-glow",
         seamlessBlend ? "bg-charcoal" : "bg-charcoal/45",
+        equalizeHeight && "flex h-full w-full flex-col",
         variant === "list" && "sm:flex",
       )}
     >
@@ -86,7 +92,7 @@ export function ProductCard({
         className="relative block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
         aria-label={product.name}
       >
-        {lookbook && productImage ? (
+        {useLookbook && lookbook && productImage ? (
           <div
             className={cn(
               "relative overflow-hidden",
@@ -115,7 +121,7 @@ export function ProductCard({
                 ? {
                     imageSrc: productImage.src,
                     imageAlt: productImage.alt,
-                    ...(product.comingSoon || productImage.fillFrame
+                    ...(product.comingSoon || productImage.fillFrame || seamlessBlend
                       ? { fit: "cover" as const }
                       : {}),
                     ...(productImage.objectPosition
@@ -243,14 +249,14 @@ export function ProductCard({
         )}
 
         {onAdd && purchaseLocked ? (
-          <div className="mt-5 flex gap-2">
+          <div className={cn("mt-5 flex gap-2", equalizeHeight && "mt-auto pt-5")}>
             <GeoButton variant="dark" size="sm" className="min-w-0 flex-1" disabled>
               <Lock className="mr-1.5 h-3.5 w-3.5 shrink-0 sm:mr-2" />
               Coming soon
             </GeoButton>
           </div>
         ) : onAdd && !product.comingSoon ? (
-          <div className="mt-5 flex gap-2">
+          <div className={cn("mt-5 flex gap-2", equalizeHeight && "mt-auto pt-5")}>
             <GeoButton
               variant={inCart ? "ghost" : "solid"}
               size="sm"
