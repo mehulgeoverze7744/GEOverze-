@@ -1,10 +1,10 @@
 import {
-  BarChart3,
-  BadgeCheck,
-  Bot,
+  BookOpen,
+  Coins,
   Gift,
   Infinity as InfinityIcon,
-  PenTool,
+  ShoppingBag,
+  Sparkles,
   Swords,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -18,39 +18,37 @@ export type MembershipBenefit = {
 export const membershipBenefits: MembershipBenefit[] = [
   {
     icon: InfinityIcon,
-    title: "Unlimited learning",
-    description: "No daily ceiling. Play, read and revisit as long as your curiosity holds out.",
+    title: "Unlimited quizzes",
+    description: "No monthly ceiling. Play as many rounds as your curiosity holds out for.",
   },
   {
-    icon: BarChart3,
-    title: "Advanced analytics",
-    description:
-      "Continent mastery, accuracy curves and the gaps worth closing next — measured, not guessed.",
-  },
-  {
-    icon: PenTool,
-    title: "Creator access",
-    description:
-      "The Creator Studio: build quizzes, publish long-form geography and watch it travel.",
+    icon: BookOpen,
+    title: "Full GEOlibrary access",
+    description: "Every article, atlas and collection in the GEOlibrary, unlocked.",
   },
   {
     icon: Swords,
-    title: "Exclusive challenges",
-    description: "Member duels, seasonal tournaments and weekly ladders reserved for subscribers.",
+    title: "PvP & Multiplayer",
+    description: "Head-to-head duels and live multiplayer rooms with explorers worldwide.",
+  },
+  {
+    icon: Coins,
+    title: "Membership credits",
+    description: "A fresh monthly credit grant that rolls over and spends across GEOverze.",
+  },
+  {
+    icon: ShoppingBag,
+    title: "GEOstore savings",
+    description: "Member discounts on every GEOstore purchase — up to 10% off with Pro.",
   },
   {
     icon: Gift,
-    title: "Premium rewards",
-    description: "Faster credit earning and reward drops that only reach paid tiers.",
+    title: "Exclusive rewards",
+    description: "Member-only avatars, themes and reward drops that only reach paid tiers.",
   },
   {
-    icon: BadgeCheck,
-    title: "Exclusive badges",
-    description: "Membership marks that sit on your profile, leaderboard row and community posts.",
-  },
-  {
-    icon: Bot,
-    title: "Future AI coach",
-    description: "Adaptive practice and on-demand explanations — Advance members see it first.",
+    icon: Sparkles,
+    title: "Unlimited fun",
+    description: "Every mode, every challenge, no limits — geography the way it should feel.",
   },
 ];

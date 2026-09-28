@@ -1,22 +1,15 @@
 import { useRef } from "react";
-import {
-  BookOpen,
-  PenTool,
-  Swords,
-  TrendingUp,
-  Users,
-  type LucideIcon,
-} from "lucide-react";
+import { BookOpen, Gift, ShoppingBag, Swords, Users, type LucideIcon } from "lucide-react";
 
 import type { UpgradeBeat } from "../data/story";
 import { useCardPointerTilt } from "../lib/useCardPointerTilt";
 
 const BEAT_ICONS: Record<UpgradeBeat["id"], LucideIcon> = {
-  learning: BookOpen,
-  competition: Swords,
-  creation: PenTool,
   community: Users,
-  growth: TrendingUp,
+  explorer: BookOpen,
+  competition: Swords,
+  rewards: Gift,
+  geostore: ShoppingBag,
 };
 
 type UpgradeRosterCardProps = {

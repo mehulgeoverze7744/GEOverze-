@@ -9,7 +9,6 @@
 .upgrade-roster-section,
 .pricing-compare-section,
 .pricing-creator-section,
-.pricing-stories-section,
 .pricing-faq-section {
   padding-top: clamp(1.75rem, 3.5vw, 2.75rem);
 }

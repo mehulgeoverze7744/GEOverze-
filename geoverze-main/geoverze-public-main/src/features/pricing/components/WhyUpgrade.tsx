@@ -7,7 +7,7 @@ import { useUpgradeRosterParallax } from "../lib/useUpgradeRosterParallax";
 import { UpgradeRosterCard } from "./UpgradeRosterCard";
 import "../styles/why-upgrade.css";
 
-/** Asymmetric scroll-parallax roster — five reasons explorers stay. */
+/** Asymmetric scroll-parallax roster — explorer testimonials. */
 export function WhyUpgrade() {
   const sectionRef = useRef<HTMLElement>(null);
   const cardRefs = useRef<(HTMLElement | null)[]>([]);
@@ -50,20 +50,14 @@ export function WhyUpgrade() {
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      aria-labelledby="why-heading"
-      className="upgrade-roster-section"
-    >
+    <section ref={sectionRef} aria-labelledby="why-heading" className="upgrade-roster-section">
       <SectionContainer>
         <header className="upgrade-roster-header">
-          <p className="eyebrow">Why upgrade</p>
+          <p className="eyebrow">Testimonials</p>
           <h2 id="why-heading" className="font-light tracking-tight text-foreground">
-            Five reasons explorers stay
+            What explorers are saying
           </h2>
-          <p>
-            Membership is not a feature list. It is a different relationship with the planet.
-          </p>
+          <p>Real experiences from the GEOverze community.</p>
         </header>
 
         <div className="upgrade-roster-stage">

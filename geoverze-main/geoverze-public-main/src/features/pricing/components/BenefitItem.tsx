@@ -7,9 +7,10 @@ type BenefitItemProps = {
 
 function splitHeadline(title: string) {
   const words = title.trim().split(/\s+/);
+  if (words.length < 2) return { primary: title, secondary: "" };
   return {
-    primary: words[0] ?? title,
-    secondary: words.slice(1).join(" "),
+    primary: words.slice(0, -1).join(" "),
+    secondary: words[words.length - 1] ?? "",
   };
 }
 
@@ -26,9 +27,7 @@ export function BenefitItem({ index, title }: BenefitItemProps) {
       </p>
       <h3 className="pricing-benefit-title">
         <span className="pricing-benefit-title-line">{primary}</span>
-        {secondary ? (
-          <span className="pricing-benefit-title-line">{secondary}</span>
-        ) : null}
+        {secondary ? <span className="pricing-benefit-title-line">{secondary}</span> : null}
       </h3>
       <ArrowRight className="pricing-benefit-arrow" strokeWidth={1.6} aria-hidden="true" />
     </article>

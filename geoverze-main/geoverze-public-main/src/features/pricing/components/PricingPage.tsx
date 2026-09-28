@@ -10,7 +10,6 @@ import { CreatorMembership } from "./CreatorMembership";
 import { PlanGrid } from "./PlanGrid";
 import { PricingFaq } from "./PricingFaq";
 import { PricingHero } from "./PricingHero";
-import { SuccessStories } from "./SuccessStories";
 import { WhyUpgrade } from "./WhyUpgrade";
 import "../styles/pricing-layout.css";
 
@@ -32,7 +31,6 @@ export function PricingPage() {
         error={error}
       />
       <CreatorMembership />
-      <SuccessStories />
       <PricingFaq />
     </PageShell>
   );
