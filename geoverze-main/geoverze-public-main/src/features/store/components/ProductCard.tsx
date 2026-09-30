@@ -50,7 +50,7 @@ export function ProductCard({
   onQuickView?: (product: Product) => void;
   onAdd?: (product: Product) => void;
   variant?: "grid" | "list";
-  /** Stretch to the rail row height and pin the cart action to the bottom. */
+  /** Rail presentation: hoodie photography covers the frame and blends into the copy. */
   equalizeHeight?: boolean;
   /** Surface-specific artwork; covers the frame and blends into the copy. */
   image?: ProductImage | undefined;
@@ -82,7 +82,8 @@ export function ProductCard({
     product.category === "mugs" ||
     product.category === "stickers" ||
     isGlobeProductSlug(product.slug) ||
-    (equalizeHeight && (product.category === "tshirts" || product.category === "hoodies"));
+    (product.category === "tshirts" && Boolean(productImage)) ||
+    (equalizeHeight && product.category === "hoodies");
   const useLookbook = Boolean(lookbook && productImage && !seamlessBlend);
 
   return (
@@ -90,8 +91,8 @@ export function ProductCard({
       className={cn(
         "group relative overflow-hidden rounded-2xl border border-bronze/12 transition-all motion-base hover:border-bronze/35 hover:bronze-glow",
         seamlessBlend ? "bg-charcoal" : "bg-charcoal/45",
-        equalizeHeight && "flex h-full w-full flex-col",
-        variant === "list" && "sm:flex",
+        "flex h-full w-full flex-col",
+        variant === "list" && "sm:flex-row",
       )}
     >
       <Link
@@ -257,14 +258,14 @@ export function ProductCard({
         )}
 
         {onAdd && purchaseLocked ? (
-          <div className={cn("mt-5 flex gap-2", equalizeHeight && "mt-auto pt-5")}>
+          <div className="mt-auto flex gap-2 pt-5">
             <GeoButton variant="dark" size="sm" className="min-w-0 flex-1" disabled>
               <Lock className="mr-1.5 h-3.5 w-3.5 shrink-0 sm:mr-2" />
               Coming soon
             </GeoButton>
           </div>
         ) : onAdd && !product.comingSoon ? (
-          <div className={cn("mt-5 flex gap-2", equalizeHeight && "mt-auto pt-5")}>
+          <div className="mt-auto flex gap-2 pt-5">
             <GeoButton
               variant={inCart ? "ghost" : "solid"}
               size="sm"

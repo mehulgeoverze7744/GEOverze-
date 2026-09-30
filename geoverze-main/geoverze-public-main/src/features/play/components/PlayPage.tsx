@@ -15,12 +15,7 @@ import {
 import { useBookmarksStore } from "@/stores/bookmarksStore";
 import { QUIZ_CATEGORIES, type QuizCategory } from "../data/categories";
 import { GAME_MODES, type GameMode } from "../data/gameModes";
-import {
-  DISCOVERY_RAILS,
-  FEATURED_QUIZ_IDS,
-  pick,
-  type Quiz,
-} from "../data/quizzes";
+import { DISCOVERY_RAILS, FEATURED_QUIZ_IDS, pick, type Quiz } from "../data/quizzes";
 import { usePublishedQuizzes } from "../hooks/usePublishedQuizzes";
 import { INITIAL_FILTERS, applyFilters, type PlayFilterState } from "../lib/filter";
 import { quizzesForRail } from "../lib/discovery";
@@ -33,6 +28,7 @@ import { FeaturedCarousel } from "./FeaturedCarousel";
 import { FilterBar } from "./FilterBar";
 import { ModeCard } from "./ModeCard";
 import { PlayHero } from "./PlayHero";
+import { PlayPageBackground } from "./PlayPageBackground";
 import { PlayQuickLinks } from "./PlayQuickLinks";
 import { QuizCard } from "./QuizCard";
 import { QuizRail } from "./QuizRail";
@@ -88,7 +84,10 @@ export function PlayPage() {
   if (error) {
     return (
       <PageShell>
-        <SectionContainer size="wide" className="pt-[calc(var(--nav-height)+var(--space-section-sm))]">
+        <SectionContainer
+          size="wide"
+          className="pt-[calc(var(--nav-height)+var(--space-section-sm))]"
+        >
           <EmptyState
             title="Could not load the quiz catalog"
             description={error}
@@ -105,6 +104,7 @@ export function PlayPage() {
 
   return (
     <PageShell>
+      <PlayPageBackground />
       <PlayHero onRandom={playRandom} />
 
       <section className="pb-[var(--space-section-sm)]">
