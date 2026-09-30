@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Michroma&display=swap");
+
 /* Scoped to Home page GEOstore showcase only */
 
 .geostore-showcase {
@@ -78,4 +80,11 @@
   .geostore-showcase__cta {
     margin-top: 2.75rem;
   }
+}
+
+/* Michroma ships a single 400 weight; bold via stroke to avoid inconsistent faux-bold */
+.geostore-showcase__cta .home-hero-cta {
+  font-family: "Michroma", "Chakra Petch", sans-serif;
+  font-weight: 400;
+  -webkit-text-stroke: 0.55px currentColor;
 }
