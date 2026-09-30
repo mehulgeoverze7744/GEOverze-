@@ -27,30 +27,26 @@ export const GeostoreViewAllCard = memo(function GeostoreViewAllCard({
       params={{ slug }}
       aria-label={`${label}. ${imageAlt}`}
       className={cn(
-        "group flex h-full flex-col overflow-hidden rounded-2xl border border-bronze/12 bg-charcoal/45 transition-all motion-base hover:border-bronze/35 hover:shadow-[0_12px_40px_-12px_oklch(0.55_0.08_55_/_0.35)]",
+        "group flex h-full flex-col overflow-hidden rounded-2xl border border-bronze/12 bg-charcoal transition-all motion-base hover:border-bronze/35 hover:bronze-glow hover:shadow-[0_12px_40px_-12px_oklch(0.55_0.08_55_/_0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
         className,
       )}
     >
-      <div className="relative aspect-[16/10] overflow-hidden bg-[oklch(0.14_0.006_62)]">
+      <div className="relative aspect-[16/10] overflow-hidden transition-transform motion-slow group-hover:scale-[1.03]">
         <img
           src={image}
           alt=""
           aria-hidden
           loading="lazy"
           decoding="async"
-          className="h-full w-full object-contain transition-transform motion-slow group-hover:scale-[1.03]"
+          className="absolute inset-0 h-full w-full object-cover object-center transition-transform motion-slow group-hover:scale-[1.03]"
         />
-        <div
+        <span
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-charcoal/88 via-charcoal/45 to-charcoal/25"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-charcoal/20 transition-opacity motion-base group-hover:bg-charcoal/10"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-2/5 bg-gradient-to-t from-charcoal to-transparent"
         />
       </div>
 
-      <div className="border-t border-bronze/10 px-5 py-5">
+      <div className="relative z-[2] -mt-5 px-5 pb-5 pt-2">
         <p className="text-[0.58rem] uppercase tracking-[0.22em] text-bronze/80">{categoryLabel}</p>
         <p className="mt-2 text-sm font-light leading-snug tracking-tight text-foreground md:text-base">
           {label}

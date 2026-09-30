@@ -31,7 +31,7 @@ export const GeostoreShowcase = memo(function GeostoreShowcase() {
         <GeostoreShowcaseIntro />
 
         <ul
-          className="geostore-showcase__row grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          className="geostore-showcase__row grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-3"
           aria-label="Featured T-shirts"
         >
           {tshirts.map((product, index) => (
@@ -41,8 +41,8 @@ export const GeostoreShowcase = memo(function GeostoreShowcase() {
               </AnimatedSection>
             </li>
           ))}
-          <li className="min-w-0 sm:col-span-2 lg:col-span-1">
-            <AnimatedSection delay={160}>
+          <li className="min-w-0">
+            <AnimatedSection delay={160} className="h-full">
               <GeostoreViewAllCard
                 slug="tshirts"
                 categoryLabel="T-SHIRT"
@@ -55,7 +55,7 @@ export const GeostoreShowcase = memo(function GeostoreShowcase() {
         </ul>
 
         <ul
-          className="geostore-showcase__row geostore-showcase__row--hoodies grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          className="geostore-showcase__row geostore-showcase__row--hoodies grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-3"
           aria-label="Featured hoodies"
         >
           {hoodies.map((product, index) => (
@@ -65,8 +65,8 @@ export const GeostoreShowcase = memo(function GeostoreShowcase() {
               </AnimatedSection>
             </li>
           ))}
-          <li className="min-w-0 sm:col-span-2 lg:col-span-1">
-            <AnimatedSection delay={280}>
+          <li className="min-w-0">
+            <AnimatedSection delay={280} className="h-full">
               <GeostoreViewAllCard
                 slug="hoodies"
                 categoryLabel="HOODIE"
