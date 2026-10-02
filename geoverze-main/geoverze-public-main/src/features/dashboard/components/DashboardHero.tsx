@@ -5,8 +5,9 @@ import { AnimatedCounter } from "@/components/shared/AnimatedCounter";
 import { GeoButton } from "@/components/shared/GeoButton";
 import { UserAvatar } from "@/features/auth/components/UserAvatar";
 import { greetingFor, motivationFor } from "@/features/dashboard/data/dashboard";
+import { useLibrarySubscriptionTier } from "@/features/library/hooks/useLibrarySubscriptionTier";
+import { libraryTierLabel } from "@/features/library/lib/access-tier";
 import { formatJoinDate, useProfile } from "@/features/profile/lib/useProfile";
-import { CreditProgressBar } from "@/features/progression/components/CreditProgressBar";
 import { useCreditHistory } from "@/features/progression/hooks/useCreditHistory";
 import { nextLevel } from "@/features/progression/lib/progress";
 import { REDEMPTION } from "@/features/progression/data/player";
@@ -28,18 +29,19 @@ export function DashboardHero({ className }: { className?: string }) {
   const unread = useNotificationsStore(selectUnreadCount);
   const player = useProgressionStore(selectPlayer);
   const { monthlyEarned } = useCreditHistory();
+  const { tier } = useLibrarySubscriptionTier();
+  const planName = libraryTierLabel(tier);
   const next = nextLevel(player.level);
   const greeting = greetingFor();
   const motivation = motivationFor();
+  const xpPct = Math.min(100, Math.round((player.xpIntoLevel / player.xpForLevel) * 100));
 
   return (
-    <section
-      className={cn(
-        "dashboard-hero relative overflow-hidden rounded-[1.75rem] border border-bronze/22",
-        className,
-      )}
-    >
-      <div className="dashboard-hero-atmosphere pointer-events-none absolute inset-0" aria-hidden="true">
+    <section className={cn("dashboard-hero relative overflow-hidden", className)}>
+      <div
+        className="dashboard-hero-atmosphere pointer-events-none absolute inset-0"
+        aria-hidden="true"
+      >
         <DashboardEarthBackground />
         <div className="dashboard-hero-surface" />
         <div className="dashboard-hero-content-shade" />
@@ -65,8 +67,42 @@ export function DashboardHero({ className }: { className?: string }) {
                 <span className="mx-2 text-foreground/25">·</span>
                 Explorer since {formatJoinDate(profile.joinedAt)}
               </p>
+              <p className="dashboard-current-plan mt-3">
+                <span className="dashboard-current-plan__label">Current plan</span>
+                <span className="dashboard-current-plan__name">{planName}</span>
+              </p>
             </div>
           </div>
+
+          <aside className="dashboard-quick-status" aria-label="Quick status">
+            <p className="dashboard-section-label">Quick status</p>
+            <dl className="dashboard-quick-status__grid">
+              <div className="dashboard-quick-status__item">
+                <dt>Current plan</dt>
+                <dd>{planName}</dd>
+              </div>
+              <div className="dashboard-quick-status__item">
+                <dt>Level / XP</dt>
+                <dd>
+                  Lv {player.level}
+                  <span className="dashboard-quick-status__meta">{xpPct}%</span>
+                </dd>
+              </div>
+              <div className="dashboard-quick-status__item">
+                <dt>Geo credits</dt>
+                <dd>
+                  <AnimatedCounter value={player.credits} />
+                </dd>
+              </div>
+              <div className="dashboard-quick-status__item">
+                <dt>Monthly progress</dt>
+                <dd>
+                  <AnimatedCounter value={monthlyEarned} />
+                  <span className="dashboard-quick-status__meta">/ {REDEMPTION.goal}</span>
+                </dd>
+              </div>
+            </dl>
+          </aside>
 
           <PlayerProgressHud
             level={player.level}
@@ -75,23 +111,6 @@ export function DashboardHero({ className }: { className?: string }) {
             xpForLevel={player.xpForLevel}
             nextRank={next ? { level: next.level, title: next.title } : null}
           />
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="dashboard-reward-module rounded-2xl border border-bronze/18 bg-charcoal/35 p-4 backdrop-blur-sm">
-              <p className="dashboard-section-label">Geo credits</p>
-              <p className="mt-2 text-[clamp(1.6rem,2.8vw,2.1rem)] font-light leading-none text-gradient-bronze">
-                <AnimatedCounter value={player.credits} />
-              </p>
-              <p className="mt-2 text-xs text-foreground/50">Available</p>
-            </div>
-            <div className="dashboard-reward-module rounded-2xl border border-bronze/18 bg-charcoal/35 p-4 backdrop-blur-sm">
-              <CreditProgressBar
-                credits={monthlyEarned}
-                goal={REDEMPTION.goal}
-                label="Monthly progress"
-              />
-            </div>
-          </div>
 
           <p className="flex items-start gap-3 text-sm italic text-foreground/50">
             <Sparkles

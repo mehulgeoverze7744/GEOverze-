@@ -1,11 +1,14 @@
 import { Target } from "lucide-react";
 
 import { ProgressRing } from "@/components/shared/ProgressRing";
-import { LEARNING_PROGRESS } from "@/features/dashboard/data/dashboard";
+import { selectPlayer, useProgressionStore } from "@/stores/progressionStore";
 import { cn } from "@/lib/utils";
 
-/** Visual world-knowledge progress modules with rings. */
+/** World-knowledge rings — only when geography tagging exists. */
 export function LearningProgressPanel({ className }: { className?: string }) {
+  const player = useProgressionStore(selectPlayer);
+  const explored = player.countriesExplored;
+
   return (
     <section
       className={cn(
@@ -22,21 +25,34 @@ export function LearningProgressPanel({ className }: { className?: string }) {
         Your world knowledge
       </h2>
 
-      <ul className="mt-6 grid gap-5 sm:grid-cols-2">
-        {LEARNING_PROGRESS.map((track) => (
-          <li key={track.id} className="flex items-center gap-4">
-            <ProgressRing value={track.value} label={track.label} size={72} thickness={4}>
-              <span className="text-xs font-medium text-gradient-bronze">{track.value}%</span>
+      {explored > 0 ? (
+        <ul className="mt-6 grid gap-5 sm:grid-cols-2">
+          <li className="flex items-center gap-4">
+            <ProgressRing
+              value={Math.round((explored / player.countriesTotal) * 100)}
+              label="Countries explored"
+              size={72}
+              thickness={4}
+            >
+              <span className="text-xs font-medium text-gradient-bronze">
+                {Math.round((explored / player.countriesTotal) * 100)}%
+              </span>
             </ProgressRing>
             <div className="min-w-0">
               <p className="text-[0.62rem] uppercase tracking-[0.2em] text-foreground/50">
-                {track.label}
+                Countries
               </p>
-              <p className="mt-1 text-sm text-foreground/85">{track.detail}</p>
+              <p className="mt-1 text-sm text-foreground/85">
+                {explored} of {player.countriesTotal}
+              </p>
             </div>
           </li>
-        ))}
-      </ul>
+        </ul>
+      ) : (
+        <p className="mt-6 text-sm leading-relaxed text-foreground/50">
+          Country, capital and flag coverage will appear here once quiz geography tagging is live.
+        </p>
+      )}
     </section>
   );
 }
