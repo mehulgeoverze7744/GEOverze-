@@ -10,14 +10,27 @@
 
 .dashboard-hero {
   min-height: min(520px, 72vw);
-  background: color-mix(in oklab, var(--charcoal) 28%, transparent);
-  box-shadow:
-    inset 0 1px 0 color-mix(in oklab, var(--bronze) 14%, transparent),
-    0 28px 56px color-mix(in oklab, var(--background) 45%, transparent);
+  border: 1px solid color-mix(in oklab, var(--bronze) 22%, transparent);
+  border-bottom: 0;
+  border-radius: 1.75rem 1.75rem 0 0;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--charcoal) 28%, transparent) 0%,
+    color-mix(in oklab, var(--charcoal) 14%, transparent) 68%,
+    transparent 100%
+  );
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--bronze) 14%, transparent);
 }
 
 .dashboard-hero-atmosphere {
   z-index: 0;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 78%,
+    rgba(0, 0, 0, 0.4) 92%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(to bottom, #000 78%, rgba(0, 0, 0, 0.4) 92%, transparent 100%);
 }
 
 /* Earth — scoped inside the card, clipped by overflow:hidden on .dashboard-hero */
@@ -47,20 +60,28 @@
   object-position: center;
   opacity: 0.95;
   mix-blend-mode: screen;
-  -webkit-mask-image: radial-gradient(
-    ellipse 66% 66% at 52% 48%,
-    #000 20%,
-    rgba(0, 0, 0, 0.94) 38%,
-    rgba(0, 0, 0, 0.5) 58%,
-    transparent 76%
-  );
-  mask-image: radial-gradient(
-    ellipse 66% 66% at 52% 48%,
-    #000 20%,
-    rgba(0, 0, 0, 0.94) 38%,
-    rgba(0, 0, 0, 0.5) 58%,
-    transparent 76%
-  );
+  -webkit-mask-image:
+    radial-gradient(
+      ellipse 70% 62% at 52% 40%,
+      #000 18%,
+      rgba(0, 0, 0, 0.94) 36%,
+      rgba(0, 0, 0, 0.45) 58%,
+      transparent 78%
+    ),
+    linear-gradient(to bottom, #000 54%, rgba(0, 0, 0, 0.42) 72%, transparent 90%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    radial-gradient(
+      ellipse 70% 62% at 52% 40%,
+      #000 18%,
+      rgba(0, 0, 0, 0.94) 36%,
+      rgba(0, 0, 0, 0.45) 58%,
+      transparent 78%
+    ),
+    linear-gradient(to bottom, #000 54%, rgba(0, 0, 0, 0.42) 72%, transparent 90%);
+  mask-composite: intersect;
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
 }
 
 /* Card surface: opaque left → transparent right (Earth shows through) */
@@ -164,18 +185,24 @@
 
   .dashboard-earth-image {
     opacity: 0.58;
-    -webkit-mask-image: radial-gradient(
-      ellipse 60% 60% at 54% 46%,
-      #000 18%,
-      rgba(0, 0, 0, 0.82) 36%,
-      transparent 70%
-    );
-    mask-image: radial-gradient(
-      ellipse 60% 60% at 54% 46%,
-      #000 18%,
-      rgba(0, 0, 0, 0.82) 36%,
-      transparent 70%
-    );
+    -webkit-mask-image:
+      radial-gradient(
+        ellipse 62% 56% at 54% 38%,
+        #000 16%,
+        rgba(0, 0, 0, 0.82) 34%,
+        transparent 70%
+      ),
+      linear-gradient(to bottom, #000 50%, rgba(0, 0, 0, 0.35) 70%, transparent 88%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      radial-gradient(
+        ellipse 62% 56% at 54% 38%,
+        #000 16%,
+        rgba(0, 0, 0, 0.82) 34%,
+        transparent 70%
+      ),
+      linear-gradient(to bottom, #000 50%, rgba(0, 0, 0, 0.35) 70%, transparent 88%);
+    mask-composite: intersect;
   }
 
   .dashboard-hero-surface {
@@ -212,6 +239,86 @@
   }
 }
 
+.dashboard-current-plan {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.38rem 0.72rem 0.38rem 0.62rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--bronze) 32%, transparent);
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in oklab, var(--bronze) 16%, transparent),
+      color-mix(in oklab, var(--charcoal) 55%, transparent)
+    );
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--bronze) 18%, transparent),
+    0 0 16px color-mix(in oklab, var(--bronze) 8%, transparent);
+}
+
+.dashboard-current-plan__label {
+  font-size: 0.52rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--bronze) 86%, transparent);
+}
+
+.dashboard-current-plan__name {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: color-mix(in oklab, var(--foreground) 92%, transparent);
+}
+
+.dashboard-quick-status {
+  max-width: 34rem;
+  padding: 0.95rem 1.05rem 1.05rem;
+  border-radius: 1.15rem;
+  border: 1px solid color-mix(in oklab, var(--bronze) 16%, transparent);
+  background: color-mix(in oklab, var(--charcoal) 38%, transparent);
+  backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--bronze) 10%, transparent);
+}
+
+.dashboard-quick-status__grid {
+  margin-top: 0.85rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem 1rem;
+}
+
+.dashboard-quick-status__item dt {
+  font-size: 0.52rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--foreground) 46%, transparent);
+}
+
+.dashboard-quick-status__item dd {
+  margin-top: 0.3rem;
+  font-size: 0.98rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: color-mix(in oklab, var(--foreground) 90%, transparent);
+}
+
+.dashboard-quick-status__meta {
+  margin-left: 0.35rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: color-mix(in oklab, var(--bronze) 82%, transparent);
+}
+
+@media (min-width: 640px) {
+  .dashboard-quick-status__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem 0.85rem;
+  }
+}
+
 /* ── Hero CTAs & cards ─────────────────────────────────────────────────── */
 
 .dashboard-cta-expedition {
@@ -245,46 +352,64 @@
 .dashboard-order-hero {
   order: 1;
 }
-.dashboard-order-streak {
+.dashboard-order-command {
   order: 2;
 }
-.dashboard-order-progress {
+.dashboard-order-streak {
   order: 3;
 }
-.dashboard-order-learning {
+.dashboard-order-progress {
   order: 4;
 }
-.dashboard-order-rewards {
-  order: 6;
-}
-.dashboard-order-viewed {
+.dashboard-order-learning {
   order: 5;
 }
-.dashboard-order-upcoming {
+.dashboard-order-viewed {
+  order: 6;
+}
+.dashboard-order-rewards {
   order: 7;
+}
+.dashboard-order-store {
+  order: 8;
+}
+.dashboard-order-actions {
+  order: 9;
+}
+.dashboard-order-upcoming {
+  order: 10;
 }
 
 @media (min-width: 1024px) {
   .dashboard-order-hero {
     order: 1;
   }
-  .dashboard-order-streak {
+  .dashboard-order-command {
     order: 2;
   }
-  .dashboard-order-progress {
+  .dashboard-order-streak {
     order: 3;
   }
-  .dashboard-order-learning {
+  .dashboard-order-progress {
     order: 4;
   }
-  .dashboard-order-viewed {
+  .dashboard-order-learning {
     order: 5;
   }
-  .dashboard-order-rewards {
+  .dashboard-order-viewed {
     order: 6;
   }
-  .dashboard-order-upcoming {
+  .dashboard-order-rewards {
     order: 7;
+  }
+  .dashboard-order-store {
+    order: 8;
+  }
+  .dashboard-order-actions {
+    order: 9;
+  }
+  .dashboard-order-upcoming {
+    order: 10;
   }
 }
 

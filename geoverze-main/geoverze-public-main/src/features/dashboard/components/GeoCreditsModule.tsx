@@ -27,10 +27,7 @@ export function GeoCreditsModule({ className }: { className?: string }) {
         aria-hidden="true"
       />
 
-      <h2
-        id="geo-credits-heading"
-        className="dashboard-section-label flex items-center gap-2"
-      >
+      <h2 id="geo-credits-heading" className="dashboard-section-label flex items-center gap-2">
         <Coins className="h-3.5 w-3.5 text-bronze/90" strokeWidth={1.5} aria-hidden="true" />
         Geo credits
       </h2>
@@ -51,9 +48,17 @@ export function GeoCreditsModule({ className }: { className?: string }) {
         />
       </div>
 
-      <GeoButton asChild variant="ghost" size="sm" className="mt-6">
-        <Link to="/play/credit-history">View credit history</Link>
-      </GeoButton>
+      <div className="mt-6 flex flex-wrap gap-2">
+        <GeoButton asChild variant="secondary" size="sm">
+          <Link to="/play/rewards">View rewards</Link>
+        </GeoButton>
+        <GeoButton asChild variant="ghost" size="sm">
+          <Link to="/play/credit-history">Credit history</Link>
+        </GeoButton>
+        <GeoButton asChild variant="ghost" size="sm">
+          <Link to="/geostore/rewards">Redeem</Link>
+        </GeoButton>
+      </div>
     </section>
   );
 }

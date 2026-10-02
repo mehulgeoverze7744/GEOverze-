@@ -2,9 +2,16 @@ import { AnimatedSection } from "@/components/shared/AnimatedSection";
 import { SectionContainer } from "@/components/shared/SectionContainer";
 
 import { AchievementsStrip } from "./AchievementsStrip";
+import { ContinuePlayingCard } from "./ContinuePlayingCard";
+import { DashboardCommandActions } from "./DashboardCommandActions";
+import { DashboardGeostoreCard } from "./DashboardGeostoreCard";
+import { DashboardLeaderboardCard } from "./DashboardLeaderboardCard";
+import { DashboardNotificationsCard } from "./DashboardNotificationsCard";
+import { DashboardProfileShortcut } from "./DashboardProfileShortcut";
 import { FavouriteCategoriesPanel } from "./FavouriteCategoriesPanel";
 import { GeoCreditsModule } from "./GeoCreditsModule";
 import { LearningProgressPanel } from "./LearningProgressPanel";
+import { QuizProgressCard } from "./QuizProgressCard";
 import { RecentQuizzesPanel } from "./RecentQuizzesPanel";
 import { RecentlyViewedPanel } from "./RecentlyViewedPanel";
 import { SavedExplorationsPanel } from "./SavedExplorationsPanel";
@@ -15,6 +22,20 @@ import { UpcomingEventsPanel } from "./UpcomingEventsPanel";
 export function DashboardWidgets() {
   return (
     <div className="contents">
+      <SectionContainer
+        size="dashboard"
+        className="dashboard-order-command mt-[var(--space-section-sm)]"
+      >
+        <div className="grid gap-4 lg:grid-cols-2 lg:items-stretch">
+          <AnimatedSection className="min-h-0 h-full">
+            <ContinuePlayingCard className="h-full" />
+          </AnimatedSection>
+          <AnimatedSection delay={60} className="min-h-0 h-full">
+            <QuizProgressCard className="h-full" />
+          </AnimatedSection>
+        </div>
+      </SectionContainer>
+
       <SectionContainer
         size="dashboard"
         className="dashboard-order-progress mt-[var(--space-section-sm)]"
@@ -32,10 +53,10 @@ export function DashboardWidgets() {
       <SectionContainer className="dashboard-order-learning mt-[var(--space-section-sm)]">
         <div className="grid gap-4 lg:grid-cols-3">
           <AnimatedSection className="dashboard-order-learning lg:col-span-2">
-            <LearningProgressPanel />
+            <LearningProgressPanel className="h-full" />
           </AnimatedSection>
           <AnimatedSection delay={60} className="dashboard-order-learning">
-            <FavouriteCategoriesPanel />
+            <FavouriteCategoriesPanel className="h-full" />
           </AnimatedSection>
         </div>
       </SectionContainer>
@@ -43,21 +64,46 @@ export function DashboardWidgets() {
       <SectionContainer className="dashboard-order-viewed mt-[var(--space-section-sm)]">
         <div className="grid gap-4 lg:grid-cols-2">
           <AnimatedSection>
-            <RecentlyViewedPanel />
+            <RecentlyViewedPanel className="h-full" />
           </AnimatedSection>
           <AnimatedSection delay={60}>
-            <SavedExplorationsPanel />
+            <SavedExplorationsPanel className="h-full" />
           </AnimatedSection>
         </div>
       </SectionContainer>
 
       <SectionContainer className="dashboard-order-rewards mt-[var(--space-section-sm)]">
-        <div className="grid gap-4 lg:grid-cols-2">
-          <AnimatedSection>
-            <GeoCreditsModule />
+        <div className="grid gap-4 lg:grid-cols-2 lg:items-stretch">
+          <AnimatedSection className="min-h-0 h-full">
+            <GeoCreditsModule className="h-full" />
           </AnimatedSection>
-          <AnimatedSection delay={60}>
-            <SubscriptionCard />
+          <AnimatedSection delay={60} className="min-h-0 h-full">
+            <SubscriptionCard className="h-full" />
+          </AnimatedSection>
+        </div>
+      </SectionContainer>
+
+      <SectionContainer className="dashboard-order-store mt-[var(--space-section-sm)]">
+        <div className="grid gap-4 lg:grid-cols-2 lg:items-stretch">
+          <AnimatedSection className="min-h-0 h-full">
+            <DashboardLeaderboardCard className="h-full" />
+          </AnimatedSection>
+          <AnimatedSection delay={60} className="min-h-0 h-full">
+            <DashboardGeostoreCard className="h-full" />
+          </AnimatedSection>
+        </div>
+      </SectionContainer>
+
+      <SectionContainer className="dashboard-order-actions mt-[var(--space-section-sm)]">
+        <div className="grid gap-4 lg:grid-cols-3 lg:items-stretch">
+          <AnimatedSection className="min-h-0 h-full">
+            <DashboardCommandActions className="h-full" />
+          </AnimatedSection>
+          <AnimatedSection delay={40} className="min-h-0 h-full">
+            <DashboardNotificationsCard className="h-full" />
+          </AnimatedSection>
+          <AnimatedSection delay={80} className="min-h-0 h-full">
+            <DashboardProfileShortcut className="h-full" />
           </AnimatedSection>
         </div>
       </SectionContainer>

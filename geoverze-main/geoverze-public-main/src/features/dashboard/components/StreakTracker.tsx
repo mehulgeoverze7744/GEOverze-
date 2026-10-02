@@ -3,6 +3,7 @@ import { Flame, Trophy } from "lucide-react";
 import { AnimatedCounter } from "@/components/shared/AnimatedCounter";
 import { ProgressBarFill } from "@/features/progression/components/ProgressBarFill";
 import { STREAK, WEEKDAYS } from "@/features/profile/data/stats";
+import { selectPlayer, useProgressionStore } from "@/stores/progressionStore";
 import { cn } from "@/lib/utils";
 
 /** Monday-based index for the current calendar day (0 = Mon … 6 = Sun). */
@@ -12,6 +13,7 @@ function currentWeekdayIndex(date = new Date()) {
 
 /** Compact streak tracker with weekly mission dots. */
 export function StreakTracker({ className }: { className?: string }) {
+  const player = useProgressionStore(selectPlayer);
   const weekPct = Math.min(100, Math.round((STREAK.daysThisWeek / STREAK.weeklyGoal) * 100));
 
   return (
@@ -28,12 +30,15 @@ export function StreakTracker({ className }: { className?: string }) {
 
       <div className="dashboard-streak-stats">
         <div className="dashboard-streak-stat dashboard-streak-stat--active">
-          <span className="dashboard-streak-stat-icon dashboard-streak-stat-icon--active" aria-hidden="true">
+          <span
+            className="dashboard-streak-stat-icon dashboard-streak-stat-icon--active"
+            aria-hidden="true"
+          >
             <Flame className="h-4 w-4" strokeWidth={1.5} />
           </span>
           <span className="dashboard-streak-stat-body">
             <span className="dashboard-streak-stat-value dashboard-streak-stat-value--active text-gradient-bronze">
-              <AnimatedCounter value={STREAK.current} />
+              <AnimatedCounter value={player.currentStreak} />
             </span>
             <span className="dashboard-streak-stat-label dashboard-streak-stat-label--active">
               Day streak
@@ -44,12 +49,15 @@ export function StreakTracker({ className }: { className?: string }) {
         <span className="dashboard-streak-stat-divider" aria-hidden="true" />
 
         <div className="dashboard-streak-stat dashboard-streak-stat--best">
-          <span className="dashboard-streak-stat-icon dashboard-streak-stat-icon--muted" aria-hidden="true">
+          <span
+            className="dashboard-streak-stat-icon dashboard-streak-stat-icon--muted"
+            aria-hidden="true"
+          >
             <Trophy className="h-4 w-4" strokeWidth={1.5} />
           </span>
           <span className="dashboard-streak-stat-body">
             <span className="dashboard-streak-stat-value dashboard-streak-stat-value--muted">
-              <AnimatedCounter value={STREAK.longest} />
+              <AnimatedCounter value={player.longestStreak} />
             </span>
             <span className="dashboard-streak-stat-label">Best streak</span>
           </span>
@@ -62,13 +70,7 @@ export function StreakTracker({ className }: { className?: string }) {
 }
 
 /** Seven-day mission tracker beneath the streak readout. */
-export function WeeklyMission({
-  className,
-  weekPct,
-}: {
-  className?: string;
-  weekPct: number;
-}) {
+export function WeeklyMission({ className, weekPct }: { className?: string; weekPct: number }) {
   const todayIndex = currentWeekdayIndex();
 
   return (
@@ -86,7 +88,13 @@ export function WeeklyMission({
       <div className="dashboard-streak-days" role="list" aria-label="Weekly activity">
         {STREAK.week.map((done, index) => {
           const isToday = index === todayIndex;
-          const state = done ? (isToday ? "current-done" : "done") : isToday ? "current" : "upcoming";
+          const state = done
+            ? isToday
+              ? "current-done"
+              : "done"
+            : isToday
+              ? "current"
+              : "upcoming";
 
           return (
             <span
