@@ -25,12 +25,12 @@ export function PlayerProgressHud({
   return (
     <div
       className={cn(
-        "dashboard-hud rounded-2xl border border-bronze/22 bg-charcoal/40 p-5 backdrop-blur-sm",
+        "dashboard-hud rounded-2xl border border-bronze/22 bg-charcoal/40 p-4 backdrop-blur-sm",
         className,
       )}
     >
-      <div className="flex flex-wrap items-center gap-5">
-        <ProgressRing value={xpPct} label="XP toward next level" size={88} thickness={4}>
+      <div className="flex flex-wrap items-center gap-3.5">
+        <ProgressRing value={xpPct} label="XP toward next level" size={72} thickness={4}>
           <span className="text-lg font-semibold text-gradient-bronze">{levelLabel}</span>
         </ProgressRing>
 
@@ -58,12 +58,10 @@ export function PlayerProgressHud({
       </div>
 
       <XpProgressBar
-        className="mt-5"
+        className="mt-3.5"
         xpIntoLevel={xpIntoLevel}
         xpForLevel={xpForLevel}
-        nextLevelLabel={
-          nextRank ? `Level ${nextRank.level} · ${nextRank.title}` : undefined
-        }
+        nextLevelLabel={nextRank ? `Level ${nextRank.level} · ${nextRank.title}` : undefined}
       />
     </div>
   );

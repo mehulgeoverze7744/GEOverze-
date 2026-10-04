@@ -49,7 +49,7 @@ export function DashboardHero({ className }: { className?: string }) {
       </div>
 
       <div className="relative z-[1] p-6 sm:p-8 lg:p-10 xl:p-12">
-        <div className="dashboard-hero-content max-w-[min(100%,640px)] space-y-6 lg:max-w-[52%]">
+        <div className="dashboard-hero-content space-y-6">
           <div className="flex items-start gap-4 sm:gap-5">
             <UserAvatar
               avatarUrl={profile.avatarUrl}
@@ -104,51 +104,57 @@ export function DashboardHero({ className }: { className?: string }) {
             </dl>
           </aside>
 
-          <PlayerProgressHud
-            level={player.level}
-            levelTitle={player.levelTitle}
-            xpIntoLevel={player.xpIntoLevel}
-            xpForLevel={player.xpForLevel}
-            nextRank={next ? { level: next.level, title: next.title } : null}
-          />
-
-          <p className="flex items-start gap-3 text-sm italic text-foreground/50">
-            <Sparkles
-              className="mt-0.5 h-4 w-4 shrink-0 text-bronze/90"
-              strokeWidth={1.4}
-              aria-hidden="true"
+          <div className="dashboard-hero-progress-row">
+            <PlayerProgressHud
+              className="dashboard-hero-hud"
+              level={player.level}
+              levelTitle={player.levelTitle}
+              xpIntoLevel={player.xpIntoLevel}
+              xpForLevel={player.xpForLevel}
+              nextRank={next ? { level: next.level, title: next.title } : null}
             />
-            {motivation}
-          </p>
 
-          <div className="flex flex-wrap gap-3">
-            <GeoButton asChild variant="primary" className="dashboard-cta-expedition group">
-              <Link to="/play">
-                <Compass
-                  className="mr-2 h-4 w-4 transition-transform motion-base group-hover:rotate-12 motion-reduce:transform-none"
-                  strokeWidth={1.5}
+            <div className="dashboard-hero-cta-cluster">
+              <p className="flex items-start gap-3 text-sm italic text-foreground/50">
+                <Sparkles
+                  className="mt-0.5 h-4 w-4 shrink-0 text-bronze/90"
+                  strokeWidth={1.4}
                   aria-hidden="true"
                 />
-                Start expedition
-              </Link>
-            </GeoButton>
-            <GeoButton asChild variant="secondary">
-              <Link to="/profile">View progress</Link>
-            </GeoButton>
-            <GeoButton asChild variant="secondary">
-              <Link to="/profile/edit">
-                <Pencil className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
-                Edit profile
-              </Link>
-            </GeoButton>
-            <GeoButton asChild variant="ghost">
-              <Link to="/notifications">
-                <Bell className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
-                Notifications
-                {unread > 0 ? <span className="ml-2 text-bronze">{unread}</span> : null}
-              </Link>
-            </GeoButton>
+                {motivation}
+              </p>
+
+              <div className="dashboard-hero-cta-actions">
+                <GeoButton asChild variant="primary" className="dashboard-cta-expedition group">
+                  <Link to="/play">
+                    <Compass
+                      className="mr-2 h-4 w-4 transition-transform motion-base group-hover:rotate-12 motion-reduce:transform-none"
+                      strokeWidth={1.5}
+                      aria-hidden="true"
+                    />
+                    Start expedition
+                  </Link>
+                </GeoButton>
+                <GeoButton asChild variant="secondary">
+                  <Link to="/profile">View progress</Link>
+                </GeoButton>
+                <GeoButton asChild variant="secondary">
+                  <Link to="/profile/edit">
+                    <Pencil className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
+                    Edit profile
+                  </Link>
+                </GeoButton>
+              </div>
+            </div>
           </div>
+
+          <GeoButton asChild variant="ghost">
+            <Link to="/notifications">
+              <Bell className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
+              Notifications
+              {unread > 0 ? <span className="ml-2 text-bronze">{unread}</span> : null}
+            </Link>
+          </GeoButton>
         </div>
       </div>
     </section>
