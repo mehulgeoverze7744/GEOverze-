@@ -1,20 +1,29 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, Gift, Globe, Trophy, Users, Zap } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
 const ACTIONS = [
-  { id: "play", label: "Play", hint: "Start a quiz", to: "/play" as const, icon: Globe },
+  { id: "play", label: "Play", hint: "Start a quiz", to: "/play" as const, emoji: "🌐" },
   {
     id: "leaderboard",
     label: "Leaderboard",
     hint: "View rankings",
     to: "/play/leaderboard" as const,
-    icon: Trophy,
+    emoji: "🏆",
+    locked: true,
   },
-  { id: "rewards", label: "Rewards", hint: "Claim & redeem", to: "/play/rewards" as const, icon: Gift },
-  { id: "community", label: "Community", hint: "Meet players", to: "/community" as const, icon: Users },
+  { id: "rewards", label: "Rewards", hint: "Claim & redeem", to: "/play/rewards" as const, emoji: "🎁" },
+  { id: "community", label: "Community", hint: "Meet players", to: "/community" as const, emoji: "🫂" },
 ] as const;
+
+function DockEmoji({ symbol }: { symbol: string }) {
+  return (
+    <span className="dashboard-dock-emoji" aria-hidden="true">
+      {symbol}
+    </span>
+  );
+}
 
 /** Compact command shortcuts — existing routes only. */
 export function DashboardCommandActions({ className }: { className?: string }) {
@@ -28,27 +37,42 @@ export function DashboardCommandActions({ className }: { className?: string }) {
           id="dashboard-quick-actions-heading"
           className="dashboard-section-label dashboard-dock-title"
         >
-          <Zap className="h-3.5 w-3.5" strokeWidth={1.6} aria-hidden="true" />
+          <DockEmoji symbol="⚡" />
           Quick actions
         </h2>
       </div>
       <ul className="dashboard-dock-actions">
         {ACTIONS.map((action) => {
-          const Icon = action.icon;
+          const body = (
+            <>
+              <DockEmoji symbol={action.emoji} />
+              <span className="dashboard-dock-action-copy">
+                <span className="dashboard-dock-action-label">{action.label}</span>
+                <span className="dashboard-dock-action-hint">{action.hint}</span>
+              </span>
+              <ChevronRight
+                className="dashboard-dock-action-chevron h-3.5 w-3.5"
+                strokeWidth={1.6}
+                aria-hidden="true"
+              />
+            </>
+          );
+
           return (
             <li key={action.id}>
-              <Link to={action.to} className="dashboard-dock-action">
-                <Icon className="h-3.5 w-3.5" strokeWidth={1.6} aria-hidden="true" />
-                <span className="dashboard-dock-action-copy">
-                  <span className="dashboard-dock-action-label">{action.label}</span>
-                  <span className="dashboard-dock-action-hint">{action.hint}</span>
+              {"locked" in action && action.locked ? (
+                <span
+                  className="dashboard-dock-action dashboard-dock-action--locked"
+                  aria-disabled="true"
+                  aria-label={`${action.label}, locked`}
+                >
+                  {body}
                 </span>
-                <ChevronRight
-                  className="dashboard-dock-action-chevron h-3.5 w-3.5"
-                  strokeWidth={1.6}
-                  aria-hidden="true"
-                />
-              </Link>
+              ) : (
+                <Link to={action.to} className="dashboard-dock-action">
+                  {body}
+                </Link>
+              )}
             </li>
           );
         })}

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Bell, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import { useNotificationsStore } from "@/stores/notificationsStore";
 import { cn } from "@/lib/utils";
@@ -19,7 +19,9 @@ export function DashboardNotificationsCard({ className }: { className?: string }
           id="dashboard-notifications-heading"
           className="dashboard-section-label dashboard-dock-title"
         >
-          <Bell className="h-3.5 w-3.5" strokeWidth={1.6} aria-hidden="true" />
+          <span className="dashboard-dock-emoji" aria-hidden="true">
+            🔔
+          </span>
           Notifications
         </h2>
         <Link to="/notifications" className="dashboard-dock-all">

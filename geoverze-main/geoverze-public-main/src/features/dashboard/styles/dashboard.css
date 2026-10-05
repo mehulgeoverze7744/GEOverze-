@@ -574,6 +574,32 @@
   color: color-mix(in oklab, var(--bronze) 88%, white 8%);
 }
 
+.dashboard-dock-emoji {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 1.05em;
+  height: 1.05em;
+  font-size: 1.12rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  color: inherit;
+  font-variant-emoji: emoji;
+  font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+}
+
+.dashboard-dock-title .dashboard-dock-emoji {
+  font-size: 1.04rem;
+}
+
+.dashboard-dock-action .dashboard-dock-emoji {
+  width: 1.3rem;
+  height: 1.3rem;
+  font-size: 1.18rem;
+}
+
 .dashboard-dock-all {
   display: inline-flex;
   align-items: center;
@@ -622,9 +648,19 @@
   box-shadow: 0 0 0 2px color-mix(in oklab, var(--bronze) 42%, transparent);
 }
 
-.dashboard-dock-action svg:first-child {
-  flex-shrink: 0;
-  color: color-mix(in oklab, var(--bronze) 88%, white 8%);
+.dashboard-dock-action--locked {
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: 0.45;
+  user-select: none;
+}
+
+.dashboard-dock-action--locked:hover,
+.dashboard-dock-action--locked:focus,
+.dashboard-dock-action--locked:focus-visible {
+  border-color: color-mix(in oklab, var(--bronze) 16%, transparent);
+  background: color-mix(in oklab, black 42%, var(--charcoal) 58%);
+  box-shadow: none;
 }
 
 .dashboard-dock-action-copy {
@@ -842,6 +878,10 @@
 /* ── Streak tracker ───────────────────────────────────────────────────── */
 
 .dashboard-streak {
+  --hero-gold-mid: oklch(0.78 0.1 78);
+  --hero-gold-deep: oklch(0.62 0.09 62);
+  --hero-gold-highlight: oklch(0.86 0.08 82);
+  --streak-ink: oklch(0.12 0.01 60);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -850,10 +890,20 @@
   min-width: 0;
   padding: 0.48rem 1.05rem;
   border-radius: 9999px;
-  border: 1px solid color-mix(in oklab, var(--bronze) 22%, transparent);
-  background: color-mix(in oklab, var(--charcoal) 42%, transparent);
-  backdrop-filter: blur(12px);
-  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--bronze) 12%, transparent);
+  border: 1px solid oklch(0.72 0.1 72 / 0.55);
+  background-color: var(--hero-gold-mid);
+  background-image: linear-gradient(
+    102deg,
+    var(--hero-gold-deep) 0%,
+    var(--hero-gold-mid) 46%,
+    var(--hero-gold-highlight) 52%,
+    var(--hero-gold-mid) 58%,
+    var(--hero-gold-deep) 100%
+  );
+  color: var(--streak-ink);
+  box-shadow:
+    0 10px 24px -14px oklch(0 0 0 / 0.88),
+    inset 0 1px 0 oklch(0.92 0.06 84 / 0.35);
 }
 
 .dashboard-streak-header {
@@ -866,7 +916,7 @@
 .dashboard-streak-header-icon {
   width: 0.78rem;
   height: 0.78rem;
-  color: color-mix(in oklab, var(--bronze) 80%, transparent);
+  color: var(--streak-ink);
 }
 
 .dashboard-streak-title {
@@ -875,7 +925,7 @@
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--foreground) 48%, transparent);
+  color: var(--streak-ink);
   white-space: nowrap;
 }
 
@@ -884,7 +934,7 @@
   width: 1px;
   height: 1.55rem;
   flex-shrink: 0;
-  background: color-mix(in oklab, var(--bronze) 22%, transparent);
+  background: color-mix(in oklab, var(--streak-ink) 22%, transparent);
 }
 
 .dashboard-streak-stat {
@@ -903,20 +953,20 @@
   align-items: center;
   justify-content: center;
   border-radius: 0.42rem;
-  border: 1px solid color-mix(in oklab, var(--bronze) 32%, transparent);
-  background: color-mix(in oklab, var(--bronze) 10%, transparent);
-  color: color-mix(in oklab, var(--bronze) 90%, transparent);
+  border: 1px solid color-mix(in oklab, var(--streak-ink) 22%, transparent);
+  background: color-mix(in oklab, var(--streak-ink) 8%, transparent);
+  color: var(--streak-ink);
 }
 
 .dashboard-streak-stat-icon--muted {
-  border-color: color-mix(in oklab, var(--bronze) 18%, transparent);
-  background: color-mix(in oklab, var(--charcoal) 50%, transparent);
-  color: color-mix(in oklab, var(--bronze) 72%, transparent);
+  border-color: color-mix(in oklab, var(--streak-ink) 16%, transparent);
+  background: color-mix(in oklab, var(--streak-ink) 6%, transparent);
+  color: var(--streak-ink);
 }
 
 .dashboard-streak-stat-icon--active {
-  border-color: color-mix(in oklab, var(--bronze) 46%, transparent);
-  background: color-mix(in oklab, var(--bronze) 16%, transparent);
+  border-color: color-mix(in oklab, var(--streak-ink) 28%, transparent);
+  background: color-mix(in oklab, var(--streak-ink) 10%, transparent);
 }
 
 .dashboard-streak-stat-body {
@@ -932,10 +982,17 @@
   font-weight: 500;
   line-height: 1;
   letter-spacing: -0.02em;
+  color: var(--streak-ink);
+}
+
+.dashboard-streak .text-gradient-bronze {
+  background-image: none;
+  color: var(--streak-ink);
+  -webkit-text-fill-color: var(--streak-ink);
 }
 
 .dashboard-streak-stat-value--muted {
-  color: color-mix(in oklab, var(--foreground) 82%, transparent);
+  color: var(--streak-ink);
 }
 
 .dashboard-streak-stat-label {
@@ -943,7 +1000,7 @@
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--foreground) 46%, transparent);
+  color: color-mix(in oklab, var(--streak-ink) 78%, transparent);
   white-space: nowrap;
 }
 
@@ -961,7 +1018,7 @@
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--foreground) 46%, transparent);
+  color: color-mix(in oklab, var(--streak-ink) 78%, transparent);
   white-space: nowrap;
 }
 
@@ -980,30 +1037,30 @@
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
-  border: 1px solid color-mix(in oklab, var(--bronze) 16%, transparent);
-  background: color-mix(in oklab, var(--charcoal) 48%, transparent);
+  border: 1px solid color-mix(in oklab, var(--streak-ink) 18%, transparent);
+  background: color-mix(in oklab, var(--streak-ink) 8%, transparent);
   font-size: 0.55rem;
   font-weight: 500;
   letter-spacing: 0.02em;
-  color: color-mix(in oklab, var(--foreground) 42%, transparent);
+  color: color-mix(in oklab, var(--streak-ink) 72%, transparent);
 }
 
 .dashboard-streak-day--done {
-  border-color: color-mix(in oklab, var(--bronze) 46%, transparent);
-  background: color-mix(in oklab, var(--bronze) 18%, transparent);
-  color: color-mix(in oklab, var(--bronze-glow) 95%, transparent);
+  border-color: color-mix(in oklab, var(--streak-ink) 28%, transparent);
+  background: color-mix(in oklab, var(--streak-ink) 14%, transparent);
+  color: var(--streak-ink);
 }
 
 .dashboard-streak-day--current-done {
-  border-color: color-mix(in oklab, var(--bronze) 55%, transparent);
-  background: color-mix(in oklab, var(--bronze) 22%, transparent);
-  color: color-mix(in oklab, var(--bronze) 95%, transparent);
+  border-color: color-mix(in oklab, var(--streak-ink) 38%, transparent);
+  background: color-mix(in oklab, var(--streak-ink) 18%, transparent);
+  color: var(--streak-ink);
 }
 
 .dashboard-streak-day--current {
-  border-color: color-mix(in oklab, var(--bronze) 42%, transparent);
-  background: color-mix(in oklab, var(--bronze) 8%, transparent);
-  color: color-mix(in oklab, var(--foreground) 72%, transparent);
+  border-color: color-mix(in oklab, var(--streak-ink) 32%, transparent);
+  background: color-mix(in oklab, var(--streak-ink) 10%, transparent);
+  color: var(--streak-ink);
 }
 
 .dashboard-streak-meter {
@@ -1020,8 +1077,14 @@
   margin: 0;
   font-size: 0.62rem;
   letter-spacing: 0.04em;
-  color: color-mix(in oklab, var(--foreground) 62%, transparent);
+  color: var(--streak-ink);
   white-space: nowrap;
+}
+
+.dashboard-streak .text-bronze-glow,
+.dashboard-streak .text-foreground\/35,
+.dashboard-streak .text-foreground\/45 {
+  color: var(--streak-ink);
 }
 
 .dashboard-streak-progress {
@@ -1029,12 +1092,12 @@
   min-width: 2.8rem;
   height: 0.16rem !important;
   border-radius: 9999px;
-  background: color-mix(in oklab, var(--background) 70%, transparent) !important;
+  background: color-mix(in oklab, var(--streak-ink) 22%, transparent) !important;
 }
 
 .dashboard-streak-progress > span {
   border-radius: 9999px;
-  background: color-mix(in oklab, var(--bronze) 82%, transparent) !important;
+  background: var(--streak-ink) !important;
 }
 
 @media (max-width: 1100px) {

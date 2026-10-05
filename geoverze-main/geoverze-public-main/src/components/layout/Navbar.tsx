@@ -25,11 +25,9 @@ import { signOut } from "@/lib/supabase/auth-sync";
 import { selectIsSignedIn, useAuthStore } from "@/stores/authStore";
 
 const accountLinks = [
-  { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
-  { label: "Profile", to: "/profile", icon: User },
+  { label: "Profile Dashboard", to: "/dashboard", icon: LayoutDashboard },
   { label: "Quiz History & Rewards", to: "/quiz-history-and-rewards", icon: Trophy },
   { label: "Bookmarks", to: "/bookmarks", icon: BookMarked },
-
   { label: "Settings", to: "/settings", icon: Settings },
   { label: "Support", to: "/support", icon: LifeBuoy },
 ] as const;

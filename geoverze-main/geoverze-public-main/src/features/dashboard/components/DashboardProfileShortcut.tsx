@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, Settings, UserRound } from "lucide-react";
+import { ChevronRight, Settings } from "lucide-react";
 
 import { UserAvatar } from "@/features/auth/components/UserAvatar";
 import { useProfile } from "@/features/profile/lib/useProfile";
@@ -19,7 +19,9 @@ export function DashboardProfileShortcut({ className }: { className?: string }) 
           id="dashboard-profile-shortcut-heading"
           className="dashboard-section-label dashboard-dock-title"
         >
-          <UserRound className="h-3.5 w-3.5" strokeWidth={1.6} aria-hidden="true" />
+          <span className="dashboard-dock-emoji" aria-hidden="true">
+            👤
+          </span>
           Profile
         </h2>
       </div>
