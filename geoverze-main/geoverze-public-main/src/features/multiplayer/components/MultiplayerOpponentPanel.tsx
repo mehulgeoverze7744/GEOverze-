@@ -59,7 +59,6 @@ export function MultiplayerOpponentPanel({
                   {participant.username}
                   {isYou ? " (you)" : ""}
                 </span>
-                <p className="text-[0.68rem] text-foreground/45">Level {participant.level}</p>
               </div>
               <MetaChip>{statusLabel}</MetaChip>
             </li>

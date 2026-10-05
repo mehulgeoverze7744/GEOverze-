@@ -123,8 +123,7 @@ export function MemberProfileScreen({ handle }: { handle: string }) {
 
   const posts = POSTS.filter((p) => p.author === handle);
   const stats = [
-    { label: "Level", value: `${member.level}` },
-    { label: "XP", value: compactCount(member.xp) },
+    { label: "Total XP", value: compactCount(member.xp) },
     { label: "Accuracy", value: `${member.accuracy}%` },
     { label: "Streak", value: `${member.streak}d` },
     { label: "Quizzes", value: compactCount(member.quizzes) },
@@ -149,7 +148,7 @@ export function MemberProfileScreen({ handle }: { handle: string }) {
                 <span aria-hidden className="mr-1">
                   {member.flag}
                 </span>
-                @{member.handle} · {member.country} · {member.levelTitle}
+                @{member.handle} · {member.country}
               </p>
               <p className="mt-1 text-[0.68rem] text-foreground/50">
                 {compactCount(member.followers)} followers · {compactCount(member.following)}{" "}

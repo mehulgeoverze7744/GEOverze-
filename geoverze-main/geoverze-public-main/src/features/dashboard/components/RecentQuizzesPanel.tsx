@@ -49,9 +49,12 @@ export function RecentQuizzesPanel({ className }: { className?: string }) {
       {loading ? (
         <p className="mt-6 text-sm text-foreground/50">Loading your latest runs…</p>
       ) : attempts.length === 0 ? (
-        <p className="mt-6 flex-1 text-sm leading-relaxed text-foreground/50">
-          No completed quizzes yet. Finish a solo, PvP or multiplayer run and it will appear here.
-        </p>
+        <div className="mt-6 flex flex-1 flex-col justify-center">
+          <p className="text-sm text-foreground/80">No quizzes played yet.</p>
+          <p className="mt-2 text-[0.75rem] leading-relaxed text-foreground/50">
+            Start an expedition to build your quiz history.
+          </p>
+        </div>
       ) : (
         <ol className="mt-6 flex flex-1 list-none flex-col justify-between gap-1">
           {attempts.map((entry) => {

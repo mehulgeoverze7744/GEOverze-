@@ -111,7 +111,7 @@ export const MATCH_POOL: readonly MatchPlayer[] = [
 /** Rotating copy for the searching state. Cosmetic only. */
 export const SEARCH_MESSAGES: readonly string[] = [
   "Scanning the globe for an opponent…",
-  "Matching your level and accuracy…",
+  "Matching your accuracy…",
   "Balancing question categories…",
   "Reserving a room on the nearest node…",
   "Almost there — locking the board…",

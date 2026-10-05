@@ -18,8 +18,8 @@ export function formatDashboardWhen(iso: string, now = Date.now()) {
 }
 
 export function formatPlayMode(mode: string) {
-  if (mode === "pvp") return "PvP";
-  if (mode === "multiplayer") return "Multiplayer";
-  if (!mode) return "Solo";
-  return mode.charAt(0).toUpperCase() + mode.slice(1);
+  const normalized = mode.toLowerCase();
+  if (normalized === "pvp") return "PvP";
+  if (normalized === "multiplayer") return "Multiplayer";
+  return "Solo";
 }

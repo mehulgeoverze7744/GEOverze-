@@ -2,26 +2,24 @@ import { useQuery } from "@tanstack/react-query";
 
 import { selectIsSignedIn, useAuthStore } from "@/stores/authStore";
 
-import {
-  DASHBOARD_RECENT_QUIZ_LIMIT,
-  fetchDashboardQuizAttempts,
-} from "../data/fetchDashboardQuizAttempts";
+import { fetchCreditProductAchievements } from "../data/fetchCreditProductAchievements";
 
-export const dashboardQuizAttemptsQueryKey = ["dashboardQuizAttempts"] as const;
+export const creditProductAchievementsQueryKey = ["creditProductAchievements"] as const;
 
-export function useDashboardQuizAttempts(limit = DASHBOARD_RECENT_QUIZ_LIMIT) {
+/** Live GeoCredit product achievements for the authenticated explorer. */
+export function useCreditProductAchievements() {
   const signedIn = useAuthStore(selectIsSignedIn);
   const userId = useAuthStore((s) => s.user?.id);
 
   const query = useQuery({
-    queryKey: [...dashboardQuizAttemptsQueryKey, userId, limit] as const,
-    queryFn: () => fetchDashboardQuizAttempts(userId as string, limit),
+    queryKey: [...creditProductAchievementsQueryKey, userId] as const,
+    queryFn: fetchCreditProductAchievements,
     enabled: signedIn && Boolean(userId),
     staleTime: 30_000,
   });
 
   return {
-    attempts: query.data ?? [],
+    achievements: query.data ?? [],
     loading: signedIn && query.isPending,
     error:
       query.error instanceof Error ? query.error.message : query.error ? String(query.error) : null,

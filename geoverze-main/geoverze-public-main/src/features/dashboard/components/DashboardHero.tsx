@@ -1,22 +1,18 @@
 import { Link } from "@tanstack/react-router";
-import { Bell, Compass, Pencil, Sparkles } from "lucide-react";
+import { Compass, Pencil, Sparkles } from "lucide-react";
 
 import { AnimatedCounter } from "@/components/shared/AnimatedCounter";
 import { GeoButton } from "@/components/shared/GeoButton";
-import { UserAvatar } from "@/features/auth/components/UserAvatar";
 import { greetingFor, motivationFor } from "@/features/dashboard/data/dashboard";
 import { useLibrarySubscriptionTier } from "@/features/library/hooks/useLibrarySubscriptionTier";
 import { libraryTierLabel } from "@/features/library/lib/access-tier";
 import { formatJoinDate, useProfile } from "@/features/profile/lib/useProfile";
 import { useCreditHistory } from "@/features/progression/hooks/useCreditHistory";
-import { nextLevel } from "@/features/progression/lib/progress";
 import { REDEMPTION } from "@/features/progression/data/player";
 import { selectPlayer, useProgressionStore } from "@/stores/progressionStore";
-import { selectUnreadCount, useNotificationsStore } from "@/stores/notificationsStore";
 import { cn } from "@/lib/utils";
 
 import { DashboardEarthBackground } from "./DashboardEarthBackground";
-import { PlayerProgressHud } from "./PlayerProgressHud";
 
 /**
  * Cinematic explorer command-centre hero — identity, progression and CTAs.
@@ -26,15 +22,18 @@ import { PlayerProgressHud } from "./PlayerProgressHud";
  */
 export function DashboardHero({ className }: { className?: string }) {
   const profile = useProfile();
-  const unread = useNotificationsStore(selectUnreadCount);
   const player = useProgressionStore(selectPlayer);
-  const { monthlyEarned } = useCreditHistory();
-  const { tier } = useLibrarySubscriptionTier();
-  const planName = libraryTierLabel(tier);
-  const next = nextLevel(player.level);
+  const { monthlyEarned, loading: creditsLoading } = useCreditHistory();
+  const { tier, displayName, loading: planLoading, signedIn } = useLibrarySubscriptionTier();
+  const planName =
+    displayName.trim() && displayName.toLowerCase() !== tier ? displayName : libraryTierLabel(tier);
+  const totalXp = Number.isFinite(player.xp) ? Math.max(0, player.xp) : 0;
+  const geoCredits = Number.isFinite(player.credits) ? Math.max(0, player.credits) : 0;
+  const monthlyProgress = Number.isFinite(monthlyEarned) ? Math.max(0, monthlyEarned) : 0;
+  const monthlyGoal = REDEMPTION.goal;
+  const planPending = signedIn && planLoading;
   const greeting = greetingFor();
   const motivation = motivationFor();
-  const xpPct = Math.min(100, Math.round((player.xpIntoLevel / player.xpForLevel) * 100));
 
   return (
     <section className={cn("dashboard-hero relative overflow-hidden", className)}>
@@ -51,12 +50,16 @@ export function DashboardHero({ className }: { className?: string }) {
       <div className="relative z-[1] p-6 sm:p-8 lg:p-10 xl:p-12">
         <div className="dashboard-hero-content space-y-6">
           <div className="flex items-start gap-4 sm:gap-5">
-            <UserAvatar
-              avatarUrl={profile.avatarUrl}
-              avatarId={profile.avatarId}
-              size={80}
-              className="shrink-0 drop-shadow-[0_8px_20px_rgba(0,0,0,0.45)]"
-            />
+            <span className="dashboard-hero-avatar">
+              <img
+                src="/assets/dashboard-explorer-avatar.png"
+                alt={`${profile.displayName} profile`}
+                width={148}
+                height={137}
+                decoding="async"
+                draggable={false}
+              />
+            </span>
             <div className="min-w-0 pt-1">
               <p className="dashboard-section-label">{greeting}</p>
               <h1 className="mt-2 truncate text-[clamp(1.75rem,3.6vw,2.65rem)] font-light tracking-tight text-foreground">
@@ -79,41 +82,42 @@ export function DashboardHero({ className }: { className?: string }) {
             <dl className="dashboard-quick-status__grid">
               <div className="dashboard-quick-status__item">
                 <dt>Current plan</dt>
-                <dd>{planName}</dd>
+                <dd>
+                  {planPending ? (
+                    <span className="dashboard-quick-status__pending">—</span>
+                  ) : (
+                    planName
+                  )}
+                </dd>
               </div>
               <div className="dashboard-quick-status__item">
-                <dt>Level / XP</dt>
+                <dt>Total XP</dt>
                 <dd>
-                  Lv {player.level}
-                  <span className="dashboard-quick-status__meta">{xpPct}%</span>
+                  <AnimatedCounter value={totalXp} />
+                  <span className="dashboard-quick-status__meta">XP</span>
                 </dd>
               </div>
               <div className="dashboard-quick-status__item">
                 <dt>Geo credits</dt>
                 <dd>
-                  <AnimatedCounter value={player.credits} />
+                  <AnimatedCounter value={geoCredits} />
                 </dd>
               </div>
               <div className="dashboard-quick-status__item">
                 <dt>Monthly progress</dt>
                 <dd>
-                  <AnimatedCounter value={monthlyEarned} />
-                  <span className="dashboard-quick-status__meta">/ {REDEMPTION.goal}</span>
+                  {creditsLoading ? (
+                    <span className="dashboard-quick-status__pending">—</span>
+                  ) : (
+                    <AnimatedCounter value={monthlyProgress} />
+                  )}
+                  <span className="dashboard-quick-status__meta">/ {monthlyGoal}</span>
                 </dd>
               </div>
             </dl>
           </aside>
 
           <div className="dashboard-hero-progress-row">
-            <PlayerProgressHud
-              className="dashboard-hero-hud"
-              level={player.level}
-              levelTitle={player.levelTitle}
-              xpIntoLevel={player.xpIntoLevel}
-              xpForLevel={player.xpForLevel}
-              nextRank={next ? { level: next.level, title: next.title } : null}
-            />
-
             <div className="dashboard-hero-cta-cluster">
               <p className="flex items-start gap-3 text-sm italic text-foreground/50">
                 <Sparkles
@@ -147,14 +151,6 @@ export function DashboardHero({ className }: { className?: string }) {
               </div>
             </div>
           </div>
-
-          <GeoButton asChild variant="ghost">
-            <Link to="/notifications">
-              <Bell className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
-              Notifications
-              {unread > 0 ? <span className="ml-2 text-bronze">{unread}</span> : null}
-            </Link>
-          </GeoButton>
         </div>
       </div>
     </section>

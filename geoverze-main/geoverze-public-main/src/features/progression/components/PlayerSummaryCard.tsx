@@ -6,16 +6,13 @@ import { MetaChip } from "@/features/play/components/Badges";
 import { GameCard } from "@/features/play/components/GameCard";
 import { useProfile } from "@/features/profile/lib/useProfile";
 import type { PlayerSnapshot } from "../data/player";
-import { nextLevel } from "../lib/progress";
-import { LevelBadge } from "./LevelBadge";
-import { XpProgressBar } from "./XpProgressBar";
 
 /** Player summary header used at the top of every progression surface. */
 export function PlayerSummaryCard({ player }: { player: PlayerSnapshot }) {
   const profile = useProfile();
-  const next = nextLevel(player.level);
 
   const stats = [
+    { icon: Sparkles, label: "Total XP", value: player.xp, suffix: " XP" },
     { icon: Zap, label: "Quizzes", value: player.totalQuizzes, suffix: "" },
     { icon: Target, label: "Accuracy", value: player.accuracy, suffix: "%", decimals: 1 },
     { icon: Flame, label: "Streak", value: player.currentStreak, suffix: " days" },
@@ -51,17 +48,9 @@ export function PlayerSummaryCard({ player }: { player: PlayerSnapshot }) {
               </p>
             </div>
           </div>
-          <LevelBadge level={player.level} title={player.levelTitle} size="lg" />
         </div>
 
-        <XpProgressBar
-          className="mt-8"
-          xpIntoLevel={player.xpIntoLevel}
-          xpForLevel={player.xpForLevel}
-          nextLevelLabel={next ? `Level ${next.level} · ${next.title}` : undefined}
-        />
-
-        <dl className="mt-8 grid grid-cols-2 gap-4 border-t border-bronze/12 pt-6 lg:grid-cols-4">
+        <dl className="mt-8 grid grid-cols-2 gap-4 border-t border-bronze/12 pt-6 sm:grid-cols-3 lg:grid-cols-5">
           {stats.map((stat) => (
             <div key={stat.label}>
               <dt className="inline-flex items-center gap-2 text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-foreground/50">

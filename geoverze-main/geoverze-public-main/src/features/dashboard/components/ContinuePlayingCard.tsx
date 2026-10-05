@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils";
 import { useSubscriptionPlanRows } from "../hooks/useSubscriptionPlanRows";
 import { isPlayModeOpen, planRowForTier, type ContinuePlayMode } from "../lib/playAccess";
 
+const MODE_CARD_CLASS = "dashboard-continue-mode h-full w-full justify-start px-4 py-4";
+
 const MODES: readonly {
   id: ContinuePlayMode;
   title: string;
@@ -65,48 +67,36 @@ export function ContinuePlayingCard({ className }: { className?: string }) {
           return (
             <li key={mode.id} className="min-w-0">
               {open && mode.id === "solo" ? (
-                <GeoButton
-                  asChild
-                  variant="secondary"
-                  className="h-full w-full justify-start px-4 py-4"
-                >
+                <GeoButton asChild variant="solid" className={MODE_CARD_CLASS}>
                   <Link to="/play/lobby" search={{ mode: "solo", quiz: undefined }}>
-                    <Icon className="mr-3 h-4 w-4 shrink-0 text-bronze/90" strokeWidth={1.5} />
+                    <Icon className="mr-3 h-4 w-4 shrink-0" strokeWidth={1.5} />
                     <span className="min-w-0 text-left">
-                      <span className="block text-sm text-foreground">{mode.title}</span>
-                      <span className="mt-0.5 block text-[0.68rem] font-normal normal-case tracking-normal text-foreground/50">
+                      <span className="block text-sm">{mode.title}</span>
+                      <span className="mt-0.5 block text-[0.68rem] font-normal normal-case tracking-normal text-foreground/70">
                         {mode.description}
                       </span>
                     </span>
                   </Link>
                 </GeoButton>
               ) : open ? (
-                <GeoButton
-                  asChild
-                  variant="secondary"
-                  className="h-full w-full justify-start px-4 py-4"
-                >
+                <GeoButton asChild variant="solid" className={MODE_CARD_CLASS}>
                   <Link to={mode.to}>
-                    <Icon className="mr-3 h-4 w-4 shrink-0 text-bronze/90" strokeWidth={1.5} />
+                    <Icon className="mr-3 h-4 w-4 shrink-0" strokeWidth={1.5} />
                     <span className="min-w-0 text-left">
-                      <span className="block text-sm text-foreground">{mode.title}</span>
-                      <span className="mt-0.5 block text-[0.68rem] font-normal normal-case tracking-normal text-foreground/50">
+                      <span className="block text-sm">{mode.title}</span>
+                      <span className="mt-0.5 block text-[0.68rem] font-normal normal-case tracking-normal text-foreground/70">
                         {mode.description}
                       </span>
                     </span>
                   </Link>
                 </GeoButton>
               ) : (
-                <GeoButton
-                  asChild
-                  variant="ghost"
-                  className="h-full w-full justify-start px-4 py-4"
-                >
+                <GeoButton asChild variant="solid" className={MODE_CARD_CLASS}>
                   <Link to="/pricing">
-                    <Lock className="mr-3 h-4 w-4 shrink-0 text-bronze/70" strokeWidth={1.5} />
+                    <Lock className="mr-3 h-4 w-4 shrink-0" strokeWidth={1.5} />
                     <span className="min-w-0 text-left">
-                      <span className="block text-sm text-foreground/80">{mode.title}</span>
-                      <span className="mt-0.5 block text-[0.68rem] font-normal normal-case tracking-normal text-foreground/45">
+                      <span className="block text-sm">{mode.title}</span>
+                      <span className="mt-0.5 block text-[0.68rem] font-normal normal-case tracking-normal text-foreground/70">
                         Requires a higher plan
                       </span>
                     </span>

@@ -1,15 +1,6 @@
 /** XP earning rules — display only. */
 import type { LucideIcon } from "lucide-react";
-import {
-  Award,
-  CalendarCheck,
-  CalendarRange,
-  Compass,
-  Flame,
-  Sparkles,
-  Star,
-  Zap,
-} from "lucide-react";
+import { CalendarCheck, CalendarRange, Compass, Flame, Sparkles, Star, Zap } from "lucide-react";
 
 export type XpRule = {
   id: string;
@@ -68,12 +59,5 @@ export const XP_RULES: readonly XpRule[] = [
     amount: "+200 XP",
     description: "First time you clear a category.",
     icon: Compass,
-  },
-  {
-    id: "levelup",
-    label: "Level up",
-    amount: "+Reward",
-    description: "Each level unlocks its own reward tier.",
-    icon: Award,
   },
 ] as const;

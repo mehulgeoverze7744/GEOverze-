@@ -32,7 +32,6 @@ export function LeaderboardRow({ row }: { row: StandingRow }) {
           </div>
         </div>
       </td>
-      <td className="px-4 py-4 text-sm text-foreground/70 tabular-nums">{row.level}</td>
       <td className="px-4 py-4 text-sm text-foreground/70 tabular-nums">
         {row.xp.toLocaleString()}
       </td>

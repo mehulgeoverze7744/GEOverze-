@@ -8,9 +8,7 @@ import { DashboardGeostoreCard } from "./DashboardGeostoreCard";
 import { DashboardLeaderboardCard } from "./DashboardLeaderboardCard";
 import { DashboardNotificationsCard } from "./DashboardNotificationsCard";
 import { DashboardProfileShortcut } from "./DashboardProfileShortcut";
-import { FavouriteCategoriesPanel } from "./FavouriteCategoriesPanel";
 import { GeoCreditsModule } from "./GeoCreditsModule";
-import { LearningProgressPanel } from "./LearningProgressPanel";
 import { QuizProgressCard } from "./QuizProgressCard";
 import { RecentQuizzesPanel } from "./RecentQuizzesPanel";
 import { RecentlyViewedPanel } from "./RecentlyViewedPanel";
@@ -46,17 +44,6 @@ export function DashboardWidgets() {
           </AnimatedSection>
           <AnimatedSection delay={60} className="min-h-0 h-full">
             <RecentQuizzesPanel className="h-full" />
-          </AnimatedSection>
-        </div>
-      </SectionContainer>
-
-      <SectionContainer className="dashboard-order-learning mt-[var(--space-section-sm)]">
-        <div className="grid gap-4 lg:grid-cols-3">
-          <AnimatedSection className="dashboard-order-learning lg:col-span-2">
-            <LearningProgressPanel className="h-full" />
-          </AnimatedSection>
-          <AnimatedSection delay={60} className="dashboard-order-learning">
-            <FavouriteCategoriesPanel className="h-full" />
           </AnimatedSection>
         </div>
       </SectionContainer>

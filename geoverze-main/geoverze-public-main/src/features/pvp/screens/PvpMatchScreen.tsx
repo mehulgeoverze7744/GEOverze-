@@ -1,10 +1,13 @@
 import { Link, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { Loader2, Swords } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { GeoButton, SectionContainer } from "@/components/shared";
+import { dashboardQuizAttemptsQueryKey } from "@/features/dashboard/hooks/useDashboardQuizAttempts";
+import { quizProgressStatsQueryKey } from "@/features/dashboard/hooks/useQuizProgressStats";
 import { QuizPlay } from "@/features/quiz/components/QuizPlay";
 import { useQuizSet } from "@/features/quiz";
 import { selectUser, useAuthStore } from "@/stores/authStore";
@@ -35,6 +38,7 @@ export function PvpMatchScreen({
   refresh,
 }: PvpMatchScreenProps) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const user = useAuthStore(selectUser);
   const { set, loading: setLoading } = useQuizSet(state?.room.quiz_id);
 
@@ -62,7 +66,9 @@ export function PvpMatchScreen({
   useEffect(() => {
     if (!roomCompleted || !rewardsSettled || !user?.id) return;
     void refreshProgression(user.id);
-  }, [roomCompleted, rewardsSettled, user?.id]);
+    void queryClient.invalidateQueries({ queryKey: quizProgressStatsQueryKey });
+    void queryClient.invalidateQueries({ queryKey: dashboardQuizAttemptsQueryKey });
+  }, [roomCompleted, rewardsSettled, user?.id, queryClient]);
 
   // Reset room-scoped guards when entering a different PvP room.
   useEffect(() => {

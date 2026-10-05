@@ -1,8 +1,11 @@
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { GeoButton } from "@/components/shared";
+import { dashboardQuizAttemptsQueryKey } from "@/features/dashboard/hooks/useDashboardQuizAttempts";
+import { quizProgressStatsQueryKey } from "@/features/dashboard/hooks/useQuizProgressStats";
 import { getLevelTitle, getXpProgress } from "@/features/progression/lib/progress";
 import { supabase } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/authStore";
@@ -35,7 +38,9 @@ type AttemptResult = {
 };
 
 /** Build the answer payload sent to submit_quiz_attempt(). */
-function buildAnswerPayload(answers: Record<string, { questionId: string; value: string[] | null; skipped: boolean }>) {
+function buildAnswerPayload(
+  answers: Record<string, { questionId: string; value: string[] | null; skipped: boolean }>,
+) {
   return Object.values(answers).map((answer) => ({
     question_id: answer.questionId,
     value: answer.skipped ? null : answer.value,
@@ -107,6 +112,7 @@ function loadResult(quizId: string): StoredQuizResult | null {
 export function QuizResultScreen() {
   const { quiz } = useSearch({ from: "/play/quiz/result" });
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const answers = useQuizStore((s) => s.answers);
   const startedAt = useQuizStore((s) => s.startedAt);
@@ -198,6 +204,8 @@ export function QuizResultScreen() {
         // Mark persisted regardless of duplicate — the run is recorded.
         setPersisted();
         setServerResult(result);
+        void queryClient.invalidateQueries({ queryKey: quizProgressStatsQueryKey });
+        void queryClient.invalidateQueries({ queryKey: dashboardQuizAttemptsQueryKey });
 
         if (result.duplicate) {
           // Server confirmed this attempt_id was already recorded.
@@ -239,6 +247,7 @@ export function QuizResultScreen() {
     mode,
     liveSummary,
     setPersisted,
+    queryClient,
   ]);
 
   // While the quiz set is loading from Supabase show a minimal spinner.

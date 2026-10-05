@@ -65,7 +65,7 @@ export function PlayLeaderboardPage() {
                 <caption className="sr-only">{scope} leaderboard standings</caption>
                 <thead>
                   <tr className="border-b border-bronze/15">
-                    {["Rank", "Player", "Level", "XP", "Streak", "Accuracy"].map((head) => (
+                    {["Rank", "Player", "XP", "Streak", "Accuracy"].map((head) => (
                       <th
                         key={head}
                         scope="col"

@@ -36,7 +36,7 @@ export const QUICK_ACTIONS: readonly QuickAction[] = [
   {
     id: "play",
     label: "Play Quiz",
-    description: "Jump into an expedition tuned to your level.",
+    description: "Jump into an expedition and start earning XP.",
     icon: Zap,
     to: "/play",
     badge: "Popular",
@@ -123,15 +123,6 @@ export const LEARNING_PROGRESS: readonly ProgressTrack[] = [
   { id: "capitals", label: "Capitals", value: 54, detail: "105 of 195" },
   { id: "flags", label: "Flags", value: 48, detail: "94 of 195" },
   { id: "physical", label: "Physical geography", value: 31, detail: "Beginner tier" },
-] as const;
-
-export type CategoryShare = { id: string; label: string; share: number; icon: LucideIcon };
-
-export const FAVORITE_CATEGORIES: readonly CategoryShare[] = [
-  { id: "capitals", label: "Capitals", share: 34, icon: Landmark },
-  { id: "flags", label: "Flags", share: 27, icon: Flag },
-  { id: "maps", label: "Maps", share: 21, icon: Map },
-  { id: "nature", label: "Nature", share: 18, icon: Compass },
 ] as const;
 
 export type LinkedItem = {

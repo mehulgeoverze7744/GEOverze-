@@ -1,64 +1,37 @@
-import { useState } from "react";
+import { CreditProductAchievementCard } from "@/features/dashboard/components/CreditProductAchievementCard";
+import { useCreditProductAchievements } from "@/features/dashboard/hooks/useCreditProductAchievements";
 
-import { ProgressBarFill } from "@/features/progression/components/ProgressBarFill";
-import {
-  ACHIEVEMENT_FILTERS,
-  ACHIEVEMENTS,
-  type AchievementFilterId,
-} from "@/features/profile/data/achievements";
-import { cn } from "@/lib/utils";
-
-import { useHistoryRewardsSummary } from "../lib/useHistoryRewardsSummary";
-import { AchievementTile } from "./AchievementTile";
-
-/** Achievement catalogue with compact summary and filters. */
+/** Full GeoCredit product achievement history for the signed-in user. */
 export function AchievementGrid() {
-  const [filter, setFilter] = useState<AchievementFilterId>("all");
-  const summary = useHistoryRewardsSummary();
+  const { achievements, loading, error } = useCreditProductAchievements();
 
-  const visible =
-    filter === "all" ? ACHIEVEMENTS : ACHIEVEMENTS.filter((item) => item.status === filter);
+  if (loading) {
+    return <p className="text-sm text-foreground/45">Loading achievements…</p>;
+  }
+
+  if (error) {
+    return <p className="text-sm text-foreground/45">Unable to load achievements.</p>;
+  }
+
+  if (achievements.length === 0) {
+    return (
+      <div>
+        <p className="text-sm text-foreground/80">No GeoCredit achievements yet.</p>
+        <p className="mt-2 text-[0.75rem] leading-relaxed text-foreground/50">
+          Acquire a GEOverze product with GeoCredits to earn your first achievement.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>
-      <div className="hr-achievement-summary">
-        <div className="hr-achievement-summary-text">
-          <p className="hr-achievement-summary-title">Achievements</p>
-          <p className="hr-achievement-summary-count">
-            {summary.badgesUnlocked} / {summary.badgesTotal} unlocked · {summary.badgeCompletion}%
-            complete
-          </p>
-        </div>
-        <div className="hr-achievement-summary-bar">
-          <ProgressBarFill
-            size="sm"
-            value={summary.badgeCompletion}
-            label="Achievement completion"
-            valueText={`${summary.badgeCompletion}% complete`}
-          />
-        </div>
-      </div>
-
-      <div className="hr-chip-row" role="group" aria-label="Filter achievements">
-        {ACHIEVEMENT_FILTERS.map((option) => (
-          <button
-            key={option.id}
-            type="button"
-            aria-pressed={filter === option.id}
-            data-active={filter === option.id}
-            onClick={() => setFilter(option.id)}
-            className={cn(
-              "hr-chip focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45",
-            )}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
-
+      <p className="hr-achievement-summary-count mb-6">
+        {achievements.length} GeoCredit {achievements.length === 1 ? "achievement" : "achievements"}
+      </p>
       <div className="hr-achievement-grid">
-        {visible.map((achievement) => (
-          <AchievementTile key={achievement.id} achievement={achievement} />
+        {achievements.map((achievement) => (
+          <CreditProductAchievementCard key={achievement.id} achievement={achievement} />
         ))}
       </div>
     </div>

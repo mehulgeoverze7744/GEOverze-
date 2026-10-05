@@ -1,15 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { LinkProps } from "@tanstack/react-router";
-import {
-  CalendarDays,
-  CalendarRange,
-  Coins,
-  Flame,
-  Gift,
-  Receipt,
-  Trophy,
-  TrendingUp,
-} from "lucide-react";
+import { CalendarDays, CalendarRange, Coins, Flame, Gift, Receipt, TrendingUp } from "lucide-react";
 
 export const PROGRESSION_LINKS: readonly {
   to: NonNullable<LinkProps["to"]>;
@@ -17,7 +8,6 @@ export const PROGRESSION_LINKS: readonly {
   icon: typeof Coins;
 }[] = [
   { to: "/play/progression", label: "Progression", icon: TrendingUp },
-  { to: "/play/level-system", label: "Levels", icon: Trophy },
   { to: "/play/rewards", label: "Rewards", icon: Gift },
   { to: "/play/streak", label: "Streak", icon: Flame },
   { to: "/play/daily-challenges", label: "Daily", icon: CalendarDays },

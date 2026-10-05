@@ -8,9 +8,6 @@ import { GeoButton } from "@/components/shared/GeoButton";
 import { SectionContainer } from "@/components/shared/SectionContainer";
 import { UserAvatar } from "@/features/auth/components/UserAvatar";
 import { formatJoinDate, useProfile } from "@/features/profile/lib/useProfile";
-import { LevelBadge } from "@/features/progression/components/LevelBadge";
-import { selectPlayer, useProgressionStore } from "@/stores/progressionStore";
-
 import { ExplorerAnalytics } from "./ExplorerAnalytics";
 import { ProfileBanner } from "./ProfileBanner";
 import { ProfileLockedUpgradeCards } from "./ProfileLockedUpgradeCards";
@@ -24,7 +21,6 @@ import "../styles/profile.css";
  */
 export function ProfilePage() {
   const profile = useProfile();
-  const player = useProgressionStore(selectPlayer);
 
   return (
     <PageShell>
@@ -71,12 +67,6 @@ export function ProfilePage() {
                 <div className="profile-hero-info min-w-0">
                   <h1 className="profile-display-name truncate">{profile.displayName}</h1>
                   <p className="profile-handle">{profile.handle}</p>
-                  <LevelBadge
-                    className="profile-level-badge profile-hero-level"
-                    size="sm"
-                    level={player.level}
-                    title={player.levelTitle}
-                  />
                   {profile.bio ? (
                     <p className="profile-bio profile-hero-bio">{profile.bio}</p>
                   ) : null}

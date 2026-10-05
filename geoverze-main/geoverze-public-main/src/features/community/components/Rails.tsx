@@ -162,7 +162,11 @@ export function FeaturedExplorersPanel() {
       <ul className="space-y-4">
         {FEATURED_EXPLORERS.map((member) => (
           <li key={member.handle}>
-            <MemberIdentity handle={member.handle} meta={`Level ${member.level}`} showTier />
+            <MemberIdentity
+              handle={member.handle}
+              meta={`${member.xp.toLocaleString()} XP`}
+              showTier
+            />
           </li>
         ))}
       </ul>

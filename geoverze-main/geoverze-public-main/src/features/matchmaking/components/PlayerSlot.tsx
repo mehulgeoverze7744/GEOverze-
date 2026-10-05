@@ -37,9 +37,6 @@ export function PlayerSlot({
         <p className="truncate text-[0.9rem] font-semibold tracking-tight text-foreground">
           {player.flag} {player.username}
         </p>
-        <p className="mt-1 text-[0.72rem] text-foreground/50">
-          Level {player.level} · {player.rankTitle}
-        </p>
         <p className="mt-3 text-[0.7rem] tabular-nums text-foreground/50">
           {player.winRate}% win rate · {player.country}
         </p>

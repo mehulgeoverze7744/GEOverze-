@@ -10,7 +10,7 @@ export const Route = createFileRoute("/community/member/$handle")({
       ? `${member.name} (@${member.handle}) — GEOverze Community`
       : `@${params.handle} — GEOverze Community`;
     const description = member
-      ? `${member.bio} Level ${member.level} ${member.levelTitle} from ${member.country}.`
+      ? `${member.bio} ${member.xp.toLocaleString()} XP from ${member.country}.`
       : `Explorer profile for @${params.handle} on GEOverze.`;
     return {
       meta: [

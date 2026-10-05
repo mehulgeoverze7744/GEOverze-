@@ -1,17 +1,18 @@
-import { Coins, Flame, Shuffle, Sparkles, Star } from "lucide-react";
+import { Coins, Flame, Shuffle, Sparkles } from "lucide-react";
 
 import { AnimatedCounter, GeoButton, SectionContainer } from "@/components/shared";
+import { selectPlayer, useProgressionStore } from "@/stores/progressionStore";
 import { GameCard } from "./GameCard";
-
-const STATS = [
-  { id: "streak", label: "Streak", value: 12, suffix: " days", icon: Flame },
-  { id: "xp", label: "XP", value: 8420, icon: Sparkles },
-  { id: "credits", label: "Credits", value: 320, icon: Coins },
-  { id: "level", label: "Level", value: 14, icon: Star },
-] as const;
 
 /** Lobby hero: heading, stat pills and the random-quiz CTA. */
 export function PlayHero({ onRandom }: { onRandom: () => void }) {
+  const player = useProgressionStore(selectPlayer);
+  const stats = [
+    { id: "streak", label: "Streak", value: player.currentStreak, suffix: " days", icon: Flame },
+    { id: "xp", label: "Total XP", value: player.xp, icon: Sparkles },
+    { id: "credits", label: "Credits", value: player.credits, icon: Coins },
+  ] as const;
+
   return (
     <section className="pt-[calc(var(--nav-height)+2.5rem)] pb-[var(--space-section-sm)]">
       <SectionContainer size="wide">
@@ -23,8 +24,8 @@ export function PlayHero({ onRandom }: { onRandom: () => void }) {
           Challenge yourself. Explore the world. Become a geography master.
         </p>
 
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {STATS.map((stat) => (
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {stats.map((stat) => (
             <GameCard
               key={stat.id}
               raised

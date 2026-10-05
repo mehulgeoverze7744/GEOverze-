@@ -4,6 +4,7 @@ import earthFragments from "@/assets/geostore/hoodie-fragments-of-earth.jpg";
 import earthIntelligence from "@/assets/geostore/hoodie-earth-intelligence.jpg";
 import explorersCompass from "@/assets/geostore/explorers-compass.jpg";
 import flagStickers from "@/assets/geostore/flag-sticker-pack.jpg";
+import geostoreHero from "@/assets/geostore/geostore-hero.jpg";
 import oldWorldMap from "@/assets/geostore/old-world-mug.jpg";
 
 import type { LinkedItem } from "@/features/dashboard/data/dashboard";
@@ -13,6 +14,9 @@ import { articleCardImageSrc } from "@/features/library/data/article-card-images
 export const DASHBOARD_EARTH_SRC = "/assets/dashboard-earth.jpg";
 
 export const FEATURED_EXPEDITION_IMAGE = earthIntelligence;
+
+/** Existing GEOstore merch hero — dashboard GEOstore card only. */
+export const GEOSTORE_CARD_IMAGE = geostoreHero;
 
 export const RECOMMENDED_IMAGES: Record<string, string> = {
   rec1: oldWorldMap,

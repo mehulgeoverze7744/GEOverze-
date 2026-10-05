@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import { Trophy } from "lucide-react";
 
 import { GeoButton } from "@/components/shared/GeoButton";
@@ -26,8 +25,16 @@ export function DashboardLeaderboardCard({ className }: { className?: string }) 
         shown.
       </p>
       <p className="mt-3 text-xs text-foreground/40">No rank movement available yet.</p>
-      <GeoButton asChild variant="secondary" size="sm" className="mt-auto pt-6">
-        <Link to="/play/leaderboard">Open leaderboard</Link>
+      <GeoButton
+        type="button"
+        variant="secondary"
+        size="sm"
+        className="pointer-events-none mt-auto cursor-not-allowed pt-6 opacity-45"
+        disabled
+        aria-disabled="true"
+        tabIndex={-1}
+      >
+        Open leaderboard
       </GeoButton>
     </section>
   );

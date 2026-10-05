@@ -119,12 +119,6 @@ export function ResultSummary({
           <Stat label="Credits" value="+0" />
         </div>
 
-        {serverResult?.level_up ? (
-          <p className="relative mt-4 text-center text-[0.8rem] font-semibold text-bronze-glow">
-            Level up! You reached level {serverResult.new_level}.
-          </p>
-        ) : null}
-
         {submitError ? (
           <p className="relative mt-4 flex items-center justify-center gap-2 text-[0.72rem] text-[oklch(0.84_0.15_25)]">
             <AlertCircle className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden />

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Coins, Flame, Gift, Trophy } from "lucide-react";
+import { ArrowRight, Coins, Flame, Gift } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer, SectionHeading } from "@/components/shared";
@@ -7,7 +7,6 @@ import { GameCard } from "@/features/play/components/GameCard";
 import { ChallengeCard } from "../components/ChallengeCard";
 import { CreditBalanceSummary } from "../components/CreditBalanceSummary";
 import { CreditRulesCard } from "../components/CreditRulesCard";
-import { LevelLadder } from "../components/LevelLadder";
 import { MonthlyProgressCard } from "../components/MonthlyProgressCard";
 import { PlayerSummaryCard } from "../components/PlayerSummaryCard";
 import { ProgressionNav } from "../components/ProgressionNav";
@@ -19,7 +18,6 @@ import { useProgressionStore } from "@/stores/progressionStore";
 
 const SHORTCUTS = [
   { to: "/play/rewards", label: "Reward catalogue", icon: Gift } as const,
-  { to: "/play/level-system", label: "Level system", icon: Trophy } as const,
   { to: "/play/streak", label: "Streak tracker", icon: Flame } as const,
   { to: "/play/credit-history", label: "Credit history", icon: Coins } as const,
 ];
@@ -38,8 +36,8 @@ export function ProgressionHub() {
             Every round moves you forward
           </h1>
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-foreground/60 md:text-base">
-            Levels, XP, credits, streaks and challenges in one place. XP and credits sync from your
-            account when signed in; daily and weekly challenges are still illustrative.
+            XP, credits, streaks and challenges in one place. XP and credits sync from your account
+            when signed in; daily and weekly challenges are still illustrative.
           </p>
         </AnimatedSection>
         <div className="mt-8">
@@ -117,29 +115,12 @@ export function ProgressionHub() {
       </SectionContainer>
 
       <SectionContainer className="mt-[var(--space-section)]">
-        <div className="grid gap-4 lg:grid-cols-2">
-          <AnimatedSection>
-            <SectionHeading as="h2" eyebrow="Credits" title="The official credit rules" />
-            <div className="mt-6">
-              <CreditRulesCard />
-            </div>
-          </AnimatedSection>
-          <AnimatedSection delay={80}>
-            <SectionHeading
-              as="h2"
-              eyebrow="Levels"
-              title="Your ladder"
-              action={
-                <GeoButton asChild variant="ghost">
-                  <Link to="/play/level-system">All levels</Link>
-                </GeoButton>
-              }
-            />
-            <div className="mt-6">
-              <LevelLadder currentLevel={player.level} />
-            </div>
-          </AnimatedSection>
-        </div>
+        <AnimatedSection>
+          <SectionHeading as="h2" eyebrow="Credits" title="The official credit rules" />
+          <div className="mt-6 max-w-3xl">
+            <CreditRulesCard />
+          </div>
+        </AnimatedSection>
       </SectionContainer>
 
       <SectionContainer className="mt-[var(--space-section)]">

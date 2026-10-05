@@ -21,7 +21,7 @@ export const upgradeStory: UpgradeBeat[] = [
     title: "Yusuf Rahman",
     description:
       "“I went from guessing at capitals to reading coastlines. The mastery map showed me exactly which continent I was avoiding.”",
-    points: ["Pro", "Level 24", "96 day streak"],
+      points: ["Pro", "96 day streak"],
   },
   {
     id: "competition",

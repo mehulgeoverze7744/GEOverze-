@@ -49,7 +49,7 @@ export const REWARD_SECTIONS: readonly RewardSection[] = [
   {
     id: "xp",
     title: "XP",
-    description: "Experience drives your level and unlocks the reward ladder.",
+    description: "Experience earned from quizzes, challenges and expeditions.",
     icon: Zap,
     rewards: [
       {
