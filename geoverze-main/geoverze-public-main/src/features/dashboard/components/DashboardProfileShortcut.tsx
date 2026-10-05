@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { Settings, UserRound } from "lucide-react";
+import { ChevronRight, Settings, UserRound } from "lucide-react";
 
-import { GeoButton } from "@/components/shared/GeoButton";
+import { UserAvatar } from "@/features/auth/components/UserAvatar";
 import { useProfile } from "@/features/profile/lib/useProfile";
 import { cn } from "@/lib/utils";
 
@@ -11,31 +11,44 @@ export function DashboardProfileShortcut({ className }: { className?: string }) 
 
   return (
     <section
-      className={cn(
-        "flex h-full flex-col rounded-2xl border border-bronze/16 bg-charcoal/30 p-6 backdrop-blur-sm",
-        className,
-      )}
+      className={cn("dashboard-dock-card", className)}
       aria-labelledby="dashboard-profile-shortcut-heading"
     >
-      <h2
-        id="dashboard-profile-shortcut-heading"
-        className="dashboard-section-label flex items-center gap-2"
-      >
-        <UserRound className="h-3.5 w-3.5 text-bronze/90" strokeWidth={1.5} aria-hidden="true" />
-        Profile
-      </h2>
-      <p className="mt-4 truncate text-sm text-foreground/80">{profile.displayName}</p>
-      <p className="mt-1 text-xs text-bronze/80">{profile.handle}</p>
-      <div className="mt-auto flex flex-wrap gap-2 pt-6">
-        <GeoButton asChild variant="secondary" size="sm">
-          <Link to="/profile">Open profile</Link>
-        </GeoButton>
-        <GeoButton asChild variant="ghost" size="sm">
-          <Link to="/settings" search={{ section: undefined }}>
-            <Settings className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
+      <div className="dashboard-dock-head">
+        <h2
+          id="dashboard-profile-shortcut-heading"
+          className="dashboard-section-label dashboard-dock-title"
+        >
+          <UserRound className="h-3.5 w-3.5" strokeWidth={1.6} aria-hidden="true" />
+          Profile
+        </h2>
+      </div>
+
+      <div className="dashboard-dock-profile">
+        <div className="dashboard-dock-identity">
+          <UserAvatar
+            avatarUrl={profile.avatarUrl}
+            avatarId={profile.avatarId}
+            size={56}
+            className="dashboard-dock-avatar"
+            alt={profile.displayName}
+          />
+          <div className="min-w-0">
+            <p className="dashboard-dock-name">{profile.displayName}</p>
+            <p className="dashboard-dock-handle">{profile.handle}</p>
+          </div>
+        </div>
+
+        <div className="dashboard-dock-ctas">
+          <Link to="/profile" className="dashboard-dock-cta">
+            Open profile
+            <ChevronRight className="h-3 w-3" strokeWidth={1.8} aria-hidden="true" />
+          </Link>
+          <Link to="/settings" search={{ section: undefined }} className="dashboard-dock-cta">
+            <Settings className="h-3 w-3" strokeWidth={1.6} aria-hidden="true" />
             Settings
           </Link>
-        </GeoButton>
+        </div>
       </div>
     </section>
   );

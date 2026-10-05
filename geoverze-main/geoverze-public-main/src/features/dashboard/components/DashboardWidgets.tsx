@@ -20,6 +20,20 @@ import { UpcomingEventsPanel } from "./UpcomingEventsPanel";
 export function DashboardWidgets() {
   return (
     <div className="contents">
+      <SectionContainer className="dashboard-order-actions mt-[var(--space-section-sm)]">
+        <div className="dashboard-dock-row">
+          <AnimatedSection className="min-h-0 h-full">
+            <DashboardCommandActions className="h-full" />
+          </AnimatedSection>
+          <AnimatedSection delay={40} className="min-h-0 h-full">
+            <DashboardNotificationsCard className="h-full" />
+          </AnimatedSection>
+          <AnimatedSection delay={80} className="min-h-0 h-full">
+            <DashboardProfileShortcut className="h-full" />
+          </AnimatedSection>
+        </div>
+      </SectionContainer>
+
       <SectionContainer
         size="dashboard"
         className="dashboard-order-command mt-[var(--space-section-sm)]"
@@ -77,20 +91,6 @@ export function DashboardWidgets() {
           </AnimatedSection>
           <AnimatedSection delay={60} className="min-h-0 h-full">
             <DashboardGeostoreCard className="h-full" />
-          </AnimatedSection>
-        </div>
-      </SectionContainer>
-
-      <SectionContainer className="dashboard-order-actions mt-[var(--space-section-sm)]">
-        <div className="grid gap-4 lg:grid-cols-3 lg:items-stretch">
-          <AnimatedSection className="min-h-0 h-full">
-            <DashboardCommandActions className="h-full" />
-          </AnimatedSection>
-          <AnimatedSection delay={40} className="min-h-0 h-full">
-            <DashboardNotificationsCard className="h-full" />
-          </AnimatedSection>
-          <AnimatedSection delay={80} className="min-h-0 h-full">
-            <DashboardProfileShortcut className="h-full" />
           </AnimatedSection>
         </div>
       </SectionContainer>

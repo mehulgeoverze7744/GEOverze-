@@ -12,6 +12,7 @@ import { REDEMPTION } from "@/features/progression/data/player";
 import { selectPlayer, useProgressionStore } from "@/stores/progressionStore";
 import { cn } from "@/lib/utils";
 
+import { QUICK_STATUS_CARD_IMAGE } from "../lib/dashboardAssets";
 import { DashboardEarthBackground } from "./DashboardEarthBackground";
 
 /**
@@ -78,6 +79,13 @@ export function DashboardHero({ className }: { className?: string }) {
           </div>
 
           <aside className="dashboard-quick-status" aria-label="Quick status">
+            <img
+              src={QUICK_STATUS_CARD_IMAGE}
+              alt=""
+              className="dashboard-quick-status__bg"
+              decoding="async"
+              aria-hidden="true"
+            />
             <p className="dashboard-section-label">Quick status</p>
             <dl className="dashboard-quick-status__grid">
               <div className="dashboard-quick-status__item">

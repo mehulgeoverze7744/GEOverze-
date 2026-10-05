@@ -338,29 +338,38 @@
 }
 
 .dashboard-quick-status {
-  --hero-gold-mid: oklch(0.78 0.1 78);
-  --hero-gold-deep: oklch(0.62 0.09 62);
-  --hero-gold-highlight: oklch(0.86 0.08 82);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   max-width: 34rem;
   padding: 0.95rem 1.05rem 1.05rem;
   border-radius: 1.15rem;
-  border: 1px solid color-mix(in oklab, var(--bronze) 60%, transparent);
-  background-color: var(--hero-gold-mid);
-  background-image: linear-gradient(
-    102deg,
-    var(--hero-gold-deep) 0%,
-    var(--hero-gold-mid) 46%,
-    var(--hero-gold-highlight) 52%,
-    var(--hero-gold-mid) 58%,
-    var(--hero-gold-deep) 100%
-  );
-  box-shadow:
-    inset 0 1px 0 oklch(0.92 0.06 84 / 0.35),
-    var(--shadow-game);
+  border: 1px solid oklch(0.58 0.018 80);
+  background: transparent;
+  box-shadow: var(--shadow-game);
+}
+
+.dashboard-quick-status__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 62% 48%;
+  transform: scale(1.16);
+  pointer-events: none;
+}
+
+.dashboard-quick-status .dashboard-section-label,
+.dashboard-quick-status__grid {
+  position: relative;
+  z-index: 1;
 }
 
 .dashboard-quick-status .dashboard-section-label {
-  color: color-mix(in oklab, var(--background) 58%, transparent);
+  font-weight: 800;
+  color: var(--background);
 }
 
 .dashboard-quick-status__grid {
@@ -372,16 +381,16 @@
 
 .dashboard-quick-status__item dt {
   font-size: 0.52rem;
-  font-weight: 600;
+  font-weight: 800;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--background) 58%, transparent);
+  color: var(--background);
 }
 
 .dashboard-quick-status__item dd {
   margin-top: 0.3rem;
   font-size: 0.98rem;
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--background);
 }
@@ -389,18 +398,27 @@
 .dashboard-quick-status__meta {
   margin-left: 0.35rem;
   font-size: 0.72rem;
+  font-weight: 700;
   letter-spacing: 0.04em;
-  color: color-mix(in oklab, var(--background) 68%, transparent);
+  color: var(--background);
 }
 
 .dashboard-quick-status__pending {
-  color: color-mix(in oklab, var(--background) 55%, transparent);
+  font-weight: 700;
+  color: var(--background);
 }
 
 @media (min-width: 640px) {
   .dashboard-quick-status__grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0.75rem 0.85rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .dashboard-quick-status__bg {
+    object-position: 72% 46%;
+    transform: scale(1.2);
   }
 }
 
@@ -493,26 +511,299 @@
 .dashboard-order-hero {
   order: 1;
 }
-.dashboard-order-command {
+.dashboard-order-actions {
   order: 2;
 }
-.dashboard-order-streak {
+.dashboard-order-command {
   order: 3;
 }
-.dashboard-order-progress {
+.dashboard-order-streak {
   order: 4;
 }
-.dashboard-order-viewed {
+.dashboard-order-progress {
   order: 5;
 }
-.dashboard-order-rewards {
+.dashboard-order-viewed {
   order: 6;
 }
-.dashboard-order-store {
+.dashboard-order-rewards {
   order: 7;
 }
-.dashboard-order-actions {
+.dashboard-order-store {
   order: 8;
+}
+
+/* ── Bottom dock: Quick actions / Notifications / Profile ─────────────── */
+
+.dashboard-dock-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.dashboard-dock-card {
+  display: flex;
+  min-width: 0;
+  height: 100%;
+  flex-direction: column;
+  border-radius: 1.65rem;
+  border: 1px solid color-mix(in oklab, var(--bronze) 18%, transparent);
+  background: color-mix(in oklab, var(--charcoal) 78%, black 22%);
+  padding: 1.15rem 1.2rem 1.2rem;
+  backdrop-filter: blur(18px);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--bronze) 10%, transparent),
+    0 10px 28px color-mix(in oklab, black 28%, transparent);
+}
+
+.dashboard-dock-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.dashboard-dock-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.dashboard-dock-title svg {
+  color: color-mix(in oklab, var(--bronze) 88%, white 8%);
+}
+
+.dashboard-dock-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--foreground) 58%, transparent);
+  transition: color 160ms ease;
+}
+
+.dashboard-dock-all:hover {
+  color: color-mix(in oklab, var(--bronze) 86%, white 8%);
+}
+
+.dashboard-dock-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.65rem;
+  margin-top: 1.05rem;
+}
+
+.dashboard-dock-action {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.55rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--bronze) 16%, transparent);
+  background: color-mix(in oklab, black 42%, var(--charcoal) 58%);
+  padding: 0.55rem 0.7rem 0.55rem 0.65rem;
+  text-decoration: none;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.dashboard-dock-action:hover {
+  border-color: color-mix(in oklab, var(--bronze) 32%, transparent);
+  background: color-mix(in oklab, black 34%, var(--charcoal) 66%);
+}
+
+.dashboard-dock-action:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--bronze) 42%, transparent);
+}
+
+.dashboard-dock-action svg:first-child {
+  flex-shrink: 0;
+  color: color-mix(in oklab, var(--bronze) 88%, white 8%);
+}
+
+.dashboard-dock-action-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.dashboard-dock-action-label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.15;
+  color: color-mix(in oklab, var(--foreground) 88%, transparent);
+}
+
+.dashboard-dock-action-hint {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 0.12rem;
+  font-size: 0.62rem;
+  line-height: 1.2;
+  color: color-mix(in oklab, var(--foreground) 42%, transparent);
+}
+
+.dashboard-dock-action-chevron {
+  flex-shrink: 0;
+  color: color-mix(in oklab, var(--bronze) 70%, transparent);
+}
+
+.dashboard-dock-empty {
+  margin-top: 0.95rem;
+  min-height: 0;
+  flex: 1;
+}
+
+.dashboard-dock-empty p {
+  max-width: 18rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: color-mix(in oklab, var(--foreground) 48%, transparent);
+}
+
+.dashboard-dock-notes {
+  margin-top: 0.95rem;
+  min-height: 0;
+  flex: 1;
+}
+
+.dashboard-dock-profile {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.dashboard-dock-identity {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: 1.15rem;
+}
+
+.dashboard-dock-identity img,
+.dashboard-dock-identity .user-avatar-explorer,
+.dashboard-dock-avatar {
+  flex-shrink: 0;
+  border-radius: 999px;
+}
+
+.dashboard-dock-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1.02rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: color-mix(in oklab, var(--foreground) 90%, transparent);
+}
+
+.dashboard-dock-handle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 0.15rem;
+  font-size: 0.78rem;
+  color: color-mix(in oklab, var(--foreground) 46%, transparent);
+}
+
+.dashboard-dock-ctas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.65rem;
+  margin-top: auto;
+  padding-top: 1.2rem;
+}
+
+.dashboard-dock-cta {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--bronze) 22%, transparent);
+  background: color-mix(in oklab, black 22%, transparent);
+  padding: 0.62rem 0.7rem;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--foreground) 82%, transparent);
+  text-decoration: none;
+  transition:
+    border-color 160ms ease,
+    color 160ms ease,
+    background-color 160ms ease;
+}
+
+.dashboard-dock-cta:hover {
+  border-color: color-mix(in oklab, var(--bronze) 40%, transparent);
+  background: color-mix(in oklab, var(--charcoal) 55%, transparent);
+  color: color-mix(in oklab, var(--foreground) 94%, transparent);
+}
+
+.dashboard-dock-cta:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--bronze) 42%, transparent);
+}
+
+.dashboard-dock-cta svg {
+  flex-shrink: 0;
+  color: color-mix(in oklab, var(--bronze) 82%, white 6%);
+}
+
+@media (min-width: 900px) {
+  .dashboard-dock-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1179px) {
+  .dashboard-dock-card {
+    padding: 1.05rem 1rem 1.1rem;
+  }
+
+  .dashboard-dock-action-hint {
+    display: none;
+  }
+}
+
+@media (min-width: 900px) and (max-width: 1179px) {
+  .dashboard-dock-action {
+    gap: 0.4rem;
+    padding: 0.5rem 0.55rem;
+  }
+
+  .dashboard-dock-action-label {
+    font-size: 0.7rem;
+  }
+
+  .dashboard-dock-action-chevron {
+    display: none;
+  }
+}
+
+@media (max-width: 719px) {
+  .dashboard-dock-card {
+    min-height: 0;
+  }
+
+  .dashboard-dock-action {
+    min-height: 2.75rem;
+  }
 }
 .dashboard-order-upcoming {
   order: 9;
@@ -522,25 +813,25 @@
   .dashboard-order-hero {
     order: 1;
   }
-  .dashboard-order-command {
+  .dashboard-order-actions {
     order: 2;
   }
-  .dashboard-order-streak {
+  .dashboard-order-command {
     order: 3;
   }
-  .dashboard-order-progress {
+  .dashboard-order-streak {
     order: 4;
   }
-  .dashboard-order-viewed {
+  .dashboard-order-progress {
     order: 5;
   }
-  .dashboard-order-rewards {
+  .dashboard-order-viewed {
     order: 6;
   }
-  .dashboard-order-store {
+  .dashboard-order-rewards {
     order: 7;
   }
-  .dashboard-order-actions {
+  .dashboard-order-store {
     order: 8;
   }
   .dashboard-order-upcoming {

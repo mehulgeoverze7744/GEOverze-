@@ -1,4 +1,5 @@
 /** Presentation-only imagery for dashboard cards. */
+import quickStatusMetal from "@/assets/dashboard/quick-status-metal.jpg";
 import continentStickers from "@/assets/geostore/continent-sticker-set.jpg";
 import earthFragments from "@/assets/geostore/hoodie-fragments-of-earth.jpg";
 import earthIntelligence from "@/assets/geostore/hoodie-earth-intelligence.jpg";
@@ -17,6 +18,9 @@ export const FEATURED_EXPEDITION_IMAGE = earthIntelligence;
 
 /** Existing GEOstore merch hero — dashboard GEOstore card only. */
 export const GEOSTORE_CARD_IMAGE = geostoreHero;
+
+/** Uploaded brushed-metal plate — Quick Status card only. */
+export const QUICK_STATUS_CARD_IMAGE = quickStatusMetal;
 
 export const RECOMMENDED_IMAGES: Record<string, string> = {
   rec1: oldWorldMap,

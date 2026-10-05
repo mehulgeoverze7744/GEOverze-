@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Bell } from "lucide-react";
+import { Bell, ChevronRight } from "lucide-react";
 
 import { useNotificationsStore } from "@/stores/notificationsStore";
 import { cn } from "@/lib/utils";
@@ -11,34 +11,29 @@ export function DashboardNotificationsCard({ className }: { className?: string }
 
   return (
     <section
-      className={cn(
-        "flex h-full flex-col rounded-2xl border border-bronze/16 bg-charcoal/30 p-6 backdrop-blur-sm",
-        className,
-      )}
+      className={cn("dashboard-dock-card", className)}
       aria-labelledby="dashboard-notifications-heading"
     >
-      <div className="flex items-center justify-between gap-3">
+      <div className="dashboard-dock-head">
         <h2
           id="dashboard-notifications-heading"
-          className="dashboard-section-label flex items-center gap-2"
+          className="dashboard-section-label dashboard-dock-title"
         >
-          <Bell className="h-3.5 w-3.5 text-bronze/90" strokeWidth={1.5} aria-hidden="true" />
+          <Bell className="h-3.5 w-3.5" strokeWidth={1.6} aria-hidden="true" />
           Notifications
         </h2>
-        <Link
-          to="/notifications"
-          className="text-[0.62rem] uppercase tracking-[0.2em] text-bronze/90 transition-colors hover:text-bronze"
-        >
+        <Link to="/notifications" className="dashboard-dock-all">
           All
+          <ChevronRight className="h-3 w-3" strokeWidth={1.8} aria-hidden="true" />
         </Link>
       </div>
 
       {latest.length === 0 ? (
-        <p className="mt-5 flex-1 text-sm leading-relaxed text-foreground/50">
-          No account notices yet. New rewards and expedition alerts will land here.
-        </p>
+        <div className="dashboard-dock-empty">
+          <p>No account notices yet. New rewards and expedition alerts will land here.</p>
+        </div>
       ) : (
-        <ul className="mt-5 flex-1 space-y-3">
+        <ul className="dashboard-dock-notes space-y-3">
           {latest.map((item) => (
             <li key={item.id} className="min-w-0">
               <p className="truncate text-sm text-foreground/85">{item.title}</p>

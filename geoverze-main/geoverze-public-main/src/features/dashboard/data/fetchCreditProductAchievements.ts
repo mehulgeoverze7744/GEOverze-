@@ -3,6 +3,7 @@ import {
   productImageForSlug,
   rewardShelfImageForSlug,
 } from "@/features/store/data/productImages";
+import { productBySlug } from "@/features/store/data/products";
 
 export type CreditProductAchievement = {
   id: string;
@@ -72,6 +73,13 @@ function imageForSlug(slug: string) {
   return productImageForSlug(slug) ?? rewardShelfImageForSlug(slug);
 }
 
+/** Obsolete honour badges — not part of the live GeoCredit rewards system. */
+export function isObsoleteRewardBadge(slug: string, name: string): boolean {
+  if (productBySlug(slug)?.category === "badges") return true;
+  if (slug.startsWith("badge-")) return true;
+  return /\bbadge\b/i.test(name);
+}
+
 /** Completed GeoCredit product acquisitions for the signed-in user (RLS-scoped). */
 export async function fetchCreditProductAchievements(): Promise<CreditProductAchievement[]> {
   const { data: orders, error: ordersError } = await (supabase as unknown as StoreOrdersQuery)
@@ -104,6 +112,8 @@ export async function fetchCreditProductAchievements(): Promise<CreditProductAch
 
       const image = imageForSlug(line.product_slug);
       const acquiredAt = order.placed_at ?? order.created_at;
+
+      if (isObsoleteRewardBadge(line.product_slug, line.product_name)) return null;
 
       return {
         id: line.id,
