@@ -31,8 +31,8 @@ export function useProfile() {
     profile.username ?? user?.username ?? displayName.toLowerCase().replace(/[^a-z0-9]/g, "");
   const countryCode = profile.country ?? user?.country ?? null;
   const country = COUNTRIES.find((item) => item.code === countryCode) ?? null;
-  const avatarUrl = user?.avatarUrl ?? null;
-  const avatarId = user?.avatarId ?? onboardingAvatar ?? null;
+  const avatarUrl = user ? (user.avatarUrl ?? null) : null;
+  const avatarId = user ? (user.avatarId ?? null) : (onboardingAvatar ?? null);
   const interests = INTERESTS.filter((interest) => interestIds.includes(interest.id));
   const skillLevel = SKILL_LEVELS.find((level) => level.id === skillLevelId) ?? null;
 

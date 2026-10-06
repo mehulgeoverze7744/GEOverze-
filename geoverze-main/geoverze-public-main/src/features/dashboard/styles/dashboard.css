@@ -311,12 +311,11 @@
   padding: 0.38rem 0.72rem 0.38rem 0.62rem;
   border-radius: 999px;
   border: 1px solid color-mix(in oklab, var(--bronze) 32%, transparent);
-  background:
-    linear-gradient(
-      145deg,
-      color-mix(in oklab, var(--bronze) 16%, transparent),
-      color-mix(in oklab, var(--charcoal) 55%, transparent)
-    );
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, var(--bronze) 16%, transparent),
+    color-mix(in oklab, var(--charcoal) 55%, transparent)
+  );
   box-shadow:
     inset 0 1px 0 color-mix(in oklab, var(--bronze) 18%, transparent),
     0 0 16px color-mix(in oklab, var(--bronze) 8%, transparent);
@@ -375,13 +374,15 @@
   font-family: var(--font-cta);
   font-synthesis: none;
   font-style: normal;
+  font-weight: 700;
   color: var(--background);
   text-rendering: optimizeLegibility;
+  text-shadow: 0 1px 2px oklch(0 0 0 / 0.5);
 }
 
 .dashboard-quick-status .dashboard-section-label {
-  font-weight: 700;
-  letter-spacing: 0.22em;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
 }
 
 .dashboard-quick-status__grid {
@@ -397,9 +398,8 @@
 
 .dashboard-quick-status__item dt {
   overflow: hidden;
-  font-size: 0.52rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
+  font-size: 0.7rem;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -408,27 +408,36 @@
 .dashboard-quick-status__item dd {
   margin-top: 0.3rem;
   min-width: 0;
-  font-size: 0.98rem;
-  font-weight: 700;
+  font-size: 1.32rem;
   letter-spacing: 0.02em;
   line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dashboard-quick-status__meta {
   margin-left: 0.35rem;
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 1.02rem;
   letter-spacing: 0.04em;
 }
 
 .dashboard-quick-status__pending {
-  font-weight: 700;
+  font-size: inherit;
 }
 
 @media (min-width: 640px) {
   .dashboard-quick-status__grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0.75rem 0.85rem;
+  }
+
+  .dashboard-quick-status__item dd {
+    font-size: 1.2rem;
+  }
+
+  .dashboard-quick-status__meta {
+    font-size: 0.95rem;
   }
 }
 
@@ -456,19 +465,51 @@
   height: 100%;
   flex-direction: column;
   justify-content: center;
-  gap: 0.85rem;
-  padding: 0.95rem 1.05rem 1.05rem;
-  border-radius: 1rem;
-  border: 1px solid color-mix(in oklab, var(--bronze) 22%, transparent);
-  background: color-mix(in oklab, var(--charcoal) 40%, transparent);
-  backdrop-filter: blur(8px);
-  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--bronze) 10%, transparent);
+  gap: 1.05rem;
+  padding: 1.15rem 1.2rem 1.25rem;
+  border-radius: 1.4rem;
+  border: 1px solid color-mix(in oklab, var(--bronze) 24%, transparent);
+  background: oklch(0.14 0.01 62 / 0.42);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow:
+    0 16px 36px oklch(0 0 0 / 0.28),
+    inset 0 1px 0 color-mix(in oklab, var(--bronze) 12%, transparent);
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+}
+
+.dashboard-hero-cta-quote {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1.45;
+  color: color-mix(in oklab, var(--foreground) 78%, transparent);
+}
+
+.dashboard-hero-cta-emoji {
+  display: inline-flex;
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+  font-size: 1.375rem;
+  line-height: 1;
+  font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+  font-variant-emoji: emoji;
+  font-style: normal;
+  font-weight: 400;
+  color: CanvasText;
 }
 
 .dashboard-hero-cta-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.65rem;
+  gap: 0.7rem;
 }
 
 .dashboard-hero-cta-actions > * {
@@ -497,16 +538,89 @@
 
 /* ── Hero CTAs & cards ─────────────────────────────────────────────────── */
 
-.dashboard-cta-expedition {
-  box-shadow:
-    0 0 0 1px color-mix(in oklab, var(--bronze) 35%, transparent),
-    0 0 24px color-mix(in oklab, var(--bronze) 12%, transparent);
+.dashboard-cta-expedition,
+.dashboard-cta-secondary {
+  min-height: 2.7rem;
+  transition:
+    transform 200ms ease,
+    filter 200ms ease,
+    box-shadow 200ms ease,
+    background-color 200ms ease,
+    border-color 200ms ease;
 }
 
-.dashboard-cta-expedition:hover {
-  box-shadow:
-    0 0 0 1px color-mix(in oklab, var(--bronze) 55%, transparent),
-    0 0 32px color-mix(in oklab, var(--bronze) 18%, transparent);
+.dashboard-cta-expedition {
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: oklch(0.14 0.02 70) !important;
+  background: color-mix(in oklab, var(--bronze) 88%, white 8%) !important;
+  border-color: color-mix(in oklab, var(--bronze) 70%, transparent) !important;
+  box-shadow: 0 8px 18px oklch(0.4 0.07 70 / 0.22) !important;
+}
+
+.dashboard-cta-secondary {
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: color-mix(in oklab, var(--foreground) 86%, transparent) !important;
+  background: oklch(0.16 0.01 62 / 0.42) !important;
+  border: 1px solid color-mix(in oklab, var(--bronze) 28%, transparent) !important;
+  box-shadow: none !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dashboard-hero-cta-cluster:hover {
+    transform: translateY(-1px);
+    border-color: color-mix(in oklab, var(--bronze) 34%, transparent);
+    box-shadow:
+      0 18px 40px oklch(0 0 0 / 0.32),
+      inset 0 1px 0 color-mix(in oklab, var(--bronze) 14%, transparent);
+  }
+
+  .dashboard-cta-expedition:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+    box-shadow: 0 12px 22px oklch(0.4 0.07 70 / 0.28) !important;
+  }
+
+  .dashboard-cta-secondary:hover {
+    transform: translateY(-1px);
+    background: oklch(0.2 0.012 62 / 0.52) !important;
+    border-color: color-mix(in oklab, var(--bronze) 42%, transparent) !important;
+  }
+
+  .dashboard-cta-expedition:active,
+  .dashboard-cta-secondary:active {
+    transform: scale(0.98);
+    filter: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .dashboard-hero-cta-actions > * {
+    flex: 1 1 100%;
+  }
+
+  .dashboard-cta-expedition,
+  .dashboard-cta-secondary {
+    min-height: 2.85rem;
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-hero-cta-cluster,
+  .dashboard-cta-expedition,
+  .dashboard-cta-secondary {
+    transition: none;
+  }
+
+  .dashboard-hero-cta-cluster:hover,
+  .dashboard-cta-expedition:hover,
+  .dashboard-cta-secondary:hover,
+  .dashboard-cta-expedition:active,
+  .dashboard-cta-secondary:active {
+    transform: none;
+  }
 }
 
 .dashboard-featured,
@@ -941,11 +1055,7 @@
   position: absolute;
   inset: -6px;
   border-radius: 50%;
-  background: radial-gradient(
-    ellipse at 35% 28%,
-    oklch(0.92 0.06 90 / 0.5) 0%,
-    transparent 58%
-  );
+  background: radial-gradient(ellipse at 35% 28%, oklch(0.92 0.06 90 / 0.5) 0%, transparent 58%);
   animation: lb-shine 6s ease-in-out infinite;
   pointer-events: none;
 }
@@ -1003,23 +1113,44 @@
 
 /* Animations */
 @keyframes lb-float {
-  from { transform: translateY(0); }
-  to   { transform: translateY(-5px); }
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-5px);
+  }
 }
 
 @keyframes lb-shine {
-  0%, 100% { opacity: 0; }
-  42%, 58% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0;
+  }
+  42%,
+  58% {
+    opacity: 1;
+  }
 }
 
 @keyframes lb-sparkle {
-  0%, 100% { opacity: 0; transform: scale(0.8); }
-  50%       { opacity: 0.8; transform: scale(1.1); }
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
 }
 
 @keyframes lb-breathe {
-  from { transform: scaleY(1); }
-  to   { transform: scaleY(1.012); }
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(1.012);
+  }
 }
 
 /* Reduced-motion: freeze all scene animations */
@@ -1090,6 +1221,10 @@
   align-items: stretch;
 }
 
+.dashboard-dock-row > * {
+  min-width: 0;
+}
+
 .dashboard-dock-card {
   display: flex;
   min-width: 0;
@@ -1144,9 +1279,9 @@
 }
 
 .dashboard-dock-action .dashboard-dock-emoji {
-  width: 1.55rem;
-  height: 1.55rem;
-  font-size: 1.4rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  font-size: 2.12rem;
 }
 
 .dashboard-dock-all {
@@ -1170,20 +1305,20 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   flex: 1;
   align-content: start;
-  gap: 0.72rem;
+  gap: 0.82rem;
   margin-top: 0.9rem;
 }
 
 .dashboard-dock-action {
   display: flex;
   min-width: 0;
-  min-height: 3.45rem;
+  min-height: 4.4rem;
   align-items: center;
-  gap: 0.62rem;
+  gap: 0.72rem;
   border-radius: 999px;
   border: 1px solid color-mix(in oklab, var(--bronze) 16%, transparent);
   background: color-mix(in oklab, black 48%, transparent);
-  padding: 0.86rem 1.05rem 0.86rem 0.95rem;
+  padding: 1.08rem 1.18rem 1.08rem 1.08rem;
   text-decoration: none;
   transition:
     border-color 160ms ease,
@@ -1262,8 +1397,10 @@
 
 .dashboard-dock-notes {
   margin-top: 0.9rem;
+  min-width: 0;
   min-height: 0;
   flex: 1;
+  overflow-x: hidden;
 }
 
 .dashboard-dock-profile {
@@ -1367,7 +1504,7 @@
 
 @media (min-width: 900px) {
   .dashboard-dock-row {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 4fr) minmax(0, 3fr) minmax(0, 3fr);
     gap: 1.35rem;
   }
 
@@ -1385,19 +1522,15 @@
 
 @media (min-width: 900px) and (max-width: 1179px) {
   .dashboard-dock-action {
-    gap: 0.48rem;
-    padding: 0.78rem 0.78rem 0.78rem 0.72rem;
-    min-height: 3.2rem;
-  }
-
-  .dashboard-dock-action-label {
-    font-size: 0.82rem;
+    gap: 0.58rem;
+    padding: 0.98rem 0.92rem 0.98rem 0.88rem;
+    min-height: 4.15rem;
   }
 
   .dashboard-dock-action .dashboard-dock-emoji {
-    width: 1.38rem;
-    height: 1.38rem;
-    font-size: 1.26rem;
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.92rem;
   }
 }
 
@@ -1412,7 +1545,14 @@
   }
 
   .dashboard-dock-action {
-    min-height: 3.35rem;
+    min-height: 4.25rem;
+    padding: 1.02rem 1.05rem 1.02rem 0.98rem;
+  }
+
+  .dashboard-dock-action .dashboard-dock-emoji {
+    width: 2.05rem;
+    height: 2.05rem;
+    font-size: 1.98rem;
   }
 }
 .dashboard-order-upcoming {
@@ -1478,7 +1618,9 @@
   box-shadow:
     0 10px 24px -14px oklch(0 0 0 / 0.88),
     inset 0 1px 0 oklch(0.92 0.06 84 / 0.35);
-  transition: border-color 380ms ease-in-out, box-shadow 380ms ease-in-out;
+  transition:
+    border-color 380ms ease-in-out,
+    box-shadow 380ms ease-in-out;
 }
 
 @keyframes dashboard-streak-wobble {
@@ -1796,6 +1938,92 @@
   border-color: color-mix(in oklab, var(--bronze) 72%, transparent);
 }
 
+.dashboard-continue-mode-row {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+}
+
+.dashboard-continue-mode--credits {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0.55rem;
+  white-space: normal;
+}
+
+.dashboard-continue-credits {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  gap: 0.32rem;
+  max-width: calc(100% - 0.35rem);
+  padding: 0.28rem 0.68rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--bronze) 78%, white 10%);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--bronze-glow) 62%, var(--charcoal)) 0%,
+    color-mix(in oklab, var(--bronze) 48%, var(--charcoal)) 100%
+  );
+  color: color-mix(in oklab, var(--bronze-glow) 22%, white 55%);
+  box-shadow:
+    0 0 12px color-mix(in oklab, var(--bronze) 38%, transparent),
+    inset 0 1px 0 color-mix(in oklab, white 24%, transparent);
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  transition:
+    box-shadow 180ms ease,
+    filter 180ms ease,
+    transform 180ms ease;
+}
+
+.dashboard-continue-credits-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  line-height: 1;
+  font-style: normal;
+  font-variant-emoji: emoji;
+  font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dashboard-continue-mode--credits:hover .dashboard-continue-credits {
+    filter: brightness(1.14);
+    transform: scale(1.045);
+    box-shadow:
+      0 0 18px color-mix(in oklab, var(--bronze) 58%, transparent),
+      inset 0 1px 0 color-mix(in oklab, white 30%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-continue-credits {
+    transition: none;
+  }
+
+  .dashboard-continue-mode--credits:hover .dashboard-continue-credits {
+    transform: none;
+  }
+}
+
+@media (max-width: 719px) {
+  .dashboard-continue-credits {
+    padding: 0.24rem 0.54rem;
+    font-size: 0.48rem;
+    letter-spacing: 0.1em;
+  }
+}
+
 /* ── GEOstore card merch backdrop ─────────────────────────────────────── */
 
 .dashboard-geostore {
@@ -2064,15 +2292,14 @@
   border-radius: 1rem;
   border: 1px solid oklch(0.5 0.08 68);
   color: var(--pass-ink);
-  background:
-    linear-gradient(
-      148deg,
-      oklch(0.82 0.068 88) 0%,
-      oklch(0.74 0.078 78) 22%,
-      oklch(0.69 0.072 72) 46%,
-      oklch(0.78 0.07 84) 68%,
-      oklch(0.71 0.076 74) 100%
-    );
+  background: linear-gradient(
+    148deg,
+    oklch(0.82 0.068 88) 0%,
+    oklch(0.74 0.078 78) 22%,
+    oklch(0.69 0.072 72) 46%,
+    oklch(0.78 0.07 84) 68%,
+    oklch(0.71 0.076 74) 100%
+  );
   box-shadow:
     inset 0 1px 0 oklch(0.93 0.04 92 / 0.42),
     inset 0 -1px 0 oklch(0.42 0.06 65 / 0.28),
@@ -2128,12 +2355,7 @@
   padding: 1.25rem;
   border-radius: 0.75rem;
   border: 1px solid oklch(0.42 0.07 64 / 0.55);
-  background:
-    linear-gradient(
-      160deg,
-      oklch(0.58 0.072 70) 0%,
-      oklch(0.5 0.068 64) 100%
-    );
+  background: linear-gradient(160deg, oklch(0.58 0.072 70) 0%, oklch(0.5 0.068 64) 100%);
   box-shadow:
     inset 0 1px 0 oklch(0.88 0.04 90 / 0.28),
     inset 0 -1px 0 oklch(0.32 0.05 58 / 0.28);
@@ -2253,12 +2475,7 @@
 
 .dashboard-subscription-cta:hover {
   border-color: oklch(0.58 0.1 72);
-  background:
-    linear-gradient(
-      160deg,
-      oklch(0.78 0.09 80) 0%,
-      oklch(0.66 0.09 70) 100%
-    );
+  background: linear-gradient(160deg, oklch(0.78 0.09 80) 0%, oklch(0.66 0.09 70) 100%);
   color: var(--pass-ink);
   filter: brightness(1.06);
   transform: translateY(-1px) scale(1.015);
@@ -2351,8 +2568,7 @@
   height: 1.05rem;
   border-radius: 50% 50% 50% 50% / 58% 58% 42% 42%;
   background:
-    radial-gradient(circle at 32% 28%, oklch(0.97 0.02 90 / 0.75) 0 14%, transparent 34%),
-    var(--b);
+    radial-gradient(circle at 32% 28%, oklch(0.97 0.02 90 / 0.75) 0 14%, transparent 34%), var(--b);
   box-shadow: inset -1px -2px 3px oklch(0.2 0.03 55 / 0.35);
   opacity: 0;
   animation: ach-balloon-rise 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) both;

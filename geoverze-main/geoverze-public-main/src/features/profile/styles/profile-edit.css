@@ -1,0 +1,355 @@
+/* Edit Profile — iOS-inspired polish, scoped to this page only. */
+
+.profile-edit header h1 {
+  font-weight: 500;
+  letter-spacing: -0.028em;
+  font-size: clamp(1.85rem, 3.8vw, 2.55rem);
+}
+
+.profile-edit .eyebrow {
+  font-weight: 600;
+  letter-spacing: 0.32em;
+}
+
+.profile-edit header .mt-4 {
+  margin-top: 0.7rem;
+}
+
+.profile-edit header .mt-6 {
+  margin-top: 0.85rem;
+  color: color-mix(in oklab, var(--foreground) 62%, transparent);
+}
+
+.profile-edit-form {
+  display: grid;
+  gap: 1.15rem;
+  padding-bottom: var(--space-section-sm);
+}
+
+.profile-edit-split {
+  display: grid;
+  gap: 1.15rem;
+  align-items: stretch;
+}
+
+.profile-edit-split-basics,
+.profile-edit-split-avatar {
+  min-width: 0;
+}
+
+.profile-edit-split-basics > *,
+.profile-edit-split-avatar > * {
+  height: 100%;
+}
+
+.profile-edit-card {
+  height: 100%;
+  border-radius: 1.35rem;
+  border-color: color-mix(in oklab, var(--bronze) 22%, transparent) !important;
+  background-color: oklch(0.13 0.01 62 / 0.48) !important;
+  background-image: none !important;
+  box-shadow:
+    0 18px 40px oklch(0 0 0 / 0.28),
+    inset 0 1px 0 color-mix(in oklab, var(--bronze) 10%, transparent);
+  backdrop-filter: blur(18px);
+  transition:
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+}
+
+.profile-edit-card:hover {
+  border-color: color-mix(in oklab, var(--bronze) 32%, transparent) !important;
+  box-shadow:
+    0 22px 44px oklch(0 0 0 / 0.32),
+    inset 0 1px 0 color-mix(in oklab, var(--bronze) 14%, transparent);
+}
+
+.profile-edit-card h3 {
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.profile-edit-card label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: color-mix(in oklab, var(--foreground) 62%, transparent);
+}
+
+.profile-edit-card input,
+.profile-edit-card textarea,
+.profile-edit-card select {
+  border-radius: 0.95rem;
+  border-color: color-mix(in oklab, var(--bronze) 20%, transparent);
+  background: oklch(0.16 0.01 62 / 0.42);
+  padding: 0.88rem 1.05rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--foreground);
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.04);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease;
+}
+
+.profile-edit-card textarea {
+  min-height: 8.5rem;
+  line-height: 1.5;
+}
+
+.profile-edit-card input::placeholder,
+.profile-edit-card textarea::placeholder {
+  color: color-mix(in oklab, var(--foreground) 38%, transparent);
+}
+
+.profile-edit-card input:focus,
+.profile-edit-card textarea:focus,
+.profile-edit-card select:focus {
+  border-color: color-mix(in oklab, var(--bronze) 55%, transparent);
+  background: oklch(0.17 0.012 62 / 0.55);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--bronze) 18%, transparent);
+}
+
+.profile-edit-avatar-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-edit-avatars {
+  display: grid;
+  grid-template-columns: repeat(3, 5.15rem);
+  justify-content: start;
+  gap: 0.85rem;
+}
+
+.profile-edit-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 5.15rem;
+  height: 5.15rem;
+  padding: 0.2rem;
+  border-radius: 9999px;
+  border: 1.5px solid color-mix(in oklab, var(--bronze) 18%, transparent);
+  background: oklch(0.12 0.01 62 / 0.45);
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.profile-edit-avatar-photo,
+.profile-edit-avatar .rounded-full,
+.profile-edit-avatar svg {
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+}
+
+.profile-edit-avatar-photo {
+  object-fit: cover;
+  object-position: 50% 18%;
+}
+
+.profile-edit-avatar-character {
+  object-position: 50% 42%;
+}
+
+.profile-edit-avatar--selected {
+  border-color: color-mix(in oklab, var(--bronze) 78%, transparent);
+  box-shadow:
+    0 0 0 3px color-mix(in oklab, var(--bronze) 28%, transparent),
+    0 10px 22px oklch(0 0 0 / 0.35);
+}
+
+.profile-edit-avatar:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--bronze) 32%, transparent);
+}
+
+.profile-edit-interests {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin: 1.5rem 0 0;
+}
+
+.profile-edit-chip {
+  --chip-accent: var(--bronze);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.45rem;
+  padding: 0.45rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in oklab, var(--chip-accent) 22%, transparent);
+  background: color-mix(in oklab, var(--chip-accent) 7%, oklch(0.16 0.01 62 / 0.36));
+  color: color-mix(in oklab, var(--foreground) 78%, transparent);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.profile-edit-chip svg {
+  color: var(--chip-accent);
+  opacity: 0.92;
+}
+
+.profile-edit-chip--countries {
+  --chip-accent: oklch(0.74 0.08 215);
+}
+
+.profile-edit-chip--flags {
+  --chip-accent: oklch(0.7 0.1 28);
+}
+
+.profile-edit-chip--capitals {
+  --chip-accent: oklch(0.78 0.1 82);
+}
+
+.profile-edit-chip--maps {
+  --chip-accent: oklch(0.72 0.09 150);
+}
+
+.profile-edit-chip--history {
+  --chip-accent: oklch(0.7 0.08 62);
+}
+
+.profile-edit-chip--landmarks {
+  --chip-accent: oklch(0.72 0.1 300);
+}
+
+.profile-edit-chip--nature {
+  --chip-accent: oklch(0.74 0.1 142);
+}
+
+.profile-edit-chip--culture {
+  --chip-accent: oklch(0.74 0.1 340);
+}
+
+.profile-edit-chip--mixed {
+  --chip-accent: oklch(0.76 0.1 78);
+}
+
+.profile-edit-chip--selected {
+  border-color: color-mix(in oklab, var(--chip-accent) 62%, transparent);
+  background: color-mix(in oklab, var(--chip-accent) 18%, oklch(0.16 0.01 62 / 0.48));
+  color: var(--foreground);
+  box-shadow: 0 6px 16px oklch(0 0 0 / 0.22);
+}
+
+.profile-edit-chip--selected svg {
+  opacity: 1;
+}
+
+.profile-edit-chip:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--chip-accent) 26%, transparent);
+}
+
+.profile-edit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.5rem;
+}
+
+.profile-edit-save {
+  min-height: 2.85rem;
+  padding-inline: 1.45rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: oklch(0.14 0.02 70) !important;
+  background: color-mix(in oklab, var(--bronze) 88%, white 8%) !important;
+  border-color: color-mix(in oklab, var(--bronze) 70%, transparent) !important;
+  box-shadow: 0 8px 20px oklch(0.42 0.08 70 / 0.22) !important;
+}
+
+.profile-edit-save:hover:not(:disabled) {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px oklch(0.42 0.08 70 / 0.28) !important;
+}
+
+.profile-edit-save:disabled {
+  opacity: 0.55;
+}
+
+.profile-edit-cancel {
+  min-height: 2.85rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .profile-edit-avatar:hover {
+    transform: scale(1.04);
+  }
+
+  .profile-edit-avatar:active {
+    transform: scale(0.98);
+  }
+
+  .profile-edit-chip:hover {
+    transform: translateY(-1px) scale(1.03);
+    border-color: color-mix(in oklab, var(--chip-accent) 48%, transparent);
+    background: color-mix(in oklab, var(--chip-accent) 12%, oklch(0.16 0.01 62 / 0.4));
+    color: var(--foreground);
+    box-shadow: 0 8px 16px oklch(0 0 0 / 0.2);
+  }
+}
+
+@media (min-width: 768px) {
+  .profile-edit-split {
+    grid-template-columns: minmax(0, 1.28fr) minmax(16.5rem, 0.92fr);
+  }
+}
+
+@media (min-width: 1100px) {
+  .profile-edit-split {
+    grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.9fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .profile-edit-avatars {
+    grid-template-columns: repeat(3, 4.65rem);
+  }
+
+  .profile-edit-avatar {
+    width: 4.65rem;
+    height: 4.65rem;
+  }
+
+  .profile-edit-card input,
+  .profile-edit-card textarea,
+  .profile-edit-card select {
+    min-height: 2.85rem;
+    font-size: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-edit-card,
+  .profile-edit-avatar,
+  .profile-edit-chip,
+  .profile-edit-save {
+    transition: none;
+  }
+
+  .profile-edit-avatar:hover,
+  .profile-edit-chip:hover,
+  .profile-edit-save:hover:not(:disabled) {
+    transform: none;
+  }
+}

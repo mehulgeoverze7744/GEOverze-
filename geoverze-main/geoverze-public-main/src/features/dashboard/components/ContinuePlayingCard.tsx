@@ -8,8 +8,6 @@ import { cn } from "@/lib/utils";
 import { useSubscriptionPlanRows } from "../hooks/useSubscriptionPlanRows";
 import { isPlayModeOpen, planRowForTier, type ContinuePlayMode } from "../lib/playAccess";
 
-const MODE_CARD_CLASS = "dashboard-continue-mode h-full w-full justify-start px-4 py-4";
-
 const MODES: readonly {
   id: ContinuePlayMode;
   title: string;
@@ -40,6 +38,34 @@ const MODES: readonly {
   },
 ];
 
+const MODE_CARD_CLASS = "dashboard-continue-mode h-full w-full justify-start px-4 py-4";
+
+function ModeInner({ mode, locked = false }: { mode: (typeof MODES)[number]; locked?: boolean }) {
+  const Icon = locked ? Lock : mode.icon;
+
+  return (
+    <>
+      <span className="dashboard-continue-mode-row">
+        <Icon className="mr-3 h-4 w-4 shrink-0" strokeWidth={1.5} />
+        <span className="min-w-0 text-left">
+          <span className="block text-sm">{mode.title}</span>
+          <span className="mt-0.5 block text-[0.68rem] font-normal normal-case tracking-normal text-foreground/70">
+            {locked ? "Requires a higher plan" : mode.description}
+          </span>
+        </span>
+      </span>
+      {mode.id === "multiplayer" ? (
+        <span className="dashboard-continue-credits">
+          <span className="dashboard-continue-credits-icon" aria-hidden="true">
+            🪙
+          </span>
+          Gets more credits
+        </span>
+      ) : null}
+    </>
+  );
+}
+
 /** One-click return to existing play flows, gated by the live plan catalog. */
 export function ContinuePlayingCard({ className }: { className?: string }) {
   const { tier } = useLibrarySubscriptionTier();
@@ -62,44 +88,39 @@ export function ContinuePlayingCard({ className }: { className?: string }) {
       <ul className="mt-5 grid flex-1 gap-3 sm:grid-cols-3">
         {MODES.map((mode) => {
           const open = isPlayModeOpen(plan, mode.id);
-          const Icon = mode.icon;
 
           return (
             <li key={mode.id} className="min-w-0">
               {open && mode.id === "solo" ? (
                 <GeoButton asChild variant="solid" className={MODE_CARD_CLASS}>
                   <Link to="/play/lobby" search={{ mode: "solo", quiz: undefined }}>
-                    <Icon className="mr-3 h-4 w-4 shrink-0" strokeWidth={1.5} />
-                    <span className="min-w-0 text-left">
-                      <span className="block text-sm">{mode.title}</span>
-                      <span className="mt-0.5 block text-[0.68rem] font-normal normal-case tracking-normal text-foreground/70">
-                        {mode.description}
-                      </span>
-                    </span>
+                    <ModeInner mode={mode} />
                   </Link>
                 </GeoButton>
               ) : open ? (
-                <GeoButton asChild variant="solid" className={MODE_CARD_CLASS}>
+                <GeoButton
+                  asChild
+                  variant="solid"
+                  className={cn(
+                    MODE_CARD_CLASS,
+                    mode.id === "multiplayer" && "dashboard-continue-mode--credits",
+                  )}
+                >
                   <Link to={mode.to}>
-                    <Icon className="mr-3 h-4 w-4 shrink-0" strokeWidth={1.5} />
-                    <span className="min-w-0 text-left">
-                      <span className="block text-sm">{mode.title}</span>
-                      <span className="mt-0.5 block text-[0.68rem] font-normal normal-case tracking-normal text-foreground/70">
-                        {mode.description}
-                      </span>
-                    </span>
+                    <ModeInner mode={mode} />
                   </Link>
                 </GeoButton>
               ) : (
-                <GeoButton asChild variant="solid" className={MODE_CARD_CLASS}>
+                <GeoButton
+                  asChild
+                  variant="solid"
+                  className={cn(
+                    MODE_CARD_CLASS,
+                    mode.id === "multiplayer" && "dashboard-continue-mode--credits",
+                  )}
+                >
                   <Link to="/pricing">
-                    <Lock className="mr-3 h-4 w-4 shrink-0" strokeWidth={1.5} />
-                    <span className="min-w-0 text-left">
-                      <span className="block text-sm">{mode.title}</span>
-                      <span className="mt-0.5 block text-[0.68rem] font-normal normal-case tracking-normal text-foreground/70">
-                        Requires a higher plan
-                      </span>
-                    </span>
+                    <ModeInner mode={mode} locked />
                   </Link>
                 </GeoButton>
               )}

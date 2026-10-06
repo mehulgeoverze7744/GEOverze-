@@ -23,7 +23,7 @@ type OnboardingState = {
   setAgeAnswer: (answer: AgeAnswer) => void;
   toggleInterest: (id: string) => void;
   setSkillLevel: (level: SkillLevelId) => void;
-  setAvatarId: (id: string) => void;
+  setAvatarId: (id: string | null) => void;
   complete: () => void;
   reset: () => void;
 };

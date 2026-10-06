@@ -169,16 +169,25 @@ async function hydrateProfileAndRole(user: User) {
   // request was in flight.
   if (useAuthStore.getState().user?.id !== user.id) return;
 
-  setSession({
+  const nextSession = {
     ...(current?.id === user.id ? current : baseSessionUser(user)),
     id: user.id,
     email: user.email ?? "",
     ...(profile?.display_name ? { displayName: profile.display_name } : {}),
     ...(profile?.username ? { username: profile.username } : {}),
     ...(profile?.country_code ? { country: profile.country_code } : {}),
-    ...(profile?.avatar_id ? { avatarId: profile.avatar_id } : {}),
-    ...(profile?.avatar_url ? { avatarUrl: profile.avatar_url } : {}),
-  });
+  };
+  if (profile?.avatar_id) {
+    nextSession.avatarId = profile.avatar_id;
+  } else {
+    delete nextSession.avatarId;
+  }
+  if (profile?.avatar_url) {
+    nextSession.avatarUrl = profile.avatar_url;
+  } else {
+    delete nextSession.avatarUrl;
+  }
+  setSession(nextSession);
 
   const roles = (roleRows ?? []).map((row) => row.role as AppRole);
   setRole(highestRole(roles));

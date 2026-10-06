@@ -25,13 +25,13 @@ export function DashboardWidgets() {
         className="dashboard-order-actions mt-[var(--space-section-sm)]"
       >
         <div className="dashboard-dock-row">
-          <AnimatedSection className="min-h-0 h-full">
+          <AnimatedSection className="min-h-0 min-w-0 h-full">
             <DashboardCommandActions className="h-full" />
           </AnimatedSection>
-          <AnimatedSection delay={40} className="min-h-0 h-full">
+          <AnimatedSection delay={40} className="min-h-0 min-w-0 h-full">
             <DashboardNotificationsCard className="h-full" />
           </AnimatedSection>
-          <AnimatedSection delay={80} className="min-h-0 h-full">
+          <AnimatedSection delay={80} className="min-h-0 min-w-0 h-full">
             <DashboardProfileShortcut className="h-full" />
           </AnimatedSection>
         </div>

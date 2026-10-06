@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { Compass, Pencil, Sparkles } from "lucide-react";
+import { Compass, Pencil } from "lucide-react";
 
 import { AnimatedCounter } from "@/components/shared/AnimatedCounter";
 import { GeoButton } from "@/components/shared/GeoButton";
+import { resolveDashboardAvatarSrc } from "@/features/auth/lib/avatar";
 import { greetingFor, motivationFor } from "@/features/dashboard/data/dashboard";
 import { useLibrarySubscriptionTier } from "@/features/library/hooks/useLibrarySubscriptionTier";
 import { libraryTierLabel } from "@/features/library/lib/access-tier";
@@ -35,6 +36,10 @@ export function DashboardHero({ className }: { className?: string }) {
   const planPending = signedIn && planLoading;
   const greeting = greetingFor();
   const motivation = motivationFor();
+  const heroAvatarSrc = resolveDashboardAvatarSrc({
+    avatarUrl: profile.avatarUrl,
+    avatarId: profile.avatarId,
+  });
 
   return (
     <section className={cn("dashboard-hero relative overflow-hidden", className)}>
@@ -53,7 +58,8 @@ export function DashboardHero({ className }: { className?: string }) {
           <div className="flex items-start gap-4 sm:gap-5">
             <span className="dashboard-hero-avatar">
               <img
-                src="/assets/dashboard-explorer-avatar.png"
+                key={heroAvatarSrc}
+                src={heroAvatarSrc}
                 alt={`${profile.displayName} profile`}
                 width={148}
                 height={137}
@@ -127,30 +133,24 @@ export function DashboardHero({ className }: { className?: string }) {
 
           <div className="dashboard-hero-progress-row">
             <div className="dashboard-hero-cta-cluster">
-              <p className="flex items-start gap-3 text-sm italic text-foreground/50">
-                <Sparkles
-                  className="mt-0.5 h-4 w-4 shrink-0 text-bronze/90"
-                  strokeWidth={1.4}
-                  aria-hidden="true"
-                />
-                {motivation}
+              <p className="dashboard-hero-cta-quote">
+                <span className="dashboard-hero-cta-emoji" aria-hidden="true">
+                  🧭
+                </span>
+                <span>{motivation}</span>
               </p>
 
               <div className="dashboard-hero-cta-actions">
-                <GeoButton asChild variant="primary" className="dashboard-cta-expedition group">
+                <GeoButton asChild variant="primary" className="dashboard-cta-expedition">
                   <Link to="/play">
-                    <Compass
-                      className="mr-2 h-4 w-4 transition-transform motion-base group-hover:rotate-12 motion-reduce:transform-none"
-                      strokeWidth={1.5}
-                      aria-hidden="true"
-                    />
+                    <Compass className="mr-2 h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
                     Start expedition
                   </Link>
                 </GeoButton>
-                <GeoButton asChild variant="secondary">
+                <GeoButton asChild variant="secondary" className="dashboard-cta-secondary">
                   <Link to="/profile">View progress</Link>
                 </GeoButton>
-                <GeoButton asChild variant="secondary">
+                <GeoButton asChild variant="secondary" className="dashboard-cta-secondary">
                   <Link to="/profile/edit">
                     <Pencil className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
                     Edit profile

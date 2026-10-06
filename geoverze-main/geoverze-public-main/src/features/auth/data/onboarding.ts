@@ -78,6 +78,8 @@ export type AvatarOption = {
   /** Bronze-family hue pair used by the generated avatar mark. */
   hue: [number, number];
   glyph: string;
+  /** Cropped character portrait for profile selection. */
+  src?: string;
 };
 
 /** Deterministic, generated avatars — no external image requests. */
@@ -92,8 +94,57 @@ export const AVATARS: readonly AvatarOption[] = [
   { id: "orbit", label: "Orbit", hue: [66, 88], glyph: "◌" },
 ] as const;
 
+/** GEOverze character portraits used on Edit Profile — not glyph placeholders. */
+export const CHARACTER_AVATARS: readonly (AvatarOption & { src: string })[] = [
+  {
+    id: "spy",
+    label: "Red-haired spy",
+    hue: [38, 58],
+    glyph: "◆",
+    src: "/assets/avatars/spy.webp",
+  },
+  {
+    id: "cosmic",
+    label: "Cosmic explorer",
+    hue: [48, 66],
+    glyph: "✦",
+    src: "/assets/avatars/cosmic.webp",
+  },
+  {
+    id: "earthbound",
+    label: "Earthbound Hero",
+    hue: [56, 84],
+    glyph: "▲",
+    src: "/assets/avatars/earthbound.webp",
+  },
+  {
+    id: "galactic",
+    label: "Galactic Armor",
+    hue: [62, 78],
+    glyph: "◉",
+    src: "/assets/avatars/galactic.webp",
+  },
+  {
+    id: "alien",
+    label: "Alien explorer",
+    hue: [74, 92],
+    glyph: "◌",
+    src: "/assets/avatars/alien.webp",
+  },
+  {
+    id: "explorer",
+    label: "Young explorer",
+    hue: [66, 88],
+    glyph: "➤",
+    src: "/assets/avatars/explorer.webp",
+  },
+] as const;
+
 export function findAvatar(id: string) {
-  return AVATARS.find((avatar) => avatar.id === id);
+  return (
+    AVATARS.find((avatar) => avatar.id === id) ??
+    CHARACTER_AVATARS.find((avatar) => avatar.id === id)
+  );
 }
 
 export const ONBOARDING_STEPS = ["Welcome", "Interests", "Skill", "Avatar", "Finish"] as const;
