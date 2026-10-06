@@ -1,64 +1,55 @@
-import { Crosshair, Flame, Swords, Zap } from "lucide-react";
-
 import { AnimatedCounter } from "@/components/shared/AnimatedCounter";
 import { cn } from "@/lib/utils";
 
 import { useQuizProgressStats } from "../hooks/useQuizProgressStats";
 
+const METRICS = [
+  { id: "played", label: "Games played", valueKey: "gamesPlayed", emoji: "⚡" },
+  { id: "wins", label: "Wins", valueKey: "wins", emoji: "🏆" },
+  { id: "accuracy", label: "Accuracy", valueKey: "accuracy", suffix: "%", emoji: "🎯" },
+  { id: "streak", label: "Current streak", valueKey: "currentStreak", emoji: "🔥" },
+] as const;
+
 /** Compact live quiz snapshot from quiz_attempts and user_progression. */
 export function QuizProgressCard({ className }: { className?: string }) {
   const { stats, loading, error } = useQuizProgressStats();
 
-  const metrics = [
-    { id: "played", label: "Games played", value: stats.gamesPlayed, icon: Zap },
-    { id: "wins", label: "Wins", value: stats.wins, icon: Swords },
-    { id: "accuracy", label: "Accuracy", value: stats.accuracy, suffix: "%", icon: Crosshair },
-    { id: "streak", label: "Current streak", value: stats.currentStreak, icon: Flame },
-  ] as const;
-
   return (
     <section
-      className={cn(
-        "flex h-full flex-col rounded-2xl border border-bronze/16 bg-charcoal/30 p-6 backdrop-blur-sm",
-        className,
-      )}
+      className={cn("dashboard-quiz-progress", className)}
       aria-labelledby="quiz-progress-heading"
     >
       <h2 id="quiz-progress-heading" className="dashboard-section-label">
         Quiz progress
       </h2>
-      <p className="mt-2 text-sm text-foreground/50">From your live expedition record.</p>
+      <p className="dashboard-quiz-progress__lede">From your live expedition record.</p>
 
       {error ? (
-        <p className="mt-5 text-sm text-foreground/50">Could not load your quiz progress.</p>
+        <p className="dashboard-quiz-progress__status">Could not load your quiz progress.</p>
       ) : (
-        <dl className="mt-5 grid flex-1 grid-cols-2 gap-3">
-          {metrics.map((stat) => {
-            const Icon = stat.icon;
-            return (
-              <div
-                key={stat.id}
-                className="rounded-xl border border-bronze/12 bg-charcoal/35 px-3 py-3"
-              >
-                <dt className="flex items-center gap-1.5 text-[0.52rem] font-semibold uppercase tracking-[0.18em] text-foreground/45">
-                  <Icon className="h-3 w-3 text-bronze/80" strokeWidth={1.5} aria-hidden="true" />
-                  {stat.label}
-                </dt>
-                <dd className="mt-2 text-xl font-light tracking-tight text-foreground">
-                  {loading ? (
-                    <span className="text-foreground/40">—</span>
-                  ) : (
-                    <>
-                      <AnimatedCounter value={stat.value} />
-                      {"suffix" in stat ? (
-                        <span className="ml-0.5 text-sm text-foreground/50">{stat.suffix}</span>
-                      ) : null}
-                    </>
-                  )}
-                </dd>
-              </div>
-            );
-          })}
+        <dl className="dashboard-quiz-progress__list">
+          {METRICS.map((stat) => (
+            <div key={stat.id} className="dashboard-quiz-progress__row">
+              <dt className="dashboard-quiz-progress__label">
+                <span className="dashboard-quiz-progress__emoji" aria-hidden="true">
+                  {stat.emoji}
+                </span>
+                {stat.label}
+              </dt>
+              <dd className="dashboard-quiz-progress__value">
+                {loading ? (
+                  <span className="dashboard-quiz-progress__pending">—</span>
+                ) : (
+                  <>
+                    <AnimatedCounter value={stats[stat.valueKey]} />
+                    {"suffix" in stat ? (
+                      <span className="dashboard-quiz-progress__suffix">{stat.suffix}</span>
+                    ) : null}
+                  </>
+                )}
+              </dd>
+            </div>
+          ))}
         </dl>
       )}
     </section>

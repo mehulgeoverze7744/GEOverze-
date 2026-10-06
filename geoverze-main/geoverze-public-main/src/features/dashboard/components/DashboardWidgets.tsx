@@ -20,7 +20,10 @@ import { UpcomingEventsPanel } from "./UpcomingEventsPanel";
 export function DashboardWidgets() {
   return (
     <div className="contents">
-      <SectionContainer className="dashboard-order-actions mt-[var(--space-section-sm)]">
+      <SectionContainer
+        size="dashboard"
+        className="dashboard-order-actions mt-[var(--space-section-sm)]"
+      >
         <div className="dashboard-dock-row">
           <AnimatedSection className="min-h-0 h-full">
             <DashboardCommandActions className="h-full" />

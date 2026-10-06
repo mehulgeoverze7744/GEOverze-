@@ -12,13 +12,13 @@ export const Route = createFileRoute("/_app/settings")({
   }),
   head: () => ({
     meta: [
-      { title: "Settings — GEOverze" },
+      { title: "Settings/Support — GEOverze" },
       {
         name: "description",
         content:
           "Tune motion, units, notifications and privacy for your GEOverze account and this device.",
       },
-      { property: "og:title", content: "Settings — GEOverze" },
+      { property: "og:title", content: "Settings/Support — GEOverze" },
       {
         property: "og:description",
         content: "Presentation, notification and privacy preferences for GEOverze.",

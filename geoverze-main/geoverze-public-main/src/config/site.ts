@@ -48,7 +48,7 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
     title: "Resources",
     items: [
       { label: "Pricing", to: "/pricing" },
-      { label: "Support", to: "/support" },
+      { label: "Settings/Support", to: "/settings" },
       { label: "Profile", to: "/profile" },
       { label: "Sign In", to: "/auth/login" },
       { label: "Create Account", to: "/auth/signup" },
@@ -59,7 +59,6 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
     items: [
       { label: "About", to: "/about" },
       { label: "Contact", to: "/contact" },
-      { label: "Settings", to: "/settings" },
     ],
   },
   {

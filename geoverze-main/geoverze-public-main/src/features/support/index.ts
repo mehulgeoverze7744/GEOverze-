@@ -1,3 +1,4 @@
+export { SupportContent } from "./components/SupportContent";
 export { SupportPage } from "./components/SupportPage";
 export {
   supportCategories,

@@ -255,6 +255,19 @@
   color: color-mix(in oklab, var(--destructive) 88%, white);
 }
 
+.settings-support-break {
+  height: 0;
+  margin: 3.25rem 0 0;
+  border: 0;
+  border-top: 1px solid color-mix(in oklab, var(--bronze) 16%, transparent);
+  scroll-margin-top: calc(var(--nav-height) + 1.25rem);
+}
+
+.support-page--embedded {
+  padding-top: 2.75rem;
+  padding-bottom: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .settings-row,
   .settings-option-row,

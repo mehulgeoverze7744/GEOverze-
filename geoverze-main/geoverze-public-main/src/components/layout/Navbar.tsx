@@ -2,7 +2,6 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   BookMarked,
   LayoutDashboard,
-  LifeBuoy,
   LogIn,
   LogOut,
   Menu,
@@ -28,8 +27,7 @@ const accountLinks = [
   { label: "Profile Dashboard", to: "/dashboard", icon: LayoutDashboard },
   { label: "Quiz History & Rewards", to: "/quiz-history-and-rewards", icon: Trophy },
   { label: "Bookmarks", to: "/bookmarks", icon: BookMarked },
-  { label: "Settings", to: "/settings", icon: Settings },
-  { label: "Support", to: "/support", icon: LifeBuoy },
+  { label: "Settings/Support", to: "/settings", icon: Settings },
 ] as const;
 
 /**

@@ -1,10 +1,11 @@
-import { getRouteApi, useNavigate } from "@tanstack/react-router";
+import { getRouteApi, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection } from "@/components/shared/AnimatedSection";
 import { SectionContainer } from "@/components/shared/SectionContainer";
 import { isSettingsSection } from "@/features/settings/lib/settingsSections";
+import { SupportContent } from "@/features/support";
 
 import { SettingsDetail } from "./SettingsDetail";
 import { SettingsHome } from "./SettingsHome";
@@ -20,6 +21,7 @@ const routeApi = getRouteApi("/_app/settings");
  */
 export function SettingsPage() {
   const { section } = routeApi.useSearch();
+  const hash = useRouterState({ select: (s) => s.location.hash });
   const navigate = useNavigate({ from: "/settings" });
 
   useEffect(() => {
@@ -27,6 +29,11 @@ export function SettingsPage() {
       void navigate({ search: { section: undefined }, replace: true });
     }
   }, [navigate, section]);
+
+  useEffect(() => {
+    if (hash !== "support" && hash !== "#support") return;
+    document.getElementById("support")?.scrollIntoView({ block: "start" });
+  }, [hash, section]);
 
   const showDetail = isSettingsSection(section);
 
@@ -49,6 +56,9 @@ export function SettingsPage() {
         ) : (
           <SettingsDetail section={section} />
         )}
+
+        <div id="support" className="settings-support-break" />
+        <SupportContent className="support-page--embedded" />
       </SectionContainer>
     </PageShell>
   );

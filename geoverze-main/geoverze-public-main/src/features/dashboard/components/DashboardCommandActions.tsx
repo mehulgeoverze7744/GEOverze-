@@ -13,7 +13,14 @@ const ACTIONS = [
     emoji: "🏆",
     locked: true,
   },
-  { id: "rewards", label: "Rewards", hint: "Claim & redeem", to: "/play/rewards" as const, emoji: "🎁" },
+  {
+    id: "rewards",
+    label: "Rewards",
+    hint: "Claim & redeem",
+    to: "/quiz-history-and-rewards" as const,
+    search: { tab: "rewards" as const },
+    emoji: "🎁",
+  },
   { id: "community", label: "Community", hint: "Meet players", to: "/community" as const, emoji: "🫂" },
 ] as const;
 
@@ -69,9 +76,15 @@ export function DashboardCommandActions({ className }: { className?: string }) {
                   {body}
                 </span>
               ) : (
-                <Link to={action.to} className="dashboard-dock-action">
-                  {body}
-                </Link>
+                "search" in action ? (
+                  <Link to={action.to} search={action.search} className="dashboard-dock-action">
+                    {body}
+                  </Link>
+                ) : (
+                  <Link to={action.to} className="dashboard-dock-action">
+                    {body}
+                  </Link>
+                )
               )}
             </li>
           );
