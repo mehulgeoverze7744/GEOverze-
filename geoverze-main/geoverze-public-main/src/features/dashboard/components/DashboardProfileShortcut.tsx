@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, Settings } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import { UserAvatar } from "@/features/auth/components/UserAvatar";
 import { useProfile } from "@/features/profile/lib/useProfile";
@@ -30,17 +30,19 @@ export function DashboardProfileShortcut({ className }: { className?: string }) 
         <div className="dashboard-dock-identity">
           <span className="dashboard-dock-avatar-stage">
             <span className="dashboard-dock-avatar-pop">
-              <UserAvatar
-                avatarUrl={profile.avatarUrl}
-                avatarId={profile.avatarId}
-                size={66}
-                priority
-                className="dashboard-dock-avatar"
-                alt={profile.displayName}
-              />
+              <span className="dashboard-dock-avatar-frame">
+                <UserAvatar
+                  avatarUrl={profile.avatarUrl}
+                  avatarId={profile.avatarId}
+                  size={66}
+                  priority
+                  className="dashboard-dock-avatar"
+                  alt={profile.displayName}
+                />
+              </span>
             </span>
           </span>
-          <div className="min-w-0">
+          <div className="dashboard-dock-identity-copy">
             <p className="dashboard-dock-name">{profile.displayName}</p>
             <p className="dashboard-dock-handle">{profile.handle}</p>
           </div>
@@ -52,7 +54,9 @@ export function DashboardProfileShortcut({ className }: { className?: string }) 
             <ChevronRight className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden="true" />
           </Link>
           <Link to="/settings" search={{ section: undefined }} className="dashboard-dock-cta">
-            <Settings className="h-3.5 w-3.5" strokeWidth={1.6} aria-hidden="true" />
+            <span className="dashboard-dock-cta-gear" aria-hidden="true">
+              ⚙️
+            </span>
             Settings
           </Link>
         </div>
