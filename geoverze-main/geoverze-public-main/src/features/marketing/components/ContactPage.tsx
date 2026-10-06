@@ -1,89 +1,174 @@
+import { type FormEvent, useState } from "react";
+import { ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 
 import { PageShell } from "@/components/layout/PageShell";
-import {
-  AnimatedSection,
-  GeoButton,
-  GlassCard,
-  PageHeader,
-  SectionContainer,
-} from "@/components/shared";
-import { AuthField } from "@/features/auth/components/AuthField";
+import { Breadcrumb } from "@/components/shared/Breadcrumb";
+import { SectionContainer } from "@/components/shared/SectionContainer";
 import { contactChannels } from "../data/contact";
+import "../styles/contact.css";
 
-/** Contact page. Submission is intentionally inert until the mail module lands. */
+type ContactFormState = {
+  name: string;
+  email: string;
+  message: string;
+};
+
+type ContactFormErrors = Partial<Record<keyof ContactFormState, string>>;
+
+const EMPTY_FORM: ContactFormState = { name: "", email: "", message: "" };
+
+function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function validate(values: ContactFormState): ContactFormErrors {
+  const errors: ContactFormErrors = {};
+  if (!values.name.trim()) errors.name = "Please enter your name.";
+  if (!values.email.trim()) errors.email = "Please enter your email.";
+  else if (!isValidEmail(values.email.trim())) errors.email = "Please enter a valid email.";
+  if (!values.message.trim()) errors.message = "Please write a message.";
+  return errors;
+}
+
+/** Contact page. Submission stays inert until the mail module lands. */
 export function ContactPage() {
+  const [values, setValues] = useState<ContactFormState>(EMPTY_FORM);
+  const [errors, setErrors] = useState<ContactFormErrors>({});
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const nextErrors = validate(values);
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) return;
+
+    toast("Message routing isn't live yet", {
+      description: "The contact form connects in a later phase.",
+    });
+  }
+
   return (
     <PageShell>
-      <PageHeader
-        eyebrow="Contact"
-        title="Send a signal"
-        description="Partnerships, institution access, press or support — tell us what you need and we'll come back to you."
-        breadcrumb={[{ label: "Home", to: "/" }, { label: "Contact" }]}
-      />
+      <SectionContainer className="ct">
+        <Breadcrumb
+          items={[{ label: "Home", to: "/" }, { label: "Contact" }]}
+          className="ct-crumb"
+        />
 
-      <section className="pb-[var(--space-section-sm)]">
-        <SectionContainer size="wide">
-          <div className="grid gap-5 lg:grid-cols-[1.1fr_1fr]">
-            <AnimatedSection>
-              <GlassCard strong className="p-8 md:p-10">
-                <form
-                  className="space-y-5"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    toast("Message routing isn't live yet", {
-                      description: "The contact form connects in a later phase.",
-                    });
+        <header className="ct-header">
+          <p className="ct-kicker">Contact</p>
+          <h1 className="ct-title">Let's talk.</h1>
+          <p className="ct-lede">
+            Partnerships, institutions, press, support, or anything GEOverze — send us a message and
+            we'll get back to you.
+          </p>
+        </header>
+
+        <div className="ct-layout">
+          <article className="ct-card">
+            <h2 className="ct-card-title">Send us a message</h2>
+            <p className="ct-card-copy">Tell us what you're working on.</p>
+
+            <form className="ct-form" onSubmit={handleSubmit} noValidate>
+              <div className="ct-field">
+                <label htmlFor="contact-name">Name</label>
+                <input
+                  id="contact-name"
+                  name="name"
+                  type="text"
+                  autoComplete="name"
+                  placeholder="Your name"
+                  value={values.name}
+                  aria-invalid={errors.name ? true : undefined}
+                  aria-describedby={errors.name ? "contact-name-error" : undefined}
+                  onChange={(event) => {
+                    setValues((current) => ({ ...current, name: event.target.value }));
+                    if (errors.name) setErrors((current) => ({ ...current, name: undefined }));
                   }}
-                >
-                  <AuthField id="contact-name" label="Name" placeholder="Your name" />
-                  <AuthField
-                    id="contact-email"
-                    label="Email"
-                    type="email"
-                    placeholder="you@example.com"
-                  />
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="contact-message"
-                      className="block text-[0.62rem] uppercase tracking-[0.28em] text-foreground/50"
-                    >
-                      Message
-                    </label>
-                    <textarea
-                      id="contact-message"
-                      rows={5}
-                      placeholder="What would you like to talk about?"
-                      className="w-full resize-none rounded-xl border border-bronze/20 bg-charcoal/50 px-4 py-3 text-sm text-foreground placeholder:text-foreground/50 transition-colors focus:border-bronze/60 focus:outline-none focus:ring-2 focus:ring-bronze/20"
-                    />
-                  </div>
-                  <GeoButton type="submit" variant="primary" size="lg" className="w-full">
-                    Send message
-                  </GeoButton>
-                </form>
-              </GlassCard>
-            </AnimatedSection>
+                />
+                {errors.name ? (
+                  <p id="contact-name-error" className="ct-error" role="alert">
+                    {errors.name}
+                  </p>
+                ) : null}
+              </div>
 
-            <div className="space-y-5">
-              {contactChannels.map((channel, i) => (
-                <AnimatedSection key={channel.title} delay={i * 90}>
-                  <GlassCard className="flex items-start gap-4 p-7">
-                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-bronze/30 bg-bronze/10 text-bronze">
-                      <channel.icon className="h-4 w-4" strokeWidth={1.5} />
+              <div className="ct-field">
+                <label htmlFor="contact-email">Email</label>
+                <input
+                  id="contact-email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  inputMode="email"
+                  placeholder="you@example.com"
+                  value={values.email}
+                  aria-invalid={errors.email ? true : undefined}
+                  aria-describedby={errors.email ? "contact-email-error" : undefined}
+                  onChange={(event) => {
+                    setValues((current) => ({ ...current, email: event.target.value }));
+                    if (errors.email) setErrors((current) => ({ ...current, email: undefined }));
+                  }}
+                />
+                {errors.email ? (
+                  <p id="contact-email-error" className="ct-error" role="alert">
+                    {errors.email}
+                  </p>
+                ) : null}
+              </div>
+
+              <div className="ct-field">
+                <label htmlFor="contact-message">Message</label>
+                <textarea
+                  id="contact-message"
+                  name="message"
+                  rows={5}
+                  placeholder="What would you like to talk about?"
+                  value={values.message}
+                  aria-invalid={errors.message ? true : undefined}
+                  aria-describedby={errors.message ? "contact-message-error" : undefined}
+                  onChange={(event) => {
+                    setValues((current) => ({ ...current, message: event.target.value }));
+                    if (errors.message) {
+                      setErrors((current) => ({ ...current, message: undefined }));
+                    }
+                  }}
+                />
+                {errors.message ? (
+                  <p id="contact-message-error" className="ct-error" role="alert">
+                    {errors.message}
+                  </p>
+                ) : null}
+              </div>
+
+              <button type="submit" className="ct-submit">
+                Send Message
+                <span aria-hidden="true">→</span>
+              </button>
+            </form>
+          </article>
+
+          <aside className="ct-options">
+            <p className="ct-options-kicker">Contact options</p>
+            <ul className="ct-group">
+              {contactChannels.map((channel) => (
+                <li key={channel.id}>
+                  <a href={channel.href} className="ct-row">
+                    <span className="ct-row-icon" aria-hidden="true">
+                      {channel.emoji}
                     </span>
-                    <div>
-                      <p className="text-[0.66rem] uppercase tracking-[0.28em] text-bronze/90">
-                        {channel.title}
-                      </p>
-                      <p className="mt-2 text-sm text-foreground/55">{channel.description}</p>
-                    </div>
-                  </GlassCard>
-                </AnimatedSection>
+                    <span className="ct-row-copy">
+                      <span className="ct-row-title">{channel.title}</span>
+                      <span className="ct-row-meta">{channel.description}</span>
+                    </span>
+                    <ChevronRight className="ct-row-arrow" strokeWidth={1.75} aria-hidden="true" />
+                  </a>
+                </li>
               ))}
-            </div>
-          </div>
-        </SectionContainer>
-      </section>
+            </ul>
+          </aside>
+        </div>
+      </SectionContainer>
     </PageShell>
   );
 }

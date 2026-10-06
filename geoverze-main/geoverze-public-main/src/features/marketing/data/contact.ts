@@ -1,14 +1,31 @@
-import { Mail, MessageSquare, Users } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-
 export type ContactChannel = {
-  icon: LucideIcon;
+  id: "general" | "institutions" | "press";
+  emoji: string;
   title: string;
   description: string;
+  href: string;
 };
 
 export const contactChannels: ContactChannel[] = [
-  { icon: Mail, title: "General", description: "hello@geoverze.com" },
-  { icon: Users, title: "Institutions", description: "Cohorts, classrooms and teams." },
-  { icon: MessageSquare, title: "Press", description: "Media kits and interviews." },
+  {
+    id: "general",
+    emoji: "✉️",
+    title: "General",
+    description: "hello@geoverze.com",
+    href: "mailto:hello@geoverze.com",
+  },
+  {
+    id: "institutions",
+    emoji: "👥",
+    title: "Institutions",
+    description: "Cohorts, classrooms and teams.",
+    href: "mailto:hello@geoverze.com?subject=Institutions",
+  },
+  {
+    id: "press",
+    emoji: "📰",
+    title: "Press",
+    description: "Media kits and interviews.",
+    href: "mailto:hello@geoverze.com?subject=Press",
+  },
 ];
