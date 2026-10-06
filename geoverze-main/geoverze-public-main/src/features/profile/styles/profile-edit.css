@@ -155,7 +155,10 @@
 }
 
 .profile-edit-avatar-character {
-  object-position: 50% 42%;
+  object-fit: cover;
+  object-position: 50% 50%;
+  transform: scale(0.875);
+  transform-origin: center center;
 }
 
 .profile-edit-avatar--selected {

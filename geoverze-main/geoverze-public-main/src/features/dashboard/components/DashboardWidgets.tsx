@@ -31,7 +31,10 @@ export function DashboardWidgets() {
           <AnimatedSection delay={40} className="min-h-0 min-w-0 h-full">
             <DashboardNotificationsCard className="h-full" />
           </AnimatedSection>
-          <AnimatedSection delay={80} className="min-h-0 min-w-0 h-full">
+          <AnimatedSection
+            delay={80}
+            className="dashboard-dock-profile-slot min-h-0 min-w-0 h-full"
+          >
             <DashboardProfileShortcut className="h-full" />
           </AnimatedSection>
         </div>
@@ -45,8 +48,8 @@ export function DashboardWidgets() {
           <AnimatedSection className="min-h-0 h-full">
             <ContinuePlayingCard className="h-full" />
           </AnimatedSection>
-          <AnimatedSection delay={60} className="min-h-0 h-full">
-            <QuizProgressCard className="h-full" />
+          <AnimatedSection delay={60} className="min-h-0 self-start">
+            <QuizProgressCard />
           </AnimatedSection>
         </div>
       </SectionContainer>

@@ -3,7 +3,7 @@ import { Compass, Pencil } from "lucide-react";
 
 import { AnimatedCounter } from "@/components/shared/AnimatedCounter";
 import { GeoButton } from "@/components/shared/GeoButton";
-import { resolveDashboardAvatarSrc } from "@/features/auth/lib/avatar";
+import { isAlienAvatarSrc, resolveDashboardAvatarSrc } from "@/features/auth/lib/avatar";
 import { greetingFor, motivationFor } from "@/features/dashboard/data/dashboard";
 import { useLibrarySubscriptionTier } from "@/features/library/hooks/useLibrarySubscriptionTier";
 import { libraryTierLabel } from "@/features/library/lib/access-tier";
@@ -65,6 +65,9 @@ export function DashboardHero({ className }: { className?: string }) {
                 height={137}
                 decoding="async"
                 draggable={false}
+                className={
+                  isAlienAvatarSrc(heroAvatarSrc) ? "dashboard-hero-avatar-photo--alien" : undefined
+                }
               />
             </span>
             <div className="min-w-0 pt-1">

@@ -129,7 +129,7 @@ export const CHARACTER_AVATARS: readonly (AvatarOption & { src: string })[] = [
     label: "Alien explorer",
     hue: [74, 92],
     glyph: "◌",
-    src: "/assets/avatars/alien.webp",
+    src: "/assets/avatars/alien.png",
   },
   {
     id: "explorer",

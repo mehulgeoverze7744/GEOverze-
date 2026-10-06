@@ -30,6 +30,35 @@ export function StreakTracker({ className }: { className?: string }) {
       className={cn("dashboard-streak", className)}
       aria-labelledby="dashboard-streak-heading"
     >
+      {/* Decorative "caught fire" perimeter — purely visual, hidden from AT. */}
+      <span className="dashboard-streak-fire" aria-hidden="true">
+        <span className="dashboard-streak-fire-glow" />
+        <span className="dashboard-streak-flames dashboard-streak-flames--top">
+          <span className="dashboard-streak-flame" />
+          <span className="dashboard-streak-flame" />
+          <span className="dashboard-streak-flame" />
+          <span className="dashboard-streak-flame" />
+          <span className="dashboard-streak-flame" />
+          <span className="dashboard-streak-flame" />
+        </span>
+        <span className="dashboard-streak-flames dashboard-streak-flames--bottom">
+          <span className="dashboard-streak-flame" />
+          <span className="dashboard-streak-flame" />
+          <span className="dashboard-streak-flame" />
+          <span className="dashboard-streak-flame" />
+          <span className="dashboard-streak-flame" />
+          <span className="dashboard-streak-flame" />
+        </span>
+        <span className="dashboard-streak-embers">
+          <span className="dashboard-streak-ember" />
+          <span className="dashboard-streak-ember" />
+          <span className="dashboard-streak-ember" />
+          <span className="dashboard-streak-ember" />
+          <span className="dashboard-streak-ember" />
+        </span>
+        <span className="dashboard-streak-shimmer" />
+      </span>
+
       <header className="dashboard-streak-header">
         <Flame className="dashboard-streak-header-icon" strokeWidth={1.5} aria-hidden="true" />
         <h2 id="dashboard-streak-heading" className="dashboard-streak-title">
@@ -40,7 +69,10 @@ export function StreakTracker({ className }: { className?: string }) {
       <span className="dashboard-streak-divider" aria-hidden="true" />
 
       <div className="dashboard-streak-stat">
-        <span className="dashboard-streak-stat-icon dashboard-streak-stat-icon--active" aria-hidden="true">
+        <span
+          className="dashboard-streak-stat-icon dashboard-streak-stat-icon--active"
+          aria-hidden="true"
+        >
           <Flame className="h-3.5 w-3.5" strokeWidth={1.5} />
         </span>
         <span className="dashboard-streak-stat-body">
@@ -54,7 +86,10 @@ export function StreakTracker({ className }: { className?: string }) {
       <span className="dashboard-streak-divider" aria-hidden="true" />
 
       <div className="dashboard-streak-stat">
-        <span className="dashboard-streak-stat-icon dashboard-streak-stat-icon--muted" aria-hidden="true">
+        <span
+          className="dashboard-streak-stat-icon dashboard-streak-stat-icon--muted"
+          aria-hidden="true"
+        >
           <Trophy className="h-3.5 w-3.5" strokeWidth={1.5} />
         </span>
         <span className="dashboard-streak-stat-body">
@@ -86,7 +121,13 @@ export function StreakTracker({ className }: { className?: string }) {
                 role="listitem"
                 className={cn("dashboard-streak-day", `dashboard-streak-day--${state}`)}
                 aria-label={`${WEEKDAYS[index]}: ${
-                  done ? (isToday ? "completed today" : "completed") : isToday ? "today" : "upcoming"
+                  done
+                    ? isToday
+                      ? "completed today"
+                      : "completed"
+                    : isToday
+                      ? "today"
+                      : "upcoming"
                 }`}
               >
                 {WEEKDAYS[index]}

@@ -11,7 +11,7 @@ export function DashboardProfileShortcut({ className }: { className?: string }) 
 
   return (
     <section
-      className={cn("dashboard-dock-card", className)}
+      className={cn("dashboard-dock-card dashboard-dock-card--profile", className)}
       aria-labelledby="dashboard-profile-shortcut-heading"
     >
       <div className="dashboard-dock-head">
@@ -28,13 +28,18 @@ export function DashboardProfileShortcut({ className }: { className?: string }) 
 
       <div className="dashboard-dock-profile">
         <div className="dashboard-dock-identity">
-          <UserAvatar
-            avatarUrl={profile.avatarUrl}
-            avatarId={profile.avatarId}
-            size={66}
-            className="dashboard-dock-avatar"
-            alt={profile.displayName}
-          />
+          <span className="dashboard-dock-avatar-stage">
+            <span className="dashboard-dock-avatar-pop">
+              <UserAvatar
+                avatarUrl={profile.avatarUrl}
+                avatarId={profile.avatarId}
+                size={66}
+                priority
+                className="dashboard-dock-avatar"
+                alt={profile.displayName}
+              />
+            </span>
+          </span>
           <div className="min-w-0">
             <p className="dashboard-dock-name">{profile.displayName}</p>
             <p className="dashboard-dock-handle">{profile.handle}</p>

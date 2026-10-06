@@ -168,6 +168,14 @@
   animation: dashboard-avatar-emerge 9s cubic-bezier(0.45, 0, 0.2, 1) infinite;
 }
 
+.dashboard-hero-avatar img.dashboard-hero-avatar-photo--alien {
+  width: 94%;
+  height: 94%;
+  object-fit: contain;
+  object-position: center 42%;
+  background: transparent;
+}
+
 /* Slow, cinematic idle motion — the explorer gently leans forward out of the
    gold ring and settles back, using perspective depth rather than a bounce. */
 @keyframes dashboard-avatar-emerge {
@@ -651,6 +659,7 @@
 .dashboard-order-streak {
   order: 4;
   overflow-x: clip;
+  overflow-y: visible;
 }
 .dashboard-order-progress {
   order: 5;
@@ -1219,6 +1228,7 @@
   grid-template-columns: minmax(0, 1fr);
   gap: 1.25rem;
   align-items: stretch;
+  overflow: visible;
 }
 
 .dashboard-dock-row > * {
@@ -1425,6 +1435,109 @@
   border-radius: 999px;
 }
 
+.dashboard-dock-profile-slot {
+  overflow: visible;
+  isolation: isolate;
+}
+
+.dashboard-dock-profile-slot:hover,
+.dashboard-dock-profile-slot:focus-within {
+  z-index: 40;
+}
+
+.dashboard-dock-card--profile {
+  overflow: visible;
+}
+
+.dashboard-dock-avatar-stage {
+  position: relative;
+  z-index: 3;
+  width: 4.125rem;
+  height: 4.125rem;
+  flex-shrink: 0;
+}
+
+.dashboard-dock-avatar-stage:hover,
+.dashboard-dock-avatar-stage:focus-within {
+  z-index: 80;
+}
+
+.dashboard-dock-avatar-pop {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  perspective: 980px;
+  transform-style: preserve-3d;
+}
+
+.dashboard-dock-avatar-pop .dashboard-dock-avatar {
+  /* Layout box is 2× the visible frame so the browser decodes a sharp bitmap
+     for hover instead of upscaling a 66px thumbnail. Resting scale(0.5) keeps
+     the on-card size at 4.125rem. */
+  width: 8.25rem !important;
+  height: 8.25rem !important;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center 42%;
+  image-rendering: auto;
+  -ms-interpolation-mode: bicubic;
+  transform: translateZ(0) scale(0.5) rotateX(0deg) rotateY(0deg);
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  filter: brightness(1);
+  box-shadow: 0 8px 18px oklch(0 0 0 / 0.28);
+  transition:
+    transform 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 380ms ease,
+    box-shadow 380ms ease,
+    object-position 380ms ease;
+}
+
+.dashboard-dock-avatar-pop .dashboard-dock-avatar.user-avatar-explorer img {
+  transform: scale(1);
+  transform-origin: center 42%;
+  image-rendering: auto;
+  transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dashboard-dock-avatar-stage:hover .dashboard-dock-avatar-pop .dashboard-dock-avatar,
+  .dashboard-dock-avatar-stage:focus-within .dashboard-dock-avatar-pop .dashboard-dock-avatar {
+    transform: translateZ(44px) translateY(-10px) scale(1) rotateX(6deg) rotateY(-7deg);
+    filter: brightness(1.1) saturate(1.05);
+    object-position: center 38%;
+    box-shadow:
+      0 0 0 2px color-mix(in oklab, var(--bronze) 58%, transparent),
+      0 0 32px color-mix(in oklab, var(--bronze) 46%, transparent),
+      0 24px 42px oklch(0 0 0 / 0.55);
+  }
+
+  .dashboard-dock-avatar-stage:hover .dashboard-dock-avatar.user-avatar-explorer img,
+  .dashboard-dock-avatar-stage:focus-within .dashboard-dock-avatar.user-avatar-explorer img {
+    transform: scale(0.86);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-dock-avatar-pop .dashboard-dock-avatar,
+  .dashboard-dock-avatar-pop .dashboard-dock-avatar.user-avatar-explorer img {
+    transition: none;
+  }
+
+  .dashboard-dock-avatar-stage:hover .dashboard-dock-avatar-pop .dashboard-dock-avatar,
+  .dashboard-dock-avatar-stage:focus-within .dashboard-dock-avatar-pop .dashboard-dock-avatar {
+    transform: translateZ(0) scale(0.5) rotateX(0deg) rotateY(0deg);
+    filter: none;
+    box-shadow: 0 8px 18px oklch(0 0 0 / 0.28);
+  }
+
+  .dashboard-dock-avatar-stage:hover .dashboard-dock-avatar.user-avatar-explorer img,
+  .dashboard-dock-avatar-stage:focus-within .dashboard-dock-avatar.user-avatar-explorer img {
+    transform: none;
+  }
+}
+
 .dashboard-dock-name {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1596,6 +1709,8 @@
   --hero-gold-deep: oklch(0.62 0.09 62);
   --hero-gold-highlight: oklch(0.86 0.08 82);
   --streak-ink: oklch(0.12 0.01 60);
+  position: relative;
+  z-index: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1657,6 +1772,265 @@
 
   .dashboard-streak:hover {
     animation: none;
+  }
+}
+
+/* ── Streak tracker — "caught fire" perimeter effect ────────────────────
+   Decorative only (aria-hidden). Sits behind the bar's own content via a
+   negative z-index on a positioned descendant, so flames/embers read as
+   hugging the border while text and icons stay fully legible on top. */
+
+.dashboard-streak-fire {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.dashboard-streak-fire-glow {
+  position: absolute;
+  inset: -0.55rem -0.35rem;
+  border-radius: 9999px;
+  background: radial-gradient(
+    ellipse 72% 170% at 50% 50%,
+    oklch(0.7 0.16 48 / 0.38) 0%,
+    oklch(0.66 0.14 42 / 0.2) 45%,
+    transparent 76%
+  );
+  filter: blur(6px);
+  opacity: 0.75;
+  animation: dashboard-streak-glow-breathe 3.6s ease-in-out infinite;
+}
+
+.dashboard-streak-flames {
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  height: 0.72rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.dashboard-streak-flames--top {
+  top: -0.4rem;
+  align-items: flex-end;
+}
+
+.dashboard-streak-flames--bottom {
+  bottom: -0.4rem;
+  align-items: flex-start;
+}
+
+.dashboard-streak-flame {
+  position: relative;
+  width: 0.46rem;
+  height: 0.6rem;
+  flex-shrink: 0;
+  transform-origin: bottom center;
+  border-radius: 50% 50% 46% 46% / 64% 64% 36% 36%;
+  background: linear-gradient(
+    0deg,
+    oklch(0.6 0.19 32 / 0.92) 0%,
+    oklch(0.72 0.18 48 / 0.86) 38%,
+    oklch(0.82 0.14 68 / 0.68) 68%,
+    oklch(0.92 0.08 86 / 0.08) 100%
+  );
+  filter: blur(0.4px);
+  animation: dashboard-streak-flame-lick 2.3s ease-in-out infinite;
+}
+
+.dashboard-streak-flames--bottom .dashboard-streak-flame {
+  transform-origin: top center;
+  background: linear-gradient(
+    180deg,
+    oklch(0.6 0.19 32 / 0.92) 0%,
+    oklch(0.72 0.18 48 / 0.86) 38%,
+    oklch(0.82 0.14 68 / 0.68) 68%,
+    oklch(0.92 0.08 86 / 0.08) 100%
+  );
+}
+
+.dashboard-streak-flame:nth-child(1) {
+  height: 0.5rem;
+  animation-delay: 0s;
+  animation-duration: 2.1s;
+}
+.dashboard-streak-flame:nth-child(2) {
+  width: 0.52rem;
+  height: 0.7rem;
+  animation-delay: 0.35s;
+  animation-duration: 2.6s;
+}
+.dashboard-streak-flame:nth-child(3) {
+  height: 0.56rem;
+  animation-delay: 0.7s;
+  animation-duration: 2.2s;
+}
+.dashboard-streak-flame:nth-child(4) {
+  width: 0.5rem;
+  height: 0.78rem;
+  animation-delay: 1.05s;
+  animation-duration: 2.8s;
+}
+.dashboard-streak-flame:nth-child(5) {
+  height: 0.52rem;
+  animation-delay: 1.4s;
+  animation-duration: 2.15s;
+}
+.dashboard-streak-flame:nth-child(6) {
+  width: 0.42rem;
+  height: 0.64rem;
+  animation-delay: 1.75s;
+  animation-duration: 2.5s;
+}
+
+.dashboard-streak-embers {
+  position: absolute;
+  inset: -0.95rem -0.4rem -0.65rem;
+  pointer-events: none;
+}
+
+.dashboard-streak-ember {
+  position: absolute;
+  bottom: 0.4rem;
+  width: 0.14rem;
+  height: 0.14rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    oklch(0.93 0.08 85) 0%,
+    oklch(0.76 0.17 55 / 0.9) 55%,
+    transparent 100%
+  );
+  box-shadow: 0 0 4px oklch(0.78 0.16 58 / 0.75);
+  opacity: 0;
+  animation: dashboard-streak-ember-rise 3.2s ease-in infinite;
+}
+
+.dashboard-streak-ember:nth-child(1) {
+  left: 9%;
+  animation-delay: 0s;
+}
+.dashboard-streak-ember:nth-child(2) {
+  left: 27%;
+  width: 0.1rem;
+  height: 0.1rem;
+  animation-delay: 0.8s;
+}
+.dashboard-streak-ember:nth-child(3) {
+  left: 52%;
+  animation-delay: 1.6s;
+}
+.dashboard-streak-ember:nth-child(4) {
+  left: 74%;
+  width: 0.11rem;
+  height: 0.11rem;
+  animation-delay: 2.3s;
+}
+.dashboard-streak-ember:nth-child(5) {
+  left: 91%;
+  animation-delay: 0.4s;
+}
+
+.dashboard-streak-shimmer {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: repeating-linear-gradient(
+    100deg,
+    transparent 0%,
+    oklch(0.95 0.05 85 / 0.07) 8%,
+    transparent 16%
+  );
+  background-size: 220% 100%;
+  mix-blend-mode: overlay;
+  opacity: 0.55;
+  filter: blur(1.5px);
+  animation: dashboard-streak-shimmer-drift 5.5s linear infinite;
+}
+
+@keyframes dashboard-streak-glow-breathe {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.92;
+    transform: scale(1.015);
+  }
+}
+
+@keyframes dashboard-streak-flame-lick {
+  0% {
+    transform: scaleY(0.86) scaleX(0.95) rotate(-2deg);
+    opacity: 0.75;
+  }
+  25% {
+    transform: scaleY(1.08) scaleX(1.02) rotate(1.5deg);
+    opacity: 0.95;
+  }
+  50% {
+    transform: scaleY(0.93) scaleX(0.97) rotate(-1deg);
+    opacity: 0.82;
+  }
+  75% {
+    transform: scaleY(1.16) scaleX(1.04) rotate(2deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(0.86) scaleX(0.95) rotate(-2deg);
+    opacity: 0.75;
+  }
+}
+
+@keyframes dashboard-streak-ember-rise {
+  0% {
+    transform: translateY(0) scale(0.6);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.9;
+  }
+  55% {
+    transform: translateY(-0.85rem) translateX(0.1rem) scale(1);
+    opacity: 0.65;
+  }
+  100% {
+    transform: translateY(-1.6rem) translateX(-0.1rem) scale(0.3);
+    opacity: 0;
+  }
+}
+
+@keyframes dashboard-streak-shimmer-drift {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 2.4rem 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-streak-fire-glow,
+  .dashboard-streak-flame,
+  .dashboard-streak-ember,
+  .dashboard-streak-shimmer {
+    animation: none;
+  }
+
+  .dashboard-streak-flame {
+    opacity: 0.8;
+    transform: none;
+  }
+
+  .dashboard-streak-ember {
+    opacity: 0;
+  }
+
+  .dashboard-streak-shimmer {
+    opacity: 0.18;
   }
 }
 
@@ -1850,8 +2224,59 @@
 }
 
 .dashboard-streak-progress > span {
+  position: relative;
   border-radius: 9999px;
-  background: var(--streak-ink) !important;
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--streak-ink) 55%, oklch(0.58 0.17 36) 45%) 0%,
+    oklch(0.64 0.19 42) 38%,
+    oklch(0.76 0.17 56) 68%,
+    oklch(0.86 0.12 74) 100%
+  ) !important;
+  background-size: 180% 100%;
+  animation: dashboard-streak-molten-shift 3.4s ease-in-out infinite;
+}
+
+.dashboard-streak-progress > span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: linear-gradient(
+    100deg,
+    transparent 32%,
+    oklch(0.94 0.07 85 / 0.65) 48%,
+    transparent 64%
+  );
+  background-size: 240% 100%;
+  mix-blend-mode: screen;
+  animation: dashboard-streak-progress-sheen 2.4s linear infinite;
+}
+
+@keyframes dashboard-streak-molten-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes dashboard-streak-progress-sheen {
+  0% {
+    background-position: -140% 0;
+  }
+  100% {
+    background-position: 140% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-streak-progress > span,
+  .dashboard-streak-progress > span::after {
+    animation: none;
+  }
 }
 
 @media (max-width: 1100px) {
@@ -1914,113 +2339,325 @@
   }
 }
 
-/* ── Continue playing mode cards (Quick Status dark bronze) ───────────── */
+/* ── Premium circular game-mode cards ────────────────────────────────── */
 
-.dashboard-continue-mode {
-  color: var(--foreground) !important;
-  border-color: color-mix(in oklab, var(--bronze) 60%, transparent) !important;
-  background-color: color-mix(in oklab, var(--bronze) 28%, var(--charcoal)) !important;
-  background-image: linear-gradient(
-    160deg,
-    color-mix(in oklab, var(--bronze) 40%, var(--charcoal)) 0%,
-    color-mix(in oklab, var(--bronze-glow) 16%, var(--charcoal)) 22%,
-    color-mix(in oklab, var(--bronze) 30%, var(--charcoal)) 55%,
-    color-mix(in oklab, var(--bronze) 18%, var(--charcoal)) 100%
-  ) !important;
-  box-shadow:
-    inset 0 1px 0 color-mix(in oklab, var(--bronze-glow) 26%, transparent),
-    inset 0 -1px 0 color-mix(in oklab, var(--background) 35%, transparent),
-    var(--shadow-game);
-}
-
-.dashboard-continue-mode:hover {
-  color: var(--foreground);
-  border-color: color-mix(in oklab, var(--bronze) 72%, transparent);
-}
-
-.dashboard-continue-mode-row {
-  display: inline-flex;
-  min-width: 0;
-  align-items: center;
-}
-
-.dashboard-continue-mode--credits {
+/* Card root — the <Link> element, absolutely fills a relative aspect-square li */
+.dashboard-gamecard {
+  position: absolute;
+  inset: 0;
+  display: flex;
   flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-  gap: 0.55rem;
-  white-space: normal;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16% 10% 14%;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1.5px solid color-mix(in oklab, var(--bronze) 52%, transparent);
+  background: oklch(0.07 0.013 62);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--bronze-glow) 18%, transparent),
+    0 8px 32px oklch(0 0 0 / 0.58);
+  text-decoration: none;
+  color: var(--foreground);
+  cursor: pointer;
+  outline: none;
+  transition:
+    transform 300ms ease,
+    border-color 300ms ease,
+    box-shadow 300ms ease;
 }
 
-.dashboard-continue-credits {
+.dashboard-gamecard--locked {
+  opacity: 0.72;
+}
+
+/* ── Artwork ───────────────────────────────────────────────────── */
+
+.dashboard-gamecard-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center top;
+  filter: brightness(0.3) saturate(0.5);
+  transform: scale(1);
+  transition:
+    transform 420ms ease,
+    filter 420ms ease;
+}
+
+/* Two-layer radial overlay: bronze top halo + deep bottom shadow */
+.dashboard-gamecard-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse 80% 50% at 50% 0%,
+      color-mix(in oklab, var(--bronze) 16%, transparent) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      ellipse 100% 58% at 50% 100%,
+      oklch(0 0 0 / 0.9) 0%,
+      oklch(0 0 0 / 0.62) 35%,
+      transparent 68%
+    ),
+    radial-gradient(circle at 50% 50%, transparent 40%, oklch(0 0 0 / 0.28) 100%);
+  pointer-events: none;
+}
+
+/* ── HUD rings ─────────────────────────────────────────────────── */
+
+.dashboard-gamecard-hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.dashboard-gamecard-hud::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in oklab, var(--bronze) 22%, transparent);
+  transition: border-color 300ms ease;
+}
+
+.dashboard-gamecard-hud::after {
+  content: "";
+  position: absolute;
+  inset: 13px;
+  border-radius: 50%;
+  border: 1px dashed color-mix(in oklab, var(--bronze) 10%, transparent);
+}
+
+/* Lock dim overlay */
+.dashboard-gamecard-lock {
+  position: absolute;
+  inset: 0;
+  background: oklch(0 0 0 / 0.22);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ── Status badge ──────────────────────────────────────────────── */
+
+.dashboard-gamecard-badge {
+  position: relative;
+  z-index: 3;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--bronze) 52%, white 8%);
+  background: oklch(0.09 0.014 62 / 0.8);
+  backdrop-filter: blur(4px);
+  color: color-mix(in oklab, var(--bronze-glow) 70%, white 22%);
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow:
+    0 0 10px color-mix(in oklab, var(--bronze) 18%, transparent),
+    inset 0 1px 0 color-mix(in oklab, white 14%, transparent);
+}
+
+/* ── Mode icon + title + subtitle ─────────────────────────────── */
+
+.dashboard-gamecard-mid {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  text-align: center;
+  width: 100%;
+}
+
+.dashboard-gamecard-icon-ring {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  align-self: center;
+  flex-shrink: 0;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 50%;
+  border: 1px solid color-mix(in oklab, var(--bronze) 40%, transparent);
+  background: oklch(0.1 0.016 62 / 0.55);
+  color: color-mix(in oklab, var(--bronze-glow) 80%, white 12%);
+  box-shadow:
+    0 0 12px color-mix(in oklab, var(--bronze) 18%, transparent),
+    inset 0 1px 0 color-mix(in oklab, white 10%, transparent);
+}
+
+.dashboard-gamecard-title {
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: oklch(0.96 0.022 74);
+  line-height: 1.1;
+  font-family: var(--font-cta), "Chakra Petch", sans-serif;
+  white-space: nowrap;
+  text-shadow: 0 1px 5px oklch(0 0 0 / 0.65);
+}
+
+.dashboard-gamecard-subtitle {
+  font-size: 0.62rem;
+  font-weight: 400;
+  color: color-mix(in oklab, var(--foreground) 52%, transparent);
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  text-shadow: 0 1px 3px oklch(0 0 0 / 0.5);
+}
+
+/* ── CTA pill ──────────────────────────────────────────────────── */
+
+.dashboard-gamecard-cta {
+  position: relative;
+  z-index: 3;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   gap: 0.32rem;
-  max-width: calc(100% - 0.35rem);
-  padding: 0.28rem 0.68rem;
+  max-width: 84%;
+  padding: 0.3rem 0.72rem;
   border-radius: 999px;
-  border: 1px solid color-mix(in oklab, var(--bronze) 78%, white 10%);
+  border: 1px solid color-mix(in oklab, var(--bronze) 72%, white 10%);
   background: linear-gradient(
     180deg,
-    color-mix(in oklab, var(--bronze-glow) 62%, var(--charcoal)) 0%,
-    color-mix(in oklab, var(--bronze) 48%, var(--charcoal)) 100%
+    color-mix(in oklab, var(--bronze-glow) 55%, var(--charcoal)) 0%,
+    color-mix(in oklab, var(--bronze) 42%, var(--charcoal)) 100%
   );
-  color: color-mix(in oklab, var(--bronze-glow) 22%, white 55%);
+  color: color-mix(in oklab, var(--bronze-glow) 18%, white 56%);
   box-shadow:
-    0 0 12px color-mix(in oklab, var(--bronze) 38%, transparent),
-    inset 0 1px 0 color-mix(in oklab, white 24%, transparent);
-  font-size: 0.52rem;
+    0 0 14px color-mix(in oklab, var(--bronze) 28%, transparent),
+    inset 0 1px 0 color-mix(in oklab, white 20%, transparent);
+  font-size: 0.5rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
-  line-height: 1.1;
+  letter-spacing: 0.11em;
+  line-height: 1.2;
   text-transform: uppercase;
+  text-align: center;
   white-space: nowrap;
   pointer-events: none;
   transition:
-    box-shadow 180ms ease,
-    filter 180ms ease,
-    transform 180ms ease;
+    box-shadow 200ms ease,
+    filter 200ms ease,
+    transform 200ms ease;
 }
 
-.dashboard-continue-credits-icon {
+/* PvP: text wraps to two lines */
+.dashboard-gamecard-cta--pvp {
+  white-space: normal;
+  max-width: 72%;
+}
+
+.dashboard-gamecard-cta-icon {
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
-  justify-content: center;
-  font-size: 0.72rem;
+  font-size: 0.65rem;
   line-height: 1;
   font-style: normal;
   font-variant-emoji: emoji;
   font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
 }
 
+/* ── Hover ─────────────────────────────────────────────────────── */
+
 @media (hover: hover) and (pointer: fine) {
-  .dashboard-continue-mode--credits:hover .dashboard-continue-credits {
-    filter: brightness(1.14);
-    transform: scale(1.045);
+  .dashboard-gamecard:hover {
+    transform: translateY(-5px) translateZ(0);
+    border-color: color-mix(in oklab, var(--bronze-glow) 68%, white 12%);
     box-shadow:
-      0 0 18px color-mix(in oklab, var(--bronze) 58%, transparent),
-      inset 0 1px 0 color-mix(in oklab, white 30%, transparent);
+      inset 0 1px 0 color-mix(in oklab, var(--bronze-glow) 26%, transparent),
+      0 0 36px color-mix(in oklab, var(--bronze) 26%, transparent),
+      0 16px 40px oklch(0 0 0 / 0.6);
+  }
+
+  .dashboard-gamecard:hover .dashboard-gamecard-bg {
+    transform: scale(1.05);
+    filter: brightness(0.4) saturate(0.68);
+  }
+
+  .dashboard-gamecard:hover .dashboard-gamecard-hud::before {
+    border-color: color-mix(in oklab, var(--bronze-glow) 30%, transparent);
+  }
+
+  .dashboard-gamecard:hover .dashboard-gamecard-hud::after {
+    border-color: color-mix(in oklab, var(--bronze) 16%, transparent);
+  }
+
+  .dashboard-gamecard:hover .dashboard-gamecard-cta {
+    filter: brightness(1.14);
+    transform: scale(1.05);
+    box-shadow:
+      0 0 20px color-mix(in oklab, var(--bronze) 46%, transparent),
+      inset 0 1px 0 color-mix(in oklab, white 26%, transparent);
+  }
+
+  .dashboard-gamecard:focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--bronze-glow) 70%, transparent);
+    outline-offset: 3px;
   }
 }
 
+/* ── Reduced motion ────────────────────────────────────────────── */
+
 @media (prefers-reduced-motion: reduce) {
-  .dashboard-continue-credits {
+  .dashboard-gamecard,
+  .dashboard-gamecard-bg,
+  .dashboard-gamecard-cta {
     transition: none;
   }
 
-  .dashboard-continue-mode--credits:hover .dashboard-continue-credits {
+  .dashboard-gamecard:hover {
     transform: none;
+  }
+
+  .dashboard-gamecard:hover .dashboard-gamecard-bg {
+    transform: none;
+  }
+
+  .dashboard-gamecard:hover .dashboard-gamecard-cta {
+    transform: none;
+    filter: none;
   }
 }
 
-@media (max-width: 719px) {
-  .dashboard-continue-credits {
-    padding: 0.24rem 0.54rem;
-    font-size: 0.48rem;
-    letter-spacing: 0.1em;
+/* ── Responsive ────────────────────────────────────────────────── */
+
+@media (max-width: 599px) {
+  .dashboard-gamecard-badge {
+    font-size: 0.46rem;
+    padding: 0.18rem 0.46rem;
+  }
+
+  .dashboard-gamecard-icon-ring {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+
+  .dashboard-gamecard-title {
+    font-size: 0.74rem;
+  }
+
+  .dashboard-gamecard-subtitle {
+    font-size: 0.56rem;
+  }
+
+  .dashboard-gamecard-cta {
+    font-size: 0.45rem;
+    padding: 0.26rem 0.56rem;
+    max-width: 86%;
+  }
+
+  .dashboard-gamecard-cta--pvp {
+    max-width: 78%;
   }
 }
 
@@ -2071,20 +2708,28 @@
   }
 }
 
-/* ── Quiz progress (Rewards-card visual language) ─────────────────────── */
+/* ── Quiz progress (premium expedition record panel) ───────────────────── */
 
 .dashboard-quiz-progress {
+  container-type: inline-size;
   display: flex;
   min-width: 0;
-  height: 100%;
+  height: auto;
   flex-direction: column;
-  padding: 1.5rem;
+  padding: 1.25rem 1.35rem 1.2rem;
   border-radius: 1rem;
   border: 1px solid color-mix(in oklab, var(--bronze) 22%, transparent);
   background: color-mix(in oklab, var(--charcoal) 42%, transparent);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
   box-shadow: inset 0 1px 0 color-mix(in oklab, var(--bronze) 8%, transparent);
+}
+
+.dashboard-quiz-progress__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.85rem;
 }
 
 .dashboard-quiz-progress__lede {
@@ -2100,46 +2745,104 @@
   color: color-mix(in oklab, var(--foreground) 50%, transparent);
 }
 
+.dashboard-quiz-progress__status-pill {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.15rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--bronze) 20%, transparent);
+  background: color-mix(in oklab, black 44%, transparent);
+  font-size: 0.56rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--foreground) 56%, transparent);
+  white-space: nowrap;
+}
+
+.dashboard-quiz-progress__status-dot {
+  display: inline-block;
+  width: 0.38rem;
+  height: 0.38rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--bronze-glow) 85%, white 10%);
+  animation: dashboard-quiz-progress-pulse 2600ms ease-in-out infinite;
+}
+
+@keyframes dashboard-quiz-progress-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
 .dashboard-quiz-progress__list {
   display: flex;
   min-width: 0;
-  flex: 1;
   flex-direction: column;
-  gap: 0.55rem;
-  margin-top: 1.25rem;
+  gap: 0.5rem;
+  margin-top: 1.05rem;
+  margin-bottom: 0;
 }
 
 .dashboard-quiz-progress__row {
   position: relative;
   display: flex;
   min-width: 0;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.85rem;
-  min-height: 3.05rem;
-  padding: 0.62rem 0.85rem 0.62rem 0.75rem;
+  flex-direction: column;
+  gap: 0.42rem;
+  padding: 0.58rem 0.8rem 0.6rem 0.7rem;
   border-radius: 0.85rem;
   border: 1px solid color-mix(in oklab, var(--bronze) 16%, transparent);
   background: color-mix(in oklab, black 38%, transparent);
   transition:
-    transform 220ms ease-out,
-    border-color 220ms ease-out,
-    background-color 220ms ease-out,
-    box-shadow 220ms ease-out;
-  will-change: transform;
+    transform 240ms ease-out,
+    border-color 240ms ease-out,
+    background-color 240ms ease-out,
+    box-shadow 240ms ease-out;
+}
+
+.dashboard-quiz-progress__row-top {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+}
+
+.dashboard-quiz-progress__row-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.32rem;
+}
+
+.dashboard-quiz-progress__row-caption {
+  font-size: 0.64rem;
+  color: color-mix(in oklab, var(--foreground) 44%, transparent);
 }
 
 /* Hover-capable pointers only — avoids sticky hover on touch. */
 @media (hover: hover) and (pointer: fine) {
   .dashboard-quiz-progress__row:hover {
-    z-index: 1;
-    transform: translateY(-2px) scale(1.04);
-    border-color: color-mix(in oklab, var(--bronze) 58%, transparent);
-    background: color-mix(in oklab, black 30%, var(--charcoal) 70%);
-    box-shadow:
-      0 10px 22px color-mix(in oklab, black 42%, transparent),
-      0 0 0 1px color-mix(in oklab, var(--bronze) 26%, transparent),
-      0 0 16px color-mix(in oklab, var(--bronze) 16%, transparent);
+    transform: translateY(-2px);
+    border-color: color-mix(in oklab, var(--bronze) 42%, transparent);
+    background: color-mix(in oklab, black 32%, var(--charcoal) 68%);
+    box-shadow: 0 8px 18px color-mix(in oklab, black 36%, transparent);
+  }
+
+  .dashboard-quiz-progress__row:hover .dashboard-quiz-progress__value {
+    color: color-mix(in oklab, var(--bronze-glow) 18%, white 92%);
+  }
+
+  .dashboard-quiz-progress__row:hover .dashboard-quiz-progress__row-bar [role="progressbar"] {
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--bronze) 32%, transparent);
   }
 }
 
@@ -2150,6 +2853,11 @@
 
   .dashboard-quiz-progress__row:hover {
     transform: none;
+  }
+
+  .dashboard-quiz-progress__status-dot {
+    animation: none;
+    opacity: 1;
   }
 }
 
@@ -2192,6 +2900,7 @@
   letter-spacing: 0.02em;
   line-height: 1;
   color: color-mix(in oklab, var(--foreground) 94%, transparent);
+  transition: color 240ms ease-out;
 }
 
 .dashboard-quiz-progress__suffix {
@@ -2205,9 +2914,15 @@
   color: color-mix(in oklab, var(--foreground) 40%, transparent);
 }
 
+@container (max-width: 300px) {
+  .dashboard-quiz-progress__row-top {
+    flex-wrap: wrap;
+  }
+}
+
 @media (min-width: 1180px) {
   .dashboard-quiz-progress__list {
-    gap: 0.62rem;
+    gap: 0.55rem;
   }
 }
 

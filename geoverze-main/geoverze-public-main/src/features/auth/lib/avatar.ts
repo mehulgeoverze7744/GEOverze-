@@ -14,6 +14,12 @@ function stripAvatarQuery(src: string) {
   return cut === -1 ? src : src.slice(0, cut);
 }
 
+/** Bundled GEOverze alien explorer portrait (transparent PNG + legacy WebP). */
+export function isAlienAvatarSrc(src: string | null | undefined) {
+  const path = src?.trim() ? stripAvatarQuery(src.trim()) : "";
+  return path === "/assets/avatars/alien.png" || path === "/assets/avatars/alien.webp";
+}
+
 /** Cache-bust remote/storage URLs after a photo replacement. Bundled assets keep a stable path. */
 export function withAvatarCacheBust(src: string, revision?: string | number | null) {
   const trimmed = src.trim();
