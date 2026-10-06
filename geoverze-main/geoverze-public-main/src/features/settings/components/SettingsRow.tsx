@@ -22,7 +22,7 @@ export function SettingsGroup({
 }
 
 type SettingsRowProps = {
-  icon?: LucideIcon;
+  icon?: LucideIcon | string;
   title: string;
   subtitle?: string;
   value?: string;
@@ -61,7 +61,11 @@ export function SettingsRow({
         className,
       )}
     >
-      {Icon ? (
+      {typeof Icon === "string" ? (
+        <span className="settings-row-icon settings-row-icon--emoji" aria-hidden="true">
+          {Icon}
+        </span>
+      ) : Icon ? (
         <span className="settings-row-icon" aria-hidden="true">
           <Icon className="h-4 w-4" strokeWidth={1.5} />
         </span>

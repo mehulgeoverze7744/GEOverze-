@@ -1,12 +1,10 @@
 import type { LinkProps } from "@tanstack/react-router";
-import type { LucideIcon } from "lucide-react";
-import { BookOpen, CreditCard, Gamepad2, LifeBuoy, Mail, ShoppingBag, UserCog } from "lucide-react";
 
 export type SupportCategory = {
   id: string;
   title: string;
   description: string;
-  icon: LucideIcon;
+  icon: string;
   to: NonNullable<LinkProps["to"]>;
 };
 
@@ -20,42 +18,42 @@ export const supportCategories: readonly SupportCategory[] = [
     id: "getting-started",
     title: "Getting started",
     description: "Learn how GEOverze works",
-    icon: LifeBuoy,
+    icon: "🌟",
     to: "/",
   },
   {
     id: "play",
     title: "Let's Play",
     description: "Quizzes, scoring, sessions and progress",
-    icon: Gamepad2,
+    icon: "🎮",
     to: "/play",
   },
   {
     id: "geolibrary",
     title: "GEOlibrary",
     description: "Articles, collections and topics",
-    icon: BookOpen,
+    icon: "📚",
     to: "/geolibrary",
   },
   {
     id: "geostore",
     title: "GEOstore",
     description: "Orders, products and delivery",
-    icon: ShoppingBag,
+    icon: "🛍️",
     to: "/geostore",
   },
   {
     id: "account",
     title: "Account & access",
     description: "Sign-in, verification and account help",
-    icon: UserCog,
+    icon: "👥",
     to: "/settings",
   },
   {
     id: "billing",
     title: "Plans & billing",
     description: "Plans, subscriptions and billing",
-    icon: CreditCard,
+    icon: "💰",
     to: "/pricing",
   },
 ] as const;
@@ -74,7 +72,7 @@ export const supportGroups: readonly SupportGroup[] = [
 export const supportContact = {
   title: "Contact GEOverze Support",
   description: "Still need help? We're here.",
-  icon: Mail,
+  icon: "💬",
   to: "/contact" as const,
 };
 

@@ -130,6 +130,10 @@
   color: color-mix(in oklab, var(--bronze-glow) 92%, transparent);
 }
 
+.support-row:hover .support-row-icon--emoji {
+  color: CanvasText;
+}
+
 .support-row:hover .support-row-chevron {
   transform: translateX(2px);
   color: color-mix(in oklab, var(--bronze-glow) 80%, transparent);
@@ -155,6 +159,16 @@
   transition:
     border-color 200ms ease,
     color 200ms ease;
+}
+
+.support-row-icon--emoji {
+  color: CanvasText;
+  font-size: 1.375rem;
+  line-height: 1;
+  font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+  font-variant-emoji: emoji;
+  font-style: normal;
+  font-weight: 400;
 }
 
 .support-row-body {

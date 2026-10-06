@@ -125,6 +125,16 @@
   color: color-mix(in oklab, var(--bronze) 82%, transparent);
 }
 
+.settings-row-icon--emoji {
+  color: CanvasText;
+  font-size: 1.375rem;
+  line-height: 1;
+  font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+  font-variant-emoji: emoji;
+  font-style: normal;
+  font-weight: 400;
+}
+
 .settings-row-body {
   display: flex;
   min-width: 0;

@@ -1,17 +1,4 @@
 import { useNavigate } from "@tanstack/react-router";
-import {
-  Bell,
-  CreditCard,
-  Database,
-  Globe2,
-  Lock,
-  LockKeyhole,
-  Mail,
-  Palette,
-  Shield,
-  Sparkles,
-  User,
-} from "lucide-react";
 
 import { AnimatedSection } from "@/components/shared/AnimatedSection";
 import { SUBSCRIPTION } from "@/features/dashboard/data/dashboard";
@@ -33,19 +20,19 @@ export function SettingsHome() {
     <AnimatedSection className="settings-groups">
       <SettingsGroup label="Account">
         <SettingsRow
-          icon={User}
+          icon="👤"
           title="Profile"
           subtitle="Your name, avatar and personal information"
           onClick={() => open("profile")}
         />
         <SettingsRow
-          icon={Mail}
+          icon="📧"
           title="Email"
           subtitle="Manage your account email address"
           onClick={() => open("account")}
         />
         <SettingsRow
-          icon={Lock}
+          icon="🔒"
           title="Password"
           subtitle="Manage your account password"
           onClick={() => open("security")}
@@ -54,19 +41,19 @@ export function SettingsHome() {
 
       <SettingsGroup label="Experience">
         <SettingsRow
-          icon={Palette}
+          icon="🎨"
           title="Appearance"
           subtitle="Theme, accent and visual preferences"
           onClick={() => open("appearance")}
         />
         <SettingsRow
-          icon={Sparkles}
+          icon="✨"
           title="Motion & performance"
           subtitle="Animation and performance"
           onClick={() => open("performance")}
         />
         <SettingsRow
-          icon={Globe2}
+          icon="🌐"
           title="Language & region"
           subtitle="Language and regional preferences"
           value={LOCALE_LABELS[locale] ?? locale}
@@ -76,7 +63,7 @@ export function SettingsHome() {
 
       <SettingsGroup label="Communication">
         <SettingsRow
-          icon={Bell}
+          icon="🔔"
           title="Notifications"
           subtitle="Manage what GEOverze sends you"
           onClick={() => open("notifications")}
@@ -85,13 +72,13 @@ export function SettingsHome() {
 
       <SettingsGroup label="Privacy & security">
         <SettingsRow
-          icon={Shield}
+          icon="🛡️"
           title="Privacy"
           subtitle="Visibility and data preferences"
           onClick={() => open("privacy")}
         />
         <SettingsRow
-          icon={LockKeyhole}
+          icon="🔐"
           title="Security"
           subtitle="Password and account protection"
           onClick={() => open("security")}
@@ -100,14 +87,14 @@ export function SettingsHome() {
 
       <SettingsGroup label="Account & plan">
         <SettingsRow
-          icon={CreditCard}
+          icon="💳"
           title="Subscription"
           subtitle="Manage your GEOverze plan"
           value={SUBSCRIPTION.plan}
           onClick={() => open("billing")}
         />
         <SettingsRow
-          icon={Database}
+          icon="🗄️"
           title="Data & account"
           subtitle="Export or manage your account"
           onClick={() => open("data")}

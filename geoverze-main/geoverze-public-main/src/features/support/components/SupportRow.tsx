@@ -2,26 +2,25 @@ import type { ReactNode } from "react";
 
 import { Link } from "@tanstack/react-router";
 import type { LinkProps } from "@tanstack/react-router";
-import type { LucideIcon } from "lucide-react";
 import { ChevronRight } from "lucide-react";
 
 type SupportRowProps = {
-  icon: LucideIcon;
+  icon: string;
   title: string;
   subtitle: string;
   to: NonNullable<LinkProps["to"]>;
 };
 
 /** Compact support navigation row. */
-export function SupportRow({ icon: Icon, title, subtitle, to }: SupportRowProps) {
+export function SupportRow({ icon, title, subtitle, to }: SupportRowProps) {
   return (
     <Link
       to={to}
       className="support-row group"
       aria-label={`${title}. ${subtitle}`}
     >
-      <span className="support-row-icon" aria-hidden="true">
-        <Icon className="h-4 w-4" strokeWidth={1.5} />
+      <span className="support-row-icon support-row-icon--emoji" aria-hidden="true">
+        {icon}
       </span>
       <div className="support-row-body">
         <div className="support-row-title">{title}</div>
