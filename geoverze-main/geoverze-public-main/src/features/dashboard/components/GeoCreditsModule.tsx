@@ -22,6 +22,17 @@ export function GeoCreditsModule({ className }: { className?: string }) {
       )}
       aria-labelledby="geo-credits-heading"
     >
+      <div className="dashboard-credits-reward-cluster" aria-hidden="true">
+        <span className="dashboard-credits-coin dashboard-credits-coin--a">$</span>
+        <span className="dashboard-credits-coin dashboard-credits-coin--b">$</span>
+        <span className="dashboard-credits-coin dashboard-credits-coin--c">$</span>
+        <span className="dashboard-credits-gift">
+          <span className="dashboard-credits-gift-lid" />
+          <span className="dashboard-credits-gift-ribbon-v" />
+          <span className="dashboard-credits-gift-ribbon-h" />
+        </span>
+      </div>
+
       <div
         className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-bronze/10 blur-2xl"
         aria-hidden="true"

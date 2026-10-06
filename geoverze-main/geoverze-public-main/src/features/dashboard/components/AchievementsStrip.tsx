@@ -18,7 +18,7 @@ export function AchievementsStrip({ className }: { className?: string }) {
   return (
     <section
       className={cn(
-        "flex h-full flex-col rounded-2xl border border-bronze/16 bg-charcoal/30 p-6 backdrop-blur-sm",
+        "relative flex h-full flex-col overflow-hidden rounded-2xl border border-bronze/16 bg-charcoal/30 p-6 backdrop-blur-sm",
         className,
       )}
       aria-labelledby="achievements-strip-heading"
@@ -58,7 +58,7 @@ export function AchievementsStrip({ className }: { className?: string }) {
         <ul className="dashboard-achievements-grid mt-6 grid flex-1 grid-cols-2 gap-3 lg:grid-cols-4 lg:content-start">
           {preview.map((item) => (
             <li key={item.id}>
-              <CreditProductAchievementCard achievement={item} />
+              <CreditProductAchievementCard achievement={item} celebrate />
             </li>
           ))}
         </ul>

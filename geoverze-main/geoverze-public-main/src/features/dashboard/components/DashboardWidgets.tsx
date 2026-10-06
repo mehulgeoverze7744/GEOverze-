@@ -88,11 +88,11 @@ export function DashboardWidgets() {
       </SectionContainer>
 
       <SectionContainer className="dashboard-order-store mt-[var(--space-section-sm)]">
-        <div className="grid gap-4 lg:grid-cols-2 lg:items-stretch">
-          <AnimatedSection className="min-h-0 h-full">
+        <div className="dashboard-store-row">
+          <AnimatedSection className="min-h-0 min-w-0 h-full">
             <DashboardLeaderboardCard className="h-full" />
           </AnimatedSection>
-          <AnimatedSection delay={60} className="min-h-0 h-full">
+          <AnimatedSection delay={60} className="min-h-0 min-w-0 h-full">
             <DashboardGeostoreCard className="h-full" />
           </AnimatedSection>
         </div>

@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Check, CreditCard, Lock } from "lucide-react";
 
-import { GeoButton } from "@/components/shared/GeoButton";
 import { useLibrarySubscriptionTier } from "@/features/library/hooks/useLibrarySubscriptionTier";
 import { libraryTierLabel } from "@/features/library/lib/access-tier";
 import { TIER_PRESENTATION } from "@/features/pricing/data/plans";
@@ -36,31 +35,26 @@ export function SubscriptionCard({ className }: { className?: string }) {
 
   return (
     <section
-      className={cn(
-        "dashboard-subscription rounded-2xl border border-bronze/18 bg-gradient-to-br from-charcoal/50 to-charcoal/25 p-6 backdrop-blur-sm",
-        className,
-      )}
+      className={cn("dashboard-subscription", className)}
       aria-labelledby="subscription-heading"
     >
-      <h2 id="subscription-heading" className="dashboard-section-label flex items-center gap-2">
-        <CreditCard className="h-3.5 w-3.5 text-bronze/90" strokeWidth={1.5} aria-hidden="true" />
+      <h2 id="subscription-heading" className="dashboard-section-label dashboard-subscription-title">
+        <CreditCard className="h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
         Your current expedition pass
       </h2>
 
-      <div className="mt-6 rounded-xl border border-bronze/15 bg-background/20 p-5">
-        <p className="text-xl font-light text-foreground">{planName}</p>
-        <p className="mt-1 text-xs uppercase tracking-[0.2em] text-bronze/90">
-          {libraryTierLabel(tier)} tier
-        </p>
-        <p className="mt-3 text-xs text-foreground/45">{presentation.positioning}</p>
+      <div className="dashboard-subscription-panel">
+        <p className="dashboard-subscription-plan">{planName}</p>
+        <p className="dashboard-subscription-tier">{libraryTierLabel(tier)} tier</p>
+        <p className="dashboard-subscription-positioning">{presentation.positioning}</p>
       </div>
 
       {usage.length > 0 ? (
-        <ul className="mt-5 space-y-2.5">
+        <ul className="dashboard-subscription-features">
           {usage.map((item) => (
-            <li key={item} className="flex items-center gap-2.5 text-xs text-foreground/60">
+            <li key={item}>
               <Check
-                className="h-3.5 w-3.5 shrink-0 text-bronze/90"
+                className="dashboard-subscription-check"
                 strokeWidth={2}
                 aria-hidden="true"
               />
@@ -71,15 +65,15 @@ export function SubscriptionCard({ className }: { className?: string }) {
       ) : null}
 
       {isAdvance ? (
-        <p className="mt-4 inline-flex items-center gap-2 text-xs text-foreground/45">
-          <Lock className="h-3.5 w-3.5 text-bronze/70" strokeWidth={1.5} aria-hidden="true" />
+        <p className="dashboard-subscription-note">
+          <Lock className="h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
           Creator Studio remains coming soon.
         </p>
       ) : null}
 
-      <GeoButton asChild variant="secondary" className="mt-6 w-full">
-        <Link to="/pricing">Change plan</Link>
-      </GeoButton>
+      <Link to="/pricing" className="dashboard-subscription-cta">
+        Change plan
+      </Link>
     </section>
   );
 }

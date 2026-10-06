@@ -58,7 +58,7 @@ export function DashboardCommandActions({ className }: { className?: string }) {
                 <span className="dashboard-dock-action-hint">{action.hint}</span>
               </span>
               <ChevronRight
-                className="dashboard-dock-action-chevron h-3.5 w-3.5"
+                className="dashboard-dock-action-chevron h-4 w-4"
                 strokeWidth={1.6}
                 aria-hidden="true"
               />

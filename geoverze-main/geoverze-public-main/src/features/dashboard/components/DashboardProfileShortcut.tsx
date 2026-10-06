@@ -31,7 +31,7 @@ export function DashboardProfileShortcut({ className }: { className?: string }) 
           <UserAvatar
             avatarUrl={profile.avatarUrl}
             avatarId={profile.avatarId}
-            size={56}
+            size={66}
             className="dashboard-dock-avatar"
             alt={profile.displayName}
           />
@@ -44,10 +44,10 @@ export function DashboardProfileShortcut({ className }: { className?: string }) 
         <div className="dashboard-dock-ctas">
           <Link to="/profile" className="dashboard-dock-cta">
             Open profile
-            <ChevronRight className="h-3 w-3" strokeWidth={1.8} aria-hidden="true" />
+            <ChevronRight className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden="true" />
           </Link>
           <Link to="/settings" search={{ section: undefined }} className="dashboard-dock-cta">
-            <Settings className="h-3 w-3" strokeWidth={1.6} aria-hidden="true" />
+            <Settings className="h-3.5 w-3.5" strokeWidth={1.6} aria-hidden="true" />
             Settings
           </Link>
         </div>
