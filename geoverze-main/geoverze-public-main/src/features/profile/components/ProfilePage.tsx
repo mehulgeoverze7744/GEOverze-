@@ -9,7 +9,6 @@ import { SectionContainer } from "@/components/shared/SectionContainer";
 import { UserAvatar } from "@/features/auth/components/UserAvatar";
 import { formatJoinDate, useProfile } from "@/features/profile/lib/useProfile";
 import { ExplorerAnalytics } from "./ExplorerAnalytics";
-import { ProfileBanner } from "./ProfileBanner";
 import { ProfileLockedUpgradeCards } from "./ProfileLockedUpgradeCards";
 import "../styles/profile.css";
 
@@ -27,13 +26,16 @@ export function ProfilePage() {
       <SectionContainer className="min-w-0 pt-[calc(var(--nav-height)+var(--space-section-sm))]">
         <AnimatedSection className="overflow-x-clip">
           <section className="profile-hero" aria-label="Profile">
-            <div className="profile-hero-bg" aria-hidden="true">
-              <ProfileBanner />
-            </div>
+            <div className="profile-hero-bg" aria-hidden="true" />
             <div className="profile-hero-scrim" aria-hidden="true" />
 
             <div className="profile-hero-toolbar">
-              <GeoButton asChild variant="primary" size="sm" className="profile-hero-btn-primary">
+              <GeoButton
+                asChild
+                variant="secondary"
+                size="sm"
+                className="profile-hero-btn-secondary"
+              >
                 <Link to="/profile/edit">
                   <Pencil className="mr-1.5 h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
                   Edit profile

@@ -536,6 +536,7 @@
 }
 .dashboard-order-streak {
   order: 4;
+  overflow-x: clip;
 }
 .dashboard-order-progress {
   order: 5;
@@ -1477,6 +1478,44 @@
   box-shadow:
     0 10px 24px -14px oklch(0 0 0 / 0.88),
     inset 0 1px 0 oklch(0.92 0.06 84 / 0.35);
+  transition: border-color 380ms ease-in-out, box-shadow 380ms ease-in-out;
+}
+
+@keyframes dashboard-streak-wobble {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  22% {
+    transform: translateX(-2.5px);
+  }
+  48% {
+    transform: translateX(2.5px);
+  }
+  74% {
+    transform: translateX(-1.5px);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dashboard-streak:hover {
+    animation: dashboard-streak-wobble 400ms ease-in-out 1;
+    border-color: oklch(0.8 0.11 74 / 0.78);
+    box-shadow:
+      0 10px 24px -14px oklch(0 0 0 / 0.88),
+      inset 0 1px 0 oklch(0.94 0.07 84 / 0.48),
+      0 0 16px oklch(0.78 0.1 78 / 0.22);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-streak {
+    transition: none;
+  }
+
+  .dashboard-streak:hover {
+    animation: none;
+  }
 }
 
 .dashboard-streak-header {
@@ -1843,6 +1882,7 @@
 }
 
 .dashboard-quiz-progress__row {
+  position: relative;
   display: flex;
   min-width: 0;
   align-items: center;
@@ -1853,6 +1893,36 @@
   border-radius: 0.85rem;
   border: 1px solid color-mix(in oklab, var(--bronze) 16%, transparent);
   background: color-mix(in oklab, black 38%, transparent);
+  transition:
+    transform 220ms ease-out,
+    border-color 220ms ease-out,
+    background-color 220ms ease-out,
+    box-shadow 220ms ease-out;
+  will-change: transform;
+}
+
+/* Hover-capable pointers only — avoids sticky hover on touch. */
+@media (hover: hover) and (pointer: fine) {
+  .dashboard-quiz-progress__row:hover {
+    z-index: 1;
+    transform: translateY(-2px) scale(1.04);
+    border-color: color-mix(in oklab, var(--bronze) 58%, transparent);
+    background: color-mix(in oklab, black 30%, var(--charcoal) 70%);
+    box-shadow:
+      0 10px 22px color-mix(in oklab, black 42%, transparent),
+      0 0 0 1px color-mix(in oklab, var(--bronze) 26%, transparent),
+      0 0 16px color-mix(in oklab, var(--bronze) 16%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-quiz-progress__row {
+    transition: none;
+  }
+
+  .dashboard-quiz-progress__row:hover {
+    transform: none;
+  }
 }
 
 .dashboard-quiz-progress__label {

@@ -19,12 +19,17 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  opacity: 0.55;
+  background-image: url("/assets/profile-hero-space.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-.profile-hero-bg .profile-banner {
-  height: 100%;
-  min-height: 100%;
+@media (min-width: 900px) {
+  .profile-hero-bg {
+    /* Wide short card: keep the astronaut in frame alongside Earth. */
+    background-position: 8% center;
+  }
 }
 
 .profile-hero-scrim {
@@ -34,10 +39,9 @@
   pointer-events: none;
   background: linear-gradient(
     105deg,
-    oklch(0.08 0.006 58 / 0.94) 0%,
-    oklch(0.09 0.007 58 / 0.88) 38%,
-    oklch(0.1 0.008 62 / 0.82) 72%,
-    oklch(0.11 0.01 240 / 0.78) 100%
+    oklch(0.07 0.006 58 / 0.66) 0%,
+    oklch(0.07 0.006 58 / 0.4) 42%,
+    oklch(0.07 0.006 58 / 0.28) 100%
   );
 }
 
@@ -180,8 +184,8 @@
 }
 
 .profile-display-name {
-  font-size: clamp(1.15rem, 2.2vw, 1.5rem);
-  font-weight: 300;
+  font-size: clamp(1.3rem, 2.5vw, 1.68rem);
+  font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.15;
   color: var(--foreground);
@@ -204,9 +208,10 @@
 .profile-bio {
   margin-top: 0.55rem;
   max-width: 36rem;
-  font-size: 0.78rem;
+  font-size: 0.9rem;
+  font-weight: 600;
   line-height: 1.45;
-  color: color-mix(in oklab, var(--foreground) 55%, transparent);
+  color: color-mix(in oklab, var(--foreground) 78%, transparent);
 }
 
 .profile-hero-bio {
@@ -453,19 +458,6 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .profile-upgrade-track {
-    animation: none;
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .profile-upgrade-viewport {
-    overflow: hidden;
-  }
-}
-
-/* Explorer analytics section */
 .explorer-analytics-label {
   font-size: 0.62rem;
   font-weight: 600;
@@ -482,30 +474,28 @@
   box-shadow: inset 0 1px 0 color-mix(in oklab, var(--bronze) 8%, transparent);
 }
 
-.explorer-analytics-empty {
-  background-image: radial-gradient(
-    ellipse 80% 60% at 50% 40%,
-    color-mix(in oklab, var(--bronze) 6%, transparent),
-    transparent 70%
-  );
-}
+@media (prefers-reduced-motion: reduce) {
+  .profile-upgrade-track {
+    animation: none;
+    width: 100%;
+    max-width: 100%;
+  }
 
-.profile-banner {
-  height: 100%;
-}
-
-.profile-banner-image {
-  object-position: 50% center;
-}
-
-@media (max-width: 639px) {
-  .profile-banner-image {
-    object-position: 42% center;
+  .profile-upgrade-viewport {
+    overflow: hidden;
   }
 }
 
-@media (min-width: 1024px) {
-  .profile-banner-image {
-    object-position: 52% center;
+@media (max-width: 639px) {
+  .profile-hero-bg {
+    background-position: 28% center;
+  }
+
+  .profile-hero-scrim {
+    background: linear-gradient(
+      180deg,
+      oklch(0.07 0.006 58 / 0.58) 0%,
+      oklch(0.07 0.006 58 / 0.42) 100%
+    );
   }
 }

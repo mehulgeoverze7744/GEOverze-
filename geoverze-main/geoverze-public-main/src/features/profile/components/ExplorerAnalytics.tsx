@@ -4,7 +4,6 @@ import { Clock, Crosshair, Flame, Globe2, ListChecks, Target, Zap } from "lucide
 import { AnimatedCounter } from "@/components/shared/AnimatedCounter";
 import { AnimatedSection } from "@/components/shared/AnimatedSection";
 import { ProgressBarFill } from "@/features/progression/components/ProgressBarFill";
-import { ProgressRing } from "@/components/shared/ProgressRing";
 import { cn } from "@/lib/utils";
 
 import { useExplorerAnalytics } from "../lib/explorerAnalytics";
@@ -85,46 +84,6 @@ function HeroMetric({
   );
 }
 
-function PerformanceChart({ hasHistory }: { hasHistory: boolean }) {
-  if (!hasHistory) {
-    return (
-      <div className="explorer-analytics-empty flex min-h-[180px] flex-col items-center justify-center rounded-xl border border-dashed border-bronze/18 bg-charcoal/20 px-6 py-10 text-center">
-        <p className="max-w-sm text-sm text-foreground/55">
-          Complete more expeditions to unlock your performance trend.
-        </p>
-      </div>
-    );
-  }
-
-  return null;
-}
-
-function CategoryBars({
-  categories,
-}: {
-  categories: { id: string; label: string; value: number; detail: string }[];
-}) {
-  return (
-    <ul className="mt-6 space-y-4">
-      {categories.map((category) => (
-        <li key={category.id}>
-          <div className="mb-2 flex items-baseline justify-between gap-3">
-            <span className="text-sm text-foreground/80">{category.label}</span>
-            <span className="shrink-0 text-xs tabular-nums text-bronze/90">{category.value}%</span>
-          </div>
-          <ProgressBarFill
-            value={category.value}
-            label={`${category.label} mastery`}
-            valueText={category.detail}
-            size="sm"
-          />
-          <p className="mt-1.5 text-[0.68rem] text-foreground/45">{category.detail}</p>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 function GameModeBars({
   modes,
   winRate,
@@ -162,63 +121,9 @@ function GameModeBars({
   );
 }
 
-function ConsistencyViz({
-  current,
-  longest,
-  recentActivity,
-}: {
-  current: number;
-  longest: number;
-  recentActivity: readonly boolean[];
-}) {
-  return (
-    <div className="mt-6 space-y-5">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <p className="text-[0.58rem] uppercase tracking-[0.22em] text-foreground/45">
-            Current streak
-          </p>
-          <p className="mt-2 text-xl font-light text-gradient-bronze">
-            <AnimatedCounter value={current} suffix=" days" />
-          </p>
-        </div>
-        <div>
-          <p className="text-[0.58rem] uppercase tracking-[0.22em] text-foreground/45">
-            Best streak
-          </p>
-          <p className="mt-2 text-xl font-light text-foreground/80">
-            <AnimatedCounter value={longest} suffix=" days" />
-          </p>
-        </div>
-      </div>
-      <div>
-        <p className="text-[0.58rem] uppercase tracking-[0.22em] text-foreground/45">
-          Recent activity
-        </p>
-        <div className="mt-3 flex flex-wrap gap-2" role="list" aria-label="Recent streak activity">
-          {recentActivity.map((active, index) => (
-            <span
-              key={index}
-              role="listitem"
-              className={cn(
-                "h-2.5 w-2.5 rounded-full border transition-colors",
-                active
-                  ? "border-bronze/55 bg-bronze/70 shadow-[0_0_10px_rgba(180,140,80,0.35)]"
-                  : "border-bronze/12 bg-charcoal/50",
-              )}
-              aria-label={active ? "Active day" : "Inactive day"}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /** Premium explorer analytics for the profile page. */
 export function ExplorerAnalytics() {
   const data = useExplorerAnalytics();
-  const hasPerformanceHistory = data.performanceHistory.length >= 2;
 
   return (
     <section className="explorer-analytics" aria-labelledby="explorer-analytics-heading">
@@ -262,64 +167,6 @@ export function ExplorerAnalytics() {
             suffix=" days"
             icon={Flame}
           />
-        </AnimatedSection>
-      </div>
-
-      <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1.55fr)_minmax(280px,1fr)]">
-        <AnimatedSection delay={60}>
-          <AnalyticsCard className="h-full">
-            <PanelHeading
-              title="Quiz performance"
-              subtitle="Accuracy and completed quizzes over time."
-            />
-            <div className="mt-6">
-              <PerformanceChart hasHistory={hasPerformanceHistory} />
-            </div>
-          </AnalyticsCard>
-        </AnimatedSection>
-
-        <AnimatedSection delay={100}>
-          <AnalyticsCard className="flex h-full flex-col items-center text-center">
-            <PanelHeading title="World exploration" className="w-full text-left" />
-            <div className="mt-6 flex flex-1 flex-col items-center justify-center">
-              <ProgressRing value={data.exploration.pct} label="Countries explored" size={132}>
-                <span className="text-2xl font-light text-gradient-bronze">
-                  {data.exploration.pct}%
-                </span>
-                <span className="text-[0.55rem] uppercase tracking-[0.22em] text-foreground/45">
-                  explored
-                </span>
-              </ProgressRing>
-              <p className="mt-5 text-sm text-foreground/70">
-                <AnimatedCounter value={data.exploration.explored} />
-                <span className="text-foreground/40"> / </span>
-                {data.exploration.total}
-              </p>
-              <p className="mt-2 text-xs text-foreground/45">
-                {data.exploration.remaining} countries remaining
-              </p>
-            </div>
-          </AnalyticsCard>
-        </AnimatedSection>
-      </div>
-
-      <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <AnimatedSection delay={80}>
-          <AnalyticsCard className="h-full">
-            <PanelHeading title="Category mastery" subtitle="Performance across geography themes." />
-            <CategoryBars categories={data.categories} />
-          </AnalyticsCard>
-        </AnimatedSection>
-
-        <AnimatedSection delay={120}>
-          <AnalyticsCard className="h-full">
-            <PanelHeading title="Consistency" subtitle="Streak rhythm and recent expedition days." />
-            <ConsistencyViz
-              current={data.consistency.current}
-              longest={data.consistency.longest}
-              recentActivity={data.consistency.recentActivity}
-            />
-          </AnalyticsCard>
         </AnimatedSection>
       </div>
 
