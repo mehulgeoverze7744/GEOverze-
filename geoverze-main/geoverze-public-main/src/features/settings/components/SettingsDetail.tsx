@@ -1,13 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import {
-  ChevronLeft,
-  Database,
-  Lock,
-  LockKeyhole,
-  Mail,
-  Shield,
-  TriangleAlert,
-} from "lucide-react";
+import { ChevronLeft, Database, Lock, LockKeyhole, Mail, TriangleAlert } from "lucide-react";
 
 import { AnimatedSection } from "@/components/shared/AnimatedSection";
 import { GeoButton } from "@/components/shared/GeoButton";
@@ -15,18 +7,14 @@ import { SUBSCRIPTION } from "@/features/dashboard/data/dashboard";
 import { useProfile } from "@/features/profile/lib/useProfile";
 import { notAvailable, PrefSwitch } from "@/features/settings/lib/settingsControls";
 import {
-  MOTION_LABELS,
+  LOCALE_LABELS,
   SECTION_DESCRIPTIONS,
   SECTION_TITLES,
   type SettingsSection,
 } from "@/features/settings/lib/settingsSections";
 import { cn } from "@/lib/utils";
 import { useProgressionStore } from "@/stores/progressionStore";
-import {
-  usePreferencesStore,
-  type MotionPreference,
-  type UnitSystem,
-} from "@/stores/preferencesStore";
+import { usePreferencesStore, type UnitSystem } from "@/stores/preferencesStore";
 
 import { SettingsGroup, SettingsRow } from "./SettingsRow";
 
@@ -39,8 +27,6 @@ export function SettingsDetail({ section }: SettingsDetailProps) {
   const navigate = useNavigate({ from: "/settings" });
   const profile = useProfile();
   const walletBalance = useProgressionStore((s) => s.player.credits);
-  const motion = usePreferencesStore((s) => s.motion);
-  const setMotion = usePreferencesStore((s) => s.setMotion);
   const units = usePreferencesStore((s) => s.units);
   const setUnits = usePreferencesStore((s) => s.setUnits);
   const locale = usePreferencesStore((s) => s.locale);
@@ -65,9 +51,6 @@ export function SettingsDetail({ section }: SettingsDetailProps) {
         {section === "account" ? <AccountPanel profile={profile} /> : null}
         {section === "profile" ? <ProfilePanel profile={profile} /> : null}
         {section === "appearance" ? <AppearancePanel /> : null}
-        {section === "performance" ? (
-          <PerformancePanel motion={motion} setMotion={setMotion} />
-        ) : null}
         {section === "region" ? (
           <RegionPanel locale={locale} units={units} setUnits={setUnits} profile={profile} />
         ) : null}
@@ -153,64 +136,10 @@ function ProfilePanel({ profile }: { profile: ReturnType<typeof useProfile> }) {
 function AppearancePanel() {
   return (
     <>
-      <p className="settings-detail-intro">
-        GEOverze is built for deep space and bronze. You can dial the atmosphere down, not repaint
-        it.
-      </p>
+      <p className="settings-detail-intro">GEOverze is built for deep space and bronze.</p>
       <SettingsGroup label="Theme">
         <SettingsRow title="Theme" value="Deep space" static />
         <SettingsRow title="Accent" value="Bronze" static />
-      </SettingsGroup>
-      <SettingsGroup label="Atmosphere">
-        <SettingsRow
-          title="Background atmosphere"
-          subtitle="Keeps the starfield behind every page. Turn off on very low-power devices."
-          control={<PrefSwitch toggle="starfield" label="Deep-space background" />}
-          static
-        />
-      </SettingsGroup>
-    </>
-  );
-}
-
-function PerformancePanel({
-  motion,
-  setMotion,
-}: {
-  motion: MotionPreference;
-  setMotion: (value: MotionPreference) => void;
-}) {
-  const options: MotionPreference[] = ["system", "full", "reduced"];
-
-  return (
-    <>
-      <p className="settings-detail-intro">
-        Every animation respects your system setting; here you can override it either way.
-      </p>
-      <div>
-        <p className="settings-subgroup-label">Motion</p>
-        <div className="settings-group">
-          {options.map((option) => (
-            <button
-              key={option}
-              type="button"
-              data-selected={motion === option}
-              onClick={() => setMotion(option)}
-              className="settings-option-row"
-            >
-              {MOTION_LABELS[option]}
-              <span className="settings-option-dot" aria-hidden="true" />
-            </button>
-          ))}
-        </div>
-      </div>
-      <SettingsGroup label="Sound">
-        <SettingsRow
-          title="Interface sound"
-          subtitle="Subtle cues on answers and rewards. Applies when the quiz engine ships."
-          control={<PrefSwitch toggle="soundEffects" label="Interface sound" />}
-          static
-        />
       </SettingsGroup>
     </>
   );

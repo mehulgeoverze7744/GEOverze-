@@ -10,7 +10,6 @@ export type UnitSystem = "metric" | "imperial";
 
 /** Toggles that will move to the account record once the backend exists. */
 export type ToggleKey =
-  | "starfield"
   | "soundEffects"
   | "notifySeasons"
   | "notifyQuizzes"
@@ -33,7 +32,6 @@ type PreferencesState = {
 };
 
 const defaultToggles: Record<ToggleKey, boolean> = {
-  starfield: true,
   soundEffects: true,
   notifySeasons: true,
   notifyQuizzes: true,
@@ -44,6 +42,16 @@ const defaultToggles: Record<ToggleKey, boolean> = {
   showOnLeaderboards: true,
   analytics: false,
 };
+
+export function isToggleKey(key: string): key is ToggleKey {
+  return Object.prototype.hasOwnProperty.call(defaultToggles, key);
+}
+
+function omitRetiredToggles(toggles: Record<string, unknown>) {
+  const next = { ...toggles };
+  delete next["starfield"];
+  return next;
+}
 
 export const usePreferencesStore = create<PreferencesState>()(
   persist(
@@ -59,12 +67,15 @@ export const usePreferencesStore = create<PreferencesState>()(
     }),
     {
       name: "geoverze.preferences",
-      version: 2,
+      version: 3,
       migrate: (persisted) => {
         const state = (persisted ?? {}) as Partial<PreferencesState>;
         return {
           ...state,
-          toggles: { ...defaultToggles, ...(state.toggles ?? {}) },
+          toggles: {
+            ...defaultToggles,
+            ...omitRetiredToggles((state.toggles ?? {}) as Record<string, unknown>),
+          },
         } as PreferencesState;
       },
     },

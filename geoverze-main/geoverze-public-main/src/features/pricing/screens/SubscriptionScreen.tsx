@@ -1,232 +1,228 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowUpRight, Download } from "lucide-react";
+import { Coins, Download } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
-import { AnimatedSection } from "@/components/shared/AnimatedSection";
-import { GeoButton } from "@/components/shared/GeoButton";
-import { GlassCard } from "@/components/shared/GlassCard";
-import { PageHeader } from "@/components/shared/PageHeader";
+import { Breadcrumb } from "@/components/shared/Breadcrumb";
 import { SectionContainer } from "@/components/shared/SectionContainer";
-import { SectionHeading } from "@/components/shared/SectionHeading";
 import { cn } from "@/lib/utils";
 
-import { currentSubscription, invoiceHistory, paymentMethods } from "../data/billing";
+import { paymentMethods } from "../data/billing";
+import { useMyBilling } from "../hooks/useMyBilling";
 import { usePricingCatalog } from "../hooks/usePricingCatalog";
-import { notBillableYet } from "../lib/checkout";
+import "../styles/billing-membership.css";
 
-const statusTone: Record<string, string> = {
-  paid: "text-bronze",
-  refunded: "text-foreground/50",
-  pending: "text-foreground/60",
+const PAYMENT_EMOJIS: Record<string, string> = {
+  cards: "💳",
+  upi: "📱",
+  netbanking: "🏦",
+  wallet: "👛",
+  international: "🌍",
+  future: "💰",
 };
 
-/** Subscription & billing management. Read-only placeholders until payments land. */
+const UNAVAILABLE_BILLING =
+  "This action is not connected to a billing provider yet. Your membership will not be changed.";
+
+/** Live membership, credits and payment history for the signed-in user. */
 export function SubscriptionScreen() {
-  const { plans, loading, error } = usePricingCatalog();
-  const plan =
-    plans.find((p) => p.id === currentSubscription.tier) ??
-    plans.find((p) => p.id === "explorer") ??
-    null;
-  const creditsGrant = plan?.monthlyCreditGrant ?? currentSubscription.creditsGrant;
+  const { plans } = usePricingCatalog();
+  const { data, loading, error, refetch } = useMyBilling();
+  const catalogPlan = data ? (plans.find((p) => p.id === data.tier) ?? null) : null;
+  const planName = catalogPlan?.name ?? data?.planName ?? "";
+  const planSummary = catalogPlan?.summary ?? data?.planSummary ?? "";
 
   return (
     <PageShell>
-      <PageHeader
-        eyebrow="Billing"
-        title="Your membership"
-        description="Plan, renewal, invoices and payment methods. Everything here is placeholder data until billing is live."
-        breadcrumb={[{ label: "Home", to: "/" }, { label: "Billing" }]}
-      />
+      <SectionContainer className="bm">
+        <Breadcrumb
+          items={[{ label: "Home", to: "/" }, { label: "Billing" }]}
+          className="bm-crumb"
+        />
 
-      <section className="pb-[var(--space-section-sm)]">
-        <SectionContainer size="wide">
-          <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
-            <AnimatedSection>
-              <GlassCard strong className="h-full p-8 md:p-10">
-                {error ? (
-                  <p className="text-sm text-foreground/60">
-                    Plan details could not be loaded. {error}
+        <header className="bm-header">
+          <p className="bm-kicker">Billing & membership</p>
+          <h1 className="bm-title">Your membership</h1>
+          <p className="bm-lede">
+            Manage your plan, billing cycle, credits, and payment preferences.
+          </p>
+        </header>
+
+        {error ? (
+          <article className="bm-card bm-load-error" role="alert">
+            <p className="bm-error-copy">Unable to load your membership details.</p>
+            <button type="button" className="bm-btn bm-btn--primary" onClick={refetch}>
+              Try again
+            </button>
+          </article>
+        ) : (
+          <div className="bm-top">
+            <article className="bm-card bm-card--plan">
+              {loading ? <div className="bm-skeleton" aria-hidden /> : null}
+
+              {!error && !loading && data ? (
+                <>
+                  <div className="bm-card-head">
+                    <p className="bm-label">Current plan</p>
+                    <span className="bm-status">{data.statusLabel}</span>
+                  </div>
+                  <h2 className="bm-plan-name">{planName}</h2>
+                  <p className="bm-plan-copy">{planSummary}</p>
+                  <p className="bm-price">
+                    {data.priceAmount}
+                    <span>{data.priceCadence}</span>
                   </p>
-                ) : null}
-
-                {!error && loading ? (
-                  <div className="h-48 animate-pulse rounded-xl bg-bronze/5" aria-hidden />
-                ) : null}
-
-                {!error && !loading && plan ? (
-                  <>
-                    <div className="flex flex-wrap items-start justify-between gap-6">
-                      <div className="min-w-0">
-                        <p className="eyebrow">Current plan</p>
-                        <h2 className="mt-4 font-light tracking-tight text-foreground text-[clamp(1.5rem,2.6vw,2rem)]">
-                          {plan.name}
-                        </h2>
-                        <p className="mt-3 max-w-md text-sm leading-relaxed text-foreground/55">
-                          {plan.summary}
-                        </p>
-                      </div>
-                      <span className="rounded-full border border-bronze/30 bg-bronze/10 px-3 py-1.5 text-[0.58rem] uppercase tracking-[0.24em] text-bronze">
-                        {currentSubscription.status}
-                      </span>
+                  <dl className="bm-meta">
+                    <div>
+                      <dt>Billing cycle</dt>
+                      <dd>{data.billingInterval}</dd>
                     </div>
-
-                    <dl className="mt-9 grid gap-6 border-t border-bronze/12 pt-8 sm:grid-cols-3">
-                      {[
-                        { label: "Billing cycle", value: currentSubscription.cycle },
-                        { label: "Member since", value: currentSubscription.since },
-                        { label: "Renews on", value: currentSubscription.renewsOn },
-                      ].map((row) => (
-                        <div key={row.label}>
-                          <dt className="text-[0.58rem] uppercase tracking-[0.26em] text-foreground/50">
-                            {row.label}
-                          </dt>
-                          <dd className="mt-2 text-sm capitalize text-foreground/80">
-                            {row.value}
-                          </dd>
-                        </div>
-                      ))}
-                    </dl>
-
-                    <div className="mt-10 flex flex-wrap gap-3">
-                      <GeoButton asChild variant="primary">
-                        <Link to="/pricing">
-                          Change plan
-                          <ArrowUpRight className="h-4 w-4" strokeWidth={1.6} />
-                        </Link>
-                      </GeoButton>
-                      <GeoButton
-                        variant="secondary"
-                        onClick={() => notBillableYet("Cycle switching")}
+                    <div>
+                      <dt>Member since</dt>
+                      <dd>{data.memberSinceLabel}</dd>
+                    </div>
+                    <div>
+                      <dt>Renews</dt>
+                      <dd>{data.renewsLabel}</dd>
+                    </div>
+                  </dl>
+                  <div className="bm-actions">
+                    <Link to="/pricing" className="bm-btn bm-btn--primary">
+                      Change Plan
+                    </Link>
+                    {data.canSwitchToAnnual ? (
+                      <button
+                        type="button"
+                        className="bm-btn bm-btn--secondary"
+                        disabled
+                        title={UNAVAILABLE_BILLING}
                       >
-                        Switch to annual
-                      </GeoButton>
-                      <GeoButton variant="ghost" onClick={() => notBillableYet("Cancellation")}>
-                        Cancel membership
-                      </GeoButton>
-                    </div>
-                  </>
-                ) : null}
-              </GlassCard>
-            </AnimatedSection>
-
-            <AnimatedSection delay={100}>
-              <GlassCard className="h-full p-8">
-                <p className="eyebrow">Monthly grant</p>
-                <p className="mt-5 font-light leading-none text-bronze-glow text-[clamp(2rem,4vw,2.8rem)]">
-                  {loading ? "—" : creditsGrant}
-                </p>
-                <p className="mt-3 text-xs uppercase tracking-[0.22em] text-foreground/50">
-                  credits per month
-                </p>
-                <p className="mt-6 text-sm leading-relaxed text-foreground/55">
-                  Paid membership credit grants follow the authoritative plan catalog. Gameplay
-                  credits follow the rollover rules on your credit history page.
-                </p>
-                <GeoButton asChild variant="secondary" size="sm" className="mt-8">
-                  <Link to="/geostore/rewards">Spend credits</Link>
-                </GeoButton>
-              </GlassCard>
-            </AnimatedSection>
-          </div>
-        </SectionContainer>
-      </section>
-
-      <section className="pb-[var(--space-section-sm)]">
-        <SectionContainer size="wide">
-          <SectionHeading
-            eyebrow="Invoices"
-            title="Billing history"
-            description="A sample ledger showing how receipts will appear."
-            className="mb-10"
-            action={
-              <GeoButton variant="ghost" size="sm" onClick={() => notBillableYet("Invoice export")}>
-                <Download className="h-4 w-4" strokeWidth={1.6} />
-                Export
-              </GeoButton>
-            }
-          />
-          <GlassCard strong className="overflow-x-auto p-0">
-            <table className="w-full min-w-[38rem] border-collapse text-left">
-              <caption className="sr-only">Placeholder invoice history</caption>
-              <thead>
-                <tr className="border-b border-bronze/15 text-[0.58rem] uppercase tracking-[0.26em] text-foreground/50">
-                  <th scope="col" className="px-7 py-5">
-                    Invoice
-                  </th>
-                  <th scope="col" className="px-7 py-5">
-                    Date
-                  </th>
-                  <th scope="col" className="px-7 py-5">
-                    Description
-                  </th>
-                  <th scope="col" className="px-7 py-5 text-right">
-                    Amount
-                  </th>
-                  <th scope="col" className="px-7 py-5 text-right">
-                    Status
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {invoiceHistory.map((invoice) => (
-                  <tr key={invoice.id} className="border-t border-bronze/10 text-sm">
-                    <th scope="row" className="px-7 py-5 font-normal text-foreground/80">
-                      {invoice.id}
-                    </th>
-                    <td className="px-7 py-5 text-foreground/50">{invoice.date}</td>
-                    <td className="px-7 py-5 text-foreground/50">{invoice.description}</td>
-                    <td className="px-7 py-5 text-right text-foreground/80">{invoice.amount}</td>
-                    <td
-                      className={cn(
-                        "px-7 py-5 text-right text-[0.62rem] uppercase tracking-[0.2em]",
-                        statusTone[invoice.status],
-                      )}
+                        Switch to Annual
+                      </button>
+                    ) : null}
+                  </div>
+                  {data.isPaidMembership ? (
+                    <button
+                      type="button"
+                      className="bm-cancel"
+                      disabled
+                      title={UNAVAILABLE_BILLING}
                     >
-                      {invoice.status}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </GlassCard>
-        </SectionContainer>
-      </section>
+                      Cancel membership
+                    </button>
+                  ) : null}
+                </>
+              ) : null}
+            </article>
 
-      <section className="pb-[var(--space-section)]">
-        <SectionContainer size="wide">
-          <SectionHeading
-            eyebrow="Payment methods"
-            title="What we plan to accept"
-            description="Provider integration arrives with the payments phase — none of these are connected yet."
-            className="mb-10"
-          />
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {paymentMethods.map((method, i) => (
-              <AnimatedSection key={method.id} delay={i * 60} className="h-full">
-                <GlassCard className="flex h-full items-start gap-5 p-7">
-                  <span
-                    aria-hidden
-                    className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-bronze/25 bg-bronze/10 text-bronze"
-                  >
-                    <method.icon className="h-4 w-4" strokeWidth={1.5} />
+            <article className="bm-card bm-credits">
+              <p className="bm-label">Monthly credits</p>
+              {loading ? <div className="bm-skeleton bm-skeleton--credit" aria-hidden /> : null}
+              {!error && !loading && data ? (
+                <>
+                  <span className="bm-credit-icon" aria-hidden="true">
+                    <Coins strokeWidth={1.6} />
                   </span>
-                  <span className="min-w-0">
-                    <span className="block text-sm font-medium text-foreground">
-                      {method.label}
-                    </span>
-                    <span className="mt-2 block text-xs leading-relaxed text-foreground/50">
-                      {method.description}
-                    </span>
-                    <span className="mt-3 block text-[0.55rem] uppercase tracking-[0.26em] text-bronze/90">
-                      {method.availability === "planned" ? "At launch" : "Later"}
-                    </span>
-                  </span>
-                </GlassCard>
-              </AnimatedSection>
+                  <p className="bm-credit-value">{data.monthlyCreditGrant}</p>
+                  <p className="bm-credit-unit">credits / month</p>
+                  <p className="bm-credit-copy">
+                    Your membership includes {data.monthlyCreditGrant} credits every month.
+                    {data.periodGrantAmount != null
+                      ? ` This period granted ${data.periodGrantAmount}.`
+                      : ""}{" "}
+                    You currently have {data.availableCredits} available.
+                  </p>
+                  <Link to="/geostore/rewards" className="bm-btn bm-btn--secondary">
+                    Spend Credits
+                  </Link>
+                </>
+              ) : null}
+            </article>
+          </div>
+        )}
+
+        <section className="bm-section" aria-labelledby="billing-history-heading">
+          <div className="bm-section-head">
+            <div>
+              <p className="bm-label">Billing history</p>
+              <h2 id="billing-history-heading" className="bm-section-title">
+                Your recent membership payments.
+              </h2>
+            </div>
+            <button
+              type="button"
+              className="bm-btn bm-btn--secondary"
+              disabled
+              title="Invoice export is not available yet."
+            >
+              <Download strokeWidth={1.6} aria-hidden="true" />
+              Export
+            </button>
+          </div>
+          {loading ? <div className="bm-skeleton bm-skeleton--ledger" aria-hidden /> : null}
+          {!error && !loading && data && data.history.length === 0 ? (
+            <p className="bm-empty">No billing history yet.</p>
+          ) : null}
+          {!error && !loading && data && data.history.length > 0 ? (
+            <ul className="bm-ledger">
+              {data.history.map((invoice) => (
+                <li key={invoice.id}>
+                  <div className="bm-invoice">
+                    <div>
+                      <p className="bm-invoice-name">{invoice.description}</p>
+                      <p className="bm-invoice-date">{invoice.date}</p>
+                    </div>
+                    <div className="bm-invoice-side">
+                      <p className="bm-invoice-amount">
+                        {invoice.amount}
+                        <span className={cn("bm-pill", `bm-pill--${invoice.status}`)}>
+                          {invoice.status}
+                        </span>
+                      </p>
+                      <p className="bm-invoice-id">{invoice.id}</p>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </section>
+
+        <section className="bm-section" aria-labelledby="payment-methods-heading">
+          <div className="bm-section-head">
+            <div>
+              <p className="bm-label">Payment methods</p>
+              <h2 id="payment-methods-heading" className="bm-section-title">
+                Not connected yet
+              </h2>
+              <p className="bm-section-copy">
+                No saved payment methods are stored on your account. Provider integration arrives
+                with the payments phase.
+              </p>
+            </div>
+          </div>
+          <div className="bm-methods">
+            {paymentMethods.map((method) => (
+              <article key={method.id} className="bm-method">
+                <span className="bm-method-icon" aria-hidden="true">
+                  {PAYMENT_EMOJIS[method.id] ?? "💳"}
+                </span>
+                <div>
+                  <h3 className="bm-method-name">{method.label}</h3>
+                  <p className="bm-method-copy">{method.description}</p>
+                </div>
+                <p
+                  className={cn(
+                    "bm-method-status",
+                    method.availability !== "planned" && "is-later",
+                  )}
+                >
+                  {method.availability === "planned" ? "Coming soon" : "Later"}
+                </p>
+              </article>
             ))}
           </div>
-        </SectionContainer>
-      </section>
+        </section>
+      </SectionContainer>
     </PageShell>
   );
 }

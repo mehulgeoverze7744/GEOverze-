@@ -15,8 +15,7 @@ export const Route = createFileRoute("/_app/settings")({
       { title: "Settings/Support — GEOverze" },
       {
         name: "description",
-        content:
-          "Tune motion, units, notifications and privacy for your GEOverze account and this device.",
+        content: "Tune units, notifications and privacy for your GEOverze account and this device.",
       },
       { property: "og:title", content: "Settings/Support — GEOverze" },
       {

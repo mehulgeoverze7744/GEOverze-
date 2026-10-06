@@ -1,73 +1,6 @@
 import { Banknote, CreditCard, Globe2, Landmark, Smartphone, Wallet } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-import type { BillingCycle, TierId } from "./plans";
-
-export type SubscriptionState = {
-  tier: TierId;
-  status: "active" | "trialing" | "none";
-  cycle: BillingCycle;
-  since: string;
-  renewsOn: string;
-  creditsGrant: number;
-};
-
-/** Placeholder subscription — replaced by a real record when billing lands. */
-export const currentSubscription: SubscriptionState = {
-  tier: "pro",
-  status: "active",
-  cycle: "monthly",
-  since: "12 March 2026",
-  renewsOn: "12 September 2026",
-  creditsGrant: 20,
-};
-
-export type Invoice = {
-  id: string;
-  date: string;
-  description: string;
-  amount: string;
-  status: "paid" | "refunded" | "pending";
-};
-
-export const invoiceHistory: Invoice[] = [
-  {
-    id: "GV-2026-0812",
-    date: "12 Aug 2026",
-    description: "Pro — monthly",
-    amount: "$4.99",
-    status: "paid",
-  },
-  {
-    id: "GV-2026-0712",
-    date: "12 Jul 2026",
-    description: "Pro — monthly",
-    amount: "$4.99",
-    status: "paid",
-  },
-  {
-    id: "GV-2026-0612",
-    date: "12 Jun 2026",
-    description: "Pro — monthly",
-    amount: "$4.99",
-    status: "paid",
-  },
-  {
-    id: "GV-2026-0512",
-    date: "12 May 2026",
-    description: "Pro — monthly",
-    amount: "$4.99",
-    status: "paid",
-  },
-  {
-    id: "GV-2026-0412",
-    date: "12 Apr 2026",
-    description: "Pro — monthly",
-    amount: "$4.99",
-    status: "refunded",
-  },
-];
-
 export type PaymentMethodOption = {
   id: string;
   icon: LucideIcon;
@@ -76,6 +9,7 @@ export type PaymentMethodOption = {
   availability: "planned" | "later";
 };
 
+/** Safe catalog of providers — no stored cards or secrets are shown. */
 export const paymentMethods: PaymentMethodOption[] = [
   {
     id: "cards",

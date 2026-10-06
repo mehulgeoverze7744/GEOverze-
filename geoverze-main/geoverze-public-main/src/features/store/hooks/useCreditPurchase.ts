@@ -65,6 +65,7 @@ export function useCreditPurchase(): UseCreditPurchaseResult {
         void queryClient.invalidateQueries({ queryKey: entitlementsQueryKey });
         void queryClient.invalidateQueries({ queryKey: creditHistoryQueryKey });
         void queryClient.invalidateQueries({ queryKey: creditProductAchievementsQueryKey });
+        void queryClient.invalidateQueries({ queryKey: ["billing"] });
 
         toast.success(`${target.name} claimed`, {
           description: `${result.credits_total} credits spent · ${result.new_balance} credits remaining`,

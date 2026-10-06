@@ -1,0 +1,13 @@
+/* Compare-page layout only. Does not affect /pricing. */
+
+.compare-plans-page .pricing-tiers-section {
+  margin-top: 0;
+}
+
+.compare-plans-toolbar {
+  padding-bottom: 0.75rem;
+}
+
+.compare-plans-page .pricing-faq-section {
+  padding-bottom: var(--space-section-sm);
+}

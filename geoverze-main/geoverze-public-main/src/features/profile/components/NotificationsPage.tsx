@@ -1,12 +1,7 @@
-import { AlertTriangle, Bell, CheckCheck, CircleCheck, Info, X } from "lucide-react";
+import { Bell, Check, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { PageShell } from "@/components/layout/PageShell";
-import { AnimatedSection } from "@/components/shared/AnimatedSection";
-import { EmptyState } from "@/components/shared/EmptyState";
-import { GeoButton } from "@/components/shared/GeoButton";
-import { GlassCard } from "@/components/shared/GlassCard";
-import { PageHeader } from "@/components/shared/PageHeader";
 import { SectionContainer } from "@/components/shared/SectionContainer";
 import { dayLabel, notificationSeeds, relativeTime } from "@/features/profile/data/notifications";
 import { cn } from "@/lib/utils";
@@ -14,22 +9,22 @@ import {
   selectUnreadCount,
   useNotificationsStore,
   type Notification,
-  type NotificationKind,
 } from "@/stores/notificationsStore";
 
-const ICONS: Record<NotificationKind, typeof Info> = {
-  info: Info,
-  success: CircleCheck,
-  warning: AlertTriangle,
-  error: AlertTriangle,
-};
+import "../styles/notifications.css";
 
-const TONES: Record<NotificationKind, string> = {
-  info: "border-bronze/25 text-bronze/90",
-  success: "border-bronze/45 text-bronze",
-  warning: "border-amber-400/30 text-amber-300/80",
-  error: "border-destructive/35 text-destructive",
-};
+function emojiFor(item: Notification) {
+  const title = item.title.toLowerCase();
+  if (title.includes("welcome")) return "🎉";
+  if (title.includes("new quiz") || title.includes("flags of oceania")) return "🌍";
+  if (title.includes("weekly progress") || title.includes("progress ready")) return "🎯";
+  if (title.includes("creator")) return "🚀";
+  if (title.includes("system")) return "⚠️";
+  if (title.includes("support")) return "💬";
+  if (item.kind === "warning" || item.kind === "error") return "⚠️";
+  if (item.kind === "success") return "🎉";
+  return "🌍";
+}
 
 /** Notification centre grouped by day, with read/dismiss controls. */
 export function NotificationsPage() {
@@ -62,122 +57,113 @@ export function NotificationsPage() {
 
   return (
     <PageShell>
-      <PageHeader
-        eyebrow="Notifications"
-        title="Everything worth knowing"
-        description="Achievements, new expeditions, community activity and system notices, newest first."
-      />
-      <SectionContainer>
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex gap-2.5" role="group" aria-label="Filter notifications">
+      <SectionContainer className="nc">
+        <header className="nc-header">
+          <div className="nc-header-row">
+            <h1 className="nc-kicker">Notifications</h1>
+            {unread > 0 ? <p className="nc-unread-count">{unread} unread</p> : null}
+          </div>
+          <p className="nc-title">Everything worth knowing</p>
+          <p className="nc-lede">
+            Achievements, expeditions, community activity and system notices.
+          </p>
+        </header>
+
+        <div className="nc-toolbar">
+          <div className="nc-segment" role="group" aria-label="Filter notifications">
             {(["all", "unread"] as const).map((option) => (
               <button
                 key={option}
                 type="button"
                 onClick={() => setFilter(option)}
                 aria-pressed={filter === option}
-                className={cn(
-                  "rounded-full border px-4 py-2 text-xs capitalize transition-colors motion-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45",
-                  filter === option
-                    ? "border-bronze/55 bg-bronze/12 text-foreground"
-                    : "border-bronze/15 text-foreground/50 hover:border-bronze/35 hover:text-foreground/80",
-                )}
+                className={cn("nc-segment-btn", filter === option && "is-active")}
               >
-                {option}
+                {option === "all" ? "All" : "Unread"}
                 {option === "unread" && unread > 0 ? (
-                  <span className="ml-2 text-bronze">{unread}</span>
+                  <span className="nc-segment-count">{unread}</span>
                 ) : null}
               </button>
             ))}
           </div>
-          <div className="flex flex-wrap gap-3">
-            <GeoButton variant="ghost" onClick={markAllRead} disabled={unread === 0}>
-              <CheckCheck className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
-              Mark all read
-            </GeoButton>
-            <GeoButton variant="ghost" onClick={clear} disabled={items.length === 0}>
-              Clear all
-            </GeoButton>
+          <div className="nc-actions">
+            <button
+              type="button"
+              className="nc-action"
+              onClick={markAllRead}
+              disabled={unread === 0}
+            >
+              <Check strokeWidth={1.75} aria-hidden="true" />
+              Mark All Read
+            </button>
+            <button
+              type="button"
+              className="nc-action"
+              onClick={clear}
+              disabled={items.length === 0}
+            >
+              Clear All
+            </button>
           </div>
         </div>
 
         {groups.length === 0 ? (
-          <AnimatedSection className="mt-8">
-            <EmptyState
-              icon={Bell}
-              title={filter === "unread" ? "Nothing unread" : "No notifications"}
-              description="When achievements unlock, quizzes launch or the platform has news, it appears here."
-            />
-          </AnimatedSection>
+          <div className="nc-empty">
+            <span className="nc-empty-icon" aria-hidden="true">
+              <Bell strokeWidth={1.5} />
+            </span>
+            <h2>{filter === "unread" ? "Nothing unread" : "No notifications"}</h2>
+            <p>
+              When achievements unlock, quizzes launch or the platform has news, it appears here.
+            </p>
+          </div>
         ) : (
-          <div className="mt-8 space-y-9">
+          <div className="nc-feed">
             {groups.map(([label, bucket]) => (
               <section key={label} aria-label={label}>
-                <h2 className="eyebrow">{label}</h2>
-                <ul className="mt-4 space-y-3">
-                  {bucket.map((item, index) => {
-                    const Icon = ICONS[item.kind];
+                <h2 className="nc-group-label">{label}</h2>
+                <ul className="nc-list">
+                  {bucket.map((item) => {
+                    const unreadItem = !item.readAt;
                     return (
                       <li key={item.id}>
-                        <AnimatedSection delay={index * 40}>
-                          <GlassCard
-                            className={cn(
-                              "flex gap-4 p-5",
-                              !item.readAt && "border-bronze/30 bg-bronze/[0.04]",
-                            )}
-                          >
-                            <span
-                              className={cn(
-                                "mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border",
-                                TONES[item.kind],
-                              )}
-                              aria-hidden="true"
-                            >
-                              <Icon className="h-4 w-4" strokeWidth={1.4} />
-                            </span>
-                            <div className="min-w-0 flex-1">
-                              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                                <p className="text-sm text-foreground/85">
-                                  {item.title}
-                                  {!item.readAt ? (
-                                    <span className="ml-2 align-middle text-[0.6rem] uppercase tracking-[0.2em] text-bronze/90">
-                                      new
-                                    </span>
-                                  ) : null}
-                                </p>
-                                <span className="text-[0.65rem] text-foreground/50">
-                                  {relativeTime(item.createdAt)}
-                                </span>
-                              </div>
-                              {item.body ? (
-                                <p className="mt-2 text-xs leading-relaxed text-foreground/50">
-                                  {item.body}
-                                </p>
-                              ) : null}
-                              {!item.readAt ? (
+                        <article className={cn("nc-card", unreadItem && "nc-card--unread")}>
+                          <span className="nc-icon" aria-hidden="true">
+                            {emojiFor(item)}
+                          </span>
+                          <div className="nc-body">
+                            <div className="nc-topline">
+                              <p className="nc-name">{item.title}</p>
+                              <time
+                                className="nc-time"
+                                dateTime={new Date(item.createdAt).toISOString()}
+                              >
+                                {relativeTime(item.createdAt).replace(" ago", "")}
+                              </time>
+                            </div>
+                            {item.body ? <p className="nc-copy">{item.body}</p> : null}
+                            {unreadItem ? (
+                              <div className="nc-meta">
+                                <span className="nc-new">New</span>
                                 <button
                                   type="button"
+                                  className="nc-read"
                                   onClick={() => markRead(item.id)}
-                                  className="mt-3 text-[0.62rem] uppercase tracking-[0.2em] text-bronze/90 transition-colors hover:text-bronze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45"
                                 >
                                   Mark as read
                                 </button>
-                              ) : null}
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => dismiss(item.id)}
-                              aria-label={`Dismiss notification: ${item.title}`}
-                              className="h-8 w-8 shrink-0 rounded-lg text-foreground/50 transition-colors hover:text-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45"
-                            >
-                              <X
-                                className="mx-auto h-3.5 w-3.5"
-                                strokeWidth={1.5}
-                                aria-hidden="true"
-                              />
-                            </button>
-                          </GlassCard>
-                        </AnimatedSection>
+                              </div>
+                            ) : null}
+                          </div>
+                          <button
+                            type="button"
+                            className="nc-dismiss"
+                            onClick={() => dismiss(item.id)}
+                            aria-label={`Dismiss notification: ${item.title}`}
+                          >
+                            <X strokeWidth={1.6} aria-hidden="true" />
+                          </button>
+                        </article>
                       </li>
                     );
                   })}

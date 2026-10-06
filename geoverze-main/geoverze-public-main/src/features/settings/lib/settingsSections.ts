@@ -3,7 +3,6 @@ export type SettingsSection =
   | "account"
   | "profile"
   | "appearance"
-  | "performance"
   | "region"
   | "notifications"
   | "privacy"
@@ -15,7 +14,6 @@ export const SETTINGS_SECTIONS = new Set<string>([
   "account",
   "profile",
   "appearance",
-  "performance",
   "region",
   "notifications",
   "privacy",
@@ -32,7 +30,6 @@ export const SECTION_TITLES: Record<SettingsSection, string> = {
   account: "Account",
   profile: "Profile",
   appearance: "Appearance",
-  performance: "Motion & performance",
   region: "Language & region",
   notifications: "Notifications",
   privacy: "Privacy",
@@ -44,8 +41,7 @@ export const SECTION_TITLES: Record<SettingsSection, string> = {
 export const SECTION_DESCRIPTIONS: Record<SettingsSection, string> = {
   account: "Your sign-in identity and account details.",
   profile: "How you appear to other explorers.",
-  appearance: "Theme, atmosphere and visual preferences.",
-  performance: "Animation and performance on this device.",
+  appearance: "Theme and visual preferences.",
   region: "Language and measurement preferences.",
   notifications: "Choose what GEOverze sends you.",
   privacy: "Visibility and data preferences.",
@@ -53,12 +49,6 @@ export const SECTION_DESCRIPTIONS: Record<SettingsSection, string> = {
   billing: "Your plan, credits and billing.",
   data: "Export or manage your account data.",
 };
-
-export const MOTION_LABELS = {
-  system: "Follow system",
-  full: "Full cinematic motion",
-  reduced: "Reduced motion",
-} as const;
 
 export const UNITS_LABELS = {
   metric: "Kilometres",

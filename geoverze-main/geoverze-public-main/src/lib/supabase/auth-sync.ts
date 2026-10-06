@@ -21,9 +21,9 @@ import { getLevelTitle, getXpProgress } from "@/features/progression/lib/progres
 import { useAuthStore, type SessionUser } from "@/stores/authStore";
 import { useOnboardingStore } from "@/stores/onboardingStore";
 import {
+  isToggleKey,
   usePreferencesStore,
   type MotionPreference,
-  type ToggleKey,
   type UnitSystem,
 } from "@/stores/preferencesStore";
 import { useProgressionStore } from "@/stores/progressionStore";
@@ -52,6 +52,7 @@ import { activateStorePersistScope } from "@/stores/storeStore";
 import { highestRole, supabase, type AppRole } from "./client";
 
 let initialized = false;
+let appQueryClient: QueryClient | null = null;
 
 function baseSessionUser(user: User): SessionUser {
   return {
@@ -141,8 +142,8 @@ async function hydratePreferences(user: User) {
   if (data.units_pref) prefs.setUnits(data.units_pref as UnitSystem);
   if (data.toggles && typeof data.toggles === "object" && !Array.isArray(data.toggles)) {
     for (const [key, value] of Object.entries(data.toggles as Record<string, unknown>)) {
-      if (typeof value === "boolean") {
-        prefs.setToggle(key as ToggleKey, value);
+      if (typeof value === "boolean" && isToggleKey(key)) {
+        prefs.setToggle(key, value);
       }
     }
   }
@@ -224,6 +225,7 @@ function applySession(session: Session | null) {
     activateLibraryPersistScope(nextScope);
     resetLibraryHydration();
     resetLibrarySubscriptionTierTracking();
+    appQueryClient?.removeQueries({ queryKey: ["billing"] });
   }
 
   if (nextStoreScope !== prevStoreScope) {
@@ -248,6 +250,7 @@ function applySession(session: Session | null) {
 export function initAuthSync(queryClient?: QueryClient) {
   if (queryClient) {
     registerLibraryQueryClient(queryClient);
+    appQueryClient = queryClient;
   }
   if (initialized) return;
   initialized = true;

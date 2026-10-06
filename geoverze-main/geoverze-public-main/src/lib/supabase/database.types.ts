@@ -652,6 +652,189 @@ export type Database = {
         }
         Relationships: []
       }
+      billing_payments: {
+        Row: {
+          attempted_at: string
+          billing_period_end: string | null
+          billing_period_start: string | null
+          catalog_usd_amount_cents: number
+          charge_amount_minor: number
+          charge_currency: string
+          created_at: string
+          cycle_number: number | null
+          failure_code: string | null
+          failure_reason: string | null
+          id: string
+          metadata: Json
+          paid_at: string | null
+          plan_promotion_id: string | null
+          plan_tier: string
+          price_snapshot_id: string
+          provider: string
+          provider_invoice_id: string | null
+          provider_payment_id: string
+          provider_subscription_id: string
+          status: string
+          subscription_id: string
+          user_id: string
+          webhook_event_id: string
+        }
+        Insert: {
+          attempted_at?: string
+          billing_period_end?: string | null
+          billing_period_start?: string | null
+          catalog_usd_amount_cents: number
+          charge_amount_minor: number
+          charge_currency: string
+          created_at?: string
+          cycle_number?: number | null
+          failure_code?: string | null
+          failure_reason?: string | null
+          id?: string
+          metadata?: Json
+          paid_at?: string | null
+          plan_promotion_id?: string | null
+          plan_tier: string
+          price_snapshot_id: string
+          provider: string
+          provider_invoice_id?: string | null
+          provider_payment_id: string
+          provider_subscription_id: string
+          status: string
+          subscription_id: string
+          user_id: string
+          webhook_event_id: string
+        }
+        Update: {
+          attempted_at?: string
+          billing_period_end?: string | null
+          billing_period_start?: string | null
+          catalog_usd_amount_cents?: number
+          charge_amount_minor?: number
+          charge_currency?: string
+          created_at?: string
+          cycle_number?: number | null
+          failure_code?: string | null
+          failure_reason?: string | null
+          id?: string
+          metadata?: Json
+          paid_at?: string | null
+          plan_promotion_id?: string | null
+          plan_tier?: string
+          price_snapshot_id?: string
+          provider?: string
+          provider_invoice_id?: string | null
+          provider_payment_id?: string
+          provider_subscription_id?: string
+          status?: string
+          subscription_id?: string
+          user_id?: string
+          webhook_event_id?: string
+        }
+        Relationships: []
+      }
+      credit_ledger_entries: {
+        Row: {
+          amount: number
+          created_at: string
+          entry_type: string
+          expires_at: string | null
+          id: string
+          idempotency_key: string
+          metadata: Json
+          month_key: string | null
+          plan_tier_at_earn: string | null
+          reference_id: string | null
+          reference_type: string | null
+          remaining_amount: number | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          entry_type: string
+          expires_at?: string | null
+          id?: string
+          idempotency_key: string
+          metadata?: Json
+          month_key?: string | null
+          plan_tier_at_earn?: string | null
+          reference_id?: string | null
+          reference_type?: string | null
+          remaining_amount?: number | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          entry_type?: string
+          expires_at?: string | null
+          id?: string
+          idempotency_key?: string
+          metadata?: Json
+          month_key?: string | null
+          plan_tier_at_earn?: string | null
+          reference_id?: string | null
+          reference_type?: string | null
+          remaining_amount?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      membership_credit_grants: {
+        Row: {
+          created_at: string
+          credit_amount: number
+          grant_period_end: string
+          grant_period_start: string
+          id: string
+          idempotency_key: string
+          ledger_entry_id: string | null
+          metadata: Json
+          plan_tier: string
+          rollover_tier_key: string
+          skip_reason: string | null
+          status: string
+          subscription_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          credit_amount: number
+          grant_period_end: string
+          grant_period_start: string
+          id?: string
+          idempotency_key: string
+          ledger_entry_id?: string | null
+          metadata?: Json
+          plan_tier: string
+          rollover_tier_key: string
+          skip_reason?: string | null
+          status: string
+          subscription_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          credit_amount?: number
+          grant_period_end?: string
+          grant_period_start?: string
+          id?: string
+          idempotency_key?: string
+          ledger_entry_id?: string | null
+          metadata?: Json
+          plan_tier?: string
+          rollover_tier_key?: string
+          skip_reason?: string | null
+          status?: string
+          subscription_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscription_plans: {
         Row: {
           active: boolean

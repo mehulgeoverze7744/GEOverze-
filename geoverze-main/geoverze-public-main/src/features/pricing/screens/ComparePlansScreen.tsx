@@ -9,8 +9,8 @@ import type { BillingCycle } from "../data/plans";
 import { BillingToggle } from "../components/BillingToggle";
 import { ComparisonTable } from "../components/ComparisonTable";
 import { PlanGrid } from "../components/PlanGrid";
-import { PricingCta } from "../components/PricingCta";
 import { PricingFaq } from "../components/PricingFaq";
+import "../styles/compare-plans.css";
 
 /** Dedicated, deep-linkable feature comparison. */
 export function ComparePlansScreen() {
@@ -18,7 +18,7 @@ export function ComparePlansScreen() {
   const { plans, comparisonGroups, loading, error } = usePricingCatalog();
 
   return (
-    <PageShell>
+    <PageShell className="compare-plans-page">
       <PageHeader
         eyebrow="Compare"
         title="Every feature, side by side"
@@ -30,7 +30,7 @@ export function ComparePlansScreen() {
         ]}
       />
 
-      <section className="pb-[var(--space-section-sm)]">
+      <section className="compare-plans-toolbar">
         <SectionContainer size="wide">
           <BillingToggle cycle={cycle} onChange={setCycle} />
         </SectionContainer>
@@ -45,7 +45,6 @@ export function ComparePlansScreen() {
         error={error}
       />
       <PricingFaq />
-      <PricingCta />
     </PageShell>
   );
 }

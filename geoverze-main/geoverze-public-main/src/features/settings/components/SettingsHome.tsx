@@ -47,12 +47,6 @@ export function SettingsHome() {
           onClick={() => open("appearance")}
         />
         <SettingsRow
-          icon="✨"
-          title="Motion & performance"
-          subtitle="Animation and performance"
-          onClick={() => open("performance")}
-        />
-        <SettingsRow
           icon="🌐"
           title="Language & region"
           subtitle="Language and regional preferences"
