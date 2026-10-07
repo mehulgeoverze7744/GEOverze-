@@ -1,6 +1,3 @@
-import { GraduationCap, Pencil, Target, VenetianMask } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-
 export type GameTypeSearch = {
   q: string | undefined;
   category: string | undefined;
@@ -10,7 +7,7 @@ export type GameType = {
   id: string;
   title: string;
   description: string;
-  icon: LucideIcon;
+  emoji: string;
   art: string;
   tags: readonly string[];
   to?: "/play/search";
@@ -23,7 +20,7 @@ export const GAME_TYPES: readonly GameType[] = [
     id: "draw-guess",
     title: "Draw & Guess",
     description: "Draw countries, landmarks, flags and geography clues while others guess.",
-    icon: Pencil,
+    emoji: "🎨",
     art: "draw-guess",
     tags: ["Party", "Live"],
   },
@@ -31,7 +28,7 @@ export const GAME_TYPES: readonly GameType[] = [
     id: "geography-imposter",
     title: "Geography Imposter",
     description: "Find the imposter using geography clues before they fool everyone.",
-    icon: VenetianMask,
+    emoji: "🕵️‍♂️",
     art: "geography-imposter",
     tags: ["Social", "Deduction"],
   },
@@ -39,7 +36,7 @@ export const GAME_TYPES: readonly GameType[] = [
     id: "emoji-fun",
     title: "Emoji & Fun Quizzes",
     description: "Challenge yourself with emojis, images, shapes and fast-paced geography quizzes.",
-    icon: Target,
+    emoji: "🤩",
     art: "emoji-fun",
     tags: ["Fast", "Visual"],
     to: "/play/search",
@@ -50,7 +47,7 @@ export const GAME_TYPES: readonly GameType[] = [
     title: "Educational Quizzes",
     description:
       "Master countries, capitals, flags, maps, history and everything around the world.",
-    icon: GraduationCap,
+    emoji: "🌍",
     art: "educational-quizzes",
     tags: ["Classic", "Catalog"],
     to: "/play/search",

@@ -83,6 +83,8 @@ export const GAME_MODES: readonly GameMode[] = [
     art: "tournament",
     cta: "Coming soon",
     comingSoon: true,
+    imageSrc: "/assets/play/tournament.jpg",
+    imageAlt: "Tournament geography trophy and globe",
   },
 ];
 

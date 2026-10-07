@@ -26,8 +26,20 @@ export function GameTypeCard({ type }: { type: GameType }) {
       <div className="relative">
         <CoverArt art={type.art} ratio="wide" />
         <span className="absolute inset-0 flex items-center justify-center">
-          <span className="inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-bronze/45 bg-[oklch(0.12_0.006_60/0.82)] text-bronze-glow shadow-[0_8px_24px_oklch(0_0_0/0.35)] transition-transform duration-200 ease-out group-hover/card:scale-110 motion-reduce:transition-none motion-reduce:group-hover/card:scale-100">
-            <type.icon className="h-6 w-6" strokeWidth={1.7} aria-hidden />
+          <span className="inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-bronze/45 bg-[oklch(0.12_0.006_60/0.82)] shadow-[0_8px_24px_oklch(0_0_0/0.35)] transition-transform duration-200 ease-out group-hover/card:scale-110 motion-reduce:transition-none motion-reduce:group-hover/card:scale-100">
+            <span
+              aria-hidden="true"
+              className="select-none text-[32px] leading-none"
+              style={{
+                fontFamily:
+                  '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif',
+                fontVariantEmoji: "emoji",
+                color: "initial",
+                WebkitTextFillColor: "initial",
+              }}
+            >
+              {type.emoji}
+            </span>
           </span>
         </span>
       </div>

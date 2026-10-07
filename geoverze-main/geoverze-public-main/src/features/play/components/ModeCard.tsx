@@ -16,7 +16,14 @@ export function ModeCard({ mode, onSelect }: { mode: GameMode; onSelect: (m: Gam
           icon={mode.icon}
           ratio="wide"
           {...(mode.imageSrc
-            ? { imageSrc: mode.imageSrc, imageAlt: mode.imageAlt, fit: "cover" as const }
+            ? {
+                imageSrc: mode.imageSrc,
+                imageAlt: mode.imageAlt,
+                fit: "cover" as const,
+                ...(mode.id === "tournament"
+                  ? { overlay: "category" as const, objectPosition: "center center" }
+                  : {}),
+              }
             : {})}
         />
         {mode.comingSoon ? (
