@@ -13,6 +13,4 @@ export { CollectionsPage } from "./screens/CollectionsPage";
 export { CollectionDetailPage } from "./screens/CollectionDetailPage";
 export { COLLECTIONS, collectionBySlug } from "./data/collections";
 export type { Collection } from "./data/collections";
-export { FEATURED_CREATORS } from "./data/creators";
-export type { FeaturedCreator } from "./data/creators";
 export { FUTURE_MODES } from "./data/gameModes";

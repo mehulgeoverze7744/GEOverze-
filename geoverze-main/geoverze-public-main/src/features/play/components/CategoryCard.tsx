@@ -1,6 +1,7 @@
 import { Clock, HelpCircle, Play, TrendingUp } from "lucide-react";
 
 import { GeoButton } from "@/components/shared";
+import { CATEGORY_ARTWORK } from "../data/categoryArtwork";
 import type { QuizCategory } from "../data/categories";
 import { DifficultyBadge, MetaChip } from "./Badges";
 import { CoverArt } from "./CoverArt";
@@ -14,10 +15,24 @@ export function CategoryCard({
   category: QuizCategory;
   onPlay: (category: QuizCategory) => void;
 }) {
+  const artwork = CATEGORY_ARTWORK[category.id];
+
   return (
-    <GameCard className="group flex flex-col">
+    <GameCard className="group/card flex flex-col">
       <div className="relative">
-        <CoverArt art={category.art} icon={category.icon} />
+        <CoverArt
+          art={category.art}
+          icon={category.icon}
+          {...(artwork
+            ? {
+                imageSrc: artwork.src,
+                imageAlt: artwork.alt,
+                fit: "cover" as const,
+                overlay: "category" as const,
+                objectPosition: artwork.objectPosition,
+              }
+            : {})}
+        />
         <div className="absolute right-3 top-3 flex flex-wrap justify-end gap-1.5">
           {category.isNew ? <MetaChip tone="bronze">New</MetaChip> : null}
           {category.trending ? (

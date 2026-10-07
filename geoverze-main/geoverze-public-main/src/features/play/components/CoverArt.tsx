@@ -27,7 +27,7 @@ export function CoverArt({
   /** `contain` for label thumbnails; `cover` for cinematic hero banners. */
   fit?: "contain" | "cover";
   /** Image overlay when `fit="cover"`. `subtle` = bottom blend only. */
-  overlay?: "none" | "subtle" | "hero";
+  overlay?: "none" | "subtle" | "hero" | "category";
   objectPosition?: string;
 }) {
   const cover = coverArt(art);
@@ -81,6 +81,15 @@ export function CoverArt({
             <span
               aria-hidden
               className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-charcoal/55 to-transparent"
+            />
+          ) : resolvedOverlay === "category" ? (
+            <span
+              aria-hidden
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(to bottom, rgba(0,0,0,0) 45%, rgba(7,5,3,0.15) 65%, rgba(7,5,3,0.85) 100%)",
+              }}
             />
           ) : null}
           {showIconOnCover ? (

@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 
-import { ProgressionNav } from "@/features/progression";
 import { useMemo, useState } from "react";
 
 import { PageShell } from "@/components/layout/PageShell";
@@ -19,20 +18,17 @@ import { DISCOVERY_RAILS, FEATURED_QUIZ_IDS, pick, type Quiz } from "../data/qui
 import { usePublishedQuizzes } from "../hooks/usePublishedQuizzes";
 import { INITIAL_FILTERS, applyFilters, type PlayFilterState } from "../lib/filter";
 import { quizzesForRail } from "../lib/discovery";
-import { COLLECTIONS } from "../data/collections";
+import { GAME_TYPES } from "../data/gameTypes";
 import { CategoryCard } from "./CategoryCard";
-import { CollectionCard } from "./CollectionCard";
-import { CreatorRail } from "./CreatorRail";
-import { DailyChallenge } from "./DailyChallenge";
 import { FeaturedCarousel } from "./FeaturedCarousel";
+import { GameTypeCard } from "./GameTypeCard";
 import { FilterBar } from "./FilterBar";
 import { ModeCard } from "./ModeCard";
 import { PlayHero } from "./PlayHero";
+import { PlayHubNav } from "./PlayHubNav";
 import { PlayPageBackground } from "./PlayPageBackground";
-import { PlayQuickLinks } from "./PlayQuickLinks";
 import { QuizCard } from "./QuizCard";
 import { QuizRail } from "./QuizRail";
-import { WeeklyChallenge } from "./WeeklyChallenge";
 
 /** Let's Play — the full quiz hub lobby. */
 export function PlayPage() {
@@ -106,6 +102,7 @@ export function PlayPage() {
     <PageShell>
       <PlayPageBackground />
       <PlayHero onRandom={playRandom} />
+      <PlayHubNav />
 
       <section className="pb-[var(--space-section-sm)]">
         <SectionContainer size="wide">
@@ -116,24 +113,10 @@ export function PlayPage() {
               <FeaturedCarousel quizzes={featured} onPlay={playQuiz} />
             )}
           </AnimatedSection>
+        </SectionContainer>
 
+        <SectionContainer size="wide">
           <AnimatedSection className="mt-12">
-            <DailyChallenge onPlay={() => openModeLobby("daily")} />
-          </AnimatedSection>
-
-          <AnimatedSection className="mt-6">
-            <WeeklyChallenge onPlay={() => openModeLobby("weekly")} />
-          </AnimatedSection>
-
-          <AnimatedSection className="mt-12">
-            <ProgressionNav />
-          </AnimatedSection>
-
-          <AnimatedSection className="mt-16">
-            <PlayQuickLinks />
-          </AnimatedSection>
-
-          <AnimatedSection className="mt-16">
             <SectionHeading
               eyebrow="Game modes"
               title="Choose how you play"
@@ -153,31 +136,22 @@ export function PlayPage() {
 
           <AnimatedSection className="mt-16">
             <SectionHeading
-              eyebrow="Collections"
-              title="Guided routes across the planet"
-              description="Multi-set journeys that build one region or theme at a time."
+              eyebrow="Game types"
+              title="Choose your way to play"
+              description="From quick fun challenges to competitive geography games, there’s always another way to explore the world."
             />
-            <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {COLLECTIONS.slice(0, 3).map((collection) => (
-                <CollectionCard key={collection.slug} collection={collection} />
+            <div className="mt-7 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {GAME_TYPES.map((type) => (
+                <GameTypeCard key={type.id} type={type} />
               ))}
             </div>
-            <div className="mt-6">
-              <GeoButton asChild variant="dark" size="md">
-                <Link to="/play/collections">Browse all collections</Link>
-              </GeoButton>
-            </div>
-          </AnimatedSection>
-
-          <AnimatedSection className="mt-16">
-            <CreatorRail />
           </AnimatedSection>
 
           <AnimatedSection className="mt-16">
             <SectionHeading
               eyebrow="Categories"
-              title="Pick your ground"
-              description="Fourteen subject areas, from flags and capitals to the planet's extremes."
+              title="How Well Do You Know the World?"
+              description="Challenge yourself with geography quizzes and discover something new with every question."
             />
             <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {QUIZ_CATEGORIES.map((category) => (
