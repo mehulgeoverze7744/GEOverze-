@@ -1,4 +1,4 @@
-import { Coins, Flame, Shuffle, Sparkles } from "lucide-react";
+import { Shuffle } from "lucide-react";
 
 import { AnimatedCounter, GeoButton, SectionContainer } from "@/components/shared";
 import { selectPlayer, useProgressionStore } from "@/stores/progressionStore";
@@ -8,9 +8,9 @@ import { GameCard } from "./GameCard";
 export function PlayHero({ onRandom }: { onRandom: () => void }) {
   const player = useProgressionStore(selectPlayer);
   const stats = [
-    { id: "streak", label: "Streak", value: player.currentStreak, suffix: " days", icon: Flame },
-    { id: "xp", label: "Total XP", value: player.xp, icon: Sparkles },
-    { id: "credits", label: "Credits", value: player.credits, icon: Coins },
+    { id: "streak", label: "Streak", value: player.currentStreak, suffix: " days", emoji: "🔥" },
+    { id: "xp", label: "Total XP", value: player.xp, emoji: "✨" },
+    { id: "credits", label: "Credits", value: player.credits, emoji: "🪙" },
   ] as const;
 
   return (
@@ -32,8 +32,20 @@ export function PlayHero({ onRandom }: { onRandom: () => void }) {
               interactive={false}
               className="flex items-center gap-3 rounded-xl px-4 py-3.5"
             >
-              <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-bronze/30 bg-bronze/12 text-bronze-glow">
-                <stat.icon className="h-4 w-4" strokeWidth={2} />
+              <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-bronze/30 bg-bronze/12">
+                <span
+                  aria-hidden="true"
+                  className="select-none text-[22px] leading-none"
+                  style={{
+                    fontFamily:
+                      '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif',
+                    fontVariantEmoji: "emoji",
+                    color: "initial",
+                    WebkitTextFillColor: "initial",
+                  }}
+                >
+                  {stat.emoji}
+                </span>
               </span>
               <span className="min-w-0">
                 <span className="block text-[0.62rem] uppercase tracking-[0.18em] text-foreground/50">
