@@ -73,6 +73,7 @@ import { Route as PlayCreditHistoryRouteImport } from './routes/play.credit-hist
 import { Route as PlayDailyChallengesRouteImport } from './routes/play.daily-challenges'
 import { Route as PlayDrawGuessRouteImport } from './routes/play.draw-guess'
 import { Route as PlayEventsRouteImport } from './routes/play.events'
+import { Route as PlayImposterRouteImport } from './routes/play.imposter'
 import { Route as PlayLeaderboardRouteImport } from './routes/play.leaderboard'
 import { Route as PlayLevelSystemRouteImport } from './routes/play.level-system'
 import { Route as PlayLobbyRouteImport } from './routes/play.lobby'
@@ -114,6 +115,10 @@ import { Route as PlayDrawGuessJoinRouteImport } from './routes/play.draw-guess.
 import { Route as PlayDrawGuessRoomRouteImport } from './routes/play.draw-guess.room'
 import { Route as PlayHistoryIndexRouteImport } from './routes/play.history.index'
 import { Route as PlayHistoryMatchIdRouteImport } from './routes/play.history.$matchId'
+import { Route as PlayImposterIndexRouteImport } from './routes/play.imposter.index'
+import { Route as PlayImposterCreateRouteImport } from './routes/play.imposter.create'
+import { Route as PlayImposterJoinRouteImport } from './routes/play.imposter.join'
+import { Route as PlayImposterRoomRouteImport } from './routes/play.imposter.room'
 import { Route as PlayMultiplayerIndexRouteImport } from './routes/play.multiplayer.index'
 import { Route as PlayMultiplayerCreateRouteImport } from './routes/play.multiplayer.create'
 import { Route as PlayMultiplayerJoinRouteImport } from './routes/play.multiplayer.join'
@@ -457,6 +462,11 @@ const PlayEventsRoute = PlayEventsRouteImport.update({
   path: '/events',
   getParentRoute: () => PlayRoute,
 } as any)
+const PlayImposterRoute = PlayImposterRouteImport.update({
+  id: '/imposter',
+  path: '/imposter',
+  getParentRoute: () => PlayRoute,
+} as any)
 const PlayLeaderboardRoute = PlayLeaderboardRouteImport.update({
   id: '/leaderboard',
   path: '/leaderboard',
@@ -665,6 +675,26 @@ const PlayHistoryMatchIdRoute = PlayHistoryMatchIdRouteImport.update({
   path: '/history/$matchId',
   getParentRoute: () => PlayRoute,
 } as any)
+const PlayImposterIndexRoute = PlayImposterIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PlayImposterRoute,
+} as any)
+const PlayImposterCreateRoute = PlayImposterCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => PlayImposterRoute,
+} as any)
+const PlayImposterJoinRoute = PlayImposterJoinRouteImport.update({
+  id: '/join',
+  path: '/join',
+  getParentRoute: () => PlayImposterRoute,
+} as any)
+const PlayImposterRoomRoute = PlayImposterRoomRouteImport.update({
+  id: '/room',
+  path: '/room',
+  getParentRoute: () => PlayImposterRoute,
+} as any)
 const PlayMultiplayerIndexRoute = PlayMultiplayerIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -836,6 +866,7 @@ export interface FileRoutesByFullPath {
   '/play/daily-challenges': typeof PlayDailyChallengesRoute
   '/play/draw-guess': typeof PlayDrawGuessRouteWithChildren
   '/play/events': typeof PlayEventsRoute
+  '/play/imposter': typeof PlayImposterRouteWithChildren
   '/play/leaderboard': typeof PlayLeaderboardRoute
   '/play/level-system': typeof PlayLevelSystemRoute
   '/play/lobby': typeof PlayLobbyRoute
@@ -875,6 +906,9 @@ export interface FileRoutesByFullPath {
   '/play/draw-guess/join': typeof PlayDrawGuessJoinRoute
   '/play/draw-guess/room': typeof PlayDrawGuessRoomRoute
   '/play/history/$matchId': typeof PlayHistoryMatchIdRoute
+  '/play/imposter/create': typeof PlayImposterCreateRoute
+  '/play/imposter/join': typeof PlayImposterJoinRoute
+  '/play/imposter/room': typeof PlayImposterRoomRoute
   '/play/multiplayer/create': typeof PlayMultiplayerCreateRoute
   '/play/multiplayer/join': typeof PlayMultiplayerJoinRoute
   '/play/multiplayer/room': typeof PlayMultiplayerRoomRoute
@@ -897,6 +931,7 @@ export interface FileRoutesByFullPath {
   '/play/collections/': typeof PlayCollectionsIndexRoute
   '/play/draw-guess/': typeof PlayDrawGuessIndexRoute
   '/play/history/': typeof PlayHistoryIndexRoute
+  '/play/imposter/': typeof PlayImposterIndexRoute
   '/play/multiplayer/': typeof PlayMultiplayerIndexRoute
   '/play/pvp/': typeof PlayPvpIndexRoute
   '/play/quiz/': typeof PlayQuizIndexRoute
@@ -992,6 +1027,9 @@ export interface FileRoutesByTo {
   '/play/draw-guess/join': typeof PlayDrawGuessJoinRoute
   '/play/draw-guess/room': typeof PlayDrawGuessRoomRoute
   '/play/history/$matchId': typeof PlayHistoryMatchIdRoute
+  '/play/imposter/create': typeof PlayImposterCreateRoute
+  '/play/imposter/join': typeof PlayImposterJoinRoute
+  '/play/imposter/room': typeof PlayImposterRoomRoute
   '/play/multiplayer/create': typeof PlayMultiplayerCreateRoute
   '/play/multiplayer/join': typeof PlayMultiplayerJoinRoute
   '/play/multiplayer/room': typeof PlayMultiplayerRoomRoute
@@ -1014,6 +1052,7 @@ export interface FileRoutesByTo {
   '/play/collections': typeof PlayCollectionsIndexRoute
   '/play/draw-guess': typeof PlayDrawGuessIndexRoute
   '/play/history': typeof PlayHistoryIndexRoute
+  '/play/imposter': typeof PlayImposterIndexRoute
   '/play/multiplayer': typeof PlayMultiplayerIndexRoute
   '/play/pvp': typeof PlayPvpIndexRoute
   '/play/quiz': typeof PlayQuizIndexRoute
@@ -1083,6 +1122,7 @@ export interface FileRoutesById {
   '/play/daily-challenges': typeof PlayDailyChallengesRoute
   '/play/draw-guess': typeof PlayDrawGuessRouteWithChildren
   '/play/events': typeof PlayEventsRoute
+  '/play/imposter': typeof PlayImposterRouteWithChildren
   '/play/leaderboard': typeof PlayLeaderboardRoute
   '/play/level-system': typeof PlayLevelSystemRoute
   '/play/lobby': typeof PlayLobbyRoute
@@ -1122,6 +1162,9 @@ export interface FileRoutesById {
   '/play/draw-guess/join': typeof PlayDrawGuessJoinRoute
   '/play/draw-guess/room': typeof PlayDrawGuessRoomRoute
   '/play/history/$matchId': typeof PlayHistoryMatchIdRoute
+  '/play/imposter/create': typeof PlayImposterCreateRoute
+  '/play/imposter/join': typeof PlayImposterJoinRoute
+  '/play/imposter/room': typeof PlayImposterRoomRoute
   '/play/multiplayer/create': typeof PlayMultiplayerCreateRoute
   '/play/multiplayer/join': typeof PlayMultiplayerJoinRoute
   '/play/multiplayer/room': typeof PlayMultiplayerRoomRoute
@@ -1144,6 +1187,7 @@ export interface FileRoutesById {
   '/play/collections/': typeof PlayCollectionsIndexRoute
   '/play/draw-guess/': typeof PlayDrawGuessIndexRoute
   '/play/history/': typeof PlayHistoryIndexRoute
+  '/play/imposter/': typeof PlayImposterIndexRoute
   '/play/multiplayer/': typeof PlayMultiplayerIndexRoute
   '/play/pvp/': typeof PlayPvpIndexRoute
   '/play/quiz/': typeof PlayQuizIndexRoute
@@ -1213,6 +1257,7 @@ export interface FileRouteTypes {
     | '/play/daily-challenges'
     | '/play/draw-guess'
     | '/play/events'
+    | '/play/imposter'
     | '/play/leaderboard'
     | '/play/level-system'
     | '/play/lobby'
@@ -1252,6 +1297,9 @@ export interface FileRouteTypes {
     | '/play/draw-guess/join'
     | '/play/draw-guess/room'
     | '/play/history/$matchId'
+    | '/play/imposter/create'
+    | '/play/imposter/join'
+    | '/play/imposter/room'
     | '/play/multiplayer/create'
     | '/play/multiplayer/join'
     | '/play/multiplayer/room'
@@ -1274,6 +1322,7 @@ export interface FileRouteTypes {
     | '/play/collections/'
     | '/play/draw-guess/'
     | '/play/history/'
+    | '/play/imposter/'
     | '/play/multiplayer/'
     | '/play/pvp/'
     | '/play/quiz/'
@@ -1369,6 +1418,9 @@ export interface FileRouteTypes {
     | '/play/draw-guess/join'
     | '/play/draw-guess/room'
     | '/play/history/$matchId'
+    | '/play/imposter/create'
+    | '/play/imposter/join'
+    | '/play/imposter/room'
     | '/play/multiplayer/create'
     | '/play/multiplayer/join'
     | '/play/multiplayer/room'
@@ -1391,6 +1443,7 @@ export interface FileRouteTypes {
     | '/play/collections'
     | '/play/draw-guess'
     | '/play/history'
+    | '/play/imposter'
     | '/play/multiplayer'
     | '/play/pvp'
     | '/play/quiz'
@@ -1459,6 +1512,7 @@ export interface FileRouteTypes {
     | '/play/daily-challenges'
     | '/play/draw-guess'
     | '/play/events'
+    | '/play/imposter'
     | '/play/leaderboard'
     | '/play/level-system'
     | '/play/lobby'
@@ -1498,6 +1552,9 @@ export interface FileRouteTypes {
     | '/play/draw-guess/join'
     | '/play/draw-guess/room'
     | '/play/history/$matchId'
+    | '/play/imposter/create'
+    | '/play/imposter/join'
+    | '/play/imposter/room'
     | '/play/multiplayer/create'
     | '/play/multiplayer/join'
     | '/play/multiplayer/room'
@@ -1520,6 +1577,7 @@ export interface FileRouteTypes {
     | '/play/collections/'
     | '/play/draw-guess/'
     | '/play/history/'
+    | '/play/imposter/'
     | '/play/multiplayer/'
     | '/play/pvp/'
     | '/play/quiz/'
@@ -2008,6 +2066,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlayEventsRouteImport
       parentRoute: typeof PlayRoute
     }
+    '/play/imposter': {
+      id: '/play/imposter'
+      path: '/imposter'
+      fullPath: '/play/imposter'
+      preLoaderRoute: typeof PlayImposterRouteImport
+      parentRoute: typeof PlayRoute
+    }
     '/play/leaderboard': {
       id: '/play/leaderboard'
       path: '/leaderboard'
@@ -2294,6 +2359,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/play/history/$matchId'
       preLoaderRoute: typeof PlayHistoryMatchIdRouteImport
       parentRoute: typeof PlayRoute
+    }
+    '/play/imposter/': {
+      id: '/play/imposter/'
+      path: '/'
+      fullPath: '/play/imposter/'
+      preLoaderRoute: typeof PlayImposterIndexRouteImport
+      parentRoute: typeof PlayImposterRoute
+    }
+    '/play/imposter/create': {
+      id: '/play/imposter/create'
+      path: '/create'
+      fullPath: '/play/imposter/create'
+      preLoaderRoute: typeof PlayImposterCreateRouteImport
+      parentRoute: typeof PlayImposterRoute
+    }
+    '/play/imposter/join': {
+      id: '/play/imposter/join'
+      path: '/join'
+      fullPath: '/play/imposter/join'
+      preLoaderRoute: typeof PlayImposterJoinRouteImport
+      parentRoute: typeof PlayImposterRoute
+    }
+    '/play/imposter/room': {
+      id: '/play/imposter/room'
+      path: '/room'
+      fullPath: '/play/imposter/room'
+      preLoaderRoute: typeof PlayImposterRoomRouteImport
+      parentRoute: typeof PlayImposterRoute
     }
     '/play/multiplayer/': {
       id: '/play/multiplayer/'
@@ -2604,6 +2697,24 @@ const PlayDrawGuessRouteWithChildren = PlayDrawGuessRoute._addFileChildren(
   PlayDrawGuessRouteChildren,
 )
 
+interface PlayImposterRouteChildren {
+  PlayImposterCreateRoute: typeof PlayImposterCreateRoute
+  PlayImposterJoinRoute: typeof PlayImposterJoinRoute
+  PlayImposterRoomRoute: typeof PlayImposterRoomRoute
+  PlayImposterIndexRoute: typeof PlayImposterIndexRoute
+}
+
+const PlayImposterRouteChildren: PlayImposterRouteChildren = {
+  PlayImposterCreateRoute: PlayImposterCreateRoute,
+  PlayImposterJoinRoute: PlayImposterJoinRoute,
+  PlayImposterRoomRoute: PlayImposterRoomRoute,
+  PlayImposterIndexRoute: PlayImposterIndexRoute,
+}
+
+const PlayImposterRouteWithChildren = PlayImposterRoute._addFileChildren(
+  PlayImposterRouteChildren,
+)
+
 interface PlayMultiplayerRouteChildren {
   PlayMultiplayerCreateRoute: typeof PlayMultiplayerCreateRoute
   PlayMultiplayerJoinRoute: typeof PlayMultiplayerJoinRoute
@@ -2667,6 +2778,7 @@ interface PlayRouteChildren {
   PlayDailyChallengesRoute: typeof PlayDailyChallengesRoute
   PlayDrawGuessRoute: typeof PlayDrawGuessRouteWithChildren
   PlayEventsRoute: typeof PlayEventsRoute
+  PlayImposterRoute: typeof PlayImposterRouteWithChildren
   PlayLeaderboardRoute: typeof PlayLeaderboardRoute
   PlayLevelSystemRoute: typeof PlayLevelSystemRoute
   PlayLobbyRoute: typeof PlayLobbyRoute
@@ -2695,6 +2807,7 @@ const PlayRouteChildren: PlayRouteChildren = {
   PlayDailyChallengesRoute: PlayDailyChallengesRoute,
   PlayDrawGuessRoute: PlayDrawGuessRouteWithChildren,
   PlayEventsRoute: PlayEventsRoute,
+  PlayImposterRoute: PlayImposterRouteWithChildren,
   PlayLeaderboardRoute: PlayLeaderboardRoute,
   PlayLevelSystemRoute: PlayLevelSystemRoute,
   PlayLobbyRoute: PlayLobbyRoute,

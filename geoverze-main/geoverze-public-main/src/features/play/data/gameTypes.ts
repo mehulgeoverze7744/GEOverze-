@@ -10,7 +10,7 @@ export type GameType = {
   emoji: string;
   art: string;
   tags: readonly string[];
-  to?: "/play/search" | "/play/draw-guess";
+  to?: "/play/search" | "/play/draw-guess" | "/play/imposter";
   search?: GameTypeSearch;
 };
 
@@ -32,6 +32,7 @@ export const GAME_TYPES: readonly GameType[] = [
     emoji: "🕵️‍♂️",
     art: "geography-imposter",
     tags: ["Social", "Deduction"],
+    to: "/play/imposter",
   },
   {
     id: "emoji-fun",
