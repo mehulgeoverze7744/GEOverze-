@@ -29,26 +29,27 @@ export interface UseImpRoomReturn {
   leave: () => Promise<void>;
 }
 
-export function useImpRoom(
-  roomId: string | undefined,
-  code: string | undefined,
-): UseImpRoomReturn {
+export function useImpRoom(roomId: string | undefined, code: string | undefined): UseImpRoomReturn {
   const user = useAuthStore(selectUser);
   const [state, setState] = useState<ImpRoomState | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const loadGen = useRef(0);
 
   // ── Initial load ────────────────────────────────────────────────────────────
   const load = useCallback(async () => {
     if (!roomId) return;
+    const gen = ++loadGen.current;
     try {
       const s = await fetchImpRoomState(roomId);
+      if (gen !== loadGen.current) return;
       setState(s);
       setError(null);
     } catch (err) {
+      if (gen !== loadGen.current) return;
       setError(err instanceof Error ? err.message : "Failed to load room");
     } finally {
-      setLoading(false);
+      if (gen === loadGen.current) setLoading(false);
     }
   }, [roomId]);
 
@@ -112,6 +113,7 @@ export function useImpRoom(
     async (ready: boolean) => {
       if (!roomId) return;
       const next = await setImpReady(roomId, ready);
+      loadGen.current += 1;
       setState(next);
     },
     [roomId],
@@ -120,12 +122,14 @@ export function useImpRoom(
   const startGame = useCallback(async () => {
     if (!roomId) return;
     const next = await startImpGame(roomId);
+    loadGen.current += 1;
     setState(next);
   }, [roomId]);
 
   const restartGame = useCallback(async () => {
     if (!roomId) return;
     const next = await restartImpGame(roomId);
+    loadGen.current += 1;
     setState(next);
   }, [roomId]);
 

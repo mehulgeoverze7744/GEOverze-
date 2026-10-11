@@ -1,16 +1,6 @@
-import {
-  ArrowLeft,
-  Check,
-  Copy,
-  Loader2,
-  Play,
-  Users,
-  Wifi,
-  WifiOff,
-} from "lucide-react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { ArrowLeft, Check, Copy, Loader2, Play, Users, Wifi, WifiOff } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { toast } from "sonner";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
@@ -20,7 +10,7 @@ import type { ImpRoomState } from "../types";
 
 const STATUS_LABEL: Record<string, string> = {
   waiting: "Waiting for players",
-  ready:   "All players ready",
+  ready: "All players ready",
   playing: "Game in progress",
 };
 
@@ -45,7 +35,6 @@ export function ImposterLobbyScreen({
   toggleReady,
   startGame,
 }: ImposterLobbyScreenProps) {
-  const navigate = useNavigate();
   const user = useAuthStore(selectUser);
   const [copied, setCopied] = useState(false);
 
@@ -56,6 +45,13 @@ export function ImposterLobbyScreen({
 
   const isHost = you?.is_host ?? false;
   const isReady = you?.is_ready ?? false;
+  const eligible = useMemo(
+    () => (state?.participants ?? []).filter((p) => !p.is_excluded),
+    [state?.participants],
+  );
+  const notReady = useMemo(() => eligible.filter((p) => !p.is_ready), [eligible]);
+  const playersNeeded = Math.max(0, 3 - eligible.length);
+  const canStart = isHost && playersNeeded === 0 && notReady.length === 0;
 
   const copyCode = () => {
     if (!code) return;
@@ -64,11 +60,6 @@ export function ImposterLobbyScreen({
       window.setTimeout(() => setCopied(false), 2_000);
     });
   };
-
-  const canStart =
-    isHost &&
-    (state?.participants.length ?? 0) >= 3 &&
-    state?.participants.every((p) => p.is_ready);
 
   if (loading) {
     return (
@@ -171,16 +162,29 @@ export function ImposterLobbyScreen({
                   {isOnline ? (
                     <Wifi className="h-3.5 w-3.5 text-emerald-400" strokeWidth={1.7} aria-hidden />
                   ) : (
-                    <WifiOff className="h-3.5 w-3.5 text-foreground/30" strokeWidth={1.7} aria-hidden />
+                    <WifiOff
+                      className="h-3.5 w-3.5 text-foreground/30"
+                      strokeWidth={1.7}
+                      aria-hidden
+                    />
                   )}
-                  {p.is_ready ? (
-                    <span className="flex items-center gap-1 text-[0.72rem] font-semibold text-emerald-400">
-                      <Check className="h-3.5 w-3.5" strokeWidth={2.5} aria-hidden />
-                      Ready
-                    </span>
-                  ) : (
-                    <span className="text-[0.72rem] text-foreground/35">Not ready</span>
-                  )}
+                  <span
+                    className={
+                      p.is_ready
+                        ? "flex items-center gap-1 text-[0.72rem] font-semibold text-emerald-400"
+                        : "text-[0.72rem] text-foreground/35"
+                    }
+                    aria-label={p.is_ready ? "Ready" : "Not ready"}
+                  >
+                    {p.is_ready ? (
+                      <>
+                        <Check className="h-3.5 w-3.5" strokeWidth={2.5} aria-hidden />
+                        Ready
+                      </>
+                    ) : (
+                      "Not ready"
+                    )}
+                  </span>
                 </div>
               );
             })}
@@ -202,27 +206,25 @@ export function ImposterLobbyScreen({
 
         {/* Actions */}
         <AnimatedSection className="mt-6 flex flex-col gap-3 sm:flex-row">
-          {/* Ready toggle */}
-          {!isHost && (
+          {you ? (
             <GeoButton
               variant={isReady ? "dark" : "solid"}
               size="lg"
               className="flex-1"
-              disabled={readyPending}
+              disabled={readyPending || room.status === "cancelled"}
               onClick={() => void toggleReady(!isReady)}
             >
               {readyPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
               ) : isReady ? (
-                "Cancel Ready"
+                "Not Ready"
               ) : (
-                "Ready Up"
+                "Ready"
               )}
             </GeoButton>
-          )}
+          ) : null}
 
-          {/* Host: start */}
-          {isHost && (
+          {isHost ? (
             <GeoButton
               variant="solid"
               size="lg"
@@ -239,16 +241,18 @@ export function ImposterLobbyScreen({
                 </>
               )}
             </GeoButton>
-          )}
+          ) : null}
         </AnimatedSection>
 
-        {!canStart && isHost && (
+        {isHost && !canStart ? (
           <p className="mt-3 text-center text-[0.75rem] text-foreground/40">
-            {participants.length < 3
-              ? `Need at least 3 players (${3 - participants.length} more)`
-              : "Waiting for all players to ready up"}
+            {playersNeeded > 0
+              ? `Need at least 3 players (${playersNeeded} more)`
+              : notReady.length === 1
+                ? `Waiting for ${notReady[0]?.display_name ?? "a player"} to ready up`
+                : `Waiting for ${notReady.map((p) => p.display_name).join(", ")} to ready up`}
           </p>
-        )}
+        ) : null}
       </SectionContainer>
     </PageShell>
   );

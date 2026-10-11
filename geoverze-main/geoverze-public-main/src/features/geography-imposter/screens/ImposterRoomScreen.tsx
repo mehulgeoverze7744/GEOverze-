@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { useImpRoom } from "../hooks/useImpRoom";
 import { ImposterGameScreen } from "./ImposterGameScreen";
@@ -13,13 +14,17 @@ export function ImposterRoomScreen({ roomId, code }: ImposterRoomScreenProps) {
   const [readyPending, setReadyPending] = useState(false);
   const [startPending, setStartPending] = useState(false);
 
-  const { state, loading, error, setState, toggleReady, startGame, restartGame, leave } =
-    useImpRoom(roomId, code);
+  const { state, loading, error, setState, toggleReady, startGame, restartGame } = useImpRoom(
+    roomId,
+    code,
+  );
 
   const handleToggleReady = async (ready: boolean) => {
     setReadyPending(true);
     try {
       await toggleReady(ready);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not update ready status");
     } finally {
       setReadyPending(false);
     }
@@ -29,6 +34,8 @@ export function ImposterRoomScreen({ roomId, code }: ImposterRoomScreenProps) {
     setStartPending(true);
     try {
       await startGame();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not start the game");
     } finally {
       setStartPending(false);
     }
@@ -36,13 +43,7 @@ export function ImposterRoomScreen({ roomId, code }: ImposterRoomScreenProps) {
 
   // Show game screen once status = playing
   if (state?.room.status === "playing" || state?.room.status === "completed") {
-    return (
-      <ImposterGameScreen
-        state={state}
-        onStateUpdate={setState}
-        onRestart={restartGame}
-      />
-    );
+    return <ImposterGameScreen state={state} onStateUpdate={setState} onRestart={restartGame} />;
   }
 
   return (
