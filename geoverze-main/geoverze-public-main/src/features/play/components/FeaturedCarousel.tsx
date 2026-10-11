@@ -50,7 +50,13 @@ export function FeaturedCarousel({
           ratio="wide"
           className="h-[15rem] md:h-[19rem]"
           fit="cover"
-          {...(thumbnail ? { imageSrc: thumbnail.src, imageAlt: thumbnail.alt } : {})}
+          {...(thumbnail
+            ? {
+                imageSrc: thumbnail.src,
+                imageAlt: thumbnail.alt,
+                ...(thumbnail.objectPosition ? { objectPosition: thumbnail.objectPosition } : {}),
+              }
+            : {})}
         />
         <div
           className={cn(

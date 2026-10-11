@@ -39,7 +39,15 @@ export function QuizCard({
       <div className="relative">
         <CoverArt
           art={quiz.art}
-          {...(thumbnail ? { imageSrc: thumbnail.src, imageAlt: thumbnail.alt } : { icon: Icon })}
+          {...(thumbnail
+            ? {
+                imageSrc: thumbnail.src,
+                imageAlt: thumbnail.alt,
+                fit: "cover" as const,
+                overlay: "subtle" as const,
+                ...(thumbnail.objectPosition ? { objectPosition: thumbnail.objectPosition } : {}),
+              }
+            : { icon: Icon })}
         />
         <button
           type="button"

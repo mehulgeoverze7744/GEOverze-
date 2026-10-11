@@ -1,38 +1,43 @@
-/** Frontend-only quiz label artwork for Let's Play cards. Keyed by quiz id — not slug or DB art key. */
+/** Frontend-only quiz cover photography for Let's Play cards. Keyed by quiz id — not slug or DB art key. */
 export type QuizThumbnail = {
   src: string;
   alt: string;
-  /** Artwork already includes the quiz title — hide duplicate card headings. */
-  labelArtwork: true;
+  /**
+   * Artwork already includes the quiz title — hide duplicate card headings.
+   * Photographic covers leave this unset so titles remain visible.
+   */
+  labelArtwork?: true;
+  /** CSS object-position for landscape card crops. */
+  objectPosition?: string;
 };
 
-const QUIZ_LABEL_BASE = "/assets/quizzes";
+const QUIZ_COVER_BASE = "/assets/quizzes";
 
 export const QUIZ_THUMBNAILS: Readonly<Record<string, QuizThumbnail>> = {
   "q-pin-the-place": {
-    src: `${QUIZ_LABEL_BASE}/pin-the-place-quiz-label.jpg`,
-    alt: "Pin the Place geography quiz artwork",
-    labelArtwork: true,
+    src: `${QUIZ_COVER_BASE}/pin-the-place-quiz.jpg`,
+    alt: "World map with a magnifying glass over Europe for the Pin the Place quiz",
+    objectPosition: "center 42%",
   },
   "q-capital-cities": {
-    src: `${QUIZ_LABEL_BASE}/capital-confusion-quiz-label.png`,
-    alt: "GEOverze Capital Confusion quiz",
-    labelArtwork: true,
+    src: `${QUIZ_COVER_BASE}/capital-confusion-quiz.jpg`,
+    alt: "European landmarks along a river for the Capital Confusion quiz",
+    objectPosition: "center 38%",
   },
   "q-monuments": {
-    src: `${QUIZ_LABEL_BASE}/monuments-and-marvels-quiz-label.jpg`,
-    alt: "Monuments and Marvels geography quiz artwork",
-    labelArtwork: true,
+    src: `${QUIZ_COVER_BASE}/monuments-and-marvels-quiz.jpg`,
+    alt: "Taj Mahal, pyramids, and Colosseum for the Monuments and Marvels quiz",
+    objectPosition: "center 40%",
   },
   "q-atlas-sprint": {
-    src: `${QUIZ_LABEL_BASE}/atlas-sprint-quiz-label.jpg`,
-    alt: "Atlas Sprint geography quiz artwork",
-    labelArtwork: true,
+    src: `${QUIZ_COVER_BASE}/atlas-sprint-quiz.jpg`,
+    alt: "Open world atlas with a marked route for the Atlas Sprint quiz",
+    objectPosition: "center 48%",
   },
   "q-flag-blitz": {
-    src: `${QUIZ_LABEL_BASE}/flag-blitz-quiz-label.jpg`,
-    alt: "Flag Blitz geography quiz artwork",
-    labelArtwork: true,
+    src: `${QUIZ_COVER_BASE}/flag-blitz-quiz.jpg`,
+    alt: "Globe marked with national flags for the Flag Blitz quiz",
+    objectPosition: "center 46%",
   },
 };
 
