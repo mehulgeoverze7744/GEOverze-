@@ -15,10 +15,14 @@ export function GameTypeCard({ type }: { type: GameType }) {
 
   const play = () => {
     if (!type.to) return;
-    navigate({
-      to: type.to,
-      search: type.search ?? { q: undefined, category: undefined },
-    });
+    if (type.to === "/play/draw-guess") {
+      navigate({ to: "/play/draw-guess" });
+    } else {
+      navigate({
+        to: type.to,
+        search: type.search ?? { q: undefined, category: undefined },
+      });
+    }
   };
 
   return (
@@ -73,14 +77,21 @@ export function GameTypeCard({ type }: { type: GameType }) {
           }
         >
           {playable && type.to ? (
-            <Link
-              to={type.to}
-              search={type.search ?? { q: undefined, category: undefined }}
-              onClick={(event) => event.stopPropagation()}
-            >
-              <Play className="h-4 w-4" strokeWidth={2.4} aria-hidden />
-              Play now
-            </Link>
+            type.to === "/play/draw-guess" ? (
+              <Link to="/play/draw-guess" onClick={(event) => event.stopPropagation()}>
+                <Play className="h-4 w-4" strokeWidth={2.4} aria-hidden />
+                Play now
+              </Link>
+            ) : (
+              <Link
+                to={type.to}
+                search={type.search ?? { q: undefined, category: undefined }}
+                onClick={(event) => event.stopPropagation()}
+              >
+                <Play className="h-4 w-4" strokeWidth={2.4} aria-hidden />
+                Play now
+              </Link>
+            )
           ) : (
             <>
               <Play className="h-4 w-4" strokeWidth={2.4} aria-hidden />

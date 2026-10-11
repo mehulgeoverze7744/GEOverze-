@@ -41,6 +41,18 @@ export type QuizCategory = {
   trending?: boolean;
 };
 
+/** Featured on /play — ids only; cards still resolve from `QUIZ_CATEGORIES`. */
+export const FEATURED_CATEGORY_IDS = ["countries", "capitals", "flags", "maps"] as const;
+
+export function getFeaturedCategories(
+  categories: readonly QuizCategory[] = QUIZ_CATEGORIES,
+): QuizCategory[] {
+  return FEATURED_CATEGORY_IDS.flatMap((id) => {
+    const match = categories.find((category) => category.id === id);
+    return match ? [match] : [];
+  });
+}
+
 export const QUIZ_CATEGORIES: readonly QuizCategory[] = [
   {
     id: "countries",

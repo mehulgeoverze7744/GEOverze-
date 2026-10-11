@@ -1,6 +1,7 @@
 export { PlayPage } from "./components/PlayPage";
-export { QUIZ_CATEGORIES } from "./data/categories";
+export { QUIZ_CATEGORIES, FEATURED_CATEGORY_IDS, getFeaturedCategories } from "./data/categories";
 export type { QuizCategory, Difficulty } from "./data/categories";
+export { CataloguePage } from "./screens/CataloguePage";
 export { GAME_MODES } from "./data/gameModes";
 export type { GameMode } from "./data/gameModes";
 export { FEATURED_QUIZ_IDS, DISCOVERY_RAILS, pick } from "./data/quizzes";

@@ -68,8 +68,10 @@ import { Route as GeostoreOrdersRouteImport } from './routes/geostore.orders'
 import { Route as GeostoreRewardsRouteImport } from './routes/geostore.rewards'
 import { Route as GeostoreWishlistRouteImport } from './routes/geostore.wishlist'
 import { Route as PlayIndexRouteImport } from './routes/play.index'
+import { Route as PlayCatalogueRouteImport } from './routes/play.catalogue'
 import { Route as PlayCreditHistoryRouteImport } from './routes/play.credit-history'
 import { Route as PlayDailyChallengesRouteImport } from './routes/play.daily-challenges'
+import { Route as PlayDrawGuessRouteImport } from './routes/play.draw-guess'
 import { Route as PlayEventsRouteImport } from './routes/play.events'
 import { Route as PlayLeaderboardRouteImport } from './routes/play.leaderboard'
 import { Route as PlayLevelSystemRouteImport } from './routes/play.level-system'
@@ -106,6 +108,10 @@ import { Route as GeostoreCategorySlugRouteImport } from './routes/geostore.cate
 import { Route as GeostoreProductSlugRouteImport } from './routes/geostore.product.$slug'
 import { Route as PlayCollectionsIndexRouteImport } from './routes/play.collections.index'
 import { Route as PlayCollectionsSlugRouteImport } from './routes/play.collections.$slug'
+import { Route as PlayDrawGuessIndexRouteImport } from './routes/play.draw-guess.index'
+import { Route as PlayDrawGuessCreateRouteImport } from './routes/play.draw-guess.create'
+import { Route as PlayDrawGuessJoinRouteImport } from './routes/play.draw-guess.join'
+import { Route as PlayDrawGuessRoomRouteImport } from './routes/play.draw-guess.room'
 import { Route as PlayHistoryIndexRouteImport } from './routes/play.history.index'
 import { Route as PlayHistoryMatchIdRouteImport } from './routes/play.history.$matchId'
 import { Route as PlayMultiplayerIndexRouteImport } from './routes/play.multiplayer.index'
@@ -426,6 +432,11 @@ const PlayIndexRoute = PlayIndexRouteImport.update({
   path: '/',
   getParentRoute: () => PlayRoute,
 } as any)
+const PlayCatalogueRoute = PlayCatalogueRouteImport.update({
+  id: '/catalogue',
+  path: '/catalogue',
+  getParentRoute: () => PlayRoute,
+} as any)
 const PlayCreditHistoryRoute = PlayCreditHistoryRouteImport.update({
   id: '/credit-history',
   path: '/credit-history',
@@ -434,6 +445,11 @@ const PlayCreditHistoryRoute = PlayCreditHistoryRouteImport.update({
 const PlayDailyChallengesRoute = PlayDailyChallengesRouteImport.update({
   id: '/daily-challenges',
   path: '/daily-challenges',
+  getParentRoute: () => PlayRoute,
+} as any)
+const PlayDrawGuessRoute = PlayDrawGuessRouteImport.update({
+  id: '/draw-guess',
+  path: '/draw-guess',
   getParentRoute: () => PlayRoute,
 } as any)
 const PlayEventsRoute = PlayEventsRouteImport.update({
@@ -619,6 +635,26 @@ const PlayCollectionsSlugRoute = PlayCollectionsSlugRouteImport.update({
   path: '/collections/$slug',
   getParentRoute: () => PlayRoute,
 } as any)
+const PlayDrawGuessIndexRoute = PlayDrawGuessIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PlayDrawGuessRoute,
+} as any)
+const PlayDrawGuessCreateRoute = PlayDrawGuessCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => PlayDrawGuessRoute,
+} as any)
+const PlayDrawGuessJoinRoute = PlayDrawGuessJoinRouteImport.update({
+  id: '/join',
+  path: '/join',
+  getParentRoute: () => PlayDrawGuessRoute,
+} as any)
+const PlayDrawGuessRoomRoute = PlayDrawGuessRoomRouteImport.update({
+  id: '/room',
+  path: '/room',
+  getParentRoute: () => PlayDrawGuessRoute,
+} as any)
 const PlayHistoryIndexRoute = PlayHistoryIndexRouteImport.update({
   id: '/history/',
   path: '/history/',
@@ -795,8 +831,10 @@ export interface FileRoutesByFullPath {
   '/geostore/orders': typeof GeostoreOrdersRoute
   '/geostore/rewards': typeof GeostoreRewardsRoute
   '/geostore/wishlist': typeof GeostoreWishlistRoute
+  '/play/catalogue': typeof PlayCatalogueRoute
   '/play/credit-history': typeof PlayCreditHistoryRoute
   '/play/daily-challenges': typeof PlayDailyChallengesRoute
+  '/play/draw-guess': typeof PlayDrawGuessRouteWithChildren
   '/play/events': typeof PlayEventsRoute
   '/play/leaderboard': typeof PlayLeaderboardRoute
   '/play/level-system': typeof PlayLevelSystemRoute
@@ -833,6 +871,9 @@ export interface FileRoutesByFullPath {
   '/geostore/category/$slug': typeof GeostoreCategorySlugRoute
   '/geostore/product/$slug': typeof GeostoreProductSlugRoute
   '/play/collections/$slug': typeof PlayCollectionsSlugRoute
+  '/play/draw-guess/create': typeof PlayDrawGuessCreateRoute
+  '/play/draw-guess/join': typeof PlayDrawGuessJoinRoute
+  '/play/draw-guess/room': typeof PlayDrawGuessRoomRoute
   '/play/history/$matchId': typeof PlayHistoryMatchIdRoute
   '/play/multiplayer/create': typeof PlayMultiplayerCreateRoute
   '/play/multiplayer/join': typeof PlayMultiplayerJoinRoute
@@ -854,6 +895,7 @@ export interface FileRoutesByFullPath {
   '/geolibrary/collections/': typeof GeolibraryCollectionsIndexRoute
   '/geolibrary/creators/': typeof GeolibraryCreatorsIndexRoute
   '/play/collections/': typeof PlayCollectionsIndexRoute
+  '/play/draw-guess/': typeof PlayDrawGuessIndexRoute
   '/play/history/': typeof PlayHistoryIndexRoute
   '/play/multiplayer/': typeof PlayMultiplayerIndexRoute
   '/play/pvp/': typeof PlayPvpIndexRoute
@@ -910,6 +952,7 @@ export interface FileRoutesByTo {
   '/geostore/orders': typeof GeostoreOrdersRoute
   '/geostore/rewards': typeof GeostoreRewardsRoute
   '/geostore/wishlist': typeof GeostoreWishlistRoute
+  '/play/catalogue': typeof PlayCatalogueRoute
   '/play/credit-history': typeof PlayCreditHistoryRoute
   '/play/daily-challenges': typeof PlayDailyChallengesRoute
   '/play/events': typeof PlayEventsRoute
@@ -945,6 +988,9 @@ export interface FileRoutesByTo {
   '/geostore/category/$slug': typeof GeostoreCategorySlugRoute
   '/geostore/product/$slug': typeof GeostoreProductSlugRoute
   '/play/collections/$slug': typeof PlayCollectionsSlugRoute
+  '/play/draw-guess/create': typeof PlayDrawGuessCreateRoute
+  '/play/draw-guess/join': typeof PlayDrawGuessJoinRoute
+  '/play/draw-guess/room': typeof PlayDrawGuessRoomRoute
   '/play/history/$matchId': typeof PlayHistoryMatchIdRoute
   '/play/multiplayer/create': typeof PlayMultiplayerCreateRoute
   '/play/multiplayer/join': typeof PlayMultiplayerJoinRoute
@@ -966,6 +1012,7 @@ export interface FileRoutesByTo {
   '/geolibrary/collections': typeof GeolibraryCollectionsIndexRoute
   '/geolibrary/creators': typeof GeolibraryCreatorsIndexRoute
   '/play/collections': typeof PlayCollectionsIndexRoute
+  '/play/draw-guess': typeof PlayDrawGuessIndexRoute
   '/play/history': typeof PlayHistoryIndexRoute
   '/play/multiplayer': typeof PlayMultiplayerIndexRoute
   '/play/pvp': typeof PlayPvpIndexRoute
@@ -1031,8 +1078,10 @@ export interface FileRoutesById {
   '/geostore/orders': typeof GeostoreOrdersRoute
   '/geostore/rewards': typeof GeostoreRewardsRoute
   '/geostore/wishlist': typeof GeostoreWishlistRoute
+  '/play/catalogue': typeof PlayCatalogueRoute
   '/play/credit-history': typeof PlayCreditHistoryRoute
   '/play/daily-challenges': typeof PlayDailyChallengesRoute
+  '/play/draw-guess': typeof PlayDrawGuessRouteWithChildren
   '/play/events': typeof PlayEventsRoute
   '/play/leaderboard': typeof PlayLeaderboardRoute
   '/play/level-system': typeof PlayLevelSystemRoute
@@ -1069,6 +1118,9 @@ export interface FileRoutesById {
   '/geostore/category/$slug': typeof GeostoreCategorySlugRoute
   '/geostore/product/$slug': typeof GeostoreProductSlugRoute
   '/play/collections/$slug': typeof PlayCollectionsSlugRoute
+  '/play/draw-guess/create': typeof PlayDrawGuessCreateRoute
+  '/play/draw-guess/join': typeof PlayDrawGuessJoinRoute
+  '/play/draw-guess/room': typeof PlayDrawGuessRoomRoute
   '/play/history/$matchId': typeof PlayHistoryMatchIdRoute
   '/play/multiplayer/create': typeof PlayMultiplayerCreateRoute
   '/play/multiplayer/join': typeof PlayMultiplayerJoinRoute
@@ -1090,6 +1142,7 @@ export interface FileRoutesById {
   '/geolibrary/collections/': typeof GeolibraryCollectionsIndexRoute
   '/geolibrary/creators/': typeof GeolibraryCreatorsIndexRoute
   '/play/collections/': typeof PlayCollectionsIndexRoute
+  '/play/draw-guess/': typeof PlayDrawGuessIndexRoute
   '/play/history/': typeof PlayHistoryIndexRoute
   '/play/multiplayer/': typeof PlayMultiplayerIndexRoute
   '/play/pvp/': typeof PlayPvpIndexRoute
@@ -1155,8 +1208,10 @@ export interface FileRouteTypes {
     | '/geostore/orders'
     | '/geostore/rewards'
     | '/geostore/wishlist'
+    | '/play/catalogue'
     | '/play/credit-history'
     | '/play/daily-challenges'
+    | '/play/draw-guess'
     | '/play/events'
     | '/play/leaderboard'
     | '/play/level-system'
@@ -1193,6 +1248,9 @@ export interface FileRouteTypes {
     | '/geostore/category/$slug'
     | '/geostore/product/$slug'
     | '/play/collections/$slug'
+    | '/play/draw-guess/create'
+    | '/play/draw-guess/join'
+    | '/play/draw-guess/room'
     | '/play/history/$matchId'
     | '/play/multiplayer/create'
     | '/play/multiplayer/join'
@@ -1214,6 +1272,7 @@ export interface FileRouteTypes {
     | '/geolibrary/collections/'
     | '/geolibrary/creators/'
     | '/play/collections/'
+    | '/play/draw-guess/'
     | '/play/history/'
     | '/play/multiplayer/'
     | '/play/pvp/'
@@ -1270,6 +1329,7 @@ export interface FileRouteTypes {
     | '/geostore/orders'
     | '/geostore/rewards'
     | '/geostore/wishlist'
+    | '/play/catalogue'
     | '/play/credit-history'
     | '/play/daily-challenges'
     | '/play/events'
@@ -1305,6 +1365,9 @@ export interface FileRouteTypes {
     | '/geostore/category/$slug'
     | '/geostore/product/$slug'
     | '/play/collections/$slug'
+    | '/play/draw-guess/create'
+    | '/play/draw-guess/join'
+    | '/play/draw-guess/room'
     | '/play/history/$matchId'
     | '/play/multiplayer/create'
     | '/play/multiplayer/join'
@@ -1326,6 +1389,7 @@ export interface FileRouteTypes {
     | '/geolibrary/collections'
     | '/geolibrary/creators'
     | '/play/collections'
+    | '/play/draw-guess'
     | '/play/history'
     | '/play/multiplayer'
     | '/play/pvp'
@@ -1390,8 +1454,10 @@ export interface FileRouteTypes {
     | '/geostore/orders'
     | '/geostore/rewards'
     | '/geostore/wishlist'
+    | '/play/catalogue'
     | '/play/credit-history'
     | '/play/daily-challenges'
+    | '/play/draw-guess'
     | '/play/events'
     | '/play/leaderboard'
     | '/play/level-system'
@@ -1428,6 +1494,9 @@ export interface FileRouteTypes {
     | '/geostore/category/$slug'
     | '/geostore/product/$slug'
     | '/play/collections/$slug'
+    | '/play/draw-guess/create'
+    | '/play/draw-guess/join'
+    | '/play/draw-guess/room'
     | '/play/history/$matchId'
     | '/play/multiplayer/create'
     | '/play/multiplayer/join'
@@ -1449,6 +1518,7 @@ export interface FileRouteTypes {
     | '/geolibrary/collections/'
     | '/geolibrary/creators/'
     | '/play/collections/'
+    | '/play/draw-guess/'
     | '/play/history/'
     | '/play/multiplayer/'
     | '/play/pvp/'
@@ -1903,6 +1973,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlayIndexRouteImport
       parentRoute: typeof PlayRoute
     }
+    '/play/catalogue': {
+      id: '/play/catalogue'
+      path: '/catalogue'
+      fullPath: '/play/catalogue'
+      preLoaderRoute: typeof PlayCatalogueRouteImport
+      parentRoute: typeof PlayRoute
+    }
     '/play/credit-history': {
       id: '/play/credit-history'
       path: '/credit-history'
@@ -1915,6 +1992,13 @@ declare module '@tanstack/react-router' {
       path: '/daily-challenges'
       fullPath: '/play/daily-challenges'
       preLoaderRoute: typeof PlayDailyChallengesRouteImport
+      parentRoute: typeof PlayRoute
+    }
+    '/play/draw-guess': {
+      id: '/play/draw-guess'
+      path: '/draw-guess'
+      fullPath: '/play/draw-guess'
+      preLoaderRoute: typeof PlayDrawGuessRouteImport
       parentRoute: typeof PlayRoute
     }
     '/play/events': {
@@ -2168,6 +2252,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/play/collections/$slug'
       preLoaderRoute: typeof PlayCollectionsSlugRouteImport
       parentRoute: typeof PlayRoute
+    }
+    '/play/draw-guess/': {
+      id: '/play/draw-guess/'
+      path: '/'
+      fullPath: '/play/draw-guess/'
+      preLoaderRoute: typeof PlayDrawGuessIndexRouteImport
+      parentRoute: typeof PlayDrawGuessRoute
+    }
+    '/play/draw-guess/create': {
+      id: '/play/draw-guess/create'
+      path: '/create'
+      fullPath: '/play/draw-guess/create'
+      preLoaderRoute: typeof PlayDrawGuessCreateRouteImport
+      parentRoute: typeof PlayDrawGuessRoute
+    }
+    '/play/draw-guess/join': {
+      id: '/play/draw-guess/join'
+      path: '/join'
+      fullPath: '/play/draw-guess/join'
+      preLoaderRoute: typeof PlayDrawGuessJoinRouteImport
+      parentRoute: typeof PlayDrawGuessRoute
+    }
+    '/play/draw-guess/room': {
+      id: '/play/draw-guess/room'
+      path: '/room'
+      fullPath: '/play/draw-guess/room'
+      preLoaderRoute: typeof PlayDrawGuessRoomRouteImport
+      parentRoute: typeof PlayDrawGuessRoute
     }
     '/play/history/': {
       id: '/play/history/'
@@ -2474,6 +2586,24 @@ const GeostoreRouteWithChildren = GeostoreRoute._addFileChildren(
   GeostoreRouteChildren,
 )
 
+interface PlayDrawGuessRouteChildren {
+  PlayDrawGuessCreateRoute: typeof PlayDrawGuessCreateRoute
+  PlayDrawGuessJoinRoute: typeof PlayDrawGuessJoinRoute
+  PlayDrawGuessRoomRoute: typeof PlayDrawGuessRoomRoute
+  PlayDrawGuessIndexRoute: typeof PlayDrawGuessIndexRoute
+}
+
+const PlayDrawGuessRouteChildren: PlayDrawGuessRouteChildren = {
+  PlayDrawGuessCreateRoute: PlayDrawGuessCreateRoute,
+  PlayDrawGuessJoinRoute: PlayDrawGuessJoinRoute,
+  PlayDrawGuessRoomRoute: PlayDrawGuessRoomRoute,
+  PlayDrawGuessIndexRoute: PlayDrawGuessIndexRoute,
+}
+
+const PlayDrawGuessRouteWithChildren = PlayDrawGuessRoute._addFileChildren(
+  PlayDrawGuessRouteChildren,
+)
+
 interface PlayMultiplayerRouteChildren {
   PlayMultiplayerCreateRoute: typeof PlayMultiplayerCreateRoute
   PlayMultiplayerJoinRoute: typeof PlayMultiplayerJoinRoute
@@ -2532,8 +2662,10 @@ const PlayQuizRouteWithChildren = PlayQuizRoute._addFileChildren(
 )
 
 interface PlayRouteChildren {
+  PlayCatalogueRoute: typeof PlayCatalogueRoute
   PlayCreditHistoryRoute: typeof PlayCreditHistoryRoute
   PlayDailyChallengesRoute: typeof PlayDailyChallengesRoute
+  PlayDrawGuessRoute: typeof PlayDrawGuessRouteWithChildren
   PlayEventsRoute: typeof PlayEventsRoute
   PlayLeaderboardRoute: typeof PlayLeaderboardRoute
   PlayLevelSystemRoute: typeof PlayLevelSystemRoute
@@ -2558,8 +2690,10 @@ interface PlayRouteChildren {
 }
 
 const PlayRouteChildren: PlayRouteChildren = {
+  PlayCatalogueRoute: PlayCatalogueRoute,
   PlayCreditHistoryRoute: PlayCreditHistoryRoute,
   PlayDailyChallengesRoute: PlayDailyChallengesRoute,
+  PlayDrawGuessRoute: PlayDrawGuessRouteWithChildren,
   PlayEventsRoute: PlayEventsRoute,
   PlayLeaderboardRoute: PlayLeaderboardRoute,
   PlayLevelSystemRoute: PlayLevelSystemRoute,

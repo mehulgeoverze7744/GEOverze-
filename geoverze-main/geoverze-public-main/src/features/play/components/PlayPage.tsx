@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 
 import { useMemo, useState } from "react";
 
@@ -12,7 +13,7 @@ import {
   SkeletonBlock,
 } from "@/components/shared";
 import { useBookmarksStore } from "@/stores/bookmarksStore";
-import { QUIZ_CATEGORIES, type QuizCategory } from "../data/categories";
+import { getFeaturedCategories, type QuizCategory } from "../data/categories";
 import { GAME_MODES, type GameMode } from "../data/gameModes";
 import { DISCOVERY_RAILS, FEATURED_QUIZ_IDS, pick, type Quiz } from "../data/quizzes";
 import { usePublishedQuizzes } from "../hooks/usePublishedQuizzes";
@@ -152,9 +153,17 @@ export function PlayPage() {
               eyebrow="Categories"
               title="How Well Do You Know the World?"
               description="Challenge yourself with geography quizzes and discover something new with every question."
+              action={
+                <GeoButton asChild variant="solid" size="md" className="gap-2">
+                  <Link to="/play/catalogue">
+                    Browse Catalogue
+                    <ArrowRight className="h-4 w-4" strokeWidth={2.2} aria-hidden="true" />
+                  </Link>
+                </GeoButton>
+              }
             />
-            <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {QUIZ_CATEGORIES.map((category) => (
+            <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {getFeaturedCategories().map((category) => (
                 <CategoryCard key={category.id} category={category} onPlay={playCategory} />
               ))}
             </div>
