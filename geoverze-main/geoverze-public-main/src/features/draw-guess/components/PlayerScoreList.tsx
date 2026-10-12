@@ -1,7 +1,8 @@
 import { Check, Crown } from "lucide-react";
 
-import { CoverArt } from "@/features/play/components/CoverArt";
+import { ParticipantAvatar } from "@/features/matchmaking/components/RoomPlayerAvatar";
 import { cn } from "@/lib/utils";
+import { selectUser, useAuthStore } from "@/stores/authStore";
 import type { DrawParticipant } from "../types";
 
 type PlayerScoreListProps = {
@@ -12,8 +13,12 @@ type PlayerScoreListProps = {
 };
 
 export function PlayerScoreList({
-  participants, currentDrawerId, correctUserIds = [], myUserId,
+  participants,
+  currentDrawerId,
+  correctUserIds = [],
+  myUserId,
 }: PlayerScoreListProps) {
+  const user = useAuthStore(selectUser);
   const sorted = [...participants].sort((a, b) => b.total_score - a.total_score);
 
   return (
@@ -32,18 +37,32 @@ export function PlayerScoreList({
               p.left_game || !p.connected ? "opacity-50" : "",
             )}
           >
-            <div className="h-8 w-8 flex-shrink-0 overflow-hidden rounded-full border border-bronze/25">
-              <CoverArt art={p.avatar_id ?? "solo"} ratio="square" className="h-8 w-8" />
-            </div>
+            <ParticipantAvatar
+              participant={p}
+              you={isYou}
+              selfAvatar={{ avatarId: user?.avatarId, avatarUrl: user?.avatarUrl }}
+              size={32}
+              alt=""
+            />
 
             <div className="min-w-0 flex-1">
               <p className="flex items-center gap-1.5 truncate text-[0.78rem] font-semibold text-foreground">
                 {p.is_host ? (
-                  <Crown className="h-3 w-3 flex-shrink-0 text-bronze" strokeWidth={2} aria-label="Host" />
+                  <Crown
+                    className="h-3 w-3 flex-shrink-0 text-bronze"
+                    strokeWidth={2}
+                    aria-label="Host"
+                  />
                 ) : null}
-                {isDrawer ? <span className="mr-0.5 text-[0.65rem]" aria-hidden>🎨</span> : null}
+                {isDrawer ? (
+                  <span className="mr-0.5 text-[0.65rem]" aria-hidden>
+                    🎨
+                  </span>
+                ) : null}
                 {p.display_name || p.username}
-                {isYou ? <span className="text-[0.6rem] font-normal text-foreground/40">(you)</span> : null}
+                {isYou ? (
+                  <span className="text-[0.6rem] font-normal text-foreground/40">(you)</span>
+                ) : null}
               </p>
               <p className="text-[0.7rem] text-foreground/50 tabular-nums">{p.total_score} pts</p>
             </div>

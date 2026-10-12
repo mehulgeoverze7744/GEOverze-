@@ -3,13 +3,10 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { GeoButton } from "@/components/shared";
+import { ParticipantAvatar } from "@/features/matchmaking/components/RoomPlayerAvatar";
+import { selectUser, useAuthStore } from "@/stores/authStore";
 import { submitImpVote } from "../data/impRoomApi";
-import type {
-  ImpParticipant,
-  ImpRoom,
-  ImpRoomState,
-  ImpVoteStatusActive,
-} from "../types";
+import type { ImpParticipant, ImpRoom, ImpRoomState, ImpVoteStatusActive } from "../types";
 import { useCountdown } from "./ImpGameHeader";
 
 type VotingPanelProps = {
@@ -19,12 +16,8 @@ type VotingPanelProps = {
   onStateUpdate: (s: ImpRoomState) => void;
 };
 
-export function VotingPanel({
-  roomState,
-  myUserId,
-  voteStatus,
-  onStateUpdate,
-}: VotingPanelProps) {
+export function VotingPanel({ roomState, myUserId, voteStatus, onStateUpdate }: VotingPanelProps) {
+  const user = useAuthStore(selectUser);
   const { room, participants } = roomState;
   const [selected, setSelected] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -45,9 +38,7 @@ export function VotingPanel({
     }
   };
 
-  const eligiblePlayers = participants.filter(
-    (p) => !p.is_excluded && p.user_id !== myUserId,
-  );
+  const eligiblePlayers = participants.filter((p) => !p.is_excluded && p.user_id !== myUserId);
 
   return (
     <div className="space-y-5">
@@ -80,8 +71,8 @@ export function VotingPanel({
         </div>
       ) : (
         <p className="text-[0.82rem] text-foreground/60 leading-relaxed">
-          Based on all the clues, who do you think is the <strong>imposter</strong>? They had
-          a different but related word and tried to blend in.
+          Based on all the clues, who do you think is the <strong>imposter</strong>? They had a
+          different but related word and tried to blend in.
         </p>
       )}
 
@@ -101,16 +92,14 @@ export function VotingPanel({
                   : "border-foreground/10 bg-foreground/[0.03] hover:border-foreground/20 hover:bg-foreground/[0.06]"
               } ${hasVoted ? "opacity-50" : ""}`}
             >
-              <div
-                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[0.7rem] font-bold ${
-                  isSelected ? "bg-bronze/20 text-bronze" : "bg-foreground/10 text-foreground/50"
-                }`}
-              >
-                {p.display_name.charAt(0).toUpperCase()}
-              </div>
-              <span className="text-[0.84rem] font-medium text-foreground">
-                {p.display_name}
-              </span>
+              <ParticipantAvatar
+                participant={p}
+                you={p.user_id === myUserId}
+                selfAvatar={{ avatarId: user?.avatarId, avatarUrl: user?.avatarUrl }}
+                size={32}
+                alt=""
+              />
+              <span className="text-[0.84rem] font-medium text-foreground">{p.display_name}</span>
               {isSelected && (
                 <Check
                   className="ml-auto h-4 w-4 text-bronze shrink-0"

@@ -49,8 +49,8 @@ export interface ImpParticipant {
   last_seen_at: string;
   joined_at: string;
   display_name: string;
-  /** avatar_url aliased to avatar_id by the RPC for UI consistency */
   avatar_id: string | null;
+  avatar_url?: string | null;
 }
 
 // ── Clue ────────────────────────────────────────────────────────────────────

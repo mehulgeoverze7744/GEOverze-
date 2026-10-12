@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
 import { MetaChip } from "@/features/play/components/Badges";
-import { CoverArt } from "@/features/play/components/CoverArt";
+import { ParticipantAvatar } from "@/features/matchmaking/components/RoomPlayerAvatar";
 import { selectUser, useAuthStore } from "@/stores/authStore";
 import { leaveDrawRoom } from "../data/drawRoomApi";
 import type { DrawRoomState } from "../types";
@@ -25,7 +25,15 @@ type DrawGuessLobbyScreenProps = {
 };
 
 export function DrawGuessLobbyScreen({
-  roomId, code, state, loading, error, readyPending, startPending, toggleReady, startGame,
+  roomId,
+  code,
+  state,
+  loading,
+  error,
+  readyPending,
+  startPending,
+  toggleReady,
+  startGame,
 }: DrawGuessLobbyScreenProps) {
   const navigate = useNavigate();
   const user = useAuthStore(selectUser);
@@ -65,7 +73,10 @@ export function DrawGuessLobbyScreen({
     return (
       <PageShell>
         <div className="flex min-h-[70vh] items-center justify-center">
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent text-bronze" aria-label="Loading room…" />
+          <div
+            className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent text-bronze"
+            aria-label="Loading room…"
+          />
         </div>
       </PageShell>
     );
@@ -77,7 +88,9 @@ export function DrawGuessLobbyScreen({
         <SectionContainer className="pt-[calc(var(--nav-height)+var(--space-section-sm))]">
           <div className="game-surface rounded-2xl p-7 text-center">
             <h1 className="text-xl font-semibold text-foreground">Room unavailable</h1>
-            <p className="mt-2 text-[0.9rem] text-foreground/60">{error ?? "This room could not be loaded."}</p>
+            <p className="mt-2 text-[0.9rem] text-foreground/60">
+              {error ?? "This room could not be loaded."}
+            </p>
             <GeoButton variant="solid" size="md" className="mt-6" asChild>
               <Link to="/play/draw-guess">Back to Draw &amp; Guess</Link>
             </GeoButton>
@@ -123,8 +136,12 @@ export function DrawGuessLobbyScreen({
             </div>
 
             <div className="game-surface rounded-2xl px-5 py-4 text-center">
-              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-foreground/50">Room code</p>
-              <p className="mt-2 text-[1.5rem] font-semibold tracking-[0.28em] text-foreground">{room.room_code}</p>
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-foreground/50">
+                Room code
+              </p>
+              <p className="mt-2 text-[1.5rem] font-semibold tracking-[0.28em] text-foreground">
+                {room.room_code}
+              </p>
               <GeoButton variant="ghost" size="sm" className="mt-3" onClick={() => void copyCode()}>
                 <Copy className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
                 {copied ? "Copied" : "Copy code"}
@@ -147,14 +164,24 @@ export function DrawGuessLobbyScreen({
                   key={p.user_id}
                   className="game-surface flex items-center gap-3 overflow-hidden rounded-2xl p-4"
                 >
-                  <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-full border border-bronze/25">
-                    <CoverArt art={p.avatar_id ?? "solo"} ratio="square" className="h-10 w-10" />
-                  </div>
+                  <ParticipantAvatar
+                    participant={p}
+                    you={isYou}
+                    selfAvatar={{ avatarId: user?.avatarId, avatarUrl: user?.avatarUrl }}
+                    size={40}
+                    alt=""
+                  />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-[0.86rem] font-semibold text-foreground">
                       {p.display_name || p.username}
-                      {isYou ? <span className="ml-1 text-[0.65rem] font-normal text-foreground/40">(you)</span> : null}
-                      {p.is_host ? <span className="ml-1 text-[0.65rem] font-normal text-bronze">host</span> : null}
+                      {isYou ? (
+                        <span className="ml-1 text-[0.65rem] font-normal text-foreground/40">
+                          (you)
+                        </span>
+                      ) : null}
+                      {p.is_host ? (
+                        <span className="ml-1 text-[0.65rem] font-normal text-bronze">host</span>
+                      ) : null}
                     </p>
                   </div>
                   <span
@@ -177,14 +204,16 @@ export function DrawGuessLobbyScreen({
               );
             })}
 
-            {Array.from({ length: Math.max(0, room.max_players - participants.length) }).map((_, i) => (
-              <div
-                key={`empty-${i}`}
-                className="rounded-2xl border border-dashed border-bronze/20 px-4 py-5 text-center text-[0.75rem] text-foreground/35"
-              >
-                Open seat
-              </div>
-            ))}
+            {Array.from({ length: Math.max(0, room.max_players - participants.length) }).map(
+              (_, i) => (
+                <div
+                  key={`empty-${i}`}
+                  className="rounded-2xl border border-dashed border-bronze/20 px-4 py-5 text-center text-[0.75rem] text-foreground/35"
+                >
+                  Open seat
+                </div>
+              ),
+            )}
           </div>
 
           <div className="mt-6 rounded-2xl border border-bronze/20 bg-bronze/5 px-5 py-4 text-[0.82rem] leading-relaxed text-foreground/60">

@@ -62,9 +62,12 @@ export function PvpLobbyScreen({
   const seats = useMemo(
     () =>
       state?.participants.map((participant) =>
-        toMatchPlayer(participant, participant.user_id === user?.id),
+        toMatchPlayer(participant, participant.user_id === user?.id, {
+          avatarId: user?.avatarId,
+          avatarUrl: user?.avatarUrl,
+        }),
       ) ?? [],
-    [state?.participants, user?.id],
+    [state?.participants, user],
   );
 
   const openSlotCount = Math.max(0, (state?.room.max_players ?? 2) - seats.length);
@@ -177,9 +180,7 @@ export function PvpLobbyScreen({
                   key={player.id}
                   player={player}
                   ready={Boolean(state.participants.find((p) => p.user_id === player.id)?.is_ready)}
-                  {...(player.you
-                    ? { onToggleReady: () => void toggleReady(!you?.is_ready) }
-                    : {})}
+                  {...(player.you ? { onToggleReady: () => void toggleReady(!you?.is_ready) } : {})}
                 />
               ))}
               {openSlotCount > 0 ? (

@@ -3,7 +3,9 @@ import { Crown, Minus, Swords, Trophy } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
+import { ParticipantAvatar } from "@/features/matchmaking/components/RoomPlayerAvatar";
 import { MetaChip } from "@/features/play/components/Badges";
+import { selectUser, useAuthStore } from "@/stores/authStore";
 import type { QuizSet } from "@/features/quiz/data/types";
 import { resetQuizRun } from "@/stores/quizStore";
 import type { PvpParticipant, PvpRoom } from "../types";
@@ -17,7 +19,14 @@ type PvpMatchResultProps = {
 };
 
 /** Final authoritative duel result after both players submit. */
-export function PvpMatchResult({ set, room, participants, youUserId, roomCode }: PvpMatchResultProps) {
+export function PvpMatchResult({
+  set,
+  room,
+  participants,
+  youUserId,
+  roomCode,
+}: PvpMatchResultProps) {
+  const user = useAuthStore(selectUser);
   const navigate = useNavigate();
   const you = participants.find((p) => p.user_id === youUserId) ?? null;
 
@@ -31,7 +40,13 @@ export function PvpMatchResult({ set, room, participants, youUserId, roomCode }:
   const youWon = !isDraw && room.winner_user_id === youUserId;
   const opponentWon = !isDraw && room.winner_user_id === opponent?.user_id;
 
-  const outcomeLabel = isDraw ? "Draw" : youWon ? "Victory" : opponentWon ? "Defeat" : "Match complete";
+  const outcomeLabel = isDraw
+    ? "Draw"
+    : youWon
+      ? "Victory"
+      : opponentWon
+        ? "Defeat"
+        : "Match complete";
   const OutcomeIcon = isDraw ? Minus : youWon ? Trophy : Crown;
 
   return (
@@ -66,7 +81,9 @@ export function PvpMatchResult({ set, room, participants, youUserId, roomCode }:
             >
               <OutcomeIcon className="h-7 w-7" strokeWidth={1.8} aria-hidden />
             </span>
-            <h2 className="mt-5 text-2xl font-semibold tracking-tight text-foreground">{outcomeLabel}</h2>
+            <h2 className="mt-5 text-2xl font-semibold tracking-tight text-foreground">
+              {outcomeLabel}
+            </h2>
             <p className="mt-2 text-[0.88rem] text-foreground/55">
               {isDraw
                 ? "Both players scored equally."
@@ -86,21 +103,32 @@ export function PvpMatchResult({ set, room, participants, youUserId, roomCode }:
             return (
               <AnimatedSection key={participant.id}>
                 <div
-                  className={`game-surface rounded-2xl p-5 ${
-                    won ? "ring-1 ring-bronze/40" : ""
-                  }`}
+                  className={`game-surface rounded-2xl p-5 ${won ? "ring-1 ring-bronze/40" : ""}`}
                 >
-                  <p className="text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-foreground/50">
-                    {isYou ? "Your result" : "Opponent"}
-                  </p>
-                  <p className="mt-2 text-lg font-semibold text-foreground">
-                    {participant.username}
-                    {won ? " · Winner" : isDraw ? " · Draw" : ""}
-                  </p>
+                  <div className="flex items-center gap-3">
+                    <ParticipantAvatar
+                      participant={participant}
+                      you={isYou}
+                      selfAvatar={{ avatarId: user?.avatarId, avatarUrl: user?.avatarUrl }}
+                      size={44}
+                      alt=""
+                    />
+                    <div className="min-w-0">
+                      <p className="text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-foreground/50">
+                        {isYou ? "Your result" : "Opponent"}
+                      </p>
+                      <p className="mt-2 text-lg font-semibold text-foreground">
+                        {participant.username}
+                        {won ? " · Winner" : isDraw ? " · Draw" : ""}
+                      </p>
+                    </div>
+                  </div>
                   <dl className="mt-4 grid grid-cols-2 gap-3 text-[0.82rem]">
                     <div>
                       <dt className="text-foreground/50">Score</dt>
-                      <dd className="mt-0.5 font-semibold text-foreground">{participant.score ?? 0}</dd>
+                      <dd className="mt-0.5 font-semibold text-foreground">
+                        {participant.score ?? 0}
+                      </dd>
                     </div>
                     <div>
                       <dt className="text-foreground/50">Correct</dt>
@@ -117,7 +145,9 @@ export function PvpMatchResult({ set, room, participants, youUserId, roomCode }:
                     {participant.xp_earned != null ? (
                       <div>
                         <dt className="text-foreground/50">XP earned</dt>
-                        <dd className="mt-0.5 font-semibold text-bronze-glow">+{participant.xp_earned}</dd>
+                        <dd className="mt-0.5 font-semibold text-bronze-glow">
+                          +{participant.xp_earned}
+                        </dd>
                       </div>
                     ) : null}
                     {participant.credits_earned != null ? (

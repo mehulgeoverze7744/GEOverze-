@@ -37,6 +37,58 @@ export function withAvatarCacheBust(src: string, revision?: string | number | nu
  * 2. Custom uploaded image (`avatar_url`)
  * 3. Default 3D astronaut window artwork
  */
+function looksLikeAvatarSrc(value: string) {
+  return (
+    value.startsWith("http://") ||
+    value.startsWith("https://") ||
+    value.startsWith("/") ||
+    value.startsWith("data:")
+  );
+}
+
+/**
+ * Room RPCs historically mixed preset ids and uploaded URLs on `avatar_id`.
+ * Normalize so each participant resolves through the shared avatar system.
+ */
+export function normalizeParticipantAvatar(input: {
+  avatarId?: string | null | undefined;
+  avatarUrl?: string | null | undefined;
+}): { avatarId: string | null; avatarUrl: string | null } {
+  const rawId = input.avatarId?.trim() || null;
+  const rawUrl = input.avatarUrl?.trim() || null;
+
+  if (rawId && looksLikeAvatarSrc(rawId)) {
+    const leftoverId = rawUrl && !looksLikeAvatarSrc(rawUrl) ? rawUrl : null;
+    return { avatarId: leftoverId, avatarUrl: rawId };
+  }
+
+  return { avatarId: rawId, avatarUrl: rawUrl };
+}
+
+/** Prefer the signed-in user's session avatar on their own room card. */
+export function resolveParticipantAvatarFields(
+  participant: { avatar_id?: string | null | undefined; avatar_url?: string | null | undefined },
+  options?: {
+    you?: boolean | undefined;
+    selfAvatar?: { avatarId?: string | null | undefined; avatarUrl?: string | null | undefined } | undefined;
+  },
+) {
+  const live = normalizeParticipantAvatar({
+    avatarId: participant.avatar_id ?? null,
+    avatarUrl: participant.avatar_url ?? null,
+  });
+
+  if (options?.you && options.selfAvatar) {
+    const self = normalizeParticipantAvatar({
+      avatarId: options.selfAvatar.avatarId ?? null,
+      avatarUrl: options.selfAvatar.avatarUrl ?? null,
+    });
+    if (self.avatarId || self.avatarUrl) return self;
+  }
+
+  return live;
+}
+
 export function resolveUserAvatar(input: {
   avatarUrl?: string | null;
   avatarId?: string | null;

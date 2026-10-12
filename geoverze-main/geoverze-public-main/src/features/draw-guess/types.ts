@@ -32,6 +32,7 @@ export type DrawParticipant = {
   username: string;
   display_name: string;
   avatar_id: string | null;
+  avatar_url?: string | null;
   is_host: boolean;
   is_ready: boolean;
   joined_at: string;

@@ -3,7 +3,9 @@ import { Trophy, Users } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
+import { ParticipantAvatar } from "@/features/matchmaking/components/RoomPlayerAvatar";
 import { MetaChip } from "@/features/play/components/Badges";
+import { selectUser, useAuthStore } from "@/stores/authStore";
 import type { QuizSet } from "@/features/quiz/data/types";
 import { resetQuizRun } from "@/stores/quizStore";
 import type { MultiplayerParticipant, MultiplayerRoom } from "../types";
@@ -52,6 +54,7 @@ export function MultiplayerMatchComplete({
   rewardsSettled,
 }: MultiplayerMatchCompleteProps) {
   const navigate = useNavigate();
+  const user = useAuthStore(selectUser);
   const you = participants.find((p) => p.user_id === youUserId) ?? null;
 
   const exitToHub = () => {
@@ -61,8 +64,7 @@ export function MultiplayerMatchComplete({
   const youRank = you?.finish_rank ?? null;
   const isFirstPlace = youRank === 1;
 
-  const headline =
-    youRank != null ? `${formatRankLabel(youRank)} place` : "Match complete";
+  const headline = youRank != null ? `${formatRankLabel(youRank)} place` : "Match complete";
 
   const youCreditLabel = rewardsSettled ? creditLabel(you?.credits_earned) : null;
 
@@ -96,7 +98,9 @@ export function MultiplayerMatchComplete({
             >
               <Trophy className="h-7 w-7" strokeWidth={1.8} aria-hidden />
             </span>
-            <h2 className="mt-5 text-2xl font-semibold tracking-tight text-foreground">{headline}</h2>
+            <h2 className="mt-5 text-2xl font-semibold tracking-tight text-foreground">
+              {headline}
+            </h2>
             <p className="mt-2 text-[0.88rem] text-foreground/55">
               Rankings by score, then submission time, for{" "}
               {room.active_player_count ?? participants.length} players.
@@ -130,6 +134,13 @@ export function MultiplayerMatchComplete({
                   } ${isFirst ? "ring-1 ring-[oklch(0.72_0.13_150/0.35)]" : ""}`}
                 >
                   <div className="flex min-w-0 items-center gap-4">
+                    <ParticipantAvatar
+                      participant={participant}
+                      you={isYou}
+                      selfAvatar={{ avatarId: user?.avatarId, avatarUrl: user?.avatarUrl }}
+                      size={48}
+                      alt=""
+                    />
                     <span
                       className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border text-sm font-semibold tabular-nums ${
                         isFirst

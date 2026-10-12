@@ -11,6 +11,8 @@ export type MatchPlayer = {
   id: string;
   username: string;
   art: string;
+  avatarId?: string | null;
+  avatarUrl?: string | null;
   level: number;
   rankTitle: string;
   country: string;

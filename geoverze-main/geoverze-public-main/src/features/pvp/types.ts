@@ -26,6 +26,7 @@ export type PvpParticipant = {
   username: string;
   display_name: string;
   avatar_id: string | null;
+  avatar_url?: string | null;
   level: number;
   submitted_at: string | null;
   correct: number | null;

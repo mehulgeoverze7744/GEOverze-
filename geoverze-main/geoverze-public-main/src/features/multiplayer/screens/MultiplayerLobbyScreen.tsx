@@ -64,19 +64,19 @@ export function MultiplayerLobbyScreen({
       state?.participants.map((participant) =>
         toMatchPlayer(
           {
-            ...participant,
-            submitted_at: null,
-            correct: null,
-            total: null,
-            score: null,
-            best_streak: null,
-            xp_earned: null,
-            credits_earned: null,
+            user_id: participant.user_id,
+            username: participant.username,
+            display_name: participant.display_name,
+            avatar_id: participant.avatar_id,
+            avatar_url: participant.avatar_url,
+            level: participant.level,
+            is_host: participant.is_host,
           },
           participant.user_id === user?.id,
+          { avatarId: user?.avatarId, avatarUrl: user?.avatarUrl },
         ),
       ) ?? [],
-    [state?.participants, user?.id],
+    [state?.participants, user],
   );
 
   const openSlotCount = Math.max(0, (state?.room.max_players ?? 6) - seats.length);
@@ -196,9 +196,7 @@ export function MultiplayerLobbyScreen({
                   key={player.id}
                   player={player}
                   ready={Boolean(state.participants.find((p) => p.user_id === player.id)?.is_ready)}
-                  {...(player.you
-                    ? { onToggleReady: () => void toggleReady(!you?.is_ready) }
-                    : {})}
+                  {...(player.you ? { onToggleReady: () => void toggleReady(!you?.is_ready) } : {})}
                 />
               ))}
               {Array.from({ length: openSlotCount }).map((_, index) => (

@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { CoverArt } from "@/features/play/components/CoverArt";
 import { MetaChip } from "@/features/play/components/Badges";
 import { MEMBERSHIP_LABEL, type MatchPlayer } from "../data/players";
+import { RoomPlayerAvatar } from "./RoomPlayerAvatar";
 
 /** One player seat: identity, rank and ready state. */
 export function PlayerSlot({
@@ -20,12 +21,20 @@ export function PlayerSlot({
   return (
     <div className={cn("game-surface overflow-hidden rounded-2xl", className)}>
       <div className="relative">
-        <CoverArt art={player.art} ratio="wide" className="h-24" />
-        {player.you ? (
-          <span className="absolute left-3 top-3">
-            <MetaChip tone="bronze">You</MetaChip>
-          </span>
-        ) : null}
+        {player.avatarId !== undefined || player.avatarUrl !== undefined ? (
+          <RoomPlayerAvatar
+            variant="banner"
+            avatarId={player.avatarId}
+            avatarUrl={player.avatarUrl}
+            alt=""
+          />
+        ) : (
+          <CoverArt art={player.art} ratio="wide" className="h-24" />
+        )}
+        <div className="absolute left-3 top-3 flex flex-col items-start gap-1">
+          {player.you ? <MetaChip tone="bronze">You</MetaChip> : null}
+          {player.rankTitle === "Host" ? <MetaChip tone="bronze">Host</MetaChip> : null}
+        </div>
         <span className="absolute right-3 top-3">
           <MetaChip>
             <Crown className="h-3 w-3 text-bronze" strokeWidth={2.2} aria-hidden />

@@ -1,6 +1,8 @@
 import { Swords, Wifi } from "lucide-react";
 
+import { ParticipantAvatar } from "@/features/matchmaking/components/RoomPlayerAvatar";
 import { MetaChip } from "@/features/play/components/Badges";
+import { selectUser, useAuthStore } from "@/stores/authStore";
 import { useQuizStore } from "@/stores/quizStore";
 import type { PvpParticipant, PvpRoomStatus } from "../types";
 
@@ -12,6 +14,7 @@ type PvpOpponentPanelProps = {
 
 /** Live duel roster beside the quiz play screen. */
 export function PvpOpponentPanel({ participants, youUserId, roomStatus }: PvpOpponentPanelProps) {
+  const user = useAuthStore(selectUser);
   const answered = Object.keys(useQuizStore((s) => s.answers)).length;
 
   return (
@@ -48,11 +51,26 @@ export function PvpOpponentPanel({ participants, youUserId, roomStatus }: PvpOpp
           return (
             <li
               key={participant.id}
-              className="flex items-center justify-between rounded-xl border border-bronze/12 bg-[oklch(0.185_0.008_62)] px-3 py-2 text-[0.8rem]"
+              className="flex items-center justify-between gap-3 rounded-xl border border-bronze/12 bg-[oklch(0.185_0.008_62)] px-3 py-2 text-[0.8rem]"
             >
-              <span className={isYou ? "font-semibold text-bronze-glow" : "text-foreground/65"}>
-                {participant.username}
-                {isYou ? " (you)" : ""}
+              <span className="flex min-w-0 items-center gap-2.5">
+                <ParticipantAvatar
+                  participant={participant}
+                  you={isYou}
+                  selfAvatar={{ avatarId: user?.avatarId, avatarUrl: user?.avatarUrl }}
+                  size={32}
+                  alt=""
+                />
+                <span
+                  className={
+                    isYou
+                      ? "truncate font-semibold text-bronze-glow"
+                      : "truncate text-foreground/65"
+                  }
+                >
+                  {participant.username}
+                  {isYou ? " (you)" : ""}
+                </span>
               </span>
               <MetaChip>{statusLabel}</MetaChip>
             </li>

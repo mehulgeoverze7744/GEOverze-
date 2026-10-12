@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
 import { MetaChip } from "@/features/play/components/Badges";
+import { ParticipantAvatar } from "@/features/matchmaking/components/RoomPlayerAvatar";
 import { selectUser, useAuthStore } from "@/stores/authStore";
 import type { ImpRoomState } from "../types";
 
@@ -145,9 +146,13 @@ export function ImposterLobbyScreen({
                   key={p.user_id}
                   className="flex items-center gap-3 rounded-xl border border-foreground/8 bg-foreground/[0.03] px-4 py-3"
                 >
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-foreground/10 text-[0.7rem] font-bold text-foreground/60">
-                    {p.display_name.charAt(0).toUpperCase()}
-                  </div>
+                  <ParticipantAvatar
+                    participant={p}
+                    you={p.user_id === user?.id}
+                    selfAvatar={{ avatarId: user?.avatarId, avatarUrl: user?.avatarUrl }}
+                    size={32}
+                    alt=""
+                  />
                   <span className="flex-1 text-[0.88rem] font-medium text-foreground">
                     {p.display_name}
                     {p.is_host && (

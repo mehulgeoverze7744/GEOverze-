@@ -2,7 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Trophy } from "lucide-react";
 
 import { GeoButton } from "@/components/shared";
-import { CoverArt } from "@/features/play/components/CoverArt";
+import { ParticipantAvatar } from "@/features/matchmaking/components/RoomPlayerAvatar";
+import { selectUser, useAuthStore } from "@/stores/authStore";
 import type { DrawParticipant, DrawRoom } from "../types";
 
 type ResultsOverlayProps = {
@@ -15,8 +16,14 @@ type ResultsOverlayProps = {
 };
 
 export function ResultsOverlay({
-  room, participants, myUserId, isHost, restartPending, onRestart,
+  room,
+  participants,
+  myUserId,
+  isHost,
+  restartPending,
+  onRestart,
 }: ResultsOverlayProps) {
+  const user = useAuthStore(selectUser);
   const sorted = [...participants].sort((a, b) => b.total_score - a.total_score);
   const winner = sorted[0];
 
@@ -25,9 +32,7 @@ export function ResultsOverlay({
       <div className="game-surface mx-auto w-full max-w-lg rounded-3xl p-8">
         <div className="text-center">
           <Trophy className="mx-auto h-10 w-10 text-bronze" strokeWidth={1.6} aria-hidden />
-          <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">
-            Game over!
-          </h2>
+          <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">Game over!</h2>
           {winner ? (
             <p className="mt-2 text-[0.9rem] text-foreground/65">
               Winner:{" "}
@@ -48,14 +53,20 @@ export function ResultsOverlay({
               <span className="w-5 text-center text-[0.8rem] font-semibold text-foreground/50">
                 {i + 1}.
               </span>
-              <div className="h-8 w-8 overflow-hidden rounded-full border border-bronze/25">
-                <CoverArt art={p.avatar_id ?? "solo"} ratio="square" className="h-8 w-8" />
-              </div>
+              <ParticipantAvatar
+                participant={p}
+                you={p.user_id === myUserId}
+                selfAvatar={{ avatarId: user?.avatarId, avatarUrl: user?.avatarUrl }}
+                size={32}
+                alt=""
+              />
               <div className="flex-1">
                 <p className="text-[0.82rem] font-semibold text-foreground">
                   {p.display_name || p.username}
                   {p.user_id === myUserId ? (
-                    <span className="ml-1 text-[0.65rem] font-normal text-foreground/40">(you)</span>
+                    <span className="ml-1 text-[0.65rem] font-normal text-foreground/40">
+                      (you)
+                    </span>
                   ) : null}
                 </p>
                 <p className="text-[0.7rem] text-foreground/50 tabular-nums">
@@ -63,7 +74,9 @@ export function ResultsOverlay({
                 </p>
               </div>
               {i === 0 ? (
-                <span className="text-[1.1rem]" aria-hidden>🏆</span>
+                <span className="text-[1.1rem]" aria-hidden>
+                  🏆
+                </span>
               ) : null}
             </li>
           ))}

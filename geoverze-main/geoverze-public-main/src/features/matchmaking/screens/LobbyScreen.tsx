@@ -10,6 +10,7 @@ import { GAME_MODES } from "@/features/play/data/gameModes";
 import { defaultPublishedQuizId } from "@/features/play/data/quizzes";
 import { usePublishedQuizzes } from "@/features/play/hooks/usePublishedQuizzes";
 import { useQuizSet } from "@/features/quiz";
+import { selectUser, useAuthStore } from "@/stores/authStore";
 import { useMatchStore } from "@/stores/matchStore";
 import { useQuizStore, type QuizMode } from "@/stores/quizStore";
 import { PlayerSlot, ReservedSlot } from "../components/PlayerSlot";
@@ -36,6 +37,7 @@ export function LobbyScreen() {
   const set = rawSet;
   const modeMeta = GAME_MODES.find((m) => m.id === resolvedMode);
 
+  const user = useAuthStore(selectUser);
   const roster = useMatchStore((s) => s.roster);
   const ready = useMatchStore((s) => s.ready);
   const resolveMatch = useMatchStore((s) => s.resolveMatch);
@@ -77,7 +79,15 @@ export function LobbyScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [youReady, countdown]);
 
-  const seats = [{ ...YOU }, ...roster];
+  const seats = [
+    {
+      ...YOU,
+      username: user?.username ?? user?.displayName ?? YOU.username,
+      avatarId: user?.avatarId ?? null,
+      avatarUrl: user?.avatarUrl ?? null,
+    },
+    ...roster,
+  ];
 
   if (catalogLoading || setLoading) {
     return (
