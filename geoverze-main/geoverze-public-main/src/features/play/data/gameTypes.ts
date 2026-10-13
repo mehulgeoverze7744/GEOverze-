@@ -10,6 +10,9 @@ export type GameType = {
   emoji: string;
   art: string;
   tags: readonly string[];
+  imageSrc?: string;
+  imageAlt?: string;
+  objectPosition?: string;
   to?: "/play/search" | "/play/draw-guess" | "/play/imposter";
   search?: GameTypeSearch;
 };
@@ -23,6 +26,8 @@ export const GAME_TYPES: readonly GameType[] = [
     emoji: "🎨",
     art: "draw-guess",
     tags: ["Party", "Live"],
+    imageSrc: "/assets/play/draw-and-guess.jpg",
+    imageAlt: "Sketchbook world map with flags and landmarks for Draw & Guess",
     to: "/play/draw-guess",
   },
   {
@@ -32,6 +37,8 @@ export const GAME_TYPES: readonly GameType[] = [
     emoji: "🕵️‍♂️",
     art: "geography-imposter",
     tags: ["Social", "Deduction"],
+    imageSrc: "/assets/play/geography-imposter.jpg",
+    imageAlt: "Open atlas with a magnifying glass and guess notes for Geography Imposter",
     to: "/play/imposter",
   },
   {
@@ -41,6 +48,8 @@ export const GAME_TYPES: readonly GameType[] = [
     emoji: "🤩",
     art: "emoji-fun",
     tags: ["Fast", "Visual"],
+    imageSrc: "/assets/play/emoji-and-fun-quizzes.jpg",
+    imageAlt: "Globe surrounded by emoji and geography stickers for Emoji & Fun Quizzes",
     to: "/play/search",
     search: { q: undefined, category: "flags" },
   },
@@ -52,6 +61,9 @@ export const GAME_TYPES: readonly GameType[] = [
     emoji: "🌍",
     art: "educational-quizzes",
     tags: ["Classic", "Catalog"],
+    imageSrc: "/assets/play/educational-quizzes.jpg",
+    imageAlt: "Desk globe, atlas, and compass for Educational Quizzes",
+    objectPosition: "center 42%",
     to: "/play/search",
     search: { q: undefined, category: undefined },
   },

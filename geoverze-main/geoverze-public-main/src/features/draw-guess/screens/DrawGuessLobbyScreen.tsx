@@ -7,6 +7,8 @@ import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
 import { MetaChip } from "@/features/play/components/Badges";
 import { ParticipantAvatar } from "@/features/matchmaking/components/RoomPlayerAvatar";
+import { SessionHero } from "@/features/play/components/SessionHero";
+import { thumbnailForGameType } from "@/features/play/data/sessionArtwork";
 import { selectUser, useAuthStore } from "@/stores/authStore";
 import { leaveDrawRoom } from "../data/drawRoomApi";
 import type { DrawRoomState } from "../types";
@@ -125,6 +127,10 @@ export function DrawGuessLobbyScreen({
             <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2.2} aria-hidden />
             Draw &amp; Guess hub
           </Link>
+
+          <div className="mt-5 overflow-hidden rounded-2xl border border-bronze/15">
+            <SessionHero thumbnail={thumbnailForGameType("draw-guess")} className="h-36 sm:h-44" />
+          </div>
 
           <div className="mt-5 flex flex-wrap items-start justify-between gap-4">
             <div>

@@ -4,6 +4,8 @@ import { useState } from "react";
 
 import { AnimatedCounter, GeoButton, ProgressRing } from "@/components/shared";
 import { MetaChip } from "@/features/play/components/Badges";
+import { SessionHero } from "@/features/play/components/SessionHero";
+import { thumbnailForQuizSession } from "@/features/play/data/sessionArtwork";
 import { cn } from "@/lib/utils";
 import type { QuizSet } from "../data/types";
 import { formatDuration, type RunSummary } from "../lib/session";
@@ -86,9 +88,14 @@ export function ResultSummary({
 
   return (
     <QuizLayout width="default" className="pt-10">
-      <section className="game-surface relative overflow-hidden rounded-2xl p-6 sm:p-8">
+      <section className="game-surface relative overflow-hidden rounded-2xl">
+        <SessionHero
+          art={set.art}
+          thumbnail={thumbnailForQuizSession(set.id)}
+          className="h-36 sm:h-44"
+        />
         {pct >= 75 ? <Confetti /> : null}
-        <div className="relative flex flex-col items-center text-center">
+        <div className="relative flex flex-col items-center p-6 text-center sm:p-8">
           <MetaChip tone="bronze">{set.title}</MetaChip>
           <div className="mt-5">
             <ProgressRing value={pct} size={132} label="Accuracy">
@@ -108,57 +115,59 @@ export function ResultSummary({
           </p>
         </div>
 
-        <div className="relative mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Stat label="Correct" value={String(summary.correct)} tone="good" />
-          <Stat label="Wrong" value={String(summary.wrong)} tone="bad" />
-          <Stat label="Skipped" value={String(summary.skipped)} />
-          <Stat label="Time" value={formatDuration(summary.durationMs)} />
-          <Stat label="Score" value={String(summary.score)} />
-          <Stat label="Best streak" value={String(summary.bestStreak)} />
-          <Stat label="XP earned" value={`+${xpDisplay}`} />
-          <Stat label="Credits" value="+0" />
-        </div>
+        <div className="relative px-6 pb-6 sm:px-8 sm:pb-8">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <Stat label="Correct" value={String(summary.correct)} tone="good" />
+            <Stat label="Wrong" value={String(summary.wrong)} tone="bad" />
+            <Stat label="Skipped" value={String(summary.skipped)} />
+            <Stat label="Time" value={formatDuration(summary.durationMs)} />
+            <Stat label="Score" value={String(summary.score)} />
+            <Stat label="Best streak" value={String(summary.bestStreak)} />
+            <Stat label="XP earned" value={`+${xpDisplay}`} />
+            <Stat label="Credits" value="+0" />
+          </div>
 
-        {submitError ? (
-          <p className="relative mt-4 flex items-center justify-center gap-2 text-[0.72rem] text-[oklch(0.84_0.15_25)]">
-            <AlertCircle className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden />
-            Could not save your result. Your score is shown below but was not recorded.
-          </p>
-        ) : hydrated ? (
-          <p className="relative mt-4 text-center text-[0.72rem] text-foreground/40">
-            Saved result — answer review is only available in the original session.
-          </p>
-        ) : serverResult ? null : (
-          <p className="relative mt-4 text-center text-[0.72rem] text-foreground/40">Saving…</p>
-        )}
+          {submitError ? (
+            <p className="relative mt-4 flex items-center justify-center gap-2 text-[0.72rem] text-[oklch(0.84_0.15_25)]">
+              <AlertCircle className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden />
+              Could not save your result. Your score is shown below but was not recorded.
+            </p>
+          ) : hydrated ? (
+            <p className="relative mt-4 text-center text-[0.72rem] text-foreground/40">
+              Saved result — answer review is only available in the original session.
+            </p>
+          ) : serverResult ? null : (
+            <p className="relative mt-4 text-center text-[0.72rem] text-foreground/40">Saving…</p>
+          )}
 
-        <div className="relative mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <GeoButton variant="solid" size="lg" onClick={onPlayAgain}>
-            <RotateCcw className="h-4 w-4" strokeWidth={2} aria-hidden />
-            Play again
-          </GeoButton>
-          {reviewSearch ? (
-            <GeoButton variant="dark" size="lg" asChild>
-              <Link to="/play/quiz/review" search={reviewSearch}>
-                <ListChecks className="h-4 w-4" strokeWidth={1.9} aria-hidden />
-                Review answers
+          <div className="relative mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <GeoButton variant="solid" size="lg" onClick={onPlayAgain}>
+              <RotateCcw className="h-4 w-4" strokeWidth={2} aria-hidden />
+              Play again
+            </GeoButton>
+            {reviewSearch ? (
+              <GeoButton variant="dark" size="lg" asChild>
+                <Link to="/play/quiz/review" search={reviewSearch}>
+                  <ListChecks className="h-4 w-4" strokeWidth={1.9} aria-hidden />
+                  Review answers
+                </Link>
+              </GeoButton>
+            ) : null}
+            <GeoButton variant="ghost" size="lg" onClick={share}>
+              <Share2 className="h-4 w-4" strokeWidth={1.9} aria-hidden />
+              {shared ? "Copied" : "Share result"}
+            </GeoButton>
+            <GeoButton variant="ghost" size="lg" asChild>
+              <Link to="/play">
+                <Home className="h-4 w-4" strokeWidth={1.9} aria-hidden />
+                Back to hub
               </Link>
             </GeoButton>
-          ) : null}
-          <GeoButton variant="ghost" size="lg" onClick={share}>
-            <Share2 className="h-4 w-4" strokeWidth={1.9} aria-hidden />
-            {shared ? "Copied" : "Share result"}
-          </GeoButton>
-          <GeoButton variant="ghost" size="lg" asChild>
-            <Link to="/play">
-              <Home className="h-4 w-4" strokeWidth={1.9} aria-hidden />
-              Back to hub
-            </Link>
-          </GeoButton>
+          </div>
+          <p aria-live="polite" className="sr-only">
+            {shared ? "Result copied to clipboard" : ""}
+          </p>
         </div>
-        <p aria-live="polite" className="sr-only">
-          {shared ? "Result copied to clipboard" : ""}
-        </p>
       </section>
     </QuizLayout>
   );

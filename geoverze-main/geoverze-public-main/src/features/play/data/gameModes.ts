@@ -14,6 +14,12 @@ export type GameMode = {
   imageAlt?: string;
 };
 
+/** Flip `comingSoon` on a GAME_MODES entry to re-enable that mode. */
+export function isGameModeAvailable(modeId: string): boolean {
+  const mode = GAME_MODES.find((entry) => entry.id === modeId);
+  return mode ? !mode.comingSoon : true;
+}
+
 export const GAME_MODES: readonly GameMode[] = [
   {
     id: "solo",
@@ -51,7 +57,8 @@ export const GAME_MODES: readonly GameMode[] = [
     description: "No clock, no score. Learn the map before you compete on it.",
     icon: Dumbbell,
     art: "practice",
-    cta: "Start practising",
+    cta: "Coming soon",
+    comingSoon: true,
     imageSrc: "/assets/play/practice.jpg",
     imageAlt: "Practice geography game",
   },
@@ -61,7 +68,8 @@ export const GAME_MODES: readonly GameMode[] = [
     description: "Ten questions, one shot, a new set every midnight.",
     icon: CalendarDays,
     art: "daily",
-    cta: "Play today's set",
+    cta: "Coming soon",
+    comingSoon: true,
     imageSrc: "/assets/play/daily-challenge.jpg",
     imageAlt: "Daily Challenge geography game",
   },
@@ -71,7 +79,8 @@ export const GAME_MODES: readonly GameMode[] = [
     description: "A longer expedition with bonus rewards for finishing clean.",
     icon: CalendarRange,
     art: "weekly",
-    cta: "Enter this week",
+    cta: "Coming soon",
+    comingSoon: true,
     imageSrc: "/assets/play/weekly-challenge.jpg",
     imageAlt: "Weekly Challenge geography game",
   },

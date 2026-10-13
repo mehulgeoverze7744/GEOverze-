@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
 import { MetaChip } from "@/features/play/components/Badges";
+import { SessionHero } from "@/features/play/components/SessionHero";
+import { thumbnailForGameType } from "@/features/play/data/sessionArtwork";
 import {
   DRAW_CATEGORY_OPTIONS,
   DRAW_DEFAULT_TURN_SECONDS,
@@ -30,9 +32,7 @@ export function DrawGuessCreateScreen() {
   const [creating, setCreating] = useState(false);
 
   const toggleCategory = (cat: DrawCategory) => {
-    setCategories((prev) =>
-      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
-    );
+    setCategories((prev) => (prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]));
   };
 
   const handleCreate = async () => {
@@ -70,7 +70,12 @@ export function DrawGuessCreateScreen() {
             <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2.2} aria-hidden />
             Draw &amp; Guess hub
           </Link>
-          <MetaChip tone="bronze" className="mt-5">Create room</MetaChip>
+          <div className="mt-5 overflow-hidden rounded-2xl border border-bronze/15">
+            <SessionHero thumbnail={thumbnailForGameType("draw-guess")} className="h-36 sm:h-44" />
+          </div>
+          <MetaChip tone="bronze" className="mt-5">
+            Create room
+          </MetaChip>
           <h1 className="mt-4 text-[clamp(1.8rem,4vw,2.6rem)] font-semibold tracking-tight text-foreground">
             Configure your game
           </h1>
@@ -84,7 +89,10 @@ export function DrawGuessCreateScreen() {
           <div className="flex flex-col gap-6">
             {/* Rounds */}
             <section aria-labelledby="rounds-label">
-              <p id="rounds-label" className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-foreground/50">
+              <p
+                id="rounds-label"
+                className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-foreground/50"
+              >
                 Rounds
               </p>
               <div className="mt-3 flex gap-2">
@@ -109,7 +117,10 @@ export function DrawGuessCreateScreen() {
 
             {/* Max players */}
             <section aria-labelledby="players-label">
-              <p id="players-label" className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-foreground/50">
+              <p
+                id="players-label"
+                className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-foreground/50"
+              >
                 Max players
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -134,7 +145,10 @@ export function DrawGuessCreateScreen() {
 
             {/* Difficulty */}
             <section aria-labelledby="difficulty-label">
-              <p id="difficulty-label" className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-foreground/50">
+              <p
+                id="difficulty-label"
+                className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-foreground/50"
+              >
                 Difficulty
               </p>
               <div className="mt-3 flex gap-2">
@@ -159,7 +173,10 @@ export function DrawGuessCreateScreen() {
 
             {/* Turn seconds */}
             <section aria-labelledby="turn-secs-label">
-              <p id="turn-secs-label" className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-foreground/50">
+              <p
+                id="turn-secs-label"
+                className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-foreground/50"
+              >
                 Drawing time per turn — <span className="text-foreground">{turnSeconds}s</span>
               </p>
               <input
@@ -181,7 +198,10 @@ export function DrawGuessCreateScreen() {
 
           {/* Right column — categories */}
           <section aria-labelledby="categories-label">
-            <p id="categories-label" className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-foreground/50">
+            <p
+              id="categories-label"
+              className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-foreground/50"
+            >
               Word categories{" "}
               <span className="font-normal text-foreground/40">(leave blank for all)</span>
             </p>

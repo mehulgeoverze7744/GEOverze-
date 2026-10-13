@@ -1,6 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import { LobbyScreen } from "@/features/matchmaking";
+import { isGameModeAvailable } from "@/features/play/data/gameModes";
 
 const t = "Game Lobby — GEOverze";
 const d =
@@ -11,6 +12,12 @@ export const Route = createFileRoute("/play/lobby")({
     mode: typeof search["mode"] === "string" ? (search["mode"] as string) : undefined,
     quiz: typeof search["quiz"] === "string" ? (search["quiz"] as string) : undefined,
   }),
+  beforeLoad: ({ search }) => {
+    const mode = search["mode"];
+    if (typeof mode === "string" && !isGameModeAvailable(mode)) {
+      throw redirect({ to: "/play" });
+    }
+  },
   head: () => ({
     meta: [
       { title: t },

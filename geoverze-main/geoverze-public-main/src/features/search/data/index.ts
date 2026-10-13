@@ -45,8 +45,7 @@ export const SEARCH_INDEX: readonly SearchRecord[] = [
     title: "Daily challenge",
     meta: "Play · Resets at midnight",
     keywords: ["daily", "challenge", "streak"],
-    to: "/play/lobby",
-    search: { mode: "daily", quiz: undefined },
+    to: "/play",
   },
 
   {

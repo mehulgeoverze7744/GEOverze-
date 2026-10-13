@@ -4,6 +4,8 @@ import { Link } from "@tanstack/react-router";
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
 import { MetaChip } from "@/features/play/components/Badges";
+import { SessionHero } from "@/features/play/components/SessionHero";
+import { thumbnailForGameType } from "@/features/play/data/sessionArtwork";
 import { selectUser, useAuthStore } from "@/stores/authStore";
 
 /** /play/imposter — entry hub with Create / Join cards. */
@@ -17,11 +19,13 @@ export function ImposterHubScreen() {
           size="narrow"
           className="pt-[calc(var(--nav-height)+var(--space-section-sm))] pb-[var(--space-section-sm)] text-center"
         >
+          <div className="mx-auto mb-6 overflow-hidden rounded-2xl border border-bronze/15">
+            <SessionHero thumbnail={thumbnailForGameType("geography-imposter")} className="h-36" />
+          </div>
           <Shield className="mx-auto h-12 w-12 text-bronze/60 mb-4" strokeWidth={1.4} aria-hidden />
           <h1 className="text-2xl font-semibold text-foreground">Sign in to play</h1>
           <p className="mt-3 text-[0.88rem] text-foreground/60">
-            Geography Imposter is a live multiplayer game. Please sign in to create or join a
-            room.
+            Geography Imposter is a live multiplayer game. Please sign in to create or join a room.
           </p>
         </SectionContainer>
       </PageShell>
@@ -42,6 +46,13 @@ export function ImposterHubScreen() {
             ← Let's Play
           </Link>
 
+          <div className="mt-5 overflow-hidden rounded-2xl border border-bronze/15">
+            <SessionHero
+              thumbnail={thumbnailForGameType("geography-imposter")}
+              className="h-40 sm:h-52"
+            />
+          </div>
+
           <MetaChip tone="bronze" className="mt-5">
             Multiplayer · 3–16 players
           </MetaChip>
@@ -50,8 +61,8 @@ export function ImposterHubScreen() {
             Geography Imposter
           </h1>
           <p className="mt-3 max-w-lg text-[0.9rem] leading-relaxed text-foreground/60">
-            One player gets a different word. Everyone gives clues. Can you spot the imposter
-            before they escape?
+            One player gets a different word. Everyone gives clues. Can you spot the imposter before
+            they escape?
           </p>
         </AnimatedSection>
 
@@ -64,8 +75,8 @@ export function ImposterHubScreen() {
               </div>
               <h2 className="text-[1.05rem] font-semibold text-foreground">Create a Room</h2>
               <p className="mt-2 text-[0.82rem] leading-relaxed text-foreground/55">
-                Choose the category, difficulty, and player limit. Get a room code to share
-                with friends.
+                Choose the category, difficulty, and player limit. Get a room code to share with
+                friends.
               </p>
               <div className="mt-4 flex items-center gap-1.5 text-[0.78rem] font-semibold text-bronze">
                 Create room

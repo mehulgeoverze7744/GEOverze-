@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
 import { MetaChip } from "@/features/play/components/Badges";
+import { SessionHero } from "@/features/play/components/SessionHero";
+import { thumbnailForGameType } from "@/features/play/data/sessionArtwork";
 import { createImpRoom } from "../data/impRoomApi";
 import {
   DEFAULT_IMP_CAPACITY,
@@ -53,6 +55,12 @@ export function ImposterCreateScreen() {
             <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2.2} aria-hidden />
             Back
           </Link>
+          <div className="mt-5 overflow-hidden rounded-2xl border border-bronze/15">
+            <SessionHero
+              thumbnail={thumbnailForGameType("geography-imposter")}
+              className="h-36 sm:h-44"
+            />
+          </div>
           <MetaChip tone="bronze" className="mt-5">
             Create room
           </MetaChip>
@@ -72,9 +80,7 @@ export function ImposterCreateScreen() {
               <Settings className="h-4 w-4 text-bronze" strokeWidth={1.9} aria-hidden />
               Max players
             </h2>
-            <p className="mt-1.5 text-[0.78rem] text-foreground/55">
-              Minimum 3 · Maximum 16
-            </p>
+            <p className="mt-1.5 text-[0.78rem] text-foreground/55">Minimum 3 · Maximum 16</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {IMP_CAPACITY_OPTIONS.map((n) => (
                 <GeoButton

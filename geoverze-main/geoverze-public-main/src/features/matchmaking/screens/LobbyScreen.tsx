@@ -5,8 +5,9 @@ import { useEffect, useState } from "react";
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, ProgressRing, SectionContainer } from "@/components/shared";
 import { DifficultyBadge, MetaChip } from "@/features/play/components/Badges";
-import { CoverArt } from "@/features/play/components/CoverArt";
+import { SessionHero } from "@/features/play/components/SessionHero";
 import { GAME_MODES } from "@/features/play/data/gameModes";
+import { thumbnailForQuizSession } from "@/features/play/data/sessionArtwork";
 import { defaultPublishedQuizId } from "@/features/play/data/quizzes";
 import { usePublishedQuizzes } from "@/features/play/hooks/usePublishedQuizzes";
 import { useQuizSet } from "@/features/quiz";
@@ -53,8 +54,14 @@ export function LobbyScreen() {
     if (social && roster.length === 0) resolveMatch(ROOM_SIZE[resolvedMode] ?? 1);
   }, [social, roster.length, resolveMatch, resolvedMode]);
 
+  useEffect(() => {
+    if (modeMeta?.comingSoon) {
+      void navigate({ to: "/play" });
+    }
+  }, [modeMeta?.comingSoon, navigate]);
+
   const launch = () => {
-    if (!set) return;
+    if (!set || modeMeta?.comingSoon) return;
     startRun(set.id, RUN_MODE[resolvedMode] ?? "solo");
     const target =
       resolvedMode === "pvp"
@@ -207,7 +214,11 @@ export function LobbyScreen() {
 
           <AnimatedSection>
             <div className="game-surface overflow-hidden rounded-2xl">
-              <CoverArt art={set.art} ratio="wide" className="h-36" />
+              <SessionHero
+                art={set.art}
+                thumbnail={thumbnailForQuizSession(set.id)}
+                className="h-36"
+              />
               <div className="p-5 sm:p-6">
                 <div className="flex flex-wrap items-center gap-2">
                   <DifficultyBadge level={set.difficulty} />

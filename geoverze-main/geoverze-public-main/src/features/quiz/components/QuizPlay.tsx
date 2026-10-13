@@ -2,6 +2,8 @@ import { ArrowLeft, ArrowRight, Check, Flag, SkipForward } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { GeoButton } from "@/components/shared";
+import { SessionHero } from "@/features/play/components/SessionHero";
+import { thumbnailForQuizSession } from "@/features/play/data/sessionArtwork";
 import { cn } from "@/lib/utils";
 import { useQuizStore, type QuizMode } from "@/stores/quizStore";
 import type { QuizSet } from "../data/types";
@@ -152,6 +154,13 @@ export function QuizPlay({
     >
       <div className={cn("pt-6", sidebar && "grid gap-6 lg:grid-cols-[1fr_18rem]")}>
         <div>
+          <div className="mb-5 overflow-hidden rounded-2xl border border-bronze/15">
+            <SessionHero
+              art={set.art}
+              thumbnail={thumbnailForQuizSession(set.id)}
+              className="h-28 sm:h-36"
+            />
+          </div>
           <QuestionRenderer
             key={question.id}
             question={question}

@@ -4,6 +4,7 @@ import { Play } from "lucide-react";
 import { GeoButton } from "@/components/shared";
 import { cn } from "@/lib/utils";
 import type { GameType } from "../data/gameTypes";
+import { coverFromThumbnail } from "../data/sessionArtwork";
 import { MetaChip } from "./Badges";
 import { CoverArt } from "./CoverArt";
 import { GameCard } from "./GameCard";
@@ -30,15 +31,26 @@ export function GameTypeCard({ type }: { type: GameType }) {
   return (
     <GameCard interactive className="group/card flex h-full cursor-pointer flex-col" onClick={play}>
       <div className="relative">
-        <CoverArt art={type.art} ratio="wide" />
-        <span className="absolute inset-0 flex items-center justify-center">
-          <span className="inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-bronze/45 bg-[oklch(0.12_0.006_60/0.82)] shadow-[0_8px_24px_oklch(0_0_0/0.35)] transition-transform duration-200 ease-out group-hover/card:scale-110 motion-reduce:transition-none motion-reduce:group-hover/card:scale-100">
+        <CoverArt
+          art={type.art}
+          ratio="video"
+          {...coverFromThumbnail(
+            type.imageSrc
+              ? {
+                  src: type.imageSrc,
+                  alt: type.imageAlt ?? type.title,
+                  ...(type.objectPosition ? { objectPosition: type.objectPosition } : {}),
+                }
+              : undefined,
+          )}
+        />
+        <span className="absolute bottom-3 left-3 z-10">
+          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-bronze/45 bg-[oklch(0.12_0.006_60/0.85)] shadow-[0_8px_24px_oklch(0_0_0/0.35)]">
             <span
               aria-hidden="true"
-              className="select-none text-[32px] leading-none"
+              className="select-none text-[22px] leading-none"
               style={{
-                fontFamily:
-                  '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif',
+                fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif',
                 fontVariantEmoji: "emoji",
                 color: "initial",
                 WebkitTextFillColor: "initial",

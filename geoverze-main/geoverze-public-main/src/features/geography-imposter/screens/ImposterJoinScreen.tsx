@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
 import { MetaChip } from "@/features/play/components/Badges";
+import { SessionHero } from "@/features/play/components/SessionHero";
+import { thumbnailForGameType } from "@/features/play/data/sessionArtwork";
 import { joinImpRoom } from "../data/impRoomApi";
 
 export function ImposterJoinScreen() {
@@ -47,6 +49,12 @@ export function ImposterJoinScreen() {
             <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2.2} aria-hidden />
             Back
           </Link>
+          <div className="mt-5 overflow-hidden rounded-2xl border border-bronze/15">
+            <SessionHero
+              thumbnail={thumbnailForGameType("geography-imposter")}
+              className="h-36 sm:h-44"
+            />
+          </div>
           <MetaChip tone="bronze" className="mt-5">
             Join room
           </MetaChip>

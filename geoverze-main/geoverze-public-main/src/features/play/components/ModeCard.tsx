@@ -42,9 +42,17 @@ export function ModeCard({ mode, onSelect }: { mode: GameMode; onSelect: (m: Gam
         <GeoButton
           variant={mode.comingSoon ? "dark" : "solid"}
           size="md"
-          className="mt-5 w-full"
+          className={
+            mode.comingSoon
+              ? "mt-5 w-full border-bronze/30 text-bronze/75 disabled:opacity-80"
+              : "mt-5 w-full"
+          }
           disabled={mode.comingSoon}
-          onClick={() => onSelect(mode)}
+          aria-disabled={mode.comingSoon || undefined}
+          onClick={() => {
+            if (mode.comingSoon) return;
+            onSelect(mode);
+          }}
         >
           {mode.cta}
         </GeoButton>

@@ -6,6 +6,8 @@ import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
 import { MetaChip } from "@/features/play/components/Badges";
 import { ParticipantAvatar } from "@/features/matchmaking/components/RoomPlayerAvatar";
+import { SessionHero } from "@/features/play/components/SessionHero";
+import { thumbnailForGameType } from "@/features/play/data/sessionArtwork";
 import { selectUser, useAuthStore } from "@/stores/authStore";
 import type { ImpRoomState } from "../types";
 
@@ -101,6 +103,13 @@ export function ImposterLobbyScreen({
             <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2.2} aria-hidden />
             Leave
           </Link>
+
+          <div className="mt-5 overflow-hidden rounded-2xl border border-bronze/15">
+            <SessionHero
+              thumbnail={thumbnailForGameType("geography-imposter")}
+              className="h-36 sm:h-44"
+            />
+          </div>
 
           <div className="mt-5 flex items-start justify-between gap-4 flex-wrap">
             <div>

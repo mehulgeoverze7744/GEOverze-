@@ -6,7 +6,8 @@ import { toast } from "sonner";
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
 import { DifficultyBadge, MetaChip } from "@/features/play/components/Badges";
-import { CoverArt } from "@/features/play/components/CoverArt";
+import { SessionHero } from "@/features/play/components/SessionHero";
+import { thumbnailForQuizSession } from "@/features/play/data/sessionArtwork";
 import { LOBBY_RULES } from "@/features/matchmaking/data/players";
 import { PlayerSlot, ReservedSlot } from "@/features/matchmaking/components/PlayerSlot";
 import { toMatchPlayer } from "@/features/pvp/lib/participantMapper";
@@ -232,7 +233,11 @@ export function MultiplayerLobbyScreen({
 
           <AnimatedSection>
             <div className="game-surface overflow-hidden rounded-2xl">
-              <CoverArt art={set.art} ratio="wide" className="h-36" />
+              <SessionHero
+                art={set.art}
+                thumbnail={thumbnailForQuizSession(set.id)}
+                className="h-36"
+              />
               <div className="p-5 sm:p-6">
                 <div className="flex flex-wrap items-center gap-2">
                   <DifficultyBadge level={set.difficulty} />

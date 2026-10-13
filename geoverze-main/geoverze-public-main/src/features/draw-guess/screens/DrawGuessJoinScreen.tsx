@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
 import { MetaChip } from "@/features/play/components/Badges";
+import { SessionHero } from "@/features/play/components/SessionHero";
+import { thumbnailForGameType } from "@/features/play/data/sessionArtwork";
 import { joinDrawRoom } from "../data/drawRoomApi";
 
 const CODE_LENGTH = 6;
@@ -15,7 +17,10 @@ export function DrawGuessJoinScreen() {
   const [code, setCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const normalized = code.toUpperCase().replace(/[^A-Z2-9]/g, "").slice(0, CODE_LENGTH);
+  const normalized = code
+    .toUpperCase()
+    .replace(/[^A-Z2-9]/g, "")
+    .slice(0, CODE_LENGTH);
   const canSubmit = normalized.length === CODE_LENGTH && !submitting;
 
   const submit = async () => {
@@ -45,6 +50,9 @@ export function DrawGuessJoinScreen() {
             <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2.2} aria-hidden />
             Back
           </Link>
+          <div className="mt-5 overflow-hidden rounded-2xl border border-bronze/15">
+            <SessionHero thumbnail={thumbnailForGameType("draw-guess")} className="h-36 sm:h-44" />
+          </div>
           <MetaChip tone="bronze" className="mt-5">
             <DoorOpen className="h-3 w-3" strokeWidth={2.2} aria-hidden />
             Join room
@@ -63,7 +71,9 @@ export function DrawGuessJoinScreen() {
             <input
               value={normalized}
               onChange={(e) => setCode(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") void submit(); }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") void submit();
+              }}
               inputMode="text"
               autoComplete="off"
               autoCapitalize="characters"

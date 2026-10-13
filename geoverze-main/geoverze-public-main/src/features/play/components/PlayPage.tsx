@@ -14,7 +14,7 @@ import {
 } from "@/components/shared";
 import { useBookmarksStore } from "@/stores/bookmarksStore";
 import { getFeaturedCategories, type QuizCategory } from "../data/categories";
-import { GAME_MODES, type GameMode } from "../data/gameModes";
+import { GAME_MODES, isGameModeAvailable, type GameMode } from "../data/gameModes";
 import { DISCOVERY_RAILS, FEATURED_QUIZ_IDS, pick, type Quiz } from "../data/quizzes";
 import { usePublishedQuizzes } from "../hooks/usePublishedQuizzes";
 import { INITIAL_FILTERS, applyFilters, type PlayFilterState } from "../lib/filter";
@@ -60,6 +60,7 @@ export function PlayPage() {
   const playCategory = (category: QuizCategory) =>
     navigate({ to: "/play/search", search: { q: undefined, category: category.id } });
   const playMode = (mode: GameMode) => {
+    if (!isGameModeAvailable(mode.id)) return;
     if (mode.id === "pvp") {
       navigate({ to: "/play/pvp" });
       return;
@@ -68,7 +69,6 @@ export function PlayPage() {
       navigate({ to: "/play/multiplayer" });
       return;
     }
-    if (mode.comingSoon) return;
     openModeLobby(mode.id);
   };
 

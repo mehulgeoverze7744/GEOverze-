@@ -1,6 +1,8 @@
 import { Clock, Shield, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { SessionHero } from "@/features/play/components/SessionHero";
+import { thumbnailForGameType } from "@/features/play/data/sessionArtwork";
 import { cn } from "@/lib/utils";
 import type { ImpGamePhase, ImpRoom } from "../types";
 
@@ -17,10 +19,7 @@ export function useCountdown(endsAt: string | null | undefined): number | null {
       return;
     }
     const update = () => {
-      const remaining = Math.max(
-        0,
-        Math.ceil((new Date(endsAt).getTime() - Date.now()) / 1000),
-      );
+      const remaining = Math.max(0, Math.ceil((new Date(endsAt).getTime() - Date.now()) / 1000));
       setSecs(remaining);
     };
     update();
@@ -74,6 +73,9 @@ export function ImpGameHeader({ room, participantCount }: ImpGameHeaderProps) {
 
   return (
     <div className="flex items-center justify-between gap-4 rounded-2xl game-surface px-4 py-3 text-sm">
+      <div className="h-9 w-14 shrink-0 overflow-hidden rounded-lg border border-bronze/25">
+        <SessionHero thumbnail={thumbnailForGameType("geography-imposter")} className="h-full" />
+      </div>
       {/* Left: phase + round */}
       <div className="flex items-center gap-2 min-w-0">
         <Shield className="h-4 w-4 shrink-0 text-bronze" strokeWidth={1.9} aria-hidden />

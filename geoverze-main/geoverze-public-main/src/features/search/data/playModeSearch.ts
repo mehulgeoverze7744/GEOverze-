@@ -56,9 +56,9 @@ function fromGameMode(mode: (typeof GAME_MODES)[number]): PlayModeSearchRecord {
         .split(/\W+/)
         .filter((w) => w.length > 3),
     ],
-    to: nav?.to ?? "/play/modes",
-    search: nav?.search,
-    comingSoon: mode.comingSoon,
+    to: nav?.to ?? "/play",
+    ...(nav?.search !== undefined ? { search: nav.search } : {}),
+    comingSoon: Boolean(mode.comingSoon),
   };
 }
 
@@ -102,8 +102,8 @@ export function searchPlayModes(query: string, limit = 12): SearchHit[] {
         meta: record.meta,
         keywords: [...record.keywords],
         to: record.to,
-        search: record.search,
-        comingSoon: record.comingSoon,
+        ...(record.search !== undefined ? { search: record.search } : {}),
+        comingSoon: record.comingSoon ?? false,
         score,
       });
     }

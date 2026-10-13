@@ -5,6 +5,7 @@ import { GeoButton } from "@/components/shared";
 import { DifficultyBadge, MetaChip } from "@/features/play/components/Badges";
 import { CoverArt } from "@/features/play/components/CoverArt";
 import { QUIZ_CATEGORIES } from "@/features/play/data/categories";
+import { coverFromThumbnail, thumbnailForQuizSession } from "@/features/play/data/sessionArtwork";
 import { useBookmarksStore } from "@/stores/bookmarksStore";
 import type { QuizSet } from "../data/types";
 import { QUESTION_TYPE_LABEL } from "../data/types";
@@ -44,12 +45,18 @@ export function QuizLobby({ set, onStart }: { set: QuizSet; onStart: () => void 
   };
 
   const Icon = ICONS.get(set.categoryId);
+  const thumbnail = thumbnailForQuizSession(set.id);
   const types = [...new Set(set.questions.map((q) => QUESTION_TYPE_LABEL[q.type]))];
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1.35fr_1fr]">
       <div className="game-surface overflow-hidden rounded-2xl">
-        <CoverArt art={set.art} icon={Icon} ratio="wide" className="h-44 sm:h-56" />
+        <CoverArt
+          art={set.art}
+          ratio="wide"
+          className="h-44 sm:h-56"
+          {...(thumbnail ? coverFromThumbnail(thumbnail) : { icon: Icon })}
+        />
         <div className="p-5 sm:p-7">
           <div className="flex flex-wrap items-center gap-2">
             <DifficultyBadge level={set.difficulty} />

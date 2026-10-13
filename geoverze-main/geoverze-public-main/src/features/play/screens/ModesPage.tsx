@@ -10,6 +10,7 @@ export function ModesPage() {
   const navigate = useNavigate();
 
   const select = (mode: GameMode) => {
+    if (mode.comingSoon) return;
     if (mode.id === "pvp") {
       navigate({ to: "/play/pvp" });
       return;
@@ -40,7 +41,7 @@ export function ModesPage() {
 
         <AnimatedSection className="mt-10">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {GAME_MODES.filter((m) => !m.comingSoon).map((mode) => (
+            {GAME_MODES.map((mode) => (
               <ModeCard key={mode.id} mode={mode} onSelect={select} />
             ))}
           </div>
@@ -53,7 +54,7 @@ export function ModesPage() {
             description="Designed, not shipped. These stay locked until the competitive service is live — no placeholder standings behind them."
           />
           <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {[...GAME_MODES.filter((m) => m.comingSoon), ...FUTURE_MODES].map((mode) => (
+            {FUTURE_MODES.map((mode) => (
               <ModeCard key={mode.id} mode={mode} onSelect={select} />
             ))}
           </div>
