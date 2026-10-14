@@ -7,6 +7,7 @@ import { GeoButton } from "@/components/shared";
 import { dashboardQuizAttemptsQueryKey } from "@/features/dashboard/hooks/useDashboardQuizAttempts";
 import { quizProgressStatsQueryKey } from "@/features/dashboard/hooks/useQuizProgressStats";
 import { getLevelTitle, getXpProgress } from "@/features/progression/lib/progress";
+import { QUIZ_RESULT_NEXT_KEY, readMigratingValue } from "@/lib/persist-key-migration";
 import { supabase } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/authStore";
 import { useProgressionStore } from "@/stores/progressionStore";
@@ -86,11 +87,9 @@ type StoredQuizResult = {
   serverResult: AttemptResult;
 };
 
-const RESULT_STORAGE_KEY = "geoVerze.quiz.lastResult";
-
 function saveResult(data: StoredQuizResult): void {
   try {
-    sessionStorage.setItem(RESULT_STORAGE_KEY, JSON.stringify(data));
+    sessionStorage.setItem(QUIZ_RESULT_NEXT_KEY, JSON.stringify(data));
   } catch {
     // sessionStorage unavailable (private browsing quota, etc.) — non-fatal.
   }
@@ -98,7 +97,7 @@ function saveResult(data: StoredQuizResult): void {
 
 function loadResult(quizId: string): StoredQuizResult | null {
   try {
-    const raw = sessionStorage.getItem(RESULT_STORAGE_KEY);
+    const raw = readMigratingValue(sessionStorage, QUIZ_RESULT_NEXT_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as StoredQuizResult;
     // Only hydrate when the stored result matches the quiz in the current URL.

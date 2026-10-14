@@ -1,10 +1,12 @@
+import { readMigratingValue } from "@/lib/persist-key-migration";
+
 export type PersistedStoreSnapshot = {
   wishlist: string[];
   recentlyViewed: string[];
   recentSearches: string[];
 };
 
-const STORAGE_PREFIX = "geoverze.store.v2";
+const STORAGE_PREFIX = "gvrze.store.v2";
 
 const EMPTY_SNAPSHOT: PersistedStoreSnapshot = {
   wishlist: [],
@@ -33,7 +35,7 @@ function normalizeRecentSearches(value: unknown): string[] {
 
 function readPersistedSnapshot(scope: string): PersistedStoreSnapshot | null {
   try {
-    const raw = localStorage.getItem(storePersistKey(scope));
+    const raw = readMigratingValue(localStorage, storePersistKey(scope));
     if (!raw) return null;
     const parsed = JSON.parse(raw) as { state?: PersistedStoreSnapshot };
     const state = parsed.state ?? (parsed as unknown as PersistedStoreSnapshot);
@@ -84,7 +86,7 @@ export function loadStoreSnapshotForActiveScope(): PersistedStoreSnapshot {
 /** One-time lift from legacy single-key storage into the anon scope. */
 export function readLegacyStoreSnapshot(): PersistedStoreSnapshot | null {
   try {
-    const raw = localStorage.getItem("geoverze.store");
+    const raw = readMigratingValue(localStorage, "gvrze.store");
     if (!raw) return null;
     const parsed = JSON.parse(raw) as { state?: PersistedStoreSnapshot };
     const state = parsed.state ?? (parsed as unknown as PersistedStoreSnapshot);

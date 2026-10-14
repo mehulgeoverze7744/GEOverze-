@@ -6,7 +6,9 @@
  * local edit that a future Supabase layer would replace.
  */
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
+
+import { createBrandStateStorage, GVRZE_PERSIST_NAMES } from "@/lib/persist-key-migration";
 
 import type { StudioArticle, StudioQuiz } from "@/features/studio/data/types";
 
@@ -58,6 +60,9 @@ export const useStudioStore = create<StudioState>()(
           return { quizDrafts, articleDrafts };
         }),
     }),
-    { name: "geoverze.studio" },
+    {
+      name: GVRZE_PERSIST_NAMES.studio,
+      storage: createJSONStorage(() => createBrandStateStorage()),
+    },
   ),
 );

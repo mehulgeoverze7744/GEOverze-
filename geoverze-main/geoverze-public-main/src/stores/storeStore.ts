@@ -1,5 +1,5 @@
 /**
- * GEOstore shopper state.
+ * GVRZE Store shopper state.
  *
  * Wishlist syncs to Supabase when authenticated; scoped localStorage caches per user.
  * Recently viewed and recent searches remain local per scope.
@@ -19,6 +19,7 @@ import {
   switchStorePersistScope,
   type PersistedStoreSnapshot,
 } from "@/features/store/lib/store-store-persistence";
+import { GVRZE_PERSIST_NAMES, readMigratingValue } from "@/lib/persist-key-migration";
 import { useAuthStore } from "@/stores/authStore";
 
 type PersistedStoreState = {
@@ -50,12 +51,12 @@ function snapshotFromState(state: StoreState): PersistedStoreSnapshot {
 function maybeSyncWishlist(userId: string | undefined, slug: string, saved: boolean) {
   if (!userId) return;
   void syncWishlistToggle(userId, slug, saved).catch((error) =>
-    console.error("GEOstore wishlist sync failed", error),
+    console.error("GVRZE Store wishlist sync failed", error),
   );
 }
 
 const scopedStorage: StateStorage = {
-  getItem: () => localStorage.getItem(storePersistKey(getActiveStorePersistScope())),
+  getItem: () => readMigratingValue(localStorage, storePersistKey(getActiveStorePersistScope())),
   setItem: (_name, value) => {
     localStorage.setItem(storePersistKey(getActiveStorePersistScope()), value);
   },
@@ -119,7 +120,7 @@ export const useStoreStore = create<StoreState>()(
       },
     }),
     {
-      name: "geoverze.store.scoped",
+      name: GVRZE_PERSIST_NAMES.storeScoped,
       storage: createJSONStorage(() => scopedStorage),
       partialize: (state) => ({
         wishlist: state.wishlist,

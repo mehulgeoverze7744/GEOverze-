@@ -6,7 +6,9 @@
  * store keeps only the in-flight step.
  */
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
+
+import { createBrandStateStorage, GVRZE_PERSIST_NAMES } from "@/lib/persist-key-migration";
 
 import type { SkillLevelId } from "@/features/auth/data/onboarding";
 
@@ -54,7 +56,10 @@ export const useOnboardingStore = create<OnboardingState>()(
       complete: () => set({ completed: true }),
       reset: () => set({ ...initial }),
     }),
-    { name: "geoverze.onboarding" },
+    {
+      name: GVRZE_PERSIST_NAMES.onboarding,
+      storage: createJSONStorage(() => createBrandStateStorage()),
+    },
   ),
 );
 

@@ -1,6 +1,7 @@
 import type { MergedLibraryState } from "@/features/library/data/sync-library-state";
+import { readMigratingValue } from "@/lib/persist-key-migration";
 
-const STORAGE_PREFIX = "geoverze.library.v1";
+const STORAGE_PREFIX = "gvrze.library.v1";
 
 const EMPTY_STATE: MergedLibraryState = {
   bookmarks: [],
@@ -23,7 +24,7 @@ export function getActiveLibraryPersistScope() {
 
 function readPersistedState(scope: string): MergedLibraryState | null {
   try {
-    const raw = localStorage.getItem(libraryPersistKey(scope));
+    const raw = readMigratingValue(localStorage, libraryPersistKey(scope));
     if (!raw) return null;
     const parsed = JSON.parse(raw) as { state?: MergedLibraryState };
     const state = parsed.state ?? (parsed as unknown as MergedLibraryState);

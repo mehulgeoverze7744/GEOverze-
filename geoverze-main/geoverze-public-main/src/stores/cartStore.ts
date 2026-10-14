@@ -1,12 +1,14 @@
 /**
- * GEOstore cart.
+ * GVRZE Store cart.
  *
  * Lines carry both a money price and a credit price so a basket can be settled
  * with cash, with credits, or with a mix. Totals are always derived, never
  * stored. Persisted so a basket survives a reload before any backend exists.
  */
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
+
+import { createBrandStateStorage, GVRZE_PERSIST_NAMES } from "@/lib/persist-key-migration";
 
 import { isComingSoonCategory } from "@/features/store/data/taxonomy";
 
@@ -88,7 +90,11 @@ export const useCartStore = create<CartState>()(
       removeSaved: (id) => set((state) => ({ saved: state.saved.filter((l) => l.id !== id) })),
       clear: () => set({ lines: [] }),
     }),
-    { name: "geoverze.cart", version: 2 },
+    {
+      name: GVRZE_PERSIST_NAMES.cart,
+      version: 2,
+      storage: createJSONStorage(() => createBrandStateStorage()),
+    },
   ),
 );
 

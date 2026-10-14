@@ -6,7 +6,9 @@
  * the feature's data layer, so a future backend swaps that layer alone.
  */
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
+
+import { createBrandStateStorage, GVRZE_PERSIST_NAMES } from "@/lib/persist-key-migration";
 
 type CommunityState = {
   likedPosts: string[];
@@ -86,7 +88,11 @@ export const useCommunityStore = create<CommunityState>()(
         set((s) => ({ readNotifications: [...new Set([...ids, ...s.readNotifications])] })),
       reset: () => set({ ...initial }),
     }),
-    { name: "geoverze.community", version: 1 },
+    {
+      name: GVRZE_PERSIST_NAMES.community,
+      version: 1,
+      storage: createJSONStorage(() => createBrandStateStorage()),
+    },
   ),
 );
 

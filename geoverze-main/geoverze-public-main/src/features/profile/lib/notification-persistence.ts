@@ -1,6 +1,8 @@
 /** Per-user notification dismiss/read state (client cache until a backend exists). */
 
-const STORAGE_PREFIX = "geoverze.notifications.v1";
+import { readMigratingValue } from "@/lib/persist-key-migration";
+
+const STORAGE_PREFIX = "gvrze.notifications.v1";
 
 export type PersistedNotificationPrefs = {
   dismissedIds: string[];
@@ -18,7 +20,7 @@ export function notificationPersistKey(userId: string) {
 
 export function loadNotificationPrefs(userId: string): PersistedNotificationPrefs {
   try {
-    const raw = localStorage.getItem(notificationPersistKey(userId));
+    const raw = readMigratingValue(localStorage, notificationPersistKey(userId));
     if (!raw) return { ...EMPTY_NOTIFICATION_PREFS };
 
     const parsed = JSON.parse(raw) as Partial<PersistedNotificationPrefs>;

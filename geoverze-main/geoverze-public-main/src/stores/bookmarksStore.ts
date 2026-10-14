@@ -3,7 +3,9 @@
  * action before any backend exists.
  */
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
+
+import { createBrandStateStorage, GVRZE_PERSIST_NAMES } from "@/lib/persist-key-migration";
 
 type BookmarksState = {
   ids: string[];
@@ -21,7 +23,10 @@ export const useBookmarksStore = create<BookmarksState>()(
         })),
       clear: () => set({ ids: [] }),
     }),
-    { name: "geoverze.bookmarks" },
+    {
+      name: GVRZE_PERSIST_NAMES.bookmarks,
+      storage: createJSONStorage(() => createBrandStateStorage()),
+    },
   ),
 );
 

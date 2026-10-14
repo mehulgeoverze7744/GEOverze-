@@ -7,7 +7,9 @@
  * stable "member since" without a backend.
  */
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
+
+import { createBrandStateStorage, GVRZE_PERSIST_NAMES } from "@/lib/persist-key-migration";
 
 type ProfileState = {
   displayName: string | null;
@@ -39,6 +41,9 @@ export const useProfileStore = create<ProfileState>()(
       },
       reset: () => set({ ...initial }),
     }),
-    { name: "geoverze.profile" },
+    {
+      name: GVRZE_PERSIST_NAMES.profile,
+      storage: createJSONStorage(() => createBrandStateStorage()),
+    },
   ),
 );

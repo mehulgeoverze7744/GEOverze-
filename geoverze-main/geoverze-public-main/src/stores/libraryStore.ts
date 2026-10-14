@@ -1,8 +1,8 @@
 /**
- * GEOlibrary reading state.
+ * GVRZE Library reading state.
  *
- * Anonymous users: persisted under geoverze.library.v1.anon.
- * Authenticated users: persisted under geoverze.library.v1.{userId} and synced with Supabase.
+ * Anonymous users: persisted under gvrze.library.v1.anon (legacy geoverze.library.v1.anon is dual-read).
+ * Authenticated users: persisted under gvrze.library.v1.{userId} and synced with Supabase.
  */
 import { create } from "zustand";
 import { createJSONStorage, persist, type StateStorage } from "zustand/middleware";
@@ -17,9 +17,11 @@ import {
   emptyLibraryState,
   getActiveLibraryPersistScope,
   libraryPersistKey,
+  loadLibraryStateForActiveScope,
   persistActiveLibraryState,
   switchLibraryPersistScope,
 } from "@/features/library/lib/library-store-persistence";
+import { GVRZE_PERSIST_NAMES, readMigratingValue } from "@/lib/persist-key-migration";
 import { useAuthStore } from "@/stores/authStore";
 
 type LibraryState = {
@@ -49,7 +51,7 @@ type LibraryState = {
 
 function maybeSync(userId: string | undefined, fn: () => Promise<void>) {
   if (!userId) return;
-  void fn().catch((error) => console.error("GEOlibrary sync failed", error));
+  void fn().catch((error) => console.error("GVRZE Library sync failed", error));
 }
 
 function snapshotFromState(state: LibraryState) {
@@ -64,7 +66,8 @@ function snapshotFromState(state: LibraryState) {
 }
 
 const scopedStorage: StateStorage = {
-  getItem: () => localStorage.getItem(libraryPersistKey(getActiveLibraryPersistScope())),
+  getItem: () =>
+    readMigratingValue(localStorage, libraryPersistKey(getActiveLibraryPersistScope())),
   setItem: (_name, value) => {
     localStorage.setItem(libraryPersistKey(getActiveLibraryPersistScope()), value);
   },
@@ -159,7 +162,7 @@ export const useLibraryStore = create<LibraryState>()(
       },
     }),
     {
-      name: "geoverze.library",
+      name: GVRZE_PERSIST_NAMES.library,
       storage: createJSONStorage(() => scopedStorage),
       partialize: (state) => ({
         bookmarks: state.bookmarks,
@@ -178,40 +181,7 @@ export function activateLibraryPersistScope(nextScope: string) {
   const current = snapshotFromState(useLibraryStore.getState());
   switchLibraryPersistScope(nextScope, current);
 
-  let loaded = emptyLibraryState;
-  try {
-    const raw = localStorage.getItem(libraryPersistKey(nextScope));
-    if (raw) {
-      const parsed = JSON.parse(raw) as {
-        state?: {
-          bookmarks?: string[];
-          likes?: string[];
-          progress?: Record<string, number>;
-          completed?: string[];
-        };
-      };
-      const state = parsed.state;
-      if (state) {
-        loaded = {
-          bookmarks: Array.isArray(state.bookmarks) ? state.bookmarks : [],
-          likes: Array.isArray(state.likes) ? state.likes : [],
-          progress: state.progress && typeof state.progress === "object" ? state.progress : {},
-          progressReadAt:
-            state.progressReadAt && typeof state.progressReadAt === "object"
-              ? state.progressReadAt
-              : {},
-          completed: Array.isArray(state.completed) ? state.completed : [],
-          continueReadingDismissed: Array.isArray(state.continueReadingDismissed)
-            ? state.continueReadingDismissed
-            : [],
-        };
-      }
-    }
-  } catch {
-    // Keep empty state for corrupt storage entries.
-  }
-
-  useLibraryStore.getState().replaceState(loaded);
+  useLibraryStore.getState().replaceState(loadLibraryStateForActiveScope());
 }
 
 export const selectLibraryBookmarks = (s: LibraryState) => s.bookmarks;

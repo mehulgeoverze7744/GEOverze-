@@ -3,7 +3,9 @@
  * choices; nothing here is account-bound yet.
  */
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
+
+import { createBrandStateStorage, GVRZE_PERSIST_NAMES } from "@/lib/persist-key-migration";
 
 export type MotionPreference = "system" | "reduced" | "full";
 export type UnitSystem = "metric" | "imperial";
@@ -66,7 +68,8 @@ export const usePreferencesStore = create<PreferencesState>()(
       setToggle: (key, value) => set((state) => ({ toggles: { ...state.toggles, [key]: value } })),
     }),
     {
-      name: "geoverze.preferences",
+      name: GVRZE_PERSIST_NAMES.preferences,
+      storage: createJSONStorage(() => createBrandStateStorage()),
       version: 3,
       migrate: (persisted) => {
         const state = (persisted ?? {}) as Partial<PreferencesState>;
