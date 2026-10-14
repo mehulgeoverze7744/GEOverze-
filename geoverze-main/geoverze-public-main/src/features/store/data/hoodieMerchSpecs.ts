@@ -3,16 +3,16 @@ import everyPointWhite from "@/assets/geostore/hoodie-every-point-has-a-story-wh
 import everyPointPink from "@/assets/geostore/hoodie-every-point-has-a-story-pink.png";
 import everyPointBurgundy from "@/assets/geostore/hoodie-every-point-has-a-story-burgundy.png";
 import everyPointBrown from "@/assets/geostore/hoodie-every-point-has-a-story-brown.png";
-import doodleBlack from "@/assets/geostore/hoodie-doodle-black.png";
-import doodleWhite from "@/assets/geostore/hoodie-doodle-white.png";
-import doodlePink from "@/assets/geostore/hoodie-doodle-pink.png";
-import doodleBurgundy from "@/assets/geostore/hoodie-doodle-burgundy.png";
-import doodleBrown from "@/assets/geostore/hoodie-doodle-brown.png";
-import typoBlack from "@/assets/geostore/hoodie-geoverze-typo-black.png";
-import typoWhite from "@/assets/geostore/hoodie-geoverze-typo-white.png";
-import typoPink from "@/assets/geostore/hoodie-geoverze-typo-pink.png";
-import typoBurgundy from "@/assets/geostore/hoodie-geoverze-typo-burgundy.png";
-import typoBrown from "@/assets/geostore/hoodie-geoverze-typo-brown.png";
+import doodleBlack from "@/assets/geostore/hoodie-gvrze-doodle-black.jpg";
+import doodleWhite from "@/assets/geostore/hoodie-gvrze-doodle-white.jpg";
+import doodlePink from "@/assets/geostore/hoodie-gvrze-doodle-pink.jpg";
+import doodleBurgundy from "@/assets/geostore/hoodie-gvrze-doodle-burgundy.jpg";
+import doodleBrown from "@/assets/geostore/hoodie-gvrze-doodle-brown.jpg";
+import typoBlack from "@/assets/geostore/hoodie-gvrze-typo-black.jpg";
+import typoWhite from "@/assets/geostore/hoodie-gvrze-typo-white.jpg";
+import typoPink from "@/assets/geostore/hoodie-gvrze-typo-pink.jpg";
+import typoBurgundy from "@/assets/geostore/hoodie-gvrze-typo-burgundy.jpg";
+import typoBrown from "@/assets/geostore/hoodie-gvrze-typo-brown.jpg";
 import samePlanetBlack from "@/assets/geostore/hoodie-same-planet-black.png";
 import samePlanetWhite from "@/assets/geostore/hoodie-same-planet-white.png";
 import samePlanetPink from "@/assets/geostore/hoodie-same-planet-pink.png";
@@ -69,7 +69,7 @@ export const HOODIE_MERCH_SPECS: Record<string, HoodieMerchSpec> = {
     title: "Every Point Has A Story",
     breadcrumb: "Every Point Has A Story",
     description:
-      "A GEOverze hoodie built around the idea that every point on the map carries a story.",
+      "A GVRZE hoodie built around the idea that every point on the map carries a story.",
     printLine: "EVERY POINT HAS A STORY",
     colors: [
       { id: "white", label: "White", hex: "#efe6d4", image: everyPointWhite },
@@ -80,10 +80,10 @@ export const HOODIE_MERCH_SPECS: Record<string, HoodieMerchSpec> = {
     ],
   },
   "hoodie-doodle": {
-    title: "GEOverze Doodle",
-    breadcrumb: "GEOverze Doodle",
-    description: "A GEOverze hoodie with a loose doodle-style graphic across the garment.",
-    printLine: "GEOVERZE DOODLE",
+    title: "GVRZE Doodle",
+    breadcrumb: "GVRZE Doodle",
+    description: "A GVRZE hoodie with a loose doodle-style graphic across the garment.",
+    printLine: "GVRZE DOODLE",
     colors: hoodiePalette({
       white: doodleWhite,
       pink: doodlePink,
@@ -93,10 +93,10 @@ export const HOODIE_MERCH_SPECS: Record<string, HoodieMerchSpec> = {
     }),
   },
   "hoodie-geoverze-typo": {
-    title: "GEOverze",
-    breadcrumb: "GEOverze",
-    description: "A GEOverze hoodie with a typographic wordmark as the main graphic.",
-    printLine: "GEOVERZE",
+    title: "GVRZE",
+    breadcrumb: "GVRZE",
+    description: "A GVRZE hoodie with a typographic wordmark as the main graphic.",
+    printLine: "GVRZE",
     colors: hoodiePalette({
       white: typoWhite,
       pink: typoPink,
@@ -108,7 +108,7 @@ export const HOODIE_MERCH_SPECS: Record<string, HoodieMerchSpec> = {
   "hoodie-same-planet": {
     title: "Same Planet. Different Perspectives.",
     breadcrumb: "Same Planet. Different Perspectives.",
-    description: "A GEOverze hoodie about sharing one planet from different viewpoints.",
+    description: "A GVRZE hoodie about sharing one planet from different viewpoints.",
     printLine: "SAME PLANET. DIFFERENT PERSPECTIVES.",
     colors: hoodiePalette({
       white: samePlanetWhite,
@@ -121,7 +121,7 @@ export const HOODIE_MERCH_SPECS: Record<string, HoodieMerchSpec> = {
   "hoodie-world-unfiltered": {
     title: "The World, Unfiltered.",
     breadcrumb: "The World, Unfiltered.",
-    description: "A GEOverze hoodie with a straightforward, unfiltered world graphic.",
+    description: "A GVRZE hoodie with a straightforward, unfiltered world graphic.",
     printLine: "THE WORLD, UNFILTERED.",
     colors: hoodiePalette({
       white: unfilteredWhite,

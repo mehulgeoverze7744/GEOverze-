@@ -29,11 +29,11 @@ import { useStoreActions } from "../lib/useStoreActions";
 import { MerchProductGallery } from "./MerchProductGallery";
 import { ProStorePerkPill } from "./ProStorePerkPill";
 
-import tshirtBlack from "@/assets/geostore/tshirt-know-the-capital-black.jpg";
-import tshirtBlue from "@/assets/geostore/tshirt-know-the-capital-blue.png";
-import tshirtBurgundy from "@/assets/geostore/tshirt-know-the-capital-burgundy.png";
-import tshirtOliveGreen from "@/assets/geostore/tshirt-know-the-capital-olive-green.png";
-import tshirtOffWhite from "@/assets/geostore/tshirt-know-the-capital-off-white.png";
+import tshirtBlack from "@/assets/geostore/tshirt-gvrze-know-the-capital-black.jpg";
+import tshirtBlue from "@/assets/geostore/tshirt-gvrze-know-the-capital-blue.jpg";
+import tshirtBurgundy from "@/assets/geostore/tshirt-gvrze-know-the-capital-burgundy.jpg";
+import tshirtOliveGreen from "@/assets/geostore/tshirt-gvrze-know-the-capital-olive-green.jpg";
+import tshirtOffWhite from "@/assets/geostore/tshirt-gvrze-know-the-capital-off-white.jpg";
 
 type ColorVariant = {
   id: string;
@@ -145,7 +145,7 @@ export const KnowTheCapitalProductPage = memo(function KnowTheCapitalProductPage
               activeOptions={{ exact: true }}
               className="transition-colors hover:text-bronze"
             >
-              Back to GEOstore
+              Back to GVRZE Store
             </Link>
             <span className="text-foreground/25" aria-hidden>
               &gt;
@@ -206,7 +206,7 @@ export const KnowTheCapitalProductPage = memo(function KnowTheCapitalProductPage
                 </AccordionRow>
                 <AccordionRow title="Details" icon={LayoutGrid}>
                   <ul className="space-y-1">
-                    <li>GEOverze merch collection T-shirt</li>
+                    <li>GVRZE merch collection T-shirt</li>
                     <li>Five colourways: Black, Blue, Burgundy, Olive Green, Off White</li>
                     <li>Sizes S, M, L, XXL</li>
                     <li>Price $37.00 or 300 credits when checkout opens</li>
@@ -230,7 +230,7 @@ export const KnowTheCapitalProductPage = memo(function KnowTheCapitalProductPage
 
             <div className="min-w-0 space-y-5 md:sticky md:top-[calc(var(--nav-height)+1.25rem)]">
               <p className="text-[0.62rem] uppercase tracking-[0.22em] text-bronze/70">
-                T-SHIRT · GEOVERZE COLLECTION
+                T-SHIRT · GVRZE COLLECTION
               </p>
 
               <div>
@@ -238,7 +238,7 @@ export const KnowTheCapitalProductPage = memo(function KnowTheCapitalProductPage
                   I KNOW THE CAPITAL. YOU KNOW THE VIBES.
                 </h1>
                 <p className="mt-2 max-w-md text-sm leading-relaxed text-foreground/50">
-                  A city-inspired GEOverze tee with the globe emblem on the front and a bold
+                  A city-inspired GVRZE tee with the globe emblem on the front and a bold
                   capital-city graphic on the back.
                 </p>
               </div>

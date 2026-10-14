@@ -5,12 +5,13 @@ export type HoodieLookbookCrop = {
 };
 
 const SHEET_1312 = { sheetWidth: 1312, sheetHeight: 1199 } as const;
-const SHEET_1254 = { sheetWidth: 1254, sheetHeight: 1254 } as const;
+/** Generated GVRZE lookbooks are 1:1; keep a similar photo-to-sheet split. */
+const SHEET_1024 = { sheetWidth: 1024, sheetHeight: 1024 } as const;
 
 const EVERY_POINT = { ...SHEET_1312, photoHeight: 863 } as const;
-const DOODLE_SQUARE = { ...SHEET_1254, photoHeight: 799 } as const;
-const DOODLE_BLACK = { ...SHEET_1312, photoHeight: 786 } as const;
-const TYPO = { ...SHEET_1312, photoHeight: 880 } as const;
+const DOODLE_SQUARE = { ...SHEET_1024, photoHeight: 720 } as const;
+const DOODLE_BLACK = { ...SHEET_1024, photoHeight: 720 } as const;
+const TYPO = { ...SHEET_1024, photoHeight: 740 } as const;
 const SAME_PLANET = { ...SHEET_1312, photoHeight: 858 } as const;
 const UNFILTERED = { ...SHEET_1312, photoHeight: 846 } as const;
 

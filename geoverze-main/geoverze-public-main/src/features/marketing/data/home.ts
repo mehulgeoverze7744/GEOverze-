@@ -20,7 +20,7 @@ export type HomeFeature = {
   imageSrc?: string;
 };
 
-/** Section 1 — Why GEOverze carousel imagery (unchanged from original pillars). */
+/** Section 1 — Why GVRZE carousel imagery (unchanged from original pillars). */
 const whyCarouselImages = [
   "/assets/home/learning.jpg",
   "/assets/home/discovery.jpg",
@@ -29,7 +29,7 @@ const whyCarouselImages = [
   "/assets/home/friendly-competition.jpg",
 ] as const;
 
-/** WHY GEOVERZE marquee — carousel copy on preserved pillar imagery. */
+/** WHY GVRZE marquee — carousel copy on preserved pillar imagery. */
 const whyCarouselContent: Pick<HomeFeature, "icon" | "title" | "description">[] = [
   {
     icon: Trophy,
@@ -75,23 +75,23 @@ export const ecosystem: {
   {
     icon: Gamepad2,
     title: "Let's Play",
-    description: "The interactive heart of GEOverze — rounds, challenges and expeditions.",
+    description: "The interactive heart of GVRZE — rounds, challenges and expeditions.",
     to: "/play",
     imageSrc: "/assets/home/ecosystem/lets-play.jpg",
   },
   {
     icon: Library,
-    title: "GEOlibrary",
+    title: "GVRZE Library",
     description: "A living reference of countries, regions and landforms.",
     to: "/geolibrary",
     imageSrc: "/assets/home/ecosystem/geolibrary.jpg",
   },
   {
     icon: Store,
-    title: "GEOstore",
+    title: "GVRZE Store",
     description: "Atlases, collections and profile pieces to unlock as you explore.",
     to: "/geostore",
-    imageSrc: "/assets/home/ecosystem/geostore.jpg",
+    imageSrc: "/assets/home/ecosystem/gvrze-geostore.jpg",
   },
   {
     icon: Trophy,

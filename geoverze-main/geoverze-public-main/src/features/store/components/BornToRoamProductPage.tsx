@@ -31,11 +31,11 @@ import { cn } from "@/lib/utils";
 import { useStoreActions } from "../lib/useStoreActions";
 import { ProStorePerkPill } from "./ProStorePerkPill";
 
-import tshirtBlack from "@/assets/geostore/tshirt-born-to-roam-black.jpg";
-import tshirtBlue from "@/assets/geostore/tshirt-born-to-roam-blue.png";
-import tshirtBurgundy from "@/assets/geostore/tshirt-born-to-roam-burgundy.png";
-import tshirtOliveGreen from "@/assets/geostore/tshirt-born-to-roam-olive-green.png";
-import tshirtOffWhite from "@/assets/geostore/tshirt-born-to-roam-off-white.png";
+import tshirtBlack from "@/assets/geostore/tshirt-gvrze-born-to-roam-black.jpg";
+import tshirtBlue from "@/assets/geostore/tshirt-gvrze-born-to-roam-blue.jpg";
+import tshirtBurgundy from "@/assets/geostore/tshirt-gvrze-born-to-roam-burgundy.jpg";
+import tshirtOliveGreen from "@/assets/geostore/tshirt-gvrze-born-to-roam-olive-green.jpg";
+import tshirtOffWhite from "@/assets/geostore/tshirt-gvrze-born-to-roam-off-white.jpg";
 
 type ColorVariant = {
   id: string;
@@ -159,7 +159,7 @@ export const BornToRoamProductPage = memo(function BornToRoamProductPage({
               activeOptions={{ exact: true }}
               className="transition-colors hover:text-bronze"
             >
-              Back to GEOstore
+              Back to GVRZE Store
             </Link>
             <span className="text-foreground/25" aria-hidden>
               &gt;
@@ -253,7 +253,7 @@ export const BornToRoamProductPage = memo(function BornToRoamProductPage({
                 </AccordionRow>
                 <AccordionRow title="Details" icon={LayoutGrid}>
                   <ul className="space-y-1">
-                    <li>GEOverze merch collection T-shirt</li>
+                    <li>GVRZE merch collection T-shirt</li>
                     <li>Five colourways: Black, Blue, Burgundy, Olive Green, Off White</li>
                     <li>Sizes S, M, L, XXL</li>
                     <li>Price $37.00 or 300 credits when checkout opens</li>
@@ -277,7 +277,7 @@ export const BornToRoamProductPage = memo(function BornToRoamProductPage({
 
             <div className="min-w-0 space-y-5 md:sticky md:top-[calc(var(--nav-height)+1.25rem)]">
               <p className="text-[0.62rem] uppercase tracking-[0.22em] text-bronze/70">
-                T-SHIRT · GEOVERZE COLLECTION
+                T-SHIRT · GVRZE COLLECTION
               </p>
 
               <div>
@@ -285,8 +285,8 @@ export const BornToRoamProductPage = memo(function BornToRoamProductPage({
                   Born to Roam T-Shirt
                 </h1>
                 <p className="mt-2 max-w-md text-sm leading-relaxed text-foreground/50">
-                  Everyday tee with the GEOverze globe on the front and Born to Roam map print on
-                  the back.
+                  Everyday tee with the GVRZE globe on the front and Born to Roam map print on the
+                  back.
                 </p>
               </div>
 

@@ -29,11 +29,11 @@ import { useStoreActions } from "../lib/useStoreActions";
 import { MerchProductGallery } from "./MerchProductGallery";
 import { ProStorePerkPill } from "./ProStorePerkPill";
 
-import tshirtBlack from "@/assets/geostore/tshirt-too-close-perfect-black.jpg";
-import tshirtBlue from "@/assets/geostore/tshirt-too-close-perfect-blue.png";
-import tshirtBurgundy from "@/assets/geostore/tshirt-too-close-perfect-burgundy.png";
-import tshirtOliveGreen from "@/assets/geostore/tshirt-too-close-perfect-olive-green.png";
-import tshirtOffWhite from "@/assets/geostore/tshirt-too-close-perfect-off-white.png";
+import tshirtBlack from "@/assets/geostore/tshirt-gvrze-too-close-perfect-black.jpg";
+import tshirtBlue from "@/assets/geostore/tshirt-gvrze-too-close-perfect-blue.jpg";
+import tshirtBurgundy from "@/assets/geostore/tshirt-gvrze-too-close-perfect-burgundy.jpg";
+import tshirtOliveGreen from "@/assets/geostore/tshirt-gvrze-too-close-perfect-olive-green.jpg";
+import tshirtOffWhite from "@/assets/geostore/tshirt-gvrze-too-close-perfect-off-white.jpg";
 
 type ColorVariant = {
   id: string;
@@ -145,7 +145,7 @@ export const TooClosePerfectProductPage = memo(function TooClosePerfectProductPa
               activeOptions={{ exact: true }}
               className="transition-colors hover:text-bronze"
             >
-              Back to GEOstore
+              Back to GVRZE Store
             </Link>
             <span className="text-foreground/25" aria-hidden>
               &gt;
@@ -206,7 +206,7 @@ export const TooClosePerfectProductPage = memo(function TooClosePerfectProductPa
                 </AccordionRow>
                 <AccordionRow title="Details" icon={LayoutGrid}>
                   <ul className="space-y-1">
-                    <li>GEOverze merch collection T-shirt</li>
+                    <li>GVRZE merch collection T-shirt</li>
                     <li>Five colourways: Black, Blue, Burgundy, Olive Green, Off White</li>
                     <li>Sizes S, M, L, XXL</li>
                     <li>Price $37.00 or 300 credits when checkout opens</li>
@@ -230,7 +230,7 @@ export const TooClosePerfectProductPage = memo(function TooClosePerfectProductPa
 
             <div className="min-w-0 space-y-5 md:sticky md:top-[calc(var(--nav-height)+1.25rem)]">
               <p className="text-[0.62rem] uppercase tracking-[0.22em] text-bronze/70">
-                T-SHIRT · GEOVERZE COLLECTION
+                T-SHIRT · GVRZE COLLECTION
               </p>
 
               <div>
@@ -238,8 +238,8 @@ export const TooClosePerfectProductPage = memo(function TooClosePerfectProductPa
                   Too Close? Perfect.
                 </h1>
                 <p className="mt-2 max-w-md text-sm leading-relaxed text-foreground/50">
-                  A precision-inspired GEOverze tee featuring the GEOverze emblem on the front and a
-                  bold target-style graphic on the back.
+                  A precision-inspired GVRZE tee featuring the GVRZE emblem on the front and a bold
+                  target-style graphic on the back.
                 </p>
               </div>
 

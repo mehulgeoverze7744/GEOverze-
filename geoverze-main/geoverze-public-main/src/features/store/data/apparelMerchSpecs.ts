@@ -1,13 +1,13 @@
-import recalculatingBlack from "@/assets/geostore/tshirt-recalculating-black.jpg";
-import recalculatingBlue from "@/assets/geostore/tshirt-recalculating-blue.png";
-import recalculatingBurgundy from "@/assets/geostore/tshirt-recalculating-burgundy.png";
-import recalculatingOlive from "@/assets/geostore/tshirt-recalculating-olive-green.png";
-import recalculatingOffWhite from "@/assets/geostore/tshirt-recalculating-off-white.png";
-import gpsBlack from "@/assets/geostore/tshirt-gps-trust-issues-black.jpg";
-import gpsBlue from "@/assets/geostore/tshirt-gps-trust-issues-blue.png";
-import gpsBurgundy from "@/assets/geostore/tshirt-gps-trust-issues-burgundy.png";
-import gpsOlive from "@/assets/geostore/tshirt-gps-trust-issues-olive-green.png";
-import gpsOffWhite from "@/assets/geostore/tshirt-gps-trust-issues-off-white.png";
+import recalculatingBlack from "@/assets/geostore/tshirt-gvrze-recalculating-black.jpg";
+import recalculatingBlue from "@/assets/geostore/tshirt-gvrze-recalculating-blue.jpg";
+import recalculatingBurgundy from "@/assets/geostore/tshirt-gvrze-recalculating-burgundy.jpg";
+import recalculatingOlive from "@/assets/geostore/tshirt-gvrze-recalculating-olive-green.jpg";
+import recalculatingOffWhite from "@/assets/geostore/tshirt-gvrze-recalculating-off-white.jpg";
+import gpsBlack from "@/assets/geostore/tshirt-gvrze-gps-trust-issues-black.jpg";
+import gpsBlue from "@/assets/geostore/tshirt-gvrze-gps-trust-issues-blue.jpg";
+import gpsBurgundy from "@/assets/geostore/tshirt-gvrze-gps-trust-issues-burgundy.jpg";
+import gpsOlive from "@/assets/geostore/tshirt-gvrze-gps-trust-issues-olive-green.jpg";
+import gpsOffWhite from "@/assets/geostore/tshirt-gvrze-gps-trust-issues-off-white.jpg";
 
 export type ApparelColorVariant = {
   id: string;
@@ -53,7 +53,7 @@ export const APPAREL_MERCH_SPECS: Record<string, ApparelMerchSpec> = {
     title: "Recalculating Since 2024.",
     breadcrumb: "Recalculating Since 2024.",
     description:
-      "A GEOverze tee built around the idea of recalculating your route, featuring a navigation-inspired graphic on the back.",
+      "A GVRZE tee built around the idea of recalculating your route, featuring a navigation-inspired graphic on the back.",
     printLine: "RECALCULATING SINCE 2024.",
     colors: fiveColors(
       recalculatingBlack,
@@ -67,7 +67,7 @@ export const APPAREL_MERCH_SPECS: Record<string, ApparelMerchSpec> = {
     title: "Your GPS Has Trust Issues.",
     breadcrumb: "Your GPS Has Trust Issues.",
     description:
-      "A GEOverze tee for questionable directions, featuring a navigation-inspired graphic built around getting lost.",
+      "A GVRZE tee for questionable directions, featuring a navigation-inspired graphic built around getting lost.",
     printLine: "YOUR GPS HAS TRUST ISSUES.",
     colors: fiveColors(gpsBlack, gpsBlue, gpsBurgundy, gpsOlive, gpsOffWhite),
   },

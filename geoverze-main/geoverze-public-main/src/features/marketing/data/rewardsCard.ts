@@ -25,9 +25,9 @@ export const HERO_REWARDS: HeroRewardItem[] = [
   },
   {
     id: "merch",
-    title: "Exclusive GEOverze Merchandise",
-    image: "/assets/rewards/geoverze-merchandise.jpg",
-    imageAlt: "Exclusive GEOverze hoodies and branded merchandise collection",
+    title: "Exclusive GVRZE Merchandise",
+    image: "/assets/rewards/gvrze-merchandise.jpg",
+    imageAlt: "Exclusive GVRZE hoodies and branded merchandise collection",
     imagePosition: "center 58%",
   },
 ];
