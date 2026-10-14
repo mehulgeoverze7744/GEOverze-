@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { HistoryPage } from "@/features/history";
 
-const t = "Match History — GEOverze";
+const t = "Match History — GVRZE";
 const d =
-  "Every completed GEOverze run with score, accuracy, timing and rewards, filterable by mode.";
+  "Every completed GVRZE run with score, accuracy, timing and rewards, filterable by mode.";
 
 export const Route = createFileRoute("/play/history/")({
   head: () => ({

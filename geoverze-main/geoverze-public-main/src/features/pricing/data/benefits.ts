@@ -23,8 +23,8 @@ export const membershipBenefits: MembershipBenefit[] = [
   },
   {
     icon: BookOpen,
-    title: "Full GEOlibrary access",
-    description: "Every article, atlas and collection in the GEOlibrary, unlocked.",
+    title: "Full GVRZE Library access",
+    description: "Every article, atlas and collection in the GVRZE Library, unlocked.",
   },
   {
     icon: Swords,
@@ -34,12 +34,12 @@ export const membershipBenefits: MembershipBenefit[] = [
   {
     icon: Coins,
     title: "Membership credits",
-    description: "A fresh monthly credit grant that rolls over and spends across GEOverze.",
+    description: "A fresh monthly credit grant that rolls over and spends across GVRZE.",
   },
   {
     icon: ShoppingBag,
-    title: "GEOstore savings",
-    description: "Member discounts on every GEOstore purchase — up to 10% off with Pro.",
+    title: "GVRZE Store savings",
+    description: "Member discounts on every GVRZE Store purchase — up to 10% off with Pro.",
   },
   {
     icon: Gift,

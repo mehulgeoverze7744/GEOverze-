@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { SavedScreen } from "@/features/community";
 
-const title = "Saved posts — GEOverze Community";
+const title = "Saved posts — GVRZE Community";
 const description = "The community posts, questions and creator updates you kept for later.";
 
 export const Route = createFileRoute("/community/saved")({

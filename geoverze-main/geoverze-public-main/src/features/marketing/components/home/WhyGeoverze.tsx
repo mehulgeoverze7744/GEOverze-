@@ -7,7 +7,7 @@ import { WhyGeoverzeIntro } from "./WhyGeoverzeIntro";
 
 import "./why-geoverze-section.css";
 
-/** Section 1 — Why GEOverze. */
+/** Section 1 — Why GVRZE. */
 export const WhyGeoverze = memo(function WhyGeoverze() {
   return (
     <section className="why-geoverze-section">

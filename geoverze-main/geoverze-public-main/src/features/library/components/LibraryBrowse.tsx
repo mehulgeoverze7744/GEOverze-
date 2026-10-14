@@ -108,7 +108,7 @@ export function LibraryBrowse() {
   return (
     <SectionContainer>
       <PageHeader
-        eyebrow="GEOlibrary"
+        eyebrow="GVRZE Library"
         title="Browse the library"
         description="Filter every entry by continent, category, difficulty and reading time."
       />

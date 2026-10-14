@@ -5,16 +5,16 @@ import { ComparePlansScreen } from "@/features/pricing";
 export const Route = createFileRoute("/pricing/compare")({
   head: () => ({
     meta: [
-      { title: "Compare Plans — GEOverze Membership" },
+      { title: "Compare Plans — GVRZE Membership" },
       {
         name: "description",
         content:
-          "A full feature comparison of GEOverze Explorer, Basic, Pro and Advance memberships — play limits, library access, rewards and Creator Studio.",
+          "A full feature comparison of GVRZE Explorer, Basic, Pro and Advance memberships — play limits, library access, rewards and Creator Studio.",
       },
-      { property: "og:title", content: "Compare Plans — GEOverze Membership" },
+      { property: "og:title", content: "Compare Plans — GVRZE Membership" },
       {
         property: "og:description",
-        content: "Every GEOverze membership capability, side by side.",
+        content: "Every GVRZE membership capability, side by side.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

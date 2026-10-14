@@ -1,7 +1,7 @@
 import { StorefrontRewardsCatalog } from "./StorefrontRewardsCatalog";
 import { useStoreCatalogue } from "../hooks/useStoreCatalogue";
 
-/** Reward catalogue for Profile → Rewards (same source as GEOstore). */
+/** Reward catalogue for Profile → Rewards (same source as GVRZE Store). */
 export function RewardsCategoryShelf({ className }: { className?: string | undefined }) {
   const { rewardProducts } = useStoreCatalogue();
 

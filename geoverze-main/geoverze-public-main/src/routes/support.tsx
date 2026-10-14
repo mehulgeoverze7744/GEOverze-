@@ -7,16 +7,16 @@ import { useAuthStore } from "@/stores/authStore";
 export const Route = createFileRoute("/support")({
   head: () => ({
     meta: [
-      { title: "Settings/Support — GEOverze" },
+      { title: "Settings/Support — GVRZE" },
       {
         name: "description",
         content:
-          "GEOverze help centre: getting started, Let's Play, GEOlibrary, GEOstore, accounts and billing answers.",
+          "GVRZE help centre: getting started, Let's Play, GVRZE Library, GVRZE Store, accounts and billing answers.",
       },
-      { property: "og:title", content: "Settings/Support — GEOverze" },
+      { property: "og:title", content: "Settings/Support — GVRZE" },
       {
         property: "og:description",
-        content: "Answers, guides and a direct line to the team building GEOverze.",
+        content: "Answers, guides and a direct line to the team building GVRZE.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

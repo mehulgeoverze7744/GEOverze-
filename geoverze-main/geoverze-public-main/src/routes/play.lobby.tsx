@@ -3,9 +3,9 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { LobbyScreen } from "@/features/matchmaking";
 import { isGameModeAvailable } from "@/features/play/data/gameModes";
 
-const t = "Game Lobby — GEOverze";
+const t = "Game Lobby — GVRZE";
 const d =
-  "The GEOverze pre-game room: confirm the set, review the rules and ready up for the round.";
+  "The GVRZE pre-game room: confirm the set, review the rules and ready up for the round.";
 
 export const Route = createFileRoute("/play/lobby")({
   validateSearch: (search: Record<string, unknown>) => ({

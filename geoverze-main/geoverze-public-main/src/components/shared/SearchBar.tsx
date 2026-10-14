@@ -4,7 +4,7 @@ import { forwardRef, type ComponentProps } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * The one search field in GEOverze.
+ * The one search field in GVRZE.
  *
  * Presentational and controlled: callers own the query and the querying. It
  * supports an async `loading` indicator and a clear affordance so a backend

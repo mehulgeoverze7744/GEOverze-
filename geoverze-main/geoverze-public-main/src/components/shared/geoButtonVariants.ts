@@ -1,7 +1,7 @@
 import { cva } from "class-variance-authority";
 
 /**
- * GEOverze button variants. Kept in its own module so the component file only
+ * GVRZE button variants. Kept in its own module so the component file only
  * exports components (Fast Refresh stays intact).
  */
 export const geoButtonVariants = cva(

@@ -136,7 +136,7 @@ function ProfilePanel({ profile }: { profile: ReturnType<typeof useProfile> }) {
 function AppearancePanel() {
   return (
     <>
-      <p className="settings-detail-intro">GEOverze is built for deep space and bronze.</p>
+      <p className="settings-detail-intro">GVRZE is built for deep space and bronze.</p>
       <SettingsGroup label="Theme">
         <SettingsRow title="Theme" value="Deep space" static />
         <SettingsRow title="Accent" value="Bronze" static />
@@ -161,7 +161,7 @@ function RegionPanel({
   return (
     <>
       <p className="settings-detail-intro">
-        GEOverze launches in English; more languages arrive with the localisation phase.
+        GVRZE launches in English; more languages arrive with the localisation phase.
       </p>
       <SettingsGroup label="Language">
         <SettingsRow title="Language" value={LOCALE_LABELS[locale] ?? locale} static />
@@ -220,7 +220,7 @@ function NotificationsPanel() {
       />
       <SettingsRow
         title="Store activity"
-        subtitle="Order confirmations and restocks from the GEOstore."
+        subtitle="Order confirmations and restocks from the GVRZE Store."
         control={<PrefSwitch toggle="notifyStore" label="Store activity" />}
         static
       />
@@ -238,7 +238,7 @@ function NotificationsPanel() {
       />
       <SettingsRow
         title="Notification centre"
-        subtitle="Read, filter and clear everything GEOverze has sent you."
+        subtitle="Read, filter and clear everything GVRZE has sent you."
         control={
           <GeoButton asChild variant="secondary" size="sm">
             <Link to="/notifications">Open</Link>
@@ -261,7 +261,7 @@ function PrivacyPanel() {
       />
       <SettingsRow
         title="Privacy policy"
-        subtitle="How GEOverze handles the little data it holds."
+        subtitle="How GVRZE handles the little data it holds."
         control={
           <GeoButton asChild variant="ghost" size="sm">
             <Link to="/privacy">Read</Link>
@@ -346,7 +346,7 @@ function BillingPanel({ walletBalance }: { walletBalance: number }) {
       </SettingsGroup>
       <SettingsGroup label="Credits">
         <SettingsRow
-          title="GEO credits"
+          title="GVRZE Credits"
           subtitle={`${walletBalance.toLocaleString()} credits available in your wallet`}
           control={
             <GeoButton asChild variant="secondary" size="sm">

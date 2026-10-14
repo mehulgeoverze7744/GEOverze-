@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { MembersScreen } from "@/features/community";
 
-const title = "Explorers — GEOverze Community";
+const title = "Explorers — GVRZE Community";
 const description =
-  "Meet the explorers, navigators, cartographers and creators building the GEOverze community.";
+  "Meet the explorers, navigators, cartographers and creators building the GVRZE community.";
 
 export const Route = createFileRoute("/community/members")({
   head: () => ({

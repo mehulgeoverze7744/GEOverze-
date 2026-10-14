@@ -38,7 +38,7 @@ export async function fetchBrowseArticles(query: LibraryQuery): Promise<Article[
   }
 
   const { data: rows, error } = await request;
-  if (error) throw new Error(`Failed to browse GEOlibrary: ${error.message}`);
+  if (error) throw new Error(`Failed to browse GVRZE Library: ${error.message}`);
 
   let articles = (rows ?? []).map((row) => mapResourceRowToArticle(row));
 

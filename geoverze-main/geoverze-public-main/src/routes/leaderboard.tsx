@@ -5,16 +5,16 @@ import { LeaderboardPage } from "@/features/leaderboard";
 export const Route = createFileRoute("/leaderboard")({
   head: () => ({
     meta: [
-      { title: "Leaderboard — GEOverze" },
+      { title: "Leaderboard — GVRZE" },
       {
         name: "description",
         content:
-          "Seasonal rankings, streaks and accuracy standings across the GEOverze player base.",
+          "Seasonal rankings, streaks and accuracy standings across the GVRZE player base.",
       },
-      { property: "og:title", content: "Leaderboard — GEOverze" },
+      { property: "og:title", content: "Leaderboard — GVRZE" },
       {
         property: "og:description",
-        content: "Seasonal rankings, streaks and accuracy standings in GEOverze.",
+        content: "Seasonal rankings, streaks and accuracy standings in GVRZE.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

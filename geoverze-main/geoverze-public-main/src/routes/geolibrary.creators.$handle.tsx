@@ -8,10 +8,10 @@ export const Route = createFileRoute("/geolibrary/creators/$handle")({
     const creator = creatorByHandle(params.handle);
     if (!creator) {
       return {
-        meta: [{ title: "Creator not found — GEOlibrary" }, { name: "robots", content: "noindex" }],
+        meta: [{ title: "Creator not found — GVRZE Library" }, { name: "robots", content: "noindex" }],
       };
     }
-    const title = `${creator.name} — GEOlibrary creator`;
+    const title = `${creator.name} — GVRZE Library creator`;
     return {
       meta: [
         { title },

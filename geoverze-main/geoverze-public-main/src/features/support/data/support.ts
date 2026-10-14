@@ -17,7 +17,7 @@ export const supportCategories: readonly SupportCategory[] = [
   {
     id: "getting-started",
     title: "Getting started",
-    description: "Learn how GEOverze works",
+    description: "Learn how GVRZE works",
     icon: "🌟",
     to: "/",
   },
@@ -30,14 +30,14 @@ export const supportCategories: readonly SupportCategory[] = [
   },
   {
     id: "geolibrary",
-    title: "GEOlibrary",
+    title: "GVRZE Library",
     description: "Articles, collections and topics",
     icon: "📚",
     to: "/geolibrary",
   },
   {
     id: "geostore",
-    title: "GEOstore",
+    title: "GVRZE Store",
     description: "Orders, products and delivery",
     icon: "🛍️",
     to: "/geostore",
@@ -60,7 +60,7 @@ export const supportCategories: readonly SupportCategory[] = [
 
 export const supportGroups: readonly SupportGroup[] = [
   {
-    label: "Explore GEOverze",
+    label: "Explore GVRZE",
     categoryIds: ["getting-started", "play", "geolibrary"],
   },
   {
@@ -70,7 +70,7 @@ export const supportGroups: readonly SupportGroup[] = [
 ] as const;
 
 export const supportContact = {
-  title: "Contact GEOverze Support",
+  title: "Contact GVRZE Support",
   description: "Still need help? We're here.",
   icon: "💬",
   to: "/contact" as const,
@@ -78,19 +78,19 @@ export const supportContact = {
 
 export const supportFaqs: { question: string; answer: string }[] = [
   {
-    question: "Is GEOverze available to play right now?",
+    question: "Is GVRZE available to play right now?",
     answer:
       "The platform foundation and every page are live. The quiz engine, leaderboards and rewards arrive in the upcoming feature phases — each module tells you exactly what it will do when you open it.",
   },
   {
     question: "Do I need an account to explore?",
     answer:
-      "Browsing the universe, the GEOlibrary overview and pricing needs nothing at all. Accounts exist to carry your progress, collections and rankings, and activate with the authentication phase.",
+      "Browsing the universe, the GVRZE Library overview and pricing needs nothing at all. Accounts exist to carry your progress, collections and rankings, and activate with the authentication phase.",
   },
   {
-    question: "How is GEOverze different from a quiz app?",
+    question: "How is GVRZE different from a quiz app?",
     answer:
-      "GEOverze treats the planet as a place you travel through rather than a list of questions. Play, reference and collecting share one continuous world, one visual language and one progression.",
+      "GVRZE treats the planet as a place you travel through rather than a list of questions. Play, reference and collecting share one continuous world, one visual language and one progression.",
   },
   {
     question: "Will my progress carry across devices?",
@@ -98,7 +98,7 @@ export const supportFaqs: { question: string; answer: string }[] = [
       "Yes. Preferences save locally today, and once accounts are live your progress, collections and settings follow your account onto any device you sign in from.",
   },
   {
-    question: "Can schools and institutions use GEOverze?",
+    question: "Can schools and institutions use GVRZE?",
     answer:
       "Institution licensing is part of the pricing model, covering classroom cohorts, shared progress views and bulk seats. Reach out through Contact and we'll plan the rollout with you.",
   },

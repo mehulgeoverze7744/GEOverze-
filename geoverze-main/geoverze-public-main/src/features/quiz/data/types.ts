@@ -1,7 +1,7 @@
 /**
  * The universal question model.
  *
- * Every quiz type in GEOverze — present and future — is expressed as one of
+ * Every quiz type in GVRZE — present and future — is expressed as one of
  * these objects. Screens never branch on the subject (flags, capitals, maps);
  * they branch on `type`, and `QuestionRenderer` owns that single switch. Adding
  * a new quiz type means adding a variant here plus one renderer component.

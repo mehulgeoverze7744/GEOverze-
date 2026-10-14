@@ -45,7 +45,7 @@ export function SettingsPage() {
             <header className="settings-header">
               <AnimatedSection>
                 <p className="settings-eyebrow">Settings</p>
-                <h1 className="settings-title">Make GEOverze yours.</h1>
+                <h1 className="settings-title">Make GVRZE yours.</h1>
                 <p className="settings-description">
                   Manage your account, experience and preferences.
                 </p>

@@ -23,7 +23,7 @@ export function LibraryBookmarksScreen() {
   return (
     <SectionContainer>
       <PageHeader
-        eyebrow="GEOlibrary"
+        eyebrow="GVRZE Library"
         title="Saved reading"
         description="Everything you bookmarked, ready to pick up again."
       />

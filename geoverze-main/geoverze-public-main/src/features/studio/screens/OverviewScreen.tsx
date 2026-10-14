@@ -38,7 +38,7 @@ export function OverviewScreen() {
       <StudioHeader
         eyebrow="Workspace"
         title={`Good to see you, ${firstName}`}
-        description="Everything you have published, everything in flight, and how it is performing across the GEOverze universe."
+        description="Everything you have published, everything in flight, and how it is performing across the GVRZE universe."
         actions={
           <>
             <GeoButton asChild size="sm" variant="secondary">

@@ -11,16 +11,16 @@ export const Route = createFileRoute("/_app/quiz-history-and-rewards")({
   }),
   head: () => ({
     meta: [
-      { title: "Quiz History & Rewards — GEOverze" },
+      { title: "Quiz History & Rewards — GVRZE" },
       {
         name: "description",
         content:
-          "Your GEOverze expeditions, achievements and rewards — quiz history, badges and credits in one place.",
+          "Your GVRZE expeditions, achievements and rewards — quiz history, badges and credits in one place.",
       },
-      { property: "og:title", content: "Quiz History & Rewards — GEOverze" },
+      { property: "og:title", content: "Quiz History & Rewards — GVRZE" },
       {
         property: "og:description",
-        content: "Quiz history, explorer achievements and Geo credits in one unified view.",
+        content: "Quiz history, explorer achievements and GVRZE Credits in one unified view.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

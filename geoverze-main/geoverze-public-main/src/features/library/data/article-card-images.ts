@@ -1,4 +1,4 @@
-/** Static cover art for GEOlibrary article cards, keyed by article slug. */
+/** Static cover art for GVRZE Library article cards, keyed by article slug. */
 const ARTICLE_BASE = "/assets/geolibrary/articles";
 const COLLECTION_BASE = "/assets/geolibrary/collections";
 

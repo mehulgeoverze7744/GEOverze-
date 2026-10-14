@@ -167,7 +167,7 @@ export const HoodieMerchProductPage = memo(function HoodieMerchProductPage({
             activeOptions={{ exact: true }}
             className="transition-colors hover:text-bronze"
           >
-            Back to GEOstore
+            Back to GVRZE Store
           </Link>
           <span className="text-foreground/25" aria-hidden>
             &gt;
@@ -284,7 +284,7 @@ export const HoodieMerchProductPage = memo(function HoodieMerchProductPage({
               </AccordionRow>
               <AccordionRow title="Details" icon={LayoutGrid}>
                 <ul className="space-y-1">
-                  <li>GEOverze merch collection hoodie</li>
+                  <li>GVRZE merch collection hoodie</li>
                   <li>
                     Colourways:{" "}
                     {colors
@@ -317,7 +317,7 @@ export const HoodieMerchProductPage = memo(function HoodieMerchProductPage({
 
           <div className="min-w-0 space-y-5 md:sticky md:top-[calc(var(--nav-height)+1.25rem)]">
             <p className="text-[0.62rem] uppercase tracking-[0.22em] text-bronze/70">
-              HOODIE · GEOVERZE COLLECTION
+              HOODIE · GVRZE COLLECTION
             </p>
 
             <div>

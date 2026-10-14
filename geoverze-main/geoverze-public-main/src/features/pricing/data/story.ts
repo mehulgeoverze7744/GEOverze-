@@ -12,7 +12,7 @@ export const upgradeStory: UpgradeBeat[] = [
     eyebrow: "Community",
     title: "Daniel Okoye",
     description:
-      "“Multiplayer quizzes are what keep me coming back to GEOverze. Competing with real players makes every round more exciting, and now I’ve even redeemed my credits for a mug that I use every day. It’s a great reminder of the games I’ve played.”",
+      "“Multiplayer quizzes are what keep me coming back to GVRZE. Competing with real players makes every round more exciting, and now I’ve even redeemed my credits for a mug that I use every day. It’s a great reminder of the games I’ve played.”",
     points: ["Pro", "Multiplayer player", "Mug reward"],
   },
   {
@@ -41,10 +41,10 @@ export const upgradeStory: UpgradeBeat[] = [
   },
   {
     id: "geostore",
-    eyebrow: "GEOstore",
+    eyebrow: "GVRZE Store",
     title: "Riya Kapoor",
     description:
       "“The T-shirt itself looks great, but the packaging surprised me even more. The acrylic sheet box felt premium enough to keep as a photo frame instead of throwing it away. It felt like opening a proper collector’s piece.”",
-    points: ["GEOstore", "T-shirt buyer", "Premium packaging"],
+    points: ["GVRZE Store", "T-shirt buyer", "Premium packaging"],
   },
 ];

@@ -25,7 +25,7 @@ const STATUS_FILTERS: (ContentStatus | "all")[] = [
   "archived",
 ];
 
-/** Content Studio index: long-form articles for GEOlibrary. */
+/** Content Studio index: long-form articles for GVRZE Library. */
 export function ArticleListScreen() {
   const [status, setStatus] = useState<ContentStatus | "all">("all");
   const [query, setQuery] = useState("");
@@ -44,7 +44,7 @@ export function ArticleListScreen() {
       <StudioHeader
         eyebrow="Create"
         title="Articles"
-        description="Write, structure and publish long-form geography content into GEOlibrary."
+        description="Write, structure and publish long-form geography content into GVRZE Library."
         actions={
           <GeoButton asChild size="sm" variant="primary" className="gap-2">
             <Link to="/studio/articles/new">

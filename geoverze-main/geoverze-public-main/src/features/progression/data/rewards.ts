@@ -97,7 +97,7 @@ export const REWARD_SECTIONS: readonly RewardSection[] = [
   {
     id: "merch",
     title: "Merchandise",
-    description: "Physical rewards arrive with the GEOstore fulfilment phase.",
+    description: "Physical rewards arrive with the GVRZE Store fulfilment phase.",
     icon: Shirt,
     rewards: [
       {
@@ -121,7 +121,7 @@ export const REWARD_SECTIONS: readonly RewardSection[] = [
   {
     id: "seasonal",
     title: "Seasonal rewards",
-    description: "Limited tracks that rotate with each GEOverze season.",
+    description: "Limited tracks that rotate with each GVRZE season.",
     icon: Snowflake,
     rewards: [
       {
@@ -166,7 +166,7 @@ export const REWARD_SECTIONS: readonly RewardSection[] = [
     rewards: [
       {
         id: "platform-rewards",
-        title: "GEOverze rewards",
+        title: "GVRZE rewards",
         description: "Spend credits on merch, digital drops, and premium perks when available.",
         value: "Coming soon",
         status: "coming-soon",

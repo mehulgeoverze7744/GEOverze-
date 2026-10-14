@@ -12,7 +12,7 @@ type LibraryCollectionCardProps = {
   className?: string;
 };
 
-/** Featured collection tile for GEOlibrary home rails. */
+/** Featured collection tile for GVRZE Library home rails. */
 export function LibraryCollectionCard({ collection, className }: LibraryCollectionCardProps) {
   return (
     <Link

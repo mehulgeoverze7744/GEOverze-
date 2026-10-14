@@ -1,5 +1,5 @@
 /**
- * GEOlibrary articles — canonical seed fixture / development reference.
+ * GVRZE Library articles — canonical seed fixture / development reference.
  *
  * Production read paths use Supabase via fetchPublishedArticles.ts.
  * This module remains the GL-4 seed source of truth.

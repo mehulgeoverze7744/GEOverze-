@@ -32,7 +32,7 @@ const trendingBrowseSearch = {
   view: "grid" as const,
 };
 
-/** GEOlibrary home: hero, categories, continue reading, trending, featured collections. */
+/** GVRZE Library home: hero, categories, continue reading, trending, featured collections. */
 export function LibraryHome() {
   const bookmarks = useLibraryStore((s) => s.bookmarks);
   const toggleBookmark = useLibraryStore((s) => s.toggleBookmark);
@@ -47,7 +47,7 @@ export function LibraryHome() {
   if (articlesError) {
     return (
       <SectionContainer>
-        <EmptyState title="GEOlibrary is unavailable" description={articlesError} />
+        <EmptyState title="GVRZE Library is unavailable" description={articlesError} />
       </SectionContainer>
     );
   }
@@ -111,7 +111,7 @@ export function LibraryHome() {
                   Meet the creators
                 </h2>
                 <p className="mt-3 text-sm leading-relaxed text-foreground/55">
-                  Cartographers, writers and researchers shaping GEOlibrary — explore their
+                  Cartographers, writers and researchers shaping GVRZE Library — explore their
                   profiles, specialties and latest work.
                 </p>
               </div>

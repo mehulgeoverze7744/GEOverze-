@@ -7,11 +7,11 @@ export const Route = createFileRoute("/community/topic/$slug")({
   head: ({ params }) => {
     const topic = topicBySlug(params.slug);
     const title = topic
-      ? `#${topic.slug} — GEOverze Community`
-      : `#${params.slug} — GEOverze Community`;
+      ? `#${topic.slug} — GVRZE Community`
+      : `#${params.slug} — GVRZE Community`;
     const description = topic
-      ? `${topic.blurb} Join the GEOverze discussion on ${topic.label.toLowerCase()}.`
-      : `Community discussion tagged #${params.slug} on GEOverze.`;
+      ? `${topic.blurb} Join the GVRZE discussion on ${topic.label.toLowerCase()}.`
+      : `Community discussion tagged #${params.slug} on GVRZE.`;
     return {
       meta: [
         { title },

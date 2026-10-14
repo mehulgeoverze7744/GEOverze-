@@ -51,7 +51,7 @@ export function AchievementsStrip({ className }: { className?: string }) {
         <div className="mt-6 flex flex-1 flex-col justify-center">
           <p className="text-sm text-foreground/80">No GeoCredit achievements yet.</p>
           <p className="mt-2 text-[0.75rem] leading-relaxed text-foreground/50">
-            Acquire a GEOverze product with GeoCredits to earn your first achievement.
+            Acquire a GVRZE product with GVRZE Credits to earn your first achievement.
           </p>
         </div>
       ) : (

@@ -5,12 +5,12 @@ import { WeeklyChallengesPage } from "@/features/progression";
 export const Route = createFileRoute("/play/weekly-challenges")({
   head: () => ({
     meta: [
-      { title: "Weekly Challenges — GEOverze" },
+      { title: "Weekly Challenges — GVRZE" },
       {
         name: "description",
         content: "Bigger weekly geography objectives with larger XP and credit rewards.",
       },
-      { property: "og:title", content: "Weekly Challenges — GEOverze" },
+      { property: "og:title", content: "Weekly Challenges — GVRZE" },
       {
         property: "og:description",
         content: "Bigger weekly geography objectives with larger XP and credit rewards.",

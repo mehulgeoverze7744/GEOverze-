@@ -5,17 +5,17 @@ import { PlayPage } from "@/features/play";
 export const Route = createFileRoute("/play/")({
   head: () => ({
     meta: [
-      { title: "Let's Play — GEOverze" },
+      { title: "Let's Play — GVRZE" },
       {
         name: "description",
         content:
-          "Timed geography rounds, live trivia and tournaments inside the GEOverze universe. The play module is in development.",
+          "Timed geography rounds, live trivia and tournaments inside the GVRZE universe. The play module is in development.",
       },
-      { property: "og:title", content: "Let's Play — GEOverze" },
+      { property: "og:title", content: "Let's Play — GVRZE" },
       {
         property: "og:description",
         content:
-          "Timed geography rounds, live trivia and tournaments inside the GEOverze universe.",
+          "Timed geography rounds, live trivia and tournaments inside the GVRZE universe.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

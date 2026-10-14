@@ -1,6 +1,6 @@
 import { memo } from "react";
 
-import emblemUrl from "@/assets/geoverze-emblem.png";
+import emblemUrl from "@/assets/gvrze-emblem.png";
 import { site } from "@/config/site";
 import { cn } from "@/lib/utils";
 
@@ -13,7 +13,7 @@ const sizes = {
 } as const;
 
 /**
- * Official GEOverze emblem. Single source for every brand surface (navbar,
+ * Official GVRZE emblem. Single source for every brand surface (navbar,
  * footer, auth, hero, loading) so sizing, retina rendering and the ambient
  * bronze sheen stay identical everywhere.
  */

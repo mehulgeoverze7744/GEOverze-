@@ -169,7 +169,7 @@ export function HomeHero() {
         open={demoOpen}
         onOpenChange={setDemoOpen}
         title="Demo coming soon"
-        description="A guided tour of the GEOverze experience is being produced."
+        description="A guided tour of the GVRZE experience is being produced."
       >
         <div className="mt-2 flex aspect-video items-center justify-center rounded-xl border border-bronze/20 bg-bronze/5">
           <p className="text-[0.62rem] uppercase tracking-[0.32em] text-bronze/90">

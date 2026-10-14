@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { TournamentsPage } from "@/features/tournaments";
 
-const t = "Tournaments — GEOverze";
+const t = "Tournaments — GVRZE";
 const d =
-  "Open brackets, seasonal cups and invitational geography tournaments inside the GEOverze quiz platform.";
+  "Open brackets, seasonal cups and invitational geography tournaments inside the GVRZE quiz platform.";
 
 export const Route = createFileRoute("/play/tournaments/")({
   head: () => ({

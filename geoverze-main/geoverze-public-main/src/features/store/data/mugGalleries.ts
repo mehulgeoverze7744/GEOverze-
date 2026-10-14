@@ -53,7 +53,7 @@ export const MUG_GALLERIES: Readonly<Record<string, readonly MugGalleryView[]>> 
   "orbital-horizon-mug": [
     {
       src: orbitalHorizonMugFront,
-      alt: "Orbital Horizon Mug — front view with GEOverze wordmark",
+      alt: "Orbital Horizon Mug — front view with GVRZE wordmark",
       label: "Front view",
     },
     {
@@ -80,7 +80,7 @@ export const MUG_GALLERIES: Readonly<Record<string, readonly MugGalleryView[]>> 
   "celestial-meridian-mug": [
     {
       src: celestialMeridianMugMain,
-      alt: "Celestial Meridian Mug — full mug with handle and GEOverze mark",
+      alt: "Celestial Meridian Mug — full mug with handle and GVRZE mark",
       label: "Front view",
       objectPosition: "50% 50%",
     },
@@ -112,7 +112,7 @@ export const MUG_GALLERIES: Readonly<Record<string, readonly MugGalleryView[]>> 
   "terra-contour-mug": [
     {
       src: terraContourMugMain,
-      alt: "Terra Contour Mug — full mug with handle and GEOverze mark",
+      alt: "Terra Contour Mug — full mug with handle and GVRZE mark",
       label: "Front view",
       objectPosition: "50% 50%",
     },

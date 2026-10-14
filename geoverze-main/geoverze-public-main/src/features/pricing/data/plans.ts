@@ -34,7 +34,7 @@ export type PricingPlan = {
   featured: boolean;
   badge?: string;
   cta: string;
-  /** Bronze callout rendered above the feature list (GEOstore member discount). */
+  /** Bronze callout rendered above the feature list (GVRZE Store member discount). */
   storePerk?: string;
   prices: Record<BillingCycle, PlanPrice>;
 };
@@ -58,7 +58,7 @@ export const TIER_PRESENTATION: Record<TierId, TierPresentation> = {
     cta: "Start free",
     featured: false,
     extraFeatures: [
-      "GEOlibrary browsing",
+      "GVRZE Library browsing",
       "Global leaderboard entry",
       "Daily streak tracking",
       "Standard credit earning",
@@ -69,9 +69,9 @@ export const TIER_PRESENTATION: Record<TierId, TierPresentation> = {
     summary: "A full month of quizzes and a steady credit grant without going unlimited.",
     cta: "Choose Basic",
     featured: false,
-    storePerk: "3% OFF on any GEOstore purchase",
+    storePerk: "3% OFF on any GVRZE Store purchase",
     extraFeatures: [
-      "Limited GEOlibrary access",
+      "Limited GVRZE Library access",
       "Global leaderboard entry",
       "Daily streak tracking",
       "Standard credit earning",
@@ -79,13 +79,13 @@ export const TIER_PRESENTATION: Record<TierId, TierPresentation> = {
   },
   pro: {
     positioning: "The complete experience",
-    summary: "Every mode, every atlas, no ceilings — the way GEOverze is meant to be played.",
+    summary: "Every mode, every atlas, no ceilings — the way GVRZE is meant to be played.",
     cta: "Choose Pro",
     featured: true,
     badge: "Most chosen",
-    storePerk: "10% OFF on any GEOstore purchase",
+    storePerk: "10% OFF on any GVRZE Store purchase",
     extraFeatures: [
-      "Full GEOlibrary access",
+      "Full GVRZE Library access",
       "PvP duels and multiplayer rooms",
       "All atlases and question packs",
       "Advanced progress analytics",

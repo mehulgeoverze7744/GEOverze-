@@ -10,7 +10,7 @@ export function ProStorePerkPill({ className }: { className?: string | undefined
     <span
       role="note"
       className={cn("pro-store-perk-pill", className)}
-      title="Pro members receive up to 10% off GEOstore purchases"
+      title="Pro members receive up to 10% off GVRZE Store purchases"
     >
       {PERK_LABEL}
     </span>

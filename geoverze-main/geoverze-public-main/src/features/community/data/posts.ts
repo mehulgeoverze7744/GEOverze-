@@ -106,7 +106,7 @@ export const POSTS: readonly Post[] = [
     likes: 156,
     comments: 63,
     shares: 4,
-    question: "Hardest quiz category in GEOverze?",
+    question: "Hardest quiz category in GVRZE?",
     options: [
       { id: "flags", label: "Flags", votes: 412 },
       { id: "capitals", label: "Capitals", votes: 288 },

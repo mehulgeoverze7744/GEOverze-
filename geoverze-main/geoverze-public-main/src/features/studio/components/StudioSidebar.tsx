@@ -32,7 +32,7 @@ export function StudioSidebar() {
           collapsed ? "justify-center px-2" : "gap-3 px-5",
         )}
       >
-        <Link to="/" className="flex items-center gap-3" aria-label="GEOverze home">
+        <Link to="/" className="flex items-center gap-3" aria-label="GVRZE home">
           <BrandMark className="h-8 w-8" />
           {!collapsed ? (
             <span className="flex flex-col leading-none">
@@ -40,7 +40,7 @@ export function StudioSidebar() {
                 Creator Studio
               </span>
               <span className="mt-1 text-[0.62rem] uppercase tracking-[0.2em] text-bronze/90">
-                GEOverze
+                GVRZE
               </span>
             </span>
           ) : null}

@@ -11,7 +11,7 @@ export const EUROPE_MICROSTATES_INTRO: readonly ArticleBlock[] = [
   },
   {
     kind: "paragraph",
-    text: "This GEOlibrary feature examines all six in depth. Malta is far larger than Vatican City or Monaco, yet still ranks among Europe's smallest states. Andorra's co-principality looks unusual on paper but made sense in medieval Pyrenean politics. What unites the group is not a single survival formula, but a shared lesson: sovereignty has never depended on area alone.",
+    text: "This GVRZE Library feature examines all six in depth. Malta is far larger than Vatican City or Monaco, yet still ranks among Europe's smallest states. Andorra's co-principality looks unusual on paper but made sense in medieval Pyrenean politics. What unites the group is not a single survival formula, but a shared lesson: sovereignty has never depended on area alone.",
   },
   {
     kind: "paragraph",

@@ -5,17 +5,17 @@ import { AudienceScreen } from "@/features/studio";
 export const Route = createFileRoute("/studio/audience")({
   head: () => ({
     meta: [
-      { title: "Audience — GEOverze Creator Studio" },
+      { title: "Audience — GVRZE Creator Studio" },
       {
         name: "description",
         content:
-          "See who follows your geography content on GEOverze and how deeply they engage with it.",
+          "See who follows your geography content on GVRZE and how deeply they engage with it.",
       },
-      { property: "og:title", content: "Audience — GEOverze Creator Studio" },
+      { property: "og:title", content: "Audience — GVRZE Creator Studio" },
       {
         property: "og:description",
         content:
-          "See who follows your geography content on GEOverze and how deeply they engage with it.",
+          "See who follows your geography content on GVRZE and how deeply they engage with it.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

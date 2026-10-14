@@ -8,7 +8,7 @@ import { CONTINUE_READING_MIN_PERCENT } from "@/features/library/lib/article-rea
 import { useLibraryStore } from "@/stores/libraryStore";
 import { cn } from "@/lib/utils";
 
-/** Recently accessed GEOlibrary articles from real reading progress. */
+/** Recently accessed GVRZE Library articles from real reading progress. */
 export function RecentlyViewedPanel({ className }: { className?: string }) {
   const progress = useLibraryStore((s) => s.progress);
   const progressReadAt = useLibraryStore((s) => s.progressReadAt);
@@ -52,7 +52,7 @@ export function RecentlyViewedPanel({ className }: { className?: string }) {
         <p className="mt-6 text-sm text-foreground/50">Loading reading history…</p>
       ) : recent.length === 0 ? (
         <p className="mt-6 text-sm leading-relaxed text-foreground/50">
-          Articles you open in GEOlibrary will collect here.
+          Articles you open in GVRZE Library will collect here.
         </p>
       ) : (
         <ul className="mt-6 space-y-3">

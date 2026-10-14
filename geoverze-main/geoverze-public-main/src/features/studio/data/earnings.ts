@@ -15,7 +15,7 @@ export const EARNINGS_SUMMARY = {
 export const REVENUE_STREAMS = [
   { id: "r1", label: "Quiz plays", amount: 9_640.25, share: 0.51 },
   { id: "r2", label: "Premium articles", amount: 5_120.8, share: 0.27 },
-  { id: "r3", label: "GEOstore bundles", amount: 2_845.45, share: 0.15 },
+  { id: "r3", label: "GVRZE Store bundles", amount: 2_845.45, share: 0.15 },
   { id: "r4", label: "Community tips", amount: 1_336.0, share: 0.07 },
 ];
 
@@ -41,7 +41,7 @@ export const TRANSACTIONS: Transaction[] = [
   {
     id: "t3",
     date: "2026-08-04T09:12:00Z",
-    label: "GEOstore bundle — Physical Geography Pack",
+    label: "GVRZE Store bundle — Physical Geography Pack",
     kind: "bundle-sale",
     amount: 240.0,
     credits: null,

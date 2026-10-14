@@ -92,7 +92,7 @@ export function PostComposer() {
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder={
                   mode === "poll"
-                    ? "Hardest quiz category in GEOverze?"
+                    ? "Hardest quiz category in GVRZE?"
                     : "Which country has the most time zones?"
                 }
               />

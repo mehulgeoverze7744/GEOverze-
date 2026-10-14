@@ -3,7 +3,7 @@ import { Lock, Sparkles } from "lucide-react";
 import { UPCOMING_EVENTS } from "@/features/dashboard/data/dashboard";
 import { cn } from "@/lib/utils";
 
-/** Vertical timeline of upcoming GEOverze events — locked until those features ship. */
+/** Vertical timeline of upcoming GVRZE events — locked until those features ship. */
 export function UpcomingEventsPanel({ className }: { className?: string }) {
   return (
     <section
@@ -13,7 +13,7 @@ export function UpcomingEventsPanel({ className }: { className?: string }) {
     >
       <h2 id="upcoming-events-heading" className="dashboard-section-label flex items-center gap-2">
         <Sparkles className="h-3.5 w-3.5 text-bronze/90" strokeWidth={1.5} aria-hidden="true" />
-        Upcoming in GEOverze
+        Upcoming in GVRZE
       </h2>
       <p className="sr-only">This section is coming soon and cannot be used yet.</p>
 

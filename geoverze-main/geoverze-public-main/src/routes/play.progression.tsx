@@ -5,15 +5,15 @@ import { ProgressionHub } from "@/features/progression";
 export const Route = createFileRoute("/play/progression")({
   head: () => ({
     meta: [
-      { title: "Progression — GEOverze" },
+      { title: "Progression — GVRZE" },
       {
         name: "description",
-        content: "Track your XP, credits, streak and challenges across the GEOverze universe.",
+        content: "Track your XP, credits, streak and challenges across the GVRZE universe.",
       },
-      { property: "og:title", content: "Progression — GEOverze" },
+      { property: "og:title", content: "Progression — GVRZE" },
       {
         property: "og:description",
-        content: "Track your XP, credits, streak and challenges across the GEOverze universe.",
+        content: "Track your XP, credits, streak and challenges across the GVRZE universe.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -7,9 +7,9 @@ export const Route = createFileRoute("/play/collections/$slug")({
   head: ({ params }) => {
     const collection = collectionBySlug(params.slug);
     const title = collection
-      ? `${collection.title} — Collections — GEOverze`
-      : "Collection — GEOverze";
-    const description = collection ? collection.description : "Curated GEOverze quiz collections.";
+      ? `${collection.title} — Collections — GVRZE`
+      : "Collection — GVRZE";
+    const description = collection ? collection.description : "Curated GVRZE quiz collections.";
     return {
       meta: [
         { title },

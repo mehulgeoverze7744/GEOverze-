@@ -1,5 +1,5 @@
 /**
- * GEOlibrary collections.
+ * GVRZE Library collections.
  *
  * Curated shelves of articles. Article membership is by slug so a backend can
  * return the same join later without touching the UI.

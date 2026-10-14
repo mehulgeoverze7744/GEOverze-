@@ -14,7 +14,7 @@ export function AchievementsPage() {
       <PageHeader
         eyebrow="Achievements"
         title="GeoCredit acquisitions"
-        description="Products you have acquired with GeoCredits."
+        description="Products you have acquired with GVRZE Credits."
       />
       <SectionContainer size="default" className="max-w-[78rem] pb-[var(--space-section-sm)]">
         <AnimatedSection>
@@ -26,7 +26,7 @@ export function AchievementsPage() {
             <div>
               <p className="text-sm text-foreground/80">No GeoCredit achievements yet.</p>
               <p className="mt-2 text-[0.75rem] leading-relaxed text-foreground/50">
-                Acquire a GEOverze product with GeoCredits to earn your first achievement.
+                Acquire a GVRZE product with GVRZE Credits to earn your first achievement.
               </p>
             </div>
           ) : (

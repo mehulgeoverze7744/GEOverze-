@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { DrawGuessCreateScreen } from "@/features/draw-guess";
 
-const t = "Create Draw & Guess Room — GEOverze";
-const d = "Configure a private GEOverze Draw & Guess room with your preferred categories and rounds.";
+const t = "Create Draw & Guess Room — GVRZE";
+const d = "Configure a private GVRZE Draw & Guess room with your preferred categories and rounds.";
 
 export const Route = createFileRoute("/play/draw-guess/create")({
   head: () => ({

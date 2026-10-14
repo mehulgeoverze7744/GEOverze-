@@ -8,13 +8,13 @@ export const Route = createFileRoute("/play/quiz/solo")({
   }),
   head: () => ({
     meta: [
-      { title: "Solo Quiz — GEOverze" },
+      { title: "Solo Quiz — GVRZE" },
       {
         name: "description",
         content:
-          "Play a timed solo geography round in GEOverze with instant feedback, explanations and keyboard shortcuts.",
+          "Play a timed solo geography round in GVRZE with instant feedback, explanations and keyboard shortcuts.",
       },
-      { property: "og:title", content: "Solo Quiz — GEOverze" },
+      { property: "og:title", content: "Solo Quiz — GVRZE" },
       {
         property: "og:description",
         content: "Play a timed solo geography round with instant feedback and explanations.",

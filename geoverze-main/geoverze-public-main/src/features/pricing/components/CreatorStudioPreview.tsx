@@ -63,7 +63,7 @@ export function CreatorStudioPreview({ view, className }: CreatorStudioPreviewPr
           <div className="pricing-creator-preview-brand">
             <BrandMark className="pricing-creator-preview-mark" />
             <div>
-              <p className="pricing-creator-preview-brand-eyebrow">GEOverze</p>
+              <p className="pricing-creator-preview-brand-eyebrow">GVRZE</p>
               <p className="pricing-creator-preview-brand-title">Creator Studio</p>
             </div>
           </div>
@@ -218,7 +218,7 @@ function PublishingView({ active }: { active: boolean }) {
       <header className="pricing-creator-preview-header">
         <h4 className="pricing-creator-preview-kicker">Publishing</h4>
         <p className="pricing-creator-preview-sub">
-          Ship straight into Let&apos;s Play and the GEOlibrary.
+          Ship straight into Let&apos;s Play and the GVRZE Library.
         </p>
       </header>
 
@@ -230,7 +230,7 @@ function PublishingView({ active }: { active: boolean }) {
         </div>
         <div className="pricing-creator-preview-publish-card">
           <p className="pricing-creator-preview-publish-label">Destination</p>
-          <p className="pricing-creator-preview-publish-title">GEOlibrary</p>
+          <p className="pricing-creator-preview-publish-title">GVRZE Library</p>
           <p className="pricing-creator-preview-publish-meta">Articles &amp; collections</p>
         </div>
       </div>
@@ -302,7 +302,7 @@ function MonetizationView({ active }: { active: boolean }) {
           <li className="pricing-creator-preview-row">
             <div>
               <p className="pricing-creator-preview-row-title">Premium article access</p>
-              <p className="pricing-creator-preview-row-meta">Member-only GEOlibrary placements</p>
+              <p className="pricing-creator-preview-row-meta">Member-only GVRZE Library placements</p>
             </div>
             <span className="pricing-creator-preview-row-badge">Planned</span>
           </li>

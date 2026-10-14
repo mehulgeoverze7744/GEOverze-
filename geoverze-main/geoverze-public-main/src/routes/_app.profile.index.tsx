@@ -5,16 +5,16 @@ import { ProfilePage } from "@/features/profile";
 export const Route = createFileRoute("/_app/profile/")({
   head: () => ({
     meta: [
-      { title: "Profile — GEOverze" },
+      { title: "Profile — GVRZE" },
       {
         name: "description",
         content:
-          "Your GEOverze profile: progress, achievements, credits and collected atlases in one place.",
+          "Your GVRZE profile: progress, achievements, credits and collected atlases in one place.",
       },
-      { property: "og:title", content: "Profile — GEOverze" },
+      { property: "og:title", content: "Profile — GVRZE" },
       {
         property: "og:description",
-        content: "Progress, achievements, credits and collected atlases in GEOverze.",
+        content: "Progress, achievements, credits and collected atlases in GVRZE.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

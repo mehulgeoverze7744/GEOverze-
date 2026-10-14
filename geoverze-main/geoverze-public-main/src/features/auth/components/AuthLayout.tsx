@@ -47,7 +47,7 @@ export function AuthLayout({
           >
             <Link
               to="/"
-              aria-label="GEOverze home"
+              aria-label="GVRZE home"
               className="inline-flex rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
             >
               <BrandMark

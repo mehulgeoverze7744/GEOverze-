@@ -1,5 +1,5 @@
 /**
- * GEOstore promotions: bundles, credit tiers and the current featured drop.
+ * GVRZE Store promotions: bundles, credit tiers and the current featured drop.
  * Illustrative placeholder merchandising — no payment processing exists yet.
  */
 

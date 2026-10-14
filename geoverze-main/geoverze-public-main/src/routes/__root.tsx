@@ -20,6 +20,7 @@ import { OfflineNotice } from "@/components/shared/OfflineNotice";
 import { Toaster } from "@/components/ui/sonner";
 
 import { NotFoundPage } from "@/features/errors";
+import { site } from "@/config/site";
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const router = useRouter();
@@ -59,14 +60,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "GEOverze — Know Earth. Think Global." },
+      { title: `${site.name} — ${site.slogan}. ${site.tagline}.` },
       {
         name: "description",
-        content:
-          "GEOverze is a cinematic geography universe — explore, learn and compete your way across the planet.",
+        content: site.description,
       },
-      { name: "author", content: "GEOverze" },
-      { property: "og:site_name", content: "GEOverze" },
+      { name: "author", content: site.name },
+      { property: "og:site_name", content: site.name },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -87,11 +87,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Organization",
-          name: "GEOverze",
-          slogan: "Know Earth. Think Global.",
-          url: "https://geoverze.com",
-          description:
-            "GEOverze is a cinematic geography universe — explore, learn and compete your way across the planet.",
+          name: site.name,
+          slogan: `${site.slogan}. ${site.tagline}.`,
+          url: site.url,
+          description: site.description,
         }),
       },
     ],

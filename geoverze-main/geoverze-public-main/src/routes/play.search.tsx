@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { SearchPage } from "@/features/play";
 
-const title = "Search Quizzes — GEOverze";
+const title = "Search Quizzes — GVRZE";
 const description =
-  "Search the full GEOverze quiz catalog and filter by difficulty, category, length, question count and creator.";
+  "Search the full GVRZE quiz catalog and filter by difficulty, category, length, question count and creator.";
 
 export const Route = createFileRoute("/play/search")({
   validateSearch: (search: Record<string, unknown>) => ({

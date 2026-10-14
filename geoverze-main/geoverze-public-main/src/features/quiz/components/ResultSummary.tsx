@@ -77,7 +77,7 @@ export function ResultSummary({
   const share = async () => {
     try {
       await navigator.clipboard.writeText(
-        `I scored ${summary.correct}/${summary.total} on "${set.title}" in GEOverze.`,
+        `I scored ${summary.correct}/${summary.total} on "${set.title}" in GVRZE.`,
       );
       setShared(true);
       window.setTimeout(() => setShared(false), 2200);

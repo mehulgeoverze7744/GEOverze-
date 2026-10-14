@@ -115,7 +115,7 @@ export function DashboardHero({ className }: { className?: string }) {
                 </dd>
               </div>
               <div className="dashboard-quick-status__item">
-                <dt>Geo credits</dt>
+                <dt>GVRZE Credits</dt>
                 <dd>
                   <AnimatedCounter value={geoCredits} />
                 </dd>

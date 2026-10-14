@@ -16,7 +16,7 @@ export const rewardSteps: RewardStep[] = [
   },
   {
     icon: Store,
-    title: "Redeem in the GEOstore",
+    title: "Redeem in the GVRZE Store",
     description: "Spend credits on atlases, question packs, cosmetics and physical merchandise.",
   },
   {
@@ -45,7 +45,7 @@ export const creatorPerks: CreatorPerk[] = [
   },
   {
     title: "Publishing",
-    description: "Ship straight into Let's Play and the GEOlibrary, where explorers already are.",
+    description: "Ship straight into Let's Play and the GVRZE Library, where explorers already are.",
   },
   {
     title: "Future monetization",

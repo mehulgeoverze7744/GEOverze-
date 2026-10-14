@@ -26,7 +26,7 @@ export function useRecordArticleView(resourceId: string | undefined, enabled: bo
       .catch((error) => {
         recordedResourceIds.delete(resourceId);
         attemptedRef.current = false;
-        console.error("Failed to record GEOlibrary article view", error);
+        console.error("Failed to record GVRZE Library article view", error);
       });
   }, [enabled, resourceId]);
 }

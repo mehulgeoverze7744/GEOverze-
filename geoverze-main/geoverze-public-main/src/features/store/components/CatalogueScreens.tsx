@@ -135,10 +135,10 @@ export function StoreBrowse() {
   return (
     <PageShell>
       <PageHeader
-        eyebrow="GEOstore"
+        eyebrow="GVRZE Store"
         title="Browse the catalogue"
-        description="GEOverze merchandise — filtered any way you like."
-        breadcrumb={[{ label: "GEOstore", to: "/geostore" }, { label: "Browse" }]}
+        description="GVRZE merchandise — filtered any way you like."
+        breadcrumb={[{ label: "GVRZE Store", to: "/geostore" }, { label: "Browse" }]}
       />
       <SectionContainer size="wide">
         <AnimatedSection className="rounded-2xl border border-bronze/12 bg-charcoal/45 p-6">
@@ -277,11 +277,11 @@ function MerchCategoryShelf({ slug }: { slug: "tshirts" | "hoodies" }) {
       <TshirtsCategoryBackground />
       <div className="relative z-10">
         <PageHeader
-          eyebrow="GEOstore"
+          eyebrow="GVRZE Store"
           title={category?.label ?? "Merchandise"}
-          description={category?.blurb ?? "Premium GEOverze apparel."}
+          description={category?.blurb ?? "Premium GVRZE apparel."}
           breadcrumb={[
-            { label: "GEOstore", to: "/geostore" },
+            { label: "GVRZE Store", to: "/geostore" },
             { label: "Browse", to: "/geostore/browse" },
             { label: category?.label ?? "Merchandise" },
           ]}
@@ -342,11 +342,11 @@ function AccessoriesCategoryShelf() {
       <TshirtsCategoryBackground />
       <div className="relative z-10">
         <PageHeader
-          eyebrow="GEOstore"
+          eyebrow="GVRZE Store"
           title={category?.label ?? "Accessories"}
           description={category?.blurb ?? "Totes, pins and desk pieces."}
           breadcrumb={[
-            { label: "GEOstore", to: "/geostore" },
+            { label: "GVRZE Store", to: "/geostore" },
             { label: "Browse", to: "/geostore/browse" },
             { label: category?.label ?? "Accessories" },
           ]}
@@ -392,11 +392,11 @@ function CatalogCategoryShelf({ slug }: { slug: string }) {
       {useClothBackground ? <TshirtsCategoryBackground /> : null}
       <div className={useClothBackground ? "relative z-10" : undefined}>
         <PageHeader
-          eyebrow="GEOstore"
+          eyebrow="GVRZE Store"
           title={category?.label ?? "Category"}
           description={category?.blurb ?? "This shelf is still being filled."}
           breadcrumb={[
-            { label: "GEOstore", to: "/geostore" },
+            { label: "GVRZE Store", to: "/geostore" },
             { label: "Browse", to: "/geostore/browse" },
             { label: category?.label ?? "Category" },
           ]}
@@ -499,10 +499,10 @@ export function ProductScreen() {
       <ProductPageFrame>
         <PageShell>
           <PageHeader
-            eyebrow="GEOstore"
+            eyebrow="GVRZE Store"
             title="We couldn't find that item"
             description="It may have sold out or been retired from the collection."
-            breadcrumb={[{ label: "GEOstore", to: "/geostore" }, { label: "Not found" }]}
+            breadcrumb={[{ label: "GVRZE Store", to: "/geostore" }, { label: "Not found" }]}
           />
           <SectionContainer>
             <EmptyState
@@ -534,11 +534,11 @@ export function ProductScreen() {
     <ProductPageFrame>
       <PageShell>
         <PageHeader
-          eyebrow={categoryById(product.category)?.label ?? "GEOstore"}
+          eyebrow={categoryById(product.category)?.label ?? "GVRZE Store"}
           title={product.name}
           description={product.tagline}
           breadcrumb={[
-            { label: "GEOstore", to: "/geostore" },
+            { label: "GVRZE Store", to: "/geostore" },
             { label: "Browse", to: "/geostore/browse" },
             { label: product.name },
           ]}
@@ -686,7 +686,7 @@ export function ProductScreen() {
                       Collection Details
                     </h3>
                     <p className="mt-2 text-sm leading-relaxed text-foreground/60">
-                      A GEOverze sticker collection.
+                      A GVRZE sticker collection.
                     </p>
                   </div>
                   {product.comingSoon || purchaseLocked ? null : (

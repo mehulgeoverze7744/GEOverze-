@@ -59,7 +59,7 @@ export function ContactPage() {
           <p className="ct-kicker">Contact</p>
           <h1 className="ct-title">Let's talk.</h1>
           <p className="ct-lede">
-            Partnerships, institutions, press, support, or anything GEOverze — send us a message and
+            Partnerships, institutions, press, support, or anything GVRZE — send us a message and
             we'll get back to you.
           </p>
         </header>

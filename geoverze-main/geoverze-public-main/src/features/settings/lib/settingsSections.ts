@@ -43,7 +43,7 @@ export const SECTION_DESCRIPTIONS: Record<SettingsSection, string> = {
   profile: "How you appear to other explorers.",
   appearance: "Theme and visual preferences.",
   region: "Language and measurement preferences.",
-  notifications: "Choose what GEOverze sends you.",
+  notifications: "Choose what GVRZE sends you.",
   privacy: "Visibility and data preferences.",
   security: "Password and account protection.",
   billing: "Your plan, credits and billing.",

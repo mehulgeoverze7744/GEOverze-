@@ -4,7 +4,7 @@ import { BookMarked } from "lucide-react";
 import { useBookmarksCollection } from "@/features/profile/lib/useBookmarksCollection";
 import { cn } from "@/lib/utils";
 
-/** Saved GEOlibrary articles from the live bookmarks collection. */
+/** Saved GVRZE Library articles from the live bookmarks collection. */
 export function SavedExplorationsPanel({ className }: { className?: string }) {
   const { byKind, loading } = useBookmarksCollection();
   const saved = byKind.articles.slice(0, 3);
@@ -37,7 +37,7 @@ export function SavedExplorationsPanel({ className }: { className?: string }) {
         <p className="mt-6 text-sm text-foreground/50">Loading saved articles…</p>
       ) : saved.length === 0 ? (
         <p className="mt-6 text-sm leading-relaxed text-foreground/50">
-          Bookmark a GEOlibrary article and it will appear on this shelf.
+          Bookmark a GVRZE Library article and it will appear on this shelf.
         </p>
       ) : (
         <ul className="mt-6 space-y-3">

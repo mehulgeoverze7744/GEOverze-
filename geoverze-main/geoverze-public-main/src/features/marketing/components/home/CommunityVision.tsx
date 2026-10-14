@@ -123,7 +123,7 @@ export const CommunityVision = memo(function CommunityVision() {
           ref={copyRef}
           className="community-vision__copy mx-auto mt-7 max-w-2xl text-sm leading-relaxed text-foreground/50 md:text-base"
         >
-          GEOverze exists for the curious — for anyone who has traced a coastline on a map and
+          GVRZE exists for the curious — for anyone who has traced a coastline on a map and
           wanted to know more. Our mission is to connect exploration, education and community so
           that learning about Earth feels like travelling it.
         </p>

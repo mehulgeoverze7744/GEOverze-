@@ -20,5 +20,5 @@ export function PrefSwitch({ toggle, label }: { toggle: ToggleKey; label: string
 
 export const notAvailable = (what: string) =>
   toast(`${what} isn't available yet`, {
-    description: "It activates once GEOverze accounts are backed by a server.",
+    description: "It activates once GVRZE accounts are backed by a server.",
   });

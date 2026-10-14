@@ -5,16 +5,16 @@ import { OnboardingPage } from "@/features/auth/pages/OnboardingPage";
 export const Route = createFileRoute("/auth/onboarding")({
   head: () => ({
     meta: [
-      { title: "Set Up Your Explorer Profile — GEOverze" },
+      { title: "Set Up Your Explorer Profile — GVRZE" },
       {
         name: "description",
         content:
-          "Choose your interests, skill level and explorer mark to personalise your GEOverze journey.",
+          "Choose your interests, skill level and explorer mark to personalise your GVRZE journey.",
       },
-      { property: "og:title", content: "Set Up Your Explorer Profile — GEOverze" },
+      { property: "og:title", content: "Set Up Your Explorer Profile — GVRZE" },
       {
         property: "og:description",
-        content: "Personalise your GEOverze journey in a few guided steps.",
+        content: "Personalise your GVRZE journey in a few guided steps.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

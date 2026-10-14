@@ -7,16 +7,16 @@ import { LegalDocument } from "@/features/legal/components/LegalDocument";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy Policy — GEOverze" },
+      { title: "Privacy Policy — GVRZE" },
       {
         name: "description",
         content:
-          "How GEOverze handles personal data, cookies, retention and privacy requests while the platform is in development.",
+          "How GVRZE handles personal data, cookies, retention and privacy requests while the platform is in development.",
       },
-      { property: "og:title", content: "Privacy Policy — GEOverze" },
+      { property: "og:title", content: "Privacy Policy — GVRZE" },
       {
         property: "og:description",
-        content: "How GEOverze handles personal data, cookies and privacy requests.",
+        content: "How GVRZE handles personal data, cookies and privacy requests.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -31,8 +31,8 @@ const sections = [
   {
     title: "About this page",
     body: [
-      "This page is maintained by the GEOverze team to answer common privacy questions about GEOverze. It is app-owned editable content, not an independent audit or certification.",
-      "GEOverze is currently in development. The platform does not yet operate user accounts, payments or gameplay data collection.",
+      "This page is maintained by the GVRZE team to answer common privacy questions about GVRZE. It is app-owned editable content, not an independent audit or certification.",
+      "GVRZE is currently in development. The platform does not yet operate user accounts, payments or gameplay data collection.",
     ],
   },
   {
@@ -75,7 +75,7 @@ function PrivacyPage() {
       <PageHeader
         eyebrow="Legal"
         title="Privacy Policy"
-        description="Written plainly, and kept honest about what GEOverze does and does not do today."
+        description="Written plainly, and kept honest about what GVRZE does and does not do today."
         breadcrumb={[{ label: "Home", to: "/" }, { label: "Privacy Policy" }]}
       />
 

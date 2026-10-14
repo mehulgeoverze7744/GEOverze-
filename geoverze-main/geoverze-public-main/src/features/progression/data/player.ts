@@ -43,7 +43,7 @@ export const PLAYER: PlayerSnapshot = {
 /** Monthly credit tracker shown across progression surfaces. */
 export const MONTHLY_CREDITS = {
   goal: 100,
-  rewardLabel: "GEOverze rewards",
+  rewardLabel: "GVRZE rewards",
   note: "Monthly earning progress resets each calendar month. Unused credits follow the rollover window for your plan.",
 } as const;
 

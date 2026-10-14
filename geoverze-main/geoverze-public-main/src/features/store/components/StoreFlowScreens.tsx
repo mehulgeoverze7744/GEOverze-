@@ -29,7 +29,7 @@ import { useStoreCredits, useStoreCreditsState } from "../lib/useStoreCredits";
 import { toast } from "sonner";
 
 function crumbs(label: string) {
-  return [{ label: "GEOstore", to: "/geostore" as const }, { label }];
+  return [{ label: "GVRZE Store", to: "/geostore" as const }, { label }];
 }
 
 /** Basket + saved for later. */
@@ -51,7 +51,7 @@ export function CartScreen() {
   return (
     <PageShell>
       <PageHeader
-        eyebrow="GEOstore"
+        eyebrow="GVRZE Store"
         title="Your cart"
         description="Review your picks before checkout."
         breadcrumb={crumbs("Cart")}
@@ -153,7 +153,7 @@ export function CheckoutScreen() {
   return (
     <PageShell>
       <PageHeader
-        eyebrow="GEOstore"
+        eyebrow="GVRZE Store"
         title="Checkout"
         description="A demonstration flow — no card is charged and no credits leave your balance permanently."
         breadcrumb={crumbs("Checkout")}
@@ -220,7 +220,7 @@ export function OrdersScreen() {
   return (
     <PageShell>
       <PageHeader
-        eyebrow="GEOstore"
+        eyebrow="GVRZE Store"
         title="Your orders"
         description="Every claim and purchase you've made."
         breadcrumb={crumbs("Orders")}
@@ -258,7 +258,7 @@ export function RewardsScreen() {
   return (
     <PageShell>
       <PageHeader
-        eyebrow="GEOstore"
+        eyebrow="GVRZE Store"
         title="Redeem with credits"
         description={
           signedIn
@@ -288,7 +288,7 @@ export function OffersScreen() {
   return (
     <PageShell>
       <PageHeader
-        eyebrow="GEOstore"
+        eyebrow="GVRZE Store"
         title="Bundles & deals"
         description="Curated sets at a better price."
         breadcrumb={crumbs("Offers")}
@@ -332,7 +332,7 @@ export function WishlistScreen() {
   return (
     <PageShell>
       <PageHeader
-        eyebrow="GEOstore"
+        eyebrow="GVRZE Store"
         title="Wishlist"
         description="Products you've saved for later."
         breadcrumb={crumbs("Wishlist")}
@@ -345,7 +345,7 @@ export function WishlistScreen() {
             description="Tap the heart on any product to save it here. Wishlist and cart work independently."
             action={
               <GeoButton asChild variant="solid">
-                <Link to="/geostore">Explore GEOstore</Link>
+                <Link to="/geostore">Explore GVRZE Store</Link>
               </GeoButton>
             }
           />

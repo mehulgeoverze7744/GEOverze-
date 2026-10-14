@@ -16,7 +16,7 @@ const EXPLORER_FALLBACK = {
   displayName: libraryTierLabel("explorer"),
 };
 
-/** Current user's public subscription tier for GEOlibrary access UI. */
+/** Current user's public subscription tier for GVRZE Library access UI. */
 export function useLibrarySubscriptionTier() {
   const signedIn = useAuthStore(selectIsSignedIn);
   const { scope, authReady } = useLibraryAuthScope();

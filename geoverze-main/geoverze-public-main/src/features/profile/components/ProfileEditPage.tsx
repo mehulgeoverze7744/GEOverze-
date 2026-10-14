@@ -152,7 +152,7 @@ export function ProfileEditPage() {
         <PageHeader
           eyebrow="Profile"
           title="Edit your explorer identity"
-          description="Everything here shapes how GEOverze greets you and tunes your expeditions."
+          description="Everything here shapes how GVRZE greets you and tunes your expeditions."
         />
         <SectionContainer>
           <form onSubmit={handleSubmit} className="profile-edit-form">
@@ -262,7 +262,7 @@ export function ProfileEditPage() {
                 <SectionHeading
                   as="h3"
                   title="Interests"
-                  description="Pick the themes GEOverze should lean into when suggesting expeditions."
+                  description="Pick the themes GVRZE should lean into when suggesting expeditions."
                 />
                 <ul className="profile-edit-interests">
                   {INTERESTS.map((interest) => {

@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { ChallengesScreen } from "@/features/community";
 
-const title = "Community challenges — GEOverze";
+const title = "Community challenges — GVRZE";
 const description =
-  "Country, flag and capital challenges the whole GEOverze community plays together, plus tournament formats in design.";
+  "Country, flag and capital challenges the whole GVRZE community plays together, plus tournament formats in design.";
 
 export const Route = createFileRoute("/community/challenges")({
   head: () => ({

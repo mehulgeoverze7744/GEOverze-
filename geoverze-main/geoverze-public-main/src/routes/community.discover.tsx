@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { CommunitySearchScreen } from "@/features/community";
 
-const title = "Discover explorers — GEOverze Community";
+const title = "Discover explorers — GVRZE Community";
 const description =
-  "Search GEOverze for explorers, creators, discussions, topics and community challenges.";
+  "Search GVRZE for explorers, creators, discussions, topics and community challenges.";
 
 export const Route = createFileRoute("/community/discover")({
   head: () => ({

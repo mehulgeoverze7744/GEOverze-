@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { MultiplayerJoinScreen } from "@/features/multiplayer";
 
-const t = "Join Multiplayer Room — GEOverze";
-const d = "Enter a six-character code to join a private GEOverze multiplayer room.";
+const t = "Join Multiplayer Room — GVRZE";
+const d = "Enter a six-character code to join a private GVRZE multiplayer room.";
 
 export const Route = createFileRoute("/play/multiplayer/join")({
   head: () => ({

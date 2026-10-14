@@ -17,13 +17,13 @@ export function RewardSummary() {
     <div>
       <p className="hr-panel-label">Rewards</p>
       <p className="mb-4 max-w-lg text-sm text-foreground/48">
-        Your exploration has value — credits earned through play can be redeemed for GEOstore
+        Your exploration has value — credits earned through play can be redeemed for GVRZE Store
         rewards.
       </p>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="hr-reward-card">
-          <p className="hr-reward-label">Geo credits</p>
+          <p className="hr-reward-label">GVRZE Credits</p>
           <p className="hr-reward-value text-gradient-bronze">
             <AnimatedCounter value={player.credits} />
           </p>

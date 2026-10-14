@@ -42,8 +42,8 @@ export const BOOKMARK_SECTIONS: readonly BookmarkSectionConfig[] = [
     label: "Articles",
     icon: BookOpen,
     emptyTitle: "No saved articles",
-    emptyBody: "Articles you bookmark in the GEOlibrary will appear here.",
-    exploreLabel: "Explore GEOlibrary",
+    emptyBody: "Articles you bookmark in the GVRZE Library will appear here.",
+    exploreLabel: "Explore GVRZE Library",
     exploreTo: "/geolibrary/browse",
     exploreSearch: {
       q: "",

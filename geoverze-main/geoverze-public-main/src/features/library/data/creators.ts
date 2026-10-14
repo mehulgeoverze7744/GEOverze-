@@ -1,5 +1,5 @@
 /**
- * GEOlibrary creators.
+ * GVRZE Library creators.
  *
  * Placeholder authors for every article. Follower and like counts are
  * illustrative; the verified marker is a design placeholder until creator

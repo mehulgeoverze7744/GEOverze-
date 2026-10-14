@@ -16,7 +16,7 @@ type LibraryHorizontalRailProps = {
   children: ReactNode;
 };
 
-/** Horizontally scrollable GEOlibrary section with bronze arrow controls. */
+/** Horizontally scrollable GVRZE Library section with bronze arrow controls. */
 export function LibraryHorizontalRail({
   title,
   description,

@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { TopicsScreen } from "@/features/community";
 
-const title = "Community topics — GEOverze";
+const title = "Community topics — GVRZE";
 const description =
   "Browse the geography topics driving conversation: rivers, borders, capitals, flags, volcanoes and cartography.";
 

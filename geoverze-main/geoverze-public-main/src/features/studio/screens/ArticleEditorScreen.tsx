@@ -89,7 +89,7 @@ export function ArticleEditorScreen({ articleId }: { articleId: string }) {
               </GeoButton>
               <GeoButton size="sm" variant="ghost" className="w-full gap-2" disabled>
                 <Eye className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
-                Preview in GEOlibrary
+                Preview in GVRZE Library
               </GeoButton>
             </div>
           </StudioPanel>

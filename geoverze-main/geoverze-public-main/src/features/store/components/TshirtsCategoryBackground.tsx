@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import tshirtsCategoryBg from "@/assets/geostore/tshirts-category-bg.jpg";
 
 /**
- * Full-page dark stone/concrete texture for selected GEOstore category listings.
+ * Full-page dark stone/concrete texture for selected GVRZE Store category listings.
  * Hides the global starfield while the shelf is mounted.
  */
 export function TshirtsCategoryBackground() {

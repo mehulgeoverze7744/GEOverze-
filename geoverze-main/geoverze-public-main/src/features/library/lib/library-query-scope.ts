@@ -6,7 +6,7 @@ import { LIBRARY_CATALOGUE_CACHE_VERSION } from "./library-catalogue";
 import type { LibraryAccessTier } from "./access-tier";
 import type { LibraryQuery } from "./filter";
 
-/** React Query scope segment — isolates GEOlibrary cache per auth identity. */
+/** React Query scope segment — isolates GVRZE Library cache per auth identity. */
 export function libraryAuthScope(userId: string | null | undefined): string {
   return userId ?? "anon";
 }
@@ -43,7 +43,7 @@ export function invalidateLibraryCatalogueQueries() {
   void libraryQueryClient.invalidateQueries({ queryKey: ["libraryRecommended"] });
 }
 
-/** Drop GEOlibrary caches when auth identity changes. */
+/** Drop GVRZE Library caches when auth identity changes. */
 export function invalidateLibraryQueries() {
   if (!libraryQueryClient) return;
 

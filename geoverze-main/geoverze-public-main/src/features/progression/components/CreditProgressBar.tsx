@@ -39,7 +39,7 @@ export function CreditProgressBar({
       />
       <p className="mt-3 text-xs text-foreground/50">
         {eligible
-          ? "Goal reached — keep earning toward GEOverze rewards."
+          ? "Goal reached — keep earning toward GVRZE rewards."
           : `${remaining} credits remaining to reach the goal.`}
       </p>
     </div>

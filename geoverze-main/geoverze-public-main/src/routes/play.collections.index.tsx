@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { CollectionsPage } from "@/features/play";
 
-const title = "Quiz Collections — GEOverze";
+const title = "Quiz Collections — GVRZE";
 const description =
-  "Curated GEOverze collections that chain several quizzes into one guided route across the planet.";
+  "Curated GVRZE collections that chain several quizzes into one guided route across the planet.";
 
 export const Route = createFileRoute("/play/collections/")({
   head: () => ({

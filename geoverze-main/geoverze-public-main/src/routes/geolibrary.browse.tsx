@@ -21,13 +21,13 @@ export const Route = createFileRoute("/geolibrary/browse")({
   validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [
-      { title: "Browse the GEOlibrary — GEOverze" },
+      { title: "Browse the GVRZE Library — GVRZE" },
       {
         name: "description",
         content:
-          "Search and filter every GEOlibrary entry by continent, category, difficulty and reading time — countries, capitals, rivers, landmarks and more.",
+          "Search and filter every GVRZE Library entry by continent, category, difficulty and reading time — countries, capitals, rivers, landmarks and more.",
       },
-      { property: "og:title", content: "Browse the GEOlibrary — GEOverze" },
+      { property: "og:title", content: "Browse the GVRZE Library — GVRZE" },
       {
         property: "og:description",
         content: "Search and filter every library entry by continent, category and reading time.",

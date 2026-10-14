@@ -94,7 +94,7 @@ export function SignupPage() {
       <AuthLayout
         width="wide"
         eyebrow="Create your account"
-        title="Join GEOverze"
+        title="Join GVRZE"
         description="Know Earth. Think Global. Build your explorer profile in under a minute."
         footer={
           <p>

@@ -1,5 +1,5 @@
 /**
- * Official GEOverze credit rules and ledger display types.
+ * Official GVRZE credit rules and ledger display types.
  *
  * Rules are educational UI only — balances and history come from the server.
  */
@@ -30,14 +30,14 @@ export const CREDIT_RULES: readonly CreditRule[] = [
 export const CREDIT_EXPIRY_NOTE =
   "Credits earned in a calendar month stay available through the following calendar month on Free, Basic, and Pro. Advance extends that window to two calendar months.";
 
-export type CreditHistoryFilter = "All" | "Earned" | "Spent" | "Gameplay" | "GEOstore";
+export type CreditHistoryFilter = "All" | "Earned" | "Spent" | "Gameplay" | "GVRZE Store";
 
 export const CREDIT_HISTORY_FILTERS: readonly CreditHistoryFilter[] = [
   "All",
   "Earned",
   "Spent",
   "Gameplay",
-  "GEOstore",
+  "GVRZE Store",
 ] as const;
 
 export type CreditLedgerDirection = "earned" | "spent";

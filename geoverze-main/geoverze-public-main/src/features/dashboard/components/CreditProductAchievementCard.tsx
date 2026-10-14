@@ -90,12 +90,12 @@ export function CreditProductAchievementCard({
       </span>
       <p className="mt-4 text-xs font-medium text-foreground/90">{achievement.productName}</p>
       <p className="mt-1 text-[0.65rem] leading-relaxed text-foreground/50">
-        Acquired with GeoCredits
+        Acquired with GVRZE Credits
         {kind ? ` · ${kind}` : ""}
         {achievement.quantity > 1 ? ` · Qty ${achievement.quantity}` : ""}
       </p>
       <p className="mt-3 text-[0.58rem] uppercase tracking-[0.16em] text-foreground/45">
-        {achievement.creditsSpent} GeoCredits
+        {achievement.creditsSpent} GVRZE Credits
         {acquiredOn ? ` · ${acquiredOn}` : ""}
       </p>
     </article>

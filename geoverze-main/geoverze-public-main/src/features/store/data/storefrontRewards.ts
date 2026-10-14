@@ -1,5 +1,5 @@
 /**
- * Visible GEOstore / Profile reward catalogue.
+ * Visible GVRZE Store / Profile reward catalogue.
  *
  * Badges, frames and boosts remain in PRODUCTS and store_products for
  * existing entitlements and direct links — they are not listed here.
@@ -16,7 +16,7 @@ export const STOREFRONT_REWARD_SLUGS = [
   "avatar-astronomer",
 ] as const;
 
-/** Display order for the GEOstore Claim with credits carousel. */
+/** Display order for the GVRZE Store Claim with credits carousel. */
 export const STOREFRONT_REWARD_CAROUSEL_ORDER = [
   "ps5",
   "iphone-duo",

@@ -5,12 +5,12 @@ import { DailyChallengesPage } from "@/features/progression";
 export const Route = createFileRoute("/play/daily-challenges")({
   head: () => ({
     meta: [
-      { title: "Daily Challenges — GEOverze" },
+      { title: "Daily Challenges — GVRZE" },
       {
         name: "description",
         content: "Five daily geography objectives that reset at midnight, each paying XP.",
       },
-      { property: "og:title", content: "Daily Challenges — GEOverze" },
+      { property: "og:title", content: "Daily Challenges — GVRZE" },
       {
         property: "og:description",
         content: "Five daily geography objectives that reset at midnight, each paying XP.",

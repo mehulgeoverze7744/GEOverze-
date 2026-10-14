@@ -12,15 +12,15 @@ export const Route = createFileRoute("/_app/settings")({
   }),
   head: () => ({
     meta: [
-      { title: "Settings/Support — GEOverze" },
+      { title: "Settings/Support — GVRZE" },
       {
         name: "description",
-        content: "Tune units, notifications and privacy for your GEOverze account and this device.",
+        content: "Tune units, notifications and privacy for your GVRZE account and this device.",
       },
-      { property: "og:title", content: "Settings/Support — GEOverze" },
+      { property: "og:title", content: "Settings/Support — GVRZE" },
       {
         property: "og:description",
-        content: "Presentation, notification and privacy preferences for GEOverze.",
+        content: "Presentation, notification and privacy preferences for GVRZE.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -5,16 +5,16 @@ import { LibraryBookmarksScreen } from "@/features/library";
 export const Route = createFileRoute("/geolibrary/bookmarks")({
   head: () => ({
     meta: [
-      { title: "Saved reading — GEOlibrary" },
+      { title: "Saved reading — GVRZE Library" },
       {
         name: "description",
         content:
-          "Every GEOlibrary entry you bookmarked, in one place — filter by category and pick up where you stopped reading.",
+          "Every GVRZE Library entry you bookmarked, in one place — filter by category and pick up where you stopped reading.",
       },
-      { property: "og:title", content: "Saved reading — GEOlibrary" },
+      { property: "og:title", content: "Saved reading — GVRZE Library" },
       {
         property: "og:description",
-        content: "Your bookmarked GEOlibrary entries and unfinished reading.",
+        content: "Your bookmarked GVRZE Library entries and unfinished reading.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

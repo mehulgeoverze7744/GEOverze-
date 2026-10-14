@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { DrawGuessHubScreen } from "@/features/draw-guess";
 
-const t = "Draw & Guess — GEOverze";
-const d = "Draw geography clues and guess with friends in a private GEOverze Draw & Guess room.";
+const t = "Draw & Guess — GVRZE";
+const d = "Draw geography clues and guess with friends in a private GVRZE Draw & Guess room.";
 
 export const Route = createFileRoute("/play/draw-guess/")({
   head: () => ({

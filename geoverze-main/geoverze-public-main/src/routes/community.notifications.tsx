@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { NotificationsScreen } from "@/features/community";
 
-const title = "Community notifications — GEOverze";
+const title = "Community notifications — GVRZE";
 const description =
-  "Replies, mentions, likes, friend requests and challenge invites from the GEOverze community.";
+  "Replies, mentions, likes, friend requests and challenge invites from the GVRZE community.";
 
 export const Route = createFileRoute("/community/notifications")({
   head: () => ({

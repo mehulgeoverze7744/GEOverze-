@@ -10,7 +10,7 @@ import { RewardCard } from "../components/RewardCard";
 import { REWARD_SECTIONS, SEASON } from "../data/rewards";
 import { useCreditHistory } from "../hooks/useCreditHistory";
 
-/** /play/rewards */
+/** Preserved catalogue screen. `/play/rewards` now redirects to Profile Rewards. */
 export function RewardsPage() {
   const { monthlyEarned } = useCreditHistory();
 
@@ -20,11 +20,11 @@ export function RewardsPage() {
         <AnimatedSection>
           <p className="eyebrow">Rewards</p>
           <h1 className="mt-4 text-[clamp(2rem,4.4vw,3.2rem)] font-semibold leading-[1.05] tracking-tight text-foreground">
-            The GEOverze reward catalogue
+            The GVRZE reward catalogue
           </h1>
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-foreground/60 md:text-base">
             Credits, XP, achievements, merchandise, seasonal drops, and platform rewards. Claim
-            digital GEOstore rewards with credits today; other catalogue sections are still
+            digital GVRZE Store rewards with credits today; other catalogue sections are still
             expanding.
           </p>
         </AnimatedSection>

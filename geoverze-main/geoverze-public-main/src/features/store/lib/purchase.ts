@@ -34,7 +34,7 @@ export type Totals = {
   needsShipping: boolean;
 };
 
-/** Placeholder unit for future GEOstore credit checkout — not a cash value. */
+/** Placeholder unit for future GVRZE Store credit checkout — not a cash value. */
 export const CREDIT_UNIT_VALUE = 1;
 
 export function lineMoney(line: CartLine): number {

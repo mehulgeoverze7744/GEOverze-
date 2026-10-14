@@ -11,7 +11,7 @@ import { GeostoreViewAllCard } from "./GeostoreViewAllCard";
 import "../home-hero.css";
 import "./geostore-showcase.css";
 
-/** Homepage GEOstore merchandise showcase — static frontend only. */
+/** Homepage GVRZE Store merchandise showcase — static frontend only. */
 export const GeostoreShowcase = memo(function GeostoreShowcase() {
   const tshirtProducts = useMemo(() => merchProductsForStoreCategory("tshirts"), []);
   const hoodieProducts = useMemo(() => merchProductsForStoreCategory("hoodies"), []);
@@ -80,7 +80,7 @@ export const GeostoreShowcase = memo(function GeostoreShowcase() {
 
         <AnimatedSection className="geostore-showcase__cta text-center" delay={120}>
           <GeoButton asChild variant="solid" size="lg" className="home-hero-cta">
-            <Link to="/geostore">Explore GEOstore</Link>
+            <Link to="/geostore">Explore GVRZE Store</Link>
           </GeoButton>
         </AnimatedSection>
       </SectionContainer>

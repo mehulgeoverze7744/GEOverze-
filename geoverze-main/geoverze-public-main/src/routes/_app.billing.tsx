@@ -5,16 +5,16 @@ import { SubscriptionScreen } from "@/features/pricing";
 export const Route = createFileRoute("/_app/billing")({
   head: () => ({
     meta: [
-      { title: "Billing & Membership — GEOverze" },
+      { title: "Billing & Membership — GVRZE" },
       {
         name: "description",
         content:
-          "Review your GEOverze membership, renewal date, monthly credit grant, invoices and payment methods.",
+          "Review your GVRZE membership, renewal date, monthly credit grant, invoices and payment methods.",
       },
-      { property: "og:title", content: "Billing & Membership — GEOverze" },
+      { property: "og:title", content: "Billing & Membership — GVRZE" },
       {
         property: "og:description",
-        content: "Manage your GEOverze subscription, invoices and payment methods.",
+        content: "Manage your GVRZE subscription, invoices and payment methods.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

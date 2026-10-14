@@ -4,7 +4,7 @@
  */
 
 export const site = {
-  name: "GEOverze",
+  name: "GVRZE",
   /** Official slogan — used wherever the brand signs off. */
   slogan: "Know Earth",
   /** Official tagline — the second line of the brand lockup. */
@@ -12,7 +12,7 @@ export const site = {
   domain: "geoverze.com",
   url: "https://geoverze.com",
   description:
-    "GEOverze is a cinematic geography universe — play, learn and collect your way across the planet.",
+    "GVRZE is a cinematic geography universe — play, learn and collect your way across the planet.",
 } as const;
 
 import type { LinkProps } from "@tanstack/react-router";
@@ -28,8 +28,8 @@ export type NavItem = {
 export const mainNav: NavItem[] = [
   { label: "Home", to: "/" },
   { label: "Let's Play", to: "/play" },
-  { label: "GEOlibrary", to: "/geolibrary" },
-  { label: "GEOstore", to: "/geostore" },
+  { label: "GVRZE Library", to: "/geolibrary" },
+  { label: "GVRZE Store", to: "/geostore" },
   { label: "Community", to: "/community" },
   { label: "Pricing", to: "/pricing" },
 ];
@@ -39,8 +39,8 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
     title: "Platform",
     items: [
       { label: "Let's Play", to: "/play" },
-      { label: "GEOlibrary", to: "/geolibrary" },
-      { label: "GEOstore", to: "/geostore" },
+      { label: "GVRZE Library", to: "/geolibrary" },
+      { label: "GVRZE Store", to: "/geostore" },
       { label: "Leaderboard", to: "/leaderboard", comingSoon: true },
       { label: "Community", to: "/community" },
     ],

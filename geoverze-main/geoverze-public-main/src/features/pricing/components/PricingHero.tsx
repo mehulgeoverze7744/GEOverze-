@@ -28,7 +28,7 @@ export function PricingHero({
               Choose your journey
             </h1>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-foreground/60 md:mt-5 md:text-base">
-              Unlock the complete GEOverze experience — unlimited play, the full library, live
+              Unlock the complete GVRZE experience — unlimited play, the full library, live
               competition and the Creator Studio.
             </p>
             <BillingToggle cycle={cycle} onChange={onCycleChange} className="mt-6 md:mt-7" />

@@ -14,7 +14,7 @@ import { categoryIcon, categoryLabel } from "../data/taxonomy";
 import { searchStoreProducts } from "../lib/filter";
 import { credits as formatCredits, money } from "../lib/format";
 
-/** Fixed GEOstore search icon — opens the product search panel. */
+/** Fixed GVRZE Store search icon — opens the product search panel. */
 export function GeostoreSearchButton({ className }: { className?: string }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -62,7 +62,7 @@ export function GeostoreSearchButton({ className }: { className?: string }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        aria-label="Search GEOstore"
+        aria-label="Search GVRZE Store"
         title="Search"
         className={cn(geostoreActionLinkClass(open), className)}
       >
@@ -75,7 +75,7 @@ export function GeostoreSearchButton({ className }: { className?: string }) {
           if (!next) close();
           else setOpen(true);
         }}
-        title="Search GEOstore"
+        title="Search GVRZE Store"
         description="Find exact products from the catalogue."
       >
         <div className="space-y-5">
@@ -83,7 +83,7 @@ export function GeostoreSearchButton({ className }: { className?: string }) {
             <SearchBar
               id={inputId}
               ref={inputRef}
-              label="Search GEOstore products"
+              label="Search GVRZE Store products"
               placeholder="Search hoodies, mugs, packs…"
               value={query}
               onChange={(event) => {
@@ -172,7 +172,7 @@ export function GeostoreSearchButton({ className }: { className?: string }) {
               <div className="rounded-2xl border border-bronze/15 bg-charcoal/45 px-5 py-8 text-center">
                 <p className="text-sm text-foreground/70">No products found</p>
                 <p className="mt-2 text-xs leading-relaxed text-foreground/50">
-                  No GEOstore matches for “{submittedQuery}”. Try another name or category.
+                  No GVRZE Store matches for “{submittedQuery}”. Try another name or category.
                 </p>
               </div>
             )
@@ -199,7 +199,7 @@ export function GeostoreSearchButton({ className }: { className?: string }) {
                 </ul>
               ) : (
                 <p className="rounded-xl border border-bronze/12 bg-charcoal/40 px-4 py-5 text-xs leading-relaxed text-foreground/50">
-                  Your previous GEOstore searches will appear here after you search for a product.
+                  Your previous GVRZE Store searches will appear here after you search for a product.
                 </p>
               )}
             </div>

@@ -152,7 +152,7 @@ export function CommunityComingSoonOverlay() {
         />
 
         <p className="mt-7 text-[0.58rem] uppercase tracking-[0.42em] text-foreground/75 sm:text-[0.62rem] sm:tracking-[0.48em]">
-          GEOverze Community
+          GVRZE Community
         </p>
 
         <h1
@@ -167,7 +167,7 @@ export function CommunityComingSoonOverlay() {
         </h1>
 
         <div className="mt-6 space-y-1 text-[0.9rem] leading-relaxed text-foreground/72 sm:text-base">
-          <p>The GEOverze community is taking shape.</p>
+          <p>The GVRZE community is taking shape.</p>
           <p>Stay tuned.</p>
         </div>
 

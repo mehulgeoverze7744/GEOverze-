@@ -40,7 +40,7 @@ export function SupportContent({ className }: { className?: string }) {
           <p className="support-eyebrow">Support</p>
           <h1 className="support-title">Need a hand?</h1>
           <p className="support-description">
-            Find answers, understand how GEOverze works, and get back to exploring.
+            Find answers, understand how GVRZE works, and get back to exploring.
           </p>
         </AnimatedSection>
       </header>

@@ -9,12 +9,12 @@ export const Route = createFileRoute("/geolibrary/collections/$slug")({
     if (!collection) {
       return {
         meta: [
-          { title: "Collection not found — GEOlibrary" },
+          { title: "Collection not found — GVRZE Library" },
           { name: "robots", content: "noindex" },
         ],
       };
     }
-    const title = `${collection.title} — GEOlibrary collection`;
+    const title = `${collection.title} — GVRZE Library collection`;
     return {
       meta: [
         { title },

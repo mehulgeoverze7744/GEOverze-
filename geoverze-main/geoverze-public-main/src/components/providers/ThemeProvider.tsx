@@ -5,7 +5,7 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 /**
  * Applies platform-level presentation preferences to the document.
  *
- * GEOverze ships one theme — the dark cinematic universe — so the provider's
+ * GVRZE ships one theme — the dark cinematic universe — so the provider's
  * job today is to keep the `dark` class pinned and to reflect the motion
  * preference on the root element (`data-motion`), which utilities and future
  * themes can key off. Additional themes plug in here without touching pages.

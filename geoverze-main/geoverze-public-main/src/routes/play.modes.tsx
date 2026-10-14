@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { ModesPage } from "@/features/play";
 
-const title = "Game Modes — Let's Play — GEOverze";
+const title = "Game Modes — Let's Play — GVRZE";
 const description =
-  "Solo runs, PvP duels, multiplayer rooms, practice and daily challenges — every way to play geography in GEOverze.";
+  "Solo runs, PvP duels, multiplayer rooms, practice and daily challenges — every way to play geography in GVRZE.";
 
 export const Route = createFileRoute("/play/modes")({
   head: () => ({

@@ -27,7 +27,7 @@ export function applyPublishedArticleBlockFixtures(article: Article): Article {
 
   if (import.meta.env.DEV) {
     console.info(
-      `[GEOlibrary] "${article.slug}": using local seed blocks (${seedBlocks.length} blocks). ` +
+      `[GVRZE Library] "${article.slug}": using local seed blocks (${seedBlocks.length} blocks). ` +
         `Remote had ${article.blocks.length} block(s).`,
     );
   }

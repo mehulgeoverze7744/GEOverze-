@@ -5,13 +5,13 @@ import { LibraryHome } from "@/features/library";
 export const Route = createFileRoute("/geolibrary/")({
   head: () => ({
     meta: [
-      { title: "GEOlibrary — Explore the world beyond quizzes" },
+      { title: "GVRZE Library — Explore the world beyond quizzes" },
       {
         name: "description",
         content:
-          "The GEOlibrary is GEOverze's knowledge centre: articles, curated collections and creator writing on countries, capitals, rivers, mountains and heritage.",
+          "The GVRZE Library is GVRZE's knowledge centre: articles, curated collections and creator writing on countries, capitals, rivers, mountains and heritage.",
       },
-      { property: "og:title", content: "GEOlibrary — Explore the world beyond quizzes" },
+      { property: "og:title", content: "GVRZE Library — Explore the world beyond quizzes" },
       {
         property: "og:description",
         content: "Articles, collections and creator writing across the whole planet.",

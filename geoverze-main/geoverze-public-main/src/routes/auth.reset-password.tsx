@@ -5,15 +5,15 @@ import { ResetPasswordPage } from "@/features/auth/pages/ResetPasswordPage";
 export const Route = createFileRoute("/auth/reset-password")({
   head: () => ({
     meta: [
-      { title: "Set a New Password — GEOverze" },
+      { title: "Set a New Password — GVRZE" },
       {
         name: "description",
-        content: "Choose a new password for your GEOverze account and get back to exploring.",
+        content: "Choose a new password for your GVRZE account and get back to exploring.",
       },
-      { property: "og:title", content: "Set a New Password — GEOverze" },
+      { property: "og:title", content: "Set a New Password — GVRZE" },
       {
         property: "og:description",
-        content: "Choose a new password for your GEOverze account.",
+        content: "Choose a new password for your GVRZE account.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

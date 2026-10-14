@@ -1,5 +1,5 @@
 /**
- * GEOstore taxonomy.
+ * GVRZE Store taxonomy.
  *
  * One source of truth for groups, categories and facet options so the
  * storefront, browse filters and category shelves never drift apart.
@@ -58,7 +58,7 @@ export const STORE_GROUPS: readonly StoreGroup[] = [
   {
     id: "merch",
     label: "Merchandise",
-    blurb: "Wearables and desk objects cut from the GEOverze material language.",
+    blurb: "Wearables and desk objects cut from the GVRZE material language.",
     icon: Package,
   },
   {

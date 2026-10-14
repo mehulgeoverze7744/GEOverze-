@@ -28,7 +28,7 @@ export type MergedLibraryState = {
 
 function logHydrationDiagnostic(message: string, detail?: unknown) {
   if (import.meta.env.DEV) {
-    console.warn(`[GEOlibrary hydrate] ${message}`, detail ?? "");
+    console.warn(`[GVRZE Library hydrate] ${message}`, detail ?? "");
   }
 }
 
@@ -180,7 +180,7 @@ export async function hydrateLibraryState(user: User) {
     lastHydratedUserId = user.id;
     await retryPendingProgressSyncs(user.id);
   } catch (error) {
-    console.error("Failed to hydrate GEOlibrary state", error);
+    console.error("Failed to hydrate GVRZE Library state", error);
     await retryPendingProgressSyncs(user.id);
   }
 }

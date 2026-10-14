@@ -67,7 +67,7 @@ export const EVENTS: readonly GameEvent[] = [
     art: "countries",
     window: "Open entries",
     summary:
-      "Creators submit sets, the community votes, and the top twenty ship as a permanent GEOverze collection.",
+      "Creators submit sets, the community votes, and the top twenty ship as a permanent GVRZE collection.",
     reward: "Creator spotlight",
     participants: 3_240,
   },
@@ -84,7 +84,7 @@ export const EVENTS: readonly GameEvent[] = [
   },
   {
     id: "e-esports",
-    title: "GEOverze Esports Series",
+    title: "GVRZE Esports Series",
     kind: "seasonal",
     art: "tournament",
     window: "Not scheduled yet",

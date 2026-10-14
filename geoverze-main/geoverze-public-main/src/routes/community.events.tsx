@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { EventsScreen } from "@/features/community";
 
-const title = "Community events — GEOverze";
+const title = "Community events — GVRZE";
 const description =
-  "Live quiz rounds, cartography workshops, tournaments and explorer meetups happening across GEOverze.";
+  "Live quiz rounds, cartography workshops, tournaments and explorer meetups happening across GVRZE.";
 
 export const Route = createFileRoute("/community/events")({
   head: () => ({

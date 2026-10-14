@@ -48,7 +48,7 @@ export function ArticleUnavailableScreen({
   const description =
     kind === "sign_in_required"
       ? `This entry is reserved for ${requiredTier ? libraryTierLabel(requiredTier) : "members"}. Sign in to check your access, or explore free reading in the library.`
-      : `Your current plan does not include this entry${requiredTier ? ` (${libraryTierRequiresLabel(requiredTier)})` : ""}. Upgrade to unlock it and the rest of the GEOlibrary catalogue.`;
+      : `Your current plan does not include this entry${requiredTier ? ` (${libraryTierRequiresLabel(requiredTier)})` : ""}. Upgrade to unlock it and the rest of the GVRZE Library catalogue.`;
 
   return (
     <SectionContainer className="pt-[calc(var(--nav-height)+1.25rem)] pb-12">

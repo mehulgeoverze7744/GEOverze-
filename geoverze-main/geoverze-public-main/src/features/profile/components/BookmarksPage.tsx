@@ -158,10 +158,10 @@ export function BookmarksPage() {
                   <>
                     <p className="bookmarks-empty-title">Nothing saved yet</p>
                     <p className="bookmarks-empty-body">
-                      Bookmark articles, quizzes and more across GEOverze to build your library.
+                      Bookmark articles, quizzes and more across GVRZE to build your library.
                     </p>
                     <Link to="/geolibrary/browse" className="bookmarks-empty-link">
-                      Explore GEOlibrary
+                      Explore GVRZE Library
                       <ArrowRight className="h-3 w-3" strokeWidth={1.75} aria-hidden="true" />
                     </Link>
                   </>

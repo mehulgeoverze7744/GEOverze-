@@ -24,7 +24,7 @@ export const COLLECTIONS: readonly Collection[] = [
     description:
       "A guided run across continents: flags, capitals, borders and landmarks in the order a cartographer would teach them.",
     art: "countries",
-    curator: "GEOverze Studio",
+    curator: "GVRZE Studio",
     minutes: 42,
     quizIds: [
       "q-atlas-sprint",

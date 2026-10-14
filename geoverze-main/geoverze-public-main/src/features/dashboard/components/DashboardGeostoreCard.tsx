@@ -35,7 +35,7 @@ export function DashboardGeostoreCard({ className }: { className?: string }) {
           className="dashboard-section-label flex items-center gap-2"
         >
           <ShoppingBag className="h-3.5 w-3.5 text-bronze/90" strokeWidth={1.5} aria-hidden="true" />
-          GEOstore
+          GVRZE Store
         </h2>
         <p className="mt-4 text-sm text-foreground/70">
           <span className="text-bronze-glow">{credits.toLocaleString()}</span> credits ready to spend
@@ -64,7 +64,7 @@ export function DashboardGeostoreCard({ className }: { className?: string }) {
 
         <div className="mt-6 flex flex-wrap gap-2">
           <GeoButton asChild variant="secondary" size="sm">
-            <Link to="/geostore">Visit GEOstore</Link>
+            <Link to="/geostore">Visit GVRZE Store</Link>
           </GeoButton>
           <GeoButton asChild variant="ghost" size="sm">
             <Link to="/geostore/rewards">View rewards</Link>

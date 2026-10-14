@@ -5,16 +5,16 @@ import { NotificationsPage } from "@/features/profile";
 export const Route = createFileRoute("/_app/notifications")({
   head: () => ({
     meta: [
-      { title: "Notifications — GEOverze" },
+      { title: "Notifications — GVRZE" },
       {
         name: "description",
         content:
-          "Achievements, new quizzes, community activity and system notices from across GEOverze.",
+          "Achievements, new quizzes, community activity and system notices from across GVRZE.",
       },
-      { property: "og:title", content: "Notifications — GEOverze" },
+      { property: "og:title", content: "Notifications — GVRZE" },
       {
         property: "og:description",
-        content: "Achievements, new quizzes and system notices from GEOverze.",
+        content: "Achievements, new quizzes and system notices from GVRZE.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

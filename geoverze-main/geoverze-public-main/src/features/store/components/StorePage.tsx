@@ -11,15 +11,15 @@ import {
 } from "@/components/shared";
 import { storeRoadmap, storeShelves } from "../data/shelves";
 
-/** GEOstore module landing page. */
+/** GVRZE Store module landing page. */
 export function StorePage() {
   return (
     <PageShell>
       <PageHeader
-        eyebrow="GEOstore"
+        eyebrow="GVRZE Store"
         title="Where progress becomes collection"
         description="Everything earned or bought stays inside the same material language — bronze, glass and dark metal."
-        breadcrumb={[{ label: "Home", to: "/" }, { label: "GEOstore" }]}
+        breadcrumb={[{ label: "Home", to: "/" }, { label: "GVRZE Store" }]}
       >
         <GeoButton asChild variant="secondary" size="lg">
           <Link to="/pricing">Compare plans</Link>

@@ -51,9 +51,9 @@ export const MerchProductScreen = memo(function MerchProductScreen({
       <PageHeader
         eyebrow={product.categoryLabel}
         title={product.title}
-        description="Part of the GEOverze merchandise collection."
+        description="Part of the GVRZE merchandise collection."
         breadcrumb={[
-          { label: "GEOstore", to: "/geostore" },
+          { label: "GVRZE Store", to: "/geostore" },
           { label: category?.label ?? "Merchandise" },
           { label: product.title },
         ]}
@@ -75,7 +75,7 @@ export const MerchProductScreen = memo(function MerchProductScreen({
               {product.categoryLabel}
             </p>
             <p className="text-sm leading-relaxed text-foreground/60">
-              Premium GEOverze apparel — designed in the same bronze-on-charcoal language as the
+              Premium GVRZE apparel — designed in the same bronze-on-charcoal language as the
               platform. Physical fulfilment is coming soon.
             </p>
             <p className="inline-flex items-center rounded-full border border-bronze/25 bg-bronze/8 px-3 py-1.5 text-[0.62rem] uppercase tracking-[0.18em] text-bronze-glow">

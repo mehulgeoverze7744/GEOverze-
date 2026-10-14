@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { PvpRoomScreen } from "@/features/pvp";
 
-const t = "PvP Room — GEOverze";
-const d = "Private GEOverze PvP room with lobby, ready states, and synchronized match start.";
+const t = "PvP Room — GVRZE";
+const d = "Private GVRZE PvP room with lobby, ready states, and synchronized match start.";
 
 export const Route = createFileRoute("/play/pvp/room")({
   validateSearch: (search: Record<string, unknown>) => ({

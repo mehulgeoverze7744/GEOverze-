@@ -6,7 +6,7 @@ import { selectCartCount, useCartStore } from "@/stores/cartStore";
 
 import { geostoreActionLinkClass } from "./geostore-action-link";
 
-/** Fixed GEOstore cart icon — middle control in the header action row. */
+/** Fixed GVRZE Store cart icon — middle control in the header action row. */
 export function GeostoreCartButton({ className }: { className?: string }) {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const cartCount = useCartStore(selectCartCount);

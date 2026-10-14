@@ -28,7 +28,7 @@ function formatTag(tag: string): string {
     .join(" ");
 }
 
-/** All GEOlibrary articles use the atlas parchment reading experience. */
+/** All GVRZE Library articles use the atlas parchment reading experience. */
 export function getArticleTheme(_slug: string): ArticleThemeId {
   return "atlas-parchment";
 }
@@ -41,13 +41,13 @@ export function getArticleReaderPresentation(article: Article): ArticleReaderPre
     theme: "atlas-parchment",
     displayTitle: article.title,
     displayDek: article.dek,
-    authorLine: `GEOlibrary · ${categoryLabel(article.category)}`,
+    authorLine: `GVRZE Library · ${categoryLabel(article.category)}`,
     topicTags: tags.map(formatTag),
     heroImage: {
       src: heroSrc,
       alt: article.title,
       caption: article.dek,
-      credit: "GEOlibrary editorial",
+      credit: "GVRZE Library editorial",
     },
   };
 }

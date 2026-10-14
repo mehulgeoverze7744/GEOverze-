@@ -74,7 +74,7 @@ export function ForgotPasswordPage() {
           <SuccessBurst
             icon={<MailCheck className="h-7 w-7" strokeWidth={1.2} aria-hidden="true" />}
             title="Reset link sent"
-            description={`If ${email} belongs to a GEOverze account, a reset link is on its way. The link expires in 30 minutes.`}
+            description={`If ${email} belongs to a GVRZE account, a reset link is on its way. The link expires in 30 minutes.`}
           >
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
               <GeoButton asChild variant="primary">

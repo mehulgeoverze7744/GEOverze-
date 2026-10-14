@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { CommunityFeed } from "@/features/community";
 
-const title = "Community feed — GEOverze";
+const title = "Community feed — GVRZE";
 const description =
-  "Every post, question, poll, photo and quiz result from the GEOverze community, filtered how you like it.";
+  "Every post, question, poll, photo and quiz result from the GVRZE community, filtered how you like it.";
 
 export const Route = createFileRoute("/community/feed")({
   head: () => ({

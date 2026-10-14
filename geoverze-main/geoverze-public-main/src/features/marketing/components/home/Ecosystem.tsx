@@ -46,7 +46,7 @@ function EcosystemCardCopy({ node }: { node: (typeof ecosystem)[number] }) {
   );
 }
 
-/** Section 5 — GEOverze Ecosystem. */
+/** Section 5 — GVRZE Ecosystem. */
 export const Ecosystem = memo(function Ecosystem() {
   return (
     <section className="relative pb-[calc(var(--space-section-sm)*0.65)] pt-4 md:pb-[calc(var(--space-section)*0.55)] md:pt-6">
@@ -58,7 +58,7 @@ export const Ecosystem = memo(function Ecosystem() {
         <SectionIntro
           eyebrow="The ecosystem"
           title="One universe, many interconnected rooms"
-          copy="Each area of GEOverze feeds the others: what you explore becomes what you play, what you play becomes what you collect and where you stand."
+          copy="Each area of GVRZE feeds the others: what you explore becomes what you play, what you play becomes what you collect and where you stand."
         />
 
         <div className="ecosystem-grid mt-10 grid gap-4 md:mt-14 md:gap-5">

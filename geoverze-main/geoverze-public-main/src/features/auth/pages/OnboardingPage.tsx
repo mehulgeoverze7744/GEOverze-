@@ -196,7 +196,7 @@ export function OnboardingPage() {
                 disabled={entering}
                 onClick={onEnter}
               >
-                {entering ? "Entering GEOverze…" : "Enter GEOverze"}
+                {entering ? "Entering GVRZE…" : "Enter GVRZE"}
               </GeoButton>
             </SuccessBurst>
           ) : null}
@@ -230,7 +230,7 @@ export function OnboardingPage() {
 }
 
 const STEP_TITLES = [
-  "Welcome to GEOverze",
+  "Welcome to GVRZE",
   "What do you want to master?",
   "How well do you know Earth?",
   "Pick your explorer mark",
@@ -240,7 +240,7 @@ const STEP_TITLES = [
 const STEP_DESCRIPTIONS = [
   "Know Earth. Think Global. A cinematic way to learn the planet — one expedition at a time.",
   "Pick as many as you like. Your daily expeditions are built from these.",
-  "This sets your starting difficulty. GEOverze adapts as you improve.",
+  "This sets your starting difficulty. GVRZE adapts as you improve.",
   "A generated bronze mark that represents you on leaderboards.",
   "",
 ] as const;
@@ -253,7 +253,7 @@ function WelcomeStep() {
           <Globe2 className="h-6 w-6" strokeWidth={1.2} aria-hidden="true" />
         </span>
         <p className="text-sm leading-relaxed text-foreground/60">
-          GEOverze turns the planet into a living arena of knowledge. Play daily expeditions, build
+          GVRZE turns the planet into a living arena of knowledge. Play daily expeditions, build
           streaks, compete in seasons and collect mastery across every corner of the map.
         </p>
       </div>

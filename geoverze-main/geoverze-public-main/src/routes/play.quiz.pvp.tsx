@@ -8,16 +8,16 @@ export const Route = createFileRoute("/play/quiz/pvp")({
   }),
   head: () => ({
     meta: [
-      { title: "1v1 Duel — GEOverze" },
+      { title: "1v1 Duel — GVRZE" },
       {
         name: "description",
         content:
-          "Head-to-head geography duels in GEOverze. Play the full question engine while live matchmaking is in development.",
+          "Head-to-head geography duels in GVRZE. Play the full question engine while live matchmaking is in development.",
       },
-      { property: "og:title", content: "1v1 Duel — GEOverze" },
+      { property: "og:title", content: "1v1 Duel — GVRZE" },
       {
         property: "og:description",
-        content: "Head-to-head geography duels inside the GEOverze universe.",
+        content: "Head-to-head geography duels inside the GVRZE universe.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

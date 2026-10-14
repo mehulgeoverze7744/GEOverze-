@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { PvpJoinScreen } from "@/features/pvp";
 
-const t = "Join PvP Room — GEOverze";
-const d = "Enter a private GEOverze PvP room code to join your opponent.";
+const t = "Join PvP Room — GVRZE";
+const d = "Enter a private GVRZE PvP room code to join your opponent.";
 
 export const Route = createFileRoute("/play/pvp/join")({
   head: () => ({

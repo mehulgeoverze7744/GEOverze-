@@ -30,7 +30,7 @@ function AccountArea() {
       <PageHeader
         eyebrow="Account"
         title="Sign in to continue"
-        description="This area belongs to your GEOverze account. Sign in to pick up where you left off."
+        description="This area belongs to your GVRZE account. Sign in to pick up where you left off."
       />
       <SectionContainer>
         <AnimatedSection>

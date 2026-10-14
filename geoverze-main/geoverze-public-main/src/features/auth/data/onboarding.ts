@@ -68,7 +68,7 @@ export const SKILL_LEVELS: readonly SkillLevel[] = [
   {
     id: "explorer",
     label: "Explorer",
-    description: "Adaptive difficulty — GEOverze tunes itself to you.",
+    description: "Adaptive difficulty — GVRZE tunes itself to you.",
   },
 ] as const;
 
@@ -94,7 +94,7 @@ export const AVATARS: readonly AvatarOption[] = [
   { id: "orbit", label: "Orbit", hue: [66, 88], glyph: "◌" },
 ] as const;
 
-/** GEOverze character portraits used on Edit Profile — not glyph placeholders. */
+/** GVRZE character portraits used on Edit Profile — not glyph placeholders. */
 export const CHARACTER_AVATARS: readonly (AvatarOption & { src: string })[] = [
   {
     id: "spy",

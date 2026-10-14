@@ -46,21 +46,19 @@ function CarouselCard({ pillar }: { pillar: HomeFeature }) {
         <h3 className="text-sm font-medium leading-snug tracking-tight text-foreground">
           {pillar.title}
         </h3>
-        <p className="line-clamp-2 text-xs leading-snug text-foreground/60">
-          {pillar.description}
-        </p>
+        <p className="line-clamp-2 text-xs leading-snug text-foreground/60">{pillar.description}</p>
       </div>
     </article>
   );
 }
 
-/** Infinite right→left marquee for WHY GEOVERZE feature pillars. */
+/** Infinite right→left marquee for WHY GVRZE feature pillars. */
 export const WhyGeoverzeCarousel = memo(function WhyGeoverzeCarousel() {
   const reducedMotion = usePrefersReducedMotion();
   const track = reducedMotion ? whyCarouselCards : [...whyCarouselCards, ...whyCarouselCards];
 
   return (
-    <div className="why-carousel-viewport" aria-label="Why GEOverze features">
+    <div className="why-carousel-viewport" aria-label="Why GVRZE features">
       <div className="why-carousel-track" role="list">
         {track.map((pillar, index) => (
           <div key={`${pillar.title}-${index}`} role="listitem">

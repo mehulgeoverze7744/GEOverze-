@@ -28,7 +28,7 @@ import vintageWorldGlobe from "@/assets/geostore/vintage-world-globe-studio.jpg"
 
 import { merchProductById } from "@/features/marketing/data/geostoreMerch";
 
-/** Product photography overrides for GEOstore cards (slug-keyed). */
+/** Product photography overrides for GVRZE Store cards (slug-keyed). */
 export type ProductImage = {
   src: string;
   alt: string;
@@ -50,108 +50,108 @@ export function isGlobeProductSlug(slug: string): boolean {
 const PRODUCT_IMAGES: Readonly<Record<string, ProductImage>> = {
   "cartographer-cap": {
     src: cartographerCap,
-    alt: "GEOverze Cartographer Cap — charcoal six-panel cap with bronze compass emblem",
+    alt: "GVRZE Cartographer Cap — charcoal six-panel cap with bronze compass emblem",
   },
   "polar-beanie": {
     src: polarBeanie,
-    alt: "GEOverze Polar Beanie — black ribbed wool beanie with bronze emblem",
+    alt: "GVRZE Polar Beanie — black ribbed wool beanie with bronze emblem",
   },
   "old-world-mug": {
     src: oldWorldMug,
-    alt: "GEOverze Old World Mug — glazed ceramic with antique world map projection",
+    alt: "GVRZE Old World Mug — glazed ceramic with antique world map projection",
   },
   "expedition-enamel-mug": {
     src: expeditionEnamelMug,
-    alt: "GEOverze Expedition Enamel Mug — camp-grade enamel with bronze rim",
+    alt: "GVRZE Expedition Enamel Mug — camp-grade enamel with bronze rim",
   },
   "orbital-horizon-mug": {
     src: orbitalHorizonMug,
-    alt: "GEOverze Orbital Horizon Mug — deep charcoal ceramic with a planetary arc and orbital lines",
+    alt: "GVRZE Orbital Horizon Mug — deep charcoal ceramic with a planetary arc and orbital lines",
     fillFrame: true,
   },
   "celestial-meridian-mug": {
     src: celestialMeridianMug,
-    alt: "GEOverze Celestial Meridian Mug — charcoal ceramic with sweeping orbital lines and a star motif",
+    alt: "GVRZE Celestial Meridian Mug — charcoal ceramic with sweeping orbital lines and a star motif",
     fillFrame: true,
   },
   "terra-contour-mug": {
     src: terraContourMug,
-    alt: "GEOverze Terra Contour Mug — dark ceramic with topographic contour lines and bronze detailing",
+    alt: "GVRZE Terra Contour Mug — dark ceramic with topographic contour lines and bronze detailing",
     fillFrame: true,
   },
   "golden-atlas-mug": {
     src: goldenAtlasMug,
-    alt: "GEOverze Golden Atlas Mug — bronze world map on deep charcoal ceramic",
+    alt: "GVRZE Golden Atlas Mug — bronze world map on deep charcoal ceramic",
     fillFrame: true,
   },
   "flag-sticker-pack": {
     src: flagStickerPack,
-    alt: "GEOverze Flag Sticker Pack — fifty die-cut weatherproof vinyl flag stickers",
+    alt: "GVRZE Flag Sticker Pack — fifty die-cut weatherproof vinyl flag stickers",
     fillFrame: true,
   },
   "continent-sticker-set": {
     src: continentStickerSet,
-    alt: "GEOverze Continent Sticker Set — seven matte-finish landmass stickers",
+    alt: "GVRZE Continent Sticker Set — seven matte-finish landmass stickers",
     fillFrame: true,
   },
   "vintage-expedition-sticker-collection": {
     src: vintageExpeditionStickerCollection,
-    alt: "GEOverze Vintage Expedition Sticker Collection — explorer badges, maps and navigation emblems",
+    alt: "GVRZE Vintage Expedition Sticker Collection — explorer badges, maps and navigation emblems",
     fillFrame: true,
   },
   "the-explorers-trail": {
     src: theExplorersTrail,
-    alt: "GEOverze THE EXPLORER'S TRAIL sticker collection",
+    alt: "GVRZE THE EXPLORER'S TRAIL sticker collection",
     fillFrame: true,
   },
   "beyond-the-horizon": {
     src: beyondTheHorizon,
-    alt: "GEOverze BEYOND THE HORIZON sticker collection",
+    alt: "GVRZE BEYOND THE HORIZON sticker collection",
     fillFrame: true,
   },
   "the-atlas-archive": {
     src: theAtlasArchive,
-    alt: "GEOverze THE ATLAS ARCHIVE sticker collection",
+    alt: "GVRZE THE ATLAS ARCHIVE sticker collection",
     fillFrame: true,
   },
   "the-cartographers-collection": {
     src: theCartographersCollection,
-    alt: "GEOverze THE CARTOGRAPHER'S COLLECTION sticker collection",
+    alt: "GVRZE THE CARTOGRAPHER'S COLLECTION sticker collection",
     fillFrame: true,
   },
   "field-notebook": {
     src: atlasEncyclopedia,
-    alt: "GEOverze Atlas Encyclopedia — black hardcover atlas with gold world map",
+    alt: "GVRZE Atlas Encyclopedia — black hardcover atlas with gold world map",
   },
   "desk-globe-mini": {
     src: deskGlobeMini,
-    alt: "GEOverze Mini Desk Globe — 12 cm desk globe with a bronze meridian",
+    alt: "GVRZE Mini Desk Globe — 12 cm desk globe with a bronze meridian",
   },
   "crystal-earth-globe": {
     src: crystalEarthGlobe,
-    alt: "GEOverze Crystal Earth Globe — acrylic globe with detailed world map and golden meridian",
+    alt: "GVRZE Crystal Earth Globe — acrylic globe with detailed world map and golden meridian",
     fillFrame: true,
     objectPosition: "50% 50%",
   },
   "vintage-world-globe": {
     src: vintageWorldGlobe,
-    alt: "GEOverze Vintage World Globe — classic political globe with wooden base",
+    alt: "GVRZE Vintage World Globe — classic political globe with wooden base",
     fillFrame: true,
     objectPosition: "50% 50%",
   },
   "blue-ocean-globe": {
     src: blueOceanGlobe,
-    alt: "GEOverze Blue Ocean Globe — modern blue ocean globe with wooden base",
+    alt: "GVRZE Blue Ocean Globe — modern blue ocean globe with wooden base",
     fillFrame: true,
     objectPosition: "50% 50%",
   },
   "explore-the-unknown": {
     src: hoodieExploreTheUnknown,
-    alt: "GEOverze Explore The Unknown Hoodie — black hoodie with world map and compass artwork",
+    alt: "GVRZE Explore The Unknown Hoodie — black hoodie with world map and compass artwork",
   },
 };
 
-/** Artwork for the GEOstore Rewards shelf cards only. */
+/** Artwork for the GVRZE Store Rewards shelf cards only. */
 const REWARD_SHELF_IMAGES: Readonly<Record<string, ProductImage>> = {
   "avatar-navigator": {
     src: rewardNavigatorAvatar,

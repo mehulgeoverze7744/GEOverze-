@@ -6,8 +6,8 @@ import { tournamentBySlug } from "@/features/tournaments/data/tournaments";
 export const Route = createFileRoute("/play/tournaments/$slug")({
   head: ({ params }) => {
     const tournament = tournamentBySlug(params.slug);
-    const t = tournament ? `${tournament.title} — Tournaments — GEOverze` : "Tournament — GEOverze";
-    const d = tournament ? tournament.summary : "GEOverze geography tournaments and brackets.";
+    const t = tournament ? `${tournament.title} — Tournaments — GVRZE` : "Tournament — GVRZE";
+    const d = tournament ? tournament.summary : "GVRZE geography tournaments and brackets.";
     return {
       meta: [
         { title: t },

@@ -197,9 +197,9 @@ async function hydrateProfileAndRole(user: User) {
   void hydratePreferences(user);
   // Hydrate progression after profile is resolved (non-blocking).
   void hydrateProgression(user);
-  // Hydrate GEOlibrary bookmarks/progress/likes (non-blocking).
+  // Hydrate GVRZE Library bookmarks/progress/likes (non-blocking).
   void hydrateLibraryState(user);
-  // Hydrate GEOstore wishlist (non-blocking).
+  // Hydrate GVRZE Store wishlist (non-blocking).
   void hydrateStoreWishlist(user);
 }
 

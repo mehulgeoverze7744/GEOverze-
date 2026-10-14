@@ -138,7 +138,7 @@ export function ComparisonTable({
             </div>
 
             <table className="pricing-compare-table" aria-describedby="compare-feature-col">
-              <caption className="sr-only">GEOverze membership feature comparison</caption>
+              <caption className="sr-only">GVRZE membership feature comparison</caption>
               <thead className="sr-only">
                 <tr>
                   <th scope="col">Feature</th>

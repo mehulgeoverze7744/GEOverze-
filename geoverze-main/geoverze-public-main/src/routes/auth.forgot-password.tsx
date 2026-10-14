@@ -5,15 +5,15 @@ import { ForgotPasswordPage } from "@/features/auth/pages/ForgotPasswordPage";
 export const Route = createFileRoute("/auth/forgot-password")({
   head: () => ({
     meta: [
-      { title: "Forgot Password — GEOverze" },
+      { title: "Forgot Password — GVRZE" },
       {
         name: "description",
-        content: "Request a secure password reset link for your GEOverze account.",
+        content: "Request a secure password reset link for your GVRZE account.",
       },
-      { property: "og:title", content: "Forgot Password — GEOverze" },
+      { property: "og:title", content: "Forgot Password — GVRZE" },
       {
         property: "og:description",
-        content: "Request a secure password reset link for your GEOverze account.",
+        content: "Request a secure password reset link for your GVRZE account.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -20,7 +20,7 @@ export function PricingCta() {
               Start free. Upgrade when the planet gets interesting.
             </h2>
             <p className="pricing-cta-note">
-              Nothing is billable while GEOverze is in development — plans describe intent, not a
+              Nothing is billable while GVRZE is in development — plans describe intent, not a
               live checkout. Your account, credits and progress carry into launch.
             </p>
             <div className="pricing-cta-actions">

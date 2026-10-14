@@ -147,7 +147,7 @@ export const GROWTH_NOTES: { id: string; label: string; detail: string; delta: n
   },
   {
     id: "g2",
-    label: "Coastline article featured in GEOlibrary",
+    label: "Coastline article featured in GVRZE Library",
     detail: "Editorial shelf placement for 9 days",
     delta: 21.8,
   },
@@ -168,7 +168,7 @@ export const GROWTH_NOTES: { id: string; label: string; detail: string; delta: n
 /** Channel split for the donut chart. */
 export const TRAFFIC_SOURCES: SeriesPoint[] = [
   { label: "Let's Play", value: 42 },
-  { label: "GEOlibrary", value: 27 },
+  { label: "GVRZE Library", value: 27 },
   { label: "Community", value: 19 },
   { label: "Direct", value: 12 },
 ];

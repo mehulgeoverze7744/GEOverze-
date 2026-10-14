@@ -91,7 +91,7 @@ function Scene({ progress }: { progress: RefObject<number> }) {
       <ambientLight intensity={0.28} />
       {/* sun key — from logo/left (−X), shared with Earth day/night shader */}
       <directionalLight position={[...EARTH_SUN_POSITION]} intensity={4.1} color="#fff6ea" />
-      {/* bronze rim — GEOverze brand accent, not planetary lighting */}
+      {/* bronze rim — GVRZE brand accent, not planetary lighting */}
       <directionalLight position={[-6, 2, -4]} intensity={1.65} color="#b8763a" />
       {/* cool space fill */}
       <pointLight position={[0, -4, 4]} intensity={4.5} distance={22} color="#5a687a" />

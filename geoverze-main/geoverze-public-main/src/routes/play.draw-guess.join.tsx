@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { DrawGuessJoinScreen } from "@/features/draw-guess";
 
-const t = "Join Draw & Guess Room — GEOverze";
-const d = "Enter a private GEOverze Draw & Guess room code to join your friends.";
+const t = "Join Draw & Guess Room — GVRZE";
+const d = "Enter a private GVRZE Draw & Guess room code to join your friends.";
 
 export const Route = createFileRoute("/play/draw-guess/join")({
   head: () => ({

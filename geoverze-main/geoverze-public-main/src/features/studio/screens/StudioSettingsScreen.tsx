@@ -83,7 +83,7 @@ export function StudioSettingsScreen() {
             <StudioPanel>
               <StudioPanelHeader
                 title="Creator profile"
-                hint="Shown on your public GEOlibrary and Community pages"
+                hint="Shown on your public GVRZE Library and Community pages"
               />
               <div className="grid gap-4 [&>*]:min-w-0 md:grid-cols-2">
                 <GeoInput
@@ -134,7 +134,7 @@ export function StudioSettingsScreen() {
             <StudioPanel>
               <StudioPanelHeader
                 title="Verification"
-                hint="Verified creators can publish directly into GEOlibrary shelves"
+                hint="Verified creators can publish directly into GVRZE Library shelves"
               />
               <div className="flex items-start gap-3 rounded-lg border border-[oklch(0.72_0.13_150/0.35)] bg-[oklch(0.72_0.13_150/0.08)] p-4">
                 <ShieldCheck
@@ -153,7 +153,7 @@ export function StudioSettingsScreen() {
               </div>
               <p className="mt-4 text-[0.8rem] leading-relaxed text-foreground/50">
                 Verification reviews credentials, sourcing standards and content history. Renewal is
-                annual and handled by the GEOverze content team.
+                annual and handled by the GVRZE content team.
               </p>
             </StudioPanel>
           ) : null}
@@ -234,7 +234,7 @@ export function StudioSettingsScreen() {
                 <GeoInput
                   id="pub-licence"
                   label="Content licence"
-                  defaultValue="GEOverze standard"
+                  defaultValue="GVRZE standard"
                 />
                 <GeoInput
                   id="pub-attribution"

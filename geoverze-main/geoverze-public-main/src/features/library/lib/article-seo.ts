@@ -6,11 +6,11 @@ const SITE_ORIGIN = "https://geoverze.com";
 export function buildArticleRouteHead(meta: ArticleCatalogueMeta | null | undefined) {
   if (!meta) {
     return {
-      meta: [{ title: "Entry not found — GEOlibrary" }, { name: "robots", content: "noindex" }],
+      meta: [{ title: "Entry not found — GVRZE Library" }, { name: "robots", content: "noindex" }],
     };
   }
 
-  const pageTitle = `${meta.title} — GEOlibrary`;
+  const pageTitle = `${meta.title} — GVRZE Library`;
   const canonical = `${SITE_ORIGIN}/geolibrary/article/${meta.slug}`;
 
   return {

@@ -5,16 +5,16 @@ import { SignupPage } from "@/features/auth/pages/SignupPage";
 export const Route = createFileRoute("/auth/signup")({
   head: () => ({
     meta: [
-      { title: "Create Your Account — GEOverze" },
+      { title: "Create Your Account — GVRZE" },
       {
         name: "description",
         content:
-          "Create a free GEOverze account to play geography expeditions, track mastery and compete worldwide.",
+          "Create a free GVRZE account to play geography expeditions, track mastery and compete worldwide.",
       },
-      { property: "og:title", content: "Create Your Account — GEOverze" },
+      { property: "og:title", content: "Create Your Account — GVRZE" },
       {
         property: "og:description",
-        content: "Join GEOverze and start exploring Earth through play.",
+        content: "Join GVRZE and start exploring Earth through play.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

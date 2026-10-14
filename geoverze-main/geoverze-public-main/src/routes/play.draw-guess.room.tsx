@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { DrawGuessRoomScreen } from "@/features/draw-guess";
 
-const t = "Draw & Guess Room — GEOverze";
-const d = "Live GEOverze Draw & Guess room lobby and match.";
+const t = "Draw & Guess Room — GVRZE";
+const d = "Live GVRZE Draw & Guess room lobby and match.";
 
 export const Route = createFileRoute("/play/draw-guess/room")({
   validateSearch: (search: Record<string, unknown>) => ({

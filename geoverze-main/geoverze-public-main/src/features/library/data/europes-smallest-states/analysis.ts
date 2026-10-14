@@ -83,7 +83,7 @@ export const EUROPE_MICROSTATES_ANALYSIS: readonly ArticleBlock[] = [
     art: "article-microstates-map",
     caption: "Approximate locations of Europe's six microstates on a continental map.",
     externalSrc: "/assets/geolibrary/collections/countries-of-europe.jpg",
-    credit: "GEOlibrary editorial map art",
+    credit: "GVRZE Library editorial map art",
   },
   {
     kind: "heading",
@@ -233,7 +233,7 @@ export const EUROPE_MICROSTATES_ANALYSIS: readonly ArticleBlock[] = [
   },
   {
     kind: "crossLinks",
-    title: "Continue in GEOlibrary",
+    title: "Continue in GVRZE Library",
     links: [
       {
         label: "Want to explore borders?",

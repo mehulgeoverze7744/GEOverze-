@@ -22,7 +22,7 @@ type Seed = {
 const SEEDS: readonly Seed[] = [
   {
     kind: "success",
-    title: "Welcome to GEOverze",
+    title: "Welcome to GVRZE",
     body: "Your explorer profile is live. Start with a daily expedition to set your baseline.",
     age: 12 * MINUTE,
   },
@@ -41,7 +41,7 @@ const SEEDS: readonly Seed[] = [
   {
     kind: "info",
     title: "Creator update",
-    body: "The Atlas of Rivers collection gained six new plates from the GEOverze studio.",
+    body: "The Atlas of Rivers collection gained six new plates from the GVRZE studio.",
     age: 1 * DAY + 4 * HOUR,
     read: true,
   },

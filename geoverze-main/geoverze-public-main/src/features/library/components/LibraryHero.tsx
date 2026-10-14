@@ -8,7 +8,7 @@ type LibraryHeroProps = {
   bookmarkCount: number;
 };
 
-/** GEOlibrary cinematic atlas hero — map/compass/books background. */
+/** GVRZE Library cinematic atlas hero — map/compass/books background. */
 export function LibraryHero({ bookmarkCount }: LibraryHeroProps) {
   return (
     <header
@@ -22,7 +22,7 @@ export function LibraryHero({ bookmarkCount }: LibraryHeroProps) {
       <div className="geolibrary-hero__grid" aria-hidden />
 
       <SectionContainer className="relative z-10 flex h-full flex-col justify-end pb-14 pt-[calc(var(--nav-height)+3.5rem)] sm:pb-16 sm:pt-[calc(var(--nav-height)+4rem)]">
-        <p className="geolibrary-hero__eyebrow">GEOlibrary</p>
+        <p className="geolibrary-hero__eyebrow">GVRZE Library</p>
 
         <h1 className="geolibrary-hero__title">
           Know Earth.

@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { CataloguePage } from "@/features/play";
 
-const title = "Explore All Categories — Let's Play — GEOverze";
+const title = "Explore All Categories — Let's Play — GVRZE";
 const description =
-  "Browse every GEOverze geography category — countries, capitals, flags, maps and more.";
+  "Browse every GVRZE geography category — countries, capitals, flags, maps and more.";
 
 export const Route = createFileRoute("/play/catalogue")({
   head: () => ({

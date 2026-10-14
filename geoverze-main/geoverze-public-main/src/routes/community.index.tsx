@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { CommunityHome } from "@/features/community";
 
-const title = "Community — GEOverze";
+const title = "Community — GVRZE";
 const description =
   "Share discoveries, answer geography questions, vote in polls and celebrate streaks with explorers around the world.";
 

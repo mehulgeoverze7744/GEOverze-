@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { MatchmakingScreen } from "@/features/matchmaking";
 
-const t = "Matchmaking — GEOverze";
-const d = "Finding an opponent matched to your accuracy before a GEOverze duel begins.";
+const t = "Matchmaking — GVRZE";
+const d = "Finding an opponent matched to your accuracy before a GVRZE duel begins.";
 
 export const Route = createFileRoute("/play/matchmaking")({
   validateSearch: (search: Record<string, unknown>) => ({

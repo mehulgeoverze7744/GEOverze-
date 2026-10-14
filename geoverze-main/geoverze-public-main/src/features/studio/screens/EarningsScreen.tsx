@@ -68,7 +68,7 @@ export function EarningsScreen() {
               {formatNumber(EARNINGS_SUMMARY.creditsEarned)}
             </p>
             <p className="mt-1.5 text-[0.75rem] text-foreground/50">
-              Spendable in GEOstore alongside cash earnings.
+              Spendable in GVRZE Store alongside cash earnings.
             </p>
           </StudioPanel>
         </div>

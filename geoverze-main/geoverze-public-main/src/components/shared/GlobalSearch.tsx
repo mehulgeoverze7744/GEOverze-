@@ -18,7 +18,7 @@ import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 /**
  * Global search overlay.
  *
- * GEOlibrary articles come from Supabase FTS; other groups remain placeholder
+ * GVRZE Library articles come from Supabase FTS; other groups remain placeholder
  * until their backends exist. Opens with ⌘K / Ctrl+K.
  */
 export function GlobalSearch() {
@@ -109,13 +109,13 @@ export function GlobalSearch() {
           setOpen(next);
           if (!next) setQuery("");
         }}
-        title="Search GEOverze"
+        title="Search GVRZE"
         description="Find play modes, quizzes, articles and more."
       >
         <div className="space-y-6">
           <SearchBar
             id="global-search"
-            label="Search GEOverze"
+            label="Search GVRZE"
             placeholder="Solo, PvP, emoji, country…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}

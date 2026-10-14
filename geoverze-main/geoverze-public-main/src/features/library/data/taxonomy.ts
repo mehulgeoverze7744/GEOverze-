@@ -1,5 +1,5 @@
 /**
- * GEOlibrary taxonomy.
+ * GVRZE Library taxonomy.
  *
  * Every facet the browse surface can filter on, expressed as data so the
  * filter rail, the chips and the search index all read from one place.

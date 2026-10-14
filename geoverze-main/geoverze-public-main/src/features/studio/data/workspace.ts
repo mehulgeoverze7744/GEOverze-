@@ -85,7 +85,7 @@ export const STUDIO_ACTIVITY: StudioActivity[] = [
   },
   {
     id: "a4",
-    label: "How Long Is a Coastline? featured in GEOlibrary",
+    label: "How Long Is a Coastline? featured in GVRZE Library",
     detail: "Editorial shelf — Physical geography",
     at: "2026-08-04T11:30:00Z",
     tone: "publish",

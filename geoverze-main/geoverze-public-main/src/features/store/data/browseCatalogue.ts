@@ -1,5 +1,5 @@
 /**
- * Browse catalogue — the physical products shoppers can reach from the GEOstore
+ * Browse catalogue — the physical products shoppers can reach from the GVRZE Store
  * merchandise shelves. Digital packs and rewards stay on their own surfaces.
  */
 import {

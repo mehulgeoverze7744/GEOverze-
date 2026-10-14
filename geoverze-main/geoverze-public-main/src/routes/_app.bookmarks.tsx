@@ -5,16 +5,16 @@ import { BookmarksPage } from "@/features/profile";
 export const Route = createFileRoute("/_app/bookmarks")({
   head: () => ({
     meta: [
-      { title: "Bookmarks — GEOverze" },
+      { title: "Bookmarks — GVRZE" },
       {
         name: "description",
         content:
-          "Saved articles, quizzes, maps and learning paths — your personal GEOverze collection.",
+          "Saved articles, quizzes, maps and learning paths — your personal GVRZE collection.",
       },
-      { property: "og:title", content: "Bookmarks — GEOverze" },
+      { property: "og:title", content: "Bookmarks — GVRZE" },
       {
         property: "og:description",
-        content: "Saved articles, quizzes, maps and learning paths in GEOverze.",
+        content: "Saved articles, quizzes, maps and learning paths in GVRZE.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -11,7 +11,7 @@ const pendingProgressSyncs = new Map<string, PendingProgressSync>();
 
 function logProgressSyncDiagnostic(message: string, detail?: unknown) {
   if (import.meta.env.DEV) {
-    console.warn(`[GEOlibrary progress] ${message}`, detail ?? "");
+    console.warn(`[GVRZE Library progress] ${message}`, detail ?? "");
   }
 }
 

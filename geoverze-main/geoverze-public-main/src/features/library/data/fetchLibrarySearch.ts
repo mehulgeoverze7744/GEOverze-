@@ -35,7 +35,7 @@ export async function fetchLibrarySearchHits(
     id: `lib-${row.slug}`,
     group: "articles" as const,
     title: row.title,
-    meta: `GEOlibrary · ${row.read_time_minutes} min read`,
+    meta: `GVRZE Library · ${row.read_time_minutes} min read`,
     to: `/geolibrary/article/${row.slug}` as NonNullable<LinkProps["to"]>,
     score: 100 - index,
   }));

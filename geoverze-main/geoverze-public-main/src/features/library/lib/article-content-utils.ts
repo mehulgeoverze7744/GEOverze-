@@ -68,7 +68,7 @@ export function editorialClosing(params: {
   }
   blocks.push({
     kind: "didYouKnow",
-    text: `Figures and place names in this feature align with GEOlibrary datasets used in Let's Play ${params.quizTopic} questions — reading here sharpens map and quiz accuracy.`,
+    text: `Figures and place names in this feature align with GVRZE Library datasets used in Let's Play ${params.quizTopic} questions — reading here sharpens map and quiz accuracy.`,
   });
   return blocks;
 }

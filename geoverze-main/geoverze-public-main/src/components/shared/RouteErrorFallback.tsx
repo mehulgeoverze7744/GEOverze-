@@ -23,7 +23,7 @@ export function RouteErrorFallback({ error, reset }: ErrorComponentProps) {
           This section didn't load
         </h1>
         <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-foreground/50">
-          Something went wrong while opening this part of GEOverze. You can try again without
+          Something went wrong while opening this part of GVRZE. You can try again without
           leaving the page.
         </p>
         <div className="mt-9 flex flex-wrap justify-center gap-3">

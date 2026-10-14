@@ -1,4 +1,4 @@
-/** Static cover art for GEOlibrary collection cards on /geolibrary/collections. */
+/** Static cover art for GVRZE Library collection cards on /geolibrary/collections. */
 export const COLLECTION_CARD_IMAGES: Readonly<Record<string, string>> = {
   "countries-of-europe": "/assets/geolibrary/collections/countries-of-europe.jpg",
   "geography-basics": "/assets/geolibrary/collections/geography-basics.jpg",

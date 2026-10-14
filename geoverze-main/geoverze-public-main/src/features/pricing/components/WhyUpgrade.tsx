@@ -57,7 +57,7 @@ export function WhyUpgrade() {
           <h2 id="why-heading" className="font-light tracking-tight text-foreground">
             What explorers are saying
           </h2>
-          <p>Real experiences from the GEOverze community.</p>
+          <p>Real experiences from the GVRZE community.</p>
         </header>
 
         <div className="upgrade-roster-stage">

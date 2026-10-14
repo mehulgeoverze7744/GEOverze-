@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { EventsPage } from "@/features/events";
 
-const t = "Special Events — GEOverze";
+const t = "Special Events — GVRZE";
 const d =
-  "Seasonal expeditions, limited-time trails and community events across the GEOverze quiz platform.";
+  "Seasonal expeditions, limited-time trails and community events across the GVRZE quiz platform.";
 
 export const Route = createFileRoute("/play/events")({
   head: () => ({

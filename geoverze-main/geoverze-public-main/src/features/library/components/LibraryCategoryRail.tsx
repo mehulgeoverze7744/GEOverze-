@@ -29,7 +29,7 @@ function categoryBrowseSearch(categoryId: CategoryId) {
   };
 }
 
-/** Horizontally scrollable GEOlibrary category tiles with arrow controls. */
+/** Horizontally scrollable GVRZE Library category tiles with arrow controls. */
 export function LibraryCategoryRail({ className }: { className?: string }) {
   const railRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);

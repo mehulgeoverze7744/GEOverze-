@@ -5,7 +5,7 @@ export const pricingFaq: FaqItem[] = [
     id: "how",
     question: "How do subscriptions work?",
     answer:
-      "Membership is a recurring plan billed monthly or annually. Annual plans cost the equivalent of ten months. Nothing is billable today — GEOverze is in development and every plan below describes intent, not a live checkout.",
+      "Membership is a recurring plan billed monthly or annually. Annual plans cost the equivalent of ten months. Nothing is billable today — GVRZE is in development and every plan below describes intent, not a live checkout.",
   },
   {
     id: "upgrade",

@@ -71,7 +71,7 @@ export function VerifyEmailPage({ email }: { email?: string }) {
           <SuccessBurst
             icon={<MailCheck className="h-7 w-7" strokeWidth={1.2} aria-hidden="true" />}
             title="Email verified"
-            description="One quick eligibility question and you're into GEOverze."
+            description="One quick eligibility question and you're into GVRZE."
           >
             <GeoButton asChild variant="primary" className="w-full sm:w-auto">
               <Link to="/auth/age-verification">Continue</Link>

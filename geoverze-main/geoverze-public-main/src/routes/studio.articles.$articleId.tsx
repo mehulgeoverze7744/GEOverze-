@@ -5,16 +5,16 @@ import { ArticleEditorScreen } from "@/features/studio";
 export const Route = createFileRoute("/studio/articles/$articleId")({
   head: () => ({
     meta: [
-      { title: "Article Editor — GEOverze Creator Studio" },
+      { title: "Article Editor — GVRZE Creator Studio" },
       {
         name: "description",
         content:
-          "Structure and refine one of your GEOverze articles block by block before submitting it for review.",
+          "Structure and refine one of your GVRZE articles block by block before submitting it for review.",
       },
-      { property: "og:title", content: "Article Editor — GEOverze Creator Studio" },
+      { property: "og:title", content: "Article Editor — GVRZE Creator Studio" },
       {
         property: "og:description",
-        content: "Structure and refine a GEOverze article block by block.",
+        content: "Structure and refine a GVRZE article block by block.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

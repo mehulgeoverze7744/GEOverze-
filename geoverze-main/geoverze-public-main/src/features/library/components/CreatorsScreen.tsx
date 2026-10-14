@@ -19,7 +19,7 @@ export function CreatorsScreen() {
   return (
     <SectionContainer>
       <PageHeader
-        eyebrow="GEOlibrary"
+        eyebrow="GVRZE Library"
         title="Creators"
         description="The cartographers, writers and researchers behind the library."
       />

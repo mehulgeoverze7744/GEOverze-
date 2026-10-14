@@ -9,7 +9,7 @@ type GeoButtonProps = ComponentProps<"button"> &
   VariantProps<typeof geoButtonVariants> & { asChild?: boolean };
 
 /**
- * GEOverze button. Bronze-forward, token-driven, three intents.
+ * GVRZE button. Bronze-forward, token-driven, three intents.
  * Use `asChild` to render a router <Link> with button styling.
  */
 export function GeoButton({ className, variant, size, asChild = false, ...props }: GeoButtonProps) {

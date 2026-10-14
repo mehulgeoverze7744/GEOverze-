@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { ImposterJoinScreen } from "@/features/geography-imposter";
 
-const t = "Join Room — Geography Imposter · GEOverze";
+const t = "Join Room — Geography Imposter · GVRZE";
 const d = "Enter a room code to join a live Geography Imposter game.";
 
 export const Route = createFileRoute("/play/imposter/join")({

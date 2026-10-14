@@ -14,7 +14,7 @@ function stripAvatarQuery(src: string) {
   return cut === -1 ? src : src.slice(0, cut);
 }
 
-/** Bundled GEOverze alien explorer portrait (transparent PNG + legacy WebP). */
+/** Bundled GVRZE alien explorer portrait (transparent PNG + legacy WebP). */
 export function isAlienAvatarSrc(src: string | null | undefined) {
   const path = src?.trim() ? stripAvatarQuery(src.trim()) : "";
   return path === "/assets/avatars/alien.png" || path === "/assets/avatars/alien.webp";

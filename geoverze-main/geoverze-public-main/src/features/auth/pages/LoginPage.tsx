@@ -61,7 +61,7 @@ export function LoginPage() {
   if (state === "success") {
     return (
       <PageShell>
-        <AuthLayout title="Welcome back to GEOverze" description="Signing you in…">
+        <AuthLayout title="Welcome back to GVRZE" description="Signing you in…">
           <SuccessBurst
             title="Signed in"
             description="Taking you to your explorer profile — the world is where you left it."
@@ -75,7 +75,7 @@ export function LoginPage() {
     <PageShell>
       <AuthLayout
         eyebrow="Welcome back"
-        title="Sign in to GEOverze"
+        title="Sign in to GVRZE"
         description="Continue your progress across the geography universe."
         footer={
           <p>

@@ -8,16 +8,16 @@ export const Route = createFileRoute("/auth/verify-email")({
   }),
   head: () => ({
     meta: [
-      { title: "Verify Your Email — GEOverze" },
+      { title: "Verify Your Email — GVRZE" },
       {
         name: "description",
         content:
-          "Confirm your email address to activate your GEOverze account and carry your progress across devices.",
+          "Confirm your email address to activate your GVRZE account and carry your progress across devices.",
       },
-      { property: "og:title", content: "Verify Your Email — GEOverze" },
+      { property: "og:title", content: "Verify Your Email — GVRZE" },
       {
         property: "og:description",
-        content: "Confirm your email address to activate your GEOverze account.",
+        content: "Confirm your email address to activate your GVRZE account.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

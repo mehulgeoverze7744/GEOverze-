@@ -6,7 +6,7 @@ import { selectWishlist, useStoreStore } from "@/stores/storeStore";
 
 import { geostoreActionLinkClass } from "./geostore-action-link";
 
-/** Fixed GEOstore wishlist icon — first control in the header action row. */
+/** Fixed GVRZE Store wishlist icon — first control in the header action row. */
 export function GeostoreWishlistButton({ className }: { className?: string }) {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const wishlistCount = useStoreStore((state) => selectWishlist(state).length);

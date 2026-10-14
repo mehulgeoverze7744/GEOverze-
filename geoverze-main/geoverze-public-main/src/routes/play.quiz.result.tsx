@@ -8,16 +8,16 @@ export const Route = createFileRoute("/play/quiz/result")({
   }),
   head: () => ({
     meta: [
-      { title: "Quiz Result — GEOverze" },
+      { title: "Quiz Result — GVRZE" },
       {
         name: "description",
         content:
-          "Your GEOverze quiz summary: score, accuracy, streaks, time and rewards, with a full answer review.",
+          "Your GVRZE quiz summary: score, accuracy, streaks, time and rewards, with a full answer review.",
       },
-      { property: "og:title", content: "Quiz Result — GEOverze" },
+      { property: "og:title", content: "Quiz Result — GVRZE" },
       {
         property: "og:description",
-        content: "Score, accuracy, streaks and rewards from your GEOverze quiz run.",
+        content: "Score, accuracy, streaks and rewards from your GVRZE quiz run.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

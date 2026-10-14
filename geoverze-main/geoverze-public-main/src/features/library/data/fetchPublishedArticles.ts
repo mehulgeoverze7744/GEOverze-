@@ -48,14 +48,14 @@ export async function fetchArticleCatalogueMeta(
   };
 }
 
-/** Published catalogue metadata for GEOlibrary browse/list surfaces. */
+/** Published catalogue metadata for GVRZE Library browse/list surfaces. */
 export async function fetchPublishedArticles(): Promise<Article[]> {
   const { data: rows, error } = await supabase
     .from(LIBRARY_CATALOGUE)
     .select("*")
     .order("published_at", { ascending: false, nullsFirst: false });
 
-  if (error) throw new Error(`Failed to load GEOlibrary articles: ${error.message}`);
+  if (error) throw new Error(`Failed to load GVRZE Library articles: ${error.message}`);
   if (!rows?.length) return [];
 
   return rows.map((row) => mapResourceRowToArticle(row));

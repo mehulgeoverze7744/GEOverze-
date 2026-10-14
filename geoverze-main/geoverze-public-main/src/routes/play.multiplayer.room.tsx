@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { MultiplayerRoomScreen } from "@/features/multiplayer";
 
-const t = "Multiplayer Room — GEOverze";
-const d = "Private GEOverze multiplayer room with lobby, ready states, and synchronized match start.";
+const t = "Multiplayer Room — GVRZE";
+const d = "Private GVRZE multiplayer room with lobby, ready states, and synchronized match start.";
 
 export const Route = createFileRoute("/play/multiplayer/room")({
   validateSearch: (search: Record<string, unknown>) => ({

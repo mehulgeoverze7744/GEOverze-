@@ -96,7 +96,7 @@ export function buildComparisonGroups(plans: SubscriptionPlanRow[]): ComparisonG
       title: "Learning",
       rows: [
         {
-          feature: "GEOlibrary benefits",
+          feature: "GVRZE Library benefits",
           detail: "Reading, bookmarking and deep-dive collections.",
           values: {
             explorer: "Browse and read",

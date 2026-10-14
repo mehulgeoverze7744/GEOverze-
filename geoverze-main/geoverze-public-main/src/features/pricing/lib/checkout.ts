@@ -25,6 +25,6 @@ export function startCheckout(plan: PricingPlan, cycle: BillingCycle) {
 /** Shared "not wired yet" notice for every billing management action. */
 export function notBillableYet(what: string) {
   toast(`${what} isn't available yet`, {
-    description: "It activates once the GEOverze payments module goes live.",
+    description: "It activates once the GVRZE payments module goes live.",
   });
 }

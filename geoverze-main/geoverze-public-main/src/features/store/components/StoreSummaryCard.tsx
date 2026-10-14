@@ -14,7 +14,7 @@ type StoreSummaryCardProps = {
   compact?: boolean;
 };
 
-/** Premium GEOstore stat tile shared by Credit Balance, Catalogue and Free Shipping. */
+/** Premium GVRZE Store stat tile shared by Credit Balance, Catalogue and Free Shipping. */
 export function StoreSummaryCard({
   label,
   value,

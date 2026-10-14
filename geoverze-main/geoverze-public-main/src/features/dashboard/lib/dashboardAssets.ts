@@ -16,7 +16,7 @@ export const DASHBOARD_EARTH_SRC = "/assets/dashboard-earth.jpg";
 
 export const FEATURED_EXPEDITION_IMAGE = earthIntelligence;
 
-/** Existing GEOstore merch hero — dashboard GEOstore card only. */
+/** Existing GVRZE Store merch hero — dashboard GVRZE Store card only. */
 export const GEOSTORE_CARD_IMAGE = geostoreHero;
 
 /** Uploaded brushed-metal plate — Quick Status card only. */
@@ -28,7 +28,7 @@ export const RECOMMENDED_IMAGES: Record<string, string> = {
   rec3: flagStickers,
 };
 
-/** Non-GEOlibrary dashboard thumbnails (GEOstore, Let's Play, etc.). */
+/** Non-GVRZE Library dashboard thumbnails (GVRZE Store, Let's Play, etc.). */
 const DASHBOARD_NON_GEOLIBRARY_THUMBNAILS: Readonly<Record<string, string>> = {
   r2: explorersCompass,
   r3: continentStickers,

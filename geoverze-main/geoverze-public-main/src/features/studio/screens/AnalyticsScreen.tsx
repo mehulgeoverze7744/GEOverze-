@@ -26,7 +26,7 @@ export function AnalyticsScreen() {
       <StudioHeader
         eyebrow="Grow"
         title="Analytics"
-        description="How your quizzes and articles perform across Let's Play, GEOlibrary and Community."
+        description="How your quizzes and articles perform across Let's Play, GVRZE Library and Community."
         actions={
           <div className="flex items-center rounded-lg border border-bronze/15 p-0.5">
             {RANGES.map((r) => (

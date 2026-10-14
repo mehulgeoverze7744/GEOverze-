@@ -20,7 +20,7 @@ export function CollectionsScreen() {
   return (
     <SectionContainer>
       <PageHeader
-        eyebrow="GEOlibrary"
+        eyebrow="GVRZE Library"
         title="Collections"
         description="Curated shelves that take you through a topic in a deliberate order."
       />

@@ -5,13 +5,13 @@ import { CollectionsScreen } from "@/features/library";
 export const Route = createFileRoute("/geolibrary/collections/")({
   head: () => ({
     meta: [
-      { title: "Collections — GEOlibrary" },
+      { title: "Collections — GVRZE Library" },
       {
         name: "description",
         content:
-          "Curated GEOlibrary shelves: Countries of Europe, World Capitals, Great Rivers, Mountain Ranges, UNESCO Heritage, Geography Basics and more.",
+          "Curated GVRZE Library shelves: Countries of Europe, World Capitals, Great Rivers, Mountain Ranges, UNESCO Heritage, Geography Basics and more.",
       },
-      { property: "og:title", content: "Collections — GEOlibrary" },
+      { property: "og:title", content: "Collections — GVRZE Library" },
       {
         property: "og:description",
         content: "Curated reading shelves across countries, capitals, rivers and heritage.",

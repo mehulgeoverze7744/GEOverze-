@@ -15,7 +15,7 @@ export function AboutPage() {
       <PageHeader
         eyebrow="About"
         title="A universe built to make Earth legible"
-        description="GEOverze turns geography into something you move through: cast in bronze, lit like a film set and structured like a serious reference."
+        description="GVRZE turns geography into something you move through: cast in bronze, lit like a film set and structured like a serious reference."
         breadcrumb={[{ label: "Home", to: "/" }, { label: "About" }]}
       />
 

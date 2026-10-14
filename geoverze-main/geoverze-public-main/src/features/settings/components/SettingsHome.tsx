@@ -59,7 +59,7 @@ export function SettingsHome() {
         <SettingsRow
           icon="🔔"
           title="Notifications"
-          subtitle="Manage what GEOverze sends you"
+          subtitle="Manage what GVRZE sends you"
           onClick={() => open("notifications")}
         />
       </SettingsGroup>
@@ -83,7 +83,7 @@ export function SettingsHome() {
         <SettingsRow
           icon="💳"
           title="Subscription"
-          subtitle="Manage your GEOverze plan"
+          subtitle="Manage your GVRZE plan"
           value={SUBSCRIPTION.plan}
           onClick={() => open("billing")}
         />

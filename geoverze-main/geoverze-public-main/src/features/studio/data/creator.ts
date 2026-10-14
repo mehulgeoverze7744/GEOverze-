@@ -25,7 +25,7 @@ export const CREATOR: CreatorProfile = {
   name: "Amara Okoye",
   handle: "amaraokoye",
   role: "Verified creator · Geography educator",
-  bio: "I write about coastlines, borders and the stories behind maps. Twelve years teaching physical geography, now building quizzes for the GEOverze universe.",
+  bio: "I write about coastlines, borders and the stories behind maps. Twelve years teaching physical geography, now building quizzes for the GVRZE universe.",
   location: "Lagos, Nigeria",
   joinedAt: "2024-11-02",
   verified: true,

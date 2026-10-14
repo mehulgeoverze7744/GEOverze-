@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { FriendsScreen } from "@/features/community";
 
-const title = "Friends — GEOverze Community";
+const title = "Friends — GVRZE Community";
 const description =
   "Manage friend requests, see the explorers you play with, and revisit recent head-to-head matches.";
 

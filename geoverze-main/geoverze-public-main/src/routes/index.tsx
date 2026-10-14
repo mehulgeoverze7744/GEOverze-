@@ -5,13 +5,13 @@ import { HomePage } from "@/features/marketing";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "GEOverze — Discover Earth Like Never Before" },
+      { title: "GVRZE — Discover Earth Like Never Before" },
       {
         name: "description",
         content:
           "Explore countries, flags, capitals, maps, cultures and landmarks through beautifully designed interactive experiences, quizzes, challenges and a global community.",
       },
-      { property: "og:title", content: "GEOverze — Discover Earth Like Never Before" },
+      { property: "og:title", content: "GVRZE — Discover Earth Like Never Before" },
       {
         property: "og:description",
         content:

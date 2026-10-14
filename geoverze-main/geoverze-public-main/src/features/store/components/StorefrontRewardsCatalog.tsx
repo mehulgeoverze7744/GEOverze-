@@ -17,7 +17,7 @@ import type { StoreCatalogueProduct } from "../lib/mergeCatalogue";
 
 export type StorefrontRewardsPresentation = "shelf" | "categories" | "carousel";
 
-/** Grouped Special Rewards / Themes / Avatars used on GEOstore and Profile. */
+/** Grouped Special Rewards / Themes / Avatars used on GVRZE Store and Profile. */
 export function StorefrontRewardsCatalog({
   products,
   className,

@@ -7,16 +7,16 @@ import { LegalDocument } from "@/features/legal/components/LegalDocument";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Terms & Conditions — GEOverze" },
+      { title: "Terms & Conditions — GVRZE" },
       {
         name: "description",
         content:
-          "The terms that govern use of the GEOverze site and platform, including acceptable use and content ownership.",
+          "The terms that govern use of the GVRZE site and platform, including acceptable use and content ownership.",
       },
-      { property: "og:title", content: "Terms & Conditions — GEOverze" },
+      { property: "og:title", content: "Terms & Conditions — GVRZE" },
       {
         property: "og:description",
-        content: "Terms governing use of the GEOverze site and platform.",
+        content: "Terms governing use of the GVRZE site and platform.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -31,8 +31,8 @@ const sections = [
   {
     title: "About these terms",
     body: [
-      "These terms are maintained by the GEOverze team and describe how the GEOverze site may be used. They will be expanded as platform features launch.",
-      "GEOverze is in development. Nothing on this site is a live purchase, subscription or account service today.",
+      "These terms are maintained by the GVRZE team and describe how the GVRZE site may be used. They will be expanded as platform features launch.",
+      "GVRZE is in development. Nothing on this site is a live purchase, subscription or account service today.",
     ],
   },
   {
@@ -50,7 +50,7 @@ const sections = [
   {
     title: "Content and ownership",
     body: [
-      "The GEOverze name, visual identity, 3D assets, copy and reference structure are owned by GEOverze. Geographic facts themselves are not claimed as proprietary.",
+      "The GVRZE name, visual identity, 3D assets, copy and reference structure are owned by GVRZE. Geographic facts themselves are not claimed as proprietary.",
     ],
   },
   {
@@ -77,7 +77,7 @@ function TermsPage() {
       <PageHeader
         eyebrow="Legal"
         title="Terms & Conditions"
-        description="Straightforward rules for using GEOverze while the platform is being built."
+        description="Straightforward rules for using GVRZE while the platform is being built."
         breadcrumb={[{ label: "Home", to: "/" }, { label: "Terms & Conditions" }]}
       />
 

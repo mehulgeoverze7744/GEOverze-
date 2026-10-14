@@ -17,7 +17,7 @@ type StoreHeroProps = {
   freeShippingThreshold: string;
 };
 
-/** GEOstore cinematic hero — merchandise photography backdrop, editorial layout. */
+/** GVRZE Store cinematic hero — merchandise photography backdrop, editorial layout. */
 export function StoreHero({
   balanceDisplay,
   creditHistoryLink,
@@ -52,7 +52,7 @@ export function StoreHero({
         className="geostore-hero__content relative z-10 flex min-h-0 flex-1 flex-col justify-start pb-16 pt-[calc(var(--nav-height)+2.75rem)] sm:pb-20 sm:pt-[calc(var(--nav-height)+3.25rem)]"
       >
         {/* Eyebrow stays pinned; copy group moves independently */}
-        <p className="geostore-hero__eyebrow">GEOstore</p>
+        <p className="geostore-hero__eyebrow">GVRZE Store</p>
 
         <div className="geostore-hero__copy">
           <div className="max-w-xl">

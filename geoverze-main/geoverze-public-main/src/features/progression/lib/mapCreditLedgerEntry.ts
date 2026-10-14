@@ -80,13 +80,13 @@ function filtersFor(row: CreditLedgerRow, category: CreditLedgerCategory): Credi
   } else if (row.amount > 0 && category === "membership") {
     tags.push("Earned");
   } else if (row.amount < 0 || row.entry_type === "store_spend") {
-    tags.push("Spent", "GEOstore");
+    tags.push("Spent", "GVRZE Store");
   } else if (row.amount > 0 && category !== "adjustment") {
     tags.push("Earned");
   }
 
   if (category === "gameplay") tags.push("Gameplay");
-  if (category === "geostore") tags.push("GEOstore");
+  if (category === "geostore") tags.push("GVRZE Store");
 
   return [...new Set(tags)];
 }
@@ -145,7 +145,7 @@ function mapStoreSpendHeadline(
     if (line) {
       return {
         headline: line.product_name,
-        detail: "GEOstore reward",
+        detail: "GVRZE Store reward",
         avatarId: "atlas",
       };
     }
@@ -154,14 +154,14 @@ function mapStoreSpendHeadline(
   if (lines.length > 1) {
     const names = lines.map((line) => line.product_name).join(", ");
     return {
-      headline: `GEOstore order (${lines.length} items)`,
+      headline: `GVRZE Store order (${lines.length} items)`,
       detail: names,
       avatarId: "atlas",
     };
   }
 
   return {
-    headline: "GEOstore reward",
+    headline: "GVRZE Store reward",
     detail: orderId ? "Store order" : "Credit purchase",
     avatarId: "atlas",
   };

@@ -1,4 +1,4 @@
-/** Public subscription tiers used by GEOlibrary access checks (matches subscription_plans.tier). */
+/** Public subscription tiers used by GVRZE Library access checks (matches subscription_plans.tier). */
 export type LibraryAccessTier = "explorer" | "basic" | "pro" | "advance";
 
 export type ResourceAccessState =

@@ -8,13 +8,13 @@ export const Route = createFileRoute("/play/quiz/review")({
   }),
   head: () => ({
     meta: [
-      { title: "Quiz Review — GEOverze" },
+      { title: "Quiz Review — GVRZE" },
       {
         name: "description",
         content:
-          "Go through every question from your GEOverze run: your answer, the correct answer and the explanation.",
+          "Go through every question from your GVRZE run: your answer, the correct answer and the explanation.",
       },
-      { property: "og:title", content: "Quiz Review — GEOverze" },
+      { property: "og:title", content: "Quiz Review — GVRZE" },
       {
         property: "og:description",
         content: "Every question from your run with answers and explanations.",

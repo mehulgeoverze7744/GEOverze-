@@ -1,5 +1,5 @@
 /**
- * GEOstore catalogue.
+ * GVRZE Store catalogue.
  *
  * Placeholder merchandising data with the shape a real commerce backend would
  * return. Money is stored in minor units (cents) and credits are whole GEO
@@ -88,7 +88,7 @@ function make(draft: Draft): Product {
     tagline: draft.tagline,
     description:
       draft.description ??
-      `${draft.name} — part of the GEOverze collection. Designed in the same bronze-on-charcoal language as the platform and made to survive daily use.`,
+      `${draft.name} — part of the GVRZE collection. Designed in the same bronze-on-charcoal language as the platform and made to survive daily use.`,
     category: draft.category,
     group,
     price,
@@ -105,7 +105,7 @@ function make(draft: Draft): Product {
     bestSeller: draft.bestSeller ?? false,
     options: draft.options ?? [],
     features: draft.features ?? [
-      "Designed in-house by the GEOverze studio",
+      "Designed in-house by the GVRZE studio",
       "Bronze foil emblem",
       "Ships worldwide",
     ],
@@ -322,9 +322,9 @@ export const PRODUCTS: readonly Product[] = [
     slug: "orbital-horizon-mug",
     name: "Orbital Horizon Mug",
     tagline:
-      "A deep charcoal mug featuring an elegant planetary arc, fine orbital lines and a subtle GEOverze mark.",
+      "A deep charcoal mug featuring an elegant planetary arc, fine orbital lines and a subtle GVRZE mark.",
     description:
-      "A deep charcoal mug featuring an elegant planetary arc, fine orbital lines and a subtle GEOverze mark.",
+      "A deep charcoal mug featuring an elegant planetary arc, fine orbital lines and a subtle GVRZE mark.",
     category: "mugs",
     price: 1_500,
     credits: 200,
@@ -342,9 +342,9 @@ export const PRODUCTS: readonly Product[] = [
     slug: "celestial-meridian-mug",
     name: "Celestial Meridian Mug",
     tagline:
-      "A refined celestial design with sweeping orbital lines, a central star motif and the GEOverze mark.",
+      "A refined celestial design with sweeping orbital lines, a central star motif and the GVRZE mark.",
     description:
-      "A refined celestial design with sweeping orbital lines, a central star motif and the GEOverze mark.",
+      "A refined celestial design with sweeping orbital lines, a central star motif and the GVRZE mark.",
     category: "mugs",
     price: 1_500,
     credits: 200,
@@ -441,9 +441,9 @@ export const PRODUCTS: readonly Product[] = [
     slug: "the-explorers-trail",
     name: "THE EXPLORER'S TRAIL",
     tagline:
-      "A rugged collection of GEOverze exploration stickers inspired by mountains, coordinates, terrain and the spirit of discovery.",
+      "A rugged collection of GVRZE exploration stickers inspired by mountains, coordinates, terrain and the spirit of discovery.",
     description:
-      "A rugged collection of GEOverze exploration stickers inspired by mountains, coordinates, terrain and the spirit of discovery.",
+      "A rugged collection of GVRZE exploration stickers inspired by mountains, coordinates, terrain and the spirit of discovery.",
     category: "stickers",
     price: 700,
     credits: 120,
@@ -815,7 +815,7 @@ export const PRODUCTS: readonly Product[] = [
   }),
   make({
     slug: "geoverze-atlas-pdf",
-    name: "GEOverze Atlas (PDF)",
+    name: "GVRZE Atlas (PDF)",
     tagline: "220 pages of bronze cartography, print ready.",
     category: "premium-resources",
     price: 2_400,
@@ -967,7 +967,7 @@ export const PRODUCTS: readonly Product[] = [
     name: "iPhone Duo",
     tagline: "Twin midnight devices, bronze-lit glass.",
     description:
-      "A paired midnight set in studio light — claimed with credits, finished in the same charcoal-and-bronze language as the rest of GEOstore.",
+      "A paired midnight set in studio light — claimed with credits, finished in the same charcoal-and-bronze language as the rest of GVRZE Store.",
     category: "prizes",
     price: null,
     credits: 7_000,

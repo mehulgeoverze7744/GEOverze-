@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { MultiplayerCreateScreen } from "@/features/multiplayer";
 
-const t = "Create Multiplayer Room — GEOverze";
+const t = "Create Multiplayer Room — GVRZE";
 const d = "Pick a quiz and room size, then share your private multiplayer room code.";
 
 export const Route = createFileRoute("/play/multiplayer/create")({
