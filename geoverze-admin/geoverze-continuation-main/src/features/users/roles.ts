@@ -47,7 +47,7 @@ export const roles: RoleDefinition[] = [
   {
     id: "content_manager",
     name: "Content Manager",
-    description: "Owns quizzes, questions and the GEOlibrary editorial pipeline.",
+    description: "Owns quizzes, questions and the GVRZE Library editorial pipeline.",
     assignedUsers: 14,
     permissions: ["View dashboard", "Publish content", "Approve creators", "View analytics"],
   },

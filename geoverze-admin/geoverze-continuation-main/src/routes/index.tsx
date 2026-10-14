@@ -42,13 +42,13 @@ import { recentActivity } from "@/lib/mock-data";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Operations Dashboard — GEOverze Admin" },
+      { title: "Operations Dashboard — GVRZE Admin" },
       {
         name: "description",
         content:
-          "Real-time operational overview of GEOverze: users, creators, content, commerce, moderation and platform health.",
+          "Real-time operational overview of GVRZE: users, creators, content, commerce, moderation and platform health.",
       },
-      { property: "og:title", content: "Operations Dashboard — GEOverze Admin" },
+      { property: "og:title", content: "Operations Dashboard — GVRZE Admin" },
       {
         property: "og:description",
         content:

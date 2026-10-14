@@ -12,12 +12,12 @@ import { notReadyNow } from "@/lib/placeholder";
 export const Route = createFileRoute("/settings/security")({
   head: () => ({
     meta: [
-      { title: "Security Settings — GEOverze Admin" },
+      { title: "Security Settings — GVRZE Admin" },
       {
         name: "description",
         content: "Admin authentication policy, session lifetime and console access controls.",
       },
-      { property: "og:title", content: "Security Settings — GEOverze Admin" },
+      { property: "og:title", content: "Security Settings — GVRZE Admin" },
       {
         property: "og:description",
         content: "Admin authentication policy, session lifetime and console access controls.",

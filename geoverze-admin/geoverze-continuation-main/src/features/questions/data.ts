@@ -111,7 +111,7 @@ function buildQuestion(index: number): QuestionRecord {
     language: pickFrom(rand, languages),
     explanation:
       rand() > 0.15
-        ? `Reference answer verified against the GEOverze atlas dataset for ${country}.`
+        ? `Reference answer verified against the GVRZE atlas dataset for ${country}.`
         : "TBD",
     options: buildOptions(rand, type, index),
     answerText:

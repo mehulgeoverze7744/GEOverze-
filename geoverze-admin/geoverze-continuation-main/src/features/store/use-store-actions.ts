@@ -14,7 +14,7 @@ import { catalogDaysAgo } from "@/lib/catalog";
 import { notReady } from "@/lib/placeholder";
 
 /**
- * GEOstore mutations (products, orders, coupons, redemptions). Local state
+ * GVRZE Store mutations (products, orders, coupons, redemptions). Local state
  * only — every handler is a single swap point for a backend call later.
  */
 export function useStoreActions(

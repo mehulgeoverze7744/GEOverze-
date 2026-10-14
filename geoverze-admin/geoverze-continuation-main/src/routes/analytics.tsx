@@ -3,15 +3,15 @@ import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/analytics")({
   head: () => ({
     meta: [
-      { title: "Analytics — GEOverze Admin" },
+      { title: "Analytics — GVRZE Admin" },
       {
         name: "description",
-        content: "Executive KPIs and business intelligence across every GEOverze module.",
+        content: "Executive KPIs and business intelligence across every GVRZE module.",
       },
-      { property: "og:title", content: "Analytics — GEOverze Admin" },
+      { property: "og:title", content: "Analytics — GVRZE Admin" },
       {
         property: "og:description",
-        content: "Executive KPIs and business intelligence across every GEOverze module.",
+        content: "Executive KPIs and business intelligence across every GVRZE module.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

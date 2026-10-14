@@ -61,7 +61,7 @@ function LibraryCreatorsDirectoryPage() {
     <>
       <PageHeader
         title="Library Creators"
-        description="GEOlibrary creator personas, avatars and featured shelves."
+        description="GVRZE Library creator personas, avatars and featured shelves."
         actions={
           <Button size="sm" asChild>
             <Link to="/library/creators/new">

@@ -30,16 +30,16 @@ import { num } from "@/lib/format";
 export const Route = createFileRoute("/questions")({
   head: () => ({
     meta: [
-      { title: "Question Bank — GEOverze Admin" },
+      { title: "Question Bank — GVRZE Admin" },
       {
         name: "description",
         content:
-          "Browse every quiz-scoped question in GEOverze. Edit questions from the parent quiz detail page.",
+          "Browse every quiz-scoped question in GVRZE. Edit questions from the parent quiz detail page.",
       },
-      { property: "og:title", content: "Question Bank — GEOverze Admin" },
+      { property: "og:title", content: "Question Bank — GVRZE Admin" },
       {
         property: "og:description",
-        content: "Read-only index of all quiz questions across the GEOverze catalogue.",
+        content: "Read-only index of all quiz questions across the GVRZE catalogue.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

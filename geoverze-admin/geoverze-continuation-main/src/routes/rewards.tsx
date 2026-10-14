@@ -32,13 +32,13 @@ import { num } from "@/lib/format";
 export const Route = createFileRoute("/rewards")({
   head: () => ({
     meta: [
-      { title: "Reward Management — GEOverze Admin" },
+      { title: "Reward Management — GVRZE Admin" },
       {
         name: "description",
         content:
-          "Manage the GEOverze reward catalogue: credits, digital goods, store items, achievements and events.",
+          "Manage the GVRZE reward catalogue: credits, digital goods, store items, achievements and events.",
       },
-      { property: "og:title", content: "Reward Management — GEOverze Admin" },
+      { property: "og:title", content: "Reward Management — GVRZE Admin" },
       {
         property: "og:description",
         content: "Reward catalogue, eligibility rules and claim history.",

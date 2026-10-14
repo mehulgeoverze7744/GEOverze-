@@ -29,7 +29,7 @@ import { num } from "@/lib/format";
 
 export const Route = createFileRoute("/quizzes/$quizId")({
   head: ({ params }) => {
-    const title = `${params.quizId} — Quiz Details | GEOverze Admin`;
+    const title = `${params.quizId} — Quiz Details | GVRZE Admin`;
     const description = `Questions, analytics, versions and moderation history for ${params.quizId}.`;
     return {
       meta: [

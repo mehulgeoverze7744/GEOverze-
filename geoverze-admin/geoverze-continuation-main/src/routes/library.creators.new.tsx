@@ -16,7 +16,7 @@ function NewLibraryCreatorPage() {
 
   return (
     <>
-      <PageHeader title="New creator" description="Create a GEOlibrary creator persona." />
+      <PageHeader title="New creator" description="Create a GVRZE Library creator persona." />
       <PageBody>
         <CreatorPersonaEditor
           persona={createDraftCreatorPersona()}

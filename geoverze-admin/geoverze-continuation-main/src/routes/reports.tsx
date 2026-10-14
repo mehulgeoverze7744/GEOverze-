@@ -10,12 +10,12 @@ import type { Report } from "@/types";
 export const Route = createFileRoute("/reports")({
   head: () => ({
     meta: [
-      { title: "Reports — GEOverze Admin" },
+      { title: "Reports — GVRZE Admin" },
       {
         name: "description",
         content: "User-submitted reports across content, billing and technical issues.",
       },
-      { property: "og:title", content: "Reports — GEOverze Admin" },
+      { property: "og:title", content: "Reports — GVRZE Admin" },
       {
         property: "og:description",
         content: "User-submitted reports across content, billing and technical issues.",

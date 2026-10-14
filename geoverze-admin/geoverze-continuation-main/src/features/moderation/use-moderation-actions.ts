@@ -23,7 +23,7 @@ const actionCopy: Record<ModerationAction, string> = {
   Reject: "The report is dismissed and the case is closed without enforcement.",
   Warn: "The reported user receives a formal warning on their record.",
   Suspend: "The reported user loses access for the standard suspension window.",
-  Ban: "The reported user is permanently banned from GEOverze.",
+  Ban: "The reported user is permanently banned from GVRZE.",
   Restore: "Previous enforcement is reverted and the case is reopened.",
   Escalate: "The case moves to the trust & safety escalation queue.",
 };

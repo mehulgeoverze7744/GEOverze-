@@ -10,12 +10,12 @@ import type { Ticket } from "@/types";
 export const Route = createFileRoute("/support")({
   head: () => ({
     meta: [
-      { title: "Support — GEOverze Admin" },
+      { title: "Support — GVRZE Admin" },
       {
         name: "description",
         content: "Support ticket queue with priority, channel and SLA state.",
       },
-      { property: "og:title", content: "Support — GEOverze Admin" },
+      { property: "og:title", content: "Support — GVRZE Admin" },
       {
         property: "og:description",
         content: "Support ticket queue with priority, channel and SLA state.",

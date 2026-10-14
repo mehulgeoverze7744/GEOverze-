@@ -35,12 +35,12 @@ import { money, num } from "@/lib/format";
 export const Route = createFileRoute("/store/orders")({
   head: () => ({
     meta: [
-      { title: "GEOstore Orders — GEOverze Admin" },
+      { title: "GVRZE Store Orders — GVRZE Admin" },
       {
         name: "description",
-        content: "Track GEOstore orders, fulfilment timelines, refunds and cancellations.",
+        content: "Track GVRZE Store orders, fulfilment timelines, refunds and cancellations.",
       },
-      { property: "og:title", content: "GEOstore Orders — GEOverze Admin" },
+      { property: "og:title", content: "GVRZE Store Orders — GVRZE Admin" },
       {
         property: "og:description",
         content: "Order management with full fulfilment timelines.",
@@ -86,7 +86,7 @@ function StoreOrdersPage() {
     <>
       <PageHeader
         title="Order Management"
-        description="Every GEOstore order with payment, fulfilment and refund history."
+        description="Every GVRZE Store order with payment, fulfilment and refund history."
         actions={
           <Button
             size="sm"

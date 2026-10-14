@@ -23,12 +23,12 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/monitoring")({
   head: () => ({
     meta: [
-      { title: "Monitoring — GEOverze Admin" },
+      { title: "Monitoring — GVRZE Admin" },
       {
         name: "description",
         content: "System health, performance, storage usage and active admin sessions.",
       },
-      { property: "og:title", content: "Monitoring — GEOverze Admin" },
+      { property: "og:title", content: "Monitoring — GVRZE Admin" },
       {
         property: "og:description",
         content: "System health, performance, storage usage and active admin sessions.",
@@ -68,7 +68,7 @@ function MonitoringPage() {
     <>
       <PageHeader
         title="Monitoring"
-        description="Live operational health for every GEOverze service."
+        description="Live operational health for every GVRZE service."
         actions={
           <Button
             variant="outline"

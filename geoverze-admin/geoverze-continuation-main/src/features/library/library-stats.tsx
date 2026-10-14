@@ -14,7 +14,7 @@ export function LibraryStats({
   state?: WidgetState | undefined;
 }) {
   return (
-    <StatGrid columns={5} label="GEOlibrary statistics">
+    <StatGrid columns={5} label="GVRZE Library statistics">
       <StatCard
         label="Total resources"
         value={num(summary.total)}

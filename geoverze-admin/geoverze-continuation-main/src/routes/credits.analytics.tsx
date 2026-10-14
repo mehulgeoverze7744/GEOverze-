@@ -18,12 +18,12 @@ import { num } from "@/lib/format";
 export const Route = createFileRoute("/credits/analytics")({
   head: () => ({
     meta: [
-      { title: "Credit Analytics — GEOverze Admin" },
+      { title: "Credit Analytics — GVRZE Admin" },
       {
         name: "description",
         content: "Issuance, redemption and outstanding-liability trends for the GEOcredit economy.",
       },
-      { property: "og:title", content: "Credit Analytics — GEOverze Admin" },
+      { property: "og:title", content: "Credit Analytics — GVRZE Admin" },
       { property: "og:description", content: "GEOcredit economy trends and top earning reasons." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

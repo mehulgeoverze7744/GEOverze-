@@ -9,7 +9,7 @@ import {
 } from "@/features/rewards/types";
 
 const namesByType: Record<RewardType, string[]> = {
-  Credits: ["GEO Credits 250", "GEO Credits 500", "GEO Credits 1200", "Weekend Credit Boost"],
+  Credits: ["GVRZE Credits 250", "GVRZE Credits 500", "GVRZE Credits 1200", "Weekend Credit Boost"],
   Digital: [
     "Atlas Wallpaper Pack",
     "Explorer Avatar Frame",
@@ -46,7 +46,7 @@ function buildRewards(): Reward[] {
     return {
       id: `RWD-${500 + index}`,
       name: `${name}${index > rewardTypes.length ? ` #${index}` : ""}`,
-      description: `${type} reward redeemable from the GEOverze rewards hub.`,
+      description: `${type} reward redeemable from the GVRZE rewards hub.`,
       type,
       eligibility: pickFrom(rand, eligibilityRules),
       creditsRequired: [0, 150, 300, 500, 900, 1800, 2500, 4500][Math.floor(rand() * 8)] ?? 300,

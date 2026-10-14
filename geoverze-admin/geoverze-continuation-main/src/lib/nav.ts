@@ -70,7 +70,7 @@ export const navigation: NavGroup[] = [
     items: [
       { title: "Quizzes", url: "/quizzes", icon: ListChecks, keywords: "games rounds" },
       { title: "Question Bank", url: "/questions", icon: Database, keywords: "items" },
-      { title: "GEOlibrary", url: "/library", icon: BookOpen, keywords: "articles posts" },
+      { title: "GVRZE Library", url: "/library", icon: BookOpen, keywords: "articles posts" },
       {
         title: "Collections",
         url: "/library/collections",
@@ -91,7 +91,7 @@ export const navigation: NavGroup[] = [
     label: "Commerce",
     icon: Store,
     items: [
-      { title: "GEOstore", url: "/store", icon: ShoppingBag, keywords: "orders products" },
+      { title: "GVRZE Store", url: "/store", icon: ShoppingBag, keywords: "orders products" },
       {
         title: "Subscriptions",
         url: "/subscriptions",

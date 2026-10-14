@@ -70,7 +70,7 @@ const devices = [
   "Safari / iOS",
   "Chrome / Windows",
   "Firefox / Linux",
-  "GEOverze Android",
+  "GVRZE Android",
 ];
 const cities = ["Mumbai", "Berlin", "São Paulo", "Tokyo", "Lagos", "Madrid", "Toronto", "Austin"];
 const reportReasons = [
@@ -86,7 +86,7 @@ function buildAchievements(rand: () => number): UserAchievement[] {
   return Array.from({ length: Math.floor(rand() * 6) }, (_, i) => ({
     id: `ach_${i}`,
     name: pick(rand, achievementNames),
-    description: "Earned through sustained play across GEOverze challenges.",
+    description: "Earned through sustained play across GVRZE challenges.",
     earnedAt: isoDaysAgo(Math.floor(rand() * 300)),
     rarity: pick(rand, rarities),
   }));

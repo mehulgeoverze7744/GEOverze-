@@ -64,7 +64,7 @@ export function AppSidebar({ collapsed, onToggle, onNavigate }: AppSidebarProps)
         </span>
         {!collapsed && (
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold">GEOverze</p>
+            <p className="truncate text-sm font-semibold">GVRZE</p>
             <p className="truncate text-[11px] text-muted-foreground">Admin Console</p>
           </div>
         )}

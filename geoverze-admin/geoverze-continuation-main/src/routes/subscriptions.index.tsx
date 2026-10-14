@@ -19,12 +19,12 @@ import { money, num } from "@/lib/format";
 export const Route = createFileRoute("/subscriptions/")({
   head: () => ({
     meta: [
-      { title: "Subscription Plans — GEOverze Admin" },
+      { title: "Subscription Plans — GVRZE Admin" },
       {
         name: "description",
         content: "Compare Basic, Pro and Advanced plan pricing, entitlements and revenue mix.",
       },
-      { property: "og:title", content: "Subscription Plans — GEOverze Admin" },
+      { property: "og:title", content: "Subscription Plans — GVRZE Admin" },
       { property: "og:description", content: "Plan pricing, entitlements and revenue mix." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

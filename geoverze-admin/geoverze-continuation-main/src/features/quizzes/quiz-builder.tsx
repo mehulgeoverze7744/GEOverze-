@@ -37,7 +37,7 @@ export function createBlankQuiz(): QuizRecord {
     id: "",
     title: "",
     creatorId: "",
-    creator: "GEOverze Studio",
+    creator: "GVRZE Studio",
     category: quizCategories[0] as string,
     difficulty: "Medium",
     questionCount: 0,
@@ -242,7 +242,7 @@ export function QuizBuilder({
               id="quiz-creator"
               value={draft.creator}
               onChange={(event) => set("creator", event.target.value)}
-              placeholder="GEOverze Studio"
+              placeholder="GVRZE Studio"
             />
           </div>
           {!manageQuestions && (

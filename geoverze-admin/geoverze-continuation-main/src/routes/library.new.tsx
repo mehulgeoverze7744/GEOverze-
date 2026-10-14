@@ -8,15 +8,15 @@ import { ResourceEditor, createDraftResource } from "@/features/library/resource
 export const Route = createFileRoute("/library/new")({
   head: () => ({
     meta: [
-      { title: "New Library Resource — GEOverze Admin" },
+      { title: "New Library Resource — GVRZE Admin" },
       {
         name: "description",
-        content: "Create a GEOlibrary article, map, infographic or PDF with SEO and media.",
+        content: "Create a GVRZE Library article, map, infographic or PDF with SEO and media.",
       },
-      { property: "og:title", content: "New Library Resource — GEOverze Admin" },
+      { property: "og:title", content: "New Library Resource — GVRZE Admin" },
       {
         property: "og:description",
-        content: "Enterprise editor for new GEOlibrary resources.",
+        content: "Enterprise editor for new GVRZE Library resources.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -33,7 +33,7 @@ function NewResourcePage() {
     <>
       <PageHeader
         title="New resource"
-        description="Draft a GEOlibrary resource — content, media, SEO and publishing in one place."
+        description="Draft a GVRZE Library resource — content, media, SEO and publishing in one place."
       />
       <PageBody>
         <ResourceEditor

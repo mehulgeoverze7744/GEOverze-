@@ -296,7 +296,7 @@ function buildCreator(index: number): CreatorRecord {
     rating: Math.round((rand() * 1.6 + 3.3) * 10) / 10,
     joinDate,
     lastActiveAt: isoDaysAgo(lastActiveDays, 14),
-    bio: "Geography creator building map-first quizzes for the GEOverze community.",
+    bio: "Geography creator building map-first quizzes for the GVRZE community.",
     website: `https://${username.replace(/\./g, "-")}.geo.site`,
     quizzes,
     activity,

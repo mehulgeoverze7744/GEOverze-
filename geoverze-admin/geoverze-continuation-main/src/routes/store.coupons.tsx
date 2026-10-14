@@ -23,12 +23,12 @@ import { num } from "@/lib/format";
 export const Route = createFileRoute("/store/coupons")({
   head: () => ({
     meta: [
-      { title: "GEOstore Coupons — GEOverze Admin" },
+      { title: "GVRZE Store Coupons — GVRZE Admin" },
       {
         name: "description",
-        content: "Create and manage GEOstore discount codes, credit rewards and usage limits.",
+        content: "Create and manage GVRZE Store discount codes, credit rewards and usage limits.",
       },
-      { property: "og:title", content: "GEOstore Coupons — GEOverze Admin" },
+      { property: "og:title", content: "GVRZE Store Coupons — GVRZE Admin" },
       { property: "og:description", content: "Discount codes and promotional controls." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

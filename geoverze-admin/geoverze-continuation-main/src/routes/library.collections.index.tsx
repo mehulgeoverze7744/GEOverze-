@@ -42,7 +42,7 @@ function CollectionsDirectoryPage() {
   if (error) {
     return (
       <>
-        <PageHeader title="GEOlibrary Collections" />
+        <PageHeader title="GVRZE Library Collections" />
         <PageBody>
           <EmptyState
             title="Could not load collections"
@@ -61,7 +61,7 @@ function CollectionsDirectoryPage() {
   return (
     <>
       <PageHeader
-        title="GEOlibrary Collections"
+        title="GVRZE Library Collections"
         description="Curated shelves and their reading order."
         actions={
           <Button size="sm" asChild>
@@ -140,7 +140,7 @@ function CollectionsDirectoryPage() {
           open
           onOpenChange={(next) => !next && setDeleteId(null)}
           title="Delete this collection?"
-          description="Membership rows are removed. GEOlibrary resources are not deleted."
+          description="Membership rows are removed. GVRZE Library resources are not deleted."
           confirmLabel="Delete"
           destructive
           onConfirm={() => {

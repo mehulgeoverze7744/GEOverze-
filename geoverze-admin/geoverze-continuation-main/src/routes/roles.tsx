@@ -21,16 +21,16 @@ import { notReady } from "@/lib/placeholder";
 export const Route = createFileRoute("/roles")({
   head: () => ({
     meta: [
-      { title: "Roles & Permissions — GEOverze Admin" },
+      { title: "Roles & Permissions — GVRZE Admin" },
       {
         name: "description",
         content:
-          "Role-based access control for GEOverze operators: eight roles, their permissions and assigned users.",
+          "Role-based access control for GVRZE operators: eight roles, their permissions and assigned users.",
       },
-      { property: "og:title", content: "Roles & Permissions — GEOverze Admin" },
+      { property: "og:title", content: "Roles & Permissions — GVRZE Admin" },
       {
         property: "og:description",
-        content: "Role-based access control for GEOverze admin operators.",
+        content: "Role-based access control for GVRZE admin operators.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

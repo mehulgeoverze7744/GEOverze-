@@ -10,9 +10,9 @@ import { Progress } from "@/components/ui/progress";
 export const Route = createFileRoute("/achievements")({
   head: () => ({
     meta: [
-      { title: "Achievements — GEOverze Admin" },
+      { title: "Achievements — GVRZE Admin" },
       { name: "description", content: "Configure achievement tiers, criteria and unlock rates." },
-      { property: "og:title", content: "Achievements — GEOverze Admin" },
+      { property: "og:title", content: "Achievements — GVRZE Admin" },
       {
         property: "og:description",
         content: "Configure achievement tiers, criteria and unlock rates.",

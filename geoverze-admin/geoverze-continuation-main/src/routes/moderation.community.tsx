@@ -5,12 +5,12 @@ import { ModerationQueue } from "@/features/moderation/moderation-queue";
 export const Route = createFileRoute("/moderation/community")({
   head: () => ({
     meta: [
-      { title: "Community Reports — GEOverze Moderation" },
+      { title: "Community Reports — GVRZE Moderation" },
       {
         name: "description",
-        content: "Moderate discussion threads, comments and live chat across GEOverze community.",
+        content: "Moderate discussion threads, comments and live chat across GVRZE community.",
       },
-      { property: "og:title", content: "Community Reports — GEOverze Moderation" },
+      { property: "og:title", content: "Community Reports — GVRZE Moderation" },
       { property: "og:description", content: "Threads, comments and live chat moderation." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

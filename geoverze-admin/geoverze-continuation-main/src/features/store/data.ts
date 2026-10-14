@@ -100,7 +100,7 @@ function buildProduct(index: number): StoreProduct {
     type,
     category: pickFrom(rand, storeCategories),
     collection: pickFrom(rand, storeCollections),
-    description: `${name} from the GEOverze store — designed for map lovers and classrooms.`,
+    description: `${name} from the GVRZE store — designed for map lovers and classrooms.`,
     price,
     compareAtPrice: price > 0 ? price + Math.floor(rand() * 30) : 0,
     discountPercent: Math.floor(rand() * 4) * 5,

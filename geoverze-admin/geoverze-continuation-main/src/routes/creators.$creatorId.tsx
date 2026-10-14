@@ -29,12 +29,12 @@ export const Route = createFileRoute("/creators/$creatorId")({
     if (!loaderData) {
       return {
         meta: [
-          { title: "Creator not found — GEOverze Admin" },
+          { title: "Creator not found — GVRZE Admin" },
           { name: "robots", content: "noindex" },
         ],
       };
     }
-    const title = `${loaderData.displayName} — Creator Profile | GEOverze Admin`;
+    const title = `${loaderData.displayName} — Creator Profile | GVRZE Admin`;
     const description = `Verification, quiz ownership, analytics and moderation history for ${loaderData.displayName}.`;
     return {
       meta: [

@@ -19,12 +19,12 @@ import { num } from "@/lib/format";
 export const Route = createFileRoute("/credits/")({
   head: () => ({
     meta: [
-      { title: "Credit Ledger — GEOverze Admin" },
+      { title: "Credit Ledger — GVRZE Admin" },
       {
         name: "description",
         content: "Every GEOcredit issuance, redemption and adjustment in one auditable ledger.",
       },
-      { property: "og:title", content: "Credit Ledger — GEOverze Admin" },
+      { property: "og:title", content: "Credit Ledger — GVRZE Admin" },
       { property: "og:description", content: "Auditable GEOcredit transaction ledger." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

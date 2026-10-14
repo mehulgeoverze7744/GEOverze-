@@ -36,16 +36,16 @@ import { num } from "@/lib/format";
 export const Route = createFileRoute("/creators/")({
   head: () => ({
     meta: [
-      { title: "Creator Directory — GEOverze Admin" },
+      { title: "Creator Directory — GVRZE Admin" },
       {
         name: "description",
         content:
-          "Search, verify and analyse GEOverze creators: tiers, verification state, quiz ownership and revenue.",
+          "Search, verify and analyse GVRZE creators: tiers, verification state, quiz ownership and revenue.",
       },
-      { property: "og:title", content: "Creator Directory — GEOverze Admin" },
+      { property: "og:title", content: "Creator Directory — GVRZE Admin" },
       {
         property: "og:description",
-        content: "Operations workspace for the GEOverze creator program.",
+        content: "Operations workspace for the GVRZE creator program.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -94,7 +94,7 @@ function CreatorDirectoryPage() {
     <>
       <PageHeader
         title="Creator Management"
-        description="Applications, verification, tiers and performance for the GEOverze creator program."
+        description="Applications, verification, tiers and performance for the GVRZE creator program."
         actions={
           <Button
             size="sm"

@@ -121,7 +121,7 @@ export const catalogMonths = [
   "Aug",
 ];
 
-/** GEOlibrary taxonomy — shared by the library directory, editor and filters. */
+/** GVRZE Library taxonomy — shared by the library directory, editor and filters. */
 export const libraryCategories = [
   "Article",
   "Country Profile",
@@ -145,7 +145,7 @@ export const libraryAuthors = [
 
 export const allCountries = Object.values(countriesByRegion).flat();
 
-/** GEOstore taxonomy. */
+/** GVRZE Store taxonomy. */
 export const storeCategories = [
   "Apparel",
   "Posters & Maps",

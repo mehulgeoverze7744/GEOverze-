@@ -43,16 +43,16 @@ import { notReady } from "@/lib/placeholder";
 export const Route = createFileRoute("/users")({
   head: () => ({
     meta: [
-      { title: "User Management — GEOverze Admin" },
+      { title: "User Management — GVRZE Admin" },
       {
         name: "description",
         content:
-          "Search, segment and inspect GEOverze player accounts, memberships, activity and permissions.",
+          "Search, segment and inspect GVRZE player accounts, memberships, activity and permissions.",
       },
-      { property: "og:title", content: "User Management — GEOverze Admin" },
+      { property: "og:title", content: "User Management — GVRZE Admin" },
       {
         property: "og:description",
-        content: "Operations workspace for GEOverze user accounts and memberships.",
+        content: "Operations workspace for GVRZE user accounts and memberships.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

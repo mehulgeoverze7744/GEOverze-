@@ -117,7 +117,7 @@ function CollectionDetailPage() {
           open
           onOpenChange={setConfirmDelete}
           title="Delete this collection?"
-          description="Membership rows are removed. GEOlibrary resources are not deleted."
+          description="Membership rows are removed. GVRZE Library resources are not deleted."
           confirmLabel="Delete"
           destructive
           onConfirm={() => {

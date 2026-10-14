@@ -126,7 +126,7 @@ const notificationTitles: Record<NotificationType, string[]> = {
     "Subscription invoices settled",
   ],
   announcement: [
-    "New GEOlibrary collection live",
+    "New GVRZE Library collection live",
     "Scheduled maintenance window",
     "Autumn tournament opens",
     "Creator payout policy update",
@@ -176,7 +176,7 @@ export const notificationTemplates: NotificationTemplate[] = [
     type: "announcement",
     channel: "In-app",
     subject: "Scheduled maintenance on {{date}}",
-    body: "GEOverze will be unavailable from {{start}} to {{end}} while we ship improvements.",
+    body: "GVRZE will be unavailable from {{start}} to {{end}} while we ship improvements.",
     updatedAt: catalogDaysAgo(12),
     usageCount: 18,
   },
@@ -185,7 +185,7 @@ export const notificationTemplates: NotificationTemplate[] = [
     name: "Creator approved",
     type: "success",
     channel: "Email",
-    subject: "You are now a verified GEOverze creator",
+    subject: "You are now a verified GVRZE creator",
     body: "Congratulations {{creator}} — your verification is complete and publishing is unlocked.",
     updatedAt: catalogDaysAgo(31),
     usageCount: 246,
@@ -281,7 +281,7 @@ export const serviceHealth: ServiceHealth[] = [
 
 export const storageBuckets: StorageBucket[] = [
   { id: "BKT-media", name: "Quiz media", usedGb: 812, capacityGb: 1024, objects: 184_302 },
-  { id: "BKT-library", name: "GEOlibrary assets", usedGb: 465, capacityGb: 1024, objects: 92_140 },
+  { id: "BKT-library", name: "GVRZE Library assets", usedGb: 465, capacityGb: 1024, objects: 92_140 },
   { id: "BKT-store", name: "Store imagery", usedGb: 128, capacityGb: 512, objects: 21_884 },
   { id: "BKT-exports", name: "Exports & backups", usedGb: 341, capacityGb: 2048, objects: 4_910 },
 ];
@@ -343,7 +343,7 @@ export const growthSeries = {
 };
 
 export const defaultSettings: PlatformSettings = {
-  platformName: "GEOverze",
+  platformName: "GVRZE",
   supportEmail: "support@geoverze.io",
   defaultLocale: "en-US",
   timezone: "UTC",
@@ -410,7 +410,7 @@ export const featureFlags = [
   },
   {
     id: "f6",
-    name: "GEOlibrary comments",
+    name: "GVRZE Library comments",
     description: "Reader discussion threads",
     on: false,
     rollout: "Beta cohort",

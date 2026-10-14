@@ -10,15 +10,15 @@ import { defaultSettings } from "@/features/ops/data";
 export const Route = createFileRoute("/settings/branding")({
   head: () => ({
     meta: [
-      { title: "Branding Settings — GEOverze Admin" },
+      { title: "Branding Settings — GVRZE Admin" },
       {
         name: "description",
-        content: "Logo, colours and the public-facing voice of the GEOverze platform.",
+        content: "Logo, colours and the public-facing voice of the GVRZE platform.",
       },
-      { property: "og:title", content: "Branding Settings — GEOverze Admin" },
+      { property: "og:title", content: "Branding Settings — GVRZE Admin" },
       {
         property: "og:description",
-        content: "Logo, colours and the public-facing voice of the GEOverze platform.",
+        content: "Logo, colours and the public-facing voice of the GVRZE platform.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/settings/branding")({
 function BrandingSettingsPage() {
   return (
     <>
-      <PageHeader title="Branding" description="How GEOverze presents itself across surfaces." />
+      <PageHeader title="Branding" description="How GVRZE presents itself across surfaces." />
       <PageBody>
         <div className="grid gap-4 lg:grid-cols-2">
           <SettingsCard title="Identity" description="Marks and copy used in product and email.">

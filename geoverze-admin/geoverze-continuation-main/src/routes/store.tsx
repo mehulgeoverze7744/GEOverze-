@@ -5,12 +5,12 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/store")({
   head: () => ({
     meta: [
-      { title: "GEOstore — GEOverze Admin" },
+      { title: "GVRZE Store — GVRZE Admin" },
       {
         name: "description",
         content: "Store orders, fulfilment status and merchandise performance.",
       },
-      { property: "og:title", content: "GEOstore — GEOverze Admin" },
+      { property: "og:title", content: "GVRZE Store — GVRZE Admin" },
       {
         property: "og:description",
         content: "Store orders, fulfilment status and merchandise performance.",
@@ -31,7 +31,7 @@ function StorePage() {
   return (
     <div className="space-y-4">
       <nav
-        aria-label="GEOstore sections"
+        aria-label="GVRZE Store sections"
         className="flex flex-wrap gap-1 border-b border-border pb-2"
       >
         {sections.map((section) => (

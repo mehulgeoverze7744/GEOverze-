@@ -23,12 +23,12 @@ import { num } from "@/lib/format";
 export const Route = createFileRoute("/credits/adjustments")({
   head: () => ({
     meta: [
-      { title: "Credit Adjustments — GEOverze Admin" },
+      { title: "Credit Adjustments — GVRZE Admin" },
       {
         name: "description",
         content: "Grant or deduct GEOcredits for a single member or in bulk with an audit reason.",
       },
-      { property: "og:title", content: "Credit Adjustments — GEOverze Admin" },
+      { property: "og:title", content: "Credit Adjustments — GVRZE Admin" },
       { property: "og:description", content: "Manual and bulk GEOcredit adjustments." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

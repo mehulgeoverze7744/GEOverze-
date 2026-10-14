@@ -15,12 +15,12 @@ import { defaultSettings } from "@/features/ops/data";
 export const Route = createFileRoute("/settings/rules")({
   head: () => ({
     meta: [
-      { title: "Platform Rules — GEOverze Admin" },
+      { title: "Platform Rules — GVRZE Admin" },
       {
         name: "description",
         content: "Quiz limits, reward approvals, credit caps and subscription defaults.",
       },
-      { property: "og:title", content: "Platform Rules — GEOverze Admin" },
+      { property: "og:title", content: "Platform Rules — GVRZE Admin" },
       {
         property: "og:description",
         content: "Quiz limits, reward approvals, credit caps and subscription defaults.",

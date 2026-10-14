@@ -24,12 +24,12 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/credits/rules")({
   head: () => ({
     meta: [
-      { title: "Credit Rules — GEOverze Admin" },
+      { title: "Credit Rules — GVRZE Admin" },
       {
         name: "description",
         content: "Configure how GEOcredits are earned, capped, expired and reset.",
       },
-      { property: "og:title", content: "Credit Rules — GEOverze Admin" },
+      { property: "og:title", content: "Credit Rules — GVRZE Admin" },
       { property: "og:description", content: "Earning rules, caps and reset configuration." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

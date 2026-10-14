@@ -147,7 +147,7 @@ function buildResource(index: number): LibraryResource {
       `- Economic and climate pressures`,
       ``,
       `## Further reading`,
-      `Linked datasets, maps and the GEOverze quiz catalogue.`,
+      `Linked datasets, maps and the GVRZE quiz catalogue.`,
     ].join("\n"),
     coverLabel: `${country} · ${region}`,
     gallery: Array.from(
@@ -156,11 +156,11 @@ function buildResource(index: number): LibraryResource {
     ),
     attachments: buildAttachments(rand, index),
     seo: {
-      metaTitle: `${title} — GEOlibrary`,
+      metaTitle: `${title} — GVRZE Library`,
       metaDescription: `Explore ${title.toLowerCase()} with maps, data and classroom notes.`,
       canonicalUrl: `/library/${slug}`,
       ogTitle: title,
-      ogDescription: `GEOlibrary resource covering ${country}.`,
+      ogDescription: `GVRZE Library resource covering ${country}.`,
       keywords: [country.toLowerCase(), region.toLowerCase(), "geography"],
     },
     createdAt: catalogDaysAgo(createdDays, 9),

@@ -16,12 +16,12 @@ import { defaultSettings, featureFlags } from "@/features/ops/data";
 export const Route = createFileRoute("/settings/")({
   head: () => ({
     meta: [
-      { title: "General Settings — GEOverze Admin" },
+      { title: "General Settings — GVRZE Admin" },
       {
         name: "description",
         content: "Platform identity, locale defaults, maintenance mode and feature flags.",
       },
-      { property: "og:title", content: "General Settings — GEOverze Admin" },
+      { property: "og:title", content: "General Settings — GVRZE Admin" },
       {
         property: "og:description",
         content: "Platform identity, locale defaults, maintenance mode and feature flags.",

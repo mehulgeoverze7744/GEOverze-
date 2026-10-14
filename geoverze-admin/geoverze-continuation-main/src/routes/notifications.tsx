@@ -38,12 +38,12 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/notifications")({
   head: () => ({
     meta: [
-      { title: "Notification Center — GEOverze Admin" },
+      { title: "Notification Center — GVRZE Admin" },
       {
         name: "description",
         content: "Compose, schedule and audit platform-wide notifications and templates.",
       },
-      { property: "og:title", content: "Notification Center — GEOverze Admin" },
+      { property: "og:title", content: "Notification Center — GVRZE Admin" },
       {
         property: "og:description",
         content: "Compose, schedule and audit platform-wide notifications and templates.",

@@ -19,12 +19,12 @@ import { notReadyNow } from "@/lib/placeholder";
 export const Route = createFileRoute("/analytics/reports")({
   head: () => ({
     meta: [
-      { title: "Business Intelligence — GEOverze Analytics" },
+      { title: "Business Intelligence — GVRZE Analytics" },
       {
         name: "description",
         content: "Custom reporting across usage, geography, creator performance and monetization.",
       },
-      { property: "og:title", content: "Business Intelligence — GEOverze Analytics" },
+      { property: "og:title", content: "Business Intelligence — GVRZE Analytics" },
       {
         property: "og:description",
         content: "Usage, geography, creator performance and monetization reporting.",
@@ -209,7 +209,7 @@ function BusinessIntelligencePage() {
             />
             <div className="grid gap-4 lg:grid-cols-2">
               <ReportTable
-                title="GEOlibrary categories"
+                title="GVRZE Library categories"
                 rows={biReports.libraryCategories}
                 primaryLabel="views"
                 secondaryLabel="bookmarks"

@@ -34,16 +34,16 @@ import { notReadyNow } from "@/lib/placeholder";
 export const Route = createFileRoute("/quizzes/")({
   head: () => ({
     meta: [
-      { title: "Quiz Catalogue — GEOverze Admin" },
+      { title: "Quiz Catalogue — GVRZE Admin" },
       {
         name: "description",
         content:
-          "Browse, filter and moderate every GEOverze quiz: status, visibility, plays and ratings.",
+          "Browse, filter and moderate every GVRZE quiz: status, visibility, plays and ratings.",
       },
-      { property: "og:title", content: "Quiz Catalogue — GEOverze Admin" },
+      { property: "og:title", content: "Quiz Catalogue — GVRZE Admin" },
       {
         property: "og:description",
-        content: "Publish, archive and audit quizzes across the GEOverze catalogue.",
+        content: "Publish, archive and audit quizzes across the GVRZE catalogue.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -108,7 +108,7 @@ function QuizDirectoryPage() {
     <>
       <PageHeader
         title="Quiz Management"
-        description="The full GEOverze quiz catalogue — publishing, visibility and performance."
+        description="The full GVRZE quiz catalogue — publishing, visibility and performance."
         actions={
           <>
             <Button size="sm" variant="outline" onClick={() => notReadyNow("Export queued.")}>

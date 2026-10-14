@@ -9,12 +9,12 @@ import { defaultSettings } from "@/features/ops/data";
 export const Route = createFileRoute("/settings/community")({
   head: () => ({
     meta: [
-      { title: "Community Settings — GEOverze Admin" },
+      { title: "Community Settings — GVRZE Admin" },
       {
         name: "description",
         content: "Moderation automation, report thresholds and community guidelines.",
       },
-      { property: "og:title", content: "Community Settings — GEOverze Admin" },
+      { property: "og:title", content: "Community Settings — GVRZE Admin" },
       {
         property: "og:description",
         content: "Moderation automation, report thresholds and community guidelines.",

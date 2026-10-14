@@ -10,16 +10,16 @@ import { QuizBuilder, createBlankQuiz } from "@/features/quizzes/quiz-builder";
 export const Route = createFileRoute("/quizzes/new")({
   head: () => ({
     meta: [
-      { title: "Create Quiz — GEOverze Admin" },
+      { title: "Create Quiz — GVRZE Admin" },
       {
         name: "description",
         content:
-          "Build a new GEOverze quiz: details, question selection, scoring settings and preview.",
+          "Build a new GVRZE quiz: details, question selection, scoring settings and preview.",
       },
-      { property: "og:title", content: "Create Quiz — GEOverze Admin" },
+      { property: "og:title", content: "Create Quiz — GVRZE Admin" },
       {
         property: "og:description",
-        content: "Step-by-step builder for new GEOverze quizzes.",
+        content: "Step-by-step builder for new GVRZE quizzes.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

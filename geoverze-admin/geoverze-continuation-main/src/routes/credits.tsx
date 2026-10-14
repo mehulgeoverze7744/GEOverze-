@@ -3,12 +3,12 @@ import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/credits")({
   head: () => ({
     meta: [
-      { title: "Credit Management — GEOverze Admin" },
+      { title: "Credit Management — GVRZE Admin" },
       {
         name: "description",
         content: "GEOcredit ledger, earning rules, manual adjustments and economy analytics.",
       },
-      { property: "og:title", content: "Credit Management — GEOverze Admin" },
+      { property: "og:title", content: "Credit Management — GVRZE Admin" },
       { property: "og:description", content: "Ledger, rules, adjustments and credit analytics." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

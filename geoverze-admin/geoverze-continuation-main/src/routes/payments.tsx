@@ -11,9 +11,9 @@ import type { Payment } from "@/types";
 export const Route = createFileRoute("/payments")({
   head: () => ({
     meta: [
-      { title: "Payments — GEOverze Admin" },
+      { title: "Payments — GVRZE Admin" },
       { name: "description", content: "Transaction ledger with settlement and refund state." },
-      { property: "og:title", content: "Payments — GEOverze Admin" },
+      { property: "og:title", content: "Payments — GVRZE Admin" },
       {
         property: "og:description",
         content: "Transaction ledger with settlement and refund state.",

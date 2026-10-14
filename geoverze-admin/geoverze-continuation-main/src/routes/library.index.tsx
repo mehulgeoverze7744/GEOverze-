@@ -36,16 +36,16 @@ import { notReady } from "@/lib/placeholder";
 export const Route = createFileRoute("/library/")({
   head: () => ({
     meta: [
-      { title: "GEOlibrary Directory — GEOverze Admin" },
+      { title: "GVRZE Library Directory — GVRZE Admin" },
       {
         name: "description",
         content:
-          "Browse, filter and publish GEOlibrary articles, country profiles, maps, infographics and PDFs.",
+          "Browse, filter and publish GVRZE Library articles, country profiles, maps, infographics and PDFs.",
       },
-      { property: "og:title", content: "GEOlibrary Directory — GEOverze Admin" },
+      { property: "og:title", content: "GVRZE Library Directory — GVRZE Admin" },
       {
         property: "og:description",
-        content: "Editorial directory for every GEOlibrary resource.",
+        content: "Editorial directory for every GVRZE Library resource.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -83,10 +83,10 @@ function LibraryDirectoryPage() {
   if (error) {
     return (
       <>
-        <PageHeader title="GEOlibrary Management" />
+        <PageHeader title="GVRZE Library Management" />
         <PageBody>
           <EmptyState
-            title="Could not load GEOlibrary"
+            title="Could not load GVRZE Library"
             description={error}
             action={
               <Button size="sm" onClick={refetch}>
@@ -102,7 +102,7 @@ function LibraryDirectoryPage() {
   return (
     <>
       <PageHeader
-        title="GEOlibrary Management"
+        title="GVRZE Library Management"
         description="Articles, country profiles, continent collections, maps, infographics and PDFs."
         actions={
           <>
@@ -332,7 +332,7 @@ function LibraryDirectoryPage() {
           title={
             deleteIds.length === 1 ? "Delete this resource?" : `Delete ${deleteIds.length} resources?`
           }
-          description="The resource is removed from GEOlibrary. This cannot be undone."
+          description="The resource is removed from GVRZE Library. This cannot be undone."
           confirmLabel="Delete"
           destructive
           onConfirm={() => {

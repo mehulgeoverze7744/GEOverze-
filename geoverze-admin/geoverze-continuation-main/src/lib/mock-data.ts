@@ -181,7 +181,7 @@ export const articles: Article[] = Array.from({ length: 38 }, (_, i) => {
 
 const products = [
   "Atlas Poster Set",
-  "GEO Credits 500",
+  "GVRZE Credits 500",
   "Explorer Hoodie",
   "Globe Desk Lamp",
   "Field Notebook",
@@ -364,7 +364,7 @@ export const dashboardMetrics = [
   { label: "Creators", value: "12,408", delta: 1.4, hint: "vs last month" },
   { label: "Published Quizzes", value: "48,219", delta: 3.6, hint: "vs last month" },
   { label: "Questions", value: "612,884", delta: 5.1, hint: "in question bank" },
-  { label: "Articles", value: "3,942", delta: 0.9, hint: "GEOlibrary" },
+  { label: "Articles", value: "3,942", delta: 0.9, hint: "GVRZE Library" },
   { label: "Store Orders", value: "18,663", delta: -1.8, hint: "last 30 days" },
   { label: "Revenue", value: "$1,284,510", delta: 7.3, hint: "last 30 days" },
   { label: "Credits Issued", value: "94,120,000", delta: 3.2, hint: "lifetime" },

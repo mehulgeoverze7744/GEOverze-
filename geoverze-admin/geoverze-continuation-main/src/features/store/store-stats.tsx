@@ -14,7 +14,7 @@ export function StoreStats({
   state?: WidgetState | undefined;
 }) {
   return (
-    <StatGrid columns={5} label="GEOstore statistics">
+    <StatGrid columns={5} label="GVRZE Store statistics">
       <StatCard
         label="Products"
         value={num(summary.totalProducts)}

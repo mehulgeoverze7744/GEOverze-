@@ -63,7 +63,7 @@ export function CollectionItemsPanel({
       <div>
         <p className="text-sm font-medium text-foreground">Collection membership</p>
         <p className="text-xs text-muted-foreground">
-          Add GEOlibrary resources and set the reading order. Positions save when the collection is
+          Add GVRZE Library resources and set the reading order. Positions save when the collection is
           saved.
         </p>
       </div>

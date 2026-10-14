@@ -24,12 +24,12 @@ import { num } from "@/lib/format";
 export const Route = createFileRoute("/store/redemptions")({
   head: () => ({
     meta: [
-      { title: "Credit Redemptions — GEOverze Admin" },
+      { title: "Credit Redemptions — GVRZE Admin" },
       {
         name: "description",
         content: "Manage GEOcredit redemption rewards, availability and approval queue.",
       },
-      { property: "og:title", content: "Credit Redemptions — GEOverze Admin" },
+      { property: "og:title", content: "Credit Redemptions — GVRZE Admin" },
       { property: "og:description", content: "GEOcredit reward catalogue and approvals." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

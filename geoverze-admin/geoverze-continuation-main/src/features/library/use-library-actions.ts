@@ -7,7 +7,7 @@ import { catalogDaysAgo } from "@/lib/catalog";
 import { notReady } from "@/lib/placeholder";
 
 /**
- * GEOlibrary mutations. Local state only — each handler is the single swap
+ * GVRZE Library mutations. Local state only — each handler is the single swap
  * point for a Lovable Cloud call once the backend is connected.
  */
 export function useLibraryActions(initial: LibraryResource[]) {
@@ -80,7 +80,7 @@ export function useLibraryActions(initial: LibraryResource[]) {
       setConfirm({
         title: ids.length === 1 ? "Delete this resource?" : `Delete ${ids.length} resources?`,
         description:
-          "The resource is removed from GEOlibrary. Analytics history is retained. This cannot be undone.",
+          "The resource is removed from GVRZE Library. Analytics history is retained. This cannot be undone.",
         confirmLabel: "Delete",
         destructive: true,
         onConfirm: () => remove(ids),

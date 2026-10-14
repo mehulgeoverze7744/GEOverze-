@@ -3,15 +3,15 @@ import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/moderation")({
   head: () => ({
     meta: [
-      { title: "Community Moderation — GEOverze Admin" },
+      { title: "Community Moderation — GVRZE Admin" },
       {
         name: "description",
-        content: "Triage flagged community content across every GEOverze surface.",
+        content: "Triage flagged community content across every GVRZE surface.",
       },
-      { property: "og:title", content: "Community Moderation — GEOverze Admin" },
+      { property: "og:title", content: "Community Moderation — GVRZE Admin" },
       {
         property: "og:description",
-        content: "Triage flagged community content across every GEOverze surface.",
+        content: "Triage flagged community content across every GVRZE surface.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

@@ -104,7 +104,7 @@ function buildQuiz(index: number): QuizRecord {
     id: `QZ-${String(3000 + index)}`,
     title,
     creatorId: creator?.id ?? "CR-1001",
-    creator: creator?.displayName ?? "GEOverze Studio",
+    creator: creator?.displayName ?? "GVRZE Studio",
     category: pickFrom(rand, quizCategories),
     difficulty,
     questionCount,
@@ -119,7 +119,7 @@ function buildQuiz(index: number): QuizRecord {
     timeLimitMinutes: pickFrom(rand, [0, 5, 10, 15, 20]),
     passingScore: pickFrom(rand, [50, 60, 70, 80]),
     instructions: "Answer every question. You can review explanations after each answer.",
-    description: `A ${difficulty.toLowerCase()} ${questionCount}-question tour of the topic, curated by ${creator?.displayName ?? "GEOverze Studio"}.`,
+    description: `A ${difficulty.toLowerCase()} ${questionCount}-question tour of the topic, curated by ${creator?.displayName ?? "GVRZE Studio"}.`,
     rewardXp: 0,
     rewardCredits: 0,
     createdAt: catalogDaysAgo(createdDays, 10),
@@ -133,7 +133,7 @@ function buildQuiz(index: number): QuizRecord {
     difficultyMix: mix,
     playsSeries: Array.from({ length: 12 }, (_, m) => Math.floor(35 + rand() * 55 + m * 1.6)),
     activity: buildActivity(rand, index, title),
-    versions: buildVersions(rand, index, creator?.displayName ?? "GEOverze Studio"),
+    versions: buildVersions(rand, index, creator?.displayName ?? "GVRZE Studio"),
   };
 }
 

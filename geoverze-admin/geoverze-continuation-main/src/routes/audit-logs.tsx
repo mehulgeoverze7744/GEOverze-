@@ -16,12 +16,12 @@ import { notReadyNow } from "@/lib/placeholder";
 export const Route = createFileRoute("/audit-logs")({
   head: () => ({
     meta: [
-      { title: "Audit Logs — GEOverze Admin" },
+      { title: "Audit Logs — GVRZE Admin" },
       {
         name: "description",
-        content: "Immutable record of every administrative action across the GEOverze platform.",
+        content: "Immutable record of every administrative action across the GVRZE platform.",
       },
-      { property: "og:title", content: "Audit Logs — GEOverze Admin" },
+      { property: "og:title", content: "Audit Logs — GVRZE Admin" },
       {
         property: "og:description",
         content: "Searchable, filterable trail of admin actions with full event detail.",

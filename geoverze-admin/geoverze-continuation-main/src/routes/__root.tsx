@@ -85,8 +85,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "GEOverze Admin" },
-      { name: "description", content: "Internal operations console for the GEOverze platform." },
+      { title: "GVRZE Admin" },
+      { name: "description", content: "Internal operations console for the GVRZE platform." },
       { name: "robots", content: "noindex, nofollow" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -184,7 +184,7 @@ function AdminGate() {
           </div>
           <h1 className="mt-4 text-lg font-semibold text-foreground">Access restricted</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Your account is signed in but does not hold an admin role for GEOverze. Contact a super
+            Your account is signed in but does not hold an admin role for GVRZE. Contact a super
             admin if you believe this is a mistake.
           </p>
           <div className="mt-6">

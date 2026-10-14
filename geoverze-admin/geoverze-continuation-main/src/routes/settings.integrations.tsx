@@ -11,15 +11,15 @@ import { notReadyNow } from "@/lib/placeholder";
 export const Route = createFileRoute("/settings/integrations")({
   head: () => ({
     meta: [
-      { title: "Integrations — GEOverze Admin" },
+      { title: "Integrations — GVRZE Admin" },
       {
         name: "description",
-        content: "Third-party services, API keys and webhook endpoints for GEOverze.",
+        content: "Third-party services, API keys and webhook endpoints for GVRZE.",
       },
-      { property: "og:title", content: "Integrations — GEOverze Admin" },
+      { property: "og:title", content: "Integrations — GVRZE Admin" },
       {
         property: "og:description",
-        content: "Third-party services, API keys and webhook endpoints for GEOverze.",
+        content: "Third-party services, API keys and webhook endpoints for GVRZE.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -42,7 +42,7 @@ function IntegrationSettingsPage() {
     <>
       <PageHeader
         title="Integrations"
-        description="External services GEOverze depends on, plus API access."
+        description="External services GVRZE depends on, plus API access."
       />
       <PageBody>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">

@@ -41,12 +41,12 @@ import { notReadyNow } from "@/lib/placeholder";
 export const Route = createFileRoute("/analytics/")({
   head: () => ({
     meta: [
-      { title: "Executive Overview — GEOverze Analytics" },
+      { title: "Executive Overview — GVRZE Analytics" },
       {
         name: "description",
         content: "Cross-module KPIs for users, creators, content, commerce and the credit economy.",
       },
-      { property: "og:title", content: "Executive Overview — GEOverze Analytics" },
+      { property: "og:title", content: "Executive Overview — GVRZE Analytics" },
       {
         property: "og:description",
         content: "Cross-module KPIs across users, content, commerce and moderation.",
@@ -91,7 +91,7 @@ function AnalyticsOverviewPage() {
     <>
       <PageHeader
         title="Executive Overview"
-        description="One board-level view of platform health across every GEOverze module."
+        description="One board-level view of platform health across every GVRZE module."
         actions={
           <div className="flex items-center gap-2">
             <Select value={window} onValueChange={setWindow}>

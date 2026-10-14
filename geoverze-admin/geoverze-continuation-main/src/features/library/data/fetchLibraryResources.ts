@@ -17,7 +17,7 @@ async function fetchCreators() {
   return data ?? [];
 }
 
-/** Read-only catalogue fetch for Admin GEOlibrary. */
+/** Read-only catalogue fetch for Admin GVRZE Library. */
 export async function fetchLibraryResources(): Promise<LibraryResource[]> {
   const { data: rows, error } = await supabase
     .from("library_resources")

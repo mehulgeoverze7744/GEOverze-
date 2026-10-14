@@ -3,12 +3,12 @@ import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
-      { title: "System Settings — GEOverze Admin" },
+      { title: "System Settings — GVRZE Admin" },
       {
         name: "description",
         content: "Global configuration, branding, platform rules, security and integrations.",
       },
-      { property: "og:title", content: "System Settings — GEOverze Admin" },
+      { property: "og:title", content: "System Settings — GVRZE Admin" },
       {
         property: "og:description",
         content: "Global configuration, branding, platform rules, security and integrations.",

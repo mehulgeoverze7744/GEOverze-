@@ -39,7 +39,7 @@ const planFeatures: Record<PlanTier, string[]> = {
   Basic: [
     "Unlimited quiz play",
     "500 monthly GEOcredits",
-    "Standard GEOlibrary access",
+    "Standard GVRZE Library access",
     "Community leaderboards",
   ],
   Pro: [

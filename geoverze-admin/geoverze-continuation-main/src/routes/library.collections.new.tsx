@@ -17,7 +17,7 @@ function NewCollectionPage() {
 
   return (
     <>
-      <PageHeader title="New collection" description="Create a curated GEOlibrary shelf." />
+      <PageHeader title="New collection" description="Create a curated GVRZE Library shelf." />
       <PageBody>
         <CollectionEditor
           collection={createDraftCollection("atlas-studio")}

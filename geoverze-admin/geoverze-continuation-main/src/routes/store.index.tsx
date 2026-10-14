@@ -46,16 +46,16 @@ import { money, num } from "@/lib/format";
 export const Route = createFileRoute("/store/")({
   head: () => ({
     meta: [
-      { title: "GEOstore Products — GEOverze Admin" },
+      { title: "GVRZE Store Products — GVRZE Admin" },
       {
         name: "description",
         content:
-          "Manage physical and digital GEOstore products, inventory, pricing and merchandising.",
+          "Manage physical and digital GVRZE Store products, inventory, pricing and merchandising.",
       },
-      { property: "og:title", content: "GEOstore Products — GEOverze Admin" },
+      { property: "og:title", content: "GVRZE Store Products — GVRZE Admin" },
       {
         property: "og:description",
-        content: "Product catalogue, inventory and pricing for the GEOverze store.",
+        content: "Product catalogue, inventory and pricing for the GVRZE store.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -105,7 +105,7 @@ function StoreProductsPage() {
   return (
     <>
       <PageHeader
-        title="GEOstore Products"
+        title="GVRZE Store Products"
         description="Physical merchandise, digital downloads, reward items and credit packs."
         actions={
           <>

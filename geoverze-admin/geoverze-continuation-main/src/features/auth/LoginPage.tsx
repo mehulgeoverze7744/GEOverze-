@@ -53,7 +53,7 @@ export function LoginPage() {
           <div className="mx-auto flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
             <ShieldCheck className="size-5" aria-hidden="true" />
           </div>
-          <CardTitle className="text-xl">GEOverze Admin</CardTitle>
+          <CardTitle className="text-xl">GVRZE Admin</CardTitle>
           <CardDescription>Sign in with an authorized administrator account.</CardDescription>
         </CardHeader>
         <CardContent>

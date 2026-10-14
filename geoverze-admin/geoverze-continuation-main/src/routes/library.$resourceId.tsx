@@ -28,15 +28,15 @@ import { num } from "@/lib/format";
 export const Route = createFileRoute("/library/$resourceId")({
   head: () => ({
     meta: [
-      { title: "Library Resource — GEOverze Admin" },
+      { title: "Library Resource — GVRZE Admin" },
       {
         name: "description",
         content: "Resource overview, content, media, SEO, analytics and version history.",
       },
-      { property: "og:title", content: "Library Resource — GEOverze Admin" },
+      { property: "og:title", content: "Library Resource — GVRZE Admin" },
       {
         property: "og:description",
-        content: "Full editorial record for a GEOlibrary resource.",
+        content: "Full editorial record for a GVRZE Library resource.",
       },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary" },
@@ -78,7 +78,7 @@ function ResourceDetailPage() {
             description={error ?? "It may have been deleted or the link is out of date."}
             action={
               <Button size="sm" asChild>
-                <Link to="/library">Back to GEOlibrary</Link>
+                <Link to="/library">Back to GVRZE Library</Link>
               </Button>
             }
           />
@@ -237,7 +237,7 @@ function ResourceDetailPage() {
           <TabsContent value="versions" className="mt-4">
             <EmptyState
               title="No version history yet"
-              description="Version history arrives in a later GEOlibrary phase."
+              description="Version history arrives in a later GVRZE Library phase."
             />
           </TabsContent>
 
@@ -252,7 +252,7 @@ function ResourceDetailPage() {
           open
           onOpenChange={(next) => !next && setConfirmDelete(false)}
           title="Delete this resource?"
-          description="The resource is removed from GEOlibrary. This cannot be undone."
+          description="The resource is removed from GVRZE Library. This cannot be undone."
           confirmLabel="Delete"
           destructive
           onConfirm={() => {
