@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { CalendarRange, Flame, Gift, Trophy } from "lucide-react";
+import { CalendarRange, Flame, Gift, Lock, Trophy } from "lucide-react";
 
 import { GeoButton } from "@/components/shared";
+import { isWeeklyChallengesAvailable } from "@/features/progression/lib/availability";
 import { MetaChip } from "./Badges";
 import { useProgressionStore } from "@/stores/progressionStore";
 
@@ -18,6 +19,7 @@ const TASKS = [
 export function WeeklyChallenge({ onPlay }: { onPlay: () => void }) {
   const currentStreak = useProgressionStore((s) => s.player.currentStreak);
   const done = TASKS.filter((t) => t.done >= t.total).length;
+  const locked = !isWeeklyChallengesAvailable();
 
   return (
     <section className="game-surface rounded-2xl p-6 md:p-8" aria-label="This week's challenge">
@@ -41,44 +43,69 @@ export function WeeklyChallenge({ onPlay }: { onPlay: () => void }) {
             streak shield and bank the bonus credits.
           </p>
         </div>
-        <GeoButton variant="solid" size="lg" className="shrink-0" onClick={onPlay}>
-          Enter this week
-        </GeoButton>
+        {locked ? (
+          <GeoButton
+            type="button"
+            variant="dark"
+            size="lg"
+            className="pointer-events-none shrink-0 cursor-not-allowed disabled:opacity-80"
+            disabled
+            aria-disabled="true"
+          >
+            <Lock className="h-3.5 w-3.5" strokeWidth={2.2} aria-hidden />
+            Coming soon
+          </GeoButton>
+        ) : (
+          <GeoButton variant="solid" size="lg" className="shrink-0" onClick={onPlay}>
+            Enter this week
+          </GeoButton>
+        )}
       </div>
 
-      <ul className="mt-6 grid gap-3 sm:grid-cols-3">
-        {TASKS.map((task) => {
-          const pct = Math.round((Math.min(task.done, task.total) / task.total) * 100);
-          return (
-            <li key={task.label} className="game-surface-raised rounded-xl p-4">
-              <p className="text-[0.8rem] font-medium text-foreground">{task.label}</p>
-              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[oklch(0.2_0.008_60)]">
-                <span className="block h-full bg-gradient-bronze" style={{ width: `${pct}%` }} />
-              </div>
-              <p className="mt-2 text-[0.68rem] tabular-nums text-foreground/50">
-                {Math.min(task.done, task.total)} / {task.total}
-              </p>
-            </li>
-          );
-        })}
-      </ul>
+      {locked ? (
+        <p className="mt-6 text-sm leading-relaxed text-foreground/50">
+          Weekly objectives stay hidden until this expedition opens.
+        </p>
+      ) : (
+        <>
+          <ul className="mt-6 grid gap-3 sm:grid-cols-3">
+            {TASKS.map((task) => {
+              const pct = Math.round((Math.min(task.done, task.total) / task.total) * 100);
+              return (
+                <li key={task.label} className="game-surface-raised rounded-xl p-4">
+                  <p className="text-[0.8rem] font-medium text-foreground">{task.label}</p>
+                  <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[oklch(0.2_0.008_60)]">
+                    <span
+                      className="block h-full bg-gradient-bronze"
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                  <p className="mt-2 text-[0.68rem] tabular-nums text-foreground/50">
+                    {Math.min(task.done, task.total)} / {task.total}
+                  </p>
+                </li>
+              );
+            })}
+          </ul>
 
-      <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.72rem] text-foreground/50">
-        <span className="inline-flex items-center gap-1.5">
-          <Trophy className="h-3.5 w-3.5 text-bronze" strokeWidth={1.8} aria-hidden />
-          {done} of {TASKS.length} objectives cleared
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <Gift className="h-3.5 w-3.5 text-bronze" strokeWidth={1.8} aria-hidden />
-          Reward: +600 XP, +12 credits
-        </span>
-        <Link
-          to="/play/weekly-challenges"
-          className="font-semibold uppercase tracking-[0.16em] text-bronze hover:text-bronze-glow"
-        >
-          Challenge details
-        </Link>
-      </div>
+          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.72rem] text-foreground/50">
+            <span className="inline-flex items-center gap-1.5">
+              <Trophy className="h-3.5 w-3.5 text-bronze" strokeWidth={1.8} aria-hidden />
+              {done} of {TASKS.length} objectives cleared
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <Gift className="h-3.5 w-3.5 text-bronze" strokeWidth={1.8} aria-hidden />
+              Reward: +600 XP, +12 credits
+            </span>
+            <Link
+              to="/play/weekly-challenges"
+              className="font-semibold uppercase tracking-[0.16em] text-bronze hover:text-bronze-glow"
+            >
+              Challenge details
+            </Link>
+          </div>
+        </>
+      )}
     </section>
   );
 }

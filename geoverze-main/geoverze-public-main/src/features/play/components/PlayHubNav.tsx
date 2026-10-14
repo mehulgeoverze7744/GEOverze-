@@ -2,8 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Lock, Trophy } from "lucide-react";
 
 import { SectionContainer } from "@/components/shared";
-import { isLeaderboardAvailable, isLeaderboardPath } from "@/features/leaderboard";
-import { PROGRESSION_LINKS } from "@/features/progression";
+import { PROGRESSION_LINKS } from "@/features/progression/components/ProgressionNav";
+import { isProgressionNavLocked } from "@/features/progression/lib/availability";
 
 import "./play-hub-nav.css";
 
@@ -11,7 +11,7 @@ function PlayHubNavItems({ duplicate = false }: { duplicate?: boolean }) {
   return (
     <ul className="play-hub-nav-list" aria-hidden={duplicate || undefined}>
       {PROGRESSION_LINKS.map((item) => {
-        const locked = !isLeaderboardAvailable() && isLeaderboardPath(item.to);
+        const locked = isProgressionNavLocked(item.to);
         const Icon = locked ? Lock : item.to === "/play/leaderboard" ? Trophy : item.icon;
         return (
           <li key={`${duplicate ? "dup-" : ""}${item.to}`}>
@@ -23,6 +23,9 @@ function PlayHubNavItems({ duplicate = false }: { duplicate?: boolean }) {
             ) : (
               <Link
                 to={item.to}
+                {...(item.search !== undefined
+                  ? { search: item.search, activeOptions: { includeSearch: true as const } }
+                  : {})}
                 className="play-hub-nav-link"
                 tabIndex={duplicate ? -1 : undefined}
                 activeProps={{ className: "play-hub-nav-link is-active" }}

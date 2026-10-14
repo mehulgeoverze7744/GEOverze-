@@ -9,7 +9,7 @@ import { REDEMPTION } from "@/features/progression/data/player";
 import { useProgressionStore } from "@/stores/progressionStore";
 import { cn } from "@/lib/utils";
 
-/** Premium reward currency module for GEO credits. */
+/** Premium reward currency module for GVRZE Credits. */
 export function GeoCreditsModule({ className }: { className?: string }) {
   const walletBalance = useProgressionStore((s) => s.player.credits);
   const { monthlyEarned } = useCreditHistory();
@@ -40,7 +40,7 @@ export function GeoCreditsModule({ className }: { className?: string }) {
 
       <h2 id="geo-credits-heading" className="dashboard-section-label flex items-center gap-2">
         <Coins className="h-3.5 w-3.5 text-bronze/90" strokeWidth={1.5} aria-hidden="true" />
-        Geo credits
+        GVRZE Credits
       </h2>
 
       <p className="mt-6 text-[clamp(2rem,4vw,2.75rem)] font-light leading-none text-gradient-bronze">
@@ -61,7 +61,9 @@ export function GeoCreditsModule({ className }: { className?: string }) {
 
       <div className="mt-6 flex flex-wrap gap-2">
         <GeoButton asChild variant="secondary" size="sm">
-          <Link to="/play/rewards">View rewards</Link>
+          <Link to="/quiz-history-and-rewards" search={{ tab: "rewards" }}>
+            View rewards
+          </Link>
         </GeoButton>
         <GeoButton asChild variant="ghost" size="sm">
           <Link to="/play/credit-history">Credit history</Link>

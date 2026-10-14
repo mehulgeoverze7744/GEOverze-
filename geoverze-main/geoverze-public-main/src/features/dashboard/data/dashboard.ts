@@ -30,6 +30,7 @@ export type QuickAction = {
   to: NonNullable<LinkProps["to"]>;
   /** Shown as a small bronze pill in the card corner. */
   badge?: string;
+  locked?: boolean;
 };
 
 export const QUICK_ACTIONS: readonly QuickAction[] = [
@@ -43,14 +44,14 @@ export const QUICK_ACTIONS: readonly QuickAction[] = [
   },
   {
     id: "library",
-    label: "Browse GEOlibrary",
+    label: "Browse GVRZE Library",
     description: "Long-form geography, maps and atlas plates.",
     icon: BookOpen,
     to: "/geolibrary",
   },
   {
     id: "store",
-    label: "Visit GEOstore",
+    label: "Visit GVRZE Store",
     description: "Atlases, finishes and season passes.",
     icon: ShoppingBag,
     to: "/geostore",
@@ -61,7 +62,8 @@ export const QUICK_ACTIONS: readonly QuickAction[] = [
     description: "Five questions, one shot, resets at midnight.",
     icon: Target,
     to: "/play",
-    badge: "New today",
+    badge: "Coming soon",
+    locked: true,
   },
   {
     id: "community",
@@ -130,7 +132,7 @@ export type LinkedItem = {
   title: string;
   meta: string;
   to: NonNullable<LinkProps["to"]>;
-  /** GEOlibrary article slug — thumbnail resolved via articleCardImageSrc. */
+  /** GVRZE Library article slug — thumbnail resolved via articleCardImageSrc. */
   articleSlug?: string;
 };
 
@@ -138,11 +140,11 @@ export const RECENTLY_VIEWED: readonly LinkedItem[] = [
   {
     id: "r1",
     title: "The Sahel, explained",
-    meta: "GEOlibrary · 8 min",
+    meta: "GVRZE Library · 8 min",
     to: "/geolibrary",
     articleSlug: "the-sahel-explained",
   },
-  { id: "r2", title: "Bronze relief atlas", meta: "GEOstore · Plate", to: "/geostore" },
+  { id: "r2", title: "Bronze relief atlas", meta: "GVRZE Store · Plate", to: "/geostore" },
   { id: "r3", title: "Capitals sprint: Africa", meta: "Let's Play · Quiz", to: "/play" },
 ] as const;
 
@@ -242,7 +244,7 @@ export const UPCOMING_EVENTS: readonly UpcomingEvent[] = [
     id: "e3",
     title: "Creator collection drop",
     when: "Next month",
-    description: "Community-made plates arrive in the GEOstore.",
+    description: "Community-made plates arrive in the GVRZE Store.",
     icon: Sparkles,
   },
 ] as const;

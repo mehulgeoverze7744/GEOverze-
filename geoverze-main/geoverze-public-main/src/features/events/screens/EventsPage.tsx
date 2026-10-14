@@ -6,6 +6,7 @@ import { AnimatedSection, GeoButton, PageHeader, SectionContainer } from "@/comp
 import { MetaChip } from "@/features/play/components/Badges";
 import { CoverArt } from "@/features/play/components/CoverArt";
 import { GameCard } from "@/features/play/components/GameCard";
+import { isDailyChallengesAvailable } from "@/features/progression/lib/availability";
 import { EVENTS, EVENT_KIND_LABEL } from "../data/events";
 
 /** /play/events — seasonal, limited-time and community events. */
@@ -53,7 +54,7 @@ export function EventsPage() {
                     </MetaChip>
                   ) : null}
                 </div>
-                {event.locked ? (
+                {event.locked || !isDailyChallengesAvailable() ? (
                   <p
                     aria-disabled
                     className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-bronze/25 px-4 py-2.5 text-[0.75rem] font-semibold uppercase tracking-[0.14em] text-foreground/50"

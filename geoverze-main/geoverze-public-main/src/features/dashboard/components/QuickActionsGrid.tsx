@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Lock } from "lucide-react";
 
 import { AnimatedBadge } from "@/components/shared/AnimatedBadge";
 import { AnimatedSection } from "@/components/shared/AnimatedSection";
 import { QUICK_ACTIONS } from "@/features/dashboard/data/dashboard";
+import { isDailyChallengesAvailable } from "@/features/progression/lib/availability";
 import { cn } from "@/lib/utils";
 
 /** Quick navigation grid with distinct visual treatment per action. */
@@ -24,12 +25,10 @@ export function QuickActionsGrid({ className }: { className?: string }) {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {QUICK_ACTIONS.map((action, index) => (
-          <AnimatedSection key={action.id} delay={index * 60}>
-            <Link
-              to={action.to}
-              className="dashboard-quick-action group block h-full rounded-2xl border border-bronze/14 bg-charcoal/30 p-6 transition-all motion-base hover:-translate-y-0.5 hover:border-bronze/30 hover:bg-charcoal/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45 motion-reduce:transform-none"
-            >
+        {QUICK_ACTIONS.map((action, index) => {
+          const locked = Boolean(action.locked) && !isDailyChallengesAvailable();
+          const body = (
+            <>
               <div className="flex items-start justify-between gap-3">
                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-bronze/25 bg-bronze/8 text-bronze transition-colors group-hover:border-bronze/40 group-hover:bg-bronze/12">
                   <action.icon className="h-4 w-4" strokeWidth={1.4} aria-hidden="true" />
@@ -38,18 +37,43 @@ export function QuickActionsGrid({ className }: { className?: string }) {
               </div>
               <p className="mt-5 flex items-center gap-2 text-sm text-foreground/85">
                 {action.label}
-                <ArrowUpRight
-                  className="h-3.5 w-3.5 text-bronze/90 transition-transform motion-base group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transform-none"
-                  strokeWidth={1.5}
-                  aria-hidden="true"
-                />
+                {locked ? (
+                  <Lock className="h-3.5 w-3.5 text-bronze/80" strokeWidth={2} aria-hidden />
+                ) : (
+                  <ArrowUpRight
+                    className="h-3.5 w-3.5 text-bronze/90 transition-transform motion-base group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transform-none"
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
+                )}
               </p>
               <p className="mt-2 text-xs leading-relaxed text-foreground/50">
                 {action.description}
               </p>
-            </Link>
-          </AnimatedSection>
-        ))}
+            </>
+          );
+
+          return (
+            <AnimatedSection key={action.id} delay={index * 60}>
+              {locked ? (
+                <div
+                  className="dashboard-quick-action block h-full cursor-not-allowed rounded-2xl border border-bronze/14 bg-charcoal/30 p-6 opacity-70"
+                  aria-disabled="true"
+                  aria-label={`${action.label}, coming soon`}
+                >
+                  {body}
+                </div>
+              ) : (
+                <Link
+                  to={action.to}
+                  className="dashboard-quick-action group block h-full rounded-2xl border border-bronze/14 bg-charcoal/30 p-6 transition-all motion-base hover:-translate-y-0.5 hover:border-bronze/30 hover:bg-charcoal/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45 motion-reduce:transform-none"
+                >
+                  {body}
+                </Link>
+              )}
+            </AnimatedSection>
+          );
+        })}
       </div>
     </section>
   );

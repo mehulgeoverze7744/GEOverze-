@@ -1,9 +1,16 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Coins, Flame, Gift } from "lucide-react";
+import { ArrowRight, Coins, Flame, Gift, Lock } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
-import { AnimatedSection, GeoButton, SectionContainer, SectionHeading } from "@/components/shared";
+import {
+  AnimatedSection,
+  ComingSoon,
+  GeoButton,
+  SectionContainer,
+  SectionHeading,
+} from "@/components/shared";
 import { GameCard } from "@/features/play/components/GameCard";
+import { useProgressionStore } from "@/stores/progressionStore";
 import { ChallengeCard } from "../components/ChallengeCard";
 import { CreditBalanceSummary } from "../components/CreditBalanceSummary";
 import { CreditRulesCard } from "../components/CreditRulesCard";
@@ -14,18 +21,24 @@ import { StreakCalendar } from "../components/StreakCalendar";
 import { DAILY_CHALLENGES } from "../data/challenges";
 import { XP_RULES } from "../data/xpRules";
 import { useCreditHistory } from "../hooks/useCreditHistory";
-import { useProgressionStore } from "@/stores/progressionStore";
+import { isDailyChallengesAvailable } from "../lib/availability";
 
 const SHORTCUTS = [
-  { to: "/play/rewards", label: "Reward catalogue", icon: Gift } as const,
-  { to: "/play/streak", label: "Streak tracker", icon: Flame } as const,
-  { to: "/play/credit-history", label: "Credit history", icon: Coins } as const,
+  {
+    to: "/quiz-history-and-rewards" as const,
+    search: { tab: "rewards" as const },
+    label: "Reward catalogue",
+    icon: Gift,
+  },
+  { to: "/play/streak" as const, label: "Streak tracker", icon: Flame },
+  { to: "/play/credit-history" as const, label: "Credit history", icon: Coins },
 ];
 
 /** /play/progression — the progression command centre. */
 export function ProgressionHub() {
   const player = useProgressionStore((s) => s.player);
   const { monthlyEarned } = useCreditHistory();
+  const dailyLocked = !isDailyChallengesAvailable();
 
   return (
     <PageShell>
@@ -37,7 +50,7 @@ export function ProgressionHub() {
           </h1>
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-foreground/60 md:text-base">
             XP, credits, streaks and challenges in one place. XP and credits sync from your account
-            when signed in; daily and weekly challenges are still illustrative.
+            when signed in. Daily and weekly challenges stay locked until those modules open.
           </p>
         </AnimatedSection>
         <div className="mt-8">
@@ -62,8 +75,11 @@ export function ProgressionHub() {
             <div className="grid grid-cols-2 gap-3">
               {SHORTCUTS.map((item) => (
                 <Link
-                  key={item.to}
+                  key={item.label}
                   to={item.to}
+                  {...("search" in item && item.search !== undefined
+                    ? { search: item.search }
+                    : {})}
                   className="game-surface game-lift flex items-center justify-between gap-3 rounded-2xl p-4 text-sm font-medium text-foreground/80"
                 >
                   <span className="inline-flex items-center gap-2">
@@ -130,19 +146,37 @@ export function ProgressionHub() {
             title="Daily challenges"
             description="Reset every midnight. Progress is illustrative."
             action={
-              <GeoButton asChild variant="ghost">
-                <Link to="/play/daily-challenges">View all</Link>
-              </GeoButton>
+              dailyLocked ? (
+                <span
+                  aria-disabled="true"
+                  className="inline-flex items-center gap-1.5 text-[0.62rem] uppercase tracking-[0.18em] text-bronze/70"
+                >
+                  <Lock className="h-3 w-3" strokeWidth={2} aria-hidden />
+                  Coming soon
+                </span>
+              ) : (
+                <GeoButton asChild variant="ghost">
+                  <Link to="/play/daily-challenges">View all</Link>
+                </GeoButton>
+              )
             }
           />
         </AnimatedSection>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {DAILY_CHALLENGES.slice(0, 3).map((challenge, index) => (
-            <AnimatedSection key={challenge.id} delay={index * 60}>
-              <ChallengeCard challenge={challenge} />
-            </AnimatedSection>
-          ))}
-        </div>
+        {dailyLocked ? (
+          <ComingSoon
+            label="Coming soon"
+            title="Daily challenges are locked"
+            description="Illustrative objectives stay hidden until midnight resets go live."
+          />
+        ) : (
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {DAILY_CHALLENGES.slice(0, 3).map((challenge, index) => (
+              <AnimatedSection key={challenge.id} delay={index * 60}>
+                <ChallengeCard challenge={challenge} />
+              </AnimatedSection>
+            ))}
+          </div>
+        )}
       </SectionContainer>
     </PageShell>
   );

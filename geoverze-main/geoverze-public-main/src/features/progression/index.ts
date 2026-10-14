@@ -7,4 +7,13 @@ export { WeeklyChallengesPage } from "./screens/WeeklyChallengesPage";
 export { PlayLeaderboardPage } from "./screens/PlayLeaderboardPage";
 export { CreditHistoryPage } from "./screens/CreditHistoryPage";
 export { PROGRESSION_LINKS, ProgressionNav } from "./components/ProgressionNav";
+export {
+  DAILY_CHALLENGES_AVAILABLE,
+  WEEKLY_CHALLENGES_AVAILABLE,
+  isDailyChallengesAvailable,
+  isDailyChallengesPath,
+  isProgressionNavLocked,
+  isWeeklyChallengesAvailable,
+  isWeeklyChallengesPath,
+} from "./lib/availability";
 export { PLAYER, MONTHLY_CREDITS, REDEMPTION } from "./data/player";

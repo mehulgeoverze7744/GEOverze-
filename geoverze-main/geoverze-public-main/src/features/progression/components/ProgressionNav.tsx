@@ -11,15 +11,21 @@ import {
   TrendingUp,
 } from "lucide-react";
 
-import { isLeaderboardAvailable, isLeaderboardPath } from "@/features/leaderboard";
+import { isProgressionNavLocked } from "../lib/availability";
 
 export const PROGRESSION_LINKS: readonly {
   to: NonNullable<LinkProps["to"]>;
   label: string;
   icon: typeof Coins;
+  search?: LinkProps["search"];
 }[] = [
   { to: "/play/progression", label: "Progression", icon: TrendingUp },
-  { to: "/play/rewards", label: "Rewards", icon: Gift },
+  {
+    to: "/quiz-history-and-rewards",
+    label: "Rewards",
+    icon: Gift,
+    search: { tab: "rewards" },
+  },
   { to: "/play/streak", label: "Streak", icon: Flame },
   { to: "/play/daily-challenges", label: "Daily", icon: CalendarDays },
   { to: "/play/weekly-challenges", label: "Weekly", icon: CalendarRange },
@@ -33,7 +39,7 @@ export function ProgressionNav() {
     <nav aria-label="Progression sections" className="-mx-1 overflow-x-auto pb-1">
       <ul className="flex min-w-max gap-2 px-1">
         {PROGRESSION_LINKS.map((item) => {
-          const locked = !isLeaderboardAvailable() && isLeaderboardPath(item.to);
+          const locked = isProgressionNavLocked(item.to);
           return (
             <li key={item.to}>
               {locked ? (
@@ -47,6 +53,9 @@ export function ProgressionNav() {
               ) : (
                 <Link
                   to={item.to}
+                  {...(item.search !== undefined
+                    ? { search: item.search, activeOptions: { includeSearch: true as const } }
+                    : {})}
                   className="inline-flex items-center gap-2 rounded-full border border-bronze/15 bg-[oklch(0.185_0.008_62)] px-4 py-2 text-xs font-medium text-foreground/60 transition-colors motion-snap hover:border-bronze/40 hover:text-foreground"
                   activeProps={{
                     className:

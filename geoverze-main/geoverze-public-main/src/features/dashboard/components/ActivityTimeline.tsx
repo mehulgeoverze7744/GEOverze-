@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 
 import { GeoButton } from "@/components/shared/GeoButton";
 import { RECENT_ACTIVITY } from "@/features/dashboard/data/activity";
+import { isProgressionNavLocked } from "@/features/progression/lib/availability";
 import { cn } from "@/lib/utils";
 
 const TONE_DOT = {
@@ -31,8 +32,8 @@ export function ActivityTimeline({ className }: { className?: string }) {
             Your exploration log
           </h2>
           <p className="mt-2 max-w-xl text-sm text-foreground/50">
-            Quizzes, badges, credits and saves in one timeline. Placeholder entries until
-            sessions are recorded.
+            Quizzes, badges, credits and saves in one timeline. Placeholder entries until sessions
+            are recorded.
           </p>
         </div>
       </div>
@@ -60,12 +61,10 @@ export function ActivityTimeline({ className }: { className?: string }) {
                 ) : null}
 
                 <span className="relative z-[1] mt-1.5 shrink-0" aria-hidden="true">
-                  <span
-                    className={cn("block h-2.5 w-2.5 rounded-full", TONE_DOT[entry.tone])}
-                  />
+                  <span className={cn("block h-2.5 w-2.5 rounded-full", TONE_DOT[entry.tone])} />
                 </span>
 
-                {entry.to ? (
+                {entry.to && !isProgressionNavLocked(entry.to) ? (
                   <Link
                     to={entry.to}
                     {...(entry.search ? { search: entry.search } : {})}
