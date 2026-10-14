@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 
+import { isLeaderboardAvailable } from "@/features/leaderboard";
 import { cn } from "@/lib/utils";
 
 const ACTIONS = [
@@ -21,7 +22,13 @@ const ACTIONS = [
     search: { tab: "rewards" as const },
     emoji: "🎁",
   },
-  { id: "community", label: "Community", hint: "Meet players", to: "/community" as const, emoji: "🫂" },
+  {
+    id: "community",
+    label: "Community",
+    hint: "Meet players",
+    to: "/community" as const,
+    emoji: "🫂",
+  },
 ] as const;
 
 function DockEmoji({ symbol }: { symbol: string }) {
@@ -50,6 +57,7 @@ export function DashboardCommandActions({ className }: { className?: string }) {
       </div>
       <ul className="dashboard-dock-actions">
         {ACTIONS.map((action) => {
+          const locked = "locked" in action && action.locked && !isLeaderboardAvailable();
           const body = (
             <>
               <DockEmoji symbol={action.emoji} />
@@ -67,7 +75,7 @@ export function DashboardCommandActions({ className }: { className?: string }) {
 
           return (
             <li key={action.id}>
-              {"locked" in action && action.locked ? (
+              {locked ? (
                 <span
                   className="dashboard-dock-action dashboard-dock-action--locked"
                   aria-disabled="true"
@@ -75,16 +83,14 @@ export function DashboardCommandActions({ className }: { className?: string }) {
                 >
                   {body}
                 </span>
+              ) : "search" in action ? (
+                <Link to={action.to} search={action.search} className="dashboard-dock-action">
+                  {body}
+                </Link>
               ) : (
-                "search" in action ? (
-                  <Link to={action.to} search={action.search} className="dashboard-dock-action">
-                    {body}
-                  </Link>
-                ) : (
-                  <Link to={action.to} className="dashboard-dock-action">
-                    {body}
-                  </Link>
-                )
+                <Link to={action.to} className="dashboard-dock-action">
+                  {body}
+                </Link>
               )}
             </li>
           );

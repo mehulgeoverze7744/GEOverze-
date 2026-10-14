@@ -1,5 +1,8 @@
 import { Link } from "@tanstack/react-router";
+import { Lock } from "lucide-react";
 import { memo } from "react";
+
+import { isLeaderboardAvailable, isLeaderboardPath } from "@/features/leaderboard";
 
 import { AnimatedSection, GlassCard, SectionContainer } from "@/components/shared";
 import { ecosystem } from "../../data/home";
@@ -28,7 +31,16 @@ function EcosystemCardCopy({ node }: { node: (typeof ecosystem)[number] }) {
         {node.description}
       </p>
       <span className="mt-1.5 inline-flex items-center gap-1.5 text-[0.55rem] uppercase tracking-[0.24em] text-bronze/90">
-        Enter <span aria-hidden>→</span>
+        {node.comingSoon || (!isLeaderboardAvailable() && isLeaderboardPath(node.to)) ? (
+          <>
+            <Lock className="h-3 w-3" strokeWidth={2} aria-hidden />
+            Coming soon
+          </>
+        ) : (
+          <>
+            Enter <span aria-hidden>→</span>
+          </>
+        )}
       </span>
     </>
   );
@@ -53,30 +65,66 @@ export const Ecosystem = memo(function Ecosystem() {
           {ecosystem.map((node, i) => (
             <AnimatedSection key={node.title} delay={i * 80} className="min-w-0">
               <GlassCard className="ecosystem-card group h-full overflow-hidden p-0">
-                <Link to={node.to} className="ecosystem-card__link relative block h-full min-h-0">
-                  {node.imageSrc ? (
-                    <>
-                      <img
-                        src={node.imageSrc}
-                        alt=""
-                        aria-hidden
-                        loading="lazy"
-                        decoding="async"
-                        className="ecosystem-card__img absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-                      />
-                      <div aria-hidden className="ecosystem-card__overlay pointer-events-none absolute inset-0" />
-                      <div className="ecosystem-card__content absolute inset-x-0 bottom-0 z-10 p-3 md:p-3.5">
+                {node.comingSoon || (!isLeaderboardAvailable() && isLeaderboardPath(node.to)) ? (
+                  <div
+                    className="ecosystem-card__link relative block h-full min-h-0 cursor-default"
+                    aria-disabled="true"
+                  >
+                    {node.imageSrc ? (
+                      <>
+                        <img
+                          src={node.imageSrc}
+                          alt=""
+                          aria-hidden
+                          loading="lazy"
+                          decoding="async"
+                          className="ecosystem-card__img absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                        />
+                        <div
+                          aria-hidden
+                          className="ecosystem-card__overlay pointer-events-none absolute inset-0"
+                        />
+                        <div className="ecosystem-card__content absolute inset-x-0 bottom-0 z-10 p-3 md:p-3.5">
+                          <EcosystemCardIcon icon={node.icon} />
+                          <EcosystemCardCopy node={node} />
+                        </div>
+                      </>
+                    ) : (
+                      <div className="flex h-full flex-col p-3.5 md:p-4">
                         <EcosystemCardIcon icon={node.icon} />
                         <EcosystemCardCopy node={node} />
                       </div>
-                    </>
-                  ) : (
-                    <div className="flex h-full flex-col p-3.5 md:p-4">
-                      <EcosystemCardIcon icon={node.icon} />
-                      <EcosystemCardCopy node={node} />
-                    </div>
-                  )}
-                </Link>
+                    )}
+                  </div>
+                ) : (
+                  <Link to={node.to} className="ecosystem-card__link relative block h-full min-h-0">
+                    {node.imageSrc ? (
+                      <>
+                        <img
+                          src={node.imageSrc}
+                          alt=""
+                          aria-hidden
+                          loading="lazy"
+                          decoding="async"
+                          className="ecosystem-card__img absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                        />
+                        <div
+                          aria-hidden
+                          className="ecosystem-card__overlay pointer-events-none absolute inset-0"
+                        />
+                        <div className="ecosystem-card__content absolute inset-x-0 bottom-0 z-10 p-3 md:p-3.5">
+                          <EcosystemCardIcon icon={node.icon} />
+                          <EcosystemCardCopy node={node} />
+                        </div>
+                      </>
+                    ) : (
+                      <div className="flex h-full flex-col p-3.5 md:p-4">
+                        <EcosystemCardIcon icon={node.icon} />
+                        <EcosystemCardCopy node={node} />
+                      </div>
+                    )}
+                  </Link>
+                )}
               </GlassCard>
             </AnimatedSection>
           ))}

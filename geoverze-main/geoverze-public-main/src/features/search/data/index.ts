@@ -95,7 +95,7 @@ export const SEARCH_INDEX: readonly SearchRecord[] = [
     title: "Meridian",
     meta: "Creator · Quiz author",
     keywords: ["meridian", "quiz", "author"],
-    to: "/leaderboard",
+    to: "/community",
   },
   {
     id: "s-c3",
@@ -112,7 +112,7 @@ export const SEARCH_INDEX: readonly SearchRecord[] = [
     title: "Best route to memorise African capitals?",
     meta: "Community · 34 replies",
     keywords: ["africa", "capital", "memorise", "tips"],
-    to: "/leaderboard",
+    to: "/community",
   },
   {
     id: "s-p2",
@@ -120,7 +120,7 @@ export const SEARCH_INDEX: readonly SearchRecord[] = [
     title: "Season 2 standings thread",
     meta: "Community · 112 replies",
     keywords: ["season", "standings", "leaderboard"],
-    to: "/leaderboard",
+    to: "/community",
   },
   {
     id: "s-p3",
@@ -128,7 +128,7 @@ export const SEARCH_INDEX: readonly SearchRecord[] = [
     title: "Show your streak",
     meta: "Community · 58 replies",
     keywords: ["streak", "daily", "showcase"],
-    to: "/leaderboard",
+    to: "/community",
   },
 
   {

@@ -68,7 +68,7 @@ export const QUICK_ACTIONS: readonly QuickAction[] = [
     label: "Community",
     description: "Standings, seasons and fellow explorers.",
     icon: Users,
-    to: "/leaderboard",
+    to: "/community",
   },
   {
     id: "bookmarks",

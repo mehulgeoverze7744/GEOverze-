@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { Trophy } from "lucide-react";
+import { Lock, Trophy } from "lucide-react";
 
 import { SectionContainer } from "@/components/shared";
+import { isLeaderboardAvailable, isLeaderboardPath } from "@/features/leaderboard";
 import { PROGRESSION_LINKS } from "@/features/progression";
 
 import "./play-hub-nav.css";
@@ -10,18 +11,26 @@ function PlayHubNavItems({ duplicate = false }: { duplicate?: boolean }) {
   return (
     <ul className="play-hub-nav-list" aria-hidden={duplicate || undefined}>
       {PROGRESSION_LINKS.map((item) => {
-        const Icon = item.to === "/play/leaderboard" ? Trophy : item.icon;
+        const locked = !isLeaderboardAvailable() && isLeaderboardPath(item.to);
+        const Icon = locked ? Lock : item.to === "/play/leaderboard" ? Trophy : item.icon;
         return (
           <li key={`${duplicate ? "dup-" : ""}${item.to}`}>
-            <Link
-              to={item.to}
-              className="play-hub-nav-link"
-              tabIndex={duplicate ? -1 : undefined}
-              activeProps={{ className: "play-hub-nav-link is-active" }}
-            >
-              <Icon className="play-hub-nav-icon" strokeWidth={2} aria-hidden="true" />
-              <span>{item.label}</span>
-            </Link>
+            {locked ? (
+              <span className="play-hub-nav-link is-locked" aria-disabled="true" tabIndex={-1}>
+                <Icon className="play-hub-nav-icon" strokeWidth={2} aria-hidden="true" />
+                <span>{item.label}</span>
+              </span>
+            ) : (
+              <Link
+                to={item.to}
+                className="play-hub-nav-link"
+                tabIndex={duplicate ? -1 : undefined}
+                activeProps={{ className: "play-hub-nav-link is-active" }}
+              >
+                <Icon className="play-hub-nav-icon" strokeWidth={2} aria-hidden="true" />
+                <span>{item.label}</span>
+              </Link>
+            )}
           </li>
         );
       })}

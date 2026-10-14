@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Lock } from "lucide-react";
 
 import { useMemo, useState } from "react";
 
@@ -268,7 +268,8 @@ export function PlayPage() {
           <AnimatedSection className="mt-16">
             <div className="game-surface flex flex-wrap items-center justify-between gap-5 rounded-2xl p-6 md:p-8">
               <div>
-                <h2 className="text-lg font-semibold tracking-tight text-foreground md:text-xl">
+                <h2 className="inline-flex items-center gap-2 text-lg font-semibold tracking-tight text-foreground md:text-xl">
+                  <Lock className="h-4 w-4 shrink-0 text-bronze" strokeWidth={2} aria-hidden />
                   Track every run on the global board
                 </h2>
                 <p className="mt-2 max-w-xl text-[0.85rem] leading-relaxed text-foreground/55">
@@ -276,8 +277,16 @@ export function PlayPage() {
                   engine goes live.
                 </p>
               </div>
-              <GeoButton asChild variant="dark" size="lg">
-                <Link to="/leaderboard">View leaderboard</Link>
+              <GeoButton
+                type="button"
+                variant="dark"
+                size="lg"
+                disabled
+                aria-disabled="true"
+                className="pointer-events-none cursor-not-allowed border-bronze/30 text-bronze/75 disabled:opacity-80"
+              >
+                <Lock className="h-3.5 w-3.5" strokeWidth={2.2} aria-hidden />
+                View leaderboard
               </GeoButton>
             </div>
           </AnimatedSection>

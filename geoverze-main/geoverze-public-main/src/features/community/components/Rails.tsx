@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { Flame, TrendingUp, Users, Trophy, CalendarDays } from "lucide-react";
+import { CalendarDays, Flame, Lock, Trophy, TrendingUp, Users } from "lucide-react";
 import { useState } from "react";
 
 import { GeoButton } from "@/components/shared";
+import { isLeaderboardAvailable } from "@/features/leaderboard";
 import { GameCard } from "@/features/play/components/GameCard";
 import { cn } from "@/lib/utils";
 
@@ -177,49 +178,72 @@ export function FeaturedExplorersPanel() {
 export function LeaderboardSnapshotPanel() {
   const [board, setBoard] = useState<SnapshotBoard>("xp");
   const boards = Object.keys(SNAPSHOT_LABEL) as SnapshotBoard[];
+  const locked = !isLeaderboardAvailable();
 
   return (
-    <Panel title="Leaderboard" icon={Trophy}>
-      <div role="tablist" aria-label="Leaderboard boards" className="flex flex-wrap gap-1.5">
-        {boards.map((id) => (
-          <button
-            key={id}
-            role="tab"
-            type="button"
-            aria-selected={board === id}
-            onClick={() => setBoard(id)}
-            className={cn(
-              "rounded-full border px-2.5 py-1 text-[0.6rem] uppercase tracking-[0.14em] transition-colors motion-snap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
-              board === id
-                ? "border-bronze/55 bg-bronze/10 text-bronze-glow"
-                : "border-bronze/15 text-foreground/50 hover:border-bronze/40",
-            )}
-          >
-            {SNAPSHOT_LABEL[id]}
-          </button>
-        ))}
-      </div>
+    <Panel title="Leaderboard" icon={locked ? Lock : Trophy}>
+      {locked ? null : (
+        <div role="tablist" aria-label="Leaderboard boards" className="flex flex-wrap gap-1.5">
+          {boards.map((id) => (
+            <button
+              key={id}
+              role="tab"
+              type="button"
+              aria-selected={board === id}
+              onClick={() => setBoard(id)}
+              className={cn(
+                "rounded-full border px-2.5 py-1 text-[0.6rem] uppercase tracking-[0.14em] transition-colors motion-snap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
+                board === id
+                  ? "border-bronze/55 bg-bronze/10 text-bronze-glow"
+                  : "border-bronze/15 text-foreground/50 hover:border-bronze/40",
+              )}
+            >
+              {SNAPSHOT_LABEL[id]}
+            </button>
+          ))}
+        </div>
+      )}
 
-      <ol className="mt-4 space-y-3">
-        {LEADERBOARD_SNAPSHOT[board].map((row, i) => (
-          <li key={row.member.handle} className="flex items-center gap-3">
-            <span className="w-4 shrink-0 text-[0.7rem] tabular-nums text-foreground/50">
-              {i + 1}
-            </span>
-            <MemberAvatar handle={row.member.handle} size="xs" />
-            <span className="min-w-0 flex-1 truncate text-sm text-foreground/80">
-              {row.member.name}
-            </span>
-            <span className="shrink-0 text-[0.68rem] tabular-nums text-bronze-glow">
-              {row.value}
-            </span>
-          </li>
-        ))}
-      </ol>
+      {locked ? (
+        <p className="mt-4 text-sm leading-relaxed text-foreground/50">
+          Community ranks stay hidden until the global board is live.
+        </p>
+      ) : (
+        <ol className="mt-4 space-y-3">
+          {LEADERBOARD_SNAPSHOT[board].map((row, i) => (
+            <li key={row.member.handle} className="flex items-center gap-3">
+              <span className="w-4 shrink-0 text-[0.7rem] tabular-nums text-foreground/50">
+                {i + 1}
+              </span>
+              <MemberAvatar handle={row.member.handle} size="xs" />
+              <span className="min-w-0 flex-1 truncate text-sm text-foreground/80">
+                {row.member.name}
+              </span>
+              <span className="shrink-0 text-[0.68rem] tabular-nums text-bronze-glow">
+                {row.value}
+              </span>
+            </li>
+          ))}
+        </ol>
+      )}
 
-      <GeoButton variant="dark" size="sm" className="mt-4 w-full" asChild>
-        <Link to="/play/leaderboard">Full leaderboard</Link>
-      </GeoButton>
+      {locked ? (
+        <GeoButton
+          type="button"
+          variant="dark"
+          size="sm"
+          className="pointer-events-none mt-4 w-full cursor-not-allowed disabled:opacity-80"
+          disabled
+          aria-disabled="true"
+        >
+          <Lock className="h-3 w-3" strokeWidth={2.2} aria-hidden />
+          Full leaderboard
+        </GeoButton>
+      ) : (
+        <GeoButton variant="dark" size="sm" className="mt-4 w-full" asChild>
+          <Link to="/play/leaderboard">Full leaderboard</Link>
+        </GeoButton>
+      )}
     </Panel>
   );
 }

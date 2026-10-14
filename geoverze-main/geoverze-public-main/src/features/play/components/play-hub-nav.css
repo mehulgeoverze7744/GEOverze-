@@ -110,6 +110,13 @@
     0 6px 14px rgb(40 24 8 / 0.36);
 }
 
+.play-hub-nav-link.is-locked {
+  pointer-events: none;
+  cursor: not-allowed;
+  filter: saturate(0.72) brightness(0.88);
+  opacity: 0.78;
+}
+
 .play-hub-nav-link:focus-visible {
   outline: none;
   box-shadow:

@@ -1,4 +1,4 @@
-import { Trophy } from "lucide-react";
+import { Lock, Trophy } from "lucide-react";
 
 import { GeoButton } from "@/components/shared/GeoButton";
 import { cn } from "@/lib/utils";
@@ -41,6 +41,7 @@ export function DashboardLeaderboardCard({ className }: { className?: string }) 
       >
         <Trophy className="h-3.5 w-3.5 text-bronze/90" strokeWidth={1.5} aria-hidden="true" />
         Leaderboard
+        <Lock className="h-3 w-3 text-bronze/80" strokeWidth={2} aria-hidden="true" />
       </h2>
       <p className="mt-5 text-sm leading-relaxed text-foreground/55">
         Global rank will appear here once competitive standings are live. Placeholder boards are not

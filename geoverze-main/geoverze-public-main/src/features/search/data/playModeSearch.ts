@@ -17,6 +17,14 @@ export type PlayModeSearchRecord = {
 
 const PLAY_FORMAT_ALIASES: readonly PlayModeSearchRecord[] = [
   {
+    id: "play-leaderboard",
+    title: "Leaderboard",
+    meta: "Play · Coming soon",
+    keywords: ["leaderboard", "standings", "rank", "season"],
+    to: "/play",
+    comingSoon: true,
+  },
+  {
     id: "play-emoji-quiz",
     title: "Emoji Quiz",
     meta: "Play · Flags",

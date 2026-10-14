@@ -13,7 +13,7 @@ export function PageHeader({
   breadcrumb,
   children,
 }: {
-  eyebrow?: string;
+  eyebrow?: ReactNode;
   title: string;
   description?: string;
   breadcrumb?: { label: string; to?: NonNullable<LinkProps["to"]> }[];

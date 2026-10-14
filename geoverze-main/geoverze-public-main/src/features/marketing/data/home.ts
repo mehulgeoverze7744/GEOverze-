@@ -70,6 +70,7 @@ export const ecosystem: {
   description: string;
   to: NavItem["to"];
   imageSrc?: string;
+  comingSoon?: boolean;
 }[] = [
   {
     icon: Gamepad2,
@@ -97,6 +98,7 @@ export const ecosystem: {
     title: "Leaderboards",
     description: "Where standings, seasons and recognition come together.",
     to: "/leaderboard",
+    comingSoon: true,
     imageSrc: "/assets/home/ecosystem/leaderboards.jpg",
   },
   {

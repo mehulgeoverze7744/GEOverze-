@@ -22,6 +22,7 @@ export type NavLink = NonNullable<LinkProps["to"]>;
 export type NavItem = {
   label: string;
   to: NavLink;
+  comingSoon?: boolean;
 };
 
 export const mainNav: NavItem[] = [
@@ -40,7 +41,7 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
       { label: "Let's Play", to: "/play" },
       { label: "GEOlibrary", to: "/geolibrary" },
       { label: "GEOstore", to: "/geostore" },
-      { label: "Leaderboard", to: "/leaderboard" },
+      { label: "Leaderboard", to: "/leaderboard", comingSoon: true },
       { label: "Community", to: "/community" },
     ],
   },

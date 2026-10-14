@@ -8,6 +8,7 @@ import { BrandMark } from "@/components/shared/BrandMark";
 import { GeoButton } from "@/components/shared/GeoButton";
 import { SectionContainer } from "@/components/shared/SectionContainer";
 import { footerNav, site, socialLinks } from "@/config/site";
+import { isLeaderboardAvailable, isLeaderboardPath } from "@/features/leaderboard";
 
 const linkClass =
   "transition-colors motion-fast hover:text-bronze focus-visible:outline-none focus-visible:text-bronze";
@@ -99,9 +100,22 @@ export const Footer = memo(function Footer() {
                 <ul className="mt-5 space-y-3">
                   {group.items.map((item) => (
                     <li key={item.to}>
-                      <Link to={item.to} className={`text-sm text-foreground/50 ${linkClass}`}>
-                        {item.label}
-                      </Link>
+                      {item.comingSoon ||
+                      (!isLeaderboardAvailable() && isLeaderboardPath(item.to)) ? (
+                        <span
+                          aria-disabled="true"
+                          className="inline-flex items-center gap-1.5 text-sm text-foreground/35"
+                        >
+                          {item.label}
+                          <span className="text-[0.58rem] uppercase tracking-[0.16em] text-bronze/70">
+                            Soon
+                          </span>
+                        </span>
+                      ) : (
+                        <Link to={item.to} className={`text-sm text-foreground/50 ${linkClass}`}>
+                          {item.label}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>
