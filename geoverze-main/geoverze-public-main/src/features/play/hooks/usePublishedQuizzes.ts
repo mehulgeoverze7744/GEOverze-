@@ -19,6 +19,9 @@ export function usePublishedQuizzes(): UsePublishedQuizzesResult {
   const query = useQuery({
     queryKey: publishedQuizzesQueryKey,
     queryFn: fetchPublishedQuizzes,
+    // Catalogue content is published from CMS/migrations; refetch on each
+    // search/hub mount so a 60s default staleTime cannot hide new quizzes.
+    refetchOnMount: "always",
   });
 
   return {
