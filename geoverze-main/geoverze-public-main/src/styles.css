@@ -859,7 +859,7 @@
     );
   }
 
-  /* Soft veil over the dissolving edge — never an opaque band or hard line */
+  /* Soft veil over the dissolving edge — blends into the page-level stone */
   .geostore-hero__fade {
     position: absolute;
     bottom: 0;
@@ -870,9 +870,8 @@
     background: linear-gradient(
       to bottom,
       transparent 0%,
-      oklch(0.14 0.012 72 / 0.03) 28%,
-      oklch(0.1 0.01 68 / 0.06) 48%,
-      oklch(0.08 0.008 62 / 0.04) 68%,
+      oklch(0.08 0.008 60 / 0.08) 42%,
+      oklch(0.06 0.006 60 / 0.04) 72%,
       transparent 100%
     );
     pointer-events: none;

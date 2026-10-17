@@ -8,11 +8,11 @@ const CATEGORY_BANNER_BASE = "/assets/store/categories";
 
 export const CATEGORY_BANNERS: Readonly<Record<string, CategoryBanner>> = {
   tshirts: {
-    src: `${CATEGORY_BANNER_BASE}/tshirts.jpg`,
+    src: `${CATEGORY_BANNER_BASE}/gvrze-tshirts-category.jpg`,
     alt: "GVRZE T-shirts",
   },
   hoodies: {
-    src: `${CATEGORY_BANNER_BASE}/hoodies.jpg`,
+    src: `${CATEGORY_BANNER_BASE}/gvrze-hoodies-category.jpg`,
     alt: "GVRZE Hoodies",
   },
   caps: {
@@ -20,11 +20,11 @@ export const CATEGORY_BANNERS: Readonly<Record<string, CategoryBanner>> = {
     alt: "GVRZE Caps",
   },
   mugs: {
-    src: `${CATEGORY_BANNER_BASE}/mugs.jpg`,
+    src: `${CATEGORY_BANNER_BASE}/gvrze-mugs-category.jpg`,
     alt: "GVRZE Mugs",
   },
   stickers: {
-    src: `${CATEGORY_BANNER_BASE}/stickers.jpg`,
+    src: `${CATEGORY_BANNER_BASE}/gvrze-stickers-category.jpg`,
     alt: "GVRZE Stickers",
   },
   posters: {
@@ -32,7 +32,7 @@ export const CATEGORY_BANNERS: Readonly<Record<string, CategoryBanner>> = {
     alt: "GVRZE Posters",
   },
   accessories: {
-    src: `${CATEGORY_BANNER_BASE}/accessories.jpg`,
+    src: `${CATEGORY_BANNER_BASE}/gvrze-accessories-category.jpg`,
     alt: "GVRZE Accessories",
   },
   "quiz-packs": {

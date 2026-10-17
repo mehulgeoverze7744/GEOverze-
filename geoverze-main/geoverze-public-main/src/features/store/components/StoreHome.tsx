@@ -10,6 +10,7 @@ import { ProductCard } from "./ProductCard";
 import { ProductRail } from "./ProductRail";
 import { StorefrontRewardsCatalog } from "./StorefrontRewardsCatalog";
 import { StoreHero } from "./StoreHero";
+import { StoreHomeBackground } from "./StoreHomeBackground";
 import { ProStorePerkPill } from "./ProStorePerkPill";
 import { QuickViewModal } from "./QuickViewModal";
 import { PRODUCTS, productBySlug, type Product } from "../data/products";
@@ -58,110 +59,113 @@ export function StoreHome() {
 
   return (
     <PageShell>
-      {/* ── Cinematic hero ─────────────────────────────────────────── */}
-      <StoreHero
-        balanceDisplay={balanceDisplay}
-        creditHistoryLink={
-          signedIn ? (
-            <Link
-              to="/play/credit-history"
-              className="inline-block text-[0.55rem] uppercase tracking-[0.16em] text-bronze transition-colors motion-fast hover:text-bronze-glow"
-            >
-              Credit history
-            </Link>
-          ) : authReady ? (
-            <Link
-              to="/auth/login"
-              className="inline-block text-[0.55rem] uppercase tracking-[0.16em] text-bronze transition-colors motion-fast hover:text-bronze-glow"
-            >
-              Sign in
-            </Link>
-          ) : null
-        }
-        catalogueCount={PRODUCTS.length}
-        categoryCount={STORE_CATEGORIES.length}
-        freeShippingThreshold={money(7_500)}
-      />
+      <StoreHomeBackground />
+      <div className="relative z-10">
+        {/* ── Cinematic hero ─────────────────────────────────────────── */}
+        <StoreHero
+          balanceDisplay={balanceDisplay}
+          creditHistoryLink={
+            signedIn ? (
+              <Link
+                to="/play/credit-history"
+                className="inline-block text-[0.55rem] uppercase tracking-[0.16em] text-bronze transition-colors motion-fast hover:text-bronze-glow"
+              >
+                Credit history
+              </Link>
+            ) : authReady ? (
+              <Link
+                to="/auth/login"
+                className="inline-block text-[0.55rem] uppercase tracking-[0.16em] text-bronze transition-colors motion-fast hover:text-bronze-glow"
+              >
+                Sign in
+              </Link>
+            ) : null
+          }
+          catalogueCount={PRODUCTS.length}
+          categoryCount={STORE_CATEGORIES.length}
+          freeShippingThreshold={money(7_500)}
+        />
 
-      {/* ── Merchandising sections ──────────────────────────────────── */}
-      <SectionContainer size="wide" className="[&>:first-child]:mt-0">
-        <ProductRail
-          title="Best sellers"
-          description="What most explorers take home."
-          titleClassName="text-2xl font-bold tracking-tight text-foreground md:text-3xl"
-          descriptionClassName="mt-2.5 max-w-xl text-sm leading-relaxed text-foreground/55 md:text-base"
-          titleAccessory={<ProStorePerkPill />}
-          to="/geostore/browse"
-          layout="scroll"
-        >
-          {bestSellers(PRODUCTS).map((product) => (
-            <div
-              key={product.slug}
-              data-rail-item
-              className="w-[min(82vw,18rem)] shrink-0 snap-start sm:w-[18rem]"
-            >
-              {card(product, true)}
-            </div>
-          ))}
-        </ProductRail>
-
-        <AnimatedSection className="mt-[var(--space-section-sm)]">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-            <h2 className="text-xl font-semibold tracking-tight text-foreground md:text-2xl">
-              All categories
-            </h2>
-            <ProStorePerkPill />
-          </div>
-          <div className="mt-6 space-y-10">
-            {STORE_GROUPS.filter(
-              (group) => group.id !== "more" && group.id !== "digital" && group.id !== "rewards",
-            ).map((group) => (
-              <div key={group.id}>
-                <div className="flex flex-wrap items-center gap-3">
-                  <group.icon className="h-4 w-4 text-bronze" strokeWidth={1.6} />
-                  <p className="text-sm font-light text-foreground/80">{group.label}</p>
-                  <p className="text-xs text-foreground/50">{group.blurb}</p>
-                </div>
-                <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {STORE_CATEGORIES.filter(
-                    (category) => category.group === group.id && category.id !== "posters",
-                  ).map((category) => (
-                    <CategoryTile key={category.id} category={category} compact />
-                  ))}
-                </div>
+        {/* ── Merchandising sections ──────────────────────────────────── */}
+        <SectionContainer size="wide" className="[&>:first-child]:mt-0">
+          <ProductRail
+            title="Best sellers"
+            description="What most explorers take home."
+            titleClassName="text-2xl font-bold tracking-tight text-foreground md:text-3xl"
+            descriptionClassName="mt-2.5 max-w-xl text-sm leading-relaxed text-foreground/55 md:text-base"
+            titleAccessory={<ProStorePerkPill />}
+            to="/geostore/browse"
+            layout="scroll"
+          >
+            {bestSellers(PRODUCTS).map((product) => (
+              <div
+                key={product.slug}
+                data-rail-item
+                className="w-[min(82vw,18rem)] shrink-0 snap-start sm:w-[18rem]"
+              >
+                {card(product, true)}
               </div>
             ))}
-          </div>
-        </AnimatedSection>
-
-        <DigitalProductsCarousel />
-
-        <ProductRail
-          title="Claim with credits"
-          description={
-            signedIn
-              ? `Rewards you can claim with your ${balanceDisplay} credits.`
-              : "Sign in to claim digital rewards with credits."
-          }
-          to="/geostore/rewards"
-          linkLabel="All rewards"
-          layout="scroll"
-        >
-          <StorefrontRewardsCatalog presentation="carousel" products={rewardProducts} />
-        </ProductRail>
-
-        {recent.length > 0 ? (
-          <ProductRail title="Recently viewed">
-            {recent.map((product) => card(product))}
           </ProductRail>
-        ) : null}
-      </SectionContainer>
 
-      <QuickViewModal
-        product={quickView}
-        onClose={() => setQuickView(null)}
-        onAdd={(product, options) => addProduct(product, options)}
-      />
+          <AnimatedSection className="mt-[var(--space-section-sm)]">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <h2 className="text-xl font-semibold tracking-tight text-foreground md:text-2xl">
+                All categories
+              </h2>
+              <ProStorePerkPill />
+            </div>
+            <div className="mt-6 space-y-10">
+              {STORE_GROUPS.filter(
+                (group) => group.id !== "more" && group.id !== "digital" && group.id !== "rewards",
+              ).map((group) => (
+                <div key={group.id}>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <group.icon className="h-4 w-4 text-bronze" strokeWidth={1.6} />
+                    <p className="text-sm font-light text-foreground/80">{group.label}</p>
+                    <p className="text-xs text-foreground/50">{group.blurb}</p>
+                  </div>
+                  <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {STORE_CATEGORIES.filter(
+                      (category) => category.group === group.id && category.id !== "posters",
+                    ).map((category) => (
+                      <CategoryTile key={category.id} category={category} compact />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </AnimatedSection>
+
+          <DigitalProductsCarousel />
+
+          <ProductRail
+            title="Claim with credits"
+            description={
+              signedIn
+                ? `Rewards you can claim with your ${balanceDisplay} credits.`
+                : "Sign in to claim digital rewards with credits."
+            }
+            to="/geostore/rewards"
+            linkLabel="All rewards"
+            layout="scroll"
+          >
+            <StorefrontRewardsCatalog presentation="carousel" products={rewardProducts} />
+          </ProductRail>
+
+          {recent.length > 0 ? (
+            <ProductRail title="Recently viewed">
+              {recent.map((product) => card(product))}
+            </ProductRail>
+          ) : null}
+        </SectionContainer>
+
+        <QuickViewModal
+          product={quickView}
+          onClose={() => setQuickView(null)}
+          onAdd={(product, options) => addProduct(product, options)}
+        />
+      </div>
     </PageShell>
   );
 }
