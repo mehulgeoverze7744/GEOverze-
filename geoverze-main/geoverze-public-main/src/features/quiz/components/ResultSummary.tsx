@@ -52,6 +52,7 @@ export function ResultSummary({
   serverResult,
   submitError,
   hydrated = false,
+  persistToAccount = false,
   onPlayAgain,
   reviewSearch,
 }: {
@@ -60,19 +61,21 @@ export function ResultSummary({
   serverResult: ServerResult | null;
   submitError: boolean;
   /**
-   * True when the result is hydrated from sessionStorage after a page refresh.
-   * In this mode the RPC is not re-fired; individual answer review is unavailable.
+   * True when the result is hydrated from sessionStorage or an owned attempt
+   * rather than the live in-memory run.
    */
   hydrated?: boolean;
+  /** Signed-in users persist via submit_quiz_attempt; guests stay on this tab. */
+  persistToAccount?: boolean;
   onPlayAgain: () => void;
-  /** Undefined in hydrated mode — answer review requires the original session. */
-  reviewSearch?: { quiz: string };
+  reviewSearch?: { quiz: string; attempt?: string };
 }) {
   const [shared, setShared] = useState(false);
   const pct = Math.round(summary.accuracy * 100);
 
   // Use server-confirmed values once available; fall back to local estimates.
   const xpDisplay = serverResult ? serverResult.xp_earned : summary.xp;
+  const creditsDisplay = serverResult ? serverResult.credits_earned : summary.credits;
 
   const share = async () => {
     try {
@@ -124,7 +127,7 @@ export function ResultSummary({
             <Stat label="Score" value={String(summary.score)} />
             <Stat label="Best streak" value={String(summary.bestStreak)} />
             <Stat label="XP earned" value={`+${xpDisplay}`} />
-            <Stat label="Credits" value="+0" />
+            <Stat label="Credits" value={`+${creditsDisplay}`} />
           </div>
 
           {submitError ? (
@@ -132,12 +135,12 @@ export function ResultSummary({
               <AlertCircle className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden />
               Could not save your result. Your score is shown below but was not recorded.
             </p>
-          ) : hydrated ? (
-            <p className="relative mt-4 text-center text-[0.72rem] text-foreground/40">
-              Saved result — answer review is only available in the original session.
-            </p>
-          ) : serverResult ? null : (
+          ) : serverResult ? null : persistToAccount ? (
             <p className="relative mt-4 text-center text-[0.72rem] text-foreground/40">Saving…</p>
+          ) : (
+            <p className="relative mt-4 text-center text-[0.72rem] text-foreground/40">
+              Saved for this tab. Sign in to record rewards on your account.
+            </p>
           )}
 
           <div className="relative mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">

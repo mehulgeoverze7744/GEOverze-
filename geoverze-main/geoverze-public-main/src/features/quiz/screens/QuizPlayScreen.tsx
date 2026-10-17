@@ -5,6 +5,8 @@ import { useQuizStore, type QuizMode } from "@/stores/quizStore";
 import { OpponentPanel } from "../components/OpponentPanel";
 import { QuizPlay } from "../components/QuizPlay";
 import { useQuizSet } from "../hooks/useQuizSet";
+import { shouldStartOrHydratePlayRun } from "../lib/playSessionGuard";
+import { persistFinishedRun } from "../lib/quizResultPersist";
 import { loadQuizRun } from "../lib/quizRunPersist";
 
 type PlayRoute = "/play/quiz/solo" | "/play/quiz/pvp" | "/play/quiz/multiplayer";
@@ -30,14 +32,22 @@ export function QuizPlayScreen({ mode, from }: { mode: QuizMode; from: PlayRoute
   // Guard on set being loaded — do not call start() until questions are available.
   useEffect(() => {
     if (!set) return;
-    const isActiveRun = status === "active" && quizId === set.id && storeMode === mode;
-    if (!isActiveRun) {
-      const saved = loadQuizRun(`${mode}:${set.id}`);
-      if (saved && saved.quizId === set.id && saved.mode === mode) {
-        hydrate(saved);
-      } else {
-        start(set.id, mode);
-      }
+    if (
+      !shouldStartOrHydratePlayRun({
+        status,
+        quizId,
+        storeMode,
+        setId: set.id,
+        mode,
+      })
+    ) {
+      return;
+    }
+    const saved = loadQuizRun(`${mode}:${set.id}`);
+    if (saved && saved.quizId === set.id && saved.mode === mode) {
+      hydrate(saved);
+    } else {
+      start(set.id, mode);
     }
   }, [hydrate, mode, quizId, set, start, status, storeMode]);
 
@@ -73,7 +83,24 @@ export function QuizPlayScreen({ mode, from }: { mode: QuizMode; from: PlayRoute
       set={set}
       mode={mode}
       sidebar={mode === "pvp" || mode === "multiplayer" ? <OpponentPanel mode={mode} /> : undefined}
-      onFinish={() => navigate({ to: "/play/quiz/result", search: { quiz: set.id } })}
+      onFinish={() => {
+        const run = useQuizStore.getState();
+        persistFinishedRun({
+          set,
+          answers: run.answers,
+          startedAt: run.startedAt,
+          finishedAt: run.finishedAt,
+          attemptId: run.attemptId,
+          mode: run.mode,
+        });
+        navigate({
+          to: "/play/quiz/result",
+          search: {
+            quiz: set.id,
+            attempt: run.attemptId ?? undefined,
+          },
+        });
+      }}
       onExit={() => {
         reset();
         navigate({ to: "/play" });

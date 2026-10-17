@@ -1,6 +1,6 @@
 import { Link, useSearch } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { GeoButton } from "@/components/shared";
 import { cn } from "@/lib/utils";
@@ -8,6 +8,7 @@ import { useQuizStore } from "@/stores/quizStore";
 import { QuizLayout } from "../components/QuizLayout";
 import { ReviewCard } from "../components/ReviewCard";
 import { useQuizSet } from "../hooks/useQuizSet";
+import { loadQuizResult } from "../lib/quizResultPersist";
 
 const FILTERS = [
   { id: "all", label: "All" },
@@ -20,8 +21,27 @@ const FILTERS = [
 export function QuizReviewScreen() {
   const { quiz } = useSearch({ from: "/play/quiz/review" });
   const answers = useQuizStore((s) => s.answers);
+  const quizId = useQuizStore((s) => s.quizId);
+  const hydrate = useQuizStore((s) => s.hydrate);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["id"]>("all");
   const { set, loading, error } = useQuizSet(quiz);
+
+  useEffect(() => {
+    if (Object.keys(answers).length > 0 && (!quiz || quizId === quiz)) return;
+    const stored = loadQuizResult(quiz ?? "");
+    if (!stored || Object.keys(stored.answers).length === 0) return;
+    hydrate({
+      quizId: stored.quizId,
+      mode: stored.mode,
+      index: 0,
+      answers: stored.answers,
+      startedAt: stored.startedAt,
+      finishedAt: stored.finishedAt,
+      attemptId: stored.attemptId,
+      status: "complete",
+    });
+  }, [answers, hydrate, quiz, quizId]);
+
   const hasRun = Object.keys(answers).length > 0;
 
   const rows = useMemo(
@@ -70,7 +90,7 @@ export function QuizReviewScreen() {
   return (
     <QuizLayout width="default" className="pt-10">
       <GeoButton variant="ghost" size="sm" asChild>
-        <Link to="/play/quiz/result" search={{ quiz: set.id }}>
+        <Link to="/play/quiz/result" search={{ quiz: set.id, attempt: undefined }}>
           <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
           Back to result
         </Link>

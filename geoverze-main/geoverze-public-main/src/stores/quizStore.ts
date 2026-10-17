@@ -79,6 +79,7 @@ type QuizState = {
     index: number;
     answers: Record<string, RunAnswer>;
     startedAt: number | null;
+    finishedAt?: number | null;
     attemptId: string | null;
     status: QuizStatus;
   }) => void;
@@ -125,7 +126,7 @@ export const useQuizStore = create<QuizState>((set) => ({
       index: snapshot.index,
       answers: snapshot.answers,
       startedAt: snapshot.startedAt,
-      finishedAt: snapshot.status === "complete" ? Date.now() : null,
+      finishedAt: snapshot.finishedAt ?? (snapshot.status === "complete" ? Date.now() : null),
       persisted: false,
       attemptId: snapshot.attemptId,
     }),

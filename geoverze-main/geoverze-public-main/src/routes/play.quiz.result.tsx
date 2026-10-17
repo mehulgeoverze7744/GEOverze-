@@ -5,6 +5,7 @@ import { QuizResultScreen } from "@/features/quiz";
 export const Route = createFileRoute("/play/quiz/result")({
   validateSearch: (search: Record<string, unknown>) => ({
     quiz: typeof search["quiz"] === "string" ? (search["quiz"] as string) : undefined,
+    attempt: typeof search["attempt"] === "string" ? (search["attempt"] as string) : undefined,
   }),
   head: () => ({
     meta: [
