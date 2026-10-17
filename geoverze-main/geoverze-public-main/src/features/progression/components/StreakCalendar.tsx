@@ -2,7 +2,7 @@ import { Check, Flame, X } from "lucide-react";
 
 import { GameCard } from "@/features/play/components/GameCard";
 import { cn } from "@/lib/utils";
-import { STREAK_DATA } from "../data/streak";
+import type { StreakWeekDay } from "../lib/streakStats";
 
 const STATE_STYLE: Record<string, string> = {
   done: "border-bronze/55 bg-gradient-bronze text-background",
@@ -12,10 +12,19 @@ const STATE_STYLE: Record<string, string> = {
 };
 
 /** Mon–Sun streak calendar with a weekly goal readout. */
-export function StreakCalendar() {
-  const done = STREAK_DATA.week.filter((day) => day.state === "done").length;
-  const goalPct = Math.min(100, Math.round((done / STREAK_DATA.weeklyGoal) * 100));
-
+export function StreakCalendar({
+  week,
+  weeklyGoal,
+  daysThisWeek,
+  weekPercent,
+  loading = false,
+}: {
+  week: readonly StreakWeekDay[];
+  weeklyGoal: number;
+  daysThisWeek: number;
+  weekPercent: number;
+  loading?: boolean;
+}) {
   return (
     <GameCard interactive={false} raised>
       <div className="p-6 sm:p-7">
@@ -25,23 +34,25 @@ export function StreakCalendar() {
             This week
           </h3>
           <p className="text-xs text-foreground/50">
-            {done} of {STREAK_DATA.weeklyGoal} day goal ({goalPct}%)
+            {loading
+              ? "Loading weekly activity"
+              : `${daysThisWeek} of ${weeklyGoal} day goal (${weekPercent}%)`}
           </p>
         </div>
 
         <ul className="mt-6 grid grid-cols-7 gap-2">
-          {STREAK_DATA.week.map((day) => (
+          {week.map((day) => (
             <li key={day.day} className="flex flex-col items-center gap-2">
               <span
                 className={cn(
                   "inline-flex h-11 w-full items-center justify-center rounded-xl border",
-                  STATE_STYLE[day.state],
+                  loading ? STATE_STYLE.upcoming : STATE_STYLE[day.state],
                 )}
                 aria-hidden="true"
               >
-                {day.state === "done" ? (
+                {!loading && day.state === "done" ? (
                   <Check className="h-4 w-4" strokeWidth={2.6} />
-                ) : day.state === "missed" ? (
+                ) : !loading && day.state === "missed" ? (
                   <X className="h-4 w-4" strokeWidth={2.4} />
                 ) : (
                   <span className="h-1.5 w-1.5 rounded-full bg-current" />

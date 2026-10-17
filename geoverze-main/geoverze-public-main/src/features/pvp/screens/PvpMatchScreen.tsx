@@ -8,6 +8,7 @@ import { PageShell } from "@/components/layout/PageShell";
 import { GeoButton, SectionContainer } from "@/components/shared";
 import { dashboardQuizAttemptsQueryKey } from "@/features/dashboard/hooks/useDashboardQuizAttempts";
 import { quizProgressStatsQueryKey } from "@/features/dashboard/hooks/useQuizProgressStats";
+import { streakStatsQueryKey } from "@/features/progression/data/fetchStreakStats";
 import { QuizPlay } from "@/features/quiz/components/QuizPlay";
 import { useQuizSet } from "@/features/quiz";
 import { selectUser, useAuthStore } from "@/stores/authStore";
@@ -71,6 +72,7 @@ export function PvpMatchScreen({
     void refreshProgression(user.id);
     void queryClient.invalidateQueries({ queryKey: quizProgressStatsQueryKey });
     void queryClient.invalidateQueries({ queryKey: dashboardQuizAttemptsQueryKey });
+    void queryClient.invalidateQueries({ queryKey: streakStatsQueryKey });
   }, [roomCompleted, rewardsSettled, user?.id, queryClient]);
 
   // Reset room-scoped guards when entering a different PvP room.

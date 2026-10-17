@@ -7,11 +7,14 @@ import { GameCard } from "@/features/play/components/GameCard";
 import { ProgressBarFill } from "../components/ProgressBarFill";
 import { ProgressionNav } from "../components/ProgressionNav";
 import { StreakCalendar } from "../components/StreakCalendar";
-import { STREAK_DATA } from "../data/streak";
+import { useStreakStats } from "../hooks/useStreakStats";
+import { dayCountLabel } from "../lib/streakStats";
 
 /** /play/streak */
 export function StreakPage() {
-  const bestPct = Math.min(100, Math.round((STREAK_DATA.current / STREAK_DATA.longest) * 100));
+  const { stats, loading, error } = useStreakStats();
+  const bestPct =
+    stats.longest > 0 ? Math.min(100, Math.round((stats.current / stats.longest) * 100)) : 0;
 
   return (
     <PageShell>
@@ -22,7 +25,7 @@ export function StreakPage() {
             Keep the fire alive
           </h1>
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-foreground/60 md:text-base">
-            One quiz a day keeps your streak and your daily XP bonus running.
+            One completed quiz a day keeps your streak and your daily XP bonus running.
           </p>
         </AnimatedSection>
         <div className="mt-8">
@@ -31,6 +34,9 @@ export function StreakPage() {
       </SectionContainer>
 
       <SectionContainer className="mt-[var(--space-section-sm)]">
+        {error ? (
+          <p className="mb-4 text-sm text-foreground/55">Could not load your streak right now.</p>
+        ) : null}
         <div className="grid gap-4 lg:grid-cols-3">
           <AnimatedSection className="lg:col-span-2">
             <GameCard interactive={false} raised className="h-full">
@@ -44,7 +50,14 @@ export function StreakPage() {
                   </span>
                   <div>
                     <p className="text-[clamp(2rem,4vw,2.8rem)] font-semibold leading-none text-foreground">
-                      <AnimatedCounter value={STREAK_DATA.current} suffix=" days" />
+                      {loading ? (
+                        <span className="text-foreground/35">—</span>
+                      ) : (
+                        <AnimatedCounter
+                          value={stats.current}
+                          suffix={stats.current === 1 ? " day" : " days"}
+                        />
+                      )}
                     </p>
                     <p className="mt-2 text-[0.6rem] font-semibold uppercase tracking-[0.18em] text-foreground/50">
                       Current streak
@@ -60,15 +73,15 @@ export function StreakPage() {
                         strokeWidth={2}
                         aria-hidden="true"
                       />
-                      Personal best {STREAK_DATA.longest} days
+                      {loading ? "Personal best" : `Personal best ${dayCountLabel(stats.longest)}`}
                     </span>
-                    <span>{bestPct}%</span>
+                    <span>{loading ? "—" : `${bestPct}%`}</span>
                   </div>
                   <ProgressBarFill
                     className="mt-2"
                     size="lg"
                     tone="flame"
-                    value={bestPct}
+                    value={loading ? 0 : bestPct}
                     label="Progress toward your personal best streak"
                   />
                 </div>
@@ -81,7 +94,13 @@ export function StreakPage() {
           </AnimatedSection>
 
           <AnimatedSection delay={80}>
-            <StreakCalendar />
+            <StreakCalendar
+              week={stats.week}
+              weeklyGoal={stats.weeklyGoal}
+              daysThisWeek={stats.daysThisWeek}
+              weekPercent={stats.weekPercent}
+              loading={loading}
+            />
           </AnimatedSection>
         </div>
       </SectionContainer>

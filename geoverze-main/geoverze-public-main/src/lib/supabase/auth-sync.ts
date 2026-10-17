@@ -18,6 +18,7 @@ import type { Session, User } from "@supabase/supabase-js";
 
 import type { SkillLevelId } from "@/features/auth/data/onboarding";
 import { getLevelTitle, getXpProgress } from "@/features/progression/lib/progress";
+import { calendarDateInZone, liveCurrentStreak } from "@/features/progression/lib/streakStats";
 import { useAuthStore, type SessionUser } from "@/stores/authStore";
 import { useOnboardingStore } from "@/stores/onboardingStore";
 import {
@@ -70,7 +71,7 @@ async function hydrateProgression(user: User) {
   const { data, error } = await supabase
     .from("user_progression")
     .select(
-      "xp, level, credits, total_quizzes, total_correct, total_answered, current_streak, longest_streak",
+      "xp, level, credits, total_quizzes, total_correct, total_answered, current_streak, longest_streak, last_played_date",
     )
     .eq("user_id", user.id)
     .maybeSingle();
@@ -99,7 +100,11 @@ async function hydrateProgression(user: User) {
     xpForLevel,
     credits: data.credits,
     monthlyGoal: 100,
-    currentStreak: data.current_streak,
+    currentStreak: liveCurrentStreak(
+      data.current_streak,
+      data.last_played_date,
+      calendarDateInZone(new Date()),
+    ),
     longestStreak: data.longest_streak,
     accuracy,
     totalQuizzes: data.total_quizzes,

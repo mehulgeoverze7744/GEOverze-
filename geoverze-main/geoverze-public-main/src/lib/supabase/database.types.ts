@@ -1237,6 +1237,7 @@ export type Database = {
         Returns: string
       }
       get_my_plan_tier: { Args: never; Returns: Json }
+      get_my_streak_stats: { Args: never; Returns: Json }
       get_user_plan_tier: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {

@@ -6,16 +6,24 @@ import { MetaChip } from "@/features/play/components/Badges";
 import { GameCard } from "@/features/play/components/GameCard";
 import { useProfile } from "@/features/profile/lib/useProfile";
 import type { PlayerSnapshot } from "../data/player";
+import { useStreakStats } from "../hooks/useStreakStats";
 
 /** Player summary header used at the top of every progression surface. */
 export function PlayerSummaryCard({ player }: { player: PlayerSnapshot }) {
   const profile = useProfile();
+  const { stats: streak } = useStreakStats();
+  const currentStreak = streak.current;
 
   const stats = [
     { icon: Sparkles, label: "Total XP", value: player.xp, suffix: " XP" },
     { icon: Zap, label: "Quizzes", value: player.totalQuizzes, suffix: "" },
     { icon: Target, label: "Accuracy", value: player.accuracy, suffix: "%", decimals: 1 },
-    { icon: Flame, label: "Streak", value: player.currentStreak, suffix: " days" },
+    {
+      icon: Flame,
+      label: "Streak",
+      value: currentStreak,
+      suffix: currentStreak === 1 ? " day" : " days",
+    },
     {
       icon: Globe2,
       label: "Countries",

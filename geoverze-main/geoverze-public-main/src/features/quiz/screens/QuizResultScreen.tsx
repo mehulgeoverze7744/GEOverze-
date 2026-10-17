@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { GeoButton } from "@/components/shared";
 import { dashboardQuizAttemptsQueryKey } from "@/features/dashboard/hooks/useDashboardQuizAttempts";
 import { quizProgressStatsQueryKey } from "@/features/dashboard/hooks/useQuizProgressStats";
+import { streakStatsQueryKey } from "@/features/progression/data/fetchStreakStats";
 import { getLevelTitle, getXpProgress } from "@/features/progression/lib/progress";
 import { QUIZ_RESULT_NEXT_KEY, readMigratingValue } from "@/lib/persist-key-migration";
 import { supabase } from "@/lib/supabase/client";
@@ -205,6 +206,7 @@ export function QuizResultScreen() {
         setServerResult(result);
         void queryClient.invalidateQueries({ queryKey: quizProgressStatsQueryKey });
         void queryClient.invalidateQueries({ queryKey: dashboardQuizAttemptsQueryKey });
+        void queryClient.invalidateQueries({ queryKey: streakStatsQueryKey });
 
         if (result.duplicate) {
           // Server confirmed this attempt_id was already recorded.

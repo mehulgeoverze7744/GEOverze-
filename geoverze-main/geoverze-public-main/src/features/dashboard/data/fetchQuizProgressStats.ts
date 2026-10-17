@@ -1,4 +1,9 @@
 import { supabase } from "@/lib/supabase/client";
+import {
+  calendarDateInZone,
+  completionDatesFromTimestamps,
+  computeStreakStats,
+} from "@/features/progression/lib/streakStats";
 
 export type QuizProgressStats = {
   gamesPlayed: number;
@@ -20,6 +25,7 @@ type AttemptRow = {
   score: number;
   correct: number;
   total: number;
+  completed_at?: string;
 };
 
 function uniqueAttempts(rows: AttemptRow[]): AttemptRow[] {
@@ -61,7 +67,10 @@ export async function fetchQuizProgressStats(userId: string): Promise<QuizProgre
       .select("total_quizzes, total_correct, total_answered, current_streak")
       .eq("user_id", userId)
       .maybeSingle(),
-    supabase.from("quiz_attempts").select("id, mode, score, correct, total").eq("user_id", userId),
+    supabase
+      .from("quiz_attempts")
+      .select("id, mode, score, correct, total, completed_at")
+      .eq("user_id", userId),
     countCompetitiveWins(userId),
   ]);
 
@@ -84,10 +93,16 @@ export async function fetchQuizProgressStats(userId: string): Promise<QuizProgre
     (row) => isSoloFamily(row.mode) && row.total > 0 && row.score === row.total,
   ).length;
 
+  const today = calendarDateInZone(new Date());
+  const streak = computeStreakStats(
+    completionDatesFromTimestamps(attempts.map((row) => row.completed_at)),
+    today,
+  );
+
   return {
     gamesPlayed: Math.max(0, gamesPlayed),
     wins: Math.max(0, competitiveWins + soloWins),
     accuracy,
-    currentStreak: Math.max(0, progression?.current_streak ?? 0),
+    currentStreak: streak.current,
   };
 }

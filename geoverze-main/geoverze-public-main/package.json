@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test:persist": "node --experimental-strip-types --test src/lib/persist-key-migration.test.ts"
+    "test:persist": "node --experimental-strip-types --test src/lib/persist-key-migration.test.ts",
+    "test:streak": "node --experimental-strip-types --test src/features/progression/lib/streakStats.test.ts",
+    "test": "node --experimental-strip-types --test src/lib/persist-key-migration.test.ts src/features/progression/lib/streakStats.test.ts src/features/rooms/lib/membershipDiff.test.ts src/features/draw-guess/lib/canvasCoords.test.ts"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",

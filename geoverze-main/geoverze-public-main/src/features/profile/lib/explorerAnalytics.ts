@@ -1,11 +1,13 @@
 import { LEARNING_PROGRESS } from "@/features/dashboard/data/dashboard";
+import { useStreakStats } from "@/features/progression/hooks/useStreakStats";
 import { selectPlayer, useProgressionStore } from "@/stores/progressionStore";
 
-import { PROFILE_STATS, RECORD_STATS, STREAK } from "../data/stats";
+import { PROFILE_STATS, RECORD_STATS } from "../data/stats";
 
 /** Aggregated explorer analytics from existing placeholder progression sources. */
 export function useExplorerAnalytics() {
   const player = useProgressionStore(selectPlayer);
+  const { stats: streak } = useStreakStats();
 
   const hoursLearned = PROFILE_STATS.find((s) => s.id === "hours");
   const questionsAnswered = RECORD_STATS.find((s) => s.id === "questions");
@@ -24,7 +26,7 @@ export function useExplorerAnalytics() {
       accuracy: player.accuracy,
       countriesExplored: player.countriesExplored,
       countriesTotal: player.countriesTotal,
-      currentStreak: player.currentStreak,
+      currentStreak: streak.current,
     },
     performanceHistory: [] as readonly { label: string; accuracy: number; quizzes: number }[],
     categories: LEARNING_PROGRESS.map((track) => ({
@@ -46,9 +48,9 @@ export function useExplorerAnalytics() {
     ],
     winRate: winRate?.value ?? 0,
     consistency: {
-      current: STREAK.current,
-      longest: STREAK.longest,
-      recentActivity: STREAK.week,
+      current: streak.current,
+      longest: streak.longest,
+      recentActivity: streak.week.map((day) => day.done),
     },
     supporting: {
       hoursLearned: hoursLearned?.value ?? 0,

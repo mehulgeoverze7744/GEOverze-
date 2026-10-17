@@ -45,7 +45,7 @@ export const PROFILE_STATS: readonly ProfileStat[] = [
   {
     id: "streak",
     label: "Current streak",
-    value: 12,
+    value: 0,
     suffix: " days",
     hint: "Keep it alive",
     icon: Flame,
@@ -53,7 +53,7 @@ export const PROFILE_STATS: readonly ProfileStat[] = [
   {
     id: "longest",
     label: "Longest streak",
-    value: 34,
+    value: 0,
     suffix: " days",
     hint: "Personal best",
     icon: Trophy,
@@ -128,14 +128,14 @@ export const RECORD_STATS: readonly ProfileStat[] = [
 ] as const;
 
 export const STREAK = {
-  current: 12,
-  longest: 34,
+  current: 0,
+  longest: 0,
   weeklyGoal: 5,
-  daysThisWeek: 4,
+  daysThisWeek: 0,
   /** Mon–Sun completion for the current week. */
-  week: [true, true, false, true, true, false, false],
+  week: [false, false, false, false, false, false, false],
   /** Days completed in the current calendar month. */
-  monthDone: 18,
+  monthDone: 0,
   monthTotal: 30,
 } as const;
 

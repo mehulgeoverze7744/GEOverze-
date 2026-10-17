@@ -1,14 +1,22 @@
 import { Shuffle } from "lucide-react";
 
 import { AnimatedCounter, GeoButton, SectionContainer } from "@/components/shared";
+import { useStreakStats } from "@/features/progression/hooks/useStreakStats";
 import { selectPlayer, useProgressionStore } from "@/stores/progressionStore";
 import { GameCard } from "./GameCard";
 
 /** Lobby hero: heading, stat pills and the random-quiz CTA. */
 export function PlayHero({ onRandom }: { onRandom: () => void }) {
   const player = useProgressionStore(selectPlayer);
+  const { stats: streak } = useStreakStats();
   const stats = [
-    { id: "streak", label: "Streak", value: player.currentStreak, suffix: " days", emoji: "🔥" },
+    {
+      id: "streak",
+      label: "Streak",
+      value: streak.current,
+      suffix: streak.current === 1 ? " day" : " days",
+      emoji: "🔥",
+    },
     { id: "xp", label: "Total XP", value: player.xp, emoji: "✨" },
     { id: "credits", label: "Credits", value: player.credits, emoji: "🪙" },
   ] as const;
