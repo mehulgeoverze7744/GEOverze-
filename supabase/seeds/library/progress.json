@@ -1,0 +1,14 @@
+{
+  "objective": "13-category quiz library: 325 quizzes, 3250 questions",
+  "stages": {
+    "audit": "complete",
+    "architecture": "complete",
+    "content": "complete",
+    "thumbnails": "complete — 325 derived JPEGs + generated map",
+    "sql": "local migration ready; remote not applied",
+    "frontend": "thumbnail map wired; catalogue needs DB rows",
+    "validation": "local validator passed"
+  },
+  "applyProduction": "npx supabase db query --linked -f supabase/migrations/20261017210000_thirteen_category_quiz_library.sql  (currently linked to staging). For Geoverze Production (hcxifkgzugxqijttmpzc), run the same file through an authorized production query after linking or via MCP execute_sql in category chunks under supabase/seeds/library/sql-chunks/.",
+  "preserve": ["countries collection", "q-atlas-sprint"]
+}
