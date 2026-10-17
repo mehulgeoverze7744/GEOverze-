@@ -61,22 +61,10 @@ export const DISCOVERY_RAILS: readonly DiscoveryRail[] = [
     quizIds: ["q-flag-blitz", "q-grand-tour", "q-extremes", "q-atlas-sprint", "q-pin-the-place"],
   },
   {
-    id: "most-played",
-    title: "Most played",
-    description: "The all-time favourites.",
-    quizIds: ["q-flag-blitz", "q-atlas-sprint", "q-grand-tour", "q-capital-cities", "q-extremes"],
-  },
-  {
     id: "new",
     title: "New arrivals",
     description: "Fresh sets, straight from the studio and the community.",
     quizIds: ["q-deep-blue", "q-summit", "q-wildlands", "q-pin-the-place", "q-protected"],
-  },
-  {
-    id: "recommended",
-    title: "Recommended for you",
-    description: "Matched to your interests and current level.",
-    quizIds: ["q-monuments", "q-festival", "q-riverrun", "q-timeline", "q-wildlands"],
   },
   {
     id: "recent",

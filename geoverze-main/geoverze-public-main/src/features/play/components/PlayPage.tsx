@@ -227,11 +227,12 @@ export function PlayPage() {
 
           <AnimatedSection className="mt-16">
             <SectionHeading
+              className="gap-2 sm:gap-6 [&_h2]:mt-2 [&_h2+p]:mt-2"
               eyebrow="Browse everything"
               title="Find an exact match"
               description="Search and filter the full catalog by difficulty, category, length, size and creator."
             />
-            <div className="mt-7">
+            <div className="mt-5">
               <FilterBar
                 filters={filters}
                 onChange={patch}
