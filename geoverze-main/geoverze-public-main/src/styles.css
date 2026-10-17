@@ -776,8 +776,65 @@
  * ------------------------------------------------------------------------- */
 
 @layer components {
+  /* Shared charcoal so the hero floor and page stone meet in the same shadow. */
+  .geostore-page {
+    --geostore-stone: oklch(0.055 0.006 58);
+    position: relative;
+    isolation: isolate;
+  }
+
+  .geostore-page-bg {
+    background-color: var(--geostore-stone, oklch(0.055 0.006 58));
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+  }
+
+  .geostore-page-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(
+        to bottom,
+        oklch(0.05 0.006 58 / 0.22) 0%,
+        oklch(0.05 0.006 58 / 0.42) 38%,
+        oklch(0.05 0.006 58 / 0.58) 72%,
+        oklch(0.05 0.006 58 / 0.66) 100%
+      ),
+      radial-gradient(ellipse at 50% 12%, oklch(0.55 0.08 70 / 0.07), transparent 52%);
+  }
+
+  .geostore-category-cover-fade {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 48%,
+      oklch(0.1 0.006 60 / 0.08) 62%,
+      oklch(0.1 0.006 60 / 0.28) 76%,
+      oklch(0.1 0.006 60 / 0.62) 88%,
+      oklch(0.1 0.006 60 / 0.94) 100%
+    );
+  }
+
+  .geostore-category-cover-fade--compact {
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 46%,
+      oklch(0.1 0.006 60 / 0.1) 64%,
+      oklch(0.1 0.006 60 / 0.34) 80%,
+      oklch(0.1 0.006 60 / 0.72) 92%,
+      oklch(0.1 0.006 60 / 0.94) 100%
+    );
+  }
+
   .geostore-hero {
-    --geostore-hero-fade: clamp(6.25rem, 12vh, 11.25rem);
+    --geostore-hero-fade: clamp(8.5rem, 20vw, 17rem);
     position: relative;
     z-index: 1;
     width: 100%;
@@ -797,32 +854,6 @@
     z-index: 0;
     overflow: hidden;
     pointer-events: none;
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      #000 0%,
-      #000 calc(100% - var(--geostore-hero-fade)),
-      rgb(0 0 0 / 0.94) calc(100% - var(--geostore-hero-fade) * 0.78),
-      rgb(0 0 0 / 0.78) calc(100% - var(--geostore-hero-fade) * 0.58),
-      rgb(0 0 0 / 0.55) calc(100% - var(--geostore-hero-fade) * 0.4),
-      rgb(0 0 0 / 0.3) calc(100% - var(--geostore-hero-fade) * 0.24),
-      rgb(0 0 0 / 0.12) calc(100% - var(--geostore-hero-fade) * 0.1),
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      #000 0%,
-      #000 calc(100% - var(--geostore-hero-fade)),
-      rgb(0 0 0 / 0.94) calc(100% - var(--geostore-hero-fade) * 0.78),
-      rgb(0 0 0 / 0.78) calc(100% - var(--geostore-hero-fade) * 0.58),
-      rgb(0 0 0 / 0.55) calc(100% - var(--geostore-hero-fade) * 0.4),
-      rgb(0 0 0 / 0.3) calc(100% - var(--geostore-hero-fade) * 0.24),
-      rgb(0 0 0 / 0.12) calc(100% - var(--geostore-hero-fade) * 0.1),
-      transparent 100%
-    );
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
   }
 
   .geostore-hero__bg picture {
@@ -859,22 +890,24 @@
     );
   }
 
-  /* Soft veil over the dissolving edge — blends into the page-level stone */
+  /* Floor dissolves into the same shadowed stone as the rest of the page. */
   .geostore-hero__fade {
     position: absolute;
-    bottom: 0;
+    bottom: -1px;
     left: 0;
     right: 0;
     height: var(--geostore-hero-fade);
     z-index: 2;
+    pointer-events: none;
     background: linear-gradient(
       to bottom,
-      transparent 0%,
-      oklch(0.08 0.008 60 / 0.08) 42%,
-      oklch(0.06 0.006 60 / 0.04) 72%,
-      transparent 100%
+      oklch(0.05 0.006 58 / 0) 0%,
+      oklch(0.05 0.006 58 / 0.12) 22%,
+      oklch(0.05 0.006 58 / 0.32) 46%,
+      oklch(0.05 0.006 58 / 0.55) 68%,
+      oklch(0.05 0.006 58 / 0.78) 86%,
+      oklch(0.05 0.006 58 / 0.92) 100%
     );
-    pointer-events: none;
   }
 
   /* Title → CTAs → cards as one group, tucked under the GEOSTORE label */

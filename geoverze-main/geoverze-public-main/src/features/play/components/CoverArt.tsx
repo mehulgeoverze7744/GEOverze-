@@ -83,14 +83,7 @@ export function CoverArt({
               className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-charcoal/55 to-transparent"
             />
           ) : resolvedOverlay === "category" ? (
-            <span
-              aria-hidden
-              className="absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(to bottom, rgba(0,0,0,0) 45%, rgba(7,5,3,0.15) 65%, rgba(7,5,3,0.85) 100%)",
-              }}
-            />
+            <span aria-hidden className="geostore-category-cover-fade" />
           ) : null}
           {showIconOnCover ? (
             <span className="absolute bottom-3 left-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-bronze/40 bg-[oklch(0.12_0.006_60/0.85)] text-bronze-glow">

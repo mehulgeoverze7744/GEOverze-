@@ -37,18 +37,27 @@ function CategoryTileBody({
   return (
     <>
       <div className="relative">
-        <div className={cn(comingSoon && "pointer-events-none overflow-hidden")}>
+        <div className={cn("relative", comingSoon && "pointer-events-none overflow-hidden")}>
           <div className={cn(comingSoon && "origin-center scale-[1.03] blur-[2.5px]")}>
             <CoverArt
               art={`cat-${category.id}`}
               icon={category.icon}
               ratio={banner ? "banner" : "wide"}
               fit={banner ? "cover" : "contain"}
-              overlay={banner ? "subtle" : "hero"}
+              overlay={banner ? "none" : "hero"}
               {...(compact ? { className: "aspect-[8/2.25]" } : {})}
               {...(banner ? { imageSrc: banner.src, imageAlt: banner.alt } : {})}
             />
           </div>
+          {banner ? (
+            <span
+              aria-hidden
+              className={cn(
+                "geostore-category-cover-fade",
+                compact && "geostore-category-cover-fade--compact",
+              )}
+            />
+          ) : null}
           {comingSoon ? (
             <div aria-hidden className="absolute inset-0 bg-charcoal/25 backdrop-blur-[1px]" />
           ) : null}
@@ -75,8 +84,8 @@ function CategoryTileBody({
       <div
         className={
           compact
-            ? "flex items-start justify-between gap-3 p-3.5 sm:p-4"
-            : "flex items-start justify-between gap-4 p-5"
+            ? "relative z-[2] flex items-start justify-between gap-3 px-3.5 pb-3.5 pt-2.5 sm:px-4 sm:pb-4"
+            : "relative z-[2] flex items-start justify-between gap-4 px-5 pb-5 pt-3"
         }
       >
         <div className="min-w-0">
@@ -127,7 +136,7 @@ export function CategoryTile({
       <article
         aria-disabled="true"
         aria-label={`${category.label}, coming soon`}
-        className="block cursor-default overflow-hidden rounded-2xl border border-bronze/12 bg-charcoal/45 select-none"
+        className="block cursor-default overflow-hidden rounded-2xl border border-bronze/12 bg-[oklch(0.10_0.006_60/0.92)] select-none"
       >
         {body}
       </article>
@@ -138,7 +147,7 @@ export function CategoryTile({
     <Link
       to="/geostore/category/$slug"
       params={{ slug: category.id }}
-      className="group/card group block cursor-pointer overflow-hidden rounded-2xl border border-bronze/12 bg-charcoal/45 transition-all motion-base hover:border-bronze/35 hover:bronze-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+      className="group/card group block cursor-pointer overflow-hidden rounded-2xl border border-bronze/12 bg-[oklch(0.10_0.006_60/0.92)] transition-all motion-base hover:border-bronze/35 hover:bronze-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
     >
       {body}
     </Link>

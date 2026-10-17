@@ -21,11 +21,8 @@ export function StoreHomeBackground() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-cover bg-center bg-no-repeat"
+      className="geostore-page-bg pointer-events-none fixed inset-0 z-0 overflow-hidden"
       style={{ backgroundImage: `url(${storeStoneBg})` }}
-    >
-      <div className="absolute inset-0 bg-[oklch(0.06_0.008_60/0.28)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_18%,oklch(0.55_0.08_70/0.08),transparent_55%)]" />
-    </div>
+    />
   );
 }
