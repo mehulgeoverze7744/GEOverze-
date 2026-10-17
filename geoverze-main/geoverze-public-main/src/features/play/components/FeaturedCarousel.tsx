@@ -7,6 +7,9 @@ import type { FeaturedHeroSlide } from "../data/featuredHero";
 import { DifficultyBadge, MetaChip } from "./Badges";
 import { CoverArt } from "./CoverArt";
 
+/** Catalog quiz slides that keep title and badges only in the Let's Play hero. */
+const HERO_SLIDES_WITHOUT_META = new Set(["q-flag-blitz", "q-pin-the-place"]);
+
 /**
  * Featured carousel. One large slide at a time, auto-advancing until the user
  * interacts, with dot controls and keyboard-reachable arrows.
@@ -43,10 +46,11 @@ export function FeaturedCarousel({
   };
 
   const hasMeta =
-    Boolean(active.creator) ||
-    active.players != null ||
-    active.rating != null ||
-    (active.questions != null && active.minutes != null);
+    !HERO_SLIDES_WITHOUT_META.has(active.id) &&
+    (Boolean(active.creator) ||
+      active.players != null ||
+      active.rating != null ||
+      (active.questions != null && active.minutes != null));
 
   return (
     <div className="group/card game-surface overflow-hidden rounded-2xl">
@@ -92,7 +96,12 @@ export function FeaturedCarousel({
               ) : null}
             </div>
           ) : null}
-          <GeoButton variant="solid" size="lg" className="mt-5" onClick={() => onPlay(active)}>
+          <GeoButton
+            variant="solid"
+            size="lg"
+            className={hasMeta ? "mt-5" : "mt-4"}
+            onClick={() => onPlay(active)}
+          >
             <Play className="h-4 w-4" strokeWidth={2.4} />
             Play now
           </GeoButton>

@@ -13,7 +13,7 @@ export type GameType = {
   imageSrc?: string;
   imageAlt?: string;
   objectPosition?: string;
-  to?: "/play/search" | "/play/draw-guess" | "/play/imposter";
+  to?: "/play/search" | "/play/catalogue" | "/play/draw-guess" | "/play/imposter";
   search?: GameTypeSearch;
 };
 
@@ -65,7 +65,6 @@ export const GAME_TYPES: readonly GameType[] = [
     imageSrc: "/assets/play/educational-quizzes.jpg",
     imageAlt: "Desk globe, atlas, and compass for Educational Quizzes",
     objectPosition: "center 42%",
-    to: "/play/search",
-    search: { q: undefined, category: undefined },
+    to: "/play/catalogue",
   },
 ];

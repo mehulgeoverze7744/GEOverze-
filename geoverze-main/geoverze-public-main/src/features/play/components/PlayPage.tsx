@@ -71,6 +71,10 @@ export function PlayPage() {
       navigate({ to: "/play/imposter" });
       return;
     }
+    if (slide.action.to === "/play/catalogue") {
+      navigate({ to: "/play/catalogue" });
+      return;
+    }
     navigate({
       to: slide.action.to,
       search: slide.action.search ?? { q: undefined, category: undefined },

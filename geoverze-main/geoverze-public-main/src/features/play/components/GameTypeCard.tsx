@@ -20,6 +20,8 @@ export function GameTypeCard({ type }: { type: GameType }) {
       navigate({ to: "/play/draw-guess" });
     } else if (type.to === "/play/imposter") {
       navigate({ to: "/play/imposter" });
+    } else if (type.to === "/play/catalogue") {
+      navigate({ to: "/play/catalogue" });
     } else {
       navigate({
         to: type.to,
@@ -98,6 +100,11 @@ export function GameTypeCard({ type }: { type: GameType }) {
               </Link>
             ) : type.to === "/play/imposter" ? (
               <Link to="/play/imposter" onClick={(event) => event.stopPropagation()}>
+                <Play className="h-4 w-4" strokeWidth={2.4} aria-hidden />
+                Play now
+              </Link>
+            ) : type.to === "/play/catalogue" ? (
+              <Link to="/play/catalogue" onClick={(event) => event.stopPropagation()}>
                 <Play className="h-4 w-4" strokeWidth={2.4} aria-hidden />
                 Play now
               </Link>
