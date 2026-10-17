@@ -21,6 +21,7 @@ import { CreditHistoryCard } from "../components/CreditHistoryCard";
 import { CreditRulesCard } from "../components/CreditRulesCard";
 import { MonthlyProgressCard } from "../components/MonthlyProgressCard";
 import { ProgressionNav } from "../components/ProgressionNav";
+import { XpEarningSection } from "../components/XpEarningSection";
 import { CREDIT_HISTORY_FILTERS, type CreditHistoryFilter } from "../data/credits";
 import { useCreditHistory } from "../hooks/useCreditHistory";
 import { filterLedgerEntries } from "../lib/mapCreditLedgerEntry";
@@ -63,6 +64,7 @@ export function CreditHistoryPage() {
             </div>
           </AnimatedSection>
         </SectionContainer>
+        <XpEarningSection className="mt-[var(--space-section)]" />
       </PageShell>
     );
   }
@@ -76,7 +78,8 @@ export function CreditHistoryPage() {
             Every credit, accounted for
           </h1>
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-foreground/60 md:text-base">
-            Your full credit ledger — gameplay earns, GVRZE Store spending, and upcoming expiry dates.
+            Your full credit ledger — gameplay earns, GVRZE Store spending, and upcoming expiry
+            dates.
           </p>
         </AnimatedSection>
         <div className="mt-8">
@@ -185,6 +188,8 @@ export function CreditHistoryPage() {
           )}
         </div>
       </SectionContainer>
+
+      <XpEarningSection className="mt-[var(--space-section)]" />
     </PageShell>
   );
 }

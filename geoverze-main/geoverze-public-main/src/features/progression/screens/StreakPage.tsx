@@ -2,28 +2,15 @@ import { Link } from "@tanstack/react-router";
 import { Flame, Trophy } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
-import {
-  AnimatedCounter,
-  AnimatedSection,
-  GeoButton,
-  SectionContainer,
-  SectionHeading,
-} from "@/components/shared";
+import { AnimatedCounter, AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
 import { GameCard } from "@/features/play/components/GameCard";
 import { ProgressBarFill } from "../components/ProgressBarFill";
 import { ProgressionNav } from "../components/ProgressionNav";
 import { StreakCalendar } from "../components/StreakCalendar";
-import { STREAK_DATA, STREAK_MESSAGES } from "../data/streak";
+import { STREAK_DATA } from "../data/streak";
 
 /** /play/streak */
 export function StreakPage() {
-  const goalPct = Math.min(
-    100,
-    Math.round(
-      (STREAK_DATA.week.filter((day) => day.state === "done").length / STREAK_DATA.weeklyGoal) *
-        100,
-    ),
-  );
   const bestPct = Math.min(100, Math.round((STREAK_DATA.current / STREAK_DATA.longest) * 100));
 
   return (
@@ -97,25 +84,6 @@ export function StreakPage() {
             <StreakCalendar />
           </AnimatedSection>
         </div>
-      </SectionContainer>
-
-      <SectionContainer className="mt-[var(--space-section)]">
-        <AnimatedSection>
-          <SectionHeading
-            eyebrow="Weekly goal"
-            title={`${goalPct}% of your ${STREAK_DATA.weeklyGoal}-day goal`}
-            description="Streak bonuses scale with consistency, not intensity."
-          />
-        </AnimatedSection>
-        <ul className="mt-8 grid gap-3 sm:grid-cols-3">
-          {STREAK_MESSAGES.map((message) => (
-            <li key={message}>
-              <GameCard interactive={false} className="h-full p-5">
-                <p className="text-sm leading-relaxed text-foreground/70">{message}</p>
-              </GameCard>
-            </li>
-          ))}
-        </ul>
       </SectionContainer>
     </PageShell>
   );

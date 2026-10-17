@@ -1,15 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { LinkProps } from "@tanstack/react-router";
-import {
-  CalendarDays,
-  CalendarRange,
-  Coins,
-  Flame,
-  Gift,
-  Lock,
-  Receipt,
-  TrendingUp,
-} from "lucide-react";
+import { CalendarDays, CalendarRange, Coins, Flame, Gift, Lock, Receipt } from "lucide-react";
 
 import { isProgressionNavLocked } from "../lib/availability";
 
@@ -19,7 +10,7 @@ export const PROGRESSION_LINKS: readonly {
   icon: typeof Coins;
   search?: LinkProps["search"];
 }[] = [
-  { to: "/play/progression", label: "Progression", icon: TrendingUp },
+  { to: "/play/credit-history", label: "Credit history", icon: Receipt },
   {
     to: "/quiz-history-and-rewards",
     label: "Rewards",
@@ -30,7 +21,6 @@ export const PROGRESSION_LINKS: readonly {
   { to: "/play/daily-challenges", label: "Daily", icon: CalendarDays },
   { to: "/play/weekly-challenges", label: "Weekly", icon: CalendarRange },
   { to: "/play/leaderboard", label: "Leaderboard", icon: Coins },
-  { to: "/play/credit-history", label: "Credit history", icon: Receipt },
 ] as const;
 
 /** Horizontal, scrollable sub-navigation shared by every progression page. */

@@ -1,23 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import { ProgressionHub } from "@/features/progression";
-
+/** Progression content now lives on Credit History. */
 export const Route = createFileRoute("/play/progression")({
-  head: () => ({
-    meta: [
-      { title: "Progression — GVRZE" },
-      {
-        name: "description",
-        content: "Track your XP, credits, streak and challenges across the GVRZE universe.",
-      },
-      { property: "og:title", content: "Progression — GVRZE" },
-      {
-        property: "og:description",
-        content: "Track your XP, credits, streak and challenges across the GVRZE universe.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: ProgressionHub,
+  beforeLoad: () => {
+    throw redirect({
+      to: "/play/credit-history",
+      replace: true,
+    });
+  },
 });
