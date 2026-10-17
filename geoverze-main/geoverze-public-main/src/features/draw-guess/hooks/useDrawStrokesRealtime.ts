@@ -4,17 +4,24 @@ import { supabase } from "@/lib/supabase/client";
 import { fetchDrawStrokesSince } from "../data/drawRoomApi";
 import type { DrawStroke } from "../types";
 
+type ReplayHooks = {
+  onReplayStart?: () => void;
+  onReplayEnd?: () => void;
+};
+
 /**
- * Incremental (not full-refetch) stroke sync for one turn: replays any
- * missed strokes on mount/reconnect, then appends new ones as they arrive.
+ * Incremental stroke sync: replay missed rows on subscribe, then append INSERTs.
  */
 export function useDrawStrokesRealtime(
   turnId: string | undefined,
   onStroke: (stroke: DrawStroke) => void,
+  hooks: ReplayHooks = {},
 ) {
   const lastIdRef = useRef(0);
   const onStrokeRef = useRef(onStroke);
+  const hooksRef = useRef(hooks);
   onStrokeRef.current = onStroke;
+  hooksRef.current = hooks;
 
   useEffect(() => {
     lastIdRef.current = 0;
@@ -25,11 +32,16 @@ export function useDrawStrokesRealtime(
     let channel: ReturnType<typeof supabase.channel> | null = null;
 
     const replay = async () => {
-      const rows = await fetchDrawStrokesSince(turnId, lastIdRef.current);
-      if (cancelled) return;
-      for (const row of rows) {
-        lastIdRef.current = Math.max(lastIdRef.current, row.id);
-        onStrokeRef.current(row);
+      hooksRef.current.onReplayStart?.();
+      try {
+        const rows = await fetchDrawStrokesSince(turnId, lastIdRef.current);
+        if (cancelled) return;
+        for (const row of rows) {
+          lastIdRef.current = Math.max(lastIdRef.current, row.id);
+          onStrokeRef.current(row);
+        }
+      } finally {
+        if (!cancelled) hooksRef.current.onReplayEnd?.();
       }
     };
 
