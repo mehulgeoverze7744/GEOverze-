@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { ImposterHubScreen } from "@/features/geography-imposter";
 
-const t = "Geography Imposter — GVRZE";
+const t = "GEOsus — GVRZE";
 const d = "Social deduction geography game. Spot the imposter before they escape!";
 
 export const Route = createFileRoute("/play/imposter/")({

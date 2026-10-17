@@ -89,7 +89,7 @@ export function buildFeaturedHeroSlides(catalog: readonly Quiz[]): FeaturedHeroS
     catalogHeroSlide("q-flag-blitz", "Flag Blitz", catalog),
     catalogHeroSlide("q-pin-the-place", "Pin the Place", catalog),
     gameTypeHeroSlide("draw-guess", "Draw and Guess"),
-    gameTypeHeroSlide("geography-imposter", "Geography Imposter"),
+    gameTypeHeroSlide("geography-imposter", "GEOsus"),
     gameTypeHeroSlide("emoji-fun", "Fun Emoji Quiz"),
   ];
 }

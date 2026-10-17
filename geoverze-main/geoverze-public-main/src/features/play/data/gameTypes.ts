@@ -32,13 +32,14 @@ export const GAME_TYPES: readonly GameType[] = [
   },
   {
     id: "geography-imposter",
-    title: "Geography Imposter",
+    title: "GEOsus",
     description: "Find the imposter using geography clues before they fool everyone.",
     emoji: "🕵️‍♂️",
     art: "geography-imposter",
     tags: ["Social", "Deduction"],
-    imageSrc: "/assets/play/geography-imposter.jpg",
-    imageAlt: "Open atlas with a magnifying glass and guess notes for Geography Imposter",
+    imageSrc: "/assets/play/geography-imposter-thumbnail.jpg",
+    imageAlt: "Vintage globe, ivory mask, compass, and maps for GEOsus",
+    objectPosition: "center 46%",
     to: "/play/imposter",
   },
   {

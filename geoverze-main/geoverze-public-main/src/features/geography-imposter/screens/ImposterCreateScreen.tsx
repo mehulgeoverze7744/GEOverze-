@@ -68,8 +68,7 @@ export function ImposterCreateScreen() {
             Room Settings
           </h1>
           <p className="mt-3 text-[0.88rem] leading-relaxed text-foreground/60">
-            Configure your Geography Imposter room. You will receive a shareable code after
-            creation.
+            Configure your GEOsus room. You will receive a shareable code after creation.
           </p>
         </AnimatedSection>
 

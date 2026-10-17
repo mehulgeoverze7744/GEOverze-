@@ -115,7 +115,7 @@ export function ImposterLobbyScreen({
             <div>
               <MetaChip tone="bronze">{STATUS_LABEL[room.status] ?? room.status}</MetaChip>
               <h1 className="mt-3 text-[1.5rem] font-semibold tracking-tight text-foreground">
-                Geography Imposter
+                GEOsus
               </h1>
               <p className="mt-1 text-[0.82rem] text-foreground/50 capitalize">
                 {room.difficulty} · {room.category?.replace(/_/g, " ") ?? "Mixed"}
