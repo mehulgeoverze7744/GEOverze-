@@ -15,7 +15,8 @@ import {
 import { useBookmarksStore } from "@/stores/bookmarksStore";
 import { getFeaturedCategories, type QuizCategory } from "../data/categories";
 import { GAME_MODES, isGameModeAvailable, type GameMode } from "../data/gameModes";
-import { DISCOVERY_RAILS, FEATURED_QUIZ_IDS, pick, type Quiz } from "../data/quizzes";
+import { buildFeaturedHeroSlides, type FeaturedHeroSlide } from "../data/featuredHero";
+import { DISCOVERY_RAILS, type Quiz } from "../data/quizzes";
 import { usePublishedQuizzes } from "../hooks/usePublishedQuizzes";
 import { INITIAL_FILTERS, applyFilters, type PlayFilterState } from "../lib/filter";
 import { quizzesForRail } from "../lib/discovery";
@@ -39,7 +40,7 @@ export function PlayPage() {
   const bookmarkIds = useBookmarksStore((s) => s.ids);
   const toggleBookmark = useBookmarksStore((s) => s.toggle);
 
-  const featured = useMemo(() => pick([...FEATURED_QUIZ_IDS], quizzes), [quizzes]);
+  const featuredSlides = useMemo(() => buildFeaturedHeroSlides(quizzes), [quizzes]);
   const results = useMemo(() => applyFilters(quizzes, filters), [quizzes, filters]);
   const bookmarked = useMemo(
     () => quizzes.filter((quiz) => bookmarkIds.includes(quiz.id)),
@@ -57,6 +58,24 @@ export function PlayPage() {
     navigate({ to: "/play/lobby", search: { mode: modeId, quiz: undefined } });
 
   const playQuiz = (quiz: Quiz) => openQuizLobby(quiz.id);
+  const playFeatured = (slide: FeaturedHeroSlide) => {
+    if (slide.action.kind === "quiz") {
+      openQuizLobby(slide.action.quizId);
+      return;
+    }
+    if (slide.action.to === "/play/draw-guess") {
+      navigate({ to: "/play/draw-guess" });
+      return;
+    }
+    if (slide.action.to === "/play/imposter") {
+      navigate({ to: "/play/imposter" });
+      return;
+    }
+    navigate({
+      to: slide.action.to,
+      search: slide.action.search ?? { q: undefined, category: undefined },
+    });
+  };
   const playCategory = (category: QuizCategory) =>
     navigate({ to: "/play/search", search: { q: undefined, category: category.id } });
   const playMode = (mode: GameMode) => {
@@ -108,10 +127,10 @@ export function PlayPage() {
       <section className="pb-[var(--space-section-sm)]">
         <SectionContainer size="wide">
           <AnimatedSection>
-            {loading && featured.length === 0 ? (
+            {loading && featuredSlides.length === 0 ? (
               <SkeletonBlock className="h-64 w-full rounded-2xl" />
             ) : (
-              <FeaturedCarousel quizzes={featured} onPlay={playQuiz} />
+              <FeaturedCarousel slides={featuredSlides} onPlay={playFeatured} />
             )}
           </AnimatedSection>
         </SectionContainer>

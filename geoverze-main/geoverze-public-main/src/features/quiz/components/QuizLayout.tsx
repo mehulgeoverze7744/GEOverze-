@@ -20,11 +20,11 @@ export function QuizLayout({
   header?: ReactNode;
 }) {
   return (
-    <div className="min-h-dvh pb-24">
+    <div className="min-h-dvh min-w-0 pb-24">
       {header}
       <div
         className={cn(
-          "mx-auto w-full px-4 sm:px-6 md:px-10",
+          "mx-auto w-full min-w-0 px-4 sm:px-6 md:px-10",
           width === "narrow" && "max-w-2xl",
           width === "default" && "max-w-4xl",
           width === "wide" && "max-w-6xl",

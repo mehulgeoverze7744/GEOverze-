@@ -36,31 +36,38 @@ export function SettingsPanel() {
   const update = useQuizStore((s) => s.updateSettings);
 
   return (
-    <section className="game-surface rounded-2xl p-5 sm:p-6" aria-label="Quiz settings">
+    <section
+      className="min-w-0 overflow-hidden rounded-[1.5rem] border border-white/8 bg-[oklch(0.145_0.008_60/0.78)] p-6 shadow-[0_12px_40px_oklch(0_0_0/0.28)] backdrop-blur-xl sm:p-7"
+      aria-label="Quiz settings"
+    >
       <div className="flex items-baseline justify-between gap-4">
-        <h2 className="text-[0.95rem] font-semibold tracking-tight text-foreground">
+        <h2 className="text-[1.05rem] font-semibold tracking-tight text-foreground">
           Quiz settings
         </h2>
         <button
           type="button"
           onClick={() => update(DEFAULT_SETTINGS)}
-          className="text-[0.7rem] uppercase tracking-[0.18em] text-foreground/50 transition-colors hover:text-bronze-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+          className="min-h-11 rounded-full px-2 text-[0.7rem] uppercase tracking-[0.16em] text-foreground/45 transition-colors hover:text-bronze-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
         >
           Reset
         </button>
       </div>
-      <p className="mt-1 text-[0.75rem] text-foreground/50">
+      <p className="mt-2 text-[0.75rem] leading-relaxed text-foreground/50">
         Preferences are saved for this session. They start shaping the round when the tuning engine
         lands.
       </p>
 
-      <div className="mt-5 space-y-4">
+      <div className="mt-6 space-y-5">
         {CHOICES.map((row) => (
-          <div key={row.key}>
-            <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-foreground/50">
+          <div key={row.key} className="min-w-0">
+            <p className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-foreground/45">
               {row.label}
             </p>
-            <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label={row.label}>
+            <div
+              className="mt-2 flex min-w-0 gap-1 overflow-x-auto rounded-full bg-[oklch(0.1_0.006_60/0.7)] p-1 ring-1 ring-white/8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              role="group"
+              aria-label={row.label}
+            >
               {row.options.map((option) => {
                 const active = settings[row.key] === option;
                 return (
@@ -70,10 +77,10 @@ export function SettingsPanel() {
                     aria-pressed={active}
                     onClick={() => update({ [row.key]: option } as Partial<QuizSettings>)}
                     className={cn(
-                      "min-h-11 rounded-xl border px-4 text-[0.78rem] font-medium transition-all motion-snap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50 active:scale-[0.97]",
+                      "min-h-10 min-w-0 flex-1 whitespace-nowrap rounded-full px-3 text-[0.75rem] font-medium transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
                       active
-                        ? "border-bronze bg-bronze/18 text-bronze-glow"
-                        : "border-bronze/14 bg-[oklch(0.185_0.008_62)] text-foreground/65 hover:border-bronze/45",
+                        ? "bg-bronze/22 text-bronze-glow shadow-[0_1px_8px_oklch(0.55_0.1_62/0.22)]"
+                        : "text-foreground/55 hover:text-foreground",
                     )}
                   >
                     {option}
@@ -84,7 +91,7 @@ export function SettingsPanel() {
           </div>
         ))}
 
-        <div className="grid gap-2 sm:grid-cols-3">
+        <div className="space-y-2">
           {TOGGLES.map(({ key, label, icon: Icon }) => {
             const active = settings[key];
             return (
@@ -94,19 +101,30 @@ export function SettingsPanel() {
                 role="switch"
                 aria-checked={active}
                 onClick={() => update({ [key]: !active } as Partial<QuizSettings>)}
-                className={cn(
-                  "flex min-h-12 items-center justify-between gap-3 rounded-xl border px-4 text-[0.8rem] font-medium transition-all motion-snap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50 active:scale-[0.98]",
-                  active
-                    ? "border-bronze/55 bg-bronze/12 text-bronze-glow"
-                    : "border-bronze/14 bg-[oklch(0.185_0.008_62)] text-foreground/55",
-                )}
+                className="flex min-h-12 w-full min-w-0 items-center justify-between gap-4 rounded-[1.15rem] border border-white/6 bg-[oklch(0.2_0.01_60/0.38)] px-4 text-left transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
               >
-                <span className="flex items-center gap-2">
-                  <Icon className="h-4 w-4" strokeWidth={1.8} aria-hidden />
-                  {label}
+                <span className="flex min-w-0 items-center gap-2.5 text-[0.85rem] font-medium text-foreground/80">
+                  <Icon className="h-4 w-4 shrink-0 text-bronze" strokeWidth={1.8} aria-hidden />
+                  <span className="truncate">{label}</span>
                 </span>
-                <span className="text-[0.65rem] uppercase tracking-[0.16em]">
-                  {active ? "On" : "Off"}
+                <span className="flex shrink-0 items-center gap-2">
+                  <span className="text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-foreground/40">
+                    {active ? "On" : "Off"}
+                  </span>
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "relative h-7 w-12 rounded-full transition-colors duration-200",
+                      active ? "bg-bronze" : "bg-white/14",
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "absolute top-0.5 left-0.5 h-6 w-6 rounded-full bg-white shadow-sm transition-transform duration-200 ease-out",
+                        active && "translate-x-5",
+                      )}
+                    />
+                  </span>
                 </span>
               </button>
             );
