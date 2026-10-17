@@ -14,6 +14,7 @@ import { buildAnswerPayload } from "@/features/pvp/lib/buildAnswerPayload";
 import { selectUser, useAuthStore } from "@/stores/authStore";
 import { refreshProgression } from "@/lib/supabase/auth-sync";
 import { useQuizStore } from "@/stores/quizStore";
+import { clearQuizRun, loadQuizRun, saveQuizRun } from "@/features/quiz/lib/quizRunPersist";
 import { MultiplayerMatchComplete } from "../components/MultiplayerMatchComplete";
 import { MultiplayerOpponentPanel } from "../components/MultiplayerOpponentPanel";
 import { submitMultiplayerAttempt } from "../data/multiplayerRoomApi";
@@ -48,7 +49,9 @@ export function MultiplayerMatchScreen({
   const startedAt = useQuizStore((s) => s.startedAt);
   const finishedAt = useQuizStore((s) => s.finishedAt);
   const start = useQuizStore((s) => s.start);
+  const hydrate = useQuizStore((s) => s.hydrate);
   const reset = useQuizStore((s) => s.reset);
+  const index = useQuizStore((s) => s.index);
 
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -80,10 +83,29 @@ export function MultiplayerMatchScreen({
     if (!roomId || !set || !state || state.room.status !== "playing" || youSubmitted) return;
     if (initializedRoomIdRef.current === roomId) return;
 
-    start(set.id, "multiplayer");
+    const saved = loadQuizRun(`multiplayer:${roomId}`);
+    if (saved && saved.roomId === roomId && saved.quizId === set.id) {
+      hydrate(saved);
+    } else {
+      start(set.id, "multiplayer");
+    }
     initializedRoomIdRef.current = roomId;
     hasFiredRef.current = false;
-  }, [roomId, set, start, state, youSubmitted]);
+  }, [hydrate, roomId, set, start, state, youSubmitted]);
+
+  useEffect(() => {
+    if (!roomId || !set || !attemptId || quizStatus !== "active" || youSubmitted) return;
+    saveQuizRun(`multiplayer:${roomId}`, {
+      quizId: set.id,
+      mode: "multiplayer",
+      roomId,
+      index,
+      answers,
+      startedAt,
+      attemptId,
+      status: quizStatus,
+    });
+  }, [answers, attemptId, index, quizStatus, roomId, set, startedAt, youSubmitted]);
 
   const submitAttempt = useCallback(async () => {
     if (
@@ -109,6 +131,7 @@ export function MultiplayerMatchScreen({
 
     try {
       await submitMultiplayerAttempt(roomId, attemptId, durationMs, payload);
+      clearQuizRun(`multiplayer:${roomId}`);
       await refresh();
     } catch (err) {
       hasFiredRef.current = false;

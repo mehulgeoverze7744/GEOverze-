@@ -7,6 +7,7 @@ import { thumbnailForQuizSession } from "@/features/play/data/sessionArtwork";
 import { cn } from "@/lib/utils";
 import { useQuizStore, type QuizMode } from "@/stores/quizStore";
 import type { QuizSet } from "../data/types";
+import { saveQuizRun } from "../lib/quizRunPersist";
 import { correctLabels, isCorrect, isPlayable } from "../lib/session";
 import { ExitDialog } from "./ExitDialog";
 import { QuestionRenderer } from "./QuestionRenderer";
@@ -42,6 +43,8 @@ export function QuizPlay({
   const index = useQuizStore((s) => s.index);
   const answers = useQuizStore((s) => s.answers);
   const startedAt = useQuizStore((s) => s.startedAt);
+  const attemptId = useQuizStore((s) => s.attemptId);
+  const quizStatus = useQuizStore((s) => s.status);
   const record = useQuizStore((s) => s.record);
   const next = useQuizStore((s) => s.next);
   const previous = useQuizStore((s) => s.previous);
@@ -55,6 +58,19 @@ export function QuizPlay({
   const [locked, setLocked] = useState(false);
   const [questionStart, setQuestionStart] = useState(() => Date.now());
   const [exitOpen, setExitOpen] = useState(false);
+
+  useEffect(() => {
+    if (!attemptId) return;
+    saveQuizRun(`${mode}:${set.id}`, {
+      quizId: set.id,
+      mode,
+      index,
+      answers,
+      startedAt,
+      attemptId,
+      status: quizStatus,
+    });
+  }, [answers, attemptId, index, mode, quizStatus, set.id, startedAt]);
 
   // Re-entering a question shows its recorded result rather than a blank card.
   useEffect(() => {

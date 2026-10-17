@@ -73,6 +73,15 @@ type QuizState = {
   setPersisted: () => void;
   reset: () => void;
   updateSettings: (patch: Partial<QuizSettings>) => void;
+  hydrate: (snapshot: {
+    quizId: string;
+    mode: QuizMode;
+    index: number;
+    answers: Record<string, RunAnswer>;
+    startedAt: number | null;
+    attemptId: string | null;
+    status: QuizStatus;
+  }) => void;
 };
 
 const initial = {
@@ -108,6 +117,18 @@ export const useQuizStore = create<QuizState>((set) => ({
   setPersisted: () => set({ persisted: true }),
   reset: () => set({ ...initial }),
   updateSettings: (patch) => set((state) => ({ settings: { ...state.settings, ...patch } })),
+  hydrate: (snapshot) =>
+    set({
+      status: snapshot.status,
+      mode: snapshot.mode,
+      quizId: snapshot.quizId,
+      index: snapshot.index,
+      answers: snapshot.answers,
+      startedAt: snapshot.startedAt,
+      finishedAt: snapshot.status === "complete" ? Date.now() : null,
+      persisted: false,
+      attemptId: snapshot.attemptId,
+    }),
 }));
 
 export const selectScore = (s: QuizState) =>

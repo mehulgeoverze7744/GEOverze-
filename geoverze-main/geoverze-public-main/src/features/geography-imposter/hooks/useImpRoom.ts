@@ -11,6 +11,8 @@ import {
   touchImpPresence,
 } from "../data/impRoomApi";
 import type { ImpRoomState } from "../types";
+import { useRoomMembershipNotices } from "@/features/rooms/hooks/useRoomMembershipNotices";
+import type { RoomSyncStatus } from "@/features/rooms/hooks/useRoomRealtime";
 import { useImpRoomRealtime } from "./useImpRoomRealtime";
 import { useImpChatRealtime } from "./useImpChatRealtime";
 
@@ -27,6 +29,7 @@ export interface UseImpRoomReturn {
   startGame: () => Promise<void>;
   restartGame: () => Promise<void>;
   leave: () => Promise<void>;
+  syncStatus: RoomSyncStatus;
 }
 
 export function useImpRoom(roomId: string | undefined, code: string | undefined): UseImpRoomReturn {
@@ -62,7 +65,8 @@ export function useImpRoom(roomId: string | undefined, code: string | undefined)
     void load();
   }, [load]);
 
-  useImpRoomRealtime(roomId, refresh);
+  const syncStatus = useImpRoomRealtime(roomId, refresh);
+  useRoomMembershipNotices(state?.participants, user?.id);
 
   // ── Incremental chat messages ────────────────────────────────────────────────
   const lastChatIdRef = useRef<string | undefined>(undefined);
@@ -138,5 +142,15 @@ export function useImpRoom(roomId: string | undefined, code: string | undefined)
     await leaveImpRoom(roomId);
   }, [roomId]);
 
-  return { state, loading, error, setState, toggleReady, startGame, restartGame, leave };
+  return {
+    state,
+    loading,
+    error,
+    setState,
+    toggleReady,
+    startGame,
+    restartGame,
+    leave,
+    syncStatus,
+  };
 }

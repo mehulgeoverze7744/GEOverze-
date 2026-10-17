@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { useRoomMembershipNotices } from "@/features/rooms/hooks/useRoomMembershipNotices";
+import { selectUser, useAuthStore } from "@/stores/authStore";
 import { fetchPvpRoomState, setPvpReady, startPvpMatch } from "../data/pvpRoomApi";
 import type { PvpRoomState } from "../types";
 import { usePvpRoomRealtime } from "./usePvpRoomRealtime";
 
 export function usePvpRoom(roomId: string | undefined) {
+  const user = useAuthStore(selectUser);
   const [state, setState] = useState<PvpRoomState | null>(null);
   const [loading, setLoading] = useState(Boolean(roomId));
   const [error, setError] = useState<string | null>(null);
@@ -57,7 +60,8 @@ export function usePvpRoom(roomId: string | undefined) {
     void refresh();
   }, [roomId, refresh]);
 
-  usePvpRoomRealtime(roomId, refresh);
+  const syncStatus = usePvpRoomRealtime(roomId, refresh);
+  useRoomMembershipNotices(state?.participants, user?.id);
 
   const toggleReady = useCallback(
     async (ready: boolean) => {
@@ -92,5 +96,15 @@ export function usePvpRoom(roomId: string | undefined) {
     }
   }, [roomId]);
 
-  return { state, loading, error, readyPending, startPending, refresh, toggleReady, startMatch };
+  return {
+    state,
+    loading,
+    error,
+    readyPending,
+    startPending,
+    refresh,
+    toggleReady,
+    startMatch,
+    syncStatus,
+  };
 }

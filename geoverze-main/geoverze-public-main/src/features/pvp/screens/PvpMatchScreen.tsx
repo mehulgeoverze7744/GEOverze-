@@ -13,6 +13,7 @@ import { useQuizSet } from "@/features/quiz";
 import { selectUser, useAuthStore } from "@/stores/authStore";
 import { refreshProgression } from "@/lib/supabase/auth-sync";
 import { useQuizStore } from "@/stores/quizStore";
+import { clearQuizRun, loadQuizRun, saveQuizRun } from "@/features/quiz/lib/quizRunPersist";
 import { PvpMatchResult } from "../components/PvpMatchResult";
 import { PvpOpponentPanel } from "../components/PvpOpponentPanel";
 import { submitPvpAttempt } from "../data/pvpRoomApi";
@@ -48,7 +49,9 @@ export function PvpMatchScreen({
   const startedAt = useQuizStore((s) => s.startedAt);
   const finishedAt = useQuizStore((s) => s.finishedAt);
   const start = useQuizStore((s) => s.start);
+  const hydrate = useQuizStore((s) => s.hydrate);
   const reset = useQuizStore((s) => s.reset);
+  const index = useQuizStore((s) => s.index);
 
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -81,10 +84,29 @@ export function PvpMatchScreen({
     if (!roomId || !set || !state || state.room.status !== "playing" || youSubmitted) return;
     if (initializedRoomIdRef.current === roomId) return;
 
-    start(set.id, "pvp");
+    const saved = loadQuizRun(`pvp:${roomId}`);
+    if (saved && saved.roomId === roomId && saved.quizId === set.id) {
+      hydrate(saved);
+    } else {
+      start(set.id, "pvp");
+    }
     initializedRoomIdRef.current = roomId;
     hasFiredRef.current = false;
-  }, [roomId, set, start, state, youSubmitted]);
+  }, [hydrate, roomId, set, start, state, youSubmitted]);
+
+  useEffect(() => {
+    if (!roomId || !set || !attemptId || quizStatus !== "active" || youSubmitted) return;
+    saveQuizRun(`pvp:${roomId}`, {
+      quizId: set.id,
+      mode: "pvp",
+      roomId,
+      index,
+      answers,
+      startedAt,
+      attemptId,
+      status: quizStatus,
+    });
+  }, [answers, attemptId, index, quizStatus, roomId, set, startedAt, youSubmitted]);
 
   // Submit answers once when the local run for this room finishes.
   const submitAttempt = useCallback(async () => {
@@ -111,6 +133,7 @@ export function PvpMatchScreen({
 
     try {
       await submitPvpAttempt(roomId, attemptId, durationMs, payload);
+      clearQuizRun(`pvp:${roomId}`);
       await refresh();
     } catch (err) {
       hasFiredRef.current = false;

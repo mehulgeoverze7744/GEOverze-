@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { RoomSyncBanner } from "@/features/rooms/components/RoomSyncBanner";
 import { useImpRoom } from "../hooks/useImpRoom";
 import { ImposterGameScreen } from "./ImposterGameScreen";
 import { ImposterLobbyScreen } from "./ImposterLobbyScreen";
@@ -14,10 +15,8 @@ export function ImposterRoomScreen({ roomId, code }: ImposterRoomScreenProps) {
   const [readyPending, setReadyPending] = useState(false);
   const [startPending, setStartPending] = useState(false);
 
-  const { state, loading, error, setState, toggleReady, startGame, restartGame } = useImpRoom(
-    roomId,
-    code,
-  );
+  const { state, loading, error, setState, toggleReady, startGame, restartGame, syncStatus } =
+    useImpRoom(roomId, code);
 
   const handleToggleReady = async (ready: boolean) => {
     setReadyPending(true);
@@ -41,21 +40,25 @@ export function ImposterRoomScreen({ roomId, code }: ImposterRoomScreenProps) {
     }
   };
 
-  // Show game screen once status = playing
-  if (state?.room.status === "playing" || state?.room.status === "completed") {
-    return <ImposterGameScreen state={state} onStateUpdate={setState} onRestart={restartGame} />;
-  }
+  const inMatch = state?.room.status === "playing" || state?.room.status === "completed";
 
   return (
-    <ImposterLobbyScreen
-      code={code}
-      state={state}
-      loading={loading}
-      error={error}
-      readyPending={readyPending}
-      startPending={startPending}
-      toggleReady={handleToggleReady}
-      startGame={handleStartGame}
-    />
+    <>
+      <RoomSyncBanner status={syncStatus} />
+      {inMatch && state ? (
+        <ImposterGameScreen state={state} onStateUpdate={setState} onRestart={restartGame} />
+      ) : (
+        <ImposterLobbyScreen
+          code={code}
+          state={state}
+          loading={loading}
+          error={error}
+          readyPending={readyPending}
+          startPending={startPending}
+          toggleReady={handleToggleReady}
+          startGame={handleStartGame}
+        />
+      )}
+    </>
   );
 }

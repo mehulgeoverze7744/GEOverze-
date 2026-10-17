@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { useRoomMembershipNotices } from "@/features/rooms/hooks/useRoomMembershipNotices";
+import { selectUser, useAuthStore } from "@/stores/authStore";
 import {
   advanceDrawTurn,
   fetchDrawRoomState,
@@ -13,6 +15,7 @@ import type { DrawRoomState } from "../types";
 import { useDrawRoomRealtime } from "./useDrawRoomRealtime";
 
 export function useDrawRoom(roomId: string | undefined) {
+  const user = useAuthStore(selectUser);
   const [state, setState] = useState<DrawRoomState | null>(null);
   const [loading, setLoading] = useState(Boolean(roomId));
   const [error, setError] = useState<string | null>(null);
@@ -64,7 +67,8 @@ export function useDrawRoom(roomId: string | undefined) {
     void refresh();
   }, [roomId, refresh]);
 
-  useDrawRoomRealtime(roomId, refresh);
+  const syncStatus = useDrawRoomRealtime(roomId, refresh);
+  useRoomMembershipNotices(state?.participants, user?.id);
 
   // Lightweight presence heartbeat — lets the server-side grace-period /
   // disconnect logic in advance_draw_turn detect stale drawers/hosts.
@@ -162,5 +166,6 @@ export function useDrawRoom(roomId: string | undefined) {
     restartGame,
     leave,
     setState,
+    syncStatus,
   };
 }

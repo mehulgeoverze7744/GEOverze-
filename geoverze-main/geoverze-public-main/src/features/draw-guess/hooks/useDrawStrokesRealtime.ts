@@ -21,32 +21,58 @@ export function useDrawStrokesRealtime(
     if (!turnId) return;
 
     let cancelled = false;
+    let retryTimer: number | null = null;
+    let channel: ReturnType<typeof supabase.channel> | null = null;
 
-    void fetchDrawStrokesSince(turnId, 0).then((rows) => {
+    const replay = async () => {
+      const rows = await fetchDrawStrokesSince(turnId, lastIdRef.current);
       if (cancelled) return;
       for (const row of rows) {
         lastIdRef.current = Math.max(lastIdRef.current, row.id);
         onStrokeRef.current(row);
       }
-    });
+    };
 
-    const channel = supabase
-      .channel(`draw-strokes:${turnId}`)
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "draw_strokes", filter: `turn_id=eq.${turnId}` },
-        (payload) => {
-          const row = payload.new as DrawStroke;
-          if (row.id <= lastIdRef.current) return;
-          lastIdRef.current = row.id;
-          onStrokeRef.current(row);
-        },
-      )
-      .subscribe();
+    const subscribe = () => {
+      if (cancelled) return;
+      const next = supabase
+        .channel(`draw-strokes:${turnId}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "draw_strokes",
+            filter: `turn_id=eq.${turnId}`,
+          },
+          (payload) => {
+            const row = payload.new as DrawStroke;
+            if (row.id <= lastIdRef.current) return;
+            lastIdRef.current = row.id;
+            onStrokeRef.current(row);
+          },
+        )
+        .subscribe((status) => {
+          if (cancelled) return;
+          if (status === "SUBSCRIBED") {
+            void replay();
+            return;
+          }
+          if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+            void supabase.removeChannel(next);
+            if (retryTimer) window.clearTimeout(retryTimer);
+            retryTimer = window.setTimeout(subscribe, 1200);
+          }
+        });
+      channel = next;
+    };
+
+    subscribe();
 
     return () => {
       cancelled = true;
-      void supabase.removeChannel(channel);
+      if (retryTimer) window.clearTimeout(retryTimer);
+      if (channel) void supabase.removeChannel(channel);
     };
   }, [turnId]);
 }

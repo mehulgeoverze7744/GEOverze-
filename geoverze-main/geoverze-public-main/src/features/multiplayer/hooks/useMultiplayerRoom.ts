@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { useRoomMembershipNotices } from "@/features/rooms/hooks/useRoomMembershipNotices";
+import { selectUser, useAuthStore } from "@/stores/authStore";
 import {
   fetchMultiplayerRoomState,
   setMultiplayerReady,
@@ -9,6 +11,7 @@ import type { MultiplayerRoomState } from "../types";
 import { useMultiplayerRoomRealtime } from "./useMultiplayerRoomRealtime";
 
 export function useMultiplayerRoom(roomId: string | undefined) {
+  const user = useAuthStore(selectUser);
   const [state, setState] = useState<MultiplayerRoomState | null>(null);
   const [loading, setLoading] = useState(Boolean(roomId));
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +64,8 @@ export function useMultiplayerRoom(roomId: string | undefined) {
     void refresh();
   }, [roomId, refresh]);
 
-  useMultiplayerRoomRealtime(roomId, refresh);
+  const syncStatus = useMultiplayerRoomRealtime(roomId, refresh);
+  useRoomMembershipNotices(state?.participants, user?.id);
 
   const toggleReady = useCallback(
     async (ready: boolean) => {
@@ -96,5 +100,15 @@ export function useMultiplayerRoom(roomId: string | undefined) {
     }
   }, [roomId]);
 
-  return { state, loading, error, readyPending, startPending, refresh, toggleReady, startMatch };
+  return {
+    state,
+    loading,
+    error,
+    readyPending,
+    startPending,
+    refresh,
+    toggleReady,
+    startMatch,
+    syncStatus,
+  };
 }

@@ -5,6 +5,7 @@ import { useQuizStore, type QuizMode } from "@/stores/quizStore";
 import { OpponentPanel } from "../components/OpponentPanel";
 import { QuizPlay } from "../components/QuizPlay";
 import { useQuizSet } from "../hooks/useQuizSet";
+import { loadQuizRun } from "../lib/quizRunPersist";
 
 type PlayRoute = "/play/quiz/solo" | "/play/quiz/pvp" | "/play/quiz/multiplayer";
 
@@ -21,6 +22,7 @@ export function QuizPlayScreen({ mode, from }: { mode: QuizMode; from: PlayRoute
   const quizId = useQuizStore((s) => s.quizId);
   const storeMode = useQuizStore((s) => s.mode);
   const start = useQuizStore((s) => s.start);
+  const hydrate = useQuizStore((s) => s.hydrate);
   const reset = useQuizStore((s) => s.reset);
   const { set, loading, error } = useQuizSet(quiz);
 
@@ -28,10 +30,16 @@ export function QuizPlayScreen({ mode, from }: { mode: QuizMode; from: PlayRoute
   // Guard on set being loaded — do not call start() until questions are available.
   useEffect(() => {
     if (!set) return;
-    const isActiveRun =
-      status === "active" && quizId === set.id && storeMode === mode;
-    if (!isActiveRun) start(set.id, mode);
-  }, [mode, quizId, set, start, status, storeMode]);
+    const isActiveRun = status === "active" && quizId === set.id && storeMode === mode;
+    if (!isActiveRun) {
+      const saved = loadQuizRun(`${mode}:${set.id}`);
+      if (saved && saved.quizId === set.id && saved.mode === mode) {
+        hydrate(saved);
+      } else {
+        start(set.id, mode);
+      }
+    }
+  }, [hydrate, mode, quizId, set, start, status, storeMode]);
 
   if (loading) {
     return (

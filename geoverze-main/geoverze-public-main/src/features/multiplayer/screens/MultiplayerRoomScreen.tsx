@@ -1,5 +1,6 @@
 import { useSearch } from "@tanstack/react-router";
 
+import { RoomSyncBanner } from "@/features/rooms/components/RoomSyncBanner";
 import { useMultiplayerRoom } from "../hooks/useMultiplayerRoom";
 import { MultiplayerLobbyScreen } from "./MultiplayerLobbyScreen";
 import { MultiplayerMatchScreen } from "./MultiplayerMatchScreen";
@@ -7,11 +8,19 @@ import { MultiplayerMatchScreen } from "./MultiplayerMatchScreen";
 /** /play/multiplayer/room — lobby while waiting/ready; match shell once playing. */
 export function MultiplayerRoomScreen() {
   const { room, code } = useSearch({ from: "/play/multiplayer/room" });
-  const roomState = useMultiplayerRoom(room);
+  const { syncStatus, ...roomState } = useMultiplayerRoom(room);
 
-  if (roomState.state?.room.status === "playing" || roomState.state?.room.status === "completed") {
-    return <MultiplayerMatchScreen roomId={room} code={code} {...roomState} />;
-  }
+  const body =
+    roomState.state?.room.status === "playing" || roomState.state?.room.status === "completed" ? (
+      <MultiplayerMatchScreen roomId={room} code={code} {...roomState} />
+    ) : (
+      <MultiplayerLobbyScreen roomId={room} code={code} {...roomState} />
+    );
 
-  return <MultiplayerLobbyScreen roomId={room} code={code} {...roomState} />;
+  return (
+    <>
+      <RoomSyncBanner status={syncStatus} />
+      {body}
+    </>
+  );
 }
