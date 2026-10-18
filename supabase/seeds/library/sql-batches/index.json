@@ -1,0 +1,470 @@
+[
+  {
+    "file": "capitals-quizzes.sql",
+    "bytes": 5711,
+    "kind": "quizzes",
+    "categoryId": "capitals"
+  },
+  {
+    "file": "capitals-questions-01.sql",
+    "bytes": 14238,
+    "kind": "questions",
+    "categoryId": "capitals"
+  },
+  {
+    "file": "capitals-questions-02.sql",
+    "bytes": 14739,
+    "kind": "questions",
+    "categoryId": "capitals"
+  },
+  {
+    "file": "capitals-questions-03.sql",
+    "bytes": 8801,
+    "kind": "questions",
+    "categoryId": "capitals"
+  },
+  {
+    "file": "capitals-questions-04.sql",
+    "bytes": 14482,
+    "kind": "questions",
+    "categoryId": "capitals"
+  },
+  {
+    "file": "capitals-questions-05.sql",
+    "bytes": 14783,
+    "kind": "questions",
+    "categoryId": "capitals"
+  },
+  {
+    "file": "flags-quizzes.sql",
+    "bytes": 5390,
+    "kind": "quizzes",
+    "categoryId": "flags"
+  },
+  {
+    "file": "flags-questions-01.sql",
+    "bytes": 16865,
+    "kind": "questions",
+    "categoryId": "flags"
+  },
+  {
+    "file": "flags-questions-02.sql",
+    "bytes": 17414,
+    "kind": "questions",
+    "categoryId": "flags"
+  },
+  {
+    "file": "flags-questions-03.sql",
+    "bytes": 10494,
+    "kind": "questions",
+    "categoryId": "flags"
+  },
+  {
+    "file": "flags-questions-04.sql",
+    "bytes": 17059,
+    "kind": "questions",
+    "categoryId": "flags"
+  },
+  {
+    "file": "flags-questions-05.sql",
+    "bytes": 18464,
+    "kind": "questions",
+    "categoryId": "flags"
+  },
+  {
+    "file": "maps-quizzes.sql",
+    "bytes": 5395,
+    "kind": "quizzes",
+    "categoryId": "maps"
+  },
+  {
+    "file": "maps-questions-01.sql",
+    "bytes": 17543,
+    "kind": "questions",
+    "categoryId": "maps"
+  },
+  {
+    "file": "maps-questions-02.sql",
+    "bytes": 17813,
+    "kind": "questions",
+    "categoryId": "maps"
+  },
+  {
+    "file": "maps-questions-03.sql",
+    "bytes": 10821,
+    "kind": "questions",
+    "categoryId": "maps"
+  },
+  {
+    "file": "maps-questions-04.sql",
+    "bytes": 18711,
+    "kind": "questions",
+    "categoryId": "maps"
+  },
+  {
+    "file": "maps-questions-05.sql",
+    "bytes": 19567,
+    "kind": "questions",
+    "categoryId": "maps"
+  },
+  {
+    "file": "landmarks-quizzes.sql",
+    "bytes": 5764,
+    "kind": "quizzes",
+    "categoryId": "landmarks"
+  },
+  {
+    "file": "landmarks-questions-01.sql",
+    "bytes": 15395,
+    "kind": "questions",
+    "categoryId": "landmarks"
+  },
+  {
+    "file": "landmarks-questions-02.sql",
+    "bytes": 15621,
+    "kind": "questions",
+    "categoryId": "landmarks"
+  },
+  {
+    "file": "landmarks-questions-03.sql",
+    "bytes": 9510,
+    "kind": "questions",
+    "categoryId": "landmarks"
+  },
+  {
+    "file": "landmarks-questions-04.sql",
+    "bytes": 15075,
+    "kind": "questions",
+    "categoryId": "landmarks"
+  },
+  {
+    "file": "landmarks-questions-05.sql",
+    "bytes": 15454,
+    "kind": "questions",
+    "categoryId": "landmarks"
+  },
+  {
+    "file": "history-quizzes.sql",
+    "bytes": 5651,
+    "kind": "quizzes",
+    "categoryId": "history"
+  },
+  {
+    "file": "history-questions-01.sql",
+    "bytes": 16181,
+    "kind": "questions",
+    "categoryId": "history"
+  },
+  {
+    "file": "history-questions-02.sql",
+    "bytes": 16454,
+    "kind": "questions",
+    "categoryId": "history"
+  },
+  {
+    "file": "history-questions-03.sql",
+    "bytes": 10211,
+    "kind": "questions",
+    "categoryId": "history"
+  },
+  {
+    "file": "history-questions-04.sql",
+    "bytes": 16109,
+    "kind": "questions",
+    "categoryId": "history"
+  },
+  {
+    "file": "history-questions-05.sql",
+    "bytes": 15896,
+    "kind": "questions",
+    "categoryId": "history"
+  },
+  {
+    "file": "mountains-quizzes.sql",
+    "bytes": 5714,
+    "kind": "quizzes",
+    "categoryId": "mountains"
+  },
+  {
+    "file": "mountains-questions-01.sql",
+    "bytes": 15916,
+    "kind": "questions",
+    "categoryId": "mountains"
+  },
+  {
+    "file": "mountains-questions-02.sql",
+    "bytes": 16305,
+    "kind": "questions",
+    "categoryId": "mountains"
+  },
+  {
+    "file": "mountains-questions-03.sql",
+    "bytes": 9886,
+    "kind": "questions",
+    "categoryId": "mountains"
+  },
+  {
+    "file": "mountains-questions-04.sql",
+    "bytes": 16752,
+    "kind": "questions",
+    "categoryId": "mountains"
+  },
+  {
+    "file": "mountains-questions-05.sql",
+    "bytes": 16908,
+    "kind": "questions",
+    "categoryId": "mountains"
+  },
+  {
+    "file": "rivers-quizzes.sql",
+    "bytes": 5483,
+    "kind": "quizzes",
+    "categoryId": "rivers"
+  },
+  {
+    "file": "rivers-questions-01.sql",
+    "bytes": 15973,
+    "kind": "questions",
+    "categoryId": "rivers"
+  },
+  {
+    "file": "rivers-questions-02.sql",
+    "bytes": 16410,
+    "kind": "questions",
+    "categoryId": "rivers"
+  },
+  {
+    "file": "rivers-questions-03.sql",
+    "bytes": 9558,
+    "kind": "questions",
+    "categoryId": "rivers"
+  },
+  {
+    "file": "rivers-questions-04.sql",
+    "bytes": 16381,
+    "kind": "questions",
+    "categoryId": "rivers"
+  },
+  {
+    "file": "rivers-questions-05.sql",
+    "bytes": 16449,
+    "kind": "questions",
+    "categoryId": "rivers"
+  },
+  {
+    "file": "oceans-quizzes.sql",
+    "bytes": 5471,
+    "kind": "quizzes",
+    "categoryId": "oceans"
+  },
+  {
+    "file": "oceans-questions-01.sql",
+    "bytes": 18109,
+    "kind": "questions",
+    "categoryId": "oceans"
+  },
+  {
+    "file": "oceans-questions-02.sql",
+    "bytes": 18583,
+    "kind": "questions",
+    "categoryId": "oceans"
+  },
+  {
+    "file": "oceans-questions-03.sql",
+    "bytes": 10850,
+    "kind": "questions",
+    "categoryId": "oceans"
+  },
+  {
+    "file": "oceans-questions-04.sql",
+    "bytes": 18825,
+    "kind": "questions",
+    "categoryId": "oceans"
+  },
+  {
+    "file": "oceans-questions-05.sql",
+    "bytes": 17645,
+    "kind": "questions",
+    "categoryId": "oceans"
+  },
+  {
+    "file": "culture-quizzes.sql",
+    "bytes": 5642,
+    "kind": "quizzes",
+    "categoryId": "culture"
+  },
+  {
+    "file": "culture-questions-01.sql",
+    "bytes": 16344,
+    "kind": "questions",
+    "categoryId": "culture"
+  },
+  {
+    "file": "culture-questions-02.sql",
+    "bytes": 16788,
+    "kind": "questions",
+    "categoryId": "culture"
+  },
+  {
+    "file": "culture-questions-03.sql",
+    "bytes": 10319,
+    "kind": "questions",
+    "categoryId": "culture"
+  },
+  {
+    "file": "culture-questions-04.sql",
+    "bytes": 16301,
+    "kind": "questions",
+    "categoryId": "culture"
+  },
+  {
+    "file": "culture-questions-05.sql",
+    "bytes": 17162,
+    "kind": "questions",
+    "categoryId": "culture"
+  },
+  {
+    "file": "mixed-quizzes.sql",
+    "bytes": 5465,
+    "kind": "quizzes",
+    "categoryId": "mixed"
+  },
+  {
+    "file": "mixed-questions-01.sql",
+    "bytes": 15166,
+    "kind": "questions",
+    "categoryId": "mixed"
+  },
+  {
+    "file": "mixed-questions-02.sql",
+    "bytes": 15406,
+    "kind": "questions",
+    "categoryId": "mixed"
+  },
+  {
+    "file": "mixed-questions-03.sql",
+    "bytes": 9313,
+    "kind": "questions",
+    "categoryId": "mixed"
+  },
+  {
+    "file": "mixed-questions-04.sql",
+    "bytes": 16481,
+    "kind": "questions",
+    "categoryId": "mixed"
+  },
+  {
+    "file": "mixed-questions-05.sql",
+    "bytes": 16802,
+    "kind": "questions",
+    "categoryId": "mixed"
+  },
+  {
+    "file": "nature-quizzes.sql",
+    "bytes": 5465,
+    "kind": "quizzes",
+    "categoryId": "nature"
+  },
+  {
+    "file": "nature-questions-01.sql",
+    "bytes": 16876,
+    "kind": "questions",
+    "categoryId": "nature"
+  },
+  {
+    "file": "nature-questions-02.sql",
+    "bytes": 17164,
+    "kind": "questions",
+    "categoryId": "nature"
+  },
+  {
+    "file": "nature-questions-03.sql",
+    "bytes": 10427,
+    "kind": "questions",
+    "categoryId": "nature"
+  },
+  {
+    "file": "nature-questions-04.sql",
+    "bytes": 16954,
+    "kind": "questions",
+    "categoryId": "nature"
+  },
+  {
+    "file": "nature-questions-05.sql",
+    "bytes": 17588,
+    "kind": "questions",
+    "categoryId": "nature"
+  },
+  {
+    "file": "unesco-quizzes.sql",
+    "bytes": 5570,
+    "kind": "quizzes",
+    "categoryId": "unesco"
+  },
+  {
+    "file": "unesco-questions-01.sql",
+    "bytes": 16012,
+    "kind": "questions",
+    "categoryId": "unesco"
+  },
+  {
+    "file": "unesco-questions-02.sql",
+    "bytes": 16259,
+    "kind": "questions",
+    "categoryId": "unesco"
+  },
+  {
+    "file": "unesco-questions-03.sql",
+    "bytes": 10235,
+    "kind": "questions",
+    "categoryId": "unesco"
+  },
+  {
+    "file": "unesco-questions-04.sql",
+    "bytes": 18156,
+    "kind": "questions",
+    "categoryId": "unesco"
+  },
+  {
+    "file": "unesco-questions-05.sql",
+    "bytes": 19237,
+    "kind": "questions",
+    "categoryId": "unesco"
+  },
+  {
+    "file": "records-quizzes.sql",
+    "bytes": 5650,
+    "kind": "quizzes",
+    "categoryId": "records"
+  },
+  {
+    "file": "records-questions-01.sql",
+    "bytes": 18717,
+    "kind": "questions",
+    "categoryId": "records"
+  },
+  {
+    "file": "records-questions-02.sql",
+    "bytes": 18863,
+    "kind": "questions",
+    "categoryId": "records"
+  },
+  {
+    "file": "records-questions-03.sql",
+    "bytes": 11912,
+    "kind": "questions",
+    "categoryId": "records"
+  },
+  {
+    "file": "records-questions-04.sql",
+    "bytes": 20591,
+    "kind": "questions",
+    "categoryId": "records"
+  },
+  {
+    "file": "records-questions-05.sql",
+    "bytes": 22102,
+    "kind": "questions",
+    "categoryId": "records"
+  }
+]
