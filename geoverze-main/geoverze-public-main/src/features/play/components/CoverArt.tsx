@@ -61,8 +61,13 @@ export function CoverArt({
           <img
             src={imageSrc}
             alt={imageAlt ?? ""}
+            width={1536}
+            height={1024}
             loading="lazy"
             decoding="async"
+            onError={(event) => {
+              event.currentTarget.style.opacity = "0";
+            }}
             className={cn(
               "absolute inset-0 h-full w-full transition-transform duration-700 ease-out motion-reduce:transition-none",
               !objectPosition && "object-center",

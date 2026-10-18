@@ -26,6 +26,9 @@ const outDir = join(ROOT, "geoverze-main", "geoverze-public-main", "public", "as
 const sourceByCategory = Object.fromEntries(CATEGORIES.map((c) => [c.id, join(catDir, c.source)]));
 
 export async function renderLibraryThumbnails() {
+  throw new Error(
+    "Do not re-run render-thumbnails.mjs — it recopies category stock photos. Use unique-prompts.mjs + ingest-unique-thumbnails.mjs.",
+  );
   mkdirSync(outDir, { recursive: true });
   const quizzes = assembleLibrary();
   for (const quiz of quizzes) {
