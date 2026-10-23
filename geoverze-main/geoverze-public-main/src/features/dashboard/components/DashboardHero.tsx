@@ -1,9 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { Compass, Pencil } from "lucide-react";
+import { useState } from "react";
 
 import { AnimatedCounter } from "@/components/shared/AnimatedCounter";
 import { GeoButton } from "@/components/shared/GeoButton";
-import { isAlienAvatarSrc, resolveDashboardAvatarSrc } from "@/features/auth/lib/avatar";
+import {
+  DASHBOARD_3D_AVATAR_SRC,
+  isAlienAvatarSrc,
+  resolveDashboardAvatarSrc,
+} from "@/features/auth/lib/avatar";
 import { greetingFor, motivationFor } from "@/features/dashboard/data/dashboard";
 import { useLibrarySubscriptionTier } from "@/features/library/hooks/useLibrarySubscriptionTier";
 import { libraryTierLabel } from "@/features/library/lib/access-tier";
@@ -36,10 +41,17 @@ export function DashboardHero({ className }: { className?: string }) {
   const planPending = signedIn && planLoading;
   const greeting = greetingFor();
   const motivation = motivationFor();
-  const heroAvatarSrc = resolveDashboardAvatarSrc({
-    avatarUrl: profile.avatarUrl,
-    avatarId: profile.avatarId,
-  });
+  const [failedAvatarSrc, setFailedAvatarSrc] = useState<string | null>(null);
+  const resolvedAvatarSrc = profile.identityPending
+    ? null
+    : resolveDashboardAvatarSrc({
+        avatarUrl: profile.avatarUrl,
+        avatarId: profile.avatarId,
+      });
+  const heroAvatarSrc =
+    resolvedAvatarSrc && failedAvatarSrc === resolvedAvatarSrc
+      ? DASHBOARD_3D_AVATAR_SRC
+      : resolvedAvatarSrc;
 
   return (
     <section className={cn("dashboard-hero relative overflow-hidden", className)}>
@@ -57,29 +69,67 @@ export function DashboardHero({ className }: { className?: string }) {
         <div className="dashboard-hero-content space-y-6">
           <div className="flex items-start gap-4 sm:gap-5">
             <span className="dashboard-hero-avatar">
-              <img
-                key={heroAvatarSrc}
-                src={heroAvatarSrc}
-                alt={`${profile.displayName} profile`}
-                width={148}
-                height={137}
-                decoding="async"
-                draggable={false}
-                className={
-                  isAlienAvatarSrc(heroAvatarSrc) ? "dashboard-hero-avatar-photo--alien" : undefined
-                }
-              />
+              {heroAvatarSrc ? (
+                <img
+                  src={heroAvatarSrc}
+                  alt={profile.displayName ? `${profile.displayName} profile` : "Profile"}
+                  width={148}
+                  height={137}
+                  decoding="async"
+                  draggable={false}
+                  className={
+                    isAlienAvatarSrc(heroAvatarSrc)
+                      ? "dashboard-hero-avatar-photo--alien"
+                      : undefined
+                  }
+                  onError={() => {
+                    if (resolvedAvatarSrc && failedAvatarSrc !== resolvedAvatarSrc) {
+                      setFailedAvatarSrc(resolvedAvatarSrc);
+                    }
+                  }}
+                />
+              ) : (
+                <span
+                  className="block h-full w-full animate-pulse rounded-full bg-bronze/10 motion-reduce:animate-none"
+                  aria-hidden
+                />
+              )}
             </span>
             <div className="min-w-0 pt-1">
               <p className="dashboard-section-label">{greeting}</p>
-              <h1 className="mt-2 truncate text-[clamp(1.75rem,3.6vw,2.65rem)] font-light tracking-tight text-foreground">
-                {profile.displayName}
-              </h1>
-              <p className="mt-2 text-sm text-foreground/55">
-                <span className="text-bronze/90">{profile.handle}</span>
-                <span className="mx-2 text-foreground/25">·</span>
-                Explorer since {formatJoinDate(profile.joinedAt)}
-              </p>
+              {profile.identityPending ? (
+                <span
+                  className="mt-2 block h-9 w-48 animate-pulse rounded-md bg-bronze/10 motion-reduce:animate-none"
+                  aria-hidden
+                />
+              ) : (
+                <h1 className="mt-2 truncate text-[clamp(1.75rem,3.6vw,2.65rem)] font-light tracking-tight text-foreground">
+                  {profile.displayName || "Profile unavailable"}
+                </h1>
+              )}
+              {profile.identityPending ? null : (
+                <p className="mt-2 text-sm text-foreground/55">
+                  {profile.handle ? <span className="text-bronze/90">{profile.handle}</span> : null}
+                  {profile.joinedAt ? (
+                    <>
+                      {profile.handle ? <span className="mx-2 text-foreground/25">·</span> : null}
+                      Explorer since {formatJoinDate(profile.joinedAt)}
+                    </>
+                  ) : null}
+                </p>
+              )}
+              {profile.identityError ? (
+                <p className="mt-2 text-xs text-foreground/70">
+                  {profile.identityError}{" "}
+                  <button
+                    type="button"
+                    className="text-bronze underline underline-offset-2"
+                    onClick={() => profile.retryProfile()}
+                  >
+                    Retry
+                  </button>
+                </p>
+              ) : null}
               <p className="dashboard-current-plan mt-3">
                 <span className="dashboard-current-plan__label">Current plan</span>
                 <span className="dashboard-current-plan__name">{planName}</span>

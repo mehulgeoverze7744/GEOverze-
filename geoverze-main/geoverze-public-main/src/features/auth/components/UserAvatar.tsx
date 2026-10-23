@@ -73,7 +73,8 @@ export function UserAvatar({
     avatarUrl: avatarUrl ?? null,
     avatarId: avatarId ?? null,
   });
-  const [imageFailed, setImageFailed] = useState(false);
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const imageFailed = resolved.kind === "url" && failedSrc === resolved.src;
   const decodeEdge = Math.max(size * 4, 512);
   const sizesPx = Math.max(size * 2, 128);
 
@@ -105,7 +106,7 @@ export function UserAvatar({
       draggable={false}
       className={cn("shrink-0 rounded-full bg-transparent object-cover", className)}
       onError={() => {
-        setImageFailed(true);
+        if (failedSrc !== resolved.src) setFailedSrc(resolved.src);
       }}
     />
   );

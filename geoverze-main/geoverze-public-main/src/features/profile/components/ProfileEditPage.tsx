@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { PageShell } from "@/components/layout/PageShell";
@@ -10,15 +10,17 @@ import { GlassCard } from "@/components/shared/GlassCard";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { SectionContainer } from "@/components/shared/SectionContainer";
 import { SectionHeading } from "@/components/shared/SectionHeading";
-import {
-  persistableAvatarSelection,
-  isBundledAvatarSrc,
-  withAvatarCacheBust,
-} from "@/features/auth/lib/avatar";
+import { persistableAvatarSelection, isBundledAvatarSrc } from "@/features/auth/lib/avatar";
 import { COUNTRIES } from "@/features/auth/data/countries";
 import { CHARACTER_AVATARS, INTERESTS } from "@/features/auth/data/onboarding";
 import { PROFILE_CURRENT_PHOTO_SRC } from "@/features/profile/lib/profileAssets";
+import {
+  bumpProfileEpoch,
+  canonicalProfileFromEdit,
+  sessionIdentityFromProfile,
+} from "@/features/profile/lib/profileIdentity";
 import { useProfile } from "@/features/profile/lib/useProfile";
+import { refreshCurrentProfile } from "@/lib/supabase/auth-sync";
 import { supabase } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/authStore";
@@ -50,100 +52,110 @@ export function ProfileEditPage() {
   const [bio, setBio] = useState(profile.bio);
   const [country, setCountry] = useState(profile.countryCode ?? "");
   const [avatarId, setAvatar] = useState<string | null>(profile.avatarId);
+  const [dirty, setDirty] = useState(false);
   const [errors, setErrors] = useState<{ displayName?: string; username?: string }>({});
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (dirty || profile.identityPending) return;
+    setDisplayName(profile.displayName);
+    setUsername(profile.username);
+    setBio(profile.bio);
+    setCountry(profile.countryCode ?? "");
+    setAvatar(profile.avatarId);
+  }, [
+    dirty,
+    profile.identityPending,
+    profile.displayName,
+    profile.username,
+    profile.bio,
+    profile.countryCode,
+    profile.avatarId,
+  ]);
   const currentPhotoSrc =
     profile.avatarUrl?.trim() && !isBundledAvatarSrc(profile.avatarUrl)
       ? profile.avatarUrl
       : PROFILE_CURRENT_PHOTO_SRC;
   const photoSelected = !avatarId;
 
-  function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     const nextErrors: typeof errors = {};
     if (displayName.trim().length < 2) nextErrors.displayName = "At least 2 characters.";
     if (!/^[a-z0-9_]{3,20}$/i.test(username))
       nextErrors.username = "3–20 letters, numbers or underscores.";
     setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) return;
+    if (Object.keys(nextErrors).length > 0 || !user || profile.identityPending) return;
 
-    setSaving(true);
-
-    // Optimistic local update — stores are a cache layer.
-    updateProfile({
-      displayName: displayName.trim(),
-      username: username.trim().toLowerCase(),
-      bio: bio.trim(),
-      country: country || null,
-    });
-    setAvatarId(avatarId);
+    const previousCache = useProfileStore.getState();
+    const previousSession = user;
+    const previousAvatar = useOnboardingStore.getState().avatarId;
     const persisted = persistableAvatarSelection({
       avatarId,
       currentAvatarUrl: profile.avatarUrl,
     });
-    const revision = Date.now();
-    const sessionAvatarUrl = persisted.avatarUrl
-      ? withAvatarCacheBust(persisted.avatarUrl, revision)
-      : null;
-    if (user) {
-      const nextUser: typeof user = {
-        ...user,
-        displayName: displayName.trim(),
-        username: username.trim().toLowerCase(),
-        ...(country ? { country } : {}),
-      };
-      if (persisted.avatarId) {
-        nextUser.avatarId = persisted.avatarId;
-      } else {
-        delete nextUser.avatarId;
-      }
-      if (sessionAvatarUrl) {
-        nextUser.avatarUrl = sessionAvatarUrl;
-      } else {
-        delete nextUser.avatarUrl;
-      }
-      setSession(nextUser);
-    }
+    const canonical = canonicalProfileFromEdit({
+      userId: user.id,
+      displayName: displayName.trim(),
+      username: username.trim().toLowerCase(),
+      bio: bio.trim(),
+      country: country ? country.toUpperCase() : null,
+      avatarId: persisted.avatarId,
+      avatarUrl: persisted.avatarUrl,
+      joinedAt: previousCache.ownerId === user.id ? previousCache.joinedAt : null,
+    });
 
-    // Persist to database in parallel; errors are surfaced via toast without
-    // rolling back the optimistic state (the user's intent is already captured
-    // in localStorage and shown on-screen).
-    if (user?.id) {
-      const userId = user.id;
-      void Promise.all([
-        supabase
-          .from("profiles")
-          .update({
-            display_name: displayName.trim(),
-            username: username.trim().toLowerCase(),
-            bio: bio.trim() || null,
-            country_code: country ? country.toUpperCase() : null,
-            avatar_id: persisted.avatarId,
-            avatar_url: persisted.avatarUrl,
-          })
-          .eq("id", userId)
-          .then(({ error }) => {
-            if (error) {
-              console.error("Failed to update profile", error);
-              toast.error(
-                "Profile saved locally, but could not reach the server. Changes will sync on next login.",
-              );
-            }
-          }),
-        supabase
-          .from("profile_preferences")
-          .upsert({ user_id: userId, interests }, { onConflict: "user_id" })
-          .then(({ error }) => {
-            if (error) console.error("Failed to update preferences", error);
-          }),
-      ]);
-    }
+    setSaving(true);
+    bumpProfileEpoch();
+    updateProfile(canonical);
+    setAvatarId(canonical.avatarId);
+    setSession(sessionIdentityFromProfile({ id: user.id, email: user.email }, canonical));
 
-    window.setTimeout(() => {
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        display_name: canonical.displayName,
+        username: canonical.username,
+        bio: canonical.bio,
+        country_code: canonical.country,
+        avatar_id: canonical.avatarId,
+        avatar_url: canonical.avatarUrl,
+      })
+      .eq("id", user.id);
+
+    if (error) {
+      console.error("Failed to update profile", error);
+      bumpProfileEpoch();
+      updateProfile({
+        ownerId: previousCache.ownerId,
+        displayName: previousCache.displayName,
+        username: previousCache.username,
+        bio: previousCache.bio,
+        country: previousCache.country,
+        joinedAt: previousCache.joinedAt,
+        avatarId: previousCache.avatarId,
+        avatarUrl: previousCache.avatarUrl,
+        loaded: previousCache.loaded,
+        status: previousCache.status,
+        loadError: previousCache.loadError,
+      });
+      setSession(previousSession);
+      setAvatarId(previousAvatar);
+      toast.error("Could not save your profile. Nothing was changed.");
       setSaving(false);
-      toast.success("Profile updated");
-      void navigate({ to: "/profile" });
-    }, 600);
+      return;
+    }
+
+    const { error: preferencesError } = await supabase
+      .from("profile_preferences")
+      .upsert({ user_id: user.id, interests }, { onConflict: "user_id" });
+    if (preferencesError) console.error("Failed to update preferences", preferencesError);
+
+    bumpProfileEpoch();
+    refreshCurrentProfile();
+    toast.success("Profile updated");
+    setSaving(false);
+    void navigate({ to: "/profile" });
   }
 
   return (
@@ -164,7 +176,10 @@ export function ProfileEditPage() {
                     id="displayName"
                     label="Display name"
                     value={displayName}
-                    onChange={(event) => setDisplayName(event.target.value)}
+                    onChange={(event) => {
+                      setDirty(true);
+                      setDisplayName(event.target.value);
+                    }}
                     autoComplete="name"
                     {...(errors.displayName ? { error: errors.displayName } : {})}
                   />
@@ -172,7 +187,10 @@ export function ProfileEditPage() {
                     id="username"
                     label="Username"
                     value={username}
-                    onChange={(event) => setUsername(event.target.value)}
+                    onChange={(event) => {
+                      setDirty(true);
+                      setUsername(event.target.value);
+                    }}
                     autoComplete="username"
                     hint="Your public handle across leaderboards and community."
                     {...(errors.username ? { error: errors.username } : {})}
@@ -183,14 +201,20 @@ export function ProfileEditPage() {
                     rows={4}
                     maxLength={BIO_LIMIT}
                     value={bio}
-                    onChange={(event) => setBio(event.target.value)}
+                    onChange={(event) => {
+                      setDirty(true);
+                      setBio(event.target.value);
+                    }}
                     hint={`${bio.length} / ${BIO_LIMIT} characters`}
                   />
                   <GeoSelect
                     id="country"
                     label="Country"
                     value={country}
-                    onChange={(event) => setCountry(event.target.value)}
+                    onChange={(event) => {
+                      setDirty(true);
+                      setCountry(event.target.value);
+                    }}
                   >
                     <option value="">Prefer not to say</option>
                     {COUNTRIES.map((item) => (
@@ -208,7 +232,10 @@ export function ProfileEditPage() {
                   <div className="profile-edit-avatars">
                     <button
                       type="button"
-                      onClick={() => setAvatar(null)}
+                      onClick={() => {
+                        setDirty(true);
+                        setAvatar(null);
+                      }}
                       aria-pressed={photoSelected}
                       className={cn(
                         "profile-edit-avatar",
@@ -232,7 +259,10 @@ export function ProfileEditPage() {
                         <button
                           key={option.id}
                           type="button"
-                          onClick={() => setAvatar(option.id)}
+                          onClick={() => {
+                            setDirty(true);
+                            setAvatar(option.id);
+                          }}
                           aria-pressed={selected}
                           className={cn(
                             "profile-edit-avatar",
@@ -298,7 +328,7 @@ export function ProfileEditPage() {
               <GeoButton
                 type="submit"
                 variant="primary"
-                disabled={saving}
+                disabled={saving || profile.identityPending}
                 className="profile-edit-save"
               >
                 {saving ? "Saving…" : "Save changes"}

@@ -37,17 +37,42 @@ export function PlayerSummaryCard({ player }: { player: PlayerSnapshot }) {
       <div className="p-6 sm:p-8">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-center gap-5">
-            <UserAvatar
-              avatarUrl={profile.avatarUrl}
-              avatarId={profile.avatarId}
-              size={78}
-              className="drop-shadow-[0_8px_20px_rgba(0,0,0,0.45)]"
-            />
+            {profile.identityPending ? (
+              <span
+                className="block h-[78px] w-[78px] shrink-0 animate-pulse rounded-full bg-bronze/15 motion-reduce:animate-none"
+                aria-hidden
+              />
+            ) : (
+              <UserAvatar
+                avatarUrl={profile.avatarUrl}
+                avatarId={profile.avatarId}
+                size={78}
+                className="drop-shadow-[0_8px_20px_rgba(0,0,0,0.45)]"
+              />
+            )}
             <div className="min-w-0">
-              <h2 className="truncate text-xl font-semibold tracking-tight text-foreground">
-                {profile.displayName}
-              </h2>
-              <p className="mt-1 text-xs text-foreground/50">{profile.handle}</p>
+              {profile.identityPending ? (
+                <span
+                  className="block h-6 w-40 animate-pulse rounded-md bg-bronze/10 motion-reduce:animate-none"
+                  aria-hidden
+                />
+              ) : (
+                <h2 className="truncate text-xl font-semibold tracking-tight text-foreground">
+                  {profile.displayName || "Profile unavailable"}
+                </h2>
+              )}
+              {profile.handle ? (
+                <p className="mt-1 text-xs text-foreground/50">{profile.handle}</p>
+              ) : null}
+              {profile.identityError ? (
+                <button
+                  type="button"
+                  className="mt-2 text-xs text-bronze underline underline-offset-2"
+                  onClick={() => profile.retryProfile()}
+                >
+                  Retry profile
+                </button>
+              ) : null}
               <p className="mt-3">
                 <MetaChip tone="bronze">
                   <Sparkles className="h-3 w-3" strokeWidth={2.4} aria-hidden="true" />

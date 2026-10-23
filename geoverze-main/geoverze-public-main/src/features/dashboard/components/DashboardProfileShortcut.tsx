@@ -31,20 +31,43 @@ export function DashboardProfileShortcut({ className }: { className?: string }) 
           <span className="dashboard-dock-avatar-stage">
             <span className="dashboard-dock-avatar-pop">
               <span className="dashboard-dock-avatar-frame">
-                <UserAvatar
-                  avatarUrl={profile.avatarUrl}
-                  avatarId={profile.avatarId}
-                  size={66}
-                  priority
-                  className="dashboard-dock-avatar"
-                  alt={profile.displayName}
-                />
+                {profile.identityPending ? (
+                  <span
+                    className="block h-[66px] w-[66px] animate-pulse rounded-full bg-bronze/15 motion-reduce:animate-none"
+                    aria-hidden
+                  />
+                ) : (
+                  <UserAvatar
+                    avatarUrl={profile.avatarUrl}
+                    avatarId={profile.avatarId}
+                    size={66}
+                    priority
+                    className="dashboard-dock-avatar"
+                    alt={profile.displayName || "Profile"}
+                  />
+                )}
               </span>
             </span>
           </span>
           <div className="dashboard-dock-identity-copy">
-            <p className="dashboard-dock-name">{profile.displayName}</p>
-            <p className="dashboard-dock-handle">{profile.handle}</p>
+            {profile.identityPending ? (
+              <span
+                className="block h-4 w-28 animate-pulse rounded-md bg-bronze/10 motion-reduce:animate-none"
+                aria-hidden
+              />
+            ) : (
+              <p className="dashboard-dock-name">{profile.displayName || "Profile unavailable"}</p>
+            )}
+            {profile.handle ? <p className="dashboard-dock-handle">{profile.handle}</p> : null}
+            {profile.identityError ? (
+              <button
+                type="button"
+                className="mt-1 text-left text-xs text-bronze underline underline-offset-2"
+                onClick={() => profile.retryProfile()}
+              >
+                Retry profile
+              </button>
+            ) : null}
           </div>
         </div>
 

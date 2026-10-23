@@ -57,18 +57,46 @@ export function ProfilePage() {
             <div className="profile-hero-layout">
               <div className="profile-hero-identity">
                 <div className="profile-hero-avatar-frame">
-                  <UserAvatar
-                    avatarUrl={profile.avatarUrl}
-                    avatarId={profile.avatarId}
-                    size={112}
-                    className="profile-hero-avatar-image"
-                    alt={`${profile.displayName} avatar`}
-                  />
+                  {profile.identityPending ? (
+                    <span
+                      className="block h-full w-full animate-pulse rounded-full bg-bronze/15 motion-reduce:animate-none"
+                      aria-hidden
+                    />
+                  ) : (
+                    <UserAvatar
+                      avatarUrl={profile.avatarUrl}
+                      avatarId={profile.avatarId}
+                      size={112}
+                      className="profile-hero-avatar-image"
+                      alt={profile.displayName ? `${profile.displayName} avatar` : "Profile avatar"}
+                    />
+                  )}
                 </div>
 
                 <div className="profile-hero-info min-w-0">
-                  <h1 className="profile-display-name truncate">{profile.displayName}</h1>
-                  <p className="profile-handle">{profile.handle}</p>
+                  {profile.identityPending ? (
+                    <span
+                      className="block h-8 w-48 animate-pulse rounded-md bg-bronze/10 motion-reduce:animate-none"
+                      aria-hidden
+                    />
+                  ) : (
+                    <h1 className="profile-display-name truncate">
+                      {profile.displayName || "Profile unavailable"}
+                    </h1>
+                  )}
+                  {profile.handle ? <p className="profile-handle">{profile.handle}</p> : null}
+                  {profile.identityError ? (
+                    <p className="mt-2 text-xs text-foreground/70">
+                      {profile.identityError}{" "}
+                      <button
+                        type="button"
+                        className="text-bronze underline underline-offset-2"
+                        onClick={() => profile.retryProfile()}
+                      >
+                        Retry
+                      </button>
+                    </p>
+                  ) : null}
                   {profile.bio ? (
                     <p className="profile-bio profile-hero-bio">{profile.bio}</p>
                   ) : null}
@@ -83,7 +111,9 @@ export function ProfilePage() {
                         {profile.country.name}
                       </span>
                     ) : null}
-                    <span>Explorer since {formatJoinDate(profile.joinedAt)}</span>
+                    {profile.joinedAt ? (
+                      <span>Explorer since {formatJoinDate(profile.joinedAt)}</span>
+                    ) : null}
                     {profile.skillLevel ? <span>{profile.skillLevel.label} tier</span> : null}
                     <span className="inline-flex items-center gap-2">
                       <Share2
