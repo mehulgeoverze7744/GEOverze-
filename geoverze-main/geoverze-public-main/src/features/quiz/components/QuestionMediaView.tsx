@@ -41,13 +41,26 @@ function ProceduralPlate({
  */
 export function QuestionMediaView({ media }: { media: QuestionMedia }) {
   if (media.kind === "flag") {
+    const units = Array.from(media.glyph).length;
+    const rebusLike = units > 4 || /[A-Za-z0-9+]/.test(media.glyph);
+    const glyphSize =
+      units <= 4
+        ? "text-[4.5rem] sm:text-[5.5rem]"
+        : units <= 10
+          ? "text-[2.35rem] sm:text-[3rem]"
+          : "text-[1.65rem] sm:text-[2rem]";
     return (
       <figure className="flex flex-col items-center gap-3">
-        <div className="game-surface-raised flex w-full max-w-sm items-center justify-center rounded-2xl py-8">
+        <div
+          className={cn(
+            "game-surface-raised flex w-full items-center justify-center rounded-2xl px-4 py-8",
+            rebusLike ? "max-w-xl" : "max-w-sm",
+          )}
+        >
           <span
-            className="text-[4.5rem] leading-none sm:text-[5.5rem]"
+            className={cn("text-center leading-none [overflow-wrap:anywhere]", glyphSize)}
             role="img"
-            aria-label={media.caption ?? "Flag"}
+            aria-label={media.caption ?? (rebusLike ? "Rebus clue" : "Flag")}
           >
             {media.glyph}
           </span>

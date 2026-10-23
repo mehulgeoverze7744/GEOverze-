@@ -49,6 +49,7 @@ export function SearchPage() {
   };
 
   const playQuiz = (quiz: Quiz) => navigate({ to: "/play/quiz", search: { quiz: quiz.id } });
+  const emojiFun = filters.category === "emoji-fun";
 
   if (error) {
     return (
@@ -78,12 +79,14 @@ export function SearchPage() {
         className="pt-[calc(var(--nav-height)+var(--space-section-sm))] pb-[var(--space-section-sm)]"
       >
         <AnimatedSection>
-          <p className="eyebrow">Search</p>
+          <p className="eyebrow">{emojiFun ? "Emoji & Fun" : "Search"}</p>
           <h1 className="mt-4 text-[clamp(2rem,4.4vw,3.2rem)] font-semibold leading-[1.05] tracking-tight text-foreground">
-            Find an exact match
+            {emojiFun ? "Emoji & Fun Quizzes" : "Find an exact match"}
           </h1>
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-foreground/60 md:text-base">
-            Search the full catalog, then narrow by difficulty, category, length, size and creator.
+            {emojiFun
+              ? "Decode emoji, letter and number rebuses for countries, capitals, landmarks and the words of the map."
+              : "Search the full catalog, then narrow by difficulty, category, length, size and creator."}
           </p>
         </AnimatedSection>
 

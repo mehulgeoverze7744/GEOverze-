@@ -27,10 +27,10 @@ const PLAY_FORMAT_ALIASES: readonly PlayModeSearchRecord[] = [
   {
     id: "play-emoji-quiz",
     title: "Emoji Quiz",
-    meta: "Play · Flags",
-    keywords: ["emoji", "flag", "flags", "glyph", "quiz"],
+    meta: "Play · Emoji & Fun",
+    keywords: ["emoji", "rebus", "fun", "glyph", "quiz"],
     to: "/play/search",
-    search: { category: "flags" },
+    search: { category: "emoji-fun" },
   },
   {
     id: "play-country-shape",

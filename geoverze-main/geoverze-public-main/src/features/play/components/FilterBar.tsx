@@ -123,7 +123,9 @@ export function FilterBar({
     () => Array.from(new Set(quizzes.map((quiz) => quiz.creator))).sort(),
     [quizzes],
   );
-  const categoryLabel = QUIZ_CATEGORIES.find((category) => category.id === filters.category)?.title;
+  const categoryLabel =
+    QUIZ_CATEGORIES.find((category) => category.id === filters.category)?.title ??
+    (filters.category === "emoji-fun" ? "Emoji & Fun" : undefined);
   const chips = chipsForFilters(filters, categoryLabel);
 
   return (
@@ -157,6 +159,7 @@ export function FilterBar({
           options={[
             { id: "any", label: "All categories" },
             ...QUIZ_CATEGORIES.map((category) => ({ id: category.id, label: category.title })),
+            { id: "emoji-fun", label: "Emoji & Fun" },
           ]}
         />
         <FilterSelect

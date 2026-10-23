@@ -20,6 +20,7 @@ export const categoryIdToLabel: Record<string, string> = {
   flags: "Flags",
   landmarks: "Landmarks",
   maps: "Borders",
+  "emoji-fun": "Emoji & Fun",
 };
 
 export function categoryIdToDisplay(categoryId: string): string {

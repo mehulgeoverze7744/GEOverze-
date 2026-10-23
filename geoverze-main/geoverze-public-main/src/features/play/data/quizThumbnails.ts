@@ -1,3 +1,4 @@
+import { EMOJI_FUN_QUIZ_THUMBNAILS } from "./emojiFunQuizThumbnails.generated";
 import { LIBRARY_QUIZ_THUMBNAILS } from "./libraryQuizThumbnails.generated";
 
 /** Frontend-only quiz cover photography for Let's Play cards. Keyed by quiz id — not slug or DB art key. */
@@ -166,6 +167,7 @@ const EXISTING_QUIZ_THUMBNAILS: Readonly<Record<string, QuizThumbnail>> = {
 export const QUIZ_THUMBNAILS: Readonly<Record<string, QuizThumbnail>> = {
   ...EXISTING_QUIZ_THUMBNAILS,
   ...LIBRARY_QUIZ_THUMBNAILS,
+  ...EMOJI_FUN_QUIZ_THUMBNAILS,
 };
 
 export function quizThumbnailForId(quizId: string): QuizThumbnail | undefined {

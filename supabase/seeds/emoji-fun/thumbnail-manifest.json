@@ -1,0 +1,402 @@
+[
+  {
+    "id": "q-emo-emoji-earth-decoder",
+    "title": "Emoji Earth Decoder",
+    "difficulty": "Easy",
+    "file": "emo-emoji-earth-decoder-quiz.jpg",
+    "scene": "Antique globe on a dark walnut desk with chilli, turkey and whale stickers, bronze rim light, charcoal background",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-crack-the-country-code",
+    "title": "Crack the Country Code",
+    "difficulty": "Easy",
+    "file": "emo-crack-the-country-code-quiz.jpg",
+    "scene": "Brass cipher wheel and a folded map on charcoal linen, with a pear, a bell and a pan sticker",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-capital-city-charades",
+    "title": "Capital City Charades",
+    "difficulty": "Easy",
+    "file": "emo-capital-city-charades-quiz.jpg",
+    "scene": "Night skyline models on a dark table, bronze window light, a sofa miniature and a bell sticker",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-flag-emoji-mysteries",
+    "title": "Flag Emoji Mysteries",
+    "difficulty": "Easy",
+    "file": "emo-flag-emoji-mysteries-quiz.jpg",
+    "scene": "Folded flag fabric and enamel pins on black slate, bronze scissors, no readable country names",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-landmark-rebus-rush",
+    "title": "Landmark Rebus Rush",
+    "difficulty": "Easy",
+    "file": "emo-landmark-rebus-rush-quiz.jpg",
+    "scene": "Miniature stone arch, bell and mountain model on a dark museum table, warm bronze spotlight",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-geography-in-disguise",
+    "title": "Geography in Disguise",
+    "difficulty": "Easy",
+    "file": "emo-geography-in-disguise-quiz.jpg",
+    "scene": "A dark globe half-covered by a bronze masquerade mask, sea-chart scraps beside it",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-the-emoji-atlas",
+    "title": "The Emoji Atlas",
+    "difficulty": "Easy",
+    "file": "emo-the-emoji-atlas-quiz.jpg",
+    "scene": "Open atlas with sticker tabs, a boot, a microphone and a breeze card on charcoal paper",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-decode-the-destination",
+    "title": "Decode the Destination",
+    "difficulty": "Easy",
+    "file": "emo-decode-the-destination-quiz.jpg",
+    "scene": "Vintage suitcase, brass locks and loose city postcards on a dark bench, no readable city names",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-symbolic-world-tour",
+    "title": "Symbolic World Tour",
+    "difficulty": "Easy",
+    "file": "emo-symbolic-world-tour-quiz.jpg",
+    "scene": "Passport, bronze fountain pen and a road-map ribbon on black leather",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-planet-puzzle-challenge",
+    "title": "Planet Puzzle Challenge",
+    "difficulty": "Easy",
+    "file": "emo-planet-puzzle-challenge-quiz.jpg",
+    "scene": "Wooden puzzle globe pulled apart on charcoal felt, bronze edges, a few loose state-shaped pieces with no labels",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-sticker-map-sprint",
+    "title": "Sticker Map Sprint",
+    "difficulty": "Easy",
+    "file": "emo-sticker-map-sprint-quiz.jpg",
+    "scene": "Wall map in a dark study with loose pear, sheep and pine stickers, bronze map pins",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-passport-of-puns",
+    "title": "Passport of Puns",
+    "difficulty": "Easy",
+    "file": "emo-passport-of-puns-quiz.jpg",
+    "scene": "Open passport on black leather with hay, tea and a bee sticker, bronze corner light",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-ocean-glyph-garden",
+    "title": "Ocean Glyph Garden",
+    "difficulty": "Easy",
+    "file": "emo-ocean-glyph-garden-quiz.jpg",
+    "scene": "Dark sea chart with shell, coral and compass stickers, low bronze lamp",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-capital-soundboard",
+    "title": "Capital Soundboard",
+    "difficulty": "Easy",
+    "file": "emo-capital-soundboard-quiz.jpg",
+    "scene": "Headphones resting on a dark city atlas, bronze earcups, no printed city names",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-first-look-landmarks",
+    "title": "First-Look Landmarks",
+    "difficulty": "Easy",
+    "file": "emo-first-look-landmarks-quiz.jpg",
+    "scene": "Museum plinth with a tiny bridge, a gold medal and a blank white tile, dark gallery walls",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-harbour-homophones",
+    "title": "Harbour Homophones",
+    "difficulty": "Easy",
+    "file": "emo-harbour-homophones-quiz.jpg",
+    "scene": "Night harbour, bronze bollard, dark water and a single ham sticker on a crate",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-easy-street-atlas",
+    "title": "Easy Street Atlas",
+    "difficulty": "Easy",
+    "file": "emo-easy-street-atlas-quiz.jpg",
+    "scene": "Cloth street atlas open under a desk lamp, charcoal room, bronze ruler",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-picture-postcard-puzzles",
+    "title": "Picture Postcard Puzzles",
+    "difficulty": "Easy",
+    "file": "emo-picture-postcard-puzzles-quiz.jpg",
+    "scene": "Stack of blank postcards, a pie and a crown sticker, dark wood table",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-globe-sticker-studio",
+    "title": "Globe Sticker Studio",
+    "difficulty": "Easy",
+    "file": "emo-globe-sticker-studio-quiz.jpg",
+    "scene": "Craft table, charcoal mat, loose doughnut, bee and cat stickers around a small globe",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-river-sound-chart",
+    "title": "River Sound Chart",
+    "difficulty": "Easy",
+    "file": "emo-river-sound-chart-quiz.jpg",
+    "scene": "River chart on black paper, rain sticker, bronze divider, no printed river names",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-mountain-sketchbook",
+    "title": "Mountain Sketchbook",
+    "difficulty": "Easy",
+    "file": "emo-mountain-sketchbook-quiz.jpg",
+    "scene": "Open sketchbook, charcoal smudges, a pie and a dragon-free bronze pencil beside a blank peak study",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-island-icon-hour",
+    "title": "Island Icon Hour",
+    "difficulty": "Easy",
+    "file": "emo-island-icon-hour-quiz.jpg",
+    "scene": "Sea chart, bronze dividers, an egg and a cloud sticker, dark water beyond the table",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-desert-dune-decoder",
+    "title": "Desert Dune Decoder",
+    "difficulty": "Easy",
+    "file": "emo-desert-dune-decoder-quiz.jpg",
+    "scene": "Dune photograph in low bronze light, a hare sticker and a comb on black sand-colored cloth",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-city-skyline-symbols",
+    "title": "City Skyline Symbols",
+    "difficulty": "Easy",
+    "file": "emo-city-skyline-symbols-quiz.jpg",
+    "scene": "Unlabelled night skyline in charcoal and bronze, a moon sticker and a crown pin",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-lake-and-lagoon-letters",
+    "title": "Lake and Lagoon Letters",
+    "difficulty": "Easy",
+    "file": "emo-lake-and-lagoon-letters-quiz.jpg",
+    "scene": "Still black water, a bronze oar, an ear sticker and a salt cellar",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-vocabulary-stickers",
+    "title": "Vocabulary Stickers",
+    "difficulty": "Easy",
+    "file": "emo-vocabulary-stickers-quiz.jpg",
+    "scene": "Cartographer's desk, bronze triangle, a cape costume brooch and a golf tee, no printed labels",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-world-in-ten-pictures",
+    "title": "World in Ten Pictures",
+    "difficulty": "Easy",
+    "file": "emo-world-in-ten-pictures-quiz.jpg",
+    "scene": "Ten blank photo prints on black board, a rabbit, a lock and a pointing hand among them",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-beginner-border-banter",
+    "title": "Beginner Border Banter",
+    "difficulty": "Easy",
+    "file": "emo-beginner-border-banter-quiz.jpg",
+    "scene": "Border stone and a bronze chain on dark soil, a milk bottle and an iceberg card",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-sunny-side-of-the-map",
+    "title": "Sunny Side of the Map",
+    "difficulty": "Easy",
+    "file": "emo-sunny-side-of-the-map-quiz.jpg",
+    "scene": "Sunlit map edge fading into charcoal, a grape, a tooth and a kettle sticker",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-map-word-warmup",
+    "title": "Map Word Warm-Up",
+    "difficulty": "Easy",
+    "file": "emo-map-word-warmup-quiz.jpg",
+    "scene": "Half-shadowed globe, bronze stand, a ribbon and a chocolate bar on the meridian",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-syllable-safari",
+    "title": "Syllable Safari",
+    "difficulty": "Medium",
+    "file": "emo-syllable-safari-quiz.jpg",
+    "scene": "Dusk savanna track, bronze binoculars, no place names on the map case",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-homophone-horizons",
+    "title": "Homophone Horizons",
+    "difficulty": "Medium",
+    "file": "emo-homophone-horizons-quiz.jpg",
+    "scene": "Horizon band of bronze light over a black sea, a rope coil and a moon sticker",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-letter-drop-landmarks",
+    "title": "Letter-Drop Landmarks",
+    "difficulty": "Medium",
+    "file": "emo-letter-drop-landmarks-quiz.jpg",
+    "scene": "Dark gallery, letterpress blocks and a small bridge model, bronze frame",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-abbreviation-atlas",
+    "title": "Abbreviation Atlas",
+    "difficulty": "Medium",
+    "file": "emo-abbreviation-atlas-quiz.jpg",
+    "scene": "Telegram tape and an atlas on charcoal cloth, a trail of bronze pins",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-double-clue-capitals",
+    "title": "Double-Clue Capitals",
+    "difficulty": "Medium",
+    "file": "emo-double-clue-capitals-quiz.jpg",
+    "scene": "Two overlapping city photographs, faces hidden, bronze clips on a black board",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-sound-alike-states",
+    "title": "Sound-Alike States",
+    "difficulty": "Medium",
+    "file": "emo-sound-alike-states-quiz.jpg",
+    "scene": "Folded road atlas of unlabeled states, bronze paperweight, charcoal desk",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-fragment-frontier",
+    "title": "Fragment Frontier",
+    "difficulty": "Medium",
+    "file": "emo-fragment-frontier-quiz.jpg",
+    "scene": "Torn frontier map, bronze weights, a microscope and a saw on black felt",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-numbered-nations",
+    "title": "Numbered Nations",
+    "difficulty": "Medium",
+    "file": "emo-numbered-nations-quiz.jpg",
+    "scene": "Brass numerals scattered on a dark chart, no printed captions",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-punctuation-places",
+    "title": "Punctuation Places",
+    "difficulty": "Medium",
+    "file": "emo-punctuation-places-quiz.jpg",
+    "scene": "Ink stamps, a cape brooch and a horn on black blotting paper",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-mixed-signal-maps",
+    "title": "Mixed-Signal Maps",
+    "difficulty": "Medium",
+    "file": "emo-mixed-signal-maps-quiz.jpg",
+    "scene": "Signal flags without letters, a microscope and a carp sketch on charcoal",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-portmanteau-ports",
+    "title": "Portmanteau Ports",
+    "difficulty": "Medium",
+    "file": "emo-portmanteau-ports-quiz.jpg",
+    "scene": "Harbour cranes at night, bronze rivets, a knot of rope and a ham tin",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-hidden-harbour-names",
+    "title": "Hidden Harbour Names",
+    "difficulty": "Medium",
+    "file": "emo-hidden-harbour-names-quiz.jpg",
+    "scene": "Foggy harbour mouth, one bronze bell, no painted port names",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-compound-coastlines",
+    "title": "Compound Coastlines",
+    "difficulty": "Medium",
+    "file": "emo-compound-coastlines-quiz.jpg",
+    "scene": "Aerial coastline in charcoal water, a gold medal and a sun sticker, no captions",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-rebus-river-run",
+    "title": "Rebus River Run",
+    "difficulty": "Medium",
+    "file": "emo-rebus-river-run-quiz.jpg",
+    "scene": "Kayak on black water, a pot, an orange and a volleyball sticker",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-capital-cryptograms",
+    "title": "Capital Cryptograms",
+    "difficulty": "Medium",
+    "file": "emo-capital-cryptograms-quiz.jpg",
+    "scene": "Cipher disk on a capital-city atlas, bronze pointer, no printed names",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-cartographers-cryptic",
+    "title": "Cartographer's Cryptic",
+    "difficulty": "Hard",
+    "file": "emo-cartographers-cryptic-quiz.jpg",
+    "scene": "Antique dividers and a brass scale on a black chart table",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-multi-step-meridians",
+    "title": "Multi-Step Meridians",
+    "difficulty": "Hard",
+    "file": "emo-multi-step-meridians-quiz.jpg",
+    "scene": "Meridian globe, a jar, a bat and a vampire novel with the title turned away",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-oblique-oceans",
+    "title": "Oblique Oceans",
+    "difficulty": "Hard",
+    "file": "emo-oblique-oceans-quiz.jpg",
+    "scene": "Deep-ocean chart, a crab, a goat and a brass stopwatch",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-enclave-equations",
+    "title": "Enclave Equations",
+    "difficulty": "Hard",
+    "file": "emo-enclave-equations-quiz.jpg",
+    "scene": "Nested border lines under a lens, a dolphin charm and a kangaroo sticker",
+    "status": "generated"
+  },
+  {
+    "id": "q-emo-the-long-way-round",
+    "title": "The Long Way Round",
+    "difficulty": "Hard",
+    "file": "emo-the-long-way-round-quiz.jpg",
+    "scene": "A dark globe with one bronze route circling it, a crab and a goat at the edge",
+    "status": "generated"
+  }
+]

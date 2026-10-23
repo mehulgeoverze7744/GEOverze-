@@ -52,7 +52,7 @@ export const GAME_TYPES: readonly GameType[] = [
     imageSrc: "/assets/play/emoji-and-fun-quizzes.jpg",
     imageAlt: "Globe surrounded by emoji and geography stickers for Emoji & Fun Quizzes",
     to: "/play/search",
-    search: { q: undefined, category: "flags" },
+    search: { q: undefined, category: "emoji-fun" },
   },
   {
     id: "educational",
