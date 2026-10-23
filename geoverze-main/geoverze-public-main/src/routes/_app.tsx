@@ -7,14 +7,17 @@ import { GeoButton } from "@/components/shared/GeoButton";
 import { GlassCard } from "@/components/shared/GlassCard";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { SectionContainer } from "@/components/shared/SectionContainer";
+import { SkeletonBlock } from "@/components/shared/SkeletonBlock";
+import { shouldShowSignIn } from "@/lib/supabase/authLifecycle";
 import { useAuthStore } from "@/stores/authStore";
 
 /**
  * Account area gate.
  *
  * Reads the Supabase-backed session mirror (`useAuthStore`) and renders an
- * inline sign-in wall instead of redirecting — the URL stays intact and the
- * page never flashes protected content while the session is restored.
+ * inline sign-in wall instead of redirecting. While the session is still
+ * being restored the wall is not shown: that state is not a signed-out user.
+ * The URL stays intact and protected content stays mounted once signed in.
  */
 export const Route = createFileRoute("/_app")({
   component: AccountArea,
@@ -24,6 +27,18 @@ function AccountArea() {
   const status = useAuthStore((s) => s.status);
 
   if (status === "signed-in") return <Outlet />;
+
+  if (!shouldShowSignIn(status)) {
+    return (
+      <PageShell>
+        <SectionContainer className="pt-[calc(var(--nav-height)+var(--space-section-sm))]">
+          <div aria-busy="true" aria-live="polite">
+            <SkeletonBlock variant="card" />
+          </div>
+        </SectionContainer>
+      </PageShell>
+    );
+  }
 
   return (
     <PageShell>

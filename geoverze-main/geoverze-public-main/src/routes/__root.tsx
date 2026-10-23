@@ -122,7 +122,7 @@ function RootComponent() {
   // the lifetime of the app. Guarded internally, so this is safe to call on
   // every render/remount.
   useEffect(() => {
-    initAuthSync(queryClient);
+    return initAuthSync(queryClient);
   }, [queryClient]);
 
   return (

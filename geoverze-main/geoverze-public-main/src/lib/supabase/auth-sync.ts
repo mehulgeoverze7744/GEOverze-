@@ -3,8 +3,9 @@
  *
  * This is the only module that reads `supabase.auth` directly for session
  * state — every screen keeps reading `useAuthStore` as before. Call
- * `initAuthSync()` once near the app root; it is idempotent so remounts
- * (React StrictMode, HMR) never register a second listener.
+ * `initAuthSync()` once near the app root. It returns a cleanup. Remounts
+ * (React StrictMode) unsubscribe the previous listener before subscribing
+ * again, so listeners do not accumulate.
  *
  * Phase 2B: also hydrates onboarding and preferences stores from
  * `profile_preferences` on every sign-in so localStorage becomes a
@@ -19,6 +20,7 @@ import type { Session, User } from "@supabase/supabase-js";
 import type { SkillLevelId } from "@/features/auth/data/onboarding";
 import { getLevelTitle, getXpProgress } from "@/features/progression/lib/progress";
 import { calendarDateInZone, liveCurrentStreak } from "@/features/progression/lib/streakStats";
+import { decideAuthTransition } from "@/lib/supabase/authLifecycle";
 import { useAuthStore } from "@/stores/authStore";
 import { useOnboardingStore } from "@/stores/onboardingStore";
 import {
@@ -208,6 +210,7 @@ async function hydrateProfileAndRole(user: User, event: string) {
 
     if (profileError) {
       console.error("Failed to load profile", profileError);
+      // A failed profile read is not a signed-out session.
       const currentCache = useProfileStore.getState();
       if (currentCache.ownerId !== user.id) useProfileStore.getState().reset();
       useProfileStore.getState().update({
@@ -257,14 +260,10 @@ function storeAuthScope(userId: string | null | undefined) {
   return userId ?? "anon";
 }
 
-function applySession(session: Session | null, event: string) {
-  const prevScope = libraryAuthScope(useAuthStore.getState().user?.id);
-  const nextScope = libraryAuthScope(session?.user?.id);
-  const prevStoreScope = storeAuthScope(useAuthStore.getState().user?.id);
-  const nextStoreScope = storeAuthScope(session?.user?.id);
-
+function applyScope(previousUserId: string | null | undefined, nextUserId: string | null | undefined) {
+  const prevScope = libraryAuthScope(previousUserId);
+  const nextScope = libraryAuthScope(nextUserId);
   syncLibraryQueryScope(nextScope);
-
   if (nextScope !== prevScope) {
     activateLibraryPersistScope(nextScope);
     resetLibraryHydration();
@@ -272,40 +271,68 @@ function applySession(session: Session | null, event: string) {
     appQueryClient?.removeQueries({ queryKey: ["billing"] });
   }
 
+  const prevStoreScope = storeAuthScope(previousUserId);
+  const nextStoreScope = storeAuthScope(nextUserId);
   if (nextStoreScope !== prevStoreScope) {
     activateStorePersistScope(nextStoreScope);
     resetStoreWishlistHydration();
   }
+}
 
-  const { setSession, setRole } = useAuthStore.getState();
+function applySession(
+  session: Session | null,
+  event: string,
+  listenerAlreadySpoke: boolean,
+  sessionReadSettled: boolean,
+) {
+  const store = useAuthStore.getState();
+  const decision = decideAuthTransition({
+    event,
+    incomingUserId: session?.user?.id ?? null,
+    phase: store.status,
+    currentUserId: store.user?.id ?? null,
+    listenerHasSpoken: listenerAlreadySpoke,
+    getSessionSettled: sessionReadSettled,
+  });
 
-  if (!session?.user) {
-    hydrateToken += 1;
-    inFlightUserId = null;
-    setSession(null);
-    setRole(null);
-    syncNotifications(null);
-    if (event === "SIGNED_OUT") useProfileStore.getState().reset();
+  if (decision.type === "ignore") {
+    if (import.meta.env.DEV && store.status === "signed-in" && !session?.user) {
+      console.info("[auth] kept session", { event, reason: decision.reason });
+    }
     return;
   }
 
-  const current = useAuthStore.getState().user;
-  if (current?.id && current.id !== session.user.id) {
-    const cache = useProfileStore.getState();
-    if (cache.ownerId && cache.ownerId !== session.user.id) useProfileStore.getState().reset();
+  if (decision.type === "unauthenticated") {
+    applyScope(store.user?.id, null);
+    hydrateToken += 1;
+    inFlightUserId = null;
+    store.setSession(null);
+    store.setRole(null);
+    syncNotifications(null);
+    useProfileStore.getState().reset();
+    return;
   }
+
+  const incoming = session?.user;
+  if (!incoming) return;
+
+  applyScope(store.user?.id, incoming.id);
+  const { setSession } = useAuthStore.getState();
+
+  const current = useAuthStore.getState().user;
+  if (decision.clearPreviousProfile) useProfileStore.getState().reset();
 
   // Keep an already hydrated identity when the same account emits another
   // auth event. Replacing the session with id + email was the flicker.
   setSession(
     retainSessionIdentity(current, {
-      id: session.user.id,
-      email: session.user.email ?? "",
+      id: incoming.id,
+      email: incoming.email ?? "",
     }),
   );
-  syncNotifications(session.user.id);
+  syncNotifications(incoming.id);
 
-  const user = session.user;
+  const user = incoming;
   const startHydration = () => {
     void hydrateProfileAndRole(user, event);
   };
@@ -316,30 +343,67 @@ function applySession(session: Session | null, event: string) {
   else setTimeout(startHydration, 0);
 }
 
+let authRefs = 0;
+let authGeneration = 0;
+let listenerHasSpoken = false;
+let getSessionSettled = false;
+let authSubscription: { unsubscribe: () => void } | null = null;
+
+function startAuthListener() {
+  const generation = ++authGeneration;
+  listenerHasSpoken = false;
+  getSessionSettled = false;
+  if (useAuthStore.getState().status !== "signed-in") {
+    useAuthStore.getState().setStatus("unknown");
+  }
+
+  const { data } = supabase.auth.onAuthStateChange((event, session) => {
+    if (generation !== authGeneration) return;
+    listenerHasSpoken = true;
+    applySession(session, event, true, getSessionSettled);
+  });
+  authSubscription = data.subscription;
+
+  void supabase.auth.getSession().then(({ data: sessionData, error }) => {
+    if (generation !== authGeneration) return;
+    if (error) {
+      // A failed read is not proof that the session is gone.
+      console.error("Failed to restore session", error);
+      return;
+    }
+    getSessionSettled = true;
+    applySession(sessionData.session ?? null, "getSession", listenerHasSpoken, true);
+  });
+}
+
+function stopAuthListener() {
+  authGeneration += 1;
+  listenerHasSpoken = false;
+  getSessionSettled = false;
+  authSubscription?.unsubscribe();
+  authSubscription = null;
+}
+
 export function initAuthSync(queryClient?: QueryClient) {
   if (queryClient) {
     registerLibraryQueryClient(queryClient);
     appQueryClient = queryClient;
   }
-  if (initialized) return;
-  initialized = true;
-
-  registerProgressSyncFlush();
-
-  if (typeof window !== "undefined") {
-    queueMicrotask(() => mergeLibraryStoreFromDisk());
+  if (!initialized) {
+    initialized = true;
+    registerProgressSyncFlush();
+    if (typeof window !== "undefined") {
+      queueMicrotask(() => mergeLibraryStoreFromDisk());
+    }
   }
 
-  useAuthStore.getState().setStatus("unknown");
+  authRefs += 1;
+  if (authRefs === 1) startAuthListener();
 
-  void supabase.auth.getSession().then(({ data, error }) => {
-    if (error) console.error("Failed to restore session", error);
-    applySession(data.session ?? null, "getSession");
-  });
-
-  supabase.auth.onAuthStateChange((event, session) => {
-    applySession(session, event);
-  });
+  return () => {
+    authRefs = Math.max(0, authRefs - 1);
+    if (authRefs === 0) stopAuthListener();
+  };
 }
 
 /** Signs out of Supabase and clears the local mirror. Use this, not store.clear(), for user-initiated logout. */
