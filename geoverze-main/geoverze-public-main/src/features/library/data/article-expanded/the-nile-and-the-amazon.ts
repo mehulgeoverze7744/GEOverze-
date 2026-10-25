@@ -27,7 +27,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "nile-khartoum-confluence",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Khartoum_-_Blue_and_White_Nile_confluence.jpg/1280px-Khartoum_-_Blue_and_White_Nile_confluence.jpg",
+      "/assets/geolibrary/body/confluence-of-nile-khartoum-001-cropped.jpg",
     caption:
       "The confluence of the Blue and White Nile at Khartoum, Sudan — where two river systems with different sources meet, their waters remaining visibly distinct for kilometres before mixing.",
     credit: "Wikimedia Commons / Public Domain",
@@ -81,31 +81,13 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "paragraph",
     text: "The Nile Delta is a triangular river delta — the shape that gave the Greek letter delta (Δ) its name in geographical usage. Formed over millions of years of sediment deposition, the delta stretches roughly 240 km along the Mediterranean coast and extends approximately 160 km inland. Today, the Nile splits into two main distributaries at Cairo: the Damietta branch to the east and the Rosetta branch to the west. In ancient times there were seven distributaries. The Aswan High Dam, completed in 1970, has dramatically reduced sediment delivery to the delta, causing it to erode at its edges — coastal communities that have existed for centuries are now threatened by Mediterranean encroachment. Alexandria, Egypt's second city and ancient Mediterranean hub, sits at the delta's western edge.",
-  },
-  {
-    kind: "image",
-    art: "nile-delta-from-space",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Nile_delta_from_orbit.jpg/800px-Nile_delta_from_orbit.jpg",
-    caption:
-      "The Nile Delta from orbit — the triangular green wedge against the Saharan beige is one of Earth's most recognisable features from space, representing one of the oldest continuously farmed landscapes on Earth.",
-    credit: "NASA / Wikimedia Commons / Public Domain",
-  },
+  },
 
   { kind: "heading", id: "amazon-in-detail", text: "The Amazon in detail" },
   {
     kind: "paragraph",
     text: "The Amazon drains approximately 40 percent of the South American continent, carrying the combined rainfall of an area larger than Europe through a basin of roughly 7 million square kilometres. The river's headwaters lie in the Andes of Peru and Bolivia, where glacial meltwater and tropical rainfall combine to form the multiple tributaries that become the Amazon's main stem. The river flows roughly 6,400 km (conventional figure) or up to 6,992 km (with the extended Mantaro-source measurement) from the Andes to the Atlantic near Marajó Island. Unlike the Nile, which narrows to near-zero discharge in some dry-season years, the Amazon is so vast that its minimum flow exceeds most other rivers' maximum. Even at low water, the Amazon's main channel is several kilometres wide and 20–100 metres deep.",
-  },
-  {
-    kind: "image",
-    art: "amazon-river-plume",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Amazon_River_plume.jpg/1280px-Amazon_River_plume.jpg",
-    caption:
-      "The Amazon's freshwater plume extending into the Atlantic Ocean. The sediment-rich discharge is visible from space as a turbid wedge stretching hundreds of kilometres from the Brazilian coast.",
-    credit: "NASA Earth Observatory / Public Domain",
-  },
+  },
   {
     kind: "facts",
     title: "The Amazon — key statistics",
@@ -226,7 +208,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "aswan-high-dam",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Aswan_High_Dam.JPG/1280px-Aswan_High_Dam.JPG",
+      "/assets/geolibrary/body/aswan-high-dam-panorama-looking-downstream.jpg",
     caption:
       "The Aswan High Dam, completed in 1970 — it ended the annual Nile flood cycle, eliminated silt delivery to the delta, and created Lake Nasser (550 km long), while requiring the relocation of Abu Simbel.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
@@ -256,7 +238,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "gerd-dam",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Grand_Ethiopian_Renaissance_Dam.jpg/1280px-Grand_Ethiopian_Renaissance_Dam.jpg",
+      "/assets/geolibrary/body/grand-ethiopian-renaissance-dam-aster.jpg",
     caption:
       "The Grand Ethiopian Renaissance Dam (GERD) on the Blue Nile — Africa's largest hydroelectric project, at the centre of an ongoing diplomatic dispute between Ethiopia, Egypt, and Sudan.",
     credit: "Wikimedia Commons / CC BY-SA 4.0",
@@ -275,7 +257,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "amazon-river-dolphin",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Boto_-_Inia_geoffrensis_%28Wikimedia_Commons%29.jpg/1280px-Boto_-_Inia_geoffrensis_%28Wikimedia_Commons%29.jpg",
+      "/assets/geolibrary/body/amazon-river-dolphin.jpg",
     caption:
       "The boto (pink river dolphin) — one of the Amazon's most distinctive species, navigating the flooded forest using echolocation to hunt fish among submerged trees.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
@@ -315,16 +297,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "paragraph",
     text: "Approximately 17 percent of the Amazon basin had been deforested as of 2024 — an area larger than France. The scientific consensus, based on modelling by Brazilian Earth-system scientists, suggests the system could cross a tipping point into a drier, savanna-like state if deforestation reaches 25–40 percent, at which point the self-sustaining rainfall cycle would no longer be able to maintain tropical forest across the basin. The 2019 dry season fires — many deliberately set to clear land under the Bolsonaro government's loosened enforcement policies — burned an area comparable to a European country in a single season. Following Luiz Inácio Lula da Silva's return to power in 2023, enforcement was strengthened and deforestation rates fell significantly, but scientists warn that the previous decade's losses cannot be reversed on political timescales.",
-  },
-  {
-    kind: "image",
-    art: "amazon-deforestation",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Deforestation_in_the_Amazon_-_Brazil.jpg/1280px-Deforestation_in_the_Amazon_-_Brazil.jpg",
-    caption:
-      "Deforestation at the Amazon frontier — the sharp boundary between intact rainforest and cleared cattle pasture is characteristic of the arc of deforestation in the Brazilian states of Pará and Mato Grosso.",
-    credit: "Wikimedia Commons / CC BY 2.0",
-  },
+  },
 
   {
     kind: "heading",

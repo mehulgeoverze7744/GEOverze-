@@ -26,7 +26,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-himalaya-north-face",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg/1280px-Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg",
+      "/assets/geolibrary/body/everest-north-face-toward-base-camp-tibet-luca-galuzzi-2006.jpg",
     caption:
       "Mount Everest's north face from the Tibetan Plateau — summit limestone began as seafloor sediment.",
     credit: "Luca Galuzzi / Wikimedia Commons / CC BY-SA 2.5",
@@ -122,7 +122,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-gangotri-glacier",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Gangotri_Glacier.jpg/1280px-Gangotri_Glacier.jpg",
+      "/assets/geolibrary/body/gangotri-glacier.jpg",
     caption:
       "Gangotri Glacier in Uttarakhand — the principal source of the Ganges, which has retreated over 22 km since 1780.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
@@ -136,15 +136,6 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "The Himalayas do not just exist as geography — they actively create climate. The range blocks cold, dry air from Central Asia from reaching the Indian subcontinent in winter. In summer, the barrier forces moist air from the Bay of Bengal and Arabian Sea to rise rapidly, cooling and dumping rainfall on the southern slopes. The Indian Summer Monsoon, which delivers over 70 percent of South Asia's annual rainfall in four months, is a direct consequence of this wall of rock. Without the Himalayas, the Indian subcontinent would resemble the Sahara in its moisture patterns.",
   },
   // Block 22
-  {
-    kind: "image",
-    art: "article-monsoon-clouds-himalaya",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Monsoon_clouds_over_Darjeeling.jpg/1280px-Monsoon_clouds_over_Darjeeling.jpg",
-    caption:
-      "Monsoon clouds banked against the foothills of the eastern Himalayas near Darjeeling.",
-    credit: "Wikimedia Commons / Public Domain",
-  },
   // Block 23
   {
     kind: "paragraph",
@@ -215,7 +206,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-himalaya-range-panorama",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Himalaya_composite.jpg/1280px-Himalaya_composite.jpg",
+      "/assets/geolibrary/body/himalaya-composite.jpg",
     caption:
       "The Himalayan range seen from the south — ten of the world's fourteen 8,000 m peaks lie in this arc.",
     credit: "Wikimedia Commons / Public Domain",
@@ -303,7 +294,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-snow-leopard-himalaya",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Schneeleopard_1.jpg/1280px-Schneeleopard_1.jpg",
+      "/assets/geolibrary/body/snow-leopard.jpg",
     caption:
       "The snow leopard ranges across the Himalayas and Central Asian ranges — IUCN Vulnerable with around 4,000–6,500 individuals remaining.",
     credit: "Wikimedia Commons / CC BY-SA 2.5",
@@ -332,10 +323,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-potala-palace-lhasa",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Potala_palace_34.jpg/1280px-Potala_palace_34.jpg",
+      "/assets/geolibrary/body/potala-palace.jpg",
     caption:
       "The Potala Palace in Lhasa, Tibet — seat of Dalai Lama governance for three centuries, at 3,650 m elevation.",
-    credit: "Wikimedia Commons / CC BY-SA 3.0",
+    credit: "Luca Galuzzi / Wikimedia Commons / CC BY-SA 2.5",
   },
 
   // Block 46

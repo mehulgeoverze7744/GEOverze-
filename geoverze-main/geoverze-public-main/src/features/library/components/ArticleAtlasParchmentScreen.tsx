@@ -124,6 +124,7 @@ export function ArticleAtlasParchmentScreen({
                   fallbackArt="article-microstates-map"
                   staticFallbackSrc="/assets/geolibrary/collections/countries-of-europe.jpg"
                   ratio="video"
+                  priority
                 />
                 <figcaption>
                   {presentation.heroImage.caption}

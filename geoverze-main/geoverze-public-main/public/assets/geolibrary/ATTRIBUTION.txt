@@ -1,0 +1,107 @@
+GVRZE Library image manifest
+
+Photographs, flags, and maps are authentic Wikimedia Commons files (or a same-subject replacement when the previous file was below 1200px wide). Nothing in this set was upscaled.
+Masters: public/assets/geolibrary/originals/ (copied before derivatives were written).
+Delivery: WebP and JPEG at 480, 768, 1200, 1600, and 1920 only when the master is wider than that size. AVIF is not generated.
+
+role | path | subject/source | license | credit | stored size | commons original | variant widths
+article-body | /assets/geolibrary/body/abu-simbel-temples.jpg | https://commons.wikimedia.org/wiki/File:Abu_Simbel_temples.jpg | CC BY-SA 2.0 | Dennis G. Jarvis | 1280x960 | 1280x960 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/albert-dock-liverpool.jpg | https://commons.wikimedia.org/wiki/File:Albert%20Dock%2C%20Liverpool.jpg | CC BY 2.0 | Mikey from Wythenshawe, Manchester, UK | 1280x960 | 1280x960 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/amazon-river-dolphin.jpg | https://commons.wikimedia.org/wiki/File:Amazon_river_dolphin.jpg | CC BY-SA 2.0 | Michelle Bender | 1024x682 | 1024x682 | 480,768,1024
+article-body | /assets/geolibrary/body/andorra-la-vella-view.jpg | https://commons.wikimedia.org/wiki/File:Andorra%20la%20Vella%20-%20view.jpg | CC BY-SA 3.0 | Tiia Monto | 1280x700 | 1280x700 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/arabic-speaking-world-svg.png | https://commons.wikimedia.org/wiki/File:Arabic_speaking_world_2.png | CC BY-SA 4.0 | Ryanzy | 1280x854 | 1280x854 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/aswan-high-dam-panorama-looking-downstream.jpg | https://commons.wikimedia.org/wiki/File:Aswan_High_Dam_panorama_looking_downstream.jpg | CC BY-SA 4.0 | Visanu Euarchukiati | 1280x382 | 1280x382 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/banjir-jakarta-2013.jpg | https://commons.wikimedia.org/wiki/File:Banjir_Jakarta_2013.jpeg | CC BY-SA 3.0 | Thedonz at Indonesian Wikipedia | 640x480 | 640x480 | 480,640
+article-body | /assets/geolibrary/body/basilique-notre-dame-de-la-paix-de-yamoussoukro-9.jpg | https://commons.wikimedia.org/wiki/File:Basilique_notre_Dame_de_la_Paix_de_Yamoussoukro_9.jpg | CC0 | Didierwiki | 1280x721 | 1280x721 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/binnenhof-and-hofvijver.jpg | https://commons.wikimedia.org/wiki/File:Binnenhof_and_Hofvijver.JPG | CC BY-SA 4.0 | Steven Lek | 1920x1440 | 2304x1728 | 480,768,1200,1600,1920
+article-body | /assets/geolibrary/body/border-between-canada-and-the-usa-at-the-49th-parallel-53023778470.jpg | https://commons.wikimedia.org/wiki/File:Border_between_Canada_and_the_USA_at_the_49th_parallel_(53023778470).jpg | CC BY 2.0 | SentinelHub | 1280x672 | 1280x672 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/chimborazo.jpg | https://commons.wikimedia.org/wiki/File:Chimborazo_2022-12-05.jpg | CC BY-SA 4.0 | Morgen Mills | 1920x1440 | 4608x3456 | 480,768,1200,1600,1920
+article-body | /assets/geolibrary/body/confluence-of-nile-khartoum-001-cropped.jpg | https://commons.wikimedia.org/wiki/File:Confluence_of_Nile_(Khartoum)_001_(cropped).jpg | CC BY-SA 3.0 | Petr Adam Dohnálek | 1280x561 | 1280x561 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/congresso-nacional.jpg | https://commons.wikimedia.org/wiki/File:Congresso%20Nacional.jpg | CC BY-SA 2.0 | Gribiche (Rob Sinclair) | 1280x867 | 1280x867 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/delhi-air-pollution-2019.jpg | https://commons.wikimedia.org/wiki/File:Delhi_air_pollution_2019.jpg | CC BY-SA 4.0 | Prami.ap90 | 1280x640 | 1280x640 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/dhaka-city.jpg | https://commons.wikimedia.org/wiki/File:Dhaka%20City.jpg | CC BY-SA 3.0 | Aashaa | 1280x960 | 1280x960 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/euro-banknotes-in-wallet.jpg | https://commons.wikimedia.org/wiki/File:Euro_banknotes_in_wallet.jpg | CC BY-SA 4.0 | Santeri Viinamäki | 1280x960 | 1280x960 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/everest-north-face-toward-base-camp-tibet-luca-galuzzi-2006.jpg | https://commons.wikimedia.org/wiki/File:Everest%20North%20Face%20toward%20Base%20Camp%20Tibet%20Luca%20Galuzzi%202006.jpg | CC BY-SA 2.5 | Luca Galuzzi ( Lucag ) | 1280x853 | 1280x853 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/flag-of-australia-converted-svg.png | https://commons.wikimedia.org/wiki/File:Flag%20of%20Australia%20(converted).svg.png | see Commons file page | Wikimedia Commons | 1280x640 | 1280x640 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/flag-of-denmark-svg.png | https://commons.wikimedia.org/wiki/File:Flag%20of%20Denmark.svg.png | see Commons file page | Wikimedia Commons | 1280x969 | 1280x969 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/flag-of-ethiopia-svg.png | https://commons.wikimedia.org/wiki/File:Flag%20of%20Ethiopia.svg.png | see Commons file page | Wikimedia Commons | 1280x640 | 1280x640 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/flag-of-france-svg.png | https://commons.wikimedia.org/wiki/File:Flag%20of%20France.svg.png | see Commons file page | Wikimedia Commons | 1280x854 | 1280x854 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/flag-of-georgia-svg.png | https://commons.wikimedia.org/wiki/File:Flag%20of%20Georgia.svg.png | see Commons file page | Wikimedia Commons | 1280x854 | 1280x854 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/flag-of-jordan-svg.png | https://commons.wikimedia.org/wiki/File:Flag%20of%20Jordan.svg.png | see Commons file page | Wikimedia Commons | 1280x640 | 1280x640 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/flag-of-nepal-svg.png | https://commons.wikimedia.org/wiki/File:Flag%20of%20Nepal.svg.png | see Commons file page | Wikimedia Commons | 1280x1561 | 1280x1561 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/flag-of-turkey-svg.png | https://commons.wikimedia.org/wiki/File:Flag%20of%20Turkey.svg.png | see Commons file page | Wikimedia Commons | 1280x854 | 1280x854 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/fortress-of-guaita-2013-09-19.jpg | https://commons.wikimedia.org/wiki/File:Fortress_of_Guaita_2013-09-19.jpg | CC BY-SA 3.0 | Max_Ryazanov | 1280x704 | 1280x704 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/gangotri-glacier.jpg | https://commons.wikimedia.org/wiki/File:Gangotri%20Glacier.jpg | CC0 | Arpit Rawat | 1280x848 | 1280x848 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/grand-ethiopian-renaissance-dam-aster.jpg | https://commons.wikimedia.org/wiki/File:Grand_Ethiopian_Renaissance_Dam_(ASTER).jpg | Public domain | NASA/METI/AIST/Japan Space Systems, and U.S./Japan ASTER Science Team | 1280x1717 | 1280x1717 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/great-barrier-reef.jpg | https://commons.wikimedia.org/wiki/File:Aerial_View_of_Great_Barrier_Reef_(Ank_Kumar)_09.jpg | CC BY-SA 4.0 | Ank Kumar | 1920x1280 | 6000x4000 | 480,768,1200,1600,1920
+article-body | /assets/geolibrary/body/hagar-qim.jpg | https://commons.wikimedia.org/wiki/File:Hagar_Qim.jpg | CC BY-SA 3.0 | Hamelin de Guettelet | 1200x609 | 1200x609 | 480,768,1200
+article-body | /assets/geolibrary/body/himalaya-composite.jpg | https://commons.wikimedia.org/wiki/File:Himalaya%20composite.jpg | Public domain | NASA | 1280x645 | 1280x645 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/houses-of-parliament-cape-town.jpg | https://commons.wikimedia.org/wiki/File:Houses_of_Parliament_(Cape_Town).jpg | CC BY-SA 3.0 | PhilippN | 1280x1066 | 1280x1066 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/human-language-families-wikicolors.png | https://commons.wikimedia.org/wiki/File:Human%20Language%20Families%20(wikicolors).png | CC BY-SA 3.0 | Wikimedia Commons | 1280x608 | 1280x608 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/iceberg-in-the-southern-ocean.jpg | https://commons.wikimedia.org/wiki/File:Iceberg%20in%20the%20Southern%20Ocean.jpg | CC BY-SA 2.0 | Liam Quinn | 1280x853 | 1280x853 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/international-date-line.png | https://commons.wikimedia.org/wiki/File:International%20date%20line.png | CC0 | Another Matt ( talk ) | 472x464 | 472x464 | 472
+article-body | /assets/geolibrary/body/kongokonferenz.jpg | https://commons.wikimedia.org/wiki/File:Kongokonferenz.jpg | Public domain | Adalbert von Roessler | 1280x984 | 1280x984 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/kurdish-inhabited-area-by-cia-1992.jpg | https://commons.wikimedia.org/wiki/File:Kurdish-inhabited%20area%20by%20CIA%20(1992).jpg | Public domain | Source stated "The following maps were produced by the U.S. Central Intelligence Agency , unless otherwise indicated." The original, non-cropped map also states: "Boundary representation is not necessarily authoritative". | 982x802 | 982x802 | 480,768,982
+article-body | /assets/geolibrary/body/la-paz-bolivia.jpg | https://commons.wikimedia.org/wiki/File:La_Paz,_Bolivia.jpg | CC BY-SA 4.0 | LBM1948 | 1280x200 | 1280x200 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/lake-chad.jpg | https://commons.wikimedia.org/wiki/File:Lake_Chad.jpg | Public domain | Lake_Chad_map_showing_receding_water_area_and_level_1972-2007.svg : * Blank_Map-Africa.svg : Andreas 06 derivative work: Chaosdruid ( talk ) | 1280x1024 | 1280x1024 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/lamu-old-town-street.jpg | https://commons.wikimedia.org/wiki/File:Lamu_old_town_street.jpg | CC BY-SA 4.0 | Mzein04 | 1280x853 | 1280x853 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/machu-picchu-peru.jpg | https://commons.wikimedia.org/wiki/File:Machu%20Picchu%2C%20Peru.jpg | CC BY-SA 2.0 | Pedro Szekely at https://www.flickr.com/photos/pedrosz/ | 1280x854 | 1280x854 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/map-of-european-microstates-svg.png | https://commons.wikimedia.org/wiki/File:Map%20of%20European%20Microstates.svg.png | see Commons file page | Wikimedia Commons | 1280x766 | 1280x766 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/mercator-projection-square.jpg | https://commons.wikimedia.org/wiki/File:Mercator%20projection%20Square.JPG | CC BY-SA 3.0 | Strebe | 1280x1280 | 1280x1280 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/monaco-monte-carlo-1.jpg | https://commons.wikimedia.org/wiki/File:Monaco%20Monte%20Carlo%201.jpg | CC BY-SA 3.0 | Martinp1 | 1280x734 | 1280x734 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/mumbai-03-2016-52-dharavi-near-mahim-junction.jpg | https://commons.wikimedia.org/wiki/File:Mumbai_03-2016_52_Dharavi_near_Mahim_Junction.jpg | FAL | A.Savin | 1280x853 | 1280x853 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/nicosia-buffer-zone.jpg | https://commons.wikimedia.org/wiki/File:Nicosia%20buffer%20zone.jpg | CC BY 2.0 | Basak Senova | 1280x856 | 1280x856 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/gatun-locks-panama-canal.jpg | https://commons.wikimedia.org/wiki/File:Gatun_Locks_03_2014_Panama_Canal_7820.JPG | CC BY-SA 3.0 | Mariordo (Mario Roberto Durán Ortiz) | 1920x1280 | 2100x1400 | 480,768,1200,1600,1920
+article-body | /assets/geolibrary/body/perdana-putra.jpg | https://commons.wikimedia.org/wiki/File:Perdana%20Putra.jpg | CC BY-SA 4.0 | Stefan Fussan | 1280x823 | 1280x823 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/ponte-estaiada-octavio-frias-sao-paulo.jpg | https://commons.wikimedia.org/wiki/File:Ponte_estaiada_Octavio_Frias_-_Sao_Paulo.jpg | CC BY-SA 3.0 | Marcosleal | 1280x844 | 1280x844 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/potala-palace.jpg | https://commons.wikimedia.org/wiki/File:Potala_Palace,_former_residence_of_Dalai_Lama,_2006.jpg | CC BY-SA 2.5 | Luca Galuzzi | 1920x1280 | 2000x1333 | 480,768,1200,1600,1920
+article-body | /assets/geolibrary/body/saint-peters-basilica-facade.jpg | https://commons.wikimedia.org/wiki/File:Saint_Peter%27s_Basilica_facade,_Rome,_Italy.jpg | CC0 | Jebulon | 1920x1278 | 4470x2975 | 480,768,1200,1600,1920
+article-body | /assets/geolibrary/body/sankore-mosque-timbuktu.jpg | https://commons.wikimedia.org/wiki/File:2007_Sankore_Mosque_Timbuktu_01.jpg | Public domain | Anne and David | 1465x1046 | 1465x1046 | 480,768,1200,1465
+article-body | /assets/geolibrary/body/scramble-for-africa-1880-1913.png | https://commons.wikimedia.org/wiki/File:Scramble-for-Africa-1880-1913.png | CC BY-SA 4.0 | davidjl123 / Somebody500 | 1280x633 | 1280x633 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/skyscrapers-of-shinjuku-2009-january.jpg | https://commons.wikimedia.org/wiki/File:Skyscrapers%20of%20Shinjuku%202009%20January.jpg | CC BY-SA 3.0 | Morio | 1280x682 | 1280x682 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/snider-pellegrini-wegener-fossil-map-svg.png | https://commons.wikimedia.org/wiki/File:Snider-Pellegrini%20Wegener%20fossil%20map.svg.png | see Commons file page | Wikimedia Commons | 1280x985 | 1280x985 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/snow-leopard.jpg | https://commons.wikimedia.org/wiki/File:Snow_leopard.jpg | Public domain | Singer, Ron, U.S. Fish and Wildlife Service | 1280x855 | 1280x855 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/srtm-ramp2-world-21600x10800.jpg | https://commons.wikimedia.org/wiki/File:Srtm%20ramp2.world.21600x10800.jpg | Public domain | Reto Stockli, NASA Earth Observatory | 1280x640 | 1280x640 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/stonehenge2007-07-30.jpg | https://commons.wikimedia.org/wiki/File:Stonehenge2007%2007%2030.jpg | CC BY 2.0 | garethwiscombe | 1280x960 | 1280x960 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/the-great-wall-of-china-at-jinshanling-edit.jpg | https://commons.wikimedia.org/wiki/File:The%20Great%20Wall%20of%20China%20at%20Jinshanling-edit.jpg | CC BY-SA 3.0 | Severin.stalder | 1280x850 | 1280x850 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/the-ordnance-survey-spider-on-the-trig-point-geograph-org-uk-7779460.jpg | https://commons.wikimedia.org/wiki/File:The_Ordnance_Survey_%27spider%27_on_the_trig_point_-_geograph.org.uk_-_7779460.jpg | CC BY-SA 2.0 | Richard Law | 1208x906 | 1208x906 | 480,768,1200,1208
+article-body | /assets/geolibrary/body/thermohaline-circulation-2.png | https://commons.wikimedia.org/wiki/File:Thermohaline%20Circulation%202.png | Public domain | Robert Simmon, NASA. Minor modifications by Robert A. Rohde also released to the public domain | 1100x690 | 1100x690 | 480,768,1100
+article-body | /assets/geolibrary/body/topographic-map-example.png | https://commons.wikimedia.org/wiki/File:Topographic%20map%20example.png | Public domain | USGS | 600x600 | 600x600 | 480,600
+article-body | /assets/geolibrary/body/union-buildings-pretoria.jpg | https://commons.wikimedia.org/wiki/File:Union_Buildings,_Pretoria.jpg | CC BY-SA 3.0 | Derek Wolmarans | 1280x959 | 1280x959 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/urban-heat-island-svg.png | https://commons.wikimedia.org/wiki/File:Urban%20heat%20island.svg.png | see Commons file page | Wikimedia Commons | 1280x713 | 1280x713 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/vaduz-castle.jpg | https://commons.wikimedia.org/wiki/File:Vaduz_Castle.jpg | CC BY-SA 3.0 | Wikimedia Commons | 1280x960 | 1280x960 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/valletta-skyline.jpg | https://commons.wikimedia.org/wiki/File:Valletta%20skyline.jpg | Copyrighted free use | Wikimedia Commons | 1280x949 | 1280x949 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/worldmap-a-non-frame.png | https://commons.wikimedia.org/wiki/File:WorldMap-A%20non-Frame.png | CC BY-SA 3.0 | Wikimedia Commons | 1280x640 | 1280x640 | 480,768,1200,1280
+article-body | /assets/geolibrary/body/zimbabwe-dollar-notes-1-to-100-trillion-2007-08-front.jpg | https://commons.wikimedia.org/wiki/File:Zimbabwe_dollar_notes_1_to_100_trillion_2007_08_Front.jpg | CC BY-SA 4.0 | TCCOVGLAM | 1280x2311 | 1280x2311 | 480,768,1200,1280
+article-cover | /assets/geolibrary/articles/europes-smallest-states.jpg | https://commons.wikimedia.org/wiki/File:Saint_Peter%27s_Basilica_facade,_Rome,_Italy.jpg | CC0 | Jebulon | 1920x1278 | 4470x2975 | 480,768,1200,1600,1920
+article-cover | /assets/geolibrary/articles/how-the-himalayas-keep-growing.jpg | Everest north face | CC BY-SA 2.5 | Luca Galuzzi | 1280x853 | 1280x853 | 480,768,1200,1280
+article-cover | /assets/geolibrary/articles/how-to-read-a-topographic-map.jpg | Wikimedia Commons | see Commons file page | Wikimedia Commons | 1208x906 | 1208x906 | 480,768,1200,1208
+article-cover | /assets/geolibrary/articles/how-unesco-picks-a-world-heritage-site.jpg | Abu Simbel | Wikimedia Commons | Wikimedia Commons | 1280x960 | 1280x960 | 480,768,1200,1280
+article-cover | /assets/geolibrary/articles/languages-that-cross-the-most-borders.jpg | Multilingual sign, Fort-de-France | CC BY-SA 4.0 | Wikimedia Commons | 1280x1707 | 1280x1707 | 480,768,1200,1280
+article-cover | /assets/geolibrary/articles/megacities-and-the-limits-of-growth.jpg | Shinjuku skyscrapers | CC BY-SA 3.0 | Morio | 1280x682 | 1280x682 | 480,768,1200,1280
+article-cover | /assets/geolibrary/articles/reading-a-flag-in-thirty-seconds.jpg | United Nations flags, Geneva | CC BY-SA 2.0 | Tom Page | 1280x853 | 1280x853 | 480,768,1200,1280
+article-cover | /assets/geolibrary/articles/the-landmarks-everyone-misplaces.jpg | https://commons.wikimedia.org/wiki/File:Chimborazo_2022-12-05.jpg | CC BY-SA 4.0 | Morgen Mills | 1920x1440 | 4608x3456 | 480,768,1200,1600,1920
+article-cover | /assets/geolibrary/articles/the-nile-and-the-amazon.jpg | Confluence of the Nile, Khartoum | Wikimedia Commons | Wikimedia Commons | 1280x561 | 1280x561 | 480,768,1200,1280
+article-cover | /assets/geolibrary/articles/the-sahel-explained.jpg | Dogon village, Mali | CC BY 2.0 | Jeanne Menjoulet | 708x960 | 708x960 | 480,708
+article-cover | /assets/geolibrary/articles/the-straightest-borders-on-earth.jpg | Canada–United States border | Wikimedia Commons | Wikimedia Commons | 1280x672 | 1280x672 | 480,768,1200,1280
+article-cover | /assets/geolibrary/articles/what-a-currency-tells-you-about-a-country.jpg | Euro banknotes | Wikimedia Commons | Wikimedia Commons | 1280x960 | 1280x960 | 480,768,1200,1280
+article-cover | /assets/geolibrary/articles/why-some-countries-have-two-capitals.jpg | Pretoria from the Union Buildings grounds | Wikimedia Commons | Wikimedia Commons | 1280x959 | 1280x959 | 480,768,1200,1280
+article-cover | /assets/geolibrary/articles/why-there-are-five-oceans-now.jpg | Iceberg in the Southern Ocean | CC BY-SA 2.0 | Liam Quinn | 1280x853 | 1280x853 | 480,768,1200,1280
+collection-cover | /assets/geolibrary/collections/climate-change.jpg | Exit Glacier | CC BY 2.0 | Wikimedia Commons | 1280x1707 | 1280x1707 | 480,768,1200,1280
+collection-cover | /assets/geolibrary/collections/countries-of-europe.jpg | Europe satellite orthographic | Public domain | Wikimedia Commons | 1158x909 | 1158x909 | 480,768,1158
+collection-cover | /assets/geolibrary/collections/geography-basics.jpg | Compass on a printed map | CC0 | Himesh Kumar Behera | 1280x658 | 1280x658 | 480,768,1200,1280
+collection-cover | /assets/geolibrary/collections/great-rivers.jpg | Horseshoe Bend | CC BY-SA 3.0 | Paul Hermans | 1280x850 | 1280x850 | 480,768,1200,1280
+collection-cover | /assets/geolibrary/collections/mountain-ranges.jpg | Matterhorn from Sunnegga | CC BY-SA 3.0 | Picea Abies | 1280x960 | 1280x960 | 480,768,1200,1280
+collection-cover | /assets/geolibrary/collections/natural-wonders.jpg | Iguazu Falls | CC BY-SA 4.0 | Pierre André Leclercq | 1280x948 | 1280x948 | 480,768,1200,1280
+collection-cover | /assets/geolibrary/collections/unesco-heritage.jpg | Machu Picchu | CC BY-SA 2.0 | Pedro Szekely | 1280x854 | 1280x854 | 480,768,1200,1280
+collection-cover | /assets/geolibrary/collections/world-capitals.jpg | Palace of Westminster | CC BY-SA 2.5 | Diliff | 1280x504 | 1280x504 | 480,768,1200,1280
+
+Kept below 1200px because a larger authentic original was not substituted (not upscaled):
+- /assets/geolibrary/body/amazon-river-dolphin.jpg 1024x682 kept (source is not wider; not upscaled)
+- /assets/geolibrary/body/banjir-jakarta-2013.jpg 640x480 kept (source is not wider; not upscaled)
+- /assets/geolibrary/body/international-date-line.png 472x464 kept (source is not wider; not upscaled)
+- /assets/geolibrary/body/kurdish-inhabited-area-by-cia-1992.jpg 982x802 kept (source is not wider; not upscaled)
+- /assets/geolibrary/body/thermohaline-circulation-2.png 1100x690 kept (source is not wider; not upscaled)
+- /assets/geolibrary/body/topographic-map-example.png 600x600 kept (source is not wider; not upscaled)
+- /assets/geolibrary/articles/the-sahel-explained.jpg 708x960 kept (source is not wider; not upscaled)
+- /assets/geolibrary/collections/countries-of-europe.jpg 1158x909 kept (source is not wider; not upscaled)

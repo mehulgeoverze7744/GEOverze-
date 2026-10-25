@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Bookmark } from "lucide-react";
 
+import { libraryResponsiveProps } from "@/features/library/lib/library-image-delivery";
 import { CoverArt } from "@/features/play/components/CoverArt";
 import { QUIZ_CATEGORIES } from "@/features/play/data/categories";
 import type { SavedBookmark } from "@/features/profile/data/bookmarks";
@@ -34,14 +35,8 @@ export function BookmarkCard({ item, onRemove, className }: BookmarkCardProps) {
       {showImage ? (
         <div className="relative border-b border-bronze/10">
           {item.imageSrc ? (
-            <div className="aspect-[16/10] overflow-hidden bg-[oklch(0.12_0.006_62)]">
-              <img
-                src={item.imageSrc}
-                alt={item.imageAlt ?? ""}
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transform-none"
-                loading="lazy"
-                decoding="async"
-              />
+            <div className="relative aspect-[16/10] overflow-hidden bg-[oklch(0.12_0.006_62)]">
+              <BookmarkImage src={item.imageSrc} alt={item.imageAlt ?? ""} />
             </div>
           ) : item.art ? (
             <CoverArt art={item.art} icon={quizIcon} ratio="video" className="rounded-none" />
@@ -101,5 +96,27 @@ export function BookmarkCard({ item, onRemove, className }: BookmarkCardProps) {
         </div>
       </div>
     </article>
+  );
+}
+
+function BookmarkImage({ src, alt }: { src: string; alt: string }) {
+  const responsive = libraryResponsiveProps(src, "card");
+  return (
+    <picture className="absolute inset-0 block h-full w-full">
+      {responsive ? (
+        <source type="image/webp" srcSet={responsive.webpSrcSet} sizes={responsive.sizes} />
+      ) : null}
+      <img
+        src={responsive?.src ?? src}
+        srcSet={responsive?.jpegSrcSet}
+        sizes={responsive?.sizes}
+        alt={alt}
+        width={responsive?.width}
+        height={responsive?.height}
+        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transform-none"
+        loading="lazy"
+        decoding="async"
+      />
+    </picture>
   );
 }

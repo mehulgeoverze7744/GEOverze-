@@ -26,8 +26,8 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-pretoria-union-buildings",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/UnionBuildingsPretoria.jpg/1280px-UnionBuildingsPretoria.jpg",
-    caption: "The Union Buildings in Pretoria — seat of South Africa's executive since 1913.",
+      "/assets/geolibrary/body/union-buildings-pretoria.jpg",
+    caption: "Pretoria seen from the Union Buildings grounds, seat of South Africa's executive since 1913.",
     credit: "Wikimedia Commons / Public Domain",
   },
 
@@ -69,7 +69,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-cape-town-parliament",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Parliament_of_South_Africa_-_Cape_Town.jpg/1280px-Parliament_of_South_Africa_-_Cape_Town.jpg",
+      "/assets/geolibrary/body/houses-of-parliament-cape-town.jpg",
     caption:
       "The South African Parliament buildings in Cape Town, legislative home since the Union of 1910.",
     credit: "Wikimedia Commons / CC BY-SA 4.0",
@@ -114,7 +114,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-la-paz-aerial",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/La_Paz%2C_Bolivia_%28cropped%29.jpg/1280px-La_Paz%2C_Bolivia_%28cropped%29.jpg",
+      "/assets/geolibrary/body/la-paz-bolivia.jpg",
     caption: "La Paz spread across a canyon at 3,640 m — the world's highest seat of government.",
     credit: "Wikimedia Commons / Public Domain",
   },
@@ -183,10 +183,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-the-hague-parliament",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Binnenhof_Hofvijver_2019.jpg/1280px-Binnenhof_Hofvijver_2019.jpg",
+      "/assets/geolibrary/body/binnenhof-and-hofvijver.jpg",
     caption:
-      "The Binnenhof in The Hague — home of the Dutch Parliament since the sixteenth century.",
-    credit: "Wikimedia Commons / Public Domain",
+      "The Binnenhof and Hofvijver in The Hague — home of the Dutch Parliament since the sixteenth century.",
+    credit: "Steven Lek / Wikimedia Commons / CC BY-SA 4.0",
   },
 
   // Block 28
@@ -213,7 +213,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-yamoussoukro-basilica",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Yamoussoukro_basilica.jpg/1280px-Yamoussoukro_basilica.jpg",
+      "/assets/geolibrary/body/basilique-notre-dame-de-la-paix-de-yamoussoukro-9.jpg",
     caption:
       "The Basilica of Our Lady of Peace in Yamoussoukro — the world's largest church by area, consecrated 1990.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
@@ -243,7 +243,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-putrajaya-perdana",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Perdana_Putra.jpg/1280px-Perdana_Putra.jpg",
+      "/assets/geolibrary/body/perdana-putra.jpg",
     caption:
       "Perdana Putra — Malaysia's Prime Minister's Department in Putrajaya, the purpose-built federal administrative capital.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
@@ -295,7 +295,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-brasilia-congress",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Congresso_Nacional.jpg/1280px-Congresso_Nacional.jpg",
+      "/assets/geolibrary/body/congresso-nacional.jpg",
     caption:
       "Oscar Niemeyer's National Congress in Brasília — symbol of Brazil's 1960 capital relocation from Rio de Janeiro.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
@@ -309,14 +309,6 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "Indonesia's decision to build a new capital on Borneo is unusual in that its primary driver is environmental rather than political. Jakarta sits on swampy coastal land, draws groundwater at an unsustainable rate, and is sinking by up to 25 cm a year in its fastest-subsiding districts. Parts of North Jakarta are already below sea level. The government formally designated Nusantara as capital in 2022 and expects to transfer core government functions across the 2020s, though Jakarta will remain the country's economic engine and most populous city. The move echoes Brazil's construction of Brasília in the 1960s, which relocated the capital inland to promote economic development in the interior.",
   },
   // Block 48
-  {
-    kind: "image",
-    art: "article-nusantara-site",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/IKN_Nusantara_aerial.jpg/1280px-IKN_Nusantara_aerial.jpg",
-    caption: "The Nusantara site in East Kalimantan, Borneo, during early construction phases.",
-    credit: "Wikimedia Commons / Public Domain",
-  },
 
   // Block 49
   { kind: "heading", id: "comparison-table", text: "Multi-capital countries at a glance" },

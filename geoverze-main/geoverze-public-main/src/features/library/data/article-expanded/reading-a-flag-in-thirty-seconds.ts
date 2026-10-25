@@ -65,7 +65,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "french-tricolour",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Flag_of_France.svg/1280px-Flag_of_France.svg.png",
+      "/assets/geolibrary/body/flag-of-france-svg.png",
     caption:
       "The French tricolour (1794) — the design that propagated across five continents as the template for national flags during the age of nationalism.",
     credit: "Wikimedia Commons / Public Domain",
@@ -80,7 +80,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "nordic-cross-denmark",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Flag_of_Denmark.svg/1280px-Flag_of_Denmark.svg.png",
+      "/assets/geolibrary/body/flag-of-denmark-svg.png",
     caption:
       "Denmark's Dannebrog — the original Nordic cross design, dating to at least 1370, making it the world's oldest national flag still in use.",
     credit: "Wikimedia Commons / Public Domain",
@@ -115,7 +115,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "ethiopia-flag",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Flag_of_Ethiopia.svg/1280px-Flag_of_Ethiopia.svg.png",
+      "/assets/geolibrary/body/flag-of-ethiopia-svg.png",
     caption:
       "The flag of Ethiopia — whose green, gold, and red tricolour inspired the pan-African colour tradition adopted by more than 30 African nations after independence.",
     credit: "Wikimedia Commons / Public Domain",
@@ -140,7 +140,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "jordan-flag",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Flag_of_Jordan.svg/1280px-Flag_of_Jordan.svg.png",
+      "/assets/geolibrary/body/flag-of-jordan-svg.png",
     caption:
       "The flag of Jordan — combining the pan-Arab colours (black, white, green horizontal stripes) with a red triangle and a white seven-pointed star representing the seven verses of Al-Fatiha.",
     credit: "Wikimedia Commons / Public Domain",
@@ -164,7 +164,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "turkey-flag",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Flag_of_Turkey.svg/1280px-Flag_of_Turkey.svg.png",
+      "/assets/geolibrary/body/flag-of-turkey-svg.png",
     caption:
       "Turkey's flag — the star and crescent on a red field, derived from Ottoman imperial symbolism that itself inherited the emblem from Byzantine Constantinople.",
     credit: "Wikimedia Commons / Public Domain",
@@ -183,7 +183,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "georgia-flag",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Flag_of_Georgia.svg/1280px-Flag_of_Georgia.svg.png",
+      "/assets/geolibrary/body/flag-of-georgia-svg.png",
     caption:
       "The flag of Georgia — the 'Five Cross Flag' using the St George's cross with four additional crosses, representing the Five Holy Wounds in Georgian Orthodox tradition.",
     credit: "Wikimedia Commons / Public Domain",
@@ -411,7 +411,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "nepal-flag",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Flag_of_Nepal.svg/800px-Flag_of_Nepal.svg.png",
+      "/assets/geolibrary/body/flag-of-nepal-svg.png",
     caption:
       "Nepal's flag — the world's only non-quadrilateral national flag, a double-pennant shape representing the union of Nepal's Himalayan and lowland regions.",
     credit: "Wikimedia Commons / Public Domain",
@@ -449,7 +449,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "australia-flag",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Flag_of_Australia_%28converted%29.svg/1280px-Flag_of_Australia_%28converted%29.svg.png",
+      "/assets/geolibrary/body/flag-of-australia-converted-svg.png",
     caption:
       "Australia's flag — Union Jack in the canton, Commonwealth Star (seven-pointed) below it, and the Southern Cross on the fly half. The pattern identifies it as a British Pacific territory at a glance.",
     credit: "Wikimedia Commons / Public Domain",

@@ -21,7 +21,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-currency-banknotes-world",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Banknotes_of_various_currencies.jpg/1280px-Banknotes_of_various_currencies.jpg",
+      "/assets/geolibrary/body/euro-banknotes-in-wallet.jpg",
     caption:
       "A selection of world currency banknotes — each one a statement of national identity, political history, and economic aspiration.",
     credit: "Wikimedia Commons / Public Domain",
@@ -82,16 +82,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "callout",
     variant: "by-the-numbers",
     text: "88% of all forex transactions in 2022 involved the US dollar on at least one side. The euro was second at 31%. The Japanese yen third at 17%. Total daily forex trading volume: approximately $7.5 trillion — larger than the annual GDP of every country except the United States and China.",
-  },
-  {
-    kind: "image",
-    art: "article-bretton-woods-conference",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Bretton_Woods_Conference%2C_1944.jpg/1280px-Bretton_Woods_Conference%2C_1944.jpg",
-    caption:
-      "The Bretton Woods Conference, July 1944 — 44 nations established the post-war international monetary order that gave the US dollar its global primacy.",
-    credit: "Wikimedia Commons / Public Domain",
-  },
+  },
 
   {
     kind: "heading",
@@ -116,16 +107,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "paragraph",
     text: "The euro banknotes, introduced in 2002, depict windows, gateways, and bridges — but none of them are real. They represent architectural styles from different periods of European history: Classical, Romanesque, Gothic, Renaissance, Baroque, Art Nouveau, and Modern. The choice of fictional buildings was a deliberate political compromise: when twelve nations were negotiating design, every actual building or bridge suggested by one country was objected to by another. Paris objected to German monuments. Germany objected to French ones. The compromise — fictional but plausible European architecture — is a remarkable document of political necessity rendered in everyday objects. The coins, however, do show real national imagery: each country mints its own design on the coin's reverse, producing a eurozone where the same denomination looks different depending on where it was minted.",
-  },
-  {
-    kind: "image",
-    art: "article-euro-banknotes-series",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Euro_banknotes_2013.jpg/1280px-Euro_banknotes_2013.jpg",
-    caption:
-      "Euro banknotes depict fictional European architectural styles — a compromise that prevented endless disputes about whose real buildings should appear on a shared currency.",
-    credit: "Wikimedia Commons / Public Domain",
-  },
+  },
   {
     kind: "callout",
     variant: "did-you-know",
@@ -175,7 +157,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-zimbabwe-100-trillion",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Zimbabwe_100_trillion_2009_Obverse.jpg/1280px-Zimbabwe_100_trillion_2009_Obverse.jpg",
+      "/assets/geolibrary/body/zimbabwe-dollar-notes-1-to-100-trillion-2007-08-front.jpg",
     caption:
       "Zimbabwe's 100 trillion dollar note (2008) — the most iconic physical symbol of hyperinflation, now a collector's item worth far more than its original face value.",
     credit: "Wikimedia Commons / Public Domain",
@@ -258,16 +240,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
       "New Zealand dollar: endemic birds (kiwi, hoiho penguin, kākāpō) and King on notes — among the most ecologically themed currency series.",
       "China renminbi: Mao Zedong on all denominations; reverses show national landmarks (Great Hall, Potala Palace, Li River).",
     ],
-  },
-  {
-    kind: "image",
-    art: "article-new-zealand-kiwi-coin",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/New_Zealand_one_dollar_coin.jpg/800px-New_Zealand_one_dollar_coin.jpg",
-    caption:
-      "New Zealand's one-dollar coin featuring the kiwi — a globally recognised use of endemic wildlife on national currency, reflecting New Zealand's ecological identity.",
-    credit: "Wikimedia Commons / Public Domain",
-  },
+  },
 
   { kind: "heading", id: "coins-that-tell-stories", text: "The coins that tell stories" },
   {
@@ -284,16 +257,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "paragraph",
     text: "Central Bank Digital Currencies (CBDCs) are government-issued digital money — not cryptocurrency, but a digital version of a national currency with legal tender status and central bank backing. Over 100 countries had CBDC projects at some stage of development as of 2024. China's digital yuan (e-CNY) is the most advanced major-economy CBDC, with trials in multiple cities and integration into retail payment apps. China's motivations are multiple: reducing reliance on Alipay and WeChat Pay (which dominate retail payments through private companies), gaining real-time transaction data, and eventually enabling cross-border transactions that bypass dollar-denominated systems. The Bahamas' Sand Dollar (2020) was the world's first fully deployed CBDC — designed to serve island communities where physical bank branches are impractical.",
-  },
-  {
-    kind: "image",
-    art: "article-digital-yuan-ecny",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Digital_RMB_app.jpg/800px-Digital_RMB_app.jpg",
-    caption:
-      "China's digital yuan (e-CNY) wallet interface — the most widely tested central bank digital currency in a major economy, trialled across multiple Chinese cities.",
-    credit: "Wikimedia Commons / CC BY-SA 4.0",
-  },
+  },
   {
     kind: "callout",
     variant: "key-idea",
@@ -357,16 +321,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "paragraph",
     text: "Some of the most revealing currency stories concern what was kept after independence. The CFA franc — Communauté Financière Africaine — is used by 14 African states across two zones: eight in West Africa (WAEMU) and six in Central Africa (CEMAC). Created by France in 1945 for its African territories, the CFA franc was pegged to the French franc and is now pegged to the euro at a fixed rate. In exchange for France's guarantee of convertibility, member countries historically deposited 50% of their foreign exchange reserves at the French Treasury in Paris. Critics argue this arrangement gives France ongoing influence over the monetary policy of 14 sovereign nations and extracts African reserves to Paris. Supporters argue it provides price stability and credibility that West African countries would struggle to achieve independently, pointing to inflation rates that are consistently lower in CFA zones than in neighbouring non-CFA countries.",
-  },
-  {
-    kind: "image",
-    art: "article-cfa-franc-notes",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/CFA_franc_BCEAO.jpg/1280px-CFA_franc_BCEAO.jpg",
-    caption:
-      "West African CFA franc banknotes — the currency of 8 countries, pegged to the euro at 655.96 XOF per euro, and subject to ongoing political debate about French oversight.",
-    credit: "Wikimedia Commons / Public Domain",
-  },
+  },
   {
     kind: "callout",
     variant: "history-note",

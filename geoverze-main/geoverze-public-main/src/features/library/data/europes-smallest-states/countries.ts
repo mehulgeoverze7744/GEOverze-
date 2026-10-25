@@ -17,10 +17,10 @@ export const EUROPE_MICROSTATES_COUNTRIES: readonly ArticleBlock[] = [
   {
     kind: "image",
     art: "article-vatican",
-    caption: "St Peter's Square and Basilica — ceremonial heart of Vatican City.",
+    caption: "The facade of St Peter's Basilica, ceremonial heart of Vatican City.",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Angelus_1637.jpg/1280px-Angelus_1637.jpg",
-    credit: "Photo: Wikimedia Commons (public domain)",
+      "/assets/geolibrary/body/saint-peters-basilica-facade.jpg",
+    credit: "Jebulon / Wikimedia Commons / CC0",
   },
   {
     kind: "facts",
@@ -59,7 +59,7 @@ export const EUROPE_MICROSTATES_COUNTRIES: readonly ArticleBlock[] = [
     art: "article-monaco",
     caption: "Monaco's Mediterranean coastline — space is measured in metres, not kilometres.",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Monaco_Monte_Carlo_1.jpg/1280px-Monaco_Monte_Carlo_1.jpg",
+      "/assets/geolibrary/body/monaco-monte-carlo-1.jpg",
     credit: "Photo: Wikimedia Commons (CC BY-SA 3.0)",
   },
   {
@@ -95,7 +95,7 @@ export const EUROPE_MICROSTATES_COUNTRIES: readonly ArticleBlock[] = [
     art: "article-san-marino",
     caption: "Guaita Tower on Mount Titano — defensive geography made visible.",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Guaita_Tower_San_Marino.jpg/1280px-Guaita_Tower_San_Marino.jpg",
+      "/assets/geolibrary/body/fortress-of-guaita-2013-09-19.jpg",
     credit: "Photo: Wikimedia Commons (CC BY 2.0)",
   },
   {
@@ -131,7 +131,7 @@ export const EUROPE_MICROSTATES_COUNTRIES: readonly ArticleBlock[] = [
     art: "article-liechtenstein",
     caption: "Vaduz Castle — symbol of princely continuity above the capital.",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Vaduz_Castle_situated_on_a_rock.jpg/1280px-Vaduz_Castle_situated_on_a_rock.jpg",
+      "/assets/geolibrary/body/vaduz-castle.jpg",
     credit: "Photo: Wikimedia Commons (CC BY-SA 3.0)",
   },
   {
@@ -161,7 +161,7 @@ export const EUROPE_MICROSTATES_COUNTRIES: readonly ArticleBlock[] = [
     art: "article-malta-valletta",
     caption: "Valletta's skyline and Grand Harbour — fortifications shaped by siege warfare.",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Valletta_skyline.jpg/1280px-Valletta_skyline.jpg",
+      "/assets/geolibrary/body/valletta-skyline.jpg",
     credit: "Photo: Wikimedia Commons (CC BY-SA 3.0)",
   },
   {
@@ -169,7 +169,7 @@ export const EUROPE_MICROSTATES_COUNTRIES: readonly ArticleBlock[] = [
     art: "article-malta-temple",
     caption: "Megalithic temple heritage — Malta's prehistory predates many European capitals.",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hagar_Qim_%28Malta%29.jpg/1280px-Hagar_Qim_%28Malta%29.jpg",
+      "/assets/geolibrary/body/hagar-qim.jpg",
     credit: "Photo: Wikimedia Commons (CC BY-SA 3.0)",
   },
   {
@@ -201,7 +201,7 @@ export const EUROPE_MICROSTATES_COUNTRIES: readonly ArticleBlock[] = [
     art: "article-andorra",
     caption: "Andorra la Vella — capital in a high Pyrenean valley.",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Andorra_la_Vella_-_view.jpg/1280px-Andorra_la_Vella_-_view.jpg",
+      "/assets/geolibrary/body/andorra-la-vella-view.jpg",
     credit: "Photo: Wikimedia Commons (CC BY-SA 3.0)",
   },
   {

@@ -1,6 +1,5 @@
 /** Static cover art for GVRZE Library article cards, keyed by article slug. */
 const ARTICLE_BASE = "/assets/geolibrary/articles";
-const COLLECTION_BASE = "/assets/geolibrary/collections";
 
 export const ARTICLE_CARD_IMAGES: Readonly<Record<string, string>> = {
   "reading-a-flag-in-thirty-seconds": `${ARTICLE_BASE}/reading-a-flag-in-thirty-seconds.jpg`,
@@ -10,13 +9,13 @@ export const ARTICLE_CARD_IMAGES: Readonly<Record<string, string>> = {
   "the-sahel-explained": `${ARTICLE_BASE}/the-sahel-explained.jpg`,
   "why-some-countries-have-two-capitals": `${ARTICLE_BASE}/why-some-countries-have-two-capitals.jpg`,
   "the-straightest-borders-on-earth": `${ARTICLE_BASE}/the-straightest-borders-on-earth.jpg`,
-  "the-nile-and-the-amazon": `${COLLECTION_BASE}/great-rivers.jpg`,
-  "how-unesco-picks-a-world-heritage-site": `${COLLECTION_BASE}/unesco-heritage.jpg`,
-  "why-there-are-five-oceans-now": `${COLLECTION_BASE}/climate-change.jpg`,
-  "what-a-currency-tells-you-about-a-country": `${COLLECTION_BASE}/world-capitals.jpg`,
-  "the-landmarks-everyone-misplaces": `${COLLECTION_BASE}/natural-wonders.jpg`,
-  "europes-smallest-states": `${COLLECTION_BASE}/countries-of-europe.jpg`,
-  "megacities-and-the-limits-of-growth": `${COLLECTION_BASE}/world-capitals.jpg`,
+  "the-nile-and-the-amazon": `${ARTICLE_BASE}/the-nile-and-the-amazon.jpg`,
+  "how-unesco-picks-a-world-heritage-site": `${ARTICLE_BASE}/how-unesco-picks-a-world-heritage-site.jpg`,
+  "why-there-are-five-oceans-now": `${ARTICLE_BASE}/why-there-are-five-oceans-now.jpg`,
+  "what-a-currency-tells-you-about-a-country": `${ARTICLE_BASE}/what-a-currency-tells-you-about-a-country.jpg`,
+  "the-landmarks-everyone-misplaces": `${ARTICLE_BASE}/the-landmarks-everyone-misplaces.jpg`,
+  "europes-smallest-states": `${ARTICLE_BASE}/europes-smallest-states.jpg`,
+  "megacities-and-the-limits-of-growth": `${ARTICLE_BASE}/megacities-and-the-limits-of-growth.jpg`,
 };
 
 export function articleCardImageSrc(slug: string): string | undefined {

@@ -32,15 +32,6 @@ export const BLOCKS: readonly ArticleBlock[] = [
     ],
   },
   // Block 5
-  {
-    kind: "image",
-    art: "article-sahel-landscape",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Sahel_Belt.jpg/1280px-Sahel_Belt.jpg",
-    caption:
-      "Typical Sahel vegetation — sparse acacia scrub between sandy patches, photographed in Niger.",
-    credit: "Wikimedia Commons / Public Domain",
-  },
 
   // Block 6
   { kind: "heading", id: "great-empires", text: "The great Sahelian empires" },
@@ -64,10 +55,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-timbuktu-sankore-mosque",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Sankore_mosque2.jpg/1280px-Sankore_mosque2.jpg",
+      "/assets/geolibrary/body/sankore-mosque-timbuktu.jpg",
     caption:
       "The Sankore Mosque in Timbuktu, Mali — centre of one of the medieval world's great universities, funded by Saharan trade wealth.",
-    credit: "Wikimedia Commons / CC BY-SA 3.0",
+    credit: "Anne and David / Wikimedia Commons / Public domain",
   },
   // Block 11
   {
@@ -194,15 +185,6 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "By 2023 approximately 18 million hectares of degraded land had been restored under the initiative's umbrella, against a target of 100 million hectares by 2030. Ethiopia accounts for a large fraction of the completed area, having planted over five billion trees in a single coordinated national campaign in 2019. The approach in the Sahel countries has increasingly focused on re-establishing native woody vegetation that already exists in seeds and root systems in degraded soils — regeneration rather than planting from scratch. The potential carbon sequestration from full implementation has been estimated at up to 250 million tonnes of CO₂ annually, making it one of the most cost-effective nature-based climate solutions identified at continental scale.",
   },
   // Block 25
-  {
-    kind: "image",
-    art: "article-great-green-wall-niger",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Zai_pits_Niger.jpg/1280px-Zai_pits_Niger.jpg",
-    caption:
-      "Zaï pits in southern Niger — traditional water-harvesting technique scaled under the Great Green Wall programme.",
-    credit: "Wikimedia Commons / Public Domain",
-  },
 
   // Block 26
   {
@@ -240,15 +222,6 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "The most important feature of the Niger for the Sahel is its inland delta in central Mali — a vast seasonal wetland of 80,000 km² known as the Macina or the Niger Inland Delta. Between July and December, the river spreads across a flat alluvial plain, creating a labyrinth of channels, lakes and floodplains that support extraordinary biodiversity and agriculture. An estimated 1.5 million people live in and around the delta, depending on its seasonal fisheries (which rank among the most productive freshwater fisheries in Africa), its rice cultivation on recession floodplains, and its dry-season pasture for the 2 million cattle and sheep that graze it annually. Climate change, upstream water withdrawals, and the construction of the Sélingué and Markala dams have reduced peak flood levels in the delta by an estimated 30% since 1960.",
   },
   // Block 33
-  {
-    kind: "image",
-    art: "article-niger-inland-delta",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/NigerInlandDelta.png/1280px-NigerInlandDelta.png",
-    caption:
-      "The Niger Inland Delta (Macina) in central Mali — an 80,000 km² seasonal wetland supporting 1.5 million people.",
-    credit: "NASA / Wikimedia Commons / Public Domain",
-  },
 
   // Block 34
   { kind: "heading", id: "sahel-countries", text: "Countries of the Sahel" },
@@ -299,7 +272,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-lake-chad-decline",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Lake_Chad_by_NASA_1972-2001.jpg/1280px-Lake_Chad_by_NASA_1972-2001.jpg",
+      "/assets/geolibrary/body/lake-chad.jpg",
     caption:
       "NASA satellite composites showing Lake Chad's dramatic contraction between 1972 and 2001.",
     credit: "NASA Earth Observatory / Public Domain",
@@ -422,15 +395,6 @@ export const BLOCKS: readonly ArticleBlock[] = [
     text: "International commitment to the Sahel has also deepened since the 2010s, though implementation has repeatedly lagged behind pledges. The 2021 One Planet Summit saw donor nations pledge USD 14.3 billion to the Great Green Wall through 2025. The World Food Programme and UN agencies have invested heavily in early-warning systems, cash-transfer programmes, and climate-smart agriculture extension services. Perhaps most importantly, Sahelian farmers themselves — not waiting for government or international intervention — have continued expanding FMNR, zaï systems, and traditional water-harvesting practices across millions of hectares. The solutions to the Sahel's challenges are, in large measure, already known. The question is whether governance, funding, and security will allow them to be applied at the necessary scale.",
   },
   // Block 60
-  {
-    kind: "image",
-    art: "article-sahel-regreening",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Farmer_managed_natural_regeneration.jpg/1280px-Farmer_managed_natural_regeneration.jpg",
-    caption:
-      "Farmer-Managed Natural Regeneration (FMNR) in Niger — protected trees regrow on degraded farmland, restoring soil moisture and yields.",
-    credit: "World Vision / Wikimedia Commons / CC BY 2.0",
-  },
 
   {
     kind: "dualCompare",

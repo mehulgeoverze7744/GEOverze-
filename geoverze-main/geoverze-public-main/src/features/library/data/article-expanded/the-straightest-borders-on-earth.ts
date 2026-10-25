@@ -27,7 +27,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "berlin-conference-painting",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Kongokonferenz.jpg/1280px-Kongokonferenz.jpg",
+      "/assets/geolibrary/body/kongokonferenz.jpg",
     caption:
       "The Berlin Conference of 1884–85. Fourteen European nations negotiated Africa's partition without a single African representative present at the table.",
     credit: "Adolf Oberländer / Wikimedia Commons / Public Domain",
@@ -127,7 +127,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "canada-us-border-slash",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Canada_US_border_from_space.jpg/1280px-Canada_US_border_from_space.jpg",
+      "/assets/geolibrary/body/border-between-canada-and-the-usa-at-the-49th-parallel-53023778470.jpg",
     caption:
       "The 49th parallel corridor — a six-metre cleared swath through Pacific Northwest forest, visible from space, marking the world's longest geometric border on a single parallel.",
     credit: "NASA / Wikimedia Commons / Public Domain",
@@ -176,16 +176,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "paragraph",
     text: "Where the 22nd parallel meets the Red Sea coast, it creates one of Africa's most persistent territorial disputes. The 1899 Anglo-Egyptian Condominium Agreement established the 22nd parallel as the administrative boundary between Egypt and Sudan. But in 1902, Britain drew a second, slightly different administrative line that moved the boundary south of the 22nd parallel near the coast, keeping nomadic Ababda and Bisharin communities — judged more closely linked to the Egyptian administration — within Egyptian territory. The result was two overlapping lines: Egypt claims the 1902 administrative boundary, which gives it the Hala'ib Triangle; Sudan claims the 1899 treaty line. Since 1995, Egypt has administered the triangle, but Sudan has never relinquished its claim. The dispute has never been adjudicated internationally.",
-  },
-  {
-    kind: "image",
-    art: "halaib-triangle-map",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Halaib_Triangle_map.png/800px-Halaib_Triangle_map.png",
-    caption:
-      "The Hala'ib Triangle on the Red Sea coast — where the 22nd parallel (1899 treaty) and the 1902 administrative line diverge to create a contested zone between Egypt and Sudan.",
-    credit: "Wikimedia Commons / Public Domain",
-  },
+  },
 
   {
     kind: "heading",
@@ -200,16 +191,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "callout",
     variant: "history-note",
     text: "The Heligoland-Zanzibar Treaty of 1890 was one of colonial history's more remarkable land-swaps: Britain ceded the North Sea island of Heligoland to Germany in exchange for recognition of British rights over Zanzibar and Uganda — and threw in the Caprivi Strip as a geographic convenience for German South-West Africa.",
-  },
-  {
-    kind: "image",
-    art: "caprivi-strip-map",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Caprivi_Strip_%28Namibia%29.svg/1280px-Caprivi_Strip_%28Namibia%29.svg.png",
-    caption:
-      "The Caprivi Strip — a narrow corridor of Namibian territory reaching east to the Zambezi River, created by the 1890 Heligoland-Zanzibar Treaty so Germany could reach the river.",
-    credit: "Wikimedia Commons / Public Domain",
-  },
+  },
 
   { kind: "heading", id: "durand-line", text: "The Durand Line: Afghanistan and Pakistan" },
   {
@@ -220,16 +202,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "callout",
     variant: "history-note",
     text: "The Durand Line split the Pashtun people — approximately 40–50 million today — between British India (now Pakistan) and Afghanistan. Pakistani Pashtuns are concentrated in Khyber Pakhtunkhwa; Afghan Pashtuns dominate southern and eastern Afghanistan. Their cultural and linguistic unity across the line has made it one of the world's most porous and contested international borders.",
-  },
-  {
-    kind: "image",
-    art: "durand-line-map",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Durand_line_map_from_the_1906_imperial_gazetteer_of_India.jpg/1280px-Durand_line_map_from_the_1906_imperial_gazetteer_of_India.jpg",
-    caption:
-      "The Durand Line as mapped in the 1906 Imperial Gazetteer of India. The boundary divided the Pashtun homeland and has never been accepted by Afghanistan as a permanent international border.",
-    credit: "Imperial Gazetteer of India / Wikimedia Commons / Public Domain",
-  },
+  },
 
   { kind: "heading", id: "green-line-cyprus", text: "The Green Line in Cyprus" },
   {
@@ -240,7 +213,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "nicosia-buffer-zone",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Nicosia_buffer_zone.jpg/1280px-Nicosia_buffer_zone.jpg",
+      "/assets/geolibrary/body/nicosia-buffer-zone.jpg",
     caption:
       "The UN buffer zone running through Nicosia — the Green Line that has divided Cyprus's capital since 1974, patrolled by UN peacekeepers for over 50 years.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
@@ -383,7 +356,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "africa-partition-map-1913",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Scramble_for_Africa_1880_to_1913.png/800px-Scramble_for_Africa_1880_to_1913.png",
+      "/assets/geolibrary/body/scramble-for-africa-1880-1913.png",
     caption:
       "The Scramble for Africa from 1880 to 1913 — European colonisation of the continent proceeded with extraordinary speed, leaving almost no territory outside colonial control within three decades.",
     credit: "Wikimedia Commons / Public Domain",

@@ -61,7 +61,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-tokyo-shinjuku-skyline",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Skyscrapers_of_Shinjuku_2009_January.jpg/1280px-Skyscrapers_of_Shinjuku_2009_January.jpg",
+      "/assets/geolibrary/body/skyscrapers-of-shinjuku-2009-january.jpg",
     caption:
       "Shinjuku district, Tokyo — the world's largest urban agglomeration at ~37.4 million people, and a model of high-density, transit-oriented urban function.",
     credit: "Wikimedia Commons / CC BY 2.0",
@@ -76,16 +76,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "paragraph",
     text: "Tokyo is the world's largest urban agglomeration at approximately 37.4 million people, and the most frequently cited example that a city of extreme scale can function efficiently. Its success rests on three foundations: the world's most extensive and punctual metro and rail network (approximately 12 million metro trips per day, with average delays measured in seconds per year), a culture of civic discipline that enables extremely high population densities without proportional increases in disorder, and decades of engineering investment in disaster resilience. Tokyo sits at the junction of three tectonic plates and has suffered catastrophic earthquakes in 1923 and 1995. The Metropolitan Area Outer Underground Discharge Channel — completed in 2006 — is a 6.3 km underground system of five vertical shafts and a 177 m-long pressure adjustment tank that captures floodwater from Tokyo's rivers and diverts it to the Edo River, preventing the urban flooding that regularly struck the city before its construction.",
-  },
-  {
-    kind: "image",
-    art: "article-tokyo-flood-tunnel",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/G-Cans_Project.jpg/1280px-G-Cans_Project.jpg",
-    caption:
-      "Tokyo's Metropolitan Area Outer Underground Discharge Channel — one of the world's largest flood control systems, diverting excess river water through underground tunnels to prevent urban flooding.",
-    credit: "Wikimedia Commons / CC BY-SA 3.0",
-  },
+  },
   {
     kind: "callout",
     variant: "by-the-numbers",
@@ -101,7 +92,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-delhi-smog",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Delhi_smog.jpg/1280px-Delhi_smog.jpg",
+      "/assets/geolibrary/body/delhi-air-pollution-2019.jpg",
     caption:
       "Smog over Delhi — the combination of vehicle emissions, industrial pollution, and agricultural burning creates some of the world's worst urban air quality, particularly in winter.",
     credit: "Wikimedia Commons / CC BY 2.0",
@@ -132,7 +123,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-sao-paulo-skyline",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Sao_Paulo_-_Bela_Vista.jpg/1280px-Sao_Paulo_-_Bela_Vista.jpg",
+      "/assets/geolibrary/body/ponte-estaiada-octavio-frias-sao-paulo.jpg",
     caption:
       "São Paulo's Bela Vista district — South America's largest city, with some of the world's most extreme wealth inequality visible in the contrast between high-rises and favelas.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
@@ -152,7 +143,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-dhaka-density",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Dhaka_City.jpg/1280px-Dhaka_City.jpg",
+      "/assets/geolibrary/body/dhaka-city.jpg",
     caption:
       "Dhaka from above — the world's most densely populated megacity at approximately 44,000 people per km², at severe risk from sea-level rise and river flooding.",
     credit: "Wikimedia Commons / CC BY-SA 2.0",
@@ -183,7 +174,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-urban-heat-island",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Urban_heat_island.svg/1280px-Urban_heat_island.svg",
+      "/assets/geolibrary/body/urban-heat-island-svg.png",
     caption:
       "Urban heat island profile — cities are measurably warmer than surrounding countryside due to dark surfaces, buildings, vehicles, and reduced vegetation, typically by 2–5°C.",
     credit: "Wikimedia Commons / Public Domain",
@@ -252,7 +243,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-dharavi-settlement",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Mumbai_India_Dharavi-Slum.jpg/1280px-Mumbai_India_Dharavi-Slum.jpg",
+      "/assets/geolibrary/body/mumbai-03-2016-52-dharavi-near-mahim-junction.jpg",
     caption:
       "Dharavi, Mumbai — one of Asia's largest informal settlements at 700,000–1 million residents in 2.1 km², and one of its most economically active, generating an estimated $1 billion annually.",
     credit: "Wikimedia Commons / CC BY-SA 2.0",
@@ -272,7 +263,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-jakarta-flooding",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Jakarta_flood_2020.jpg/1280px-Jakarta_flood_2020.jpg",
+      "/assets/geolibrary/body/banjir-jakarta-2013.jpg",
     caption:
       "Flooding in North Jakarta — the result of land subsidence from groundwater extraction combined with seasonal monsoon flooding and gradual sea-level rise.",
     credit: "Wikimedia Commons / CC BY 2.0",

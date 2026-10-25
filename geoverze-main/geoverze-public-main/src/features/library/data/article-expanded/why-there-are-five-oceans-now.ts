@@ -35,7 +35,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-world-ocean-map",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/WorldMap-A_non-Frame.png/1280px-WorldMap-A_non-Frame.png",
+      "/assets/geolibrary/body/worldmap-a-non-frame.png",
     caption:
       "The world's five named oceans — Pacific, Atlantic, Indian, Southern, and Arctic — are divisions of a single continuous body of water covering 71 percent of Earth's surface.",
     credit: "Wikimedia Commons / Public Domain",
@@ -212,7 +212,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-southern-ocean-icebergs",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Iceberg_in_the_Southern_Ocean.jpg/1280px-Iceberg_in_the_Southern_Ocean.jpg",
+      "/assets/geolibrary/body/iceberg-in-the-southern-ocean.jpg",
     caption:
       "Icebergs in the Southern Ocean — the largest icebergs on Earth calve from Antarctica and are carried north by the Circumpolar Current before gradually melting.",
     credit: "Wikimedia Commons / Public Domain",
@@ -250,7 +250,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-thermohaline-circulation",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Thermohaline_Circulation_2.png/1280px-Thermohaline_Circulation_2.png",
+      "/assets/geolibrary/body/thermohaline-circulation-2.png",
     caption:
       "The thermohaline circulation (global ocean conveyor belt) — connecting all five oceans, it distributes heat across the planet and drives climate patterns on every continent.",
     credit: "Wikimedia Commons / Public Domain",
@@ -311,16 +311,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "paragraph",
     text: "The Southern Ocean's uninterrupted wind fetch — no land mass at any longitude to slow or redirect the westerlies — produces the most consistently violent sea conditions on Earth. Sailors named the latitude bands: the Roaring Forties (40°–50° south), the Furious Fifties (50°–60°), and the Screaming Sixties (60°–70°). For the sailing ships of the nineteenth century following the Clipper Route from Europe to Australia and back, these latitudes offered the fastest passage — wind and current pushing ships eastward at great speed — at the price of extreme danger from wave heights that regularly exceeded 10 metres and storm systems that formed and intensified without warning. The same conditions make the Southern Ocean inhospitable to regular commercial shipping today. Vessels bound for Antarctica from South America still face some of the roughest crossings in global navigation.",
-  },
-  {
-    kind: "image",
-    art: "article-southern-ocean-storm",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Southern_Ocean_storm.jpg/1280px-Southern_Ocean_storm.jpg",
-    caption:
-      "A storm system over the Southern Ocean — with no land to interrupt the westerly winds at any longitude, wave heights regularly exceed 10 metres and storms form rapidly.",
-    credit: "Wikimedia Commons / Public Domain",
-  },
+  },
 
   { kind: "heading", id: "arctic-ocean", text: "The Arctic Ocean: The Shallowest and Smallest" },
   {

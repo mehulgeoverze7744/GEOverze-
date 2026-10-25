@@ -5,6 +5,7 @@ import { isLibraryMediaPath, proceduralArtKey } from "@/lib/supabase/library-med
 import { cn } from "@/lib/utils";
 
 import { useLibraryMediaUrl } from "../hooks/useLibraryMediaUrl";
+import { libraryResponsiveProps } from "../lib/library-image-delivery";
 
 type LibraryMediaImageProps = {
   storagePath?: string | null;
@@ -32,15 +33,17 @@ export function LibraryMediaImage({
   const procedural = proceduralArtKey(fallbackArt);
 
   if (staticImageSrc) {
+    const responsive = libraryResponsiveProps(staticImageSrc, "card");
     return (
       <CoverArt
         art={procedural}
         icon={icon}
-        imageSrc={staticImageSrc}
+        imageSrc={responsive?.src ?? staticImageSrc}
         imageAlt={alt}
         ratio={ratio}
         fit={fit}
         className={className}
+        {...(responsive ? { responsive } : {})}
       />
     );
   }

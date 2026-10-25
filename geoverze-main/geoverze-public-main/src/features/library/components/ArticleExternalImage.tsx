@@ -3,6 +3,8 @@ import { useState } from "react";
 import { CoverArt } from "@/features/play/components/CoverArt";
 import { cn } from "@/lib/utils";
 
+import { libraryResponsiveProps, type LibraryImageSlot } from "../lib/library-image-delivery";
+
 type ArticleExternalImageProps = {
   src: string;
   alt: string;
@@ -11,9 +13,12 @@ type ArticleExternalImageProps = {
   staticFallbackSrc?: string;
   className?: string;
   ratio?: "video" | "wide" | "square" | "banner";
+  /** The article hero is the only image fetched immediately. Body figures stay lazy. */
+  priority?: boolean;
+  slot?: LibraryImageSlot;
 };
 
-/** Remote article image with procedural fallback when the URL fails. */
+/** Article photograph with responsive WebP/JPEG sources and a static fallback. */
 export function ArticleExternalImage({
   src,
   alt,
@@ -21,9 +26,13 @@ export function ArticleExternalImage({
   staticFallbackSrc,
   className,
   ratio = "video",
+  priority = false,
+  slot,
 }: ArticleExternalImageProps) {
   const [failed, setFailed] = useState(false);
   const resolvedSrc = failed ? (staticFallbackSrc ?? "") : src;
+  const imageSlot = slot ?? (priority ? "hero" : "body");
+  const responsive = resolvedSrc ? libraryResponsiveProps(resolvedSrc, imageSlot) : null;
 
   if (failed && !staticFallbackSrc) {
     return (
@@ -42,14 +51,24 @@ export function ArticleExternalImage({
         className,
       )}
     >
-      <img
-        src={resolvedSrc}
-        alt={alt}
-        loading="lazy"
-        decoding="async"
-        className="absolute inset-0 h-full w-full object-cover object-center"
-        onError={() => setFailed(true)}
-      />
+      <picture className="absolute inset-0 block h-full w-full">
+        {responsive ? (
+          <source type="image/webp" srcSet={responsive.webpSrcSet} sizes={responsive.sizes} />
+        ) : null}
+        <img
+          src={responsive?.src ?? resolvedSrc}
+          srcSet={responsive?.jpegSrcSet}
+          sizes={responsive?.sizes}
+          alt={alt}
+          width={responsive?.width}
+          height={responsive?.height}
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : undefined}
+          decoding="async"
+          className="h-full w-full object-cover object-center"
+          onError={() => setFailed(true)}
+        />
+      </picture>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import type { Article } from "@/features/library/data/articles";
 import { articleCardImageSrc } from "@/features/library/data/article-card-images";
 import { categoryLabel } from "@/features/library/data/taxonomy";
+import { libraryImageCredit } from "@/features/library/lib/library-image-delivery";
 
 export type ArticleThemeId = "atlas-parchment";
 
@@ -47,7 +48,7 @@ export function getArticleReaderPresentation(article: Article): ArticleReaderPre
       src: heroSrc,
       alt: article.title,
       caption: article.dek,
-      credit: "GVRZE Library editorial",
+      credit: libraryImageCredit(heroSrc) ?? "Wikimedia Commons",
     },
   };
 }

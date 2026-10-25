@@ -16,7 +16,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-topographic-map-example",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Topographic_map_example.png/800px-Topographic_map_example.png",
+      "/assets/geolibrary/body/topographic-map-example.png",
     caption:
       "A standard topographic map excerpt — concentric loops for hills, V-shapes for valleys, densely packed lines for steep faces, and wide spacing for gentle slopes.",
     credit: "Wikimedia Commons / Public Domain",
@@ -98,16 +98,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "paragraph",
     text: "Rivers and streams shown in blue provide a cross-check on topography. A river always flows in a valley — a depression in the landscape — and contour lines must reflect this. When contours cross a river, they form a V-shape pointing upstream (toward higher elevation), because the valley walls are higher than the riverbed. This V-tip-upstream rule is one of the most reliable diagnostic patterns on any topographic map. To distinguish a valley (V points upstream, toward higher numbers) from a ridge (contours form a V pointing downstream, toward lower numbers), check which direction the V opens: toward the higher contours or the lower ones. Valleys open toward the lower terrain; ridges open toward the higher terrain. Meanders — large river bends — on a flat floodplain appear as widely spaced, gently curved contours, confirming a low-gradient, low-energy river.",
-  },
-  {
-    kind: "image",
-    art: "article-contour-valley-ridge",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Contour-lines-ridge-and-valley.png/800px-Contour-lines-ridge-and-valley.png",
-    caption:
-      "Contour V-shapes showing ridge (V opens toward higher ground) and valley (V tip points toward higher ground, upstream) — the essential diagnostic pair for terrain reading.",
-    credit: "Wikimedia Commons / Public Domain",
-  },
+  },
   {
     kind: "callout",
     variant: "geography-note",
@@ -123,7 +114,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-trig-point-pillar",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Trig_point_on_Mynydd_Mawr.jpg/800px-Trig_point_on_Mynydd_Mawr.jpg",
+      "/assets/geolibrary/body/the-ordnance-survey-spider-on-the-trig-point-geograph-org-uk-7779460.jpg",
     caption:
       "A UK Ordnance Survey triangulation pillar — one of roughly 6,500 trig points placed on hilltops across Britain to establish the national survey network from the 1930s onward.",
     credit: "Wikimedia Commons / CC BY-SA 2.0",
@@ -223,16 +214,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
         value: "1 inch = 2,000 ft; US standard hiking/survey scale",
       },
     ],
-  },
-  {
-    kind: "image",
-    art: "article-os-map-landranger",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/OS_OpenData_Landranger_style_map.jpg/1280px-OS_OpenData_Landranger_style_map.jpg",
-    caption:
-      "UK Ordnance Survey 1:50,000 Landranger-style map — one of the world's most recognisable and widely used topographic map traditions, in continuous production since the 1940s.",
-    credit: "Wikimedia Commons / OGL v3.0",
-  },
+  },
 
   { kind: "heading", id: "conventional-symbols", text: "Conventional symbols: the map's alphabet" },
   {
@@ -263,16 +245,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "paragraph",
     text: "Contour lines show elevation precisely but require training to interpret intuitively. Relief shading — or hillshading — adds a visual layer that untrained readers interpret immediately. The technique assumes an imaginary light source, conventionally in the northwest corner of the map, and darkens slopes that face away from the light and lightens those facing it. The result mimics the appearance of a three-dimensional model viewed from above in oblique light. Swiss cartographers perfected hillshading in the 18th and 19th centuries — Eduard Imhof's work remains the benchmark — and the technique has been reproduced digitally through algorithms that simulate light across digital elevation models. A common reader error: when the light source is unconventional (not northwest), hills appear as valleys and vice versa. The human visual system defaults to assuming light comes from above-left, and any deviation confuses the terrain interpretation.",
-  },
-  {
-    kind: "image",
-    art: "article-relief-shaded-map",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Switzerland_topographic_map.png/1280px-Switzerland_topographic_map.png",
-    caption:
-      "Swiss topographic relief shading — the technique developed by Swiss cartographers in the 18th century, where light from the northwest casts shadows to reveal terrain intuitively.",
-    credit: "Wikimedia Commons / Public Domain",
-  },
+  },
 
   {
     kind: "heading",
@@ -287,7 +260,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-srtm-global-dem",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Srtm_ramp2.world.21600x10800.jpg/1280px-Srtm_ramp2.world.21600x10800.jpg",
+      "/assets/geolibrary/body/srtm-ramp2-world-21600x10800.jpg",
     caption:
       "NASA SRTM global digital elevation model — the entire Earth's terrain captured in 11 days in February 2000, now the foundation of most global terrain visualisations.",
     credit: "Wikimedia Commons / Public Domain (NASA)",

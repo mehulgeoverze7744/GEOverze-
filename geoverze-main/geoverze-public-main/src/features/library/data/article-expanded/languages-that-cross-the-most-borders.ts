@@ -20,7 +20,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-arabic-speaking-world",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Arabic_speaking_world.svg/1280px-Arabic_speaking_world.svg.png",
+      "/assets/geolibrary/body/arabic-speaking-world-svg.png",
     caption:
       "The Arabic-speaking world — 22 countries across North Africa and the Middle East share Arabic as an official language, though spoken dialects diverge substantially across the region.",
     credit: "Wikimedia Commons / Public Domain",
@@ -54,16 +54,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "paragraph",
     text: "Today, the most striking demographic fact about French is that the majority of its speakers live in Africa, not Europe. Sub-Saharan Africa alone accounts for over 60 percent of all Francophone speakers worldwide, and this share is growing rapidly as African populations expand. In countries like the Democratic Republic of Congo — the world's largest Francophone country by population — French is the official language of government and education but is spoken natively by only a small educated minority; the majority speak it as a second or third language alongside hundreds of indigenous languages. The DRC alone has over 250 indigenous languages, making French indispensable as a cross-ethnic communication medium. By 2060, Africa is projected to account for 85 percent of French speakers globally.",
-  },
-  {
-    kind: "image",
-    art: "article-francophonie-map",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Francophonie_map_2014.png/1280px-Francophonie_map_2014.png",
-    caption:
-      "Member states and observers of the Organisation internationale de la Francophonie — French is official or co-official in 29 countries across five continents.",
-    credit: "Wikimedia Commons / Public Domain",
-  },
+  },
   {
     kind: "callout",
     variant: "history-note",
@@ -123,7 +114,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-swahili-coast",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Lamu_Old_Town_aerial.jpg/1280px-Lamu_Old_Town_aerial.jpg",
+      "/assets/geolibrary/body/lamu-old-town-street.jpg",
     caption:
       "Lamu Old Town, Kenya — a UNESCO World Heritage Site and historic centre of Swahili culture, where Arabic, Persian, and Bantu languages met the Indian Ocean trade network.",
     credit: "Wikimedia Commons / CC BY 2.0",
@@ -205,7 +196,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-kurdish-homeland-map",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Kurdish-inhabited_area_by_CIA_%281992%29.jpg/1280px-Kurdish-inhabited_area_by_CIA_%281992%29.jpg",
+      "/assets/geolibrary/body/kurdish-inhabited-area-by-cia-1992.jpg",
     caption:
       "Kurdish-inhabited areas across Turkey, Iraq, Iran, and Syria — the Kurdish people represent one of the world's largest ethnic groups without a sovereign state, their homeland divided among four countries.",
     credit: "Wikimedia Commons / Public Domain (CIA, 1992)",
@@ -365,7 +356,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-language-families-world",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Human_Language_Families_%28wikicolors%29.png/1280px-Human_Language_Families_%28wikicolors%29.png",
+      "/assets/geolibrary/body/human-language-families-wikicolors.png",
     caption:
       "The world's major language families — approximately 7,000 languages are grouped into about 140 language families, with Indo-European, Sino-Tibetan, and Niger-Congo being the three largest by speaker count.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",

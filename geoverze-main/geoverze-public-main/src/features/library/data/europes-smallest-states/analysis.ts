@@ -82,8 +82,9 @@ export const EUROPE_MICROSTATES_ANALYSIS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-microstates-map",
     caption: "Approximate locations of Europe's six microstates on a continental map.",
-    externalSrc: "/assets/geolibrary/collections/countries-of-europe.jpg",
-    credit: "GVRZE Library editorial map art",
+    externalSrc:
+      "/assets/geolibrary/body/map-of-european-microstates-svg.png",
+    credit: "Wikimedia Commons / CC BY-SA 4.0",
   },
   {
     kind: "heading",

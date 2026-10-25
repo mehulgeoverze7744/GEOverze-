@@ -20,10 +20,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-panama-canal-satellite",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/PanamaCanal-EO.JPG/1280px-PanamaCanal-EO.JPG",
+      "/assets/geolibrary/body/gatun-locks-panama-canal.jpg",
     caption:
-      "NASA satellite view of the Panama Canal — the Pacific entrance (lower right) is east of the Atlantic entrance (upper left), confounding most people's mental maps.",
-    credit: "Wikimedia Commons / Public Domain (NASA)",
+      "The Gatún Locks on the Atlantic side of the Panama Canal. The Pacific entrance at Panama City lies east of this Atlantic entrance.",
+    credit: "Mariordo (Mario Roberto Durán Ortiz) / Wikimedia Commons / CC BY-SA 3.0",
   },
   {
     kind: "callout",
@@ -54,15 +54,6 @@ export const BLOCKS: readonly ArticleBlock[] = [
   {
     kind: "paragraph",
     text: "Egypt is commonly imagined with Cairo positioned somewhere near the geographic middle of the country, perhaps slightly north. In reality, Cairo sits near the very northern end of Egypt, at the apex of the Nile Delta, at approximately 30°N. The country extends some 1,100 km south to Wadi Halfa on the Sudanese border. Most of Egypt is empty: the Nile corridor, narrow strips of irrigated farmland, and then vast expanses of the Eastern Desert, Western Desert (part of the Sahara), and Sinai Peninsula. More than 95% of Egypt's population lives along the Nile corridor and in the Delta — a strip representing less than 4% of Egypt's total land area. Cairo functions as the entry point of the Nile into its delta and has always been a city positioned at the junction of Egypt's arable land and the Mediterranean trade routes, not at its geographic centre.",
-  },
-  {
-    kind: "image",
-    art: "article-nile-delta-satellite",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Nile_River_Delta_at_Night_-_Flickr_-_NASA_Goddard_Photo_and_Video.jpg/1280px-Nile_River_Delta_at_Night_-_Flickr_-_NASA_Goddard_Photo_and_Video.jpg",
-    caption:
-      "NASA night image of the Nile Delta — Cairo and Alexandria glow at the very northern tip of Egypt; almost no light appears to the south, where most of Egypt's land area lies.",
-    credit: "Wikimedia Commons / NASA Goddard Photo and Video",
   },
   {
     kind: "callout",
@@ -108,15 +99,6 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "callout",
     variant: "by-the-numbers",
     text: "Longitude check: Los Angeles = 118.2°W. Reno, Nevada = 119.8°W. Portland, Oregon = 122.7°W. Seattle = 122.3°W. The entire California coast bends eastward so significantly that the southern end of the state is almost as far east as Denver, Colorado (104.9°W).",
-  },
-  {
-    kind: "image",
-    art: "article-california-coast-shape",
-    externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/California_terrain.jpg/640px-California_terrain.jpg",
-    caption:
-      "California terrain map showing the dramatic southeastward curve of the coast — Los Angeles sits further east than Reno, Nevada, despite being on the Pacific coast.",
-    credit: "Wikimedia Commons / Public Domain",
   },
 
   {
@@ -203,10 +185,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-chimborazo-volcano",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Chimborazo_volcano.jpg/1280px-Chimborazo_volcano.jpg",
+      "/assets/geolibrary/body/chimborazo.jpg",
     caption:
       "Chimborazo, Ecuador (6,263 m) — lower than Everest above sea level, but further from Earth's centre due to the equatorial bulge of the planet.",
-    credit: "Wikimedia Commons / CC BY-SA 3.0",
+    credit: "Morgen Mills / Wikimedia Commons / CC BY-SA 4.0",
   },
 
   { kind: "heading", id: "new-zealand-australia", text: "New Zealand is not near Australia" },
@@ -233,7 +215,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-africa-south-america-drift",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Snider-Pellegrini_Wegener_fossil_map.svg/1280px-Snider-Pellegrini_Wegener_fossil_map.svg",
+      "/assets/geolibrary/body/snider-pellegrini-wegener-fossil-map-svg.png",
     caption:
       "Wegener's 1915 diagram showing matching fossil and geological evidence across Africa and South America — the narrowest Atlantic crossing is about 2,850 km.",
     credit: "Wikimedia Commons / Public Domain",
@@ -253,7 +235,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-mercator-projection",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Mercator_projection_Square.JPG/1280px-Mercator_projection_Square.JPG",
+      "/assets/geolibrary/body/mercator-projection-square.jpg",
     caption:
       "The Mercator projection — designed for navigation, not for area comparison. Greenland appears roughly the size of Africa; in reality Africa is 14 times larger.",
     credit: "Wikimedia Commons / Public Domain",
@@ -277,7 +259,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-international-date-line",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/International_date_line.png/1280px-International_date_line.png",
+      "/assets/geolibrary/body/international-date-line.png",
     caption:
       "The International Date Line — far from straight, it zigzags around Kiribati, Samoa, Tonga, and Fiji to keep island nations on one calendar day.",
     credit: "Wikimedia Commons / Public Domain",

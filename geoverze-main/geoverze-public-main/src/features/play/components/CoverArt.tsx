@@ -17,6 +17,9 @@ export function CoverArt({
   fit = "contain",
   overlay = "hero",
   objectPosition,
+  responsive,
+  loading = "lazy",
+  fetchPriority,
 }: {
   art: string;
   icon?: LucideIcon | undefined;
@@ -29,6 +32,16 @@ export function CoverArt({
   /** Image overlay when `fit="cover"`. `subtle` = bottom blend only. */
   overlay?: "none" | "subtle" | "hero" | "category";
   objectPosition?: string;
+  /** Responsive library derivatives. Omitted for quiz and store art. */
+  responsive?: {
+    webpSrcSet: string;
+    jpegSrcSet: string;
+    sizes: string;
+    width: number;
+    height: number;
+  };
+  loading?: "eager" | "lazy";
+  fetchPriority?: "high" | "low" | "auto";
 }) {
   const cover = coverArt(art);
   const pattern = patternLayer(cover.pattern);
@@ -58,25 +71,33 @@ export function CoverArt({
     >
       {imageSrc ? (
         <>
-          <img
-            src={imageSrc}
-            alt={imageAlt ?? ""}
-            width={1536}
-            height={1024}
-            loading="lazy"
-            decoding="async"
-            onError={(event) => {
-              event.currentTarget.style.opacity = "0";
-            }}
-            className={cn(
-              "absolute inset-0 h-full w-full transition-transform duration-700 ease-out motion-reduce:transition-none",
-              !objectPosition && "object-center",
-              fit === "cover"
-                ? "object-cover group-hover/card:scale-[1.04] motion-reduce:group-hover/card:scale-100"
-                : "object-contain group-hover/card:scale-[1.03]",
-            )}
-            style={objectPosition ? { objectPosition } : undefined}
-          />
+          <picture className="absolute inset-0 block h-full w-full">
+            {responsive ? (
+              <source type="image/webp" srcSet={responsive.webpSrcSet} sizes={responsive.sizes} />
+            ) : null}
+            <img
+              src={imageSrc}
+              srcSet={responsive?.jpegSrcSet}
+              sizes={responsive?.sizes}
+              alt={imageAlt ?? ""}
+              width={responsive?.width ?? 1536}
+              height={responsive?.height ?? 1024}
+              loading={loading}
+              fetchPriority={fetchPriority}
+              decoding="async"
+              onError={(event) => {
+                event.currentTarget.style.opacity = "0";
+              }}
+              className={cn(
+                "h-full w-full transition-transform duration-700 ease-out motion-reduce:transition-none",
+                !objectPosition && "object-center",
+                fit === "cover"
+                  ? "object-cover group-hover/card:scale-[1.04] motion-reduce:group-hover/card:scale-100"
+                  : "object-contain group-hover/card:scale-[1.03]",
+              )}
+              style={objectPosition ? { objectPosition } : undefined}
+            />
+          </picture>
           {resolvedOverlay === "hero" ? (
             <span
               aria-hidden

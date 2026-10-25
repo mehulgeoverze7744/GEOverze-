@@ -10,7 +10,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-abu-simbel-temples",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Panorama_Abu_Simbel_Oct_2007.jpg/1280px-Panorama_Abu_Simbel_Oct_2007.jpg",
+      "/assets/geolibrary/body/abu-simbel-temples.jpg",
     caption:
       "Abu Simbel temples, Egypt — the international campaign to save them from the Aswan Dam reservoir directly inspired the 1972 World Heritage Convention.",
     credit: "Wikimedia Commons / CC BY-SA 2.0",
@@ -159,10 +159,10 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-great-barrier-reef",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Great_Barrier_Reef_2090_Nevit.jpg/1280px-Great_Barrier_Reef_2090_Nevit.jpg",
+      "/assets/geolibrary/body/great-barrier-reef.jpg",
     caption:
       "The Great Barrier Reef, Australia — inscribed 1981, meeting all four natural criteria (vii–x), it is the world's largest coral reef system and faces severe threat from climate-driven bleaching.",
-    credit: "Wikimedia Commons / CC BY-SA 3.0",
+    credit: "Ank Kumar / Wikimedia Commons / CC BY-SA 4.0",
   },
 
   { kind: "heading", id: "countries-most-sites", text: "Countries with the Most Sites" },
@@ -213,7 +213,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-liverpool-albert-dock",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Albert_Dock%2C_Liverpool.jpg/1280px-Albert_Dock%2C_Liverpool.jpg",
+      "/assets/geolibrary/body/albert-dock-liverpool.jpg",
     caption:
       "Liverpool's Albert Dock — part of the Maritime Mercantile City that was removed from the World Heritage List in 2021, one of only three sites ever delisted.",
     credit: "Wikimedia Commons / CC BY 2.0",
@@ -232,7 +232,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-machu-picchu",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Machu_Picchu%2C_Peru.jpg/1280px-Machu_Picchu%2C_Peru.jpg",
+      "/assets/geolibrary/body/machu-picchu-peru.jpg",
     caption:
       "Machu Picchu, Peru — inscribed in 1983 and now receiving over one million visitors per year, it is the paradigm case of the inscription-driven tourism paradox.",
     credit: "Wikimedia Commons / CC BY 2.0",
@@ -252,7 +252,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-great-wall-china",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/The_Great_Wall_of_China_at_Jinshanling-edit.jpg/1280px-The_Great_Wall_of_China_at_Jinshanling-edit.jpg",
+      "/assets/geolibrary/body/the-great-wall-of-china-at-jinshanling-edit.jpg",
     caption:
       "The Great Wall at Jinshanling, China — inscribed 1987 under five criteria, spanning over 21,000 kilometres of fortifications built across two millennia of Chinese history.",
     credit: "Wikimedia Commons / CC BY-SA 3.0",
@@ -364,7 +364,7 @@ export const BLOCKS: readonly ArticleBlock[] = [
     kind: "image",
     art: "article-stonehenge-wiltshire",
     externalSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Stonehenge2007_07_30.jpg/1280px-Stonehenge2007_07_30.jpg",
+      "/assets/geolibrary/body/stonehenge2007-07-30.jpg",
     caption:
       "Stonehenge, England — inscribed 1986 as part of the Stonehenge, Avebury and Associated Sites serial property, meeting criteria i, ii, and iii for its Neolithic ceremonial landscape.",
     credit: "Wikimedia Commons / CC BY-SA 2.0",
