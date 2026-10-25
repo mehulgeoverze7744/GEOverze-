@@ -1,25 +1,15 @@
-import { supabase } from "@/lib/supabase/client";
+import { CREATORS, GVRZE_STUDIO_HANDLE, creatorByHandle, type Creator } from "./creators";
 
-import { mapCreatorRowToCreator } from "./library-mapper";
-import type { Creator } from "./creators";
-
+/**
+ * Public creator catalogue. Library articles are official GVRZE content, so the
+ * directory is the studio profile rather than placeholder rows stored for the
+ * original seed.
+ */
 export async function fetchPublishedCreators(): Promise<Creator[]> {
-  const { data: rows, error } = await supabase
-    .from("library_creators")
-    .select("*")
-    .order("joined_at", { ascending: false });
-
-  if (error) throw new Error(`Failed to load creators: ${error.message}`);
-  return (rows ?? []).map(mapCreatorRowToCreator);
+  return [...CREATORS];
 }
 
 export async function fetchCreatorByHandle(handle: string): Promise<Creator | null> {
-  const { data: row, error } = await supabase
-    .from("library_creators")
-    .select("*")
-    .eq("handle", handle)
-    .maybeSingle();
-
-  if (error) throw new Error(`Failed to load creator "${handle}": ${error.message}`);
-  return row ? mapCreatorRowToCreator(row) : null;
+  if (handle !== GVRZE_STUDIO_HANDLE) return null;
+  return creatorByHandle(handle) ?? null;
 }

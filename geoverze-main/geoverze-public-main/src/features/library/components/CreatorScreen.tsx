@@ -1,19 +1,17 @@
 import { getRouteApi } from "@tanstack/react-router";
 import { BadgeCheck } from "lucide-react";
 
-import { EmptyState, SectionContainer } from "@/components/shared";
-import { isLibraryMediaPath } from "@/lib/supabase/library-media";
+import { BrandMark, EmptyState, SectionContainer } from "@/components/shared";
 import { useLibraryStore } from "@/stores/libraryStore";
 
 import { LibraryCard } from "./LibraryCard";
-import { LibraryMediaImage } from "./LibraryMediaImage";
 import { useCreatorByHandle } from "../hooks/usePublishedCreators";
 import { useLibrarySubscriptionTier } from "../hooks/useLibrarySubscriptionTier";
 import { getResourceAccessState } from "../lib/access-tier";
 
 const routeApi = getRouteApi("/geolibrary/creators/$handle");
 
-/** Creator profile with their published entries. */
+/** Official creator profile and the Library entries they publish. */
 export function CreatorScreen() {
   const { handle } = routeApi.useParams();
   const { creator, articles, loading, error } = useCreatorByHandle(handle);
@@ -47,17 +45,11 @@ export function CreatorScreen() {
 
   return (
     <SectionContainer>
-      <div className="flex flex-col gap-8 sm:flex-row sm:items-start">
-        <LibraryMediaImage
-          storagePath={isLibraryMediaPath(creator.art) ? creator.art : null}
-          fallbackArt={creator.art}
-          alt={creator.name}
-          ratio="square"
-          className="mx-auto w-32 shrink-0 overflow-hidden rounded-full sm:mx-0 sm:w-40"
-        />
+      <div className="flex flex-col items-center gap-8 text-center sm:flex-row sm:items-start sm:text-left">
+        <BrandMark size="xl" className="shrink-0" />
         <div className="min-w-0 flex-1">
-          <p className="eyebrow">{creator.role}</p>
-          <h1 className="mt-4 flex items-center gap-2 font-light tracking-tight text-foreground text-[clamp(2rem,4vw,3rem)]">
+          <p className="text-[0.6rem] uppercase tracking-[0.22em] text-bronze/90">{creator.role}</p>
+          <h1 className="mt-4 flex items-center justify-center gap-2 font-light tracking-tight text-foreground text-[clamp(2rem,4vw,3rem)] sm:justify-start">
             {creator.name}
             {creator.verified ? (
               <BadgeCheck className="size-6 shrink-0 text-primary" aria-label="Verified creator" />
@@ -66,10 +58,9 @@ export function CreatorScreen() {
           <p className="mt-6 max-w-2xl text-sm leading-relaxed text-foreground/60 md:text-base">
             {creator.bio}
           </p>
-          <p className="mt-6 text-xs text-foreground/50">
-            joined {creator.joinedAt}
-            {creator.location ? ` · ${creator.location}` : ""}
-          </p>
+          {creator.location ? (
+            <p className="mt-6 text-xs text-foreground/50">{creator.location}</p>
+          ) : null}
         </div>
       </div>
       <h2 className="mt-12 text-lg font-light tracking-tight text-foreground">Published entries</h2>

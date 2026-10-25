@@ -9,12 +9,12 @@ export const Route = createFileRoute("/geolibrary/creators/")({
       {
         name: "description",
         content:
-          "Meet the cartographers, writers and researchers behind GVRZE Library entries, and follow the ones whose work you want more of.",
+          "GVRZE Studio is the official editorial team behind GVRZE Library, based in Mumbai, India.",
       },
       { property: "og:title", content: "Creators — GVRZE Library" },
       {
         property: "og:description",
-        content: "The writers and cartographers behind GVRZE Library entries.",
+        content: "GVRZE Studio, the official creator of GVRZE Library.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

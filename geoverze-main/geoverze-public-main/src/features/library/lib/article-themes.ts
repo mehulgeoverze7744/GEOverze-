@@ -42,7 +42,7 @@ export function getArticleReaderPresentation(article: Article): ArticleReaderPre
     theme: "atlas-parchment",
     displayTitle: article.title,
     displayDek: article.dek,
-    authorLine: `GVRZE Library · ${categoryLabel(article.category)}`,
+    authorLine: `GVRZE Studio · ${categoryLabel(article.category)}`,
     topicTags: tags.map(formatTag),
     heroImage: {
       src: heroSrc,

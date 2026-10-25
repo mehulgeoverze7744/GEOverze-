@@ -5,6 +5,7 @@ import { parseLibraryAccessTier, type LibraryAccessTier } from "@/features/libra
 import { LIBRARY_CATALOGUE } from "../lib/library-catalogue";
 
 import { applyPublishedArticleBlockFixtures } from "../lib/library-article-fixtures";
+import { GVRZE_STUDIO_HANDLE } from "./creators";
 import { mapResourceRowToArticle } from "./library-mapper";
 import type { Article } from "./articles";
 
@@ -156,10 +157,11 @@ export async function fetchRecentArticles(limit = 6): Promise<Article[]> {
 }
 
 export async function fetchArticlesByCreator(handle: string): Promise<Article[]> {
+  if (handle !== GVRZE_STUDIO_HANDLE) return [];
+
   const { data: rows, error } = await supabase
     .from(LIBRARY_CATALOGUE)
     .select("*")
-    .eq("author_handle", handle)
     .order("published_at", { ascending: false });
 
   if (error) throw new Error(`Failed to load creator articles: ${error.message}`);

@@ -85,26 +85,10 @@ export const SEARCH_INDEX: readonly SearchRecord[] = [
   {
     id: "s-c1",
     group: "creators",
-    title: "Atlas Studio",
-    meta: "Creator · 24 plates",
-    keywords: ["atlas", "studio", "maps"],
-    to: "/geolibrary",
-  },
-  {
-    id: "s-c2",
-    group: "creators",
-    title: "Meridian",
-    meta: "Creator · Quiz author",
-    keywords: ["meridian", "quiz", "author"],
-    to: "/community",
-  },
-  {
-    id: "s-c3",
-    group: "creators",
-    title: "Cartography Guild",
-    meta: "Creator collective",
-    keywords: ["cartography", "guild", "community"],
-    to: "/geolibrary",
+    title: "GVRZE Studio",
+    meta: "Official GVRZE Library creator · Mumbai, India",
+    keywords: ["gvrze", "studio", "library", "mumbai"],
+    to: "/geolibrary/creators",
   },
 
   {
@@ -169,7 +153,7 @@ export function searchStaticAll(query: string, limit = 12): SearchHit[] {
   const hits: SearchHit[] = [...playHits];
 
   for (const record of SEARCH_INDEX) {
-    if (record.group === "articles" || record.group === "creators") continue;
+    if (record.group === "articles") continue;
     const title = record.title.toLowerCase();
     let score = 0;
     if (title.startsWith(q)) score = 100;
