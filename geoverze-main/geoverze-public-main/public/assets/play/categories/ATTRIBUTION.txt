@@ -1,0 +1,91 @@
+Category photographs for /play/catalogue
+
+These files replace the previous category artwork. Each image is a photograph
+(or, for Countries, a NASA Apollo photograph of Earth) used under the license
+named below. Wikimedia Commons file pages are the source records. Adaptations
+of the CC BY-SA images must stay under the same license.
+
+countries.jpg
+  Subject: Earth from Apollo 17, Africa and the surrounding oceans
+  Source: https://commons.wikimedia.org/wiki/File:The_Blue_Marble_(remastered).jpg
+  Author: NASA/Apollo 17 crew; taken by either Harrison Schmitt or Ron Evans
+  License: Public domain
+
+capitals.jpg
+  Subject: Palace of Westminster and the River Thames, London
+  Source: https://commons.wikimedia.org/wiki/File:Palace_of_Westminster,_London_-_Feb_2007.jpg
+  Author: Diliff
+  License: CC BY-SA 2.5 (https://creativecommons.org/licenses/by-sa/2.5)
+
+flags.jpg
+  Subject: National flags at the Palace of Nations, United Nations, Geneva
+  Source: https://commons.wikimedia.org/wiki/File:United_Nations_Flags_-_cropped.jpg
+  Author: Tom Page
+  License: CC BY-SA 2.0 (https://creativecommons.org/licenses/by-sa/2.0)
+
+maps.jpg
+  Subject: Printed map with a compass
+  Source: https://commons.wikimedia.org/wiki/File:Top_view_of_a_compass_on_a_map_(Unsplash).jpg
+  Author: Himesh Kumar Behera (thehopefultraveller), via Unsplash
+  Unsplash: https://unsplash.com/photos/t11oyf1K8kA
+  License: CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/)
+
+landmarks.jpg
+  Subject: Taj Mahal, Agra
+  Source: https://commons.wikimedia.org/wiki/File:Taj_Mahal,_Agra,_India_edit3.jpg
+  Author: Yann; edited by King of Hearts; derivative work by Jbarta
+  License: CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0)
+
+history.jpg
+  Subject: The Colosseum, Rome
+  Source: https://commons.wikimedia.org/wiki/File:Colosseo_2020.jpg
+  Author: FeaturedPics
+  License: CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0)
+
+mountains.jpg
+  Subject: The Matterhorn from Sunnegga, summer
+  Source: https://commons.wikimedia.org/wiki/File:Sunnegga%27s_sight_to_%22Matterhorn%22_on_summer_-_panoramio.jpg
+  Author: Picea Abies
+  License: CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0)
+
+rivers.jpg
+  Subject: Colorado River at Horseshoe Bend
+  Source: https://commons.wikimedia.org/wiki/File:Horseshoe_Bend_TC_27-09-2012_15-34-14.jpg
+  Author: Paul Hermans
+  License: CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0)
+
+oceans.jpg
+  Subject: Open ocean waves
+  Source: https://commons.wikimedia.org/wiki/File:Ocean_waves.jpg
+  Author: Sean O'Flaherty
+  License: CC BY-SA 2.5 (https://creativecommons.org/licenses/by-sa/2.5)
+
+culture.jpg
+  Subject: Jemaa el-Fnaa market, Marrakech
+  Source: https://commons.wikimedia.org/wiki/File:Jemaa_el-Fnaa.jpg
+  Author: Hamed Gamaoun
+  License: CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0)
+
+mixed-geography.jpg
+  Subject: Yosemite Valley from Tunnel View
+  Source: https://commons.wikimedia.org/wiki/File:Yosemite_Valley_from_Tunnel_View.jpg
+  Author: Nitesh Aggerwal
+  License: CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0)
+
+nature.jpg
+  Subject: Iguazu Falls
+  Source: https://commons.wikimedia.org/wiki/File:Rainbows_at_Iguazu_Falls_frrom_Argentina.jpg
+  Author: Pierre André Leclercq
+  License: CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0)
+
+unesco-sites.jpg
+  Subject: Machu Picchu
+  Source: https://commons.wikimedia.org/wiki/File:Machu_Picchu,_Peru.jpg
+  Author: Pedro Szekely (https://www.flickr.com/photos/pedrosz/)
+  License: CC BY-SA 2.0 (https://creativecommons.org/licenses/by-sa/2.0)
+
+world-records.jpg
+  Subject: Mount Everest from Kala Patthar
+  Source: https://commons.wikimedia.org/wiki/File:Everest_kalapatthar_crop.jpg
+  Author: Pavel Novak
+  License: CC BY-SA 2.5 (https://creativecommons.org/licenses/by-sa/2.5)

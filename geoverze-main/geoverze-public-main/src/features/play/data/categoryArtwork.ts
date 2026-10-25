@@ -5,72 +5,72 @@ export const CATEGORY_ARTWORK: Record<
 > = {
   countries: {
     src: "/assets/play/categories/countries.jpg",
-    alt: "Globe surrounded by world landmarks",
+    alt: "Satellite photograph of Earth showing Africa, the oceans, and cloud cover",
     objectPosition: "center center",
   },
   capitals: {
     src: "/assets/play/categories/capitals.jpg",
-    alt: "World capitals and civic landmarks",
-    objectPosition: "center center",
+    alt: "The Palace of Westminster and the River Thames in London",
+    objectPosition: "72% center",
   },
   flags: {
     src: "/assets/play/categories/flags.jpg",
-    alt: "Globe surrounded by national flags",
+    alt: "National flags flying outdoors at the United Nations in Geneva",
     objectPosition: "center center",
   },
   maps: {
     src: "/assets/play/categories/maps.jpg",
-    alt: "World map with compass and cartography tools",
+    alt: "A printed map photographed with a compass resting on the paper",
     objectPosition: "center center",
   },
   landmarks: {
     src: "/assets/play/categories/landmarks.jpg",
-    alt: "Famous landmarks across the world",
+    alt: "The Taj Mahal in Agra, photographed in daylight",
     objectPosition: "center center",
   },
   history: {
     src: "/assets/play/categories/history.jpg",
-    alt: "Historical maps, ships and ancient monuments",
+    alt: "The Colosseum in Rome, an ancient stone amphitheatre",
     objectPosition: "center center",
   },
   mountains: {
     src: "/assets/play/categories/mountains.jpg",
-    alt: "Snow-capped mountain peaks above the clouds",
+    alt: "The Matterhorn above Zermatt in summer daylight",
     objectPosition: "center center",
   },
   rivers: {
     src: "/assets/play/categories/rivers.jpg",
-    alt: "River winding through mountains and a harbour",
+    alt: "The Colorado River bending through Horseshoe Bend",
     objectPosition: "center center",
   },
   oceans: {
     src: "/assets/play/categories/oceans.jpg",
-    alt: "Deep ocean trench with whales and coral",
+    alt: "Ocean waves breaking in natural daylight",
     objectPosition: "center center",
   },
   culture: {
     src: "/assets/play/categories/culture.jpg",
-    alt: "World cultures, markets and landmarks",
+    alt: "Evening market at Jemaa el-Fnaa in Marrakech",
     objectPosition: "center center",
   },
   mixed: {
     src: "/assets/play/categories/mixed-geography.jpg",
-    alt: "Globe, map and mixed geography subjects",
+    alt: "Yosemite Valley, with cliffs, forest, and a waterfall",
     objectPosition: "center center",
   },
   nature: {
     src: "/assets/play/categories/nature.jpg",
-    alt: "Earth ecosystems from ocean to mountains",
+    alt: "Iguazu Falls and rainforest, with a rainbow in the spray",
     objectPosition: "center center",
   },
   unesco: {
     src: "/assets/play/categories/unesco-sites.jpg",
-    alt: "UNESCO heritage sites around the world",
+    alt: "Machu Picchu in the Andes, a UNESCO World Heritage Site",
     objectPosition: "center center",
   },
   records: {
     src: "/assets/play/categories/world-records.jpg",
-    alt: "World records trophy and geographic extremes",
-    objectPosition: "center center",
+    alt: "Mount Everest, the highest mountain on Earth, seen from Kala Patthar",
+    objectPosition: "center 18%",
   },
 };
