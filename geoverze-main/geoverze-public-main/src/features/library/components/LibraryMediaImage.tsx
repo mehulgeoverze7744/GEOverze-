@@ -8,15 +8,17 @@ import { useLibraryMediaUrl } from "../hooks/useLibraryMediaUrl";
 import { libraryResponsiveProps } from "../lib/library-image-delivery";
 
 type LibraryMediaImageProps = {
-  storagePath?: string | null;
+  storagePath?: string | null | undefined;
   fallbackArt: string;
   /** Static public asset override (slug-keyed article/collection art). */
-  staticImageSrc?: string;
-  icon?: LucideIcon;
-  alt?: string;
-  className?: string;
+  staticImageSrc?: string | undefined;
+  icon?: LucideIcon | undefined;
+  alt?: string | undefined;
+  className?: string | undefined;
   ratio?: "video" | "wide" | "square" | "banner";
   fit?: "contain" | "cover";
+  /** Cover treatment. Article cards pass `none` and fade the photo in the card itself. */
+  overlay?: "none" | "subtle" | "hero" | "category" | undefined;
 };
 
 /** Storage-backed library image with procedural CoverArt fallback. */
@@ -29,20 +31,25 @@ export function LibraryMediaImage({
   className,
   ratio = "video",
   fit = "cover",
+  overlay,
 }: LibraryMediaImageProps) {
   const procedural = proceduralArtKey(fallbackArt);
+  const coverProps = {
+    ...(icon ? { icon } : {}),
+    ...(className ? { className } : {}),
+    ...(overlay ? { overlay } : {}),
+  };
 
   if (staticImageSrc) {
     const responsive = libraryResponsiveProps(staticImageSrc, "card");
     return (
       <CoverArt
         art={procedural}
-        icon={icon}
         imageSrc={responsive?.src ?? staticImageSrc}
         imageAlt={alt}
         ratio={ratio}
         fit={fit}
-        className={className}
+        {...coverProps}
         {...(responsive ? { responsive } : {})}
       />
     );
@@ -52,7 +59,9 @@ export function LibraryMediaImage({
   const { url, loading, error } = useLibraryMediaUrl(resolvedPath);
 
   if (!resolvedPath || error) {
-    return <CoverArt art={procedural} icon={icon} ratio={ratio} fit={fit} className={className} />;
+    return (
+      <CoverArt art={procedural} ratio={ratio} fit={fit} {...coverProps} />
+    );
   }
 
   if (loading || !url) {
@@ -74,12 +83,11 @@ export function LibraryMediaImage({
   return (
     <CoverArt
       art={procedural}
-      icon={icon}
       imageSrc={url}
       imageAlt={alt}
       ratio={ratio}
       fit={fit}
-      className={className}
+      {...coverProps}
     />
   );
 }

@@ -21,6 +21,7 @@ import {
   libraryRailContinueReadingCardClass,
   libraryRailMediaClass,
 } from "../lib/library-rail-layout";
+import "../styles/library-card.css";
 
 const compact = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(n >= 10_000 ? 0 : 1)}k` : `${n}`);
 
@@ -224,15 +225,18 @@ export function LibraryCard({
           inRail && libraryRailMediaClass,
         )}
       >
-        <LibraryMediaImage
-          storagePath={article.coverArtKey}
-          fallbackArt={article.slug}
-          staticImageSrc={cardImageSrc}
-          icon={Icon}
-          ratio="video"
-          fit="cover"
-          className="h-full w-full"
-        />
+        <div className="library-card-photo">
+          <LibraryMediaImage
+            storagePath={article.coverArtKey}
+            fallbackArt={article.slug}
+            staticImageSrc={cardImageSrc}
+            icon={Icon}
+            ratio="video"
+            fit="cover"
+            overlay="none"
+            className="h-full w-full bg-transparent"
+          />
+        </div>
         <span className="absolute right-3 top-3 rounded-full border border-bronze/35 bg-[oklch(0.12_0.006_60/0.85)] px-3 py-1 text-[0.58rem] uppercase tracking-[0.2em] text-bronze/85">
           {categoryLabel(article.category)}
         </span>
@@ -249,10 +253,7 @@ export function LibraryCard({
           </span>
         ) : null}
         {restricted ? (
-          <span
-            className="pointer-events-none absolute inset-0 bg-[oklch(0.08_0.004_60/0.35)]"
-            aria-hidden
-          />
+          <span className="library-card-photo-scrim" aria-hidden />
         ) : null}
         {progress > 0 ? (
           <span

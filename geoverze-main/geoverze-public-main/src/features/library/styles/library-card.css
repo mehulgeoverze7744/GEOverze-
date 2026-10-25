@@ -1,0 +1,79 @@
+/*
+ * Poster cards dissolve the photograph into the card's own glass surface.
+ * The upper image stays opaque; only the lower portion reveals the card.
+ */
+.library-card-photo {
+  background: transparent;
+}
+
+/* Keep the category mark on the still-clear part of the photograph. */
+.library-card-photo > div > span.absolute {
+  bottom: 32%;
+}
+
+/* The photo plate is opaque by default. Let the card surface show through the fade. */
+.library-card-photo > div:has(img) {
+  background-color: transparent;
+}
+
+.library-card-photo img {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 42%,
+    rgb(0 0 0 / 0.94) 56%,
+    rgb(0 0 0 / 0.78) 68%,
+    rgb(0 0 0 / 0.5) 80%,
+    rgb(0 0 0 / 0.22) 91%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 42%,
+    rgb(0 0 0 / 0.94) 56%,
+    rgb(0 0 0 / 0.78) 68%,
+    rgb(0 0 0 / 0.5) 80%,
+    rgb(0 0 0 / 0.22) 91%,
+    transparent 100%
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+.library-card-photo-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: oklch(0.08 0.004 60 / 0.35);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 42%,
+    rgb(0 0 0 / 0.5) 80%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(to bottom, #000 0%, #000 42%, rgb(0 0 0 / 0.5) 80%, transparent 100%);
+}
+
+/* Procedural covers have no photograph. Fade the plate into the card surface. */
+.library-card-photo > div:not(:has(img)) {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 42%,
+    rgb(0 0 0 / 0.78) 68%,
+    rgb(0 0 0 / 0.22) 91%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 42%,
+    rgb(0 0 0 / 0.78) 68%,
+    rgb(0 0 0 / 0.22) 91%,
+    transparent 100%
+  );
+}
