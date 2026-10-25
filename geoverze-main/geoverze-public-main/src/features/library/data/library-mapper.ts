@@ -2,7 +2,7 @@ import { isLibraryMediaPath } from "@/lib/supabase/library-media";
 import type { Article, ArticleBlock } from "@/features/library/data/articles";
 import { parseLibraryAccessTier } from "@/features/library/lib/access-tier";
 import type { Collection } from "@/features/library/data/collections";
-import type { Creator } from "@/features/library/data/creators";
+import { GVRZE_STUDIO_HANDLE, type Creator } from "@/features/library/data/creators";
 import type { CategoryId, ContinentId, DifficultyId } from "@/features/library/data/taxonomy";
 
 type CatalogueRow = Tables<"library_catalogue_resources">;
@@ -12,8 +12,13 @@ type CollectionRow = Tables<"library_collections">;
 type CreatorRow = Tables<"library_creators">;
 type ArticleSourceRow = ResourceRow | CatalogueRow;
 
-function aggregateCount(value: number | null | undefined): number {
-  return typeof value === "number" && Number.isFinite(value) ? value : 0;
+function aggregateCount(value: number | string | null | undefined): number {
+  if (typeof value === "number" && Number.isFinite(value)) return Math.max(0, Math.trunc(value));
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) return Math.max(0, Math.trunc(parsed));
+  }
+  return 0;
 }
 
 function readEngagement(row: ArticleSourceRow) {
@@ -220,7 +225,7 @@ export function mapResourceRowToArticle(
     publishedAt:
       row.published_at?.slice(0, 10) ??
       ("created_at" in row && row.created_at ? row.created_at.slice(0, 10) : ""),
-    creator: row.author_handle,
+    creator: GVRZE_STUDIO_HANDLE,
     tags: row.tags ?? [],
     views: engagement.views,
     likes: engagement.likes,
@@ -244,7 +249,7 @@ export function mapCollectionRowToCollection(
     art: row.art_key,
     category: asCategoryId(row.subject_category),
     continent: asContinentId(row.continent),
-    curator: row.curator_handle,
+    curator: GVRZE_STUDIO_HANDLE,
     featured: row.featured,
     articles: articleSlugs,
     followers: 0,

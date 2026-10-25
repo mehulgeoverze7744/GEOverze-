@@ -193,7 +193,7 @@ export function resetLibraryHydration() {
 export async function syncBookmarkToggle(userId: string, slug: string, saved: boolean) {
   const slugToId = await fetchResourceIdsBySlugs([slug]);
   const resourceId = slugToId.get(slug);
-  if (!resourceId) return;
+  if (!resourceId) throw new Error(`No published Library article for slug ${slug}`);
   if (saved) await insertBookmark(userId, resourceId);
   else await deleteBookmark(userId, resourceId);
   invalidateLibraryCatalogueQueries();
@@ -202,7 +202,7 @@ export async function syncBookmarkToggle(userId: string, slug: string, saved: bo
 export async function syncLikeToggle(userId: string, slug: string, liked: boolean) {
   const slugToId = await fetchResourceIdsBySlugs([slug]);
   const resourceId = slugToId.get(slug);
-  if (!resourceId) return;
+  if (!resourceId) throw new Error(`No published Library article for slug ${slug}`);
   if (liked) await insertLike(userId, resourceId);
   else await deleteLike(userId, resourceId);
   invalidateLibraryCatalogueQueries();

@@ -2,6 +2,12 @@ import type { QueryClient } from "@tanstack/react-query";
 
 import { useAuthStore } from "@/stores/authStore";
 
+import {
+  mapCachedArticleMetricDelta,
+  mapCachedArticleMetrics,
+  type ArticleMetricDelta,
+  type ArticleMetricPatch,
+} from "./article-metric-cache";
 import { LIBRARY_CATALOGUE_CACHE_VERSION } from "./library-catalogue";
 import type { LibraryAccessTier } from "./access-tier";
 import type { LibraryQuery } from "./filter";
@@ -41,6 +47,34 @@ export function invalidateLibraryCatalogueQueries() {
   void libraryQueryClient.invalidateQueries({ queryKey: ["publishedArticles"] });
   void libraryQueryClient.invalidateQueries({ queryKey: ["browseArticles"] });
   void libraryQueryClient.invalidateQueries({ queryKey: ["libraryRecommended"] });
+  void libraryQueryClient.invalidateQueries({ queryKey: ["libraryArticle"] });
+  void libraryQueryClient.invalidateQueries({ queryKey: ["publishedCreators"] });
+}
+
+const METRIC_QUERY_KEYS = [
+  ["publishedArticles"],
+  ["browseArticles"],
+  ["libraryRecommended"],
+  ["libraryArticle"],
+  ["publishedCreators"],
+] as const;
+
+function writeCachedArticleMetrics(apply: (data: unknown) => unknown) {
+  if (!libraryQueryClient) return;
+  for (const queryKey of METRIC_QUERY_KEYS) {
+    libraryQueryClient.setQueriesData({ queryKey }, apply);
+  }
+}
+
+/** Add to cached like or bookmark totals. Counts never drop below zero. */
+export function adjustCachedArticleMetrics(slug: string, delta: ArticleMetricDelta) {
+  if (!slug) return;
+  writeCachedArticleMetrics((data) => mapCachedArticleMetricDelta(data, slug, delta));
+}
+
+/** Write catalogue engagement counts into every cached Library article list. */
+export function patchCachedArticleMetrics(slug: string, patch: ArticleMetricPatch) {
+  writeCachedArticleMetrics((data) => mapCachedArticleMetrics(data, slug, patch));
 }
 
 /** Drop GVRZE Library caches when auth identity changes. */

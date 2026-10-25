@@ -37,7 +37,7 @@ export function ArticleScreen() {
   const canRecordView =
     Boolean(readyArticle?.resourceId) && contentAccess?.kind === "open" && !error && signedIn;
 
-  useRecordArticleView(readyArticle?.resourceId, canRecordView);
+  useRecordArticleView(readyArticle?.resourceId, readyArticle?.slug, canRecordView);
   const canStartReading =
     pageState?.status === "ready" &&
     Boolean(article) &&

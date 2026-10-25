@@ -1,12 +1,19 @@
 import { useEffect, useRef } from "react";
 
 import { recordLibraryView } from "@/features/library/data/recordLibraryView";
-import { invalidateLibraryCatalogueQueries } from "@/features/library/lib/library-query-scope";
+import { patchCachedArticleMetrics } from "@/features/library/lib/library-query-scope";
 
 const recordedResourceIds = new Set<string>();
 
-/** One in-memory view record attempt per resource per active session. */
-export function useRecordArticleView(resourceId: string | undefined, enabled: boolean) {
+/**
+ * One authenticated view-record attempt per resource per browser session.
+ * The server still dedupes the same user to one count per six hours.
+ */
+export function useRecordArticleView(
+  resourceId: string | undefined,
+  slug: string | undefined,
+  enabled: boolean,
+) {
   const attemptedRef = useRef(false);
 
   useEffect(() => {
@@ -19,14 +26,13 @@ export function useRecordArticleView(resourceId: string | undefined, enabled: bo
 
     void recordLibraryView(resourceId)
       .then((result) => {
-        if (result.counted) {
-          invalidateLibraryCatalogueQueries();
-        }
+        if (!slug) return;
+        patchCachedArticleMetrics(slug, { views: result.view_count });
       })
       .catch((error) => {
         recordedResourceIds.delete(resourceId);
         attemptedRef.current = false;
         console.error("Failed to record GVRZE Library article view", error);
       });
-  }, [enabled, resourceId]);
+  }, [enabled, resourceId, slug]);
 }

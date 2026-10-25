@@ -1,6 +1,6 @@
 import { useLayoutEffect, useMemo } from "react";
 
-import { articleBySlug, type Article } from "@/features/library/data/articles";
+import type { Article } from "@/features/library/data/articles";
 import { mergeLibraryStoreFromDisk } from "@/features/library/lib/merge-library-store-from-disk";
 import {
   CONTINUE_READING_MAX_CARDS,
@@ -34,7 +34,7 @@ export function useContinueReadingArticles(catalogue: readonly Article[]) {
     ).slice(0, CONTINUE_READING_MAX_CARDS);
 
     const articles = slugs
-      .map((slug) => catalogue.find((entry) => entry.slug === slug) ?? articleBySlug(slug))
+      .map((slug) => catalogue.find((entry) => entry.slug === slug))
       .filter((entry): entry is Article => Boolean(entry));
 
     if (articles.length === 0) {

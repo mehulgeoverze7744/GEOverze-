@@ -12,6 +12,7 @@ import {
   syncLikeToggle,
   syncProgressUpdate,
 } from "@/features/library/data/sync-library-state";
+import { adjustCachedArticleMetrics } from "@/features/library/lib/library-query-scope";
 import { CONTINUE_READING_MIN_PERCENT } from "@/features/library/lib/article-reading-progress";
 import {
   emptyLibraryState,
@@ -92,7 +93,21 @@ export const useLibraryStore = create<LibraryState>()(
         }));
         persistActiveLibraryState(snapshotFromState(get()));
         const userId = useAuthStore.getState().user?.id;
-        maybeSync(userId, () => syncBookmarkToggle(userId!, slug, !wasSaved));
+        if (!userId) return;
+        const delta = wasSaved ? -1 : 1;
+        adjustCachedArticleMetrics(slug, { bookmarks: delta });
+        void syncBookmarkToggle(userId, slug, !wasSaved).catch((error) => {
+          console.error("GVRZE Library sync failed", error);
+          set((s) => ({
+            bookmarks: wasSaved
+              ? s.bookmarks.includes(slug)
+                ? s.bookmarks
+                : [slug, ...s.bookmarks]
+              : s.bookmarks.filter((entry) => entry !== slug),
+          }));
+          persistActiveLibraryState(snapshotFromState(get()));
+          adjustCachedArticleMetrics(slug, { bookmarks: -delta });
+        });
       },
       toggleLike: (slug) => {
         const wasLiked = get().likes.includes(slug);
@@ -101,7 +116,21 @@ export const useLibraryStore = create<LibraryState>()(
         }));
         persistActiveLibraryState(snapshotFromState(get()));
         const userId = useAuthStore.getState().user?.id;
-        maybeSync(userId, () => syncLikeToggle(userId!, slug, !wasLiked));
+        if (!userId) return;
+        const delta = wasLiked ? -1 : 1;
+        adjustCachedArticleMetrics(slug, { likes: delta });
+        void syncLikeToggle(userId, slug, !wasLiked).catch((error) => {
+          console.error("GVRZE Library sync failed", error);
+          set((s) => ({
+            likes: wasLiked
+              ? s.likes.includes(slug)
+                ? s.likes
+                : [slug, ...s.likes]
+              : s.likes.filter((entry) => entry !== slug),
+          }));
+          persistActiveLibraryState(snapshotFromState(get()));
+          adjustCachedArticleMetrics(slug, { likes: -delta });
+        });
       },
       setProgress: (slug, percent) => {
         const prev = get().progress[slug] ?? 0;
