@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { useMemo } from "react";
 
@@ -108,27 +107,26 @@ export function LibraryHome() {
                   Behind every entry
                 </p>
                 <h2 className="mt-2 text-xl font-light tracking-tight text-foreground sm:text-2xl">
-                  Meet the creators
+                  GVRZE Studio
                 </h2>
                 <p className="mt-3 text-sm leading-relaxed text-foreground/55">
-                  Cartographers, writers and researchers shaping GVRZE Library — explore their
-                  profiles, specialties and latest work.
+                  The official editorial team behind GVRZE Library, creating and curating geography
+                  articles, maps, cultural insights, and educational resources.
                 </p>
               </div>
 
               <GeoButton
-                asChild
+                type="button"
                 variant="ghost"
-                className="group/btn shrink-0 border border-bronze/30 bg-bronze/8 px-5 hover:border-bronze/55 hover:bg-bronze/14"
+                disabled
+                className="group/btn shrink-0 border border-bronze/30 bg-bronze/8 px-5 hover:border-bronze/55 hover:bg-bronze/14 disabled:opacity-100"
               >
-                <Link to="/geolibrary/creators">
-                  View creators
-                  <ArrowRight
-                    className="ml-2 h-4 w-4 transition-transform motion-fast group-hover/btn:translate-x-0.5"
-                    strokeWidth={1.8}
-                    aria-hidden
-                  />
-                </Link>
+                View creator
+                <ArrowRight
+                  className="ml-2 h-4 w-4 transition-transform motion-fast group-hover/btn:translate-x-0.5"
+                  strokeWidth={1.8}
+                  aria-hidden
+                />
               </GeoButton>
             </div>
           </div>
