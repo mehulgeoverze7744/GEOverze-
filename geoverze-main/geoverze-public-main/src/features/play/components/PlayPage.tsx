@@ -31,6 +31,10 @@ import { PlayHubNav } from "./PlayHubNav";
 import { PlayPageBackground } from "./PlayPageBackground";
 import { QuizCard } from "./QuizCard";
 import { QuizRail } from "./QuizRail";
+import { ViewAllQuizzesCard } from "./ViewAllQuizzesCard";
+
+/** Cards shown in the play-page preview. The search catalogue stays unlimited. */
+const PLAY_PAGE_QUIZ_PREVIEW = 7;
 
 /** Let's Play — the full quiz hub lobby. */
 export function PlayPage() {
@@ -42,6 +46,7 @@ export function PlayPage() {
 
   const featuredSlides = useMemo(() => buildFeaturedHeroSlides(quizzes), [quizzes]);
   const results = useMemo(() => applyFilters(quizzes, filters), [quizzes, filters]);
+  const previewQuizzes = results.slice(0, PLAY_PAGE_QUIZ_PREVIEW);
   const bookmarked = useMemo(
     () => quizzes.filter((quiz) => bookmarkIds.includes(quiz.id)),
     [quizzes, bookmarkIds],
@@ -253,7 +258,7 @@ export function PlayPage() {
               </div>
             ) : results.length > 0 ? (
               <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {results.map((quiz) => (
+                {previewQuizzes.map((quiz) => (
                   <QuizCard
                     key={quiz.id}
                     quiz={quiz}
@@ -262,6 +267,7 @@ export function PlayPage() {
                     onPlay={playQuiz}
                   />
                 ))}
+                <ViewAllQuizzesCard />
               </div>
             ) : quizzes.length === 0 ? (
               <div className="mt-6">
