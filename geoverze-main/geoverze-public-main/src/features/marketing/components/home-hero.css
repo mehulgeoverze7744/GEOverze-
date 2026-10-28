@@ -74,6 +74,13 @@
   animation: home-hero-scroll-float 1.85s var(--ease-soft) infinite;
 }
 
+/* The cue's flex display would otherwise beat the mobile utility. */
+@media (max-width: 767px) {
+  .home-hero-scroll-cue {
+    display: none;
+  }
+}
+
 @keyframes home-hero-scroll-float {
   0%,
   100% {

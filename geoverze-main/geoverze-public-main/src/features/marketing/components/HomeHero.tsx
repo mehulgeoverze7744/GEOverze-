@@ -108,7 +108,7 @@ export function HomeHero() {
       {/* Scroll-synced copy */}
       <div
         ref={panel1}
-        className="pointer-events-none absolute inset-x-6 bottom-24 will-change-transform md:inset-x-auto md:left-12 md:bottom-auto md:max-w-[34rem] md:top-[calc(108px+150px+1.5rem)]"
+        className="pointer-events-none absolute inset-x-6 bottom-24 will-change-transform max-md:hidden md:inset-x-auto md:left-12 md:bottom-auto md:max-w-[34rem] md:top-[calc(108px+150px+1.5rem)]"
       >
         <p className="eyebrow">Know Earth</p>
         <h1 className="mt-6 font-semibold leading-[1.03] tracking-tight text-foreground text-[clamp(2.15rem,5.2vw,4.25rem)]">
@@ -124,7 +124,7 @@ export function HomeHero() {
 
       <div
         ref={panel2}
-        className="pointer-events-none absolute inset-x-6 bottom-24 opacity-0 will-change-transform md:inset-x-auto md:left-12 md:top-1/2 md:bottom-auto md:max-w-[30rem] md:-translate-y-1/2"
+        className="pointer-events-none absolute inset-x-6 bottom-24 opacity-0 will-change-transform max-md:hidden md:inset-x-auto md:left-12 md:top-1/2 md:bottom-auto md:max-w-[30rem] md:-translate-y-1/2"
       >
         <p className="eyebrow">One planet, endless ground to cover</p>
         <h2 className="mt-4 font-light leading-[1.05] tracking-tight text-foreground text-[clamp(1.7rem,3.6vw,2.9rem)]">
@@ -134,7 +134,7 @@ export function HomeHero() {
 
       <div
         ref={panel3}
-        className="pointer-events-none absolute inset-x-6 bottom-20 opacity-0 will-change-transform md:inset-x-auto md:left-12 md:top-1/2 md:bottom-auto md:max-w-[28rem] md:-translate-y-1/2"
+        className="pointer-events-none absolute inset-x-6 bottom-20 opacity-0 will-change-transform max-md:hidden md:inset-x-auto md:left-12 md:top-1/2 md:bottom-auto md:max-w-[28rem] md:-translate-y-1/2"
       >
         <p className="eyebrow">Begin the journey</p>
         <h2 className="mt-4 font-light leading-[1.05] tracking-tight text-foreground text-[clamp(1.7rem,3.4vw,2.7rem)]">
@@ -181,7 +181,7 @@ export function HomeHero() {
       <div
         ref={cueRef}
         aria-hidden
-        className="home-hero-scroll-cue pointer-events-none absolute bottom-8 left-1/2 -translate-x-1/2"
+        className="home-hero-scroll-cue pointer-events-none absolute bottom-8 left-1/2 -translate-x-1/2 max-md:hidden"
       >
         <span className="home-hero-scroll-cue__text">Scroll the experience</span>
         <ChevronDown className="home-hero-scroll-cue__arrow" strokeWidth={1.75} aria-hidden />
