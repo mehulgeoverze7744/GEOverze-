@@ -1,8 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Globe2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { geoButtonVariants } from "@/components/shared/geoButtonVariants";
 import { cn } from "@/lib/utils";
+
+/** Apollo 17 Blue Marble, already licensed for the Countries category. */
+const VIEW_ALL_COVER = "/assets/play/categories/countries.jpg";
 
 /** Eighth card in the play-page preview grid. Opens the full quiz catalogue. */
 export function ViewAllQuizzesCard() {
@@ -15,10 +18,16 @@ export function ViewAllQuizzesCard() {
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
       )}
     >
-      <div className="relative flex aspect-video items-center justify-center bg-[oklch(0.11_0.006_60)]">
-        <span className="inline-flex h-16 w-16 items-center justify-center rounded-full border border-bronze/30 bg-bronze/10 text-bronze transition-colors motion-snap group-hover/view-all:border-bronze/60 group-hover/view-all:text-bronze-glow">
-          <Globe2 className="h-7 w-7" strokeWidth={1.4} aria-hidden="true" />
-        </span>
+      <div className="relative aspect-video overflow-hidden bg-[var(--game-bg)]">
+        <img
+          src={VIEW_ALL_COVER}
+          alt=""
+          className="h-full w-full object-cover object-[center_36%]"
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent from-[42%] via-[color-mix(in_oklab,var(--game-bg)_28%,transparent)] via-[72%] to-[var(--game-bg)]"
+        />
       </div>
 
       <div className="flex flex-1 flex-col p-5">

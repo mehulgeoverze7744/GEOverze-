@@ -27,7 +27,7 @@ function EcosystemCardCopy({ node }: { node: (typeof ecosystem)[number] }) {
       <h3 className="mt-1.5 text-sm font-medium leading-snug tracking-tight text-foreground">
         {node.title}
       </h3>
-      <p className="mt-0.5 line-clamp-2 text-xs leading-snug text-foreground/70">
+      <p className="mt-0.5 line-clamp-2 text-xs leading-snug text-foreground/70 max-md:hidden">
         {node.description}
       </p>
       <span className="mt-1.5 inline-flex items-center gap-1.5 text-[0.55rem] uppercase tracking-[0.24em] text-bronze/90">
