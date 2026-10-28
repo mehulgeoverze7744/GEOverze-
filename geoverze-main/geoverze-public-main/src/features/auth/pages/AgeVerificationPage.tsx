@@ -124,7 +124,7 @@ export function AgeVerificationPage() {
           </div>
           <p className="text-center text-[0.68rem] leading-relaxed text-foreground/50">
             By continuing you confirm your answer is accurate. See the{" "}
-            <Link to="/terms" className="text-bronze/90 hover:text-bronze">
+            <Link to="/terms-of-service" className="text-bronze/90 hover:text-bronze">
               Terms of Service
             </Link>{" "}
             for the full eligibility policy.

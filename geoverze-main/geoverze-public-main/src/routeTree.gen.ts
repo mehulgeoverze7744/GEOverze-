@@ -15,6 +15,7 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as DisclaimerRouteImport } from './routes/disclaimer'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as GeolibraryRouteImport } from './routes/geolibrary'
 import { Route as GeostoreRouteImport } from './routes/geostore'
@@ -24,11 +25,15 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as PlayRouteImport } from './routes/play'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
+import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as ShippingPolicyRouteImport } from './routes/shipping-policy'
 import { Route as StoreRouteImport } from './routes/store'
 import { Route as StudioRouteImport } from './routes/studio'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
 import { Route as AppAchievementsRouteImport } from './routes/_app.achievements'
 import { Route as AppBillingRouteImport } from './routes/_app.billing'
 import { Route as AppBookmarksRouteImport } from './routes/_app.bookmarks'
@@ -171,6 +176,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DisclaimerRoute = DisclaimerRouteImport.update({
+  id: '/disclaimer',
+  path: '/disclaimer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
@@ -216,9 +226,24 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RefundPolicyRoute = RefundPolicyRouteImport.update({
+  id: '/refund-policy',
+  path: '/refund-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShippingPolicyRoute = ShippingPolicyRouteImport.update({
+  id: '/shipping-policy',
+  path: '/shipping-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StoreRoute = StoreRouteImport.update({
@@ -239,6 +264,11 @@ const SupportRoute = SupportRouteImport.update({
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
+  id: '/terms-of-service',
+  path: '/terms-of-service',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppAchievementsRoute = AppAchievementsRouteImport.update({
@@ -812,6 +842,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/community': typeof CommunityRouteWithChildren
   '/contact': typeof ContactRoute
+  '/disclaimer': typeof DisclaimerRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/geolibrary': typeof GeolibraryRouteWithChildren
   '/geostore': typeof GeostoreRouteWithChildren
@@ -821,11 +852,15 @@ export interface FileRoutesByFullPath {
   '/play': typeof PlayRouteWithChildren
   '/pricing': typeof PricingRouteWithChildren
   '/privacy': typeof PrivacyRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/refund-policy': typeof RefundPolicyRoute
   '/register': typeof RegisterRoute
+  '/shipping-policy': typeof ShippingPolicyRoute
   '/store': typeof StoreRoute
   '/studio': typeof StudioRouteWithChildren
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/achievements': typeof AppAchievementsRoute
   '/billing': typeof AppBillingRoute
   '/bookmarks': typeof AppBookmarksRoute
@@ -944,15 +979,20 @@ export interface FileRoutesByTo {
   '/404': typeof R404Route
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/disclaimer': typeof DisclaimerRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/leaderboard': typeof LeaderboardRoute
   '/library': typeof LibraryRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/refund-policy': typeof RefundPolicyRoute
   '/register': typeof RegisterRoute
+  '/shipping-policy': typeof ShippingPolicyRoute
   '/store': typeof StoreRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/achievements': typeof AppAchievementsRoute
   '/billing': typeof AppBillingRoute
   '/bookmarks': typeof AppBookmarksRoute
@@ -1068,6 +1108,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/community': typeof CommunityRouteWithChildren
   '/contact': typeof ContactRoute
+  '/disclaimer': typeof DisclaimerRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/geolibrary': typeof GeolibraryRouteWithChildren
   '/geostore': typeof GeostoreRouteWithChildren
@@ -1077,11 +1118,15 @@ export interface FileRoutesById {
   '/play': typeof PlayRouteWithChildren
   '/pricing': typeof PricingRouteWithChildren
   '/privacy': typeof PrivacyRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/refund-policy': typeof RefundPolicyRoute
   '/register': typeof RegisterRoute
+  '/shipping-policy': typeof ShippingPolicyRoute
   '/store': typeof StoreRoute
   '/studio': typeof StudioRouteWithChildren
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/_app/achievements': typeof AppAchievementsRoute
   '/_app/billing': typeof AppBillingRoute
   '/_app/bookmarks': typeof AppBookmarksRoute
@@ -1203,6 +1248,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/community'
     | '/contact'
+    | '/disclaimer'
     | '/forgot-password'
     | '/geolibrary'
     | '/geostore'
@@ -1212,11 +1258,15 @@ export interface FileRouteTypes {
     | '/play'
     | '/pricing'
     | '/privacy'
+    | '/privacy-policy'
+    | '/refund-policy'
     | '/register'
+    | '/shipping-policy'
     | '/store'
     | '/studio'
     | '/support'
     | '/terms'
+    | '/terms-of-service'
     | '/achievements'
     | '/billing'
     | '/bookmarks'
@@ -1335,15 +1385,20 @@ export interface FileRouteTypes {
     | '/404'
     | '/about'
     | '/contact'
+    | '/disclaimer'
     | '/forgot-password'
     | '/leaderboard'
     | '/library'
     | '/login'
     | '/privacy'
+    | '/privacy-policy'
+    | '/refund-policy'
     | '/register'
+    | '/shipping-policy'
     | '/store'
     | '/support'
     | '/terms'
+    | '/terms-of-service'
     | '/achievements'
     | '/billing'
     | '/bookmarks'
@@ -1458,6 +1513,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/community'
     | '/contact'
+    | '/disclaimer'
     | '/forgot-password'
     | '/geolibrary'
     | '/geostore'
@@ -1467,11 +1523,15 @@ export interface FileRouteTypes {
     | '/play'
     | '/pricing'
     | '/privacy'
+    | '/privacy-policy'
+    | '/refund-policy'
     | '/register'
+    | '/shipping-policy'
     | '/store'
     | '/studio'
     | '/support'
     | '/terms'
+    | '/terms-of-service'
     | '/_app/achievements'
     | '/_app/billing'
     | '/_app/bookmarks'
@@ -1593,6 +1653,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   CommunityRoute: typeof CommunityRouteWithChildren
   ContactRoute: typeof ContactRoute
+  DisclaimerRoute: typeof DisclaimerRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   GeolibraryRoute: typeof GeolibraryRouteWithChildren
   GeostoreRoute: typeof GeostoreRouteWithChildren
@@ -1602,11 +1663,15 @@ export interface RootRouteChildren {
   PlayRoute: typeof PlayRouteWithChildren
   PricingRoute: typeof PricingRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
+  RefundPolicyRoute: typeof RefundPolicyRoute
   RegisterRoute: typeof RegisterRoute
+  ShippingPolicyRoute: typeof ShippingPolicyRoute
   StoreRoute: typeof StoreRoute
   StudioRoute: typeof StudioRouteWithChildren
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
+  TermsOfServiceRoute: typeof TermsOfServiceRoute
   AuthAgeVerificationRoute: typeof AuthAgeVerificationRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
@@ -1658,6 +1723,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/disclaimer': {
+      id: '/disclaimer'
+      path: '/disclaimer'
+      fullPath: '/disclaimer'
+      preLoaderRoute: typeof DisclaimerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgot-password': {
@@ -1723,11 +1795,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/refund-policy': {
+      id: '/refund-policy'
+      path: '/refund-policy'
+      fullPath: '/refund-policy'
+      preLoaderRoute: typeof RefundPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/register': {
       id: '/register'
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shipping-policy': {
+      id: '/shipping-policy'
+      path: '/shipping-policy'
+      fullPath: '/shipping-policy'
+      preLoaderRoute: typeof ShippingPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/store': {
@@ -1756,6 +1849,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms-of-service': {
+      id: '/terms-of-service'
+      path: '/terms-of-service'
+      fullPath: '/terms-of-service'
+      preLoaderRoute: typeof TermsOfServiceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/achievements': {
@@ -2885,6 +2985,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   CommunityRoute: CommunityRouteWithChildren,
   ContactRoute: ContactRoute,
+  DisclaimerRoute: DisclaimerRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   GeolibraryRoute: GeolibraryRouteWithChildren,
   GeostoreRoute: GeostoreRouteWithChildren,
@@ -2894,11 +2995,15 @@ const rootRouteChildren: RootRouteChildren = {
   PlayRoute: PlayRouteWithChildren,
   PricingRoute: PricingRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
+  RefundPolicyRoute: RefundPolicyRoute,
   RegisterRoute: RegisterRoute,
+  ShippingPolicyRoute: ShippingPolicyRoute,
   StoreRoute: StoreRoute,
   StudioRoute: StudioRouteWithChildren,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
+  TermsOfServiceRoute: TermsOfServiceRoute,
   AuthAgeVerificationRoute: AuthAgeVerificationRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,

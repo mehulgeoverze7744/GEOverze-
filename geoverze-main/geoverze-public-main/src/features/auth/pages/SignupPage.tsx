@@ -194,7 +194,7 @@ export function SignupPage() {
               label={
                 <>
                   I accept the{" "}
-                  <Link to="/terms" className="text-bronze hover:text-bronze-glow">
+                  <Link to="/terms-of-service" className="text-bronze hover:text-bronze-glow">
                     Terms of Service
                   </Link>
                   .
@@ -209,7 +209,7 @@ export function SignupPage() {
               label={
                 <>
                   I accept the{" "}
-                  <Link to="/privacy" className="text-bronze hover:text-bronze-glow">
+                  <Link to="/privacy-policy" className="text-bronze hover:text-bronze-glow">
                     Privacy Policy
                   </Link>
                   .

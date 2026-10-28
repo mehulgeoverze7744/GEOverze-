@@ -128,12 +128,21 @@ export const Footer = memo(function Footer() {
           <p>
             &copy; {new Date().getFullYear()} {site.name}. {site.slogan}. {site.tagline}.
           </p>
-          <div className="flex gap-6">
-            <Link to="/privacy" className={linkClass}>
-              Privacy
+          <div className="flex flex-wrap gap-x-6 gap-y-3">
+            <Link to="/privacy-policy" className={linkClass}>
+              Privacy Policy
             </Link>
-            <Link to="/terms" className={linkClass}>
-              Terms
+            <Link to="/shipping-policy" className={linkClass}>
+              Shipping Policy
+            </Link>
+            <Link to="/refund-policy" className={linkClass}>
+              Refund & Replacement Policy
+            </Link>
+            <Link to="/disclaimer" className={linkClass}>
+              Disclaimer
+            </Link>
+            <Link to="/terms-of-service" className={linkClass}>
+              Terms of Service
             </Link>
             <Link to="/contact" className={linkClass}>
               Contact

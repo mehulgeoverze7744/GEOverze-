@@ -264,7 +264,7 @@ function PrivacyPanel() {
         subtitle="How GVRZE handles the little data it holds."
         control={
           <GeoButton asChild variant="ghost" size="sm">
-            <Link to="/privacy">Read</Link>
+            <Link to="/privacy-policy">Read</Link>
           </GeoButton>
         }
         static

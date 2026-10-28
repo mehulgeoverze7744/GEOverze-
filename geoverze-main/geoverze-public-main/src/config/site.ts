@@ -65,8 +65,11 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
   {
     title: "Legal",
     items: [
-      { label: "Privacy Policy", to: "/privacy" },
-      { label: "Terms & Conditions", to: "/terms" },
+      { label: "Privacy Policy", to: "/privacy-policy" },
+      { label: "Shipping Policy", to: "/shipping-policy" },
+      { label: "Refund & Replacement Policy", to: "/refund-policy" },
+      { label: "Disclaimer", to: "/disclaimer" },
+      { label: "Terms of Service", to: "/terms-of-service" },
     ],
   },
 ];
