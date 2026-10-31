@@ -11,7 +11,7 @@ export function DashboardNotificationsCard({ className }: { className?: string }
 
   return (
     <section
-      className={cn("dashboard-dock-card", className)}
+      className={cn("dashboard-dock-card dashboard-notifications", className)}
       aria-labelledby="dashboard-notifications-heading"
     >
       <div className="dashboard-dock-head">
@@ -38,9 +38,9 @@ export function DashboardNotificationsCard({ className }: { className?: string }
         <ul className="dashboard-dock-notes space-y-3">
           {latest.map((item) => (
             <li key={item.id} className="min-w-0">
-              <p className="truncate text-sm text-foreground/85">{item.title}</p>
+              <p className="dashboard-notifications-title truncate text-sm">{item.title}</p>
               {item.body ? (
-                <p className="mt-0.5 line-clamp-2 text-[0.68rem] text-foreground/45">{item.body}</p>
+                <p className="dashboard-notifications-body mt-0.5 line-clamp-2 text-[0.68rem]">{item.body}</p>
               ) : null}
             </li>
           ))}

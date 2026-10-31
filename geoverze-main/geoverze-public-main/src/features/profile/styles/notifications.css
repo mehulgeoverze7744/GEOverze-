@@ -1,6 +1,10 @@
 div.nc {
   --nc-radius: 1.25rem;
   --nc-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --nc-ink: #111111;
+  --nc-copy: #333333;
+  --nc-muted: #667085;
+  --nc-icon: #333333;
   position: relative;
   max-width: 66rem;
   padding-top: calc(var(--nav-height) + 2.25rem);
@@ -43,7 +47,8 @@ div.nc > * {
   font-weight: 300;
   letter-spacing: -0.03em;
   line-height: 1.1;
-  color: var(--foreground);
+  color: var(--nc-ink);
+  text-shadow: none;
 }
 
 .nc-unread-count {
@@ -52,7 +57,8 @@ div.nc > * {
   font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--bronze) 78%, var(--bronze-glow));
+  color: var(--nc-muted);
+  text-shadow: none;
 }
 
 .nc-title {
@@ -60,7 +66,8 @@ div.nc > * {
   font-size: 0.95rem;
   font-weight: 450;
   letter-spacing: -0.01em;
-  color: oklch(0.94 0.012 82 / 0.88);
+  color: var(--nc-ink);
+  text-shadow: none;
 }
 
 .nc-lede {
@@ -68,7 +75,8 @@ div.nc > * {
   max-width: 34rem;
   font-size: 0.8125rem;
   line-height: 1.5;
-  color: oklch(0.9 0.01 80 / 0.48);
+  color: var(--nc-copy);
+  text-shadow: none;
 }
 
 .nc-toolbar {
@@ -100,7 +108,7 @@ div.nc > * {
   font-size: 0.78rem;
   font-weight: 500;
   letter-spacing: -0.01em;
-  color: oklch(0.9 0.01 80 / 0.48);
+  color: var(--nc-muted);
   transition:
     background 220ms var(--nc-ease),
     color 220ms var(--nc-ease),
@@ -108,19 +116,19 @@ div.nc > * {
 }
 
 .nc-segment-btn:hover {
-  color: oklch(0.94 0.01 80 / 0.78);
+  color: var(--nc-ink);
 }
 
 .nc-segment-btn.is-active {
   border-color: color-mix(in oklab, var(--bronze) 22%, transparent);
   background: color-mix(in oklab, var(--bronze) 16%, oklch(0.16 0.02 70 / 0.55));
-  color: oklch(0.96 0.015 82);
+  color: var(--nc-ink);
 }
 
 .nc-segment-count {
   margin-left: 0.28rem;
   font-size: 0.68rem;
-  color: color-mix(in oklab, var(--bronze) 72%, transparent);
+  color: var(--nc-muted);
 }
 
 .nc-segment-btn:focus-visible,
@@ -149,7 +157,7 @@ div.nc > * {
   background: transparent;
   font-size: 0.78rem;
   font-weight: 450;
-  color: oklch(0.9 0.01 80 / 0.46);
+  color: var(--nc-muted);
   transition:
     color 200ms var(--nc-ease),
     background 200ms var(--nc-ease);
@@ -157,7 +165,7 @@ div.nc > * {
 
 .nc-action:hover:not(:disabled) {
   background: oklch(1 0 0 / 0.04);
-  color: oklch(0.94 0.012 82 / 0.82);
+  color: var(--nc-ink);
 }
 
 .nc-action:disabled {
@@ -182,7 +190,8 @@ div.nc > * {
   font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--bronze) 62%, oklch(0.62 0.04 70));
+  color: var(--nc-ink);
+  text-shadow: none;
 }
 
 .nc-list {
@@ -274,29 +283,33 @@ div.nc > * {
 .nc-name {
   margin: 0;
   font-size: 0.98rem;
-  font-weight: 550;
+  font-weight: 600;
   letter-spacing: -0.015em;
   line-height: 1.3;
-  color: oklch(0.96 0.01 82);
+  color: var(--nc-ink);
+  text-shadow: none;
 }
 
 .nc-card:not(.nc-card--unread) .nc-name {
-  font-weight: 500;
-  color: oklch(0.93 0.01 82 / 0.78);
+  font-weight: 600;
+  color: var(--nc-ink);
 }
 
 .nc-time {
   flex-shrink: 0;
   font-size: 0.72rem;
   letter-spacing: 0.01em;
-  color: oklch(0.9 0.01 80 / 0.4);
+  color: var(--nc-muted);
+  text-shadow: none;
 }
 
 .nc-copy {
   margin: 0.22rem 0 0;
   font-size: 0.8125rem;
+  font-weight: 400;
   line-height: 1.45;
-  color: oklch(0.9 0.012 80 / 0.52);
+  color: var(--nc-copy);
+  text-shadow: none;
 }
 
 .nc-meta {
@@ -312,7 +325,8 @@ div.nc > * {
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--bronze) 72%, var(--bronze-glow));
+  color: var(--nc-ink);
+  text-shadow: none;
 }
 
 .nc-read {
@@ -321,7 +335,7 @@ div.nc > * {
   background: none;
   font-size: 0.75rem;
   font-weight: 450;
-  color: color-mix(in oklab, var(--bronze) 68%, oklch(0.72 0.04 70));
+  color: var(--nc-muted);
   text-decoration: none;
   text-underline-offset: 0.18em;
   transition:
@@ -330,9 +344,9 @@ div.nc > * {
 }
 
 .nc-read:hover {
-  color: color-mix(in oklab, var(--bronze-glow) 86%, white 6%);
+  color: var(--nc-ink);
   text-decoration: underline;
-  text-decoration-color: color-mix(in oklab, var(--bronze) 45%, transparent);
+  text-decoration-color: var(--nc-muted);
 }
 
 .nc-dismiss {
@@ -344,7 +358,7 @@ div.nc > * {
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: oklch(0.9 0.01 80 / 0.38);
+  color: var(--nc-icon);
   opacity: 0.55;
   transition:
     opacity 200ms var(--nc-ease),
@@ -365,7 +379,7 @@ div.nc > * {
 
 .nc-dismiss:hover {
   background: oklch(1 0 0 / 0.07);
-  color: oklch(0.94 0.01 82 / 0.82);
+  color: var(--nc-ink);
 }
 
 .nc-dismiss svg {
@@ -390,7 +404,7 @@ div.nc > * {
   margin: 0 auto 0.85rem;
   border-radius: 0.8rem;
   border: 1px solid color-mix(in oklab, var(--bronze) 16%, transparent);
-  color: color-mix(in oklab, var(--bronze) 72%, transparent);
+  color: var(--nc-icon);
 }
 
 .nc-empty-icon svg {
@@ -401,8 +415,10 @@ div.nc > * {
 .nc-empty h2 {
   margin: 0;
   font-size: 0.98rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: -0.015em;
+  color: var(--nc-ink);
+  text-shadow: none;
 }
 
 .nc-empty p {
@@ -410,7 +426,8 @@ div.nc > * {
   max-width: 22rem;
   font-size: 0.8125rem;
   line-height: 1.5;
-  color: oklch(0.9 0.01 80 / 0.48);
+  color: var(--nc-copy);
+  text-shadow: none;
 }
 
 @media (max-width: 720px) {
@@ -467,4 +484,42 @@ div.nc > * {
   .nc-card:hover {
     transform: none;
   }
+}
+
+/* Account chrome: force black / dark-grey type, keep existing card surfaces. */
+#gvrze-account .nc .nc-kicker,
+#gvrze-account .nc .nc-title,
+#gvrze-account .nc .nc-name,
+#gvrze-account .nc .nc-group-label,
+#gvrze-account .nc .nc-new,
+#gvrze-account .nc .nc-empty h2,
+#gvrze-account .nc .nc-segment-btn.is-active {
+  color: #111111;
+  -webkit-text-fill-color: #111111;
+  text-shadow: none;
+}
+
+#gvrze-account .nc .nc-lede,
+#gvrze-account .nc .nc-copy,
+#gvrze-account .nc .nc-empty p {
+  color: #333333;
+  -webkit-text-fill-color: #333333;
+  text-shadow: none;
+}
+
+#gvrze-account .nc .nc-unread-count,
+#gvrze-account .nc .nc-time,
+#gvrze-account .nc .nc-read,
+#gvrze-account .nc .nc-action,
+#gvrze-account .nc .nc-segment-btn,
+#gvrze-account .nc .nc-segment-count {
+  color: #667085;
+  -webkit-text-fill-color: #667085;
+  text-shadow: none;
+}
+
+#gvrze-account .nc .nc-dismiss,
+#gvrze-account .nc .nc-empty-icon,
+#gvrze-account .nc .nc-action svg {
+  color: #333333;
 }

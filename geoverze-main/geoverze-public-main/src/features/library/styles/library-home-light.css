@@ -1,67 +1,23 @@
+@import "./library-geo-page-bg.css";
+
 /*
  * Light cartographic theme for /geolibrary home only.
- * Every rule is keyed to #gvrze-library-home or body:has(#gvrze-library-home)
- * so browse, collections, articles, creators, and the rest of the site stay dark.
+ * Page-level icy map is shared with Collections via library-geo-page-bg.css.
+ * Browse, articles, creators, and the rest of the site stay dark.
  */
-
-body:has(#gvrze-library-home) {
-  background: #f3f6fb;
-  overflow-x: hidden;
-}
-
-/* Hide the shared starfield while Library home is mounted. The desk hero
-   has its own photograph; the icy map lives on the content plate below. */
-body:has(#gvrze-library-home) #geoverze-universe-background {
-  display: none !important;
-}
 
 #gvrze-library-home {
   overflow-x: clip;
 }
 
-/* Full-bleed icy atlas under Explore by Subject, rails, cards, studio.
-   High-res WebP (3840) with JPEG fallback — never the desk hero photograph. */
+/* Content plate is transparent so the shared 4K map shows through
+   without stretching a second copy down the page. */
 #gvrze-library-home .gvrze-library-home__content {
   position: relative;
   isolation: isolate;
   overflow-x: clip;
   min-width: 0;
-  background-color: #f3f6fb;
-  background-image: url("/assets/gvrze-library-page-bg.jpg");
-  background-image: -webkit-image-set(
-    url("/assets/gvrze-library-page-bg.webp") type("image/webp"),
-    url("/assets/gvrze-library-page-bg.jpg") type("image/jpeg")
-  );
-  background-image: image-set(
-    url("/assets/gvrze-library-page-bg.webp") type("image/webp"),
-    url("/assets/gvrze-library-page-bg.jpg") type("image/jpeg")
-  );
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-attachment: scroll;
-  image-rendering: auto;
-}
-
-@media (min-width: 768px) and (max-width: 1023px) {
-  #gvrze-library-home .gvrze-library-home__content {
-    background-position: 38% center;
-  }
-}
-
-@media (max-width: 767px) {
-  #gvrze-library-home .gvrze-library-home__content {
-    background-image: url("/assets/gvrze-library-page-bg-sm.webp");
-    background-image: -webkit-image-set(
-      url("/assets/gvrze-library-page-bg-sm.webp") type("image/webp"),
-      url("/assets/gvrze-library-page-bg.jpg") type("image/jpeg")
-    );
-    background-image: image-set(
-      url("/assets/gvrze-library-page-bg-sm.webp") type("image/webp"),
-      url("/assets/gvrze-library-page-bg.jpg") type("image/jpeg")
-    );
-    background-position: 32% 28%;
-  }
+  background: transparent;
 }
 
 /* Soft join from the desk photograph into the icy plate — fade only. */

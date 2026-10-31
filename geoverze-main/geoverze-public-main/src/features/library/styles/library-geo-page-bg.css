@@ -1,0 +1,71 @@
+/*
+ * Shared icy cartographic plate for /geolibrary and /geolibrary/collections.
+ * Replaces the starfield with the 4K library map. Other /geolibrary* routes
+ * keep the default universe until they opt in.
+ */
+
+body:has(#gvrze-library-home),
+body:has(#gvrze-library-collections) {
+  background: #f3f6fb;
+  overflow-x: hidden;
+}
+
+body:has(#gvrze-library-home) #geoverze-universe-background,
+body:has(#gvrze-library-collections) #geoverze-universe-background {
+  background: #f3f6fb;
+}
+
+body:has(#gvrze-library-home) #geoverze-universe-background > div:not(:first-child),
+body:has(#gvrze-library-collections) #geoverze-universe-background > div:not(:first-child) {
+  display: none !important;
+}
+
+body:has(#gvrze-library-home) #geoverze-universe-background > div:first-child,
+body:has(#gvrze-library-collections) #geoverze-universe-background > div:first-child {
+  opacity: 1;
+  filter: none !important;
+  transform: none !important;
+  scale: 1 !important;
+  background-color: #f3f6fb;
+  background-image: url("/assets/gvrze-library-page-bg.jpg") !important;
+  background-image: -webkit-image-set(
+    url("/assets/gvrze-library-page-bg.webp") type("image/webp"),
+    url("/assets/gvrze-library-page-bg.jpg") type("image/jpeg")
+  ) !important;
+  background-image: image-set(
+    url("/assets/gvrze-library-page-bg.webp") type("image/webp"),
+    url("/assets/gvrze-library-page-bg.jpg") type("image/jpeg")
+  ) !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-attachment: scroll !important;
+  image-rendering: auto;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  body:has(#gvrze-library-home) #geoverze-universe-background > div:first-child,
+  body:has(#gvrze-library-collections) #geoverze-universe-background > div:first-child {
+    background-position: 38% center !important;
+  }
+}
+
+@media (max-width: 767px) {
+  body:has(#gvrze-library-home) #geoverze-universe-background > div:first-child,
+  body:has(#gvrze-library-collections) #geoverze-universe-background > div:first-child {
+    background-position: 32% 28% !important;
+  }
+}
+
+/* Collections header sits on the icy plate — keep type readable without restyling cards. */
+#gvrze-library-collections header h1 {
+  color: #17191d;
+}
+
+#gvrze-library-collections header p {
+  color: #626b75;
+}
+
+#gvrze-library-collections header .eyebrow {
+  color: #5d7d94;
+}

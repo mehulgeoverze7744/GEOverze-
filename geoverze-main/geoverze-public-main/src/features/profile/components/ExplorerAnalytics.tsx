@@ -7,6 +7,7 @@ import { ProgressBarFill } from "@/features/progression/components/ProgressBarFi
 import { cn } from "@/lib/utils";
 
 import { useExplorerAnalytics } from "../lib/explorerAnalytics";
+import "../styles/explorer-analytics.css";
 
 function AnalyticsCard({
   className,
@@ -15,16 +16,7 @@ function AnalyticsCard({
   className?: string;
   children: ReactNode;
 }) {
-  return (
-    <div
-      className={cn(
-        "rounded-2xl border border-bronze/16 bg-charcoal/28 p-5 backdrop-blur-sm sm:p-6",
-        className,
-      )}
-    >
-      {children}
-    </div>
-  );
+  return <div className={cn("explorer-analytics-card rounded-2xl p-5 sm:p-6", className)}>{children}</div>;
 }
 
 function PanelHeading({
@@ -38,10 +30,10 @@ function PanelHeading({
 }) {
   return (
     <div className={className}>
-      <h3 className="text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-foreground/55">
+      <h3 className="explorer-analytics-panel-title text-[0.62rem] font-semibold uppercase tracking-[0.26em]">
         {title}
       </h3>
-      {subtitle ? <p className="mt-1.5 text-xs text-foreground/45">{subtitle}</p> : null}
+      {subtitle ? <p className="explorer-analytics-panel-sub mt-1.5 text-xs">{subtitle}</p> : null}
     </div>
   );
 }
@@ -62,24 +54,28 @@ function HeroMetric({
   detail?: string;
 }) {
   return (
-    <div className="explorer-analytics-hero-metric rounded-xl border border-bronze/14 bg-charcoal/35 px-4 py-5 sm:px-5">
+    <div className="explorer-analytics-hero-metric rounded-xl px-4 py-5 sm:px-5">
       <div className="flex items-start justify-between gap-3">
-        <p className="text-[0.58rem] font-semibold uppercase tracking-[0.24em] text-foreground/50">
+        <p className="explorer-analytics-hero-label text-[0.58rem] font-semibold uppercase tracking-[0.24em]">
           {label}
         </p>
-        <Icon className="h-3.5 w-3.5 shrink-0 text-bronze/80" strokeWidth={1.5} aria-hidden="true" />
+        <Icon
+          className="explorer-analytics-hero-icon h-3.5 w-3.5 shrink-0"
+          strokeWidth={1.5}
+          aria-hidden="true"
+        />
       </div>
-      <p className="mt-3 text-[clamp(1.35rem,2.4vw,1.85rem)] font-light leading-none text-gradient-bronze">
+      <p className="explorer-analytics-hero-value mt-3 text-[clamp(1.35rem,2.4vw,1.85rem)] font-light leading-none">
         {detail ? (
           <>
             <AnimatedCounter value={value} decimals={decimals} />
-            <span className="text-[0.72em] text-foreground/45">{suffix}</span>
+            <span className="explorer-analytics-hero-suffix text-[0.72em]">{suffix}</span>
           </>
         ) : (
           <AnimatedCounter value={value} decimals={decimals} suffix={suffix} />
         )}
       </p>
-      {detail ? <p className="mt-2 text-xs text-foreground/45">{detail}</p> : null}
+      {detail ? <p className="explorer-analytics-hero-detail mt-2 text-xs">{detail}</p> : null}
     </div>
   );
 }
@@ -100,10 +96,11 @@ function GameModeBars({
         return (
           <div key={mode.id}>
             <div className="mb-2 flex items-baseline justify-between gap-3">
-              <span className="text-sm text-foreground/80">{mode.label}</span>
-              <span className="text-xs tabular-nums text-foreground/50">{mode.wins} wins</span>
+              <span className="explorer-analytics-mode-label text-sm">{mode.label}</span>
+              <span className="explorer-analytics-mode-meta text-xs tabular-nums">{mode.wins} wins</span>
             </div>
             <ProgressBarFill
+              className="explorer-analytics-progress"
               value={pct}
               label={`${mode.label} wins`}
               valueText={`${mode.wins} wins`}
@@ -112,10 +109,10 @@ function GameModeBars({
           </div>
         );
       })}
-      <p className="pt-2 text-xs text-foreground/45">
+      <p className="explorer-analytics-winrate pt-2 text-xs">
         Overall win rate{" "}
-        <span className="tabular-nums text-bronze/90">{winRate.toFixed(1)}%</span> across duels and
-        multiplayer.
+        <span className="explorer-analytics-winrate-value tabular-nums">{winRate.toFixed(1)}%</span> across
+        duels and multiplayer.
       </p>
     </div>
   );
@@ -132,7 +129,7 @@ export function ExplorerAnalytics() {
           <p className="explorer-analytics-label">Explorer analytics</p>
           <h2
             id="explorer-analytics-heading"
-            className="mt-2 text-[clamp(1.35rem,2.8vw,1.75rem)] font-light tracking-tight text-foreground"
+            className="explorer-analytics-heading mt-2 text-[clamp(1.35rem,2.8vw,1.75rem)] font-light tracking-tight"
           >
             Your journey across the world, measured.
           </h2>
@@ -176,21 +173,21 @@ export function ExplorerAnalytics() {
           <div className="mt-2 grid gap-8 lg:grid-cols-[minmax(0,1.4fr)_minmax(220px,1fr)] lg:items-end">
             <GameModeBars modes={data.gameModes} winRate={data.winRate} />
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-              <div className="rounded-xl border border-bronze/12 bg-charcoal/30 px-4 py-4">
-                <div className="flex items-center gap-2 text-[0.58rem] uppercase tracking-[0.22em] text-foreground/45">
-                  <ListChecks className="h-3.5 w-3.5 text-bronze/80" strokeWidth={1.5} />
+              <div className="explorer-analytics-inner rounded-xl px-4 py-4">
+                <div className="explorer-analytics-inner-label flex items-center gap-2 text-[0.58rem] uppercase tracking-[0.22em]">
+                  <ListChecks className="explorer-analytics-inner-icon h-3.5 w-3.5" strokeWidth={1.5} />
                   Questions answered
                 </div>
-                <p className="mt-2 text-lg font-light text-foreground/85">
+                <p className="explorer-analytics-inner-value mt-2 text-lg font-light">
                   <AnimatedCounter value={data.supporting.questionsAnswered} />
                 </p>
               </div>
-              <div className="rounded-xl border border-bronze/12 bg-charcoal/30 px-4 py-4">
-                <div className="flex items-center gap-2 text-[0.58rem] uppercase tracking-[0.22em] text-foreground/45">
-                  <Crosshair className="h-3.5 w-3.5 text-bronze/80" strokeWidth={1.5} />
+              <div className="explorer-analytics-inner rounded-xl px-4 py-4">
+                <div className="explorer-analytics-inner-label flex items-center gap-2 text-[0.58rem] uppercase tracking-[0.22em]">
+                  <Crosshair className="explorer-analytics-inner-icon h-3.5 w-3.5" strokeWidth={1.5} />
                   Average score
                 </div>
-                <p className="mt-2 text-lg font-light text-foreground/85">
+                <p className="explorer-analytics-inner-value mt-2 text-lg font-light">
                   <AnimatedCounter
                     value={data.supporting.averageScore}
                     decimals={1}
@@ -198,12 +195,12 @@ export function ExplorerAnalytics() {
                   />
                 </p>
               </div>
-              <div className="rounded-xl border border-bronze/12 bg-charcoal/30 px-4 py-4 sm:col-span-2 lg:col-span-1">
-                <div className="flex items-center gap-2 text-[0.58rem] uppercase tracking-[0.22em] text-foreground/45">
-                  <Clock className="h-3.5 w-3.5 text-bronze/80" strokeWidth={1.5} />
+              <div className="explorer-analytics-inner rounded-xl px-4 py-4 sm:col-span-2 lg:col-span-1">
+                <div className="explorer-analytics-inner-label flex items-center gap-2 text-[0.58rem] uppercase tracking-[0.22em]">
+                  <Clock className="explorer-analytics-inner-icon h-3.5 w-3.5" strokeWidth={1.5} />
                   Learning time
                 </div>
-                <p className="mt-2 text-lg font-light text-foreground/85">
+                <p className="explorer-analytics-inner-value mt-2 text-lg font-light">
                   <AnimatedCounter
                     value={data.supporting.hoursLearned}
                     decimals={data.supporting.hoursDecimals}

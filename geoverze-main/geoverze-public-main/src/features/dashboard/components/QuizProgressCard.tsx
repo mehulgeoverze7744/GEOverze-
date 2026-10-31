@@ -100,6 +100,7 @@ export function QuizProgressCard({ className }: { className?: string }) {
                       value={gamesPct}
                       label="Games played progress"
                       valueText={`${stats.gamesPlayed} of ${gamesMilestone} games`}
+                      className="dashboard-quiz-progress__bar"
                     />
                     <p className="dashboard-quiz-progress__row-caption">
                       {gamesRemaining} more to {gamesMilestone}
@@ -114,6 +115,7 @@ export function QuizProgressCard({ className }: { className?: string }) {
                       value={winsPct}
                       label="Wins progress"
                       valueText={`${stats.wins} of ${winsMilestone} wins`}
+                      className="dashboard-quiz-progress__bar"
                     />
                     <p className="dashboard-quiz-progress__row-caption">
                       {winsRemaining} more to {winsMilestone}
@@ -128,6 +130,7 @@ export function QuizProgressCard({ className }: { className?: string }) {
                       value={accuracyPct}
                       label="Accuracy"
                       valueText={`${stats.accuracy}%`}
+                      className="dashboard-quiz-progress__bar"
                     />
                   </div>
                 ) : null}

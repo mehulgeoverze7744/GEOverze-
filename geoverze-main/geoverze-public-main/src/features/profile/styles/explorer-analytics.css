@@ -1,0 +1,133 @@
+/*
+ * Profile explorer analytics only.
+ * Solid white panels — no glass, blur or translucent overlays.
+ */
+.explorer-analytics {
+  --ea-bg: #ffffff;
+  --ea-line: #e5e7eb;
+  --ea-ink: #111111;
+  --ea-muted: #667085;
+  --ea-icon: #4a86b8;
+  --ea-bar: #a9cce8;
+  --ea-track: #4b5563;
+}
+
+.explorer-analytics,
+.explorer-analytics * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+#gvrze-account .explorer-analytics-label,
+.explorer-analytics-label {
+  color: var(--ea-muted);
+}
+
+#gvrze-account .explorer-analytics-heading,
+.explorer-analytics-heading {
+  color: var(--ea-ink);
+}
+
+#gvrze-account .explorer-analytics-card,
+.explorer-analytics-card {
+  border: 1px solid var(--ea-line);
+  background: var(--ea-bg);
+  box-shadow: none;
+  opacity: 1;
+}
+
+#gvrze-account .explorer-analytics-panel-title,
+.explorer-analytics-panel-title {
+  color: var(--ea-ink);
+}
+
+#gvrze-account .explorer-analytics-panel-sub,
+.explorer-analytics-panel-sub {
+  color: var(--ea-muted);
+}
+
+#gvrze-account .explorer-analytics-hero-metric,
+.explorer-analytics-hero-metric {
+  border: 1px solid var(--ea-line);
+  background: var(--ea-bg);
+  box-shadow: none;
+  opacity: 1;
+}
+
+#gvrze-account .explorer-analytics-hero-label,
+.explorer-analytics-hero-label {
+  color: var(--ea-muted);
+}
+
+#gvrze-account .explorer-analytics-hero-icon,
+.explorer-analytics-hero-icon {
+  color: var(--ea-icon);
+}
+
+#gvrze-account .explorer-analytics-hero-value,
+.explorer-analytics-hero-value,
+#gvrze-account .explorer-analytics-hero-value .text-gradient-bronze {
+  color: var(--ea-ink);
+  background: none;
+  -webkit-text-fill-color: var(--ea-ink);
+}
+
+#gvrze-account .explorer-analytics-hero-suffix,
+#gvrze-account .explorer-analytics-hero-detail,
+.explorer-analytics-hero-suffix,
+.explorer-analytics-hero-detail {
+  color: var(--ea-muted);
+  -webkit-text-fill-color: var(--ea-muted);
+}
+
+#gvrze-account .explorer-analytics-mode-label,
+.explorer-analytics-mode-label {
+  color: var(--ea-ink);
+}
+
+#gvrze-account .explorer-analytics-mode-meta,
+.explorer-analytics-mode-meta,
+#gvrze-account .explorer-analytics-winrate,
+.explorer-analytics-winrate {
+  color: var(--ea-muted);
+}
+
+#gvrze-account .explorer-analytics-winrate-value,
+.explorer-analytics-winrate-value {
+  color: var(--ea-ink);
+}
+
+#gvrze-account .explorer-analytics-inner,
+.explorer-analytics-inner {
+  border: 1px solid var(--ea-line);
+  background: var(--ea-bg);
+  box-shadow: none;
+  opacity: 1;
+}
+
+#gvrze-account .explorer-analytics-inner-label,
+.explorer-analytics-inner-label {
+  color: var(--ea-muted);
+}
+
+#gvrze-account .explorer-analytics-inner-icon,
+.explorer-analytics-inner-icon {
+  color: var(--ea-icon);
+}
+
+#gvrze-account .explorer-analytics-inner-value,
+.explorer-analytics-inner-value {
+  color: var(--ea-ink);
+}
+
+#gvrze-account .explorer-analytics .explorer-analytics-progress,
+.explorer-analytics .explorer-analytics-progress {
+  background: var(--ea-track) !important;
+  background-image: none !important;
+}
+
+#gvrze-account .explorer-analytics .explorer-analytics-progress > span,
+.explorer-analytics .explorer-analytics-progress > span {
+  background: var(--ea-bar) !important;
+  background-image: none !important;
+}

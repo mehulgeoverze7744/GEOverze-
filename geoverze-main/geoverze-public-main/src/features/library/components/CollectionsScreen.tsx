@@ -3,7 +3,9 @@ import { Link } from "@tanstack/react-router";
 import { EmptyState, PageHeader, SectionContainer } from "@/components/shared";
 
 import { CollectionCardCover } from "./CollectionCardCover";
+import { LibraryGeoPageBackground } from "./LibraryGeoPageBackground";
 import { usePublishedCollections } from "../hooks/usePublishedCollections";
+import "../styles/library-geo-page-bg.css";
 
 /** All curated shelves. */
 export function CollectionsScreen() {
@@ -11,44 +13,50 @@ export function CollectionsScreen() {
 
   if (error) {
     return (
-      <SectionContainer>
-        <EmptyState title="Could not load collections" description={error} />
-      </SectionContainer>
+      <div id="gvrze-library-collections">
+        <LibraryGeoPageBackground />
+        <SectionContainer>
+          <EmptyState title="Could not load collections" description={error} />
+        </SectionContainer>
+      </div>
     );
   }
 
   return (
-    <SectionContainer>
-      <PageHeader
-        eyebrow="GVRZE Library"
-        title="Collections"
-        description="Curated shelves that take you through a topic in a deliberate order."
-      />
-      <div className="mb-8 mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {loading ? (
-          <p className="text-sm text-foreground/50">Loading collections…</p>
-        ) : (
-          collections.map((collection) => (
-            <Link
-              key={collection.slug}
-              to="/geolibrary/collections/$slug"
-              params={{ slug: collection.slug }}
-              className="glass-panel surface-gradient group/card overflow-hidden rounded-2xl transition-all motion-base hover:border-bronze/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
-            >
-              <CollectionCardCover collection={collection} />
-              <div className="p-5">
-                <h2 className="text-base font-light text-foreground">{collection.title}</h2>
-                <p className="mt-2 line-clamp-2 text-[0.8rem] text-foreground/50">
-                  {collection.description}
-                </p>
-                <p className="mt-3 text-[0.68rem] uppercase tracking-[0.2em] text-bronze/90">
-                  {collection.articles.length} entries
-                </p>
-              </div>
-            </Link>
-          ))
-        )}
-      </div>
-    </SectionContainer>
+    <div id="gvrze-library-collections">
+      <LibraryGeoPageBackground />
+      <SectionContainer>
+        <PageHeader
+          eyebrow="GVRZE Library"
+          title="Collections"
+          description="Curated shelves that take you through a topic in a deliberate order."
+        />
+        <div className="mb-8 mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {loading ? (
+            <p className="text-sm text-foreground/50">Loading collections…</p>
+          ) : (
+            collections.map((collection) => (
+              <Link
+                key={collection.slug}
+                to="/geolibrary/collections/$slug"
+                params={{ slug: collection.slug }}
+                className="glass-panel surface-gradient group/card overflow-hidden rounded-2xl transition-all motion-base hover:border-bronze/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+              >
+                <CollectionCardCover collection={collection} />
+                <div className="p-5">
+                  <h2 className="text-base font-light text-foreground">{collection.title}</h2>
+                  <p className="mt-2 line-clamp-2 text-[0.8rem] text-foreground/50">
+                    {collection.description}
+                  </p>
+                  <p className="mt-3 text-[0.68rem] uppercase tracking-[0.2em] text-bronze/90">
+                    {collection.articles.length} entries
+                  </p>
+                </div>
+              </Link>
+            ))
+          )}
+        </div>
+      </SectionContainer>
+    </div>
   );
 }

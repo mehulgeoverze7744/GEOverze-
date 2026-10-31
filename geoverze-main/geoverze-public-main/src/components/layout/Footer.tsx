@@ -4,11 +4,12 @@ import { Instagram, Linkedin, Twitter, Youtube } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { toast } from "sonner";
 
-import { BrandMark } from "@/components/shared/BrandMark";
 import { GeoButton } from "@/components/shared/GeoButton";
 import { SectionContainer } from "@/components/shared/SectionContainer";
 import { footerNav, site, socialLinks } from "@/config/site";
 import { isLeaderboardAvailable, isLeaderboardPath } from "@/features/leaderboard";
+
+import "./footer.css";
 
 const linkClass =
   "transition-colors motion-fast hover:text-bronze focus-visible:outline-none focus-visible:text-bronze";
@@ -29,9 +30,15 @@ export const Footer = memo(function Footer() {
             <Link
               to="/"
               aria-label={`${site.name} home`}
-              className="inline-flex rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+              className="inline-flex items-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
             >
-              <BrandMark size="lg" withWordmark />
+              <img
+                src="/assets/home/gvrze-wordmark.png"
+                alt=""
+                width={581}
+                height={85}
+                className="gvrze-home-wordmark gvrze-footer-wordmark"
+              />
             </Link>
             <p className="mt-6 flex flex-wrap items-center gap-3 text-[0.62rem] uppercase tracking-[0.3em] text-bronze/90">
               <span>{site.slogan}</span>

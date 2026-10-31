@@ -1413,6 +1413,47 @@
   overflow-x: hidden;
 }
 
+/* Notifications dock only — do not restyle Quick actions or Profile. */
+.dashboard-notifications .dashboard-dock-title,
+#gvrze-account .dashboard-notifications .dashboard-dock-title,
+#gvrze-account .dashboard-notifications .dashboard-section-label {
+  color: #111111;
+  text-shadow: none;
+}
+
+.dashboard-notifications .dashboard-notifications-title,
+#gvrze-account .dashboard-notifications .dashboard-notifications-title {
+  color: #111111;
+  font-weight: 600;
+  text-shadow: none;
+}
+
+.dashboard-notifications .dashboard-notifications-body,
+#gvrze-account .dashboard-notifications .dashboard-notifications-body,
+.dashboard-notifications .dashboard-dock-empty p,
+#gvrze-account .dashboard-notifications .dashboard-dock-empty p {
+  color: #333333;
+  text-shadow: none;
+}
+
+.dashboard-notifications .dashboard-dock-all,
+#gvrze-account .dashboard-notifications .dashboard-dock-all {
+  color: #667085;
+  text-shadow: none;
+}
+
+.dashboard-notifications .dashboard-dock-all:hover,
+#gvrze-account .dashboard-notifications .dashboard-dock-all:hover {
+  color: #111111;
+}
+
+.dashboard-notifications .dashboard-dock-title svg,
+.dashboard-notifications .dashboard-dock-all svg,
+#gvrze-account .dashboard-notifications .dashboard-dock-title svg,
+#gvrze-account .dashboard-notifications .dashboard-dock-all svg {
+  color: #333333;
+}
+
 .dashboard-dock-profile {
   display: flex;
   min-width: 0;
@@ -1733,10 +1774,11 @@
 /* ── Streak tracker ───────────────────────────────────────────────────── */
 
 .dashboard-streak {
-  --hero-gold-mid: oklch(0.78 0.1 78);
-  --hero-gold-deep: oklch(0.62 0.09 62);
-  --hero-gold-highlight: oklch(0.86 0.08 82);
-  --streak-ink: oklch(0.12 0.01 60);
+  --streak-fill: #bbd9f0;
+  --streak-accent: #a9cce8;
+  --streak-line: #8fb9d9;
+  --streak-ink: #111827;
+  --streak-icon: #172b40;
   position: relative;
   z-index: 0;
   display: flex;
@@ -1747,23 +1789,11 @@
   min-width: 0;
   padding: 0.48rem 1.05rem;
   border-radius: 9999px;
-  border: 1px solid oklch(0.72 0.1 72 / 0.55);
-  background-color: var(--hero-gold-mid);
-  background-image: linear-gradient(
-    102deg,
-    var(--hero-gold-deep) 0%,
-    var(--hero-gold-mid) 46%,
-    var(--hero-gold-highlight) 52%,
-    var(--hero-gold-mid) 58%,
-    var(--hero-gold-deep) 100%
-  );
+  border: 1px solid var(--streak-line);
+  background: var(--streak-fill);
   color: var(--streak-ink);
-  box-shadow:
-    0 10px 24px -14px oklch(0 0 0 / 0.88),
-    inset 0 1px 0 oklch(0.92 0.06 84 / 0.35);
-  transition:
-    border-color 380ms ease-in-out,
-    box-shadow 380ms ease-in-out;
+  box-shadow: none;
+  transition: border-color 380ms ease-in-out;
 }
 
 @keyframes dashboard-streak-wobble {
@@ -1785,11 +1815,8 @@
 @media (hover: hover) and (pointer: fine) {
   .dashboard-streak:hover {
     animation: dashboard-streak-wobble 400ms ease-in-out 1;
-    border-color: oklch(0.8 0.11 74 / 0.78);
-    box-shadow:
-      0 10px 24px -14px oklch(0 0 0 / 0.88),
-      inset 0 1px 0 oklch(0.94 0.07 84 / 0.48),
-      0 0 16px oklch(0.78 0.1 78 / 0.22);
+    border-color: var(--streak-line);
+    box-shadow: none;
   }
 }
 
@@ -1809,11 +1836,7 @@
    hugging the border while text and icons stay fully legible on top. */
 
 .dashboard-streak-fire {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  pointer-events: none;
+  display: none;
 }
 
 .dashboard-streak-fire-glow {
@@ -2072,7 +2095,7 @@
 .dashboard-streak-header-icon {
   width: 0.78rem;
   height: 0.78rem;
-  color: var(--streak-ink);
+  color: var(--streak-icon);
 }
 
 .dashboard-streak-title {
@@ -2090,7 +2113,7 @@
   width: 1px;
   height: 1.55rem;
   flex-shrink: 0;
-  background: color-mix(in oklab, var(--streak-ink) 22%, transparent);
+  background: var(--streak-line);
 }
 
 .dashboard-streak-stat {
@@ -2109,20 +2132,16 @@
   align-items: center;
   justify-content: center;
   border-radius: 0.42rem;
-  border: 1px solid color-mix(in oklab, var(--streak-ink) 22%, transparent);
-  background: color-mix(in oklab, var(--streak-ink) 8%, transparent);
-  color: var(--streak-ink);
+  border: 1px solid var(--streak-line);
+  background: var(--streak-accent);
+  color: var(--streak-icon);
 }
 
-.dashboard-streak-stat-icon--muted {
-  border-color: color-mix(in oklab, var(--streak-ink) 16%, transparent);
-  background: color-mix(in oklab, var(--streak-ink) 6%, transparent);
-  color: var(--streak-ink);
-}
-
+.dashboard-streak-stat-icon--muted,
 .dashboard-streak-stat-icon--active {
-  border-color: color-mix(in oklab, var(--streak-ink) 28%, transparent);
-  background: color-mix(in oklab, var(--streak-ink) 10%, transparent);
+  border-color: var(--streak-line);
+  background: var(--streak-accent);
+  color: var(--streak-icon);
 }
 
 .dashboard-streak-stat-body {
@@ -2156,7 +2175,7 @@
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--streak-ink) 78%, transparent);
+  color: var(--streak-ink);
   white-space: nowrap;
 }
 
@@ -2174,7 +2193,7 @@
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--streak-ink) 78%, transparent);
+  color: var(--streak-ink);
   white-space: nowrap;
 }
 
@@ -2193,29 +2212,19 @@
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
-  border: 1px solid color-mix(in oklab, var(--streak-ink) 18%, transparent);
-  background: color-mix(in oklab, var(--streak-ink) 8%, transparent);
+  border: 1px solid var(--streak-line);
+  background: var(--streak-accent);
   font-size: 0.55rem;
   font-weight: 500;
   letter-spacing: 0.02em;
-  color: color-mix(in oklab, var(--streak-ink) 72%, transparent);
-}
-
-.dashboard-streak-day--done {
-  border-color: color-mix(in oklab, var(--streak-ink) 28%, transparent);
-  background: color-mix(in oklab, var(--streak-ink) 14%, transparent);
   color: var(--streak-ink);
 }
 
-.dashboard-streak-day--current-done {
-  border-color: color-mix(in oklab, var(--streak-ink) 38%, transparent);
-  background: color-mix(in oklab, var(--streak-ink) 18%, transparent);
-  color: var(--streak-ink);
-}
-
+.dashboard-streak-day--done,
+.dashboard-streak-day--current-done,
 .dashboard-streak-day--current {
-  border-color: color-mix(in oklab, var(--streak-ink) 32%, transparent);
-  background: color-mix(in oklab, var(--streak-ink) 10%, transparent);
+  border-color: var(--streak-line);
+  background: var(--streak-accent);
   color: var(--streak-ink);
 }
 
@@ -2248,37 +2257,18 @@
   min-width: 2.8rem;
   height: 0.16rem !important;
   border-radius: 9999px;
-  background: color-mix(in oklab, var(--streak-ink) 22%, transparent) !important;
+  background: var(--streak-accent) !important;
 }
 
 .dashboard-streak-progress > span {
   position: relative;
   border-radius: 9999px;
-  background: linear-gradient(
-    90deg,
-    color-mix(in oklab, var(--streak-ink) 55%, oklch(0.58 0.17 36) 45%) 0%,
-    oklch(0.64 0.19 42) 38%,
-    oklch(0.76 0.17 56) 68%,
-    oklch(0.86 0.12 74) 100%
-  ) !important;
-  background-size: 180% 100%;
-  animation: dashboard-streak-molten-shift 3.4s ease-in-out infinite;
+  background: var(--streak-icon) !important;
+  animation: none;
 }
 
 .dashboard-streak-progress > span::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 9999px;
-  background: linear-gradient(
-    100deg,
-    transparent 32%,
-    oklch(0.94 0.07 85 / 0.65) 48%,
-    transparent 64%
-  );
-  background-size: 240% 100%;
-  mix-blend-mode: screen;
-  animation: dashboard-streak-progress-sheen 2.4s linear infinite;
+  display: none;
 }
 
 @keyframes dashboard-streak-molten-shift {
@@ -2806,6 +2796,24 @@
   gap: 0.32rem;
 }
 
+/* Games played / Wins / Accuracy only — leave streak and other meters alone. */
+.dashboard-quiz-progress__bar,
+#gvrze-account .dashboard-quiz-progress__bar {
+  background: #222222 !important;
+  background-image: none !important;
+  opacity: 1;
+}
+
+.dashboard-quiz-progress__bar > span,
+#gvrze-account .dashboard-quiz-progress__bar > span,
+#gvrze-account .dashboard-quiz-progress__bar [class*="bg-bronze"],
+#gvrze-account .dashboard-quiz-progress__bar .bg-gradient-bronze {
+  background: #ffffff !important;
+  background-image: none !important;
+  background-color: #ffffff !important;
+  opacity: 1;
+}
+
 .dashboard-quiz-progress__row-caption {
   font-size: 0.64rem;
   color: color-mix(in oklab, var(--foreground) 44%, transparent);
@@ -2825,7 +2833,7 @@
   }
 
   .dashboard-quiz-progress__row:hover .dashboard-quiz-progress__row-bar [role="progressbar"] {
-    box-shadow: 0 0 0 1px color-mix(in oklab, var(--bronze) 32%, transparent);
+    box-shadow: none;
   }
 }
 

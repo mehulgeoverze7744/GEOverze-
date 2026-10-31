@@ -87,7 +87,7 @@ export function BookmarksPage() {
                   aria-controls="bookmark-panel"
                   data-active={activeFilter === filterId}
                   onClick={() => setActiveFilter(filterId)}
-                  className="bookmarks-filter focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45"
+                  className="bookmarks-filter focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]/25"
                 >
                   {BOOKMARK_FILTER_LABELS[filterId]}
                   <span className="bookmarks-filter-count">{counts[filterId]}</span>

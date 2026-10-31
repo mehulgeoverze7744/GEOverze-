@@ -463,15 +463,6 @@
   font-weight: 600;
   letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--bronze) 75%, transparent);
-}
-
-.explorer-analytics .dashboard-section-label {
-  color: color-mix(in oklab, var(--bronze) 75%, transparent);
-}
-
-.explorer-analytics-hero-metric {
-  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--bronze) 8%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {

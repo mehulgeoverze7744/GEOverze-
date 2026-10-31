@@ -10,7 +10,7 @@ type PlanTierSelectorProps = {
   className?: string;
 };
 
-/** Four-tier bronze segmented selector for the comparison matrix. */
+/** Four-tier membership selector for the comparison matrix. */
 export function PlanTierSelector({ plans, value, onChange, className }: PlanTierSelectorProps) {
   const ordered = TIER_ORDER.flatMap((tier) => {
     const plan = plans.find((entry) => entry.id === tier);

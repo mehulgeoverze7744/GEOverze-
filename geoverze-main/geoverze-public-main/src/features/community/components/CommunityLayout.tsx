@@ -1,4 +1,5 @@
 import { Outlet, Link, useRouterState } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 import {
   Bell,
   Bookmark,
@@ -44,10 +45,26 @@ function ModuleNav({ compact = false }: { compact?: boolean }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const read = useCommunityStore((s) => s.readNotifications);
   const unread = COMMUNITY_NOTIFICATIONS.filter((n) => !n.read && !read.includes(n.id)).length;
+  const scrollerRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    if (!compact) return;
+    const scroller = scrollerRef.current;
+    const active = scroller?.querySelector<HTMLElement>(".is-active");
+    if (!scroller || !active) return;
+    const left = active.offsetLeft - (scroller.clientWidth - active.offsetWidth) / 2;
+    scroller.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+  }, [compact, pathname]);
 
   return (
-    <nav aria-label="Community sections">
-      <ul className={cn(compact ? "flex gap-1 overflow-x-auto pb-1" : "flex flex-col gap-0.5")}>
+    <nav
+      aria-label="Community sections"
+      className={compact ? "community-module-nav-wrap" : undefined}
+    >
+      <ul
+        ref={scrollerRef}
+        className={cn(compact ? "community-module-nav" : "flex flex-col gap-0.5")}
+      >
         {NAV.map((item) => {
           const active =
             "exact" in item && item.exact ? pathname === item.to : pathname.startsWith(item.to);
@@ -57,12 +74,12 @@ function ModuleNav({ compact = false }: { compact?: boolean }) {
                 to={item.to}
                 className={cn(
                   "community-sidebar-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-[0.68rem] uppercase tracking-[0.16em] text-[#17191D] transition-colors motion-snap",
-                  compact && "px-3 py-2",
+                  compact && "whitespace-nowrap px-3 py-2",
                   active && "is-active",
                 )}
               >
                 <item.icon className="h-4 w-4 shrink-0 text-[#17191D]" strokeWidth={1.5} />
-                <span className="truncate">{item.label}</span>
+                <span>{item.label}</span>
                 {item.label === "Notifications" && unread > 0 ? (
                   <span className="ml-auto rounded-full bg-[#17191D] px-1.5 py-0.5 text-[0.58rem] tabular-nums text-white">
                     {unread}
@@ -79,7 +96,12 @@ function ModuleNav({ compact = false }: { compact?: boolean }) {
 
 function SidebarCard({ compact = false }: { compact?: boolean }) {
   return (
-    <div className="community-card overflow-hidden rounded-2xl p-4 sm:p-5">
+    <div
+      className={cn(
+        "community-card overflow-hidden rounded-2xl p-4 sm:p-5",
+        compact && "community-module-nav-card",
+      )}
+    >
       <ModuleNav compact={compact} />
       {compact ? null : (
         <div className="mt-5 rounded-xl border border-[#DDE1E5] bg-[#ECEFF2] px-4 py-4">
@@ -119,14 +141,8 @@ export function CommunityLayout() {
               </aside>
 
               <div className="min-w-0">
-                <div className="mb-5 lg:hidden">
-                  <div
-                    inert={COMMUNITY_LOCKED ? true : undefined}
-                    aria-hidden={COMMUNITY_LOCKED ? true : undefined}
-                    className={cn(COMMUNITY_LOCKED && "select-none")}
-                  >
-                    <SidebarCard compact />
-                  </div>
+                <div className="mb-5 min-w-0 max-w-full lg:hidden">
+                  <SidebarCard compact />
                 </div>
 
                 <div className="relative min-h-[36rem]">

@@ -70,7 +70,7 @@ export function StreakTracker({ className }: { className?: string }) {
           <Flame className="h-3.5 w-3.5" strokeWidth={1.5} />
         </span>
         <span className="dashboard-streak-stat-body">
-          <span className="dashboard-streak-stat-value text-gradient-bronze">
+          <span className="dashboard-streak-stat-value">
             {loading ? "—" : <AnimatedCounter value={currentStreak} />}
           </span>
           <span className="dashboard-streak-stat-label">Day streak</span>
@@ -136,10 +136,10 @@ export function StreakTracker({ className }: { className?: string }) {
 
       <div className="dashboard-streak-meter">
         <p className="dashboard-streak-meter-label">
-          <span className="text-bronze-glow">{loading ? "—" : daysThisWeek}</span>
-          <span className="text-foreground/35"> / </span>
+          <span>{loading ? "—" : daysThisWeek}</span>
+          <span> / </span>
           <span>{weeklyGoal}</span>
-          <span className="ml-1 text-foreground/45">days</span>
+          <span className="ml-1">days</span>
         </p>
         <ProgressBarFill
           className="dashboard-streak-progress"

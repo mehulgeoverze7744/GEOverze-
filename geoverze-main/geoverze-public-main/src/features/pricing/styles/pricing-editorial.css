@@ -1180,3 +1180,84 @@
     animation: none;
   }
 }
+
+/*
+ * Membership plan selector only.
+ * Black capsule + white active pill — does not restyle cards or billing toggle.
+ */
+.pricing-compare-selector.geo-segmented,
+.pricing-compare-selector.geo-segmented[data-variant="bronze"] {
+  background: #080808;
+  background-image: none;
+  border: 1px solid #333333;
+  box-shadow: none;
+}
+
+.pricing-compare-selector .geo-segmented-indicator,
+.pricing-compare-selector[data-variant="bronze"] .geo-segmented-indicator {
+  background: #ffffff;
+  background-image: none;
+  border: 1px solid #ffffff;
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.1),
+    0 6px 16px rgb(17 17 17 / 0.18);
+}
+
+.pricing-compare-selector[data-variant="bronze"] .geo-segmented-indicator::before,
+.pricing-compare-selector[data-variant="bronze"] .geo-segmented-indicator::after {
+  content: none;
+  display: none;
+  animation: none;
+}
+
+.pricing-compare-selector .geo-segmented-option,
+.pricing-compare-selector[data-variant="bronze"] .geo-segmented-option {
+  color: #d1d5db;
+  text-shadow: none;
+}
+
+.pricing-compare-selector .geo-segmented-option:not(:first-child)::before,
+.pricing-compare-selector[data-variant="bronze"] .geo-segmented-option:not(:first-child)::before,
+.pricing-compare-selector[data-variant="bronze"]:has(.geo-segmented-option:hover:not([data-active="true"]))
+  .geo-segmented-option:not([data-active="true"]):hover::before,
+.pricing-compare-selector[data-variant="bronze"]
+  .geo-segmented-option:hover:not([data-active="true"])::before {
+  background: #4b5563;
+}
+
+.pricing-compare-selector .geo-segmented-option[data-active="true"],
+.pricing-compare-selector[data-variant="bronze"] .geo-segmented-option[data-active="true"] {
+  color: #000000;
+  font-weight: 600;
+  text-shadow: none;
+}
+
+.pricing-compare-selector .geo-segmented-option:hover:not([data-active="true"]),
+.pricing-compare-selector[data-variant="bronze"] .geo-segmented-option:hover:not([data-active="true"]) {
+  color: #ffffff;
+  background: #1a1a1a;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.pricing-compare-selector .geo-segmented-option:focus-visible,
+.pricing-compare-selector[data-variant="bronze"] .geo-segmented-option:focus-visible {
+  box-shadow: 0 0 0 2px rgb(209 213 219 / 0.35);
+}
+
+.pricing-compare-selector[data-variant="bronze"]:has(.geo-segmented-option[data-active="true"]:hover)
+  .geo-segmented-indicator {
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.1),
+    0 6px 16px rgb(17 17 17 / 0.18);
+}
+
+@media (max-width: 640px) {
+  .pricing-compare-selector[data-variant="bronze"] .geo-segmented-indicator,
+  .pricing-compare-selector[data-variant="bronze"]:has(.geo-segmented-option[data-active="true"]:hover)
+    .geo-segmented-indicator {
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.1),
+      0 6px 16px rgb(17 17 17 / 0.18);
+  }
+}

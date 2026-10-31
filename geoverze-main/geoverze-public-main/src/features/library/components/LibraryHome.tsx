@@ -9,6 +9,7 @@ import { ContinueReadingSection } from "./ContinueReadingSection";
 import { LibraryCard } from "./LibraryCard";
 import { LibraryCategoryRail } from "./LibraryCategoryRail";
 import { LibraryCollectionCard } from "./LibraryCollectionCard";
+import { LibraryGeoPageBackground } from "./LibraryGeoPageBackground";
 import { LibraryHero } from "./LibraryHero";
 import { LibraryHorizontalRail } from "./LibraryHorizontalRail";
 import { usePublishedArticles } from "../hooks/usePublishedArticles";
@@ -47,6 +48,7 @@ export function LibraryHome() {
   if (articlesError) {
     return (
       <div id="gvrze-library-home">
+        <LibraryGeoPageBackground />
         <div className="gvrze-library-home__content">
           <SectionContainer>
             <EmptyState title="GVRZE Library is unavailable" description={articlesError} />
@@ -58,6 +60,7 @@ export function LibraryHome() {
 
   return (
     <div id="gvrze-library-home">
+      <LibraryGeoPageBackground />
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <LibraryHero bookmarkCount={bookmarks.length} />
 
