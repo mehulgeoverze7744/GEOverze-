@@ -1,107 +1,115 @@
-import { Link } from "@tanstack/react-router";
+/**
+ * Routes every GeostoreMerchProduct to the unified StorefrontProductPage.
+ *
+ * This single component replaces the old per-product specialised pages
+ * (BornToRoamProductPage, KnowTheCapitalProductPage, etc.) and the dark-theme
+ * ApparelMerchProductPage / HoodieMerchProductPage. All merch product detail
+ * pages now share the clean white storefront design from the Figma reference.
+ */
+
 import { memo } from "react";
-import { toast } from "sonner";
 
-import { PageShell } from "@/components/layout/PageShell";
-import { AnimatedSection, GeoButton, PageHeader, SectionContainer } from "@/components/shared";
 import type { GeostoreMerchProduct } from "@/features/marketing/data/geostoreMerch";
-import { categoryById } from "../data/taxonomy";
-import { BornToRoamProductPage } from "./BornToRoamProductPage";
-import { KnowTheCapitalProductPage } from "./KnowTheCapitalProductPage";
-import { TooClosePerfectProductPage } from "./TooClosePerfectProductPage";
-import { ApparelMerchProductPage } from "./ApparelMerchProductPage";
-import { HoodieMerchProductPage } from "./HoodieMerchProductPage";
-import { APPAREL_MERCH_SPECS } from "../data/apparelMerchSpecs";
-import { HOODIE_MERCH_SPECS } from "../data/hoodieMerchSpecs";
 
-/** Presentation-only merchandise detail — no credits or checkout. */
+import { APPAREL_MERCH_SPECS } from "../data/apparelMerchSpecs";
+import { HOODIE_MERCH_SPECS, hoodieColorsWithImages } from "../data/hoodieMerchSpecs";
+import {
+  StorefrontProductPage,
+  type SFColorOption,
+} from "../storefront/StorefrontProductPage";
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+/** Convert minor-unit USD cents to a display string, e.g. 3700 → "$37.00". */
+function formatPrice(cents: number): string {
+  return `$${(cents / 100).toFixed(2)}`;
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
+/** Presentation-only merchandise detail page (uses the storefront white design). */
 export const MerchProductScreen = memo(function MerchProductScreen({
   product,
 }: {
   product: GeostoreMerchProduct;
 }) {
-  // The Born to Roam tee gets its own premium product page.
-  if (product.id === "tshirt-born-to-roam") {
-    return <BornToRoamProductPage product={product} />;
-  }
+  const categorySlug = product.category === "t-shirt" ? "tshirts" : "hoodies";
+  const priceLabel = formatPrice(product.price);
 
-  if (product.id === "tshirt-know-the-capital") {
-    return <KnowTheCapitalProductPage product={product} />;
-  }
-
-  if (product.id === "tshirt-too-close-perfect") {
-    return <TooClosePerfectProductPage product={product} />;
-  }
-
+  // ── Apparel (T-shirt) products ────────────────────────────────────────────
   const apparelSpec = APPAREL_MERCH_SPECS[product.id];
   if (apparelSpec) {
-    return <ApparelMerchProductPage key={product.id} product={product} spec={apparelSpec} />;
+    const colors: SFColorOption[] = apparelSpec.colors.map((c) => ({
+      id: c.id,
+      label: c.label,
+      hex: c.hex,
+      image: c.image,
+    }));
+
+    return (
+      <StorefrontProductPage
+        key={product.id}
+        slug={product.id}
+        name={apparelSpec.title}
+        categoryLabel={product.categoryLabel}
+        priceLabel={priceLabel}
+        images={[{ src: colors[0]?.image ?? product.image, alt: product.alt }]}
+        colors={colors}
+        description={apparelSpec.description}
+        highlights={[
+          "100% Cotton Comfort — breathable, pre-shrunk fabric built for all-day wear.",
+          "260 GSM Heavyweight Quality — substantial feel with structure that holds its shape.",
+          "Premium Screen Printing — sharp, fade-resistant graphics that last wash after wash.",
+          "Versatile Streetwear — pairs easily with denim, cargo pants, or joggers.",
+        ]}
+        categorySlug={categorySlug}
+      />
+    );
   }
 
+  // ── Hoodie products ───────────────────────────────────────────────────────
   const hoodieSpec = HOODIE_MERCH_SPECS[product.id];
   if (hoodieSpec) {
-    return <HoodieMerchProductPage key={product.id} product={product} spec={hoodieSpec} />;
+    const allColors = hoodieColorsWithImages(hoodieSpec.colors);
+    const colors: SFColorOption[] = allColors.map((c) => ({
+      id: c.id,
+      label: c.label,
+      hex: c.hex,
+      image: c.image as string,
+    }));
+
+    return (
+      <StorefrontProductPage
+        key={product.id}
+        slug={product.id}
+        name={hoodieSpec.title}
+        categoryLabel={product.categoryLabel}
+        priceLabel={priceLabel}
+        images={[{ src: colors[0]?.image ?? product.image, alt: product.alt }]}
+        colors={colors}
+        description={hoodieSpec.description}
+        highlights={[
+          "Premium French Terry fleece — thick, warm, and built for all-season wear.",
+          "Heavyweight construction — structured hood, ribbed cuffs and hem.",
+          "Premium Screen Printing — sharp, fade-resistant graphics that last wash after wash.",
+          "Streetwear essential — pairs with joggers, cargo trousers, or denim.",
+        ]}
+        categorySlug={categorySlug}
+      />
+    );
   }
 
-  const categorySlug = product.category === "t-shirt" ? "tshirts" : "hoodies";
-  const category = categoryById(categorySlug);
-
+  // ── Fallback: product with no spec (single hero image) ───────────────────
   return (
-    <PageShell>
-      <PageHeader
-        eyebrow={product.categoryLabel}
-        title={product.title}
-        description="Part of the GVRZE merchandise collection."
-        breadcrumb={[
-          { label: "GVRZE Store", to: "/geostore" },
-          { label: category?.label ?? "Merchandise" },
-          { label: product.title },
-        ]}
-      />
-      <SectionContainer size="wide">
-        <div className="grid gap-10 lg:grid-cols-2">
-          <AnimatedSection>
-            <div className="overflow-hidden rounded-2xl border border-bronze/12 bg-[oklch(0.14_0.006_62)]">
-              <img
-                src={product.image}
-                alt={product.alt}
-                className="aspect-[16/10] w-full object-contain"
-              />
-            </div>
-          </AnimatedSection>
-
-          <AnimatedSection delay={80} className="space-y-6">
-            <p className="text-[0.62rem] uppercase tracking-[0.22em] text-bronze/80">
-              {product.categoryLabel}
-            </p>
-            <p className="text-sm leading-relaxed text-foreground/60">
-              Premium GVRZE apparel — designed in the same bronze-on-charcoal language as the
-              platform. Physical fulfilment is coming soon.
-            </p>
-            <p className="inline-flex items-center rounded-full border border-bronze/25 bg-bronze/8 px-3 py-1.5 text-[0.62rem] uppercase tracking-[0.18em] text-bronze-glow">
-              Available soon
-            </p>
-            <div className="flex flex-wrap gap-3 pt-2">
-              <GeoButton
-                variant="solid"
-                disabled
-                onClick={() =>
-                  toast.message("Available soon", {
-                    description: "Merchandise checkout is not live yet.",
-                  })
-                }
-              >
-                Available soon
-              </GeoButton>
-              <GeoButton asChild variant="ghost">
-                <Link to="/geostore/category/$slug" params={{ slug: categorySlug }}>
-                  Back to {category?.label ?? "collection"}
-                </Link>
-              </GeoButton>
-            </div>
-          </AnimatedSection>
-        </div>
-      </SectionContainer>
-    </PageShell>
+    <StorefrontProductPage
+      key={product.id}
+      slug={product.id}
+      name={product.title}
+      categoryLabel={product.categoryLabel}
+      priceLabel={priceLabel}
+      images={[{ src: product.image, alt: product.alt }]}
+      description={product.tagline}
+      categorySlug={categorySlug}
+    />
   );
 });

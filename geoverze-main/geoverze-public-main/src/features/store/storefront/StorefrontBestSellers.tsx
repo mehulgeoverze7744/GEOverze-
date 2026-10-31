@@ -13,6 +13,8 @@ type BestSeller = {
   tone: string;
   image: { src: string; width: number; height: number };
   alt: string;
+  /** Route slug for the individual product detail page. */
+  slug: string;
   /**
    * Placement of the photo inside the 324 x 407 Figma tile, as percentages of the
    * tile, so the crop scales with the card.
@@ -26,8 +28,7 @@ type BestSeller = {
 
 /**
  * The four products shown in the Figma Best Sellers frame (Desktop - 9), in the
- * Figma order. These are Figma showcase pieces and are not yet catalogue products,
- * so the cards lead to the T-shirts category rather than a product page.
+ * Figma order. Each card now links to its individual product detail page.
  */
 const BEST_SELLERS: readonly BestSeller[] = [
   {
@@ -36,6 +37,7 @@ const BEST_SELLERS: readonly BestSeller[] = [
     tone: "#000000",
     image: SF_ASSETS.bestSellerMidnightBlack,
     alt: "Midnight Black T-Shirt, back view",
+    slug: "midnight-black-tshirt",
     // Figma: x 12, y 24, 293 x 383; photo 114.75% tall, anchored to the top.
     frame: { left: "3.704%", top: "5.897%", width: "90.432%", height: "94.103%" },
     imageStyle: { height: "114.75%", top: "-0.07%" },
@@ -47,6 +49,7 @@ const BEST_SELLERS: readonly BestSeller[] = [
     tone: "#e29ecc",
     image: SF_ASSETS.bestSellerCherryBlossom,
     alt: "Cherry Blossom T-Shirt, back view",
+    slug: "cherry-blossom-tshirt",
     // Figma: x 10, y 30, 304 x 346, cover.
     frame: { left: "3.086%", top: "7.371%", width: "93.827%", height: "85.012%" },
   },
@@ -56,6 +59,7 @@ const BEST_SELLERS: readonly BestSeller[] = [
     tone: "#8c624a",
     image: SF_ASSETS.bestSellerGoldenArc,
     alt: "Golden Arc T-Shirt, front view",
+    slug: "golden-arc-tshirt",
     // Figma: frame y 18, 324 x 388, clipped. Photo 342 x 417, rotated -3.55deg.
     frame: { left: "0%", top: "4.423%", width: "100%", height: "95.332%" },
     imageStyle: {
@@ -73,15 +77,18 @@ const BEST_SELLERS: readonly BestSeller[] = [
     tone: "#6c0036",
     image: SF_ASSETS.bestSellerNewAge,
     alt: "New Age T-Shirt, back view",
+    slug: "new-age-tshirt",
     // Figma: x 5, y 26, 312 x 381, anchored to the bottom.
     frame: { left: "1.543%", top: "6.388%", width: "96.296%", height: "93.612%" },
   },
 ];
 
-const CATEGORY_LINK = { to: "/geostore/category/$slug", params: { slug: "tshirts" } } as const;
-
 function BestSellerCard({ item }: { item: BestSeller }) {
   const free = item.imageStyle !== undefined;
+  const productLink = {
+    to: "/geostore/product/$slug",
+    params: { slug: item.slug },
+  } as const;
 
   return (
     <li className="min-w-0">
@@ -91,7 +98,7 @@ function BestSellerCard({ item }: { item: BestSeller }) {
       >
         {/* The title link below is the accessible link. This one makes the photo clickable. */}
         <Link
-          {...CATEGORY_LINK}
+          {...productLink}
           tabIndex={-1}
           aria-hidden="true"
           className="absolute inset-0 block"
@@ -122,7 +129,7 @@ function BestSellerCard({ item }: { item: BestSeller }) {
 
       <div className="mt-3.5 px-0.5 sm:px-3">
         <h3 className="text-[12.5px] font-normal leading-snug text-black [overflow-wrap:anywhere] sm:text-[16px]">
-          <Link {...CATEGORY_LINK} className="transition-opacity hover:opacity-60">
+          <Link {...productLink} className="transition-opacity hover:opacity-60">
             {item.name}
           </Link>
         </h3>

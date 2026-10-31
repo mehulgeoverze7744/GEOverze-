@@ -8,6 +8,21 @@ import gpsBlue from "@/assets/geostore/tshirt-gvrze-gps-trust-issues-blue.jpg";
 import gpsBurgundy from "@/assets/geostore/tshirt-gvrze-gps-trust-issues-burgundy.jpg";
 import gpsOlive from "@/assets/geostore/tshirt-gvrze-gps-trust-issues-olive-green.jpg";
 import gpsOffWhite from "@/assets/geostore/tshirt-gvrze-gps-trust-issues-off-white.jpg";
+import bornBlack from "@/assets/geostore/tshirt-gvrze-born-to-roam-black.jpg";
+import bornBlue from "@/assets/geostore/tshirt-gvrze-born-to-roam-blue.jpg";
+import bornBurgundy from "@/assets/geostore/tshirt-gvrze-born-to-roam-burgundy.jpg";
+import bornOlive from "@/assets/geostore/tshirt-gvrze-born-to-roam-olive-green.jpg";
+import bornOffWhite from "@/assets/geostore/tshirt-gvrze-born-to-roam-off-white.jpg";
+import capitalBlack from "@/assets/geostore/tshirt-gvrze-know-the-capital-black.jpg";
+import capitalBlue from "@/assets/geostore/tshirt-gvrze-know-the-capital-blue.jpg";
+import capitalBurgundy from "@/assets/geostore/tshirt-gvrze-know-the-capital-burgundy.jpg";
+import capitalOlive from "@/assets/geostore/tshirt-gvrze-know-the-capital-olive-green.jpg";
+import capitalOffWhite from "@/assets/geostore/tshirt-gvrze-know-the-capital-off-white.jpg";
+import tooCloseBlack from "@/assets/geostore/tshirt-gvrze-too-close-perfect-black.jpg";
+import tooCloseBlue from "@/assets/geostore/tshirt-gvrze-too-close-perfect-blue.jpg";
+import tooCloseBurgundy from "@/assets/geostore/tshirt-gvrze-too-close-perfect-burgundy.jpg";
+import tooCloseOlive from "@/assets/geostore/tshirt-gvrze-too-close-perfect-olive-green.jpg";
+import tooCloseOffWhite from "@/assets/geostore/tshirt-gvrze-too-close-perfect-off-white.jpg";
 
 export type ApparelColorVariant = {
   id: string;
@@ -70,5 +85,29 @@ export const APPAREL_MERCH_SPECS: Record<string, ApparelMerchSpec> = {
       "A GVRZE tee for questionable directions, featuring a navigation-inspired graphic built around getting lost.",
     printLine: "YOUR GPS HAS TRUST ISSUES.",
     colors: fiveColors(gpsBlack, gpsBlue, gpsBurgundy, gpsOlive, gpsOffWhite),
+  },
+  "tshirt-born-to-roam": {
+    title: "0% Local. 100% Global. Born To Roam.",
+    breadcrumb: "Born To Roam.",
+    description:
+      "For explorers who treat every border as an invitation. The Born To Roam tee is built from 100% premium cotton and printed with GVRZE's boldest declaration yet.",
+    printLine: "0% LOCAL. 100% GLOBAL. BORN TO ROAM.",
+    colors: fiveColors(bornBlack, bornBlue, bornBurgundy, bornOlive, bornOffWhite),
+  },
+  "tshirt-know-the-capital": {
+    title: "I Know The Capital. You Know The Vibes.",
+    breadcrumb: "Know The Capital.",
+    description:
+      "Capital cities, confident energy. This GVRZE tee is for those who know the difference between geography and guesswork.",
+    printLine: "I KNOW THE CAPITAL. YOU KNOW THE VIBES.",
+    colors: fiveColors(capitalBlack, capitalBlue, capitalBurgundy, capitalOlive, capitalOffWhite),
+  },
+  "tshirt-too-close-perfect": {
+    title: "Too Close? Perfect.",
+    breadcrumb: "Too Close? Perfect.",
+    description:
+      "Radar-close detail for map obsessives. A GVRZE tee that leans into precision, featuring a radar-inspired graphic and a one-line statement for explorers who get it.",
+    printLine: "TOO CLOSE? PERFECT.",
+    colors: fiveColors(tooCloseBlack, tooCloseBlue, tooCloseBurgundy, tooCloseOlive, tooCloseOffWhite),
   },
 };

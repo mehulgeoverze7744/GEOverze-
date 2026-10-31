@@ -24,6 +24,11 @@ import {
 import { ComingSoonLockChip } from "./ComingSoonLockChip";
 import { GeostoreProductPageBackground } from "./GeostoreProductPageBackground";
 import { MerchProductScreen } from "./MerchProductScreen";
+import {
+  storefrontTeeById,
+  type StorefrontTeeProduct,
+} from "../storefront/storefront-product-data";
+import { StorefrontTeeProductPage } from "../storefront/StorefrontProductPage";
 import { ProductCard } from "./ProductCard";
 import { ProductGallery } from "./ProductGallery";
 import { ProductRail } from "./ProductRail";
@@ -485,6 +490,14 @@ export function ProductScreen() {
   useEffect(() => {
     if (product) view(product.slug);
   }, [product, view]);
+
+  // Storefront signature tees (Midnight Black, Cherry Blossom, Golden Arc, New Age)
+  // get the clean-white storefront design. This check is placed after all hooks
+  // so the Rules of Hooks are satisfied on every render path.
+  const storefrontTee = storefrontTeeById(slug);
+  if (storefrontTee) {
+    return <StorefrontTeeProductPage tee={storefrontTee} />;
+  }
 
   if (merch) {
     return (
