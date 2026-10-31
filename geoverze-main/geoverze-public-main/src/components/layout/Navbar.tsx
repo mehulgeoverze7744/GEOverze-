@@ -82,6 +82,7 @@ export function Navbar() {
     <header
       ref={headerRef}
       data-scrolled="false"
+      data-surface={isHome ? "home" : undefined}
       className="group fixed inset-x-0 top-0 z-50 h-[var(--nav-height)] border-b border-transparent transition-all motion-base data-[scrolled=true]:glass-panel data-[scrolled=true]:rounded-none data-[scrolled=true]:shadow-[var(--shadow-float)]"
     >
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-6 px-6 md:px-10">
@@ -91,7 +92,17 @@ export function Navbar() {
           aria-label={`${site.name} home`}
           className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
         >
-          <BrandMark size="md" withWordmark />
+          {isHome ? (
+            <img
+              src="/assets/home/gvrze-wordmark.png"
+              alt=""
+              width={581}
+              height={85}
+              className="gvrze-home-wordmark"
+            />
+          ) : (
+            <BrandMark size="md" withWordmark />
+          )}
         </Link>
 
         <nav aria-label="Main" className="hidden items-center gap-9 lg:flex">

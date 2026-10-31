@@ -4,6 +4,7 @@ import * as THREE from "three";
 
 import { BronzeGlobe } from "./BronzeGlobe";
 import { EARTH_SUN_POSITION } from "./earthGlobeAssets";
+import { HeroAstronaut } from "./HeroAstronaut";
 
 function easeInOut(t: number) {
   return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
@@ -23,8 +24,8 @@ function CameraRig({ progress }: { progress: RefObject<number> }) {
 }
 
 /**
- * Warm studio environment generated in-code (no HDRI download). Reproduces the
- * previous preset's bronze-leaning reflections at a fraction of the cost.
+ * Pale lunar studio, generated in-code. Reflections pick up the same cool
+ * blue-white as the homepage sky instead of a dark bronze room.
  */
 function StudioEnvironment() {
   const { gl, scene } = useThree();
@@ -36,10 +37,10 @@ function StudioEnvironment() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     const grad = ctx.createLinearGradient(0, 0, 0, 32);
-    grad.addColorStop(0, "#4b423b");
-    grad.addColorStop(0.42, "#9b8471");
-    grad.addColorStop(0.62, "#2b2622");
-    grad.addColorStop(1, "#0b0a09");
+    grad.addColorStop(0, "#f4f8fb");
+    grad.addColorStop(0.38, "#d5e6f2");
+    grad.addColorStop(0.68, "#9ebcd2");
+    grad.addColorStop(1, "#e7f1f8");
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, 32, 32);
 
@@ -88,15 +89,16 @@ function Scene({ progress }: { progress: RefObject<number> }) {
   return (
     <>
       <CameraRig progress={progress} />
-      <ambientLight intensity={0.28} />
-      {/* sun key — from logo/left (−X), shared with Earth day/night shader */}
-      <directionalLight position={[...EARTH_SUN_POSITION]} intensity={4.1} color="#fff6ea" />
-      {/* bronze rim — GVRZE brand accent, not planetary lighting */}
-      <directionalLight position={[-6, 2, -4]} intensity={1.65} color="#b8763a" />
-      {/* cool space fill */}
-      <pointLight position={[0, -4, 4]} intensity={4.5} distance={22} color="#5a687a" />
+      <ambientLight intensity={0.52} color="#e7f2f8" />
+      <hemisphereLight args={["#eef6fb", "#b7cfe0", 0.62]} />
+      {/* sun key — direction shared with the Earth day/night shader */}
+      <directionalLight position={[...EARTH_SUN_POSITION]} intensity={2.75} color="#f4f7fb" />
+      {/* cool rim so the limb matches the lunar sky */}
+      <directionalLight position={[-5, 1.4, -3.5]} intensity={0.9} color="#d7e8f4" />
+      <pointLight position={[0, -3.5, 4]} intensity={1.5} distance={24} color="#c9dceb" />
       <StudioEnvironment />
       <BronzeGlobe progress={progress} {...layout} />
+      <HeroAstronaut progress={progress} />
     </>
   );
 }
@@ -163,7 +165,7 @@ export default function GlobeScene({ progress }: { progress: RefObject<number> }
           scene.background = null;
           gl.shadowMap.enabled = false;
           gl.toneMapping = THREE.ACESFilmicToneMapping;
-          gl.toneMappingExposure = 1.05;
+          gl.toneMappingExposure = 1.18;
         }}
       >
         <Scene progress={progress} />

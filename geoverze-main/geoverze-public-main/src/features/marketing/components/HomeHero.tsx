@@ -5,12 +5,18 @@ import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { useScrollProgress } from "@/components/geoverze/useScrollProgress";
 import "./home-hero.css";
 import { skyLayer } from "@/components/layout/skyLayer";
-import { BrandMark, GeoButton, Modal } from "@/components/shared";
+import { GeoButton, Modal } from "@/components/shared";
 import { RewardsCard } from "@/features/marketing/components/hero/RewardsCard";
 import { hasWebGLSupport } from "@/lib/webgl";
 
 /** The 3D scene is the only heavy chunk in the app and stays lazily loaded. */
 const GlobeScene = lazy(() => import("@/components/geoverze/GlobeScene"));
+
+/**
+ * Temporary homepage hide. RewardsCard and its styles stay in the tree;
+ * set this to true to show the card again.
+ */
+const SHOW_HOME_REWARDS_CARD = false;
 
 function clamp01(v: number) {
   return v < 0 ? 0 : v > 1 ? 1 : v;
@@ -22,28 +28,23 @@ function band(p: number, a: number, b: number, c: number, d: number) {
 }
 
 /**
- * Scroll-pinned hero: the bronze globe emerges from the emblem, dominates the
- * frame and parks on the right while three copy panels hand off to each other.
+ * Scroll-pinned hero: the globe emerges on the left, dominates the frame and
+ * parks on the right while three copy panels hand off to each other.
  *
  * All scroll-driven work is written imperatively to the DOM from a single rAF
  * flush — the component itself never re-renders while scrolling.
  */
 export function HomeHero() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const emblemRef = useRef<HTMLDivElement>(null);
   const panel1 = useRef<HTMLDivElement>(null);
   const panel2 = useRef<HTMLDivElement>(null);
   const panel3 = useRef<HTMLDivElement>(null);
   const cueRef = useRef<HTMLDivElement>(null);
   const [webgl, setWebgl] = useState(true);
   const [demoOpen, setDemoOpen] = useState(false);
-  const webglRef = useRef(true);
 
-  // Without WebGL there is no globe to hand off to, so the emblem stays put.
   useEffect(() => {
-    const supported = hasWebGLSupport();
-    webglRef.current = supported;
-    setWebgl(supported);
+    setWebgl(hasWebGLSupport());
   }, []);
 
   const progress = useScrollProgress(sectionRef, (p) => {
@@ -51,13 +52,6 @@ export function HomeHero() {
     if (sky) {
       // very slow parallax: it breathes rather than travels
       sky.style.transform = `translate3d(0, ${(-p * 2.5).toFixed(3)}%, 0) scale(${(1.04 + p * 0.03).toFixed(4)})`;
-    }
-
-    const el = emblemRef.current;
-    if (el && webglRef.current) {
-      const t = clamp01((p - 0.05) / 0.25);
-      el.style.opacity = String(1 - t * 0.85);
-      el.style.transform = `scale(${1 - t * 0.62})`;
     }
 
     const set = (node: HTMLDivElement | null, value: number, shift: number) => {
@@ -86,15 +80,6 @@ export function HomeHero() {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,var(--bloom-bronze),transparent_70%)]"
       />
 
-      {/* Hero emblem the globe emerges from */}
-      <div
-        ref={emblemRef}
-        aria-hidden
-        className="pointer-events-none absolute left-6 top-[92px] z-10 h-[104px] w-[104px] origin-top-left will-change-transform md:left-12 md:top-[108px] md:h-[150px] md:w-[150px]"
-      >
-        <BrandMark size="fill" sheen={false} className="h-full w-full" />
-      </div>
-
       {webgl ? (
         <ClientOnly fallback={null}>
           <Suspense fallback={null}>
@@ -103,12 +88,12 @@ export function HomeHero() {
         </ClientOnly>
       ) : null}
 
-      <RewardsCard scrollProgress={progress} />
+      {SHOW_HOME_REWARDS_CARD ? <RewardsCard scrollProgress={progress} /> : null}
 
       {/* Scroll-synced copy */}
       <div
         ref={panel1}
-        className="pointer-events-none absolute inset-x-6 bottom-24 will-change-transform max-md:hidden md:inset-x-auto md:left-12 md:bottom-auto md:max-w-[34rem] md:top-[calc(108px+150px+1.5rem)]"
+        className="pointer-events-none absolute inset-x-6 bottom-24 will-change-transform max-md:hidden md:inset-x-auto md:left-12 md:bottom-auto md:max-w-[34rem] md:top-[calc(var(--nav-height)+1.75rem)]"
       >
         <p className="eyebrow">Know Earth</p>
         <h1 className="mt-6 font-semibold leading-[1.03] tracking-tight text-foreground text-[clamp(2.15rem,5.2vw,4.25rem)]">

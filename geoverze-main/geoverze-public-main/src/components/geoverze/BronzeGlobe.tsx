@@ -148,7 +148,7 @@ void main() {
   float rim = pow(clamp(1.0 - dot(outwardNormal, viewDir), 0.0, 1.0), 2.55);
   float sunFacing = clamp(dot(outwardNormal, normalize(sunPosition)), 0.0, 1.0);
   float dayRim = pow(sunFacing, 0.95);
-  float intensity = rim * (0.2 + dayRim * 0.34) * glowStrength;
+  float intensity = rim * (0.28 + dayRim * 0.22) * glowStrength;
   gl_FragColor = vec4(glowColor, intensity);
 }
 `;
@@ -189,10 +189,10 @@ export function BronzeGlobe({ progress, origin, parked, startScale, bigScale, fi
     const material = new THREE.MeshStandardMaterial({
       map: dayMap,
       bumpMap: bumpMap,
-      bumpScale: 0.012,
-      roughness: 0.92,
+      bumpScale: 0.007,
+      roughness: 0.86,
       metalness: 0.02,
-      envMapIntensity: 0.22,
+      envMapIntensity: 0.36,
       transparent: true,
       opacity: 0,
     });
@@ -220,15 +220,15 @@ export function BronzeGlobe({ progress, origin, parked, startScale, bigScale, fi
         `#include <map_fragment>
         vec3 sunDir = normalize(sunPosition);
         float cosAngle = dot(normalize(vWorldNormal), sunDir);
-        float nightMix = 1.0 - smoothstep(-0.22, 0.26, cosAngle);
+        float nightMix = 1.0 - smoothstep(-0.4, 0.48, cosAngle);
 
         vec3 dayColor = diffuseColor.rgb;
         vec3 nightTex = texture2D(tNight, vMapUv).rgb;
         float cityLuma = dot(nightTex, vec3(0.299, 0.587, 0.114));
 
-        vec3 darkBase = dayColor * 0.018;
+        vec3 darkBase = dayColor * 0.32 + vec3(0.07, 0.12, 0.18);
         vec3 warmLight = nightTex * vec3(1.04, 0.9, 0.64);
-        vec3 cityGlow = warmLight * (0.65 + cityLuma * 5.2);
+        vec3 cityGlow = warmLight * (0.45 + cityLuma * 3.4);
         float cityMask = smoothstep(0.006, 0.048, cityLuma);
         vec3 nightColor = mix(darkBase, cityGlow, cityMask);
 
@@ -238,7 +238,7 @@ export function BronzeGlobe({ progress, origin, parked, startScale, bigScale, fi
       material.userData.shader = shader;
     };
 
-    material.customProgramCacheKey = () => "earth-day-night-v3";
+    material.customProgramCacheKey = () => "earth-day-night-v4";
 
     return material;
   }, [dayMap, nightMap, bumpMap]);
@@ -263,7 +263,7 @@ export function BronzeGlobe({ progress, origin, parked, startScale, bigScale, fi
       vertexShader: atmosphereVertexShader,
       fragmentShader: atmosphereFragmentShader,
       uniforms: {
-        glowColor: { value: new THREE.Color("#8fd4ff") },
+        glowColor: { value: new THREE.Color("#c5dff0") },
         sunPosition: { value: SUN.clone() },
         glowStrength: { value: 0 },
       },
@@ -276,7 +276,7 @@ export function BronzeGlobe({ progress, origin, parked, startScale, bigScale, fi
 
   const earthGeometry = useMemo(() => new THREE.SphereGeometry(1, 96, 96), []);
   const cloudGeometry = useMemo(() => new THREE.SphereGeometry(1.006, 96, 96), []);
-  const atmosphereGeometry = useMemo(() => new THREE.SphereGeometry(1.034, 72, 72), []);
+  const atmosphereGeometry = useMemo(() => new THREE.SphereGeometry(1.06, 72, 72), []);
 
   useEffect(
     () => () => {
@@ -319,7 +319,7 @@ export function BronzeGlobe({ progress, origin, parked, startScale, bigScale, fi
 
     earthMaterial.opacity = reveal;
     cloudMaterial.uniforms.cloudOpacity.value = reveal;
-    atmosphereMaterial.uniforms.glowStrength.value = reveal * 0.78;
+    atmosphereMaterial.uniforms.glowStrength.value = reveal * 1;
     r.visible = reveal > 0.001;
 
     const cx = THREE.MathUtils.lerp(origin[0], 0, emerge);

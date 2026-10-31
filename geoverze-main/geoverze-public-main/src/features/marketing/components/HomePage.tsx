@@ -7,6 +7,7 @@ import { WhyGeoverze } from "./home/WhyGeoverze";
 import { Ecosystem } from "./home/Ecosystem";
 import { CommunityVision } from "./home/CommunityVision";
 import { GeostoreShowcase } from "./home/GeostoreShowcase";
+import "./home-lunar.css";
 
 /** Home page — the only route with the 3D globe. */
 export function HomePage() {
@@ -24,12 +25,24 @@ export function HomePage() {
   }, [historyAction]);
 
   return (
-    <>
+    <div id="gvrze-home">
+      <div className="gvrze-home-sky" aria-hidden="true">
+        <img
+          src="/assets/home/lunar-horizon.jpg"
+          alt=""
+          width={1024}
+          height={528}
+          fetchPriority="high"
+          decoding="async"
+        />
+      </div>
       <HomeHero />
-      <WhyGeoverze />
-      <Ecosystem />
-      <GeostoreShowcase />
-      <CommunityVision />
-    </>
+      <div className="gvrze-home-below">
+        <WhyGeoverze />
+        <Ecosystem />
+        <GeostoreShowcase />
+        <CommunityVision />
+      </div>
+    </div>
   );
 }

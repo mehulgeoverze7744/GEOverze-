@@ -1,0 +1,257 @@
+/*
+ * Home page only. Every rule is keyed off #gvrze-home or
+ * header[data-surface="home"], which the navbar sets only on "/".
+ */
+
+body:has(#gvrze-home) #geoverze-universe-background {
+  display: none !important;
+}
+
+.gvrze-home-sky {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  overflow: hidden;
+  pointer-events: none;
+  background: #d7e6f0;
+}
+
+.gvrze-home-sky img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: 62% 42%;
+}
+
+@media (max-width: 767px) {
+  .gvrze-home-sky img {
+    object-position: 74% 36%;
+  }
+}
+
+/*
+ * Below the hero the moon photo stops. An opaque icy gradient covers it so the
+ * lunar palette continues without repeating the photograph.
+ */
+body:has(#gvrze-home) {
+  background: #e4eef6;
+}
+
+.gvrze-home-below {
+  position: relative;
+  color: #1a2c42;
+  background:
+    linear-gradient(180deg, rgb(232 242 248 / 0) 0%, #e7f2f8 5.5rem),
+    radial-gradient(ellipse 80% 28% at 82% 6%, rgb(255 255 255 / 0.75), transparent 52%),
+    radial-gradient(ellipse 64% 36% at 8% 32%, rgb(186 214 232 / 0.55), transparent 58%),
+    radial-gradient(ellipse 70% 32% at 78% 62%, rgb(255 255 255 / 0.5), transparent 54%),
+    radial-gradient(ellipse 55% 28% at 18% 88%, rgb(196 220 234 / 0.45), transparent 60%),
+    linear-gradient(180deg, #e5f0f7 0%, #d5e6f2 24%, #eef5f9 46%, #dceaf3 70%, #f4f8fb 100%);
+}
+
+/* Dark bronze blooms were painted for the galaxy sky. */
+#gvrze-home .gvrze-home-below > section > .pointer-events-none {
+  display: none;
+}
+
+#gvrze-home .gvrze-home-below :is(h1, h2, h3) {
+  color: #152536;
+}
+
+#gvrze-home .gvrze-home-below :is(p, li) {
+  color: rgb(21 37 54 / 0.78);
+}
+
+#gvrze-home .gvrze-home-below p.eyebrow,
+#gvrze-home .gvrze-home-below p[class*="eyebrow"],
+#gvrze-home .gvrze-home-below [class*="text-bronze"],
+#gvrze-home .gvrze-home-below .why-geoverze-intro__emphasis {
+  color: var(--bronze);
+}
+
+/* Photo cards keep light type on their scrims. */
+#gvrze-home .why-carousel-card__body :is(h3, p),
+#gvrze-home .ecosystem-card__content :is(h3, p) {
+  color: #f4f8fb;
+}
+
+#gvrze-home .why-carousel-card__body p,
+#gvrze-home .ecosystem-card__content p {
+  color: rgb(244 248 251 / 0.82);
+}
+
+#gvrze-home .why-carousel-card__overlay {
+  background: linear-gradient(
+    to top,
+    rgb(16 36 54 / 0.72) 0%,
+    rgb(16 36 54 / 0.28) 46%,
+    rgb(255 255 255 / 0.04) 100%
+  );
+}
+
+#gvrze-home .ecosystem-card__overlay {
+  background: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 0.02) 0%,
+    rgb(16 36 54 / 0.12) 42%,
+    rgb(16 36 54 / 0.62) 100%
+  );
+}
+
+#gvrze-home .glass-panel,
+#gvrze-home .glass-panel-strong {
+  background-color: rgb(255 255 255 / 0.42);
+  border-color: rgb(255 255 255 / 0.72);
+  box-shadow: 0 14px 34px rgb(48 78 108 / 0.1);
+}
+
+#gvrze-home .bg-charcoal,
+#gvrze-home .bg-charcoal\/45 {
+  background-color: rgb(255 255 255 / 0.5);
+  border-color: rgb(255 255 255 / 0.78);
+  box-shadow: 0 12px 28px rgb(48 78 108 / 0.08);
+}
+
+#gvrze-home .geostore-showcase :is(h2, h3, p, span) {
+  color: #1a2c42;
+}
+
+#gvrze-home .geostore-showcase [class*="text-bronze"],
+#gvrze-home .geostore-showcase [class*="bronze-glow"] {
+  color: var(--bronze);
+}
+
+#gvrze-home .community-vision__overlay {
+  background:
+    linear-gradient(
+      180deg,
+      rgb(232 242 248 / 0.78) 0%,
+      rgb(214 230 241 / 0.62) 46%,
+      rgb(236 245 250 / 0.82) 100%
+    ),
+    radial-gradient(circle at 50% 42%, rgb(255 255 255 / 0.35), transparent 64%);
+}
+
+/* Homepage footer only. The shared footer is unchanged on every other route. */
+body:has(#gvrze-home) > div > footer,
+body:has(#gvrze-home) footer {
+  background:
+    radial-gradient(ellipse 70% 80% at 12% 0%, rgb(255 255 255 / 0.55), transparent 55%),
+    linear-gradient(180deg, #e7f1f7 0%, #f5f8fb 55%, #e4eef5 100%);
+  border-top-color: rgb(23 32 51 / 0.1);
+  color: #1a2c42;
+}
+
+body:has(#gvrze-home) footer :is(p, a, li, span) {
+  color: rgb(26 44 66 / 0.82);
+}
+
+body:has(#gvrze-home) footer [class*=" text-bronze"],
+body:has(#gvrze-home) footer [class^="text-bronze"] {
+  color: var(--bronze);
+}
+
+body:has(#gvrze-home) footer input {
+  background: rgb(255 255 255 / 0.72);
+  color: #172033;
+  border-color: rgb(23 32 51 / 0.16);
+}
+
+body:has(#gvrze-home) footer input::placeholder {
+  color: rgb(23 32 51 / 0.42);
+}
+
+/* The bronze bloom is a sky effect. Hide it so the lunar photo stays true. */
+#gvrze-home #home-hero > div:first-child {
+  display: none;
+}
+
+#gvrze-home #home-hero h1,
+#gvrze-home #home-hero h2 {
+  color: #172033;
+}
+
+#gvrze-home #home-hero p:not(.eyebrow) {
+  color: rgb(23 32 51 / 0.78);
+}
+
+/* Navbar — pale, transparent, navy. Other routes never get data-surface="home". */
+header[data-surface="home"] {
+  background: transparent;
+  border-color: transparent;
+}
+
+header[data-surface="home"][data-scrolled="true"] {
+  background-color: rgb(232 240 246 / 0.92);
+  border-color: transparent;
+  border-bottom: 1px solid rgb(23 32 51 / 0.08);
+  backdrop-filter: blur(16px) saturate(1.05);
+  box-shadow: none;
+}
+
+header[data-surface="home"] .gvrze-home-wordmark {
+  display: block;
+  height: 1.15rem;
+  width: auto;
+}
+
+@media (min-width: 768px) {
+  header[data-surface="home"] .gvrze-home-wordmark {
+    height: 1.5rem;
+  }
+}
+
+header[data-surface="home"] nav[aria-label="Main"] a {
+  color: #172033;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+}
+
+header[data-surface="home"] nav[aria-label="Main"] a:hover,
+header[data-surface="home"] nav[aria-label="Main"] a[data-status="active"] {
+  color: #172033;
+}
+
+header[data-surface="home"] nav[aria-label="Main"] a[data-status="active"] {
+  text-decoration: underline;
+  text-underline-offset: 7px;
+  text-decoration-thickness: 1px;
+}
+
+header[data-surface="home"] button[aria-label="Open search"],
+header[data-surface="home"] button[aria-label="Notifications"],
+header[data-surface="home"] button[aria-label^="Notifications,"],
+header[data-surface="home"] button[aria-label="Account menu"],
+header[data-surface="home"] button[aria-label="Open menu"] {
+  border-color: #172033;
+  background: transparent;
+  color: #172033;
+}
+
+header[data-surface="home"] button[aria-label="Open search"]:hover,
+header[data-surface="home"] button[aria-label="Notifications"]:hover,
+header[data-surface="home"] button[aria-label^="Notifications,"]:hover,
+header[data-surface="home"] button[aria-label="Account menu"]:hover,
+header[data-surface="home"] button[aria-label="Open menu"]:hover {
+  border-color: #172033;
+  background: rgb(23 32 51 / 0.06);
+  color: #172033;
+}
+
+header[data-surface="home"] a[href="/auth/signup"] {
+  border-color: #172033;
+  background: transparent;
+  color: #172033;
+  box-shadow: none;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+}
+
+header[data-surface="home"] a[href="/auth/signup"]:hover {
+  border-color: #172033;
+  background: rgb(23 32 51 / 0.06);
+  color: #172033;
+  box-shadow: none;
+}
