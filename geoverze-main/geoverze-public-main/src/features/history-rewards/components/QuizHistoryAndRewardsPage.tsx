@@ -69,7 +69,7 @@ export function QuizHistoryAndRewardsPage() {
 
   return (
     <PageShell>
-      <SectionContainer size="default" className="hr-page max-w-[78rem]">
+      <SectionContainer size="default" className="hr-page max-w-[78rem]" id="gvrze-quiz-history">
         <header className="hr-header">
           <AnimatedSection>
             <p className="hr-eyebrow">Quiz history &amp; rewards</p>
@@ -88,11 +88,12 @@ export function QuizHistoryAndRewardsPage() {
           role="tabpanel"
           id={`hr-panel-${tab}`}
           aria-labelledby={`hr-tab-${tab}`}
+          className="hr-stage"
         >
           {tab === "history" ? (
             <AnimatedSection>
               {loading ? (
-                <p className="text-sm text-foreground/45">Loading your quiz history…</p>
+                <p className="hr-muted text-sm">Loading your quiz history…</p>
               ) : (
                 <>
                   <QuizHistoryFilters

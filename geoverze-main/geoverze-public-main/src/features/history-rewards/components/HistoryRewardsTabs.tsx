@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import { type CSSProperties, useEffect, useRef } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -18,10 +18,17 @@ type HistoryRewardsTabsProps = {
 
 /** Primary segmented navigation for the unified page. */
 export function HistoryRewardsTabs({ active, onChange, className }: HistoryRewardsTabsProps) {
+  const listRef = useRef<HTMLDivElement>(null);
   const activeIndex = TABS.findIndex((tab) => tab.id === active);
+
+  useEffect(() => {
+    const activeTab = listRef.current?.querySelector<HTMLElement>('[data-active="true"]');
+    activeTab?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+  }, [active]);
 
   return (
     <div
+      ref={listRef}
       className={cn("hr-tabs", className)}
       style={{ "--hr-active-index": activeIndex } as CSSProperties}
       role="tablist"
@@ -38,7 +45,7 @@ export function HistoryRewardsTabs({ active, onChange, className }: HistoryRewar
           aria-controls={`hr-panel-${tab.id}`}
           data-active={active === tab.id}
           onClick={() => onChange(tab.id)}
-          className="hr-tab focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45"
+          className="hr-tab focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]/25"
         >
           {tab.label}
         </button>

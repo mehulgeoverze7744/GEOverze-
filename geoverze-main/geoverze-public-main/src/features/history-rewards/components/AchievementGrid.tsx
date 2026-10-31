@@ -6,18 +6,18 @@ export function AchievementGrid() {
   const { achievements, loading, error } = useCreditProductAchievements();
 
   if (loading) {
-    return <p className="text-sm text-foreground/45">Loading achievements…</p>;
+    return <p className="hr-muted text-sm">Loading achievements…</p>;
   }
 
   if (error) {
-    return <p className="text-sm text-foreground/45">Unable to load achievements.</p>;
+    return <p className="hr-muted text-sm">Unable to load achievements.</p>;
   }
 
   if (achievements.length === 0) {
     return (
       <div>
-        <p className="text-sm text-foreground/80">No GeoCredit achievements yet.</p>
-        <p className="mt-2 text-[0.75rem] leading-relaxed text-foreground/50">
+        <p className="hr-empty-title">No GeoCredit achievements yet.</p>
+        <p className="hr-muted mt-2 text-[0.75rem] leading-relaxed">
           Acquire a GVRZE product with GVRZE Credits to earn your first achievement.
         </p>
       </div>

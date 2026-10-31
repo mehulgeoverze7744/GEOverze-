@@ -16,7 +16,7 @@ export function RewardSummary() {
   return (
     <div>
       <p className="hr-panel-label">Rewards</p>
-      <p className="mb-4 max-w-lg text-sm text-foreground/48">
+      <p className="hr-muted mb-4 max-w-lg text-sm">
         Your exploration has value — credits earned through play can be redeemed for GVRZE Store
         rewards.
       </p>
@@ -24,7 +24,7 @@ export function RewardSummary() {
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="hr-reward-card">
           <p className="hr-reward-label">GVRZE Credits</p>
-          <p className="hr-reward-value text-gradient-bronze">
+          <p className="hr-reward-value">
             <AnimatedCounter value={player.credits} />
           </p>
           <p className="hr-reward-note">Available balance</p>
@@ -41,7 +41,7 @@ export function RewardSummary() {
 
       <Link
         to="/geostore/rewards"
-        className="mt-5 inline-flex items-center gap-1.5 text-[0.62rem] uppercase tracking-[0.16em] text-bronze/90 transition-colors hover:text-bronze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45"
+        className="hr-reward-link mt-5 inline-flex items-center gap-1.5 text-[0.62rem] uppercase tracking-[0.16em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]/25"
       >
         Browse redeemable rewards
         <ArrowRight className="h-3 w-3" strokeWidth={1.75} aria-hidden="true" />

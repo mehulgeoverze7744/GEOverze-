@@ -92,7 +92,7 @@ export function QuizHistoryFilters({
           />
         </div>
       </div>
-      <p className="text-[0.68rem] text-foreground/42" aria-live="polite">
+      <p className="hr-count" aria-live="polite">
         {resultCount} {resultCount === 1 ? "run" : "runs"}
       </p>
     </div>

@@ -33,7 +33,7 @@ export function StatsSummary() {
       <div className="hr-stat">
         <p className="hr-stat-value">
           {summary.badgesUnlocked}
-          <span className="text-foreground/35"> / {summary.badgesTotal}</span>
+          <span className="hr-stat-value-soft"> / {summary.badgesTotal}</span>
         </p>
         <p className="hr-stat-label">Badges</p>
       </div>

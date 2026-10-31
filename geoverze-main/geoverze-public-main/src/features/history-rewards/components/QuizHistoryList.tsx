@@ -19,18 +19,16 @@ function HistoryTableRow({ run }: { run: QuizRun }) {
   return (
     <li className="hr-table-row">
       <div className="min-w-0">
-        <p className="truncate text-sm text-foreground/88">{run.title}</p>
-        <p className="mt-1 text-xs text-foreground/45 lg:hidden">
+        <p className="hr-table-title truncate text-sm">{run.title}</p>
+        <p className="hr-table-meta mt-1 text-xs lg:hidden">
           {MODE_LABEL[run.mode]} · {formatDate(run.playedAt)}
         </p>
       </div>
-      <p className="hidden text-xs text-foreground/55 lg:block">{MODE_LABEL[run.mode]}</p>
-      <p className="mt-2 text-xs tabular-nums text-foreground/72 lg:mt-0">
-        <span className="text-bronze/90">
-          {run.score}/{run.total}
-        </span>
+      <p className="hr-table-meta hidden text-xs lg:block">{MODE_LABEL[run.mode]}</p>
+      <p className="hr-table-score mt-2 text-xs tabular-nums lg:mt-0">
+        {run.score}/{run.total}
       </p>
-      <p className="hidden text-xs text-foreground/48 lg:block">{formatDate(run.playedAt)}</p>
+      <p className="hr-table-meta hidden text-xs lg:block">{formatDate(run.playedAt)}</p>
       <p className={cn("hr-result mt-2 lg:mt-0", RESULT_CLASS[run.result])}>
         {RESULT_LABEL[run.result]}
       </p>
