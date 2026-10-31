@@ -66,9 +66,21 @@ body:has(#gvrze-home) {
 
 #gvrze-home .gvrze-home-below p.eyebrow,
 #gvrze-home .gvrze-home-below p[class*="eyebrow"],
-#gvrze-home .gvrze-home-below [class*="text-bronze"],
-#gvrze-home .gvrze-home-below .why-geoverze-intro__emphasis {
-  color: var(--bronze);
+#gvrze-home .gvrze-home-below [class*="text-bronze"]:not([aria-hidden]),
+#gvrze-home .gvrze-home-below [class*="text-bronze-glow"],
+#gvrze-home .gvrze-home-below .why-geoverze-intro__emphasis,
+#gvrze-home .gvrze-home-below .why-geoverze-intro__eyebrow,
+#gvrze-home .gvrze-home-below .geostore-showcase-intro__eyebrow {
+  color: #111111;
+  background-image: none;
+  -webkit-text-fill-color: #111111;
+  text-shadow: none;
+}
+
+#gvrze-home .gvrze-home-below [class*="hover:text-bronze"]:hover,
+#gvrze-home .gvrze-home-below [class*="hover:text-bronze"]:focus-visible,
+#gvrze-home .gvrze-home-below [class*="focus-visible:text-bronze"]:focus-visible {
+  color: #111111;
 }
 
 /* Photo cards keep light type on their scrims. */
@@ -80,6 +92,11 @@ body:has(#gvrze-home) {
 #gvrze-home .why-carousel-card__body p,
 #gvrze-home .ecosystem-card__content p {
   color: rgb(244 248 251 / 0.82);
+}
+
+#gvrze-home .ecosystem-card__content [class*="text-bronze"]:not([aria-hidden]) {
+  color: #f4f8fb;
+  -webkit-text-fill-color: #f4f8fb;
 }
 
 #gvrze-home .why-carousel-card__overlay {
@@ -119,8 +136,15 @@ body:has(#gvrze-home) {
 }
 
 #gvrze-home .geostore-showcase [class*="text-bronze"],
-#gvrze-home .geostore-showcase [class*="bronze-glow"] {
-  color: var(--bronze);
+#gvrze-home .geostore-showcase [class*="text-bronze-glow"] {
+  color: #111111;
+}
+
+#gvrze-home .home-hero-cta,
+#gvrze-home .home-hero-cta *,
+body:has(#gvrze-home) footer button,
+body:has(#gvrze-home) footer button * {
+  -webkit-text-fill-color: unset;
 }
 
 #gvrze-home .community-vision__overlay {
@@ -148,9 +172,14 @@ body:has(#gvrze-home) footer :is(p, a, li, span) {
   color: rgb(26 44 66 / 0.82);
 }
 
-body:has(#gvrze-home) footer [class*=" text-bronze"],
-body:has(#gvrze-home) footer [class^="text-bronze"] {
-  color: var(--bronze);
+body:has(#gvrze-home) footer :is(p, a, li, span, label)[class*="text-bronze"] {
+  color: #111111;
+}
+
+body:has(#gvrze-home) footer [class*="hover:text-bronze"]:hover,
+body:has(#gvrze-home) footer [class*="hover:text-bronze"]:focus-visible,
+body:has(#gvrze-home) footer [class*="focus-visible:text-bronze"]:focus-visible {
+  color: #111111;
 }
 
 body:has(#gvrze-home) footer input {
@@ -170,11 +199,15 @@ body:has(#gvrze-home) footer input::placeholder {
 
 #gvrze-home #home-hero h1,
 #gvrze-home #home-hero h2 {
-  color: #172033;
+  color: #111827;
+}
+
+#gvrze-home #home-hero .eyebrow {
+  color: #111111;
 }
 
 #gvrze-home #home-hero p:not(.eyebrow) {
-  color: rgb(23 32 51 / 0.78);
+  color: #374151;
 }
 
 /* Navbar — pale, transparent, navy. Other routes never get data-surface="home". */

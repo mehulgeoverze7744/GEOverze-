@@ -1,4 +1,4 @@
-/* Hero CTA — solid metallic gold, scoped to HomeHero only */
+/* Store showcase still uses the gold CTA. The homepage hero overrides below. */
 
 .home-hero-cta {
   --hero-gold-mid: oklch(0.78 0.1 78);
@@ -33,6 +33,36 @@
     inset 0 1px 0 oklch(0.94 0.06 84 / 0.45);
 }
 
+#home-hero .home-hero-cta {
+  background-color: #080808;
+  background-image: none !important;
+  border-color: #3f3f3f !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 10px 24px -14px oklch(0 0 0 / 0.88),
+    inset 0 1px 0 rgb(255 255 255 / 0.08);
+  filter: none;
+  transition:
+    background-color var(--dur-base) var(--ease-cinematic),
+    transform var(--dur-base) var(--ease-cinematic),
+    box-shadow var(--dur-base) var(--ease-cinematic);
+}
+
+#home-hero .home-hero-cta:hover {
+  background-color: #252525;
+  filter: none;
+  transform: translateY(-1px);
+  box-shadow:
+    0 16px 36px -14px oklch(0 0 0 / 0.38),
+    0 10px 24px -14px oklch(0 0 0 / 0.88),
+    inset 0 1px 0 rgb(255 255 255 / 0.1);
+}
+
+#home-hero .home-hero-cta:focus-visible {
+  outline: 2px solid #3f3f3f;
+  outline-offset: 3px;
+}
+
 .home-hero-cta:active {
   transform: translateY(0);
 }
@@ -40,6 +70,10 @@
 @media (prefers-reduced-motion: reduce) {
   .home-hero-cta {
     transition: filter var(--dur-fast) var(--ease-soft);
+  }
+
+  #home-hero .home-hero-cta {
+    transition: background-color var(--dur-fast) var(--ease-soft);
   }
 
   .home-hero-cta:hover {
@@ -64,13 +98,13 @@
   font-weight: 400;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: oklch(0.68 0.09 62 / 0.72);
+  color: #111111;
 }
 
 .home-hero-scroll-cue__arrow {
   width: 0.875rem;
   height: 0.875rem;
-  color: oklch(0.72 0.1 72 / 0.78);
+  color: #252525;
   animation: home-hero-scroll-float 1.85s var(--ease-soft) infinite;
 }
 

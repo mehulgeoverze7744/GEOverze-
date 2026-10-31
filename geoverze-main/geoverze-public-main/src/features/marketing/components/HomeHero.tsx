@@ -156,8 +156,8 @@ export function HomeHero() {
         title="Demo coming soon"
         description="A guided tour of the GVRZE experience is being produced."
       >
-        <div className="mt-2 flex aspect-video items-center justify-center rounded-xl border border-bronze/20 bg-bronze/5">
-          <p className="text-[0.62rem] uppercase tracking-[0.32em] text-bronze/90">
+        <div className="mt-2 flex aspect-video items-center justify-center rounded-xl border border-neutral-400/30 bg-neutral-900/5">
+          <p className="text-[0.62rem] uppercase tracking-[0.32em] text-neutral-800">
             Preview in production
           </p>
         </div>

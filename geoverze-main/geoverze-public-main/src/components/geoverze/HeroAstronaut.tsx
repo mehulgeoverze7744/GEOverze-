@@ -41,6 +41,23 @@ const MODEL_CENTER = (MODEL_TOP + MODEL_FEET) / 2;
 const BODY_YAW = -0.75;
 const HEAD_YAW = 0.45;
 
+const _ndcNear = new THREE.Vector3();
+const _ndcFar = new THREE.Vector3();
+
+/** World-space point on the z = 0 plane that projects to an NDC xy. */
+function ndcToZ0(ndcX: number, ndcY: number, camera: THREE.Camera, out: THREE.Vector3) {
+  _ndcNear.set(ndcX, ndcY, -1).unproject(camera);
+  _ndcFar.set(ndcX, ndcY, 1).unproject(camera);
+  const dz = _ndcFar.z - _ndcNear.z;
+  const t = Math.abs(dz) < 1e-6 ? 0 : (0 - _ndcNear.z) / dz;
+  out.set(
+    _ndcNear.x + (_ndcFar.x - _ndcNear.x) * t,
+    _ndcNear.y + (_ndcFar.y - _ndcNear.y) * t,
+    0,
+  );
+  return out;
+}
+
 const ENTRANCE_DURATION = 1.6;
 const WAVE_START = 1.75;
 const WAVE_RAISE = 0.55;
@@ -257,7 +274,7 @@ type Props = {
 };
 
 export function HeroAstronaut({ progress }: Props) {
-  const { viewport, size } = useThree();
+  const { camera, viewport, size } = useThree();
   const mobile = size.width < 768;
 
   const root = useRef<THREE.Group>(null);
@@ -280,6 +297,9 @@ export function HeroAstronaut({ progress }: Props) {
   const fillLight = useRef<THREE.PointLight>(null);
 
   const time = useRef(0);
+  const corner = useRef(new THREE.Vector3());
+  const targetPos = useRef(new THREE.Vector3());
+  const startPos = useRef(new THREE.Vector3());
   const reduced = useMemo(
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
     [],
@@ -361,25 +381,14 @@ export function HeroAstronaut({ progress }: Props) {
   );
 
   const layout = useMemo(() => {
-    const halfW = viewport.width / 2;
-    const halfH = viewport.height / 2;
-    // Sized against the viewport height, capped by width so portrait tablets
-    // do not get a figure that crowds the hero copy and scroll cue.
+    // Same figure size as before — crop is done by placement, not by shrinking.
     const height = Math.min(
       viewport.height * (mobile ? 0.36 : 0.46),
       viewport.width * (mobile ? 0.7 : 0.42),
     );
-    const scale = height / MODEL_HEIGHT;
-    // Centre of the right third, boots fully inside the frame.
-    const x = mobile ? halfW * 0.5 : halfW * 0.56;
-    const y = -halfH + height / 2 + viewport.height * 0.03;
     return {
-      scale,
+      scale: height / MODEL_HEIGHT,
       height,
-      target: new THREE.Vector3(x, y, 0),
-      start: new THREE.Vector3(x + height * 0.6, y - height * 1.4, 0),
-      rim: new THREE.Vector3(x + height * 0.35, y + height * 0.5, -height * 0.5),
-      fill: new THREE.Vector3(x - height * 0.55, y + height * 0.15, height * 0.95),
       lightReach: height * 1.7,
     };
   }, [viewport.width, viewport.height, mobile]);
@@ -409,12 +418,37 @@ export function HeroAstronaut({ progress }: Props) {
     const torsoTurn = smoothstep(0.45, 1, u);
     const headTurn = smoothstep(0.58, 1, u);
 
-    g.position.lerpVectors(layout.start, layout.target, move);
+    // Pin to the live camera’s bottom-right. Lift keeps helmet → belt on
+    // screen; lower legs stay below the hero. Mobile needs less lift because
+    // the tall frustum maps NDC −1 closer to the true visual bottom.
+    camera.updateMatrixWorld();
+    ndcToZ0(0.9, -1, camera, corner.current);
+    const x = corner.current.x - layout.scale * (mobile ? 0.42 : 0.52);
+    const y = corner.current.y + layout.height * (mobile ? 0.34 : 0.7);
+    targetPos.current.set(x, y, 0);
+    startPos.current.set(x + layout.height * 0.35, y - layout.height * 0.4, 0);
+
+    g.position.lerpVectors(startPos.current, targetPos.current, move);
     g.position.y -= (1 - vis) * layout.height * 1.3;
     g.scale.setScalar(layout.scale * pop);
 
-    // Float / drift.
-    const floatY = Math.sin(t * 0.9) * 0.04 * idle;
+    if (rimLight.current) {
+      rimLight.current.position.set(
+        targetPos.current.x + layout.height * 0.35,
+        targetPos.current.y + layout.height * 0.5,
+        -layout.height * 0.5,
+      );
+    }
+    if (fillLight.current) {
+      fillLight.current.position.set(
+        targetPos.current.x - layout.height * 0.55,
+        targetPos.current.y + layout.height * 0.15,
+        layout.height * 0.95,
+      );
+    }
+
+    // Small idle bob — kept well below the hidden-leg allowance so boots stay off-screen.
+    const floatY = Math.sin(t * 0.9) * 0.018 * idle;
     b.position.set(0, -MODEL_CENTER + floatY, 0);
     b.rotation.set(
       Math.sin(t * 0.33) * 0.015 * idle + (1 - move) * 0.25,
@@ -490,7 +524,6 @@ export function HeroAstronaut({ progress }: Props) {
     <>
       <pointLight
         ref={rimLight}
-        position={layout.rim}
         color="#b9d9f6"
         intensity={2.2}
         distance={layout.lightReach}
@@ -498,7 +531,6 @@ export function HeroAstronaut({ progress }: Props) {
       />
       <pointLight
         ref={fillLight}
-        position={layout.fill}
         color="#eef5fb"
         intensity={1.0}
         distance={layout.lightReach}
