@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Clock3, Coins, Search, ShoppingBag } from "lucide-react";
-import { useEffect, useId, useMemo, useRef, useState, type FormEvent } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 
 import { Modal, SearchBar } from "@/components/shared";
 import { CoverArt } from "@/features/play/components/CoverArt";
@@ -14,8 +14,18 @@ import { categoryIcon, categoryLabel } from "../data/taxonomy";
 import { searchStoreProducts } from "../lib/filter";
 import { credits as formatCredits, money } from "../lib/format";
 
-/** Fixed GVRZE Store search icon — opens the product search panel. */
-export function GeostoreSearchButton({ className }: { className?: string }) {
+/**
+ * Fixed GVRZE Store search icon — opens the product search panel.
+ * `renderTrigger` lets a surface with its own visual language (the storefront)
+ * supply the opener while reusing the same search panel and recent searches.
+ */
+export function GeostoreSearchButton({
+  className,
+  renderTrigger,
+}: {
+  className?: string;
+  renderTrigger?: (props: { open: boolean; onOpen: () => void }) => ReactNode;
+}) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
@@ -59,15 +69,19 @@ export function GeostoreSearchButton({ className }: { className?: string }) {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label="Search GVRZE Store"
-        title="Search"
-        className={cn(geostoreActionLinkClass(open), className)}
-      >
-        <Search className="h-4 w-4" strokeWidth={1.8} aria-hidden />
-      </button>
+      {renderTrigger ? (
+        renderTrigger({ open, onOpen: () => setOpen(true) })
+      ) : (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label="Search GVRZE Store"
+          title="Search"
+          className={cn(geostoreActionLinkClass(open), className)}
+        >
+          <Search className="h-4 w-4" strokeWidth={1.8} aria-hidden />
+        </button>
+      )}
 
       <Modal
         open={open}

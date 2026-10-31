@@ -1,0 +1,61 @@
+/*
+ * GVRZE storefront (/geostore).
+ *
+ * Every rule here is keyed to #gvrze-storefront, so nothing leaks into other
+ * pages even though the stylesheet stays loaded after navigating away.
+ */
+
+/*
+ * The storefront ships its own navigation, footer and light canvas. The
+ * site-wide chrome (navbar, footer, universe backdrop and the old floating
+ * store icon row) is hidden only while the storefront is mounted. These
+ * selectors stop matching the moment the storefront unmounts.
+ */
+div:has(> main #gvrze-storefront) > header,
+div:has(> main #gvrze-storefront) > footer,
+body:has(#gvrze-storefront) #geoverze-universe-background,
+body:has(#gvrze-storefront) [aria-label="GVRZE Store actions"] {
+  display: none !important;
+}
+
+#gvrze-storefront {
+  --sf-ink: #000000;
+  --sf-ink-strong: #1a1a1a;
+  --sf-ink-soft: #353535;
+  --sf-ink-muted: #555555;
+  --sf-canvas: #f6f6f6;
+  --sf-line: #cacaca;
+  --sf-chip: #e2e2e2;
+  --sf-radius: 11px;
+  --sf-font-body: "Montserrat", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --sf-font-ui: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  position: relative;
+  background: #ffffff;
+  color: var(--sf-ink);
+  font-family: var(--sf-font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* The app-wide focus ring is bronze on dark. On the light canvas use ink. */
+#gvrze-storefront :focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px #ffffff,
+    0 0 0 4px var(--sf-ink-strong);
+}
+
+/* Anchor jumps (e.g. "Collections") clear the fixed storefront header. */
+#gvrze-storefront [id] {
+  scroll-margin-top: 88px;
+}
+
+#gvrze-storefront a,
+#gvrze-storefront button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+#gvrze-storefront img {
+  max-width: none;
+}
