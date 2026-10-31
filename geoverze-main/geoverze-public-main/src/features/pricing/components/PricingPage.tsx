@@ -11,7 +11,9 @@ import { PlanGrid } from "./PlanGrid";
 import { PricingFaq } from "./PricingFaq";
 import { PricingHero } from "./PricingHero";
 import { WhyUpgrade } from "./WhyUpgrade";
+import { PricingPageBackground } from "./PricingPageBackground";
 import "../styles/pricing-layout.css";
+import "../styles/pricing-page-light.css";
 
 /** Pricing home — the full membership story. Nothing billable yet. */
 export function PricingPage() {
@@ -19,19 +21,22 @@ export function PricingPage() {
   const { plans, comparisonGroups, loading, error } = usePricingCatalog();
 
   return (
-    <PageShell className="pricing-page">
-      <PricingHero cycle={cycle} onCycleChange={setCycle} />
-      <PlanGrid cycle={cycle} plans={plans} loading={loading} error={error} />
-      <BenefitGrid />
-      <WhyUpgrade />
-      <ComparisonTable
-        plans={plans}
-        comparisonGroups={comparisonGroups}
-        loading={loading}
-        error={error}
-      />
-      <CreatorMembership />
-      <PricingFaq />
-    </PageShell>
+    <div id="gvrze-pricing-page">
+      <PricingPageBackground />
+      <PageShell className="pricing-page">
+        <PricingHero cycle={cycle} onCycleChange={setCycle} />
+        <PlanGrid cycle={cycle} plans={plans} loading={loading} error={error} />
+        <BenefitGrid />
+        <WhyUpgrade />
+        <ComparisonTable
+          plans={plans}
+          comparisonGroups={comparisonGroups}
+          loading={loading}
+          error={error}
+        />
+        <CreatorMembership />
+        <PricingFaq />
+      </PageShell>
+    </div>
   );
 }

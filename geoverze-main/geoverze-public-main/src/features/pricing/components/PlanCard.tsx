@@ -26,6 +26,7 @@ export const PlanCard = memo(function PlanCard({
     <GlassCard
       strong={plan.featured}
       interactive={!locked}
+      data-tier={plan.id}
       className={cn(
         "pricing-plan-card relative flex h-full min-w-0 flex-col p-7 sm:p-8 xl:p-9",
         plan.featured && "pricing-plan-card--featured border-bronze/45 bronze-glow",

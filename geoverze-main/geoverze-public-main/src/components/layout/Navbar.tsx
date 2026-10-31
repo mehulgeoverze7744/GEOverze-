@@ -42,6 +42,7 @@ export function Navbar() {
   const isHome = pathname === "/";
   const isPlayHub = pathname === "/play";
   const isCommunity = pathname.startsWith("/community");
+  const isPricing = pathname === "/pricing" || pathname === "/pricing/";
   const signedIn = useAuthStore(selectIsSignedIn);
   const navigate = useNavigate();
 
@@ -84,7 +85,9 @@ export function Navbar() {
     <header
       ref={headerRef}
       data-scrolled="false"
-      data-surface={isHome ? "home" : isPlayHub ? "play" : isCommunity ? "community" : undefined}
+      data-surface={
+        isHome ? "home" : isPlayHub ? "play" : isCommunity ? "community" : isPricing ? "pricing" : undefined
+      }
       className="group fixed inset-x-0 top-0 z-50 h-[var(--nav-height)] border-b border-transparent transition-all motion-base data-[scrolled=true]:glass-panel data-[scrolled=true]:rounded-none data-[scrolled=true]:shadow-[var(--shadow-float)]"
     >
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-6 px-6 md:px-10">
@@ -94,7 +97,7 @@ export function Navbar() {
           aria-label={`${site.name} home`}
           className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
         >
-          {isHome || isPlayHub || isCommunity ? (
+          {isHome || isPlayHub || isCommunity || isPricing ? (
             <img
               src="/assets/home/gvrze-wordmark.png"
               alt=""
