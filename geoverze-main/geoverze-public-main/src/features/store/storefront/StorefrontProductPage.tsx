@@ -273,12 +273,12 @@ export function StorefrontProductPage({
   ];
 
   return (
-    <div id="gvrze-storefront">
-      <StorefrontNav />
+    <div id="gvrze-storefront" className="gvrze-storefront-product">
+      <StorefrontNav variant="solid" />
 
-      <main className="min-h-screen bg-white pb-[clamp(48px,6vw,96px)]">
-        {/* ── Breadcrumb ─────────────────────────────────────────────────────── */}
-        <div className={`${SF_SHELL} py-4`}>
+      <main className="min-h-0 bg-white pb-[clamp(48px,6vw,96px)]">
+        {/* ── Breadcrumb: own row below the header, never under the nav ───── */}
+        <div className={`${SF_SHELL} pb-4 pt-5 md:pb-5 md:pt-6`}>
           <nav aria-label="Breadcrumb">
             <ol className="flex flex-wrap items-center gap-x-1.5 text-[11px] text-[#888888]">
               <li>

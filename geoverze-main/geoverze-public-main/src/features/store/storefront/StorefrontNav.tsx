@@ -66,12 +66,21 @@ function Icon({
   );
 }
 
+type StorefrontNavProps = {
+  /**
+   * `overlay` — homepage: fixed over the hero, transparent until scroll.
+   * `solid` — inner store pages: in-flow bar so content never sits underneath.
+   */
+  variant?: "overlay" | "solid";
+};
+
 /**
  * Minimal storefront navigation: transparent over the hero, a light blurred bar
  * once the page scrolls. Cart, wishlist, search and account all stay wired to
  * the existing store state; the menu carries the rest of the store and site.
  */
-export function StorefrontNav() {
+export function StorefrontNav({ variant = "overlay" }: StorefrontNavProps) {
+  const solid = variant === "solid";
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const cartCount = useCartStore(selectCartCount);
@@ -80,6 +89,7 @@ export function StorefrontNav() {
   const { balance, authReady } = useStoreCreditsState();
 
   useEffect(() => {
+    if (solid) return;
     let frame = 0;
     const update = () => {
       frame = 0;
@@ -94,7 +104,7 @@ export function StorefrontNav() {
       window.removeEventListener("scroll", onScroll);
       if (frame) window.cancelAnimationFrame(frame);
     };
-  }, []);
+  }, [solid]);
 
   const closeMenu = () => setMenuOpen(false);
   const navLink = `${SF_UI_FONT} text-[16px] text-black transition-opacity duration-200 hover:opacity-60 motion-reduce:transition-none`;
@@ -102,37 +112,60 @@ export function StorefrontNav() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-40 border-b transition-[height,background-color,border-color] duration-300 motion-reduce:transition-none",
-        scrolled
-          ? "h-16 border-black/10 bg-white/90 backdrop-blur-md"
-          : "h-[76px] border-transparent bg-transparent md:h-[100px]",
+        "z-40 border-b",
+        solid
+          ? "relative h-16 border-black/10 bg-white md:h-[72px]"
+          : cn(
+              "fixed inset-x-0 top-0 transition-[height,background-color,border-color] duration-300 motion-reduce:transition-none",
+              scrolled
+                ? "h-16 border-black/10 bg-white/90 backdrop-blur-md"
+                : "h-[76px] border-transparent bg-transparent md:h-[100px]",
+            ),
       )}
     >
-      <div className={cn(SF_SHELL, "flex h-full items-center")}>
+      <div
+        className={cn(
+          SF_SHELL,
+          "grid h-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2",
+        )}
+      >
         <nav
           aria-label="Store"
-          className="hidden flex-1 items-center gap-[clamp(20px,2.2vw,32px)] md:flex"
+          className="hidden min-w-0 items-center gap-[clamp(16px,2.2vw,32px)] md:flex"
         >
           <Link to="/geostore/browse" className={navLink}>
             Shop
           </Link>
-          <a href="#collections" className={navLink}>
-            Collections
-          </a>
+          {solid ? (
+            <Link to="/geostore" hash="collections" className={navLink}>
+              Collections
+            </Link>
+          ) : (
+            <a href="#collections" className={navLink}>
+              Collections
+            </a>
+          )}
         </nav>
-        <div className="flex-1 md:hidden" aria-hidden="true" />
+        <div className="min-w-0 md:hidden" aria-hidden="true" />
 
-        <Link to="/geostore" aria-label="GVRZE Store home" className="shrink-0 rounded-sm">
+        <Link
+          to="/geostore"
+          aria-label="GVRZE Store home"
+          className="justify-self-center rounded-sm"
+        >
           <img
             src={SF_ASSETS.logo.src}
             width={SF_ASSETS.logo.width}
             height={SF_ASSETS.logo.height}
             alt="GVRZE"
-            className="h-auto w-[clamp(112px,17.6vw,253px)]"
+            className={cn(
+              "block h-auto max-w-full",
+              solid ? "w-[clamp(96px,14vw,168px)]" : "w-[clamp(112px,17.6vw,253px)]",
+            )}
           />
         </Link>
 
-        <div className="flex flex-1 items-center justify-end">
+        <div className="flex min-w-0 items-center justify-end">
           <GeostoreSearchButton
             renderTrigger={({ onOpen }) => (
               <button

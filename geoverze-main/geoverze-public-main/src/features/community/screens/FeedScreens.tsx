@@ -31,10 +31,10 @@ function FeedTabs({
           aria-selected={value === filter.id}
           onClick={() => onChange(filter.id)}
           className={cn(
-            "rounded-full border px-3.5 py-1.5 text-[0.66rem] uppercase tracking-[0.16em] transition-[color,border-color,transform] motion-snap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50 active:scale-[0.97]",
+            "rounded-full border px-3.5 py-1.5 text-[0.66rem] uppercase tracking-[0.16em] transition-[color,border-color,transform] motion-snap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#17191D]/30 active:scale-[0.97]",
             value === filter.id
-              ? "border-bronze/55 bg-bronze/10 text-bronze-glow"
-              : "border-bronze/15 text-foreground/50 hover:border-bronze/40 hover:text-foreground/85",
+              ? "border-[#17191D] bg-[#ECEFF2] text-[#17191D]"
+              : "border-[#DDE1E5] text-[#737B85] hover:border-[#17191D]/40 hover:text-[#17191D]",
           )}
         >
           {filter.label}
@@ -49,13 +49,15 @@ export function CommunityHome() {
   return (
     <div className="space-y-8">
       <AnimatedSection>
-        <p className="eyebrow">Community</p>
-        <h1 className="mt-3 font-light leading-[1.05] tracking-tight text-foreground text-[clamp(1.9rem,4vw,2.9rem)]">
+        <p className="eyebrow text-[0.62rem] uppercase tracking-[0.28em] text-[#737B85]">
+          GVRZE Community
+        </p>
+        <h1 className="mt-3 font-light leading-[1.05] tracking-tight text-[#17191D] text-[clamp(1.9rem,4vw,2.9rem)]">
           Where explorers compare notes
         </h1>
-        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-foreground/60">
-          Share what you learn, settle arguments about borders, celebrate a streak, and find people
-          who take geography as seriously as you do.
+        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#737B85]">
+          Share what you know, learn what you don&apos;t, and connect with a global community that
+          sees geography differently.
         </p>
       </AnimatedSection>
 
@@ -131,8 +133,8 @@ export function CommunityFeed() {
               className={cn(
                 "rounded-full border px-3 py-1.5 text-[0.62rem] uppercase tracking-[0.16em] transition-colors motion-snap",
                 sort === id
-                  ? "border-bronze/50 text-bronze-glow"
-                  : "border-bronze/15 text-foreground/50 hover:border-bronze/35",
+                  ? "border-[#17191D] text-[#17191D]"
+                  : "border-[#DDE1E5] text-[#737B85] hover:border-[#17191D]/40",
               )}
             >
               {id === "recent" ? "Recent" : "Top"}

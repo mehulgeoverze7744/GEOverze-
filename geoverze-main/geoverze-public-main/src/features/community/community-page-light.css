@@ -1,0 +1,250 @@
+/*
+ * Light geographical theme for /community only.
+ * Every rule is keyed to #gvrze-community-page or body:has(#gvrze-community-page)
+ * so homepage, /play, store, library and pricing stay untouched.
+ */
+
+body:has(#gvrze-community-page) {
+  background: #f5f6f7;
+}
+
+body:has(#gvrze-community-page) #geoverze-universe-background {
+  background: #f5f6f7;
+}
+
+body:has(#gvrze-community-page) #geoverze-universe-background > div:not(:first-child) {
+  display: none !important;
+}
+
+body:has(#gvrze-community-page) #geoverze-universe-background > div:first-child {
+  opacity: 1;
+}
+
+/* Site header — white, dark type, active COMMUNITY underline. */
+body:has(#gvrze-community-page) header {
+  background: rgb(255 255 255 / 0.9) !important;
+  border-bottom: 1px solid #dde1e5 !important;
+  box-shadow: none !important;
+}
+
+body:has(#gvrze-community-page) header[data-scrolled="true"] {
+  background-color: rgb(255 255 255 / 0.96) !important;
+  border-bottom: 1px solid #dde1e5 !important;
+  backdrop-filter: blur(16px) saturate(1.05);
+  box-shadow: 0 8px 24px -20px rgb(23 25 29 / 0.28) !important;
+}
+
+body:has(#gvrze-community-page) header .gvrze-home-wordmark {
+  display: block;
+  height: 1.15rem;
+  width: auto;
+}
+
+@media (min-width: 768px) {
+  body:has(#gvrze-community-page) header .gvrze-home-wordmark {
+    height: 1.5rem;
+  }
+}
+
+body:has(#gvrze-community-page) header nav[aria-label="Main"] a {
+  color: #17191d;
+  font-weight: 500;
+}
+
+body:has(#gvrze-community-page) header nav[aria-label="Main"] a:hover {
+  color: #17191d;
+}
+
+body:has(#gvrze-community-page) header nav[aria-label="Main"] a[data-status="active"] {
+  color: #17191d;
+  text-decoration: underline;
+  text-underline-offset: 8px;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: #17191d;
+}
+
+body:has(#gvrze-community-page) header button[aria-label="Open search"],
+body:has(#gvrze-community-page) header button[aria-label="Notifications"],
+body:has(#gvrze-community-page) header button[aria-label^="Notifications,"],
+body:has(#gvrze-community-page) header button[aria-label="Account menu"],
+body:has(#gvrze-community-page) header button[aria-label="Open menu"] {
+  border-color: #dde1e5;
+  background: #ffffff;
+  color: #17191d;
+}
+
+body:has(#gvrze-community-page) header a[href="/auth/signup"] {
+  border-color: #17191d;
+  background: #17191d;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+body:has(#gvrze-community-page) footer {
+  background: rgb(255 255 255 / 0.82);
+  border-color: #dde1e5;
+  color: #17191d;
+}
+
+body:has(#gvrze-community-page) footer p,
+body:has(#gvrze-community-page) footer a,
+body:has(#gvrze-community-page) footer span {
+  color: #737b85;
+}
+
+body:has(#gvrze-community-page) footer a:hover {
+  color: #17191d;
+}
+
+#gvrze-community-page {
+  --cm-bg: #f5f6f7;
+  --cm-white: #ffffff;
+  --cm-grey: #eceff2;
+  --cm-line: #dde1e5;
+  --cm-ink: #17191d;
+  --cm-muted: #737b85;
+  --cm-ice: #c8d8e5;
+  --cm-shadow: 0 10px 28px -22px rgb(23 25 29 / 0.35);
+  color: var(--cm-ink);
+}
+
+#gvrze-community-page .eyebrow {
+  color: var(--cm-muted);
+  letter-spacing: 0.28em;
+}
+
+#gvrze-community-page h1,
+#gvrze-community-page h2,
+#gvrze-community-page h3 {
+  color: var(--cm-ink);
+}
+
+#gvrze-community-page .text-gradient-bronze {
+  background: none;
+  -webkit-text-fill-color: var(--cm-ink);
+  color: var(--cm-ink);
+}
+
+#gvrze-community-page .text-foreground {
+  color: var(--cm-ink);
+}
+
+#gvrze-community-page .text-foreground\/90,
+#gvrze-community-page .text-foreground\/85,
+#gvrze-community-page .text-foreground\/80 {
+  color: var(--cm-ink);
+}
+
+#gvrze-community-page .text-foreground\/75,
+#gvrze-community-page .text-foreground\/72,
+#gvrze-community-page .text-foreground\/70,
+#gvrze-community-page .text-foreground\/60,
+#gvrze-community-page .text-foreground\/55,
+#gvrze-community-page .text-foreground\/50,
+#gvrze-community-page .text-foreground\/42 {
+  color: var(--cm-muted);
+}
+
+#gvrze-community-page p {
+  color: var(--cm-muted);
+}
+
+#gvrze-community-page .text-bronze,
+#gvrze-community-page .text-bronze-glow,
+#gvrze-community-page .text-bronze\/90,
+#gvrze-community-page .text-bronze\/85,
+#gvrze-community-page .text-bronze\/80 {
+  color: var(--cm-ink);
+}
+
+#gvrze-community-page .game-surface,
+#gvrze-community-page .game-surface-raised,
+#gvrze-community-page .community-card {
+  background-color: var(--cm-white);
+  border: 1px solid var(--cm-line);
+  box-shadow: var(--cm-shadow);
+}
+
+#gvrze-community-page .game-lift:hover {
+  border-color: rgb(23 25 29 / 0.18);
+  box-shadow: 0 14px 32px -22px rgb(23 25 29 / 0.4);
+}
+
+#gvrze-community-page button.bg-gradient-bronze,
+#gvrze-community-page a.bg-gradient-bronze {
+  background-image: none !important;
+  background-color: var(--cm-ink) !important;
+  border-color: var(--cm-ink) !important;
+  color: var(--cm-white) !important;
+  box-shadow: none;
+}
+
+#gvrze-community-page button.bg-gradient-bronze:hover,
+#gvrze-community-page a.bg-gradient-bronze:hover {
+  background-color: #25272c !important;
+  filter: none;
+}
+
+#gvrze-community-page .game-surface-raised.inline-flex,
+#gvrze-community-page a.game-surface-raised,
+#gvrze-community-page button.game-surface-raised {
+  background-color: var(--cm-white);
+  border-color: var(--cm-line);
+  color: var(--cm-ink);
+}
+
+#gvrze-community-page select,
+#gvrze-community-page input,
+#gvrze-community-page textarea {
+  background-color: var(--cm-white) !important;
+  border-color: var(--cm-line) !important;
+  color: var(--cm-ink) !important;
+}
+
+#gvrze-community-page .border-bronze\/55,
+#gvrze-community-page .border-bronze\/50,
+#gvrze-community-page .border-bronze\/40,
+#gvrze-community-page .border-bronze\/35,
+#gvrze-community-page .border-bronze\/25,
+#gvrze-community-page .border-bronze\/20,
+#gvrze-community-page .border-bronze\/15,
+#gvrze-community-page .border-bronze\/12,
+#gvrze-community-page .border-bronze\/10 {
+  border-color: var(--cm-line);
+}
+
+#gvrze-community-page .bg-bronze\/10,
+#gvrze-community-page .bg-bronze\/8,
+#gvrze-community-page .bg-bronze\/5 {
+  background-color: var(--cm-grey);
+}
+
+#gvrze-community-page .bg-charcoal\/50 {
+  background-color: var(--cm-grey);
+}
+
+#gvrze-community-page .community-sidebar-link {
+  color: var(--cm-ink);
+}
+
+#gvrze-community-page .community-sidebar-link.is-active {
+  background: var(--cm-grey);
+  color: var(--cm-ink);
+}
+
+#gvrze-community-page .community-sidebar-link:hover {
+  background: var(--cm-grey);
+}
+
+#gvrze-community-page .community-feed-behind {
+  filter: blur(5px);
+  opacity: 0.58;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #gvrze-community-page .community-feed-behind {
+    filter: blur(3px);
+  }
+}

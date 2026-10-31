@@ -19,6 +19,7 @@ import {
   SUGGESTED_PEOPLE,
   type SnapshotBoard,
 } from "../data/suggestions";
+import { getCommunityStats } from "../lib/communityStats";
 import { compactCount } from "../lib/format";
 import { useCommunityActions } from "../lib/useCommunityActions";
 import { MemberAvatar } from "./MemberAvatar";
@@ -36,9 +37,9 @@ function Panel({
   action?: React.ReactNode;
 }) {
   return (
-    <GameCard interactive={false} className="p-5">
+    <GameCard interactive={false} className="community-card p-5">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-        <h2 className="flex min-w-0 items-center gap-2 text-[0.62rem] uppercase tracking-[0.24em] text-bronze/90">
+        <h2 className="flex min-w-0 items-center gap-2 text-[0.62rem] uppercase tracking-[0.22em] text-[#17191D]">
           {Icon ? <Icon className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} /> : null}
           <span className="truncate">{title}</span>
         </h2>
@@ -52,23 +53,37 @@ function Panel({
 /** Today's community-wide prompt. */
 export function DailyTopicCard() {
   return (
-    <GameCard interactive={false} className="p-5">
-      <p className="text-[0.62rem] uppercase tracking-[0.24em] text-bronze/90">Topic of the day</p>
-      <p className="mt-2.5 text-sm font-medium leading-relaxed text-foreground">
+    <GameCard interactive={false} className="community-card p-5">
+      <p className="text-[0.62rem] uppercase tracking-[0.22em] text-[#17191D]">
+        Topic of the day
+      </p>
+      <p className="mt-3 text-sm font-medium leading-relaxed text-[#17191D]">
         {DAILY_TOPIC.title}
       </p>
-      <p className="mt-2 text-[0.78rem] leading-relaxed text-foreground/55">{DAILY_TOPIC.prompt}</p>
-      <p className="mt-3 text-[0.65rem] text-foreground/50">
-        {compactCount(DAILY_TOPIC.responses)} responses today
-      </p>
-      <GeoButton variant="solid" size="sm" className="mt-4 w-full" asChild>
+      <p className="mt-2 text-[0.78rem] leading-relaxed text-[#737B85]">{DAILY_TOPIC.prompt}</p>
+      <div className="mt-4 flex items-center gap-3">
+        <div className="flex -space-x-2">
+          {FEATURED_EXPLORERS.slice(0, 3).map((member) => (
+            <MemberAvatar
+              key={member.handle}
+              handle={member.handle}
+              size="xs"
+              className="ring-2 ring-white"
+            />
+          ))}
+        </div>
+        <p className="text-[0.65rem] text-[#737B85]">
+          {compactCount(DAILY_TOPIC.responses)} explorers joined
+        </p>
+      </div>
+      <GeoButton variant="solid" size="sm" className="mt-4 w-full bg-[#17191D]" asChild>
         <Link to="/community/feed">Join the discussion</Link>
       </GeoButton>
     </GameCard>
   );
 }
 
-export function TrendingTopicsPanel({ limit = 6 }: { limit?: number }) {
+export function TrendingTopicsPanel({ limit = 5 }: { limit?: number }) {
   return (
     <Panel
       title="Trending topics"
@@ -76,30 +91,33 @@ export function TrendingTopicsPanel({ limit = 6 }: { limit?: number }) {
       action={
         <Link
           to="/community/topics"
-          className="shrink-0 text-[0.62rem] uppercase tracking-[0.18em] text-foreground/50 transition-colors hover:text-bronze"
+          className="shrink-0 text-[0.62rem] uppercase tracking-[0.18em] text-[#737B85] transition-colors hover:text-[#17191D]"
         >
           All
         </Link>
       }
     >
-      <ul className="space-y-1">
-        {TOPICS.slice(0, limit).map((topic) => (
+      <ul className="divide-y divide-[#DDE1E5]">
+        {TOPICS.slice(0, limit).map((topic, index) => (
           <li key={topic.slug}>
             <Link
               to="/community/topic/$slug"
               params={{ slug: topic.slug }}
-              className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-lg px-2 py-2 transition-colors motion-snap hover:bg-bronze/8"
+              className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-lg px-1 py-2.5 transition-colors motion-snap hover:bg-[#ECEFF2]"
             >
+              <span className="w-4 shrink-0 text-[0.68rem] tabular-nums text-[#737B85]">
+                {index + 1}
+              </span>
               <span className="min-w-0">
-                <span className="block truncate text-sm text-foreground/85">#{topic.slug}</span>
-                <span className="block truncate text-[0.68rem] text-foreground/50">
+                <span className="block truncate text-sm text-[#17191D]">#{topic.slug}</span>
+                <span className="block truncate text-[0.68rem] text-[#737B85]">
                   {compactCount(topic.posts)} posts
                 </span>
               </span>
               <span
                 className={cn(
                   "shrink-0 text-[0.68rem] tabular-nums",
-                  topic.trend >= 0 ? "text-bronze-glow" : "text-foreground/50",
+                  topic.trend >= 0 ? "text-[#17191D]" : "text-[#737B85]",
                 )}
               >
                 {topic.trend >= 0 ? "+" : ""}
@@ -341,6 +359,40 @@ export function SuggestedCommunitiesPanel() {
   );
 }
 
+export function CommunityStatsPanel() {
+  const stats = getCommunityStats();
+
+  return (
+    <GameCard interactive={false} className="community-card p-5">
+      <h2 className="text-[0.62rem] uppercase tracking-[0.22em] text-[#17191D]">
+        Community stats
+      </h2>
+      <dl className="mt-4 grid grid-cols-3 gap-2 text-center">
+        <div>
+          <dt className="text-[0.58rem] uppercase tracking-[0.16em] text-[#737B85]">Explorers</dt>
+          <dd className="mt-1.5 text-lg font-semibold tabular-nums text-[#17191D]">
+            {stats.explorers}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-[0.58rem] uppercase tracking-[0.16em] text-[#737B85]">
+            Discussions
+          </dt>
+          <dd className="mt-1.5 text-lg font-semibold tabular-nums text-[#17191D]">
+            {stats.discussions}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-[0.58rem] uppercase tracking-[0.16em] text-[#737B85]">Countries</dt>
+          <dd className="mt-1.5 text-lg font-semibold tabular-nums text-[#17191D]">
+            {stats.countries}
+          </dd>
+        </div>
+      </dl>
+    </GameCard>
+  );
+}
+
 /** Left rail: navigation-adjacent context. */
 export function CommunityLeftRail() {
   return (
@@ -352,14 +404,13 @@ export function CommunityLeftRail() {
   );
 }
 
-/** Right rail: discovery and social proof. */
+/** Right rail: topic, trends and live community counts. */
 export function CommunityRightRail() {
   return (
-    <div className="space-y-5">
-      <SuggestedPeoplePanel />
-      <LeaderboardSnapshotPanel />
-      <UpcomingEventsPanel />
-      <RecentAchievementsPanel />
+    <div className="space-y-4">
+      <DailyTopicCard />
+      <TrendingTopicsPanel />
+      <CommunityStatsPanel />
     </div>
   );
 }

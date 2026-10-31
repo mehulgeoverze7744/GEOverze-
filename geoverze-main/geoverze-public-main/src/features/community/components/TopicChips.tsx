@@ -23,7 +23,7 @@ export function TopicChips({
               <Link
                 to="/community/topic/$slug"
                 params={{ slug: topic }}
-                className="inline-flex rounded-full border border-bronze/20 px-2.5 py-1 text-[0.65rem] text-foreground/55 transition-[color,border-color] motion-snap hover:border-bronze/45 hover:text-bronze-glow"
+                className="inline-flex rounded-full border border-[#DDE1E5] px-2.5 py-1 text-[0.65rem] text-[#737B85] transition-[color,border-color] motion-snap hover:border-[#17191D]/40 hover:text-[#17191D]"
               >
                 {label}
               </Link>

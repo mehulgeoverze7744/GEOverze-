@@ -5,62 +5,66 @@ import {
   CalendarDays,
   Compass,
   Flame,
-  Hash,
   Home,
-  Search,
+  Lightbulb,
+  Map,
+  MessageCircle,
+  Newspaper,
   Users,
-  UserPlus,
+  UsersRound,
 } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { SectionContainer } from "@/components/shared";
 import { cn } from "@/lib/utils";
 
+import "../community-page-light.css";
 import { COMMUNITY_NOTIFICATIONS } from "../data/notifications";
 import { COMMUNITY_LOCKED } from "../lib/communityLocked";
 import { useCommunityStore } from "@/stores/communityStore";
 import { CommunityComingSoonOverlay } from "./CommunityComingSoonOverlay";
-import { CommunityLeftRail, CommunityRightRail } from "./Rails";
+import { CommunityPageBackground } from "./CommunityPageBackground";
+import { CommunityRightRail } from "./Rails";
 
 const NAV = [
   { label: "Community", to: "/community", icon: Home, exact: true },
-  { label: "Feed", to: "/community/feed", icon: Compass },
-  { label: "Discover", to: "/community/discover", icon: Search },
-  { label: "Topics", to: "/community/topics", icon: Hash },
-  { label: "Explorers", to: "/community/members", icon: Users },
-  { label: "Friends", to: "/community/friends", icon: UserPlus },
-  { label: "Challenges", to: "/community/challenges", icon: Flame },
+  { label: "Feed", to: "/community/feed", icon: Newspaper },
+  { label: "Discuss", to: "/community/discover", icon: MessageCircle },
+  { label: "Maps", to: "/community/topics", icon: Map },
+  { label: "Explorers", to: "/community/members", icon: Compass },
   { label: "Events", to: "/community/events", icon: CalendarDays },
+  { label: "Ideas", to: "/community/topics", icon: Lightbulb },
+  { label: "Challenges", to: "/community/challenges", icon: Flame },
+  { label: "Groups", to: "/community/friends", icon: UsersRound },
   { label: "Saved", to: "/community/saved", icon: Bookmark },
   { label: "Notifications", to: "/community/notifications", icon: Bell },
 ] as const;
 
-function ModuleNav() {
+function ModuleNav({ compact = false }: { compact?: boolean }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const read = useCommunityStore((s) => s.readNotifications);
   const unread = COMMUNITY_NOTIFICATIONS.filter((n) => !n.read && !read.includes(n.id)).length;
 
   return (
-    <nav aria-label="Community sections" className="-mx-6 overflow-x-auto px-6 lg:mx-0 lg:px-0">
-      <ul className="flex gap-1.5 lg:flex-col">
+    <nav aria-label="Community sections">
+      <ul className={cn(compact ? "flex gap-1 overflow-x-auto pb-1" : "flex flex-col gap-0.5")}>
         {NAV.map((item) => {
           const active =
             "exact" in item && item.exact ? pathname === item.to : pathname.startsWith(item.to);
           return (
-            <li key={item.to} className="shrink-0 lg:shrink">
+            <li key={`${item.label}-${item.to}`} className={compact ? "shrink-0" : undefined}>
               <Link
                 to={item.to}
                 className={cn(
-                  "flex items-center gap-2.5 rounded-full border px-3.5 py-2 text-[0.7rem] uppercase tracking-[0.14em] transition-[color,border-color] motion-snap lg:rounded-xl",
-                  active
-                    ? "border-bronze/50 bg-bronze/10 text-bronze-glow"
-                    : "border-transparent text-foreground/50 hover:border-bronze/25 hover:text-foreground/85",
+                  "community-sidebar-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-[0.68rem] uppercase tracking-[0.16em] text-[#17191D] transition-colors motion-snap",
+                  compact && "px-3 py-2",
+                  active && "is-active",
                 )}
               >
-                <item.icon className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />
+                <item.icon className="h-4 w-4 shrink-0 text-[#17191D]" strokeWidth={1.5} />
                 <span className="truncate">{item.label}</span>
                 {item.label === "Notifications" && unread > 0 ? (
-                  <span className="ml-auto rounded-full bg-bronze/20 px-1.5 text-[0.6rem] tabular-nums text-bronze-glow">
+                  <span className="ml-auto rounded-full bg-[#17191D] px-1.5 py-0.5 text-[0.58rem] tabular-nums text-white">
                     {unread}
                   </span>
                 ) : null}
@@ -73,47 +77,100 @@ function ModuleNav() {
   );
 }
 
+function SidebarCard({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className="community-card overflow-hidden rounded-2xl p-4 sm:p-5">
+      <ModuleNav compact={compact} />
+      {compact ? null : (
+        <div className="mt-5 rounded-xl border border-[#DDE1E5] bg-[#ECEFF2] px-4 py-4">
+          <p className="flex items-start gap-2.5 text-[0.72rem] leading-relaxed text-[#737B85]">
+            <Users className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#17191D]" strokeWidth={1.5} />
+            A global community of curious explorers.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /**
- * Three-column community shell: module nav, page content, discovery rail.
- * Rails collapse below the content on narrow viewports.
+ * Three-column community shell: sidebar, feed, discovery widgets.
+ * The Coming Soon panel sits over the feed only.
  */
 export function CommunityLayout() {
   return (
-    <PageShell>
-      <div className="relative">
-        <SectionContainer
-          size="wide"
-          inert={COMMUNITY_LOCKED ? true : undefined}
-          aria-hidden={COMMUNITY_LOCKED ? true : undefined}
-          className={cn(
-            "pt-[calc(var(--nav-height)+var(--space-section-sm))]",
-            COMMUNITY_LOCKED && "select-none",
-          )}
-        >
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,200px)_minmax(0,1fr)] xl:grid-cols-[minmax(0,200px)_minmax(0,1fr)_minmax(0,320px)]">
-            <aside className="min-w-0 lg:sticky lg:top-[calc(var(--nav-height)+1.5rem)] lg:self-start">
-              <ModuleNav />
-            </aside>
+    <div id="gvrze-community-page">
+      <CommunityPageBackground />
+      <PageShell>
+        <div className="relative">
+          <SectionContainer
+            size="wide"
+            className="pt-[calc(var(--nav-height)+var(--space-section-sm))]"
+          >
+            <div className="grid items-start gap-5 lg:grid-cols-[220px_minmax(0,1fr)] xl:grid-cols-[220px_minmax(0,1fr)_300px] xl:gap-6">
+              <aside className="hidden min-w-0 lg:sticky lg:top-[calc(var(--nav-height)+1.25rem)] lg:block lg:self-start">
+                <div
+                  inert={COMMUNITY_LOCKED ? true : undefined}
+                  aria-hidden={COMMUNITY_LOCKED ? true : undefined}
+                  className={cn(COMMUNITY_LOCKED && "select-none")}
+                >
+                  <SidebarCard />
+                </div>
+              </aside>
 
-            <div className="min-w-0">
-              <Outlet />
-              <div className="mt-8 space-y-5 xl:hidden">
-                <CommunityLeftRail />
-                <CommunityRightRail />
+              <div className="min-w-0">
+                <div className="mb-5 lg:hidden">
+                  <div
+                    inert={COMMUNITY_LOCKED ? true : undefined}
+                    aria-hidden={COMMUNITY_LOCKED ? true : undefined}
+                    className={cn(COMMUNITY_LOCKED && "select-none")}
+                  >
+                    <SidebarCard compact />
+                  </div>
+                </div>
+
+                <div className="relative min-h-[36rem]">
+                  <div
+                    inert={COMMUNITY_LOCKED ? true : undefined}
+                    aria-hidden={COMMUNITY_LOCKED ? true : undefined}
+                    className={cn(
+                      COMMUNITY_LOCKED && "community-feed-behind select-none",
+                    )}
+                  >
+                    <Outlet />
+                  </div>
+
+                  {COMMUNITY_LOCKED ? (
+                    <div className="pointer-events-none absolute inset-x-0 top-0 bottom-0 z-10">
+                      <div className="sticky top-[calc(var(--nav-height)+2.25rem)] flex justify-center px-2 pt-4 sm:pt-8">
+                        <CommunityComingSoonOverlay />
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+
+                <div
+                  className="mt-8 space-y-5 xl:hidden"
+                  inert={COMMUNITY_LOCKED ? true : undefined}
+                  aria-hidden={COMMUNITY_LOCKED ? true : undefined}
+                >
+                  <CommunityRightRail />
+                </div>
               </div>
+
+              <aside className="hidden xl:sticky xl:top-[calc(var(--nav-height)+1.25rem)] xl:block xl:self-start">
+                <div
+                  inert={COMMUNITY_LOCKED ? true : undefined}
+                  aria-hidden={COMMUNITY_LOCKED ? true : undefined}
+                  className={cn(COMMUNITY_LOCKED && "select-none")}
+                >
+                  <CommunityRightRail />
+                </div>
+              </aside>
             </div>
-
-            <aside className="hidden xl:sticky xl:top-[calc(var(--nav-height)+1.5rem)] xl:block xl:self-start">
-              <div className="space-y-5">
-                <CommunityLeftRail />
-                <CommunityRightRail />
-              </div>
-            </aside>
-          </div>
-        </SectionContainer>
-
-        {COMMUNITY_LOCKED ? <CommunityComingSoonOverlay /> : null}
-      </div>
-    </PageShell>
+          </SectionContainer>
+        </div>
+      </PageShell>
+    </div>
   );
 }

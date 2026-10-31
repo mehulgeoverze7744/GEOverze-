@@ -59,3 +59,12 @@ body:has(#gvrze-storefront) [aria-label="GVRZE Store actions"] {
 #gvrze-storefront img {
   max-width: none;
 }
+
+/* Header wordmark must stay inside the bar; product photos keep max-width: none. */
+#gvrze-storefront header img {
+  max-width: 100%;
+}
+
+#gvrze-storefront.gvrze-storefront-product {
+  overflow-x: clip;
+}

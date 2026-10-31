@@ -61,10 +61,10 @@ export function PostComposer() {
                   onClick={() => setMode(m.id)}
                   aria-pressed={mode === m.id}
                   className={cn(
-                    "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[0.68rem] uppercase tracking-[0.14em] transition-[color,border-color,transform] motion-snap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50 active:scale-[0.97]",
+                    "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[0.68rem] uppercase tracking-[0.14em] transition-[color,border-color,transform] motion-snap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#17191D]/30 active:scale-[0.97]",
                     mode === m.id
-                      ? "border-bronze/55 bg-bronze/10 text-bronze-glow"
-                      : "border-bronze/15 text-foreground/50 hover:border-bronze/40 hover:text-foreground/80",
+                      ? "border-[#17191D] bg-[#ECEFF2] text-[#17191D]"
+                      : "border-[#DDE1E5] text-[#737B85] hover:border-[#17191D]/40 hover:text-[#17191D]",
                   )}
                 >
                   <m.icon className="h-3.5 w-3.5" strokeWidth={1.5} />
