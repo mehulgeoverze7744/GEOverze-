@@ -323,6 +323,114 @@ body:has(header[data-surface="account"]) footer span[aria-label$="coming soon"] 
   color: #5c636c;
 }
 
+#gvrze-account .dashboard-geostore {
+  background: #ffffff;
+  border-color: #dde2e7;
+  box-shadow: 0 12px 32px -22px rgb(23 25 29 / 0.18);
+  color: #17191d;
+}
+
+#gvrze-account .dashboard-subscription {
+  background: #ffffff;
+  border-color: #dde2e7;
+  box-shadow: 0 12px 32px -22px rgb(23 25 29 / 0.18);
+  color: #17191d;
+}
+
+#gvrze-account .dashboard-subscription-title,
+#gvrze-account .dashboard-subscription-title.dashboard-section-label,
+#gvrze-account .dashboard-subscription-title svg {
+  color: #17191d;
+}
+
+#gvrze-account .dashboard-subscription-panel {
+  background: #f1f3f5;
+  border-color: #dde2e7;
+}
+
+#gvrze-account .dashboard-subscription-plan {
+  color: #17191d;
+}
+
+#gvrze-account .dashboard-subscription-tier {
+  color: #8a929a;
+}
+
+#gvrze-account .dashboard-subscription-positioning,
+#gvrze-account .dashboard-subscription-note,
+#gvrze-account .dashboard-subscription-note svg {
+  color: #555e68;
+}
+
+#gvrze-account .dashboard-subscription-features li {
+  color: #17191d;
+}
+
+#gvrze-account .dashboard-subscription-check {
+  color: #111111;
+}
+
+#gvrze-account .dashboard-subscription-cta,
+#gvrze-account .dashboard-subscription-cta:hover,
+#gvrze-account .dashboard-subscription-cta:active {
+  background: #000000;
+  border-color: #000000;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+#gvrze-account .dashboard-subscription-cta:hover {
+  background: #2a2f36;
+  border-color: #2a2f36;
+}
+
+#gvrze-account .dashboard-achievements-grid .dashboard-achievement,
+#gvrze-account .dashboard-history-row {
+  background: #dcecf8;
+  border-color: #c5dcec;
+  color: #17191d;
+  box-shadow: none;
+}
+
+#gvrze-account .dashboard-achievements-grid .dashboard-achievement:hover,
+#gvrze-account .dashboard-history-row:hover {
+  background: #d0e5f4;
+}
+
+#gvrze-account .dashboard-achievement__icon {
+  background: #e7f2fa;
+  border-color: #c5dcec;
+  color: #3d5368;
+}
+
+#gvrze-account .dashboard-achievement__title,
+#gvrze-account .dashboard-history-row__title {
+  color: #17191d;
+}
+
+#gvrze-account .dashboard-achievement__dek {
+  color: #515b65;
+}
+
+#gvrze-account .dashboard-achievement__meta,
+#gvrze-account .dashboard-history-row__meta {
+  color: #687887;
+}
+
+#gvrze-account .dashboard-history-row__score,
+#gvrze-account .dashboard-history-row__score--normal,
+#gvrze-account .dashboard-history-row__score--strong,
+#gvrze-account .dashboard-history-row__score--perfect {
+  background: #ffffff;
+  border-color: #c5dcec;
+  color: #17191d;
+}
+
+#gvrze-account .dashboard-history-row__score--strong,
+#gvrze-account .dashboard-history-row__score--perfect {
+  background: #e7f2fa;
+}
+
 #gvrze-account .dashboard-current-plan,
 #gvrze-account .dashboard-quick-status,
 #gvrze-account .dashboard-quick-status__item,

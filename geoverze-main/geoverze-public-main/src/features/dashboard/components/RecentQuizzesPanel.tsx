@@ -15,9 +15,9 @@ function scoreTone(score: number, total: number) {
 }
 
 const TONE_CLASS = {
-  perfect: "border-bronze/50 bg-bronze/15 text-bronze-glow",
-  strong: "border-bronze/35 bg-bronze/10 text-bronze",
-  normal: "border-bronze/18 bg-charcoal/45 text-foreground/65",
+  perfect: "dashboard-history-row__score--perfect",
+  strong: "dashboard-history-row__score--strong",
+  normal: "dashboard-history-row__score--normal",
 } as const;
 
 /** Recent attempts from quiz_attempts — empty until the explorer has played. */
@@ -56,7 +56,7 @@ export function RecentQuizzesPanel({ className }: { className?: string }) {
           </p>
         </div>
       ) : (
-        <ol className="mt-6 flex flex-1 list-none flex-col justify-between gap-1">
+        <ol className="dashboard-history-list mt-6 flex flex-1 list-none flex-col justify-between gap-2">
           {attempts.map((entry) => {
             const tone = scoreTone(entry.score, entry.total);
 
@@ -65,23 +65,18 @@ export function RecentQuizzesPanel({ className }: { className?: string }) {
                 <Link
                   to="/play/quiz"
                   search={{ quiz: entry.quizId }}
-                  className="dashboard-history-row group flex items-center gap-3 rounded-xl border border-transparent px-2 py-2.5 transition-colors motion-fast hover:border-bronze/20 hover:bg-bronze/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45 lg:px-2.5"
+                  className="dashboard-history-row group"
                 >
                   <span className="min-w-0 flex-1">
                     <span className="flex items-start justify-between gap-2">
-                      <span className="truncate text-sm leading-snug text-foreground/90">
+                      <span className="dashboard-history-row__title">
                         {entry.title}
                       </span>
-                      <span
-                        className={cn(
-                          "shrink-0 rounded-full border px-2 py-0.5 text-[0.62rem] font-medium tabular-nums",
-                          TONE_CLASS[tone],
-                        )}
-                      >
+                      <span className={cn("dashboard-history-row__score", TONE_CLASS[tone])}>
                         {entry.score}/{entry.total}
                       </span>
                     </span>
-                    <span className="mt-0.5 block truncate text-[0.68rem] text-foreground/50">
+                    <span className="dashboard-history-row__meta">
                       {formatPlayMode(entry.mode)} · {formatDashboardWhen(entry.completedAt)}
                       {entry.creditsEarned > 0 ? ` · +${entry.creditsEarned} credits` : ""}
                     </span>

@@ -5,7 +5,6 @@ import earthFragments from "@/assets/geostore/hoodie-fragments-of-earth.jpg";
 import earthIntelligence from "@/assets/geostore/hoodie-earth-intelligence.jpg";
 import explorersCompass from "@/assets/geostore/explorers-compass.jpg";
 import flagStickers from "@/assets/geostore/flag-sticker-pack.jpg";
-import geostoreHero from "@/assets/geostore/geostore-hero.jpg";
 import oldWorldMap from "@/assets/geostore/old-world-mug.jpg";
 
 import type { LinkedItem } from "@/features/dashboard/data/dashboard";
@@ -15,9 +14,6 @@ import { articleCardImageSrc } from "@/features/library/data/article-card-images
 export const DASHBOARD_EARTH_SRC = "/assets/dashboard-earth.jpg";
 
 export const FEATURED_EXPEDITION_IMAGE = earthIntelligence;
-
-/** Existing GVRZE Store merch hero — dashboard GVRZE Store card only. */
-export const GEOSTORE_CARD_IMAGE = geostoreHero;
 
 /** Uploaded brushed-metal plate — Quick Status card only. */
 export const QUICK_STATUS_CARD_IMAGE = quickStatusMetal;
