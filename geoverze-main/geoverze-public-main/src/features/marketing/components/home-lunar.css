@@ -13,21 +13,22 @@ body:has(#gvrze-home) #geoverze-universe-background {
   z-index: -10;
   overflow: hidden;
   pointer-events: none;
-  background: #d7e6f0;
+  background-color: #e8f1f8;
+  background-image: url("/assets/home/lunar-orbit-hero.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 82% 48%;
 }
 
-.gvrze-home-sky img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  max-width: none;
-  object-fit: cover;
-  object-position: 62% 42%;
+@media (max-width: 1023px) {
+  .gvrze-home-sky {
+    background-position: 68% 44%;
+  }
 }
 
 @media (max-width: 767px) {
-  .gvrze-home-sky img {
-    object-position: 74% 36%;
+  .gvrze-home-sky {
+    background-position: 52% 38%;
   }
 }
 
@@ -195,6 +196,12 @@ body:has(#gvrze-home) footer input::placeholder {
 /* The bronze bloom is a sky effect. Hide it so the lunar photo stays true. */
 #gvrze-home #home-hero > div:first-child {
   display: none;
+}
+
+/* Keep the supplied moon photograph as the only hero backdrop. */
+#gvrze-home #home-hero canvas {
+  opacity: 0;
+  pointer-events: none;
 }
 
 #gvrze-home #home-hero h1,

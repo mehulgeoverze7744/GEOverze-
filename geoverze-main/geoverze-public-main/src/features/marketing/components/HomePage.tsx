@@ -26,16 +26,7 @@ export function HomePage() {
 
   return (
     <div id="gvrze-home">
-      <div className="gvrze-home-sky" aria-hidden="true">
-        <img
-          src="/assets/home/lunar-horizon.jpg"
-          alt=""
-          width={1024}
-          height={528}
-          fetchPriority="high"
-          decoding="async"
-        />
-      </div>
+      <div className="gvrze-home-sky" aria-hidden="true" />
       <HomeHero />
       <div className="gvrze-home-below">
         <WhyGeoverze />

@@ -14,14 +14,14 @@ export const HERO_REWARDS: HeroRewardItem[] = [
     title: "iPhone Duo",
     image: "/assets/rewards/iphone-duo.jpg",
     imageAlt: "Two premium iPhones in a product display",
-    imagePosition: "center center",
+    imagePosition: "center 42%",
   },
   {
     id: "ps5",
-    title: "PS5",
+    title: "PlayStation",
     image: "/assets/rewards/ps5.jpg",
     imageAlt: "PlayStation 5 console and DualSense controller",
-    imagePosition: "62% center",
+    imagePosition: "70% center",
   },
   {
     id: "merch",

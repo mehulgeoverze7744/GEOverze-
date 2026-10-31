@@ -612,3 +612,127 @@ body:has(#lets-play-page) footer .mt-16.border-t {
     padding: 0.36rem 0.75rem;
   }
 }
+
+/* Featured banner — white titles, filter tabs, circular arrows. */
+#lets-play-page .featured-carousel-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem 0;
+}
+
+#lets-play-page .featured-carousel-filter {
+  min-height: 2rem;
+  padding: 0.35rem 0.95rem;
+  border: 1px solid #d9dee5;
+  border-radius: 9999px;
+  background: #ffffff;
+  color: #17191d;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+#lets-play-page .featured-carousel-filter:hover {
+  background: #f4f5f7;
+}
+
+#lets-play-page .featured-carousel-filter.is-active {
+  background: #111111;
+  border-color: #111111;
+  color: #ffffff;
+}
+
+#lets-play-page .featured-carousel-filter:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+#lets-play-page .featured-carousel-scrim {
+  background: linear-gradient(
+    to top,
+    rgb(0 0 0 / 0.72) 0%,
+    rgb(0 0 0 / 0.28) 48%,
+    rgb(0 0 0 / 0.04) 100%
+  );
+}
+
+#lets-play-page h2.featured-carousel-title,
+#lets-play-page .featured-carousel-title {
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 18px rgb(0 0 0 / 0.35);
+}
+
+#lets-play-page .featured-carousel-media {
+  animation: featured-carousel-fade 320ms ease;
+}
+
+#lets-play-page .featured-carousel-arrow {
+  position: absolute;
+  top: 1.15rem;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid #d9dee5;
+  border-radius: 9999px;
+  background: #ffffff;
+  color: #17191d;
+  box-shadow: 0 8px 18px -12px rgb(17 24 39 / 0.45);
+}
+
+#lets-play-page .featured-carousel-arrow svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+#lets-play-page .featured-carousel-arrow:hover {
+  background: #f4f5f7;
+}
+
+#lets-play-page .featured-carousel-arrow--prev {
+  left: 0.85rem;
+}
+
+#lets-play-page .featured-carousel-arrow--next {
+  right: 0.85rem;
+}
+
+@media (max-width: 767px) {
+  #lets-play-page .featured-carousel-arrow {
+    top: 0.85rem;
+    width: 2rem;
+    height: 2rem;
+  }
+
+  #lets-play-page .featured-carousel-arrow svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  #lets-play-page .featured-carousel-arrow--prev {
+    left: 0.55rem;
+  }
+
+  #lets-play-page .featured-carousel-arrow--next {
+    right: 0.55rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #lets-play-page .featured-carousel-media {
+    animation: none;
+  }
+}
+
+@keyframes featured-carousel-fade {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}

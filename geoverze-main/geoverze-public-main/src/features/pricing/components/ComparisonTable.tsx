@@ -139,6 +139,12 @@ export function ComparisonTable({
 
             <table className="pricing-compare-table" aria-describedby="compare-feature-col">
               <caption className="sr-only">GVRZE membership feature comparison</caption>
+              <colgroup>
+                <col className="pricing-compare-feature-col" />
+                {plans.map((plan) => (
+                  <col key={plan.id} className="pricing-compare-plan-col" />
+                ))}
+              </colgroup>
               <thead className="sr-only">
                 <tr>
                   <th scope="col">Feature</th>

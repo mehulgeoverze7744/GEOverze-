@@ -17,6 +17,11 @@
   padding-top: 0;
 }
 
+/* Keep a clear gap under the billing toggle — do not pull cards into the hero. */
+#gvrze-pricing-page .pricing-tiers-section {
+  margin-top: 0;
+}
+
 .pricing-page .pricing-faq-section {
   padding-bottom: var(--space-section-sm);
 }

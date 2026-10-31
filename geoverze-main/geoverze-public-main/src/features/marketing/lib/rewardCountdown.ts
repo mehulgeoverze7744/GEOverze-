@@ -68,3 +68,7 @@ export function formatCountdownSegment(value: number): string {
 export function formatRewardCountdown(parts: RewardCountdownParts): string {
   return `${formatCountdownSegment(parts.days)} DAYS : ${formatCountdownSegment(parts.hours)} HOURS : ${formatCountdownSegment(parts.minutes)} MINS`;
 }
+
+export function isRewardCountdownExpired(parts: RewardCountdownParts): boolean {
+  return parts.days + parts.hours + parts.minutes + parts.seconds <= 0;
+}

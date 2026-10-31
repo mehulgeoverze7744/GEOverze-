@@ -1,6 +1,6 @@
 import type { Difficulty } from "./categories";
 import { GAME_TYPES, type GameType, type GameTypeSearch } from "./gameTypes";
-import type { Quiz } from "./quizzes";
+import { FEATURED_QUIZ_IDS, type Quiz } from "./quizzes";
 import { quizThumbnailForId } from "./quizThumbnails";
 
 export type FeaturedHeroAction =
@@ -92,4 +92,30 @@ export function buildFeaturedHeroSlides(catalog: readonly Quiz[]): FeaturedHeroS
     gameTypeHeroSlide("geography-imposter", "GEOsus"),
     gameTypeHeroSlide("emoji-fun", "Fun Emoji Quiz"),
   ];
+}
+
+const POPULAR_FALLBACK_TITLES: Record<string, string> = {
+  "q-flag-blitz": "Flag Blitz",
+  "q-atlas-sprint": "Atlas Sprint",
+  "q-grand-tour": "Grand Tour",
+  "q-pin-the-place": "Pin the Place",
+  "q-extremes": "Extremes",
+  "q-monuments": "Monuments",
+  "q-deep-blue": "Deep Blue",
+};
+
+/** Popular banner set — existing catalog games ranked by popularity. */
+export function buildPopularHeroSlides(catalog: readonly Quiz[]): FeaturedHeroSlide[] {
+  const ranked = [...catalog]
+    .filter((quiz) => quizThumbnailForId(quiz.id))
+    .sort((a, b) => b.popularity - a.popularity || b.players - a.players)
+    .slice(0, 5)
+    .map((quiz) => catalogHeroSlide(quiz.id, quiz.title, catalog));
+
+  if (ranked.length > 0) return ranked;
+
+  return FEATURED_QUIZ_IDS.flatMap((id) => {
+    if (!quizThumbnailForId(id)) return [];
+    return [catalogHeroSlide(id, POPULAR_FALLBACK_TITLES[id] ?? id, catalog)];
+  }).slice(0, 5);
 }

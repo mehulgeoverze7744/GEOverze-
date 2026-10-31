@@ -423,17 +423,14 @@ body:has(#gvrze-pricing-page) footer a:hover {
 #gvrze-pricing-page .pricing-compare-category th,
 #gvrze-pricing-page .pricing-compare-feature,
 #gvrze-pricing-page .pricing-compare-cell {
-  color: var(--pr-charcoal);
+  color: #17191d;
 }
 
 #gvrze-pricing-page .pricing-compare-detail,
 #gvrze-pricing-page .pricing-compare-state {
-  color: var(--pr-muted);
+  color: #555e6b;
 }
 
-#gvrze-pricing-page .pricing-compare-category th,
-#gvrze-pricing-page .pricing-compare-row th,
-#gvrze-pricing-page .pricing-compare-row td,
 #gvrze-pricing-page .pricing-faq-accordion,
 #gvrze-pricing-page .pricing-faq-item,
 #gvrze-pricing-page .pricing-creator-features,
@@ -441,8 +438,10 @@ body:has(#gvrze-pricing-page) footer a:hover {
   border-color: var(--pr-line);
 }
 
-#gvrze-pricing-page .pricing-compare-sticky {
-  background: linear-gradient(90deg, rgb(255 255 255 / 0.96) 88%, rgb(255 255 255 / 0.72) 100%);
+#gvrze-pricing-page .pricing-compare-category th,
+#gvrze-pricing-page .pricing-compare-row th,
+#gvrze-pricing-page .pricing-compare-row td {
+  border-color: #d9dee5;
 }
 
 #gvrze-pricing-page .pricing-compare-cell[data-tier="pro"],
@@ -532,4 +531,209 @@ body:has(#gvrze-pricing-page) footer a:hover {
 
 #gvrze-pricing-page .bronze-glow {
   box-shadow: var(--pr-shadow);
+}
+
+/*
+ * Feature comparison — opaque white description boxes aligned to the
+ * main pricing content width. Playing / Learning / Progress / Creating.
+ */
+#gvrze-pricing-page .pricing-compare-scroll {
+  width: 100%;
+  max-width: 100%;
+  margin-inline: 0;
+  padding-inline: 0;
+  overflow-x: auto;
+  scroll-padding-inline: 0;
+}
+
+#gvrze-pricing-page .pricing-compare-sheet,
+#gvrze-pricing-page .pricing-compare-table {
+  width: 100%;
+  min-width: 0;
+  margin-inline: 0;
+}
+
+#gvrze-pricing-page .pricing-compare-table {
+  table-layout: auto;
+}
+
+#gvrze-pricing-page .pricing-compare-feature-col {
+  width: 42%;
+}
+
+#gvrze-pricing-page .pricing-compare-plan-col {
+  width: 14.5%;
+}
+
+#gvrze-pricing-page .pricing-compare-controls {
+  grid-template-columns: minmax(0, 42%) repeat(4, minmax(0, 1fr));
+  margin-bottom: 1.25rem;
+  padding-inline: 0;
+}
+
+#gvrze-pricing-page .pricing-compare-feature-heading {
+  padding: 0 1.25rem 0.4rem 1.25rem;
+  color: #17191d;
+}
+
+#gvrze-pricing-page .pricing-compare-table thead.sr-only th:first-child,
+#gvrze-pricing-page .pricing-compare-sticky {
+  width: 42%;
+}
+
+#gvrze-pricing-page .pricing-compare-category th {
+  padding: 1.5rem 1.25rem 0.7rem;
+  color: #17191d;
+  border-top-color: #d9dee5;
+}
+
+#gvrze-pricing-page .pricing-compare-category th::after {
+  background: #d9dee5;
+}
+
+#gvrze-pricing-page .pricing-compare-row {
+  background: #ffffff;
+}
+
+#gvrze-pricing-page .pricing-compare-row:hover {
+  background: #ffffff;
+}
+
+#gvrze-pricing-page .pricing-compare-row:hover .pricing-compare-feature {
+  color: #17191d;
+}
+
+#gvrze-pricing-page .pricing-compare-row th,
+#gvrze-pricing-page .pricing-compare-row td {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid #d9dee5;
+  vertical-align: top;
+  background: #ffffff;
+}
+
+#gvrze-pricing-page .pricing-compare-row th {
+  padding-left: 1.25rem;
+  text-align: left;
+}
+
+#gvrze-pricing-page .pricing-compare-sticky {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: #ffffff;
+  background-image: none;
+  backdrop-filter: blur(0);
+  -webkit-backdrop-filter: blur(0);
+  box-shadow: none;
+  overflow: hidden;
+}
+
+#gvrze-pricing-page .pricing-compare-feature {
+  display: block;
+  color: #17191d;
+  text-align: left;
+  overflow-wrap: break-word;
+}
+
+#gvrze-pricing-page .pricing-compare-detail {
+  display: block;
+  margin-top: 0.35rem;
+  max-width: none;
+  color: #555e6b;
+  text-align: left;
+  overflow-wrap: break-word;
+}
+
+#gvrze-pricing-page .pricing-compare-cell {
+  color: #17191d;
+  overflow-wrap: break-word;
+}
+
+#gvrze-pricing-page .pricing-compare-cell[data-tier="pro"],
+#gvrze-pricing-page .pricing-compare-cell[data-selected] {
+  background: #ffffff;
+  box-shadow: inset 1px 0 0 #d9dee5, inset -1px 0 0 #d9dee5;
+  color: #17191d;
+}
+
+#gvrze-pricing-page .pricing-compare-cell[data-tier="advance"] {
+  background: #ffffff;
+  box-shadow: none;
+}
+
+@media (min-width: 768px) {
+  #gvrze-pricing-page .pricing-compare-sheet,
+  #gvrze-pricing-page .pricing-compare-table {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  #gvrze-pricing-page .pricing-compare-scroll {
+    overflow-x: visible;
+  }
+
+  #gvrze-pricing-page .pricing-compare-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  #gvrze-pricing-page .pricing-compare-feature-heading {
+    padding: 0 0 0.15rem;
+  }
+
+  #gvrze-pricing-page .pricing-compare-controls .pricing-compare-selector {
+    grid-column: auto;
+    width: 100%;
+  }
+
+  #gvrze-pricing-page .pricing-compare-table,
+  #gvrze-pricing-page .pricing-compare-table tbody,
+  #gvrze-pricing-page .pricing-compare-category,
+  #gvrze-pricing-page .pricing-compare-row {
+    display: block;
+    width: 100%;
+  }
+
+  #gvrze-pricing-page .pricing-compare-table colgroup {
+    display: none;
+  }
+
+  #gvrze-pricing-page .pricing-compare-category th {
+    display: block;
+    width: 100%;
+    padding: 1.25rem 0 0.55rem;
+  }
+
+  #gvrze-pricing-page .pricing-compare-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: 100%;
+    margin: 0 0 0.65rem;
+    border: 1px solid #d9dee5;
+    background: #ffffff;
+  }
+
+  #gvrze-pricing-page .pricing-compare-row th.pricing-compare-sticky {
+    display: block;
+    grid-column: 1 / -1;
+    width: 100%;
+    position: static;
+    padding: 0.95rem 1rem 0.7rem;
+    border-top: 0;
+  }
+
+  #gvrze-pricing-page .pricing-compare-row td.pricing-compare-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    padding: 0.55rem 0.4rem 0.85rem;
+    border-top: 1px solid #d9dee5;
+    font-size: 0.7rem;
+    line-height: 1.35;
+  }
 }

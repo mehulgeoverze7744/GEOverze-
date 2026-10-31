@@ -1,7 +1,9 @@
 import { memo, useEffect, useState } from "react";
+import { CalendarDays, Coins } from "lucide-react";
 
 import {
-  formatRewardCountdown,
+  formatCountdownSegment,
+  isRewardCountdownExpired,
   nextRewardDropTarget,
   rewardCountdownParts,
 } from "@/features/marketing/lib/rewardCountdown";
@@ -25,11 +27,34 @@ export const RewardCardCountdown = memo(function RewardCardCountdown() {
   const now = useRewardCountdownTick();
   const target = nextRewardDropTarget(now);
   const parts = rewardCountdownParts(target, now);
+  const expired = isRewardCountdownExpired(parts);
 
   return (
     <div className="rewards-card__countdown" aria-live="polite" aria-atomic="true">
-      <p className="rewards-card__stat-label">NEXT REWARD DROP</p>
-      <p className="rewards-card__stat-value">{formatRewardCountdown(parts)}</p>
+      <div className="rewards-card__section-head">
+        <CalendarDays className="rewards-card__section-icon" strokeWidth={1.75} aria-hidden />
+        <span className="rewards-card__stat-label">Next Reward Drop</span>
+      </div>
+      {expired ? (
+        <p className="rewards-card__drop-live">New rewards are live</p>
+      ) : (
+        <div className="rewards-card__timer">
+          <div className="rewards-card__unit">
+            <span className="rewards-card__unit-value">{formatCountdownSegment(parts.days)}</span>
+            <span className="rewards-card__unit-label">Days</span>
+          </div>
+          <div className="rewards-card__unit">
+            <span className="rewards-card__unit-value">{formatCountdownSegment(parts.hours)}</span>
+            <span className="rewards-card__unit-label">Hours</span>
+          </div>
+          <div className="rewards-card__unit">
+            <span className="rewards-card__unit-value">
+              {formatCountdownSegment(parts.minutes)}
+            </span>
+            <span className="rewards-card__unit-label">Mins</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 });
@@ -52,10 +77,17 @@ export const RewardCardCredits = memo(function RewardCardCredits() {
 
   return (
     <div className="rewards-card__credits" aria-live="polite" aria-atomic="true">
-      <p className="rewards-card__stat-label">YOUR CREDITS</p>
-      <p className="rewards-card__stat-value">
-        {credits.toLocaleString()} {credits === 1 ? "CREDIT" : "CREDITS"}
-      </p>
+      <div className="rewards-card__section-head">
+        <Coins className="rewards-card__section-icon" strokeWidth={1.75} aria-hidden />
+        <span className="rewards-card__stat-label">Your Credits</span>
+      </div>
+      <div className="rewards-card__balance">
+        <span className="rewards-card__balance-value">{credits.toLocaleString()}</span>
+        <span className="rewards-card__balance-unit">{credits === 1 ? "Credit" : "Credits"}</span>
+      </div>
+      <span className="rewards-card__credits-hint">
+        Play quizzes and challenges to earn more credits.
+      </span>
     </div>
   );
 });

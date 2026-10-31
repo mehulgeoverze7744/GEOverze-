@@ -12,11 +12,7 @@ import { hasWebGLSupport } from "@/lib/webgl";
 /** The 3D scene is the only heavy chunk in the app and stays lazily loaded. */
 const GlobeScene = lazy(() => import("@/components/geoverze/GlobeScene"));
 
-/**
- * Temporary homepage hide. RewardsCard and its styles stay in the tree;
- * set this to true to show the card again.
- */
-const SHOW_HOME_REWARDS_CARD = false;
+const SHOW_HOME_REWARDS_CARD = true;
 
 function clamp01(v: number) {
   return v < 0 ? 0 : v > 1 ? 1 : v;
@@ -88,8 +84,6 @@ export function HomeHero() {
         </ClientOnly>
       ) : null}
 
-      {SHOW_HOME_REWARDS_CARD ? <RewardsCard scrollProgress={progress} /> : null}
-
       {/* Scroll-synced copy — visible on mobile; desktop placement unchanged. */}
       <div
         ref={panel1}
@@ -134,6 +128,8 @@ export function HomeHero() {
           </GeoButton>
         </div>
       </div>
+
+      {SHOW_HOME_REWARDS_CARD ? <RewardsCard /> : null}
 
       <div
         ref={panel2}

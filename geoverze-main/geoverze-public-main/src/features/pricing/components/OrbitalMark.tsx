@@ -27,7 +27,7 @@ export const OrbitalMark = memo(function OrbitalMark() {
           />
           <circle className="pricing-orbital-mark__cap" cx="90" cy="258" r="11" />
           <circle className="pricing-orbital-mark__cap" cx="1110" cy="258" r="7.25" />
-          <circle className="pricing-orbit-planet pricing-orbit-planet--live" r="6">
+          <circle className="pricing-orbit-planet pricing-orbit-planet--live" r="12">
             <animateMotion dur="18s" repeatCount="indefinite" calcMode="linear">
               <mpath href="#pricing-orbit-path" />
             </animateMotion>
@@ -36,7 +36,7 @@ export const OrbitalMark = memo(function OrbitalMark() {
             className="pricing-orbit-planet pricing-orbit-planet--static"
             cx="1072"
             cy="218"
-            r="6"
+            r="12"
           />
         </g>
 

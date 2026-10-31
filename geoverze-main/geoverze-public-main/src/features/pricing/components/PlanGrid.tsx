@@ -20,7 +20,7 @@ export function PlanGrid({
   return (
     <section
       aria-labelledby="tiers-heading"
-      className="pricing-tiers-section -mt-2 pb-[var(--space-section-sm)] md:-mt-6 lg:-mt-8"
+      className="pricing-tiers-section pb-[var(--space-section-sm)]"
     >
       <SectionContainer size="wide" className="min-w-0">
         <h2 id="tiers-heading" className="sr-only">

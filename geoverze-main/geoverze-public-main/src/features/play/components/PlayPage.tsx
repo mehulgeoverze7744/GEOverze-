@@ -15,7 +15,11 @@ import {
 import { useBookmarksStore } from "@/stores/bookmarksStore";
 import { getFeaturedCategories, type QuizCategory } from "../data/categories";
 import { GAME_MODES, isGameModeAvailable, type GameMode } from "../data/gameModes";
-import { buildFeaturedHeroSlides, type FeaturedHeroSlide } from "../data/featuredHero";
+import {
+  buildFeaturedHeroSlides,
+  buildPopularHeroSlides,
+  type FeaturedHeroSlide,
+} from "../data/featuredHero";
 import { DISCOVERY_RAILS, type Quiz } from "../data/quizzes";
 import { usePublishedQuizzes } from "../hooks/usePublishedQuizzes";
 import { INITIAL_FILTERS, applyFilters, type PlayFilterState } from "../lib/filter";
@@ -47,6 +51,7 @@ export function PlayPage() {
   const toggleBookmark = useBookmarksStore((s) => s.toggle);
 
   const featuredSlides = useMemo(() => buildFeaturedHeroSlides(quizzes), [quizzes]);
+  const popularSlides = useMemo(() => buildPopularHeroSlides(quizzes), [quizzes]);
   const results = useMemo(() => applyFilters(quizzes, filters), [quizzes, filters]);
   const previewQuizzes = results.slice(0, PLAY_PAGE_QUIZ_PREVIEW);
   const bookmarked = useMemo(
@@ -142,7 +147,11 @@ export function PlayPage() {
             {loading && featuredSlides.length === 0 ? (
               <SkeletonBlock className="h-64 w-full rounded-2xl" />
             ) : (
-              <FeaturedCarousel slides={featuredSlides} onPlay={playFeatured} />
+              <FeaturedCarousel
+                slides={featuredSlides}
+                popularSlides={popularSlides}
+                onPlay={playFeatured}
+              />
             )}
           </AnimatedSection>
         </SectionContainer>
