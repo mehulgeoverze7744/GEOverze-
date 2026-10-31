@@ -8,7 +8,7 @@ import { StorefrontHero } from "./StorefrontHero";
 import { StorefrontNav } from "./StorefrontNav";
 
 /**
- * GVRZE Store front page (/geostore), redesigned from the "thegvrze" Figma file.
+ * Gstore front page (/geostore), redesigned from the "thegvrze" Figma file.
  *
  * Everything is scoped to #gvrze-storefront. The site-wide navbar and
  * backdrop are hidden only while this page is mounted (see storefront.css);

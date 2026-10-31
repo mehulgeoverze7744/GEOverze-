@@ -238,13 +238,13 @@
   font-size: 0.68rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: oklch(0.92 0.01 80 / 0.62);
+  color: #ffffff;
 }
 
 .bookmarks-empty-body {
   margin-top: 0.5rem;
   font-size: 0.8125rem;
-  color: oklch(0.92 0.01 80 / 0.45);
+  color: #ffffff;
 }
 
 .bookmarks-empty-link {
@@ -255,12 +255,21 @@
   font-size: 0.62rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: oklch(0.72 0.08 75 / 0.9);
+  color: #ffffff;
   transition: color 160ms ease;
 }
 
 .bookmarks-empty-link:hover {
-  color: oklch(0.78 0.1 78);
+  color: #ffffff;
+}
+
+/* Beat the account-area `p` / link ink so only this empty card stays white. */
+#gvrze-account .bookmarks-empty :is(.bookmarks-empty-title, .bookmarks-empty-body, .bookmarks-empty-link),
+#gvrze-account .bookmarks-empty .bookmarks-empty-link:hover,
+#gvrze-account .bookmarks-empty .bookmarks-empty-link:focus-visible,
+#gvrze-account .bookmarks-empty .bookmarks-empty-link svg {
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
 }
 
 .bookmarks-empty-link:focus-visible {

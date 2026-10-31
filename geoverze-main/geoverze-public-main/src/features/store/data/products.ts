@@ -1,5 +1,5 @@
 /**
- * GVRZE Store catalogue.
+ * Gstore catalogue.
  *
  * Placeholder merchandising data with the shape a real commerce backend would
  * return. Money is stored in minor units (cents) and credits are whole GEO
@@ -967,7 +967,7 @@ export const PRODUCTS: readonly Product[] = [
     name: "iPhone Duo",
     tagline: "Twin midnight devices, bronze-lit glass.",
     description:
-      "A paired midnight set in studio light — claimed with credits, finished in the same charcoal-and-bronze language as the rest of GVRZE Store.",
+      "A paired midnight set in studio light — claimed with credits, finished in the same charcoal-and-bronze language as the rest of Gstore.",
     category: "prizes",
     price: null,
     credits: 7_000,

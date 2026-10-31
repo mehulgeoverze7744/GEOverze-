@@ -129,7 +129,7 @@ export function StorefrontNav({ variant = "overlay" }: StorefrontNavProps) {
         )}
       >
         <nav
-          aria-label="Store"
+          aria-label="Gstore"
           className="hidden min-w-0 items-center gap-[clamp(16px,2.2vw,32px)] md:flex"
         >
           <Link to="/geostore/browse" className={navLink}>
@@ -149,7 +149,7 @@ export function StorefrontNav({ variant = "overlay" }: StorefrontNavProps) {
 
         <Link
           to="/geostore"
-          aria-label="GVRZE Store home"
+          aria-label="Gstore home"
           className="justify-self-center rounded-sm"
         >
           <img
@@ -170,7 +170,7 @@ export function StorefrontNav({ variant = "overlay" }: StorefrontNavProps) {
               <button
                 type="button"
                 onClick={onOpen}
-                aria-label="Search GVRZE Store"
+                aria-label="Search Gstore"
                 className={ICON_BUTTON}
               >
                 <Icon asset={SF_ASSETS.iconSearch} />
@@ -229,13 +229,13 @@ export function StorefrontNav({ variant = "overlay" }: StorefrontNavProps) {
         >
           <SheetHeader className="border-b border-black/10 px-7 py-6 text-left">
             <SheetTitle className="text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-black">
-              GVRZE Store
+              Gstore
             </SheetTitle>
-            <SheetDescription className="sr-only">Store, site and account links</SheetDescription>
+            <SheetDescription className="sr-only">Gstore, site and account links</SheetDescription>
           </SheetHeader>
 
           <div className="flex-1 px-7 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-            <nav aria-label="Store menu" className="flex flex-col">
+            <nav aria-label="Gstore menu" className="flex flex-col">
               <Link
                 to="/geostore/category/$slug"
                 params={{ slug: "tshirts" }}

@@ -11,7 +11,7 @@ export const Route = createFileRoute("/support")({
       {
         name: "description",
         content:
-          "GVRZE help centre: getting started, Let's Play, GVRZE Library, GVRZE Store, accounts and billing answers.",
+          "GVRZE help centre: getting started, Let's Play, GVRZE Library, Gstore, accounts and billing answers.",
       },
       { property: "og:title", content: "Settings/Support — GVRZE" },
       {

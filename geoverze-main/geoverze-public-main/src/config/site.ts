@@ -28,7 +28,7 @@ export type NavItem = {
 export const mainNav: NavItem[] = [
   { label: "Home", to: "/" },
   { label: "Let's Play", to: "/play" },
-  { label: "GVRZE Store", to: "/geostore" },
+  { label: "Gstore", to: "/geostore" },
   { label: "Community", to: "/community" },
   { label: "GVRZE Library", to: "/geolibrary" },
   { label: "Pricing", to: "/pricing" },
@@ -40,7 +40,7 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
     items: [
       { label: "Let's Play", to: "/play" },
       { label: "GVRZE Library", to: "/geolibrary" },
-      { label: "GVRZE Store", to: "/geostore" },
+      { label: "Gstore", to: "/geostore" },
       { label: "Leaderboard", to: "/leaderboard", comingSoon: true },
       { label: "Community", to: "/community" },
     ],

@@ -1,5 +1,5 @@
 /**
- * GVRZE Store cart.
+ * Gstore cart.
  *
  * Lines carry both a money price and a credit price so a basket can be settled
  * with cash, with credits, or with a mix. Totals are always derived, never

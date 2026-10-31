@@ -17,18 +17,20 @@ import type { StoreCatalogueProduct } from "../lib/mergeCatalogue";
 
 export type StorefrontRewardsPresentation = "shelf" | "categories" | "carousel";
 
-/** Grouped Special Rewards / Themes / Avatars used on GVRZE Store and Profile. */
+/** Grouped Special Rewards / Themes / Avatars used on Gstore and Profile. */
 export function StorefrontRewardsCatalog({
   products,
   className,
   presentation = "shelf",
+  tone = "default",
 }: {
   products: readonly StoreCatalogueProduct[];
   className?: string | undefined;
   presentation?: StorefrontRewardsPresentation | undefined;
+  tone?: "default" | "light";
 }) {
   if (presentation === "carousel") {
-    return <RewardCarousel products={products} />;
+    return <RewardCarousel tone={tone} products={products} />;
   }
 
   const groups = groupStorefrontRewards(products);
@@ -36,14 +38,20 @@ export function StorefrontRewardsCatalog({
   if (groups.length === 0) return null;
 
   if (presentation === "categories") {
-    return <RewardCategoryPicker className={className} groups={groups} />;
+    return <RewardCategoryPicker tone={tone} className={className} groups={groups} />;
   }
 
-  return <RewardShelf className={className} groups={groups} />;
+  return <RewardShelf tone={tone} className={className} groups={groups} />;
 }
 
-function RewardCarousel({ products }: { products: readonly StoreCatalogueProduct[] }) {
-  const renderCard = useStorefrontRewardCard();
+function RewardCarousel({
+  products,
+  tone = "default",
+}: {
+  products: readonly StoreCatalogueProduct[];
+  tone?: "default" | "light";
+}) {
+  const renderCard = useStorefrontRewardCard(tone);
   const listed = listStorefrontRewards(products);
 
   if (listed.length === 0) return null;
@@ -66,11 +74,13 @@ function RewardCarousel({ products }: { products: readonly StoreCatalogueProduct
 function RewardShelf({
   groups,
   className,
+  tone = "default",
 }: {
   groups: StorefrontRewardGroup<StoreCatalogueProduct>[];
   className?: string | undefined;
+  tone?: "default" | "light";
 }) {
-  const renderCard = useStorefrontRewardCard();
+  const renderCard = useStorefrontRewardCard(tone);
   const lead = groups.slice(0, 2);
   const rest = groups.slice(2);
 
@@ -79,18 +89,29 @@ function RewardShelf({
       {lead.length === 2 ? (
         <div className="grid items-start gap-x-6 gap-y-10 lg:grid-cols-2">
           {lead.map((group) => (
-            <RewardGroupSection key={group.category.id} group={group} renderCard={renderCard} />
+            <RewardGroupSection
+              key={group.category.id}
+              tone={tone}
+              group={group}
+              renderCard={renderCard}
+            />
           ))}
         </div>
       ) : (
         lead.map((group) => (
-          <RewardGroupSection key={group.category.id} group={group} renderCard={renderCard} />
+          <RewardGroupSection
+            key={group.category.id}
+            tone={tone}
+            group={group}
+            renderCard={renderCard}
+          />
         ))
       )}
       {rest.map((group) => (
         <RewardGroupSection
           key={group.category.id}
           compactOnDesktop
+          tone={tone}
           group={group}
           renderCard={renderCard}
         />
@@ -103,14 +124,21 @@ function RewardGroupSection({
   group,
   renderCard,
   compactOnDesktop = false,
+  tone = "default",
 }: {
   group: StorefrontRewardGroup<StoreCatalogueProduct>;
   renderCard: (product: StoreCatalogueProduct) => ReactNode;
   compactOnDesktop?: boolean | undefined;
+  tone?: "default" | "light";
 }) {
   return (
     <section>
-      <h3 className="mb-3 text-[0.58rem] font-medium uppercase tracking-[0.3em] text-bronze">
+      <h3
+        className={cn(
+          "mb-3 text-[0.58rem] font-medium uppercase tracking-[0.3em]",
+          tone === "light" ? "text-[#555555]" : "text-bronze",
+        )}
+      >
         {group.category.label}
       </h3>
       <div className={cn("grid gap-6 sm:grid-cols-2", compactOnDesktop && "lg:grid-cols-4")}>
@@ -123,13 +151,16 @@ function RewardGroupSection({
 function RewardCategoryPicker({
   groups,
   className,
+  tone = "default",
 }: {
   groups: StorefrontRewardGroup<StoreCatalogueProduct>[];
   className?: string | undefined;
+  tone?: "default" | "light";
 }) {
   const [openId, setOpenId] = useState<string | null>(null);
-  const renderCard = useStorefrontRewardCard();
+  const renderCard = useStorefrontRewardCard(tone);
   const openGroup = groups.find((group) => group.category.id === openId) ?? null;
+  const light = tone === "light";
 
   return (
     <div className={cn("space-y-8", className)}>
@@ -144,10 +175,20 @@ function RewardCategoryPicker({
               aria-controls={`reward-category-panel-${group.category.id}`}
               onClick={() => setOpenId(selected ? null : group.category.id)}
               className={cn(
-                "group/card overflow-hidden rounded-2xl border bg-charcoal text-left transition-all motion-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",
-                selected
-                  ? "border-bronze/55 bronze-glow"
-                  : "border-bronze/12 hover:border-bronze/35 hover:bronze-glow",
+                "group/card overflow-hidden rounded-2xl border text-left transition-all motion-base focus-visible:outline-none focus-visible:ring-2",
+                light
+                  ? cn(
+                      "bg-[#FFFFFF] shadow-[0_14px_32px_-22px_rgb(17_17_17_/_0.18)] focus-visible:ring-[#111111]/25",
+                      selected
+                        ? "border-[#111111]"
+                        : "border-[#E5E7EB] hover:border-[#d1d5db]",
+                    )
+                  : cn(
+                      "bg-charcoal focus-visible:ring-bronze/50",
+                      selected
+                        ? "border-bronze/55 bronze-glow"
+                        : "border-bronze/12 hover:border-bronze/35 hover:bronze-glow",
+                    ),
               )}
             >
               <div className="grid grid-cols-2">
@@ -156,7 +197,10 @@ function RewardCategoryPicker({
                   return (
                     <div
                       key={product.slug}
-                      className="relative aspect-[4/3] overflow-hidden bg-[oklch(0.12_0.006_62)]"
+                      className={cn(
+                        "relative aspect-[4/3] overflow-hidden",
+                        light ? "bg-[#F5F6F8]" : "bg-[oklch(0.12_0.006_62)]",
+                      )}
                     >
                       {image ? (
                         <img
@@ -165,22 +209,44 @@ function RewardCategoryPicker({
                           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover/card:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover/card:scale-100"
                         />
                       ) : null}
-                      <span
-                        aria-hidden
-                        className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/20 to-transparent"
-                      />
+                      {light ? null : (
+                        <span
+                          aria-hidden
+                          className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/20 to-transparent"
+                        />
+                      )}
                     </div>
                   );
                 })}
               </div>
-              <div className="relative z-[1] -mt-5 px-4 pb-4 pt-2">
-                <p className="text-[0.58rem] font-medium uppercase tracking-[0.3em] text-bronze">
+              <div
+                className={cn(
+                  "relative z-[1] px-4 pb-4",
+                  light ? "pt-3" : "-mt-5 pt-2",
+                )}
+              >
+                <p
+                  className={cn(
+                    "text-[0.58rem] font-medium uppercase tracking-[0.3em]",
+                    light ? "text-[#555555]" : "text-bronze",
+                  )}
+                >
                   {group.category.label}
                 </p>
-                <p className="mt-2 text-sm font-light tracking-tight text-foreground/90">
+                <p
+                  className={cn(
+                    "mt-2 text-sm tracking-tight",
+                    light ? "font-bold text-[#111111]" : "font-light text-foreground/90",
+                  )}
+                >
                   {group.products.length} rewards
                 </p>
-                <p className="mt-1 text-xs leading-relaxed text-foreground/50">
+                <p
+                  className={cn(
+                    "mt-1 text-xs leading-relaxed",
+                    light ? "text-[#606060]" : "text-foreground/50",
+                  )}
+                >
                   {group.products.map((product) => product.name).join(" · ")}
                 </p>
               </div>
@@ -194,7 +260,12 @@ function RewardCategoryPicker({
           id={`reward-category-panel-${openGroup.category.id}`}
           aria-label={openGroup.category.label}
         >
-          <h3 className="mb-3 text-[0.58rem] font-medium uppercase tracking-[0.3em] text-bronze">
+          <h3
+            className={cn(
+              "mb-3 text-[0.58rem] font-medium uppercase tracking-[0.3em]",
+              light ? "text-[#555555]" : "text-bronze",
+            )}
+          >
             {openGroup.category.label}
           </h3>
           <div className="grid gap-6 sm:grid-cols-2 lg:max-w-3xl">
@@ -206,7 +277,7 @@ function RewardCategoryPicker({
   );
 }
 
-function useStorefrontRewardCard() {
+function useStorefrontRewardCard(tone: "default" | "light" = "default") {
   const { wishlistToggle, wishlist } = useStoreActions();
   const balance = useStoreCredits();
   const entitlements = useEntitlements();
@@ -226,6 +297,7 @@ function useStorefrontRewardCard() {
         purchasing={isPurchasing(product.slug)}
         image={rewardShelfImageForSlug(product.slug)}
         equalizeHeight
+        tone={tone}
         onToggleWishlist={wishlistToggle}
         onAdd={() => {
           if (!product.purchasable || !product.serverProductId) return;

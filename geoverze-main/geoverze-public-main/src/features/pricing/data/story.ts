@@ -41,10 +41,10 @@ export const upgradeStory: UpgradeBeat[] = [
   },
   {
     id: "geostore",
-    eyebrow: "GVRZE Store",
+    eyebrow: "Gstore",
     title: "Riya Kapoor",
     description:
       "“The T-shirt itself looks great, but the packaging surprised me even more. The acrylic sheet box felt premium enough to keep as a photo frame instead of throwing it away. It felt like opening a proper collector’s piece.”",
-    points: ["GVRZE Store", "T-shirt buyer", "Premium packaging"],
+    points: ["Gstore", "T-shirt buyer", "Premium packaging"],
   },
 ];

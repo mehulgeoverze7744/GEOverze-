@@ -1,4 +1,4 @@
-/** Catalogue filtering, sorting and search for the GVRZE Store browse surfaces. */
+/** Catalogue filtering, sorting and search for the Gstore browse surfaces. */
 import type { Product } from "../data/products";
 import { isProductListed } from "../data/products";
 import {
@@ -110,7 +110,7 @@ export function creditPicks(
 
 export type ProductSearchHit = Product & { score: number };
 
-/** Ranked GVRZE Store product search over name, slug, tags, category and copy. */
+/** Ranked Gstore product search over name, slug, tags, category and copy. */
 export function searchStoreProducts(
   products: readonly Product[],
   query: string,

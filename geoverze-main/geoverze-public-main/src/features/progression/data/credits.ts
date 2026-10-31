@@ -30,14 +30,14 @@ export const CREDIT_RULES: readonly CreditRule[] = [
 export const CREDIT_EXPIRY_NOTE =
   "Credits earned in a calendar month stay available through the following calendar month on Free, Basic, and Pro. Advance extends that window to two calendar months.";
 
-export type CreditHistoryFilter = "All" | "Earned" | "Spent" | "Gameplay" | "GVRZE Store";
+export type CreditHistoryFilter = "All" | "Earned" | "Spent" | "Gameplay" | "Gstore";
 
 export const CREDIT_HISTORY_FILTERS: readonly CreditHistoryFilter[] = [
   "All",
   "Earned",
   "Spent",
   "Gameplay",
-  "GVRZE Store",
+  "Gstore",
 ] as const;
 
 export type CreditLedgerDirection = "earned" | "spent";

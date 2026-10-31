@@ -27,7 +27,7 @@ export function RecentlyViewedPanel({ className }: { className?: string }) {
   return (
     <section
       className={cn(
-        "rounded-2xl border border-bronze/16 bg-charcoal/30 p-6 backdrop-blur-sm",
+        "dashboard-recently-viewed rounded-2xl border border-bronze/16 bg-charcoal/30 p-6 backdrop-blur-sm",
         className,
       )}
       aria-labelledby="recently-viewed-heading"
@@ -42,7 +42,7 @@ export function RecentlyViewedPanel({ className }: { className?: string }) {
         </h2>
         <Link
           to="/geolibrary"
-          className="text-[0.62rem] uppercase tracking-[0.2em] text-bronze/90 transition-colors hover:text-bronze"
+          className="dashboard-shelf-all text-[0.62rem] uppercase tracking-[0.2em] text-bronze/90 transition-colors hover:text-bronze"
         >
           All
         </Link>

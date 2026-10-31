@@ -1,0 +1,145 @@
+/*
+ * Global search modal only. Other Dialogs / Modals keep their own chrome.
+ */
+
+.gvrze-global-search,
+.gvrze-global-search.glass-panel-strong {
+  color: #111111;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow:
+    0 1px 2px rgb(17 17 17 / 0.04),
+    0 18px 42px -18px rgb(17 17 17 / 0.18);
+  /* LightningCSS drops `none`; blur(0) is the reliable kill switch. */
+  backdrop-filter: blur(0) !important;
+  -webkit-backdrop-filter: blur(0) !important;
+  color-scheme: light;
+}
+
+.gvrze-global-search::before,
+.gvrze-global-search::after {
+  display: none;
+}
+
+.gvrze-global-search h2,
+.gvrze-global-search [data-slot="dialog-title"] {
+  color: #111111;
+}
+
+.gvrze-global-search p,
+.gvrze-global-search [class*="text-foreground"] {
+  color: #4b5563;
+}
+
+.gvrze-global-search [class*="text-bronze"],
+.gvrze-global-search [class*="text-bronze-glow"] {
+  color: #111111;
+}
+
+.gvrze-global-search > button {
+  color: #111111;
+  opacity: 1;
+}
+
+.gvrze-global-search > button:hover,
+.gvrze-global-search > button:focus-visible {
+  color: #111111;
+  opacity: 1;
+}
+
+.gvrze-global-search input[type="search"] {
+  background: #f1f3f5 !important;
+  background-color: #f1f3f5 !important;
+  color: #111111 !important;
+  border-color: #d0d5dd !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(0) !important;
+  -webkit-backdrop-filter: blur(0) !important;
+}
+
+.gvrze-global-search input[type="search"]::placeholder {
+  color: #6b7280;
+}
+
+.gvrze-global-search input[type="search"]:focus,
+.gvrze-global-search input[type="search"]:focus-visible {
+  border-color: #111111 !important;
+  box-shadow: 0 0 0 2px rgb(17 17 17 / 0.08) !important;
+}
+
+.gvrze-global-search .relative svg {
+  color: #111111;
+}
+
+.gvrze-global-search button[aria-label="Clear search"] {
+  color: #374151;
+}
+
+.gvrze-global-search button[aria-label="Clear search"]:hover {
+  color: #111111;
+}
+
+.gvrze-global-search a.inline-flex,
+.gvrze-global-search a.glass-panel {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  border: 1px solid #e5e7eb !important;
+  color: #111111 !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(0) !important;
+  -webkit-backdrop-filter: blur(0) !important;
+}
+
+.gvrze-global-search a.inline-flex:hover,
+.gvrze-global-search a.inline-flex:focus-visible,
+.gvrze-global-search a.glass-panel:hover,
+.gvrze-global-search a.glass-panel:focus-visible {
+  background: #f1f3f5 !important;
+  background-color: #f1f3f5 !important;
+  border-color: #d0d5dd !important;
+  color: #111111 !important;
+  box-shadow: none !important;
+}
+
+.gvrze-global-search a.inline-flex svg,
+.gvrze-global-search a.glass-panel svg {
+  color: #111111;
+}
+
+.gvrze-global-search h3,
+.gvrze-global-search h3 svg {
+  color: #111111;
+}
+
+.gvrze-global-search a.rounded-xl .text-sm {
+  color: #111111;
+}
+
+.gvrze-global-search a.rounded-xl .text-xs {
+  color: #6b7280;
+}
+
+.gvrze-global-search a.rounded-xl {
+  border-color: transparent;
+  color: #111111;
+}
+
+.gvrze-global-search a.rounded-xl:hover,
+.gvrze-global-search a.rounded-xl:focus-visible {
+  border-color: #e5e7eb !important;
+  background: #f1f3f5 !important;
+}
+
+.gvrze-global-search [aria-disabled="true"] {
+  border-color: #e5e7eb;
+  background: #f8f9fb;
+  color: #6b7280;
+}
+
+.gvrze-global-search__empty {
+  background: #f1f3f5 !important;
+  border-color: #e5e7eb !important;
+}

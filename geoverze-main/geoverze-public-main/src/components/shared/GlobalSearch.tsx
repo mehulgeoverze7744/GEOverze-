@@ -15,6 +15,8 @@ import {
 } from "@/features/search/data/index";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
+import "./global-search.css";
+
 /**
  * Global search overlay.
  *
@@ -111,6 +113,7 @@ export function GlobalSearch() {
         }}
         title="Search GVRZE"
         description="Find play modes, quizzes, articles and more."
+        className="gvrze-global-search"
       >
         <div className="space-y-6">
           <SearchBar
@@ -128,7 +131,7 @@ export function GlobalSearch() {
           </p>
 
           {hasQuery && hits.length === 0 && !searching ? (
-            <div className="rounded-2xl border border-bronze/15 bg-charcoal/40 p-6 text-center">
+            <div className="gvrze-global-search__empty rounded-2xl border border-bronze/15 bg-charcoal/40 p-6 text-center">
               <p className="text-sm text-foreground/60">No results found for “{query.trim()}”.</p>
               <p className="mt-2 text-xs leading-relaxed text-foreground/50">
                 Try a play mode such as Solo, PvP, Multiplayer, or Emoji Quiz.

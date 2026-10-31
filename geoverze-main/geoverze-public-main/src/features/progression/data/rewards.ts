@@ -97,7 +97,7 @@ export const REWARD_SECTIONS: readonly RewardSection[] = [
   {
     id: "merch",
     title: "Merchandise",
-    description: "Physical rewards arrive with the GVRZE Store fulfilment phase.",
+    description: "Physical rewards arrive with the Gstore fulfilment phase.",
     icon: Shirt,
     rewards: [
       {

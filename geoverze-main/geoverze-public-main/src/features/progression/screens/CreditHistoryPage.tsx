@@ -51,7 +51,7 @@ export function CreditHistoryPage() {
               Sign in to view your credits
             </h1>
             <p className="mt-4 text-[0.9rem] leading-relaxed text-foreground/60">
-              Your wallet balance, earn history, GVRZE Store spending, and upcoming expiry dates are
+              Your wallet balance, earn history, Gstore spending, and upcoming expiry dates are
               tied to your account.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
@@ -78,7 +78,7 @@ export function CreditHistoryPage() {
             Every credit, accounted for
           </h1>
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-foreground/60 md:text-base">
-            Your full credit ledger — gameplay earns, GVRZE Store spending, and upcoming expiry
+            Your full credit ledger — gameplay earns, Gstore spending, and upcoming expiry
             dates.
           </p>
         </AnimatedSection>
@@ -174,7 +174,7 @@ export function CreditHistoryPage() {
                 }
                 description={
                   filter === "All"
-                    ? "Win duels or claim GVRZE Store rewards to start filling the ledger."
+                    ? "Win duels or claim Gstore rewards to start filling the ledger."
                     : "Try another filter or earn credits through gameplay."
                 }
               />

@@ -51,7 +51,7 @@ export const QUICK_ACTIONS: readonly QuickAction[] = [
   },
   {
     id: "store",
-    label: "Visit GVRZE Store",
+    label: "Visit Gstore",
     description: "Atlases, finishes and season passes.",
     icon: ShoppingBag,
     to: "/geostore",
@@ -144,7 +144,7 @@ export const RECENTLY_VIEWED: readonly LinkedItem[] = [
     to: "/geolibrary",
     articleSlug: "the-sahel-explained",
   },
-  { id: "r2", title: "Bronze relief atlas", meta: "GVRZE Store · Plate", to: "/geostore" },
+  { id: "r2", title: "Bronze relief atlas", meta: "Gstore · Plate", to: "/geostore" },
   { id: "r3", title: "Capitals sprint: Africa", meta: "Let's Play · Quiz", to: "/play" },
 ] as const;
 
@@ -244,7 +244,7 @@ export const UPCOMING_EVENTS: readonly UpcomingEvent[] = [
     id: "e3",
     title: "Creator collection drop",
     when: "Next month",
-    description: "Community-made plates arrive in the GVRZE Store.",
+    description: "Community-made plates arrive in the Gstore.",
     icon: Sparkles,
   },
 ] as const;

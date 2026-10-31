@@ -1,5 +1,5 @@
 /**
- * GVRZE Store shopper state.
+ * Gstore shopper state.
  *
  * Wishlist syncs to Supabase when authenticated; scoped localStorage caches per user.
  * Recently viewed and recent searches remain local per scope.
@@ -51,7 +51,7 @@ function snapshotFromState(state: StoreState): PersistedStoreSnapshot {
 function maybeSyncWishlist(userId: string | undefined, slug: string, saved: boolean) {
   if (!userId) return;
   void syncWishlistToggle(userId, slug, saved).catch((error) =>
-    console.error("GVRZE Store wishlist sync failed", error),
+    console.error("Gstore wishlist sync failed", error),
   );
 }
 

@@ -13,7 +13,7 @@ export function StorefrontHero() {
       aria-label="GVRZE collection"
       className="relative isolate h-[clamp(520px,59.58vw,100svh)] overflow-hidden bg-[#d4d4d4]"
     >
-      <h1 className="sr-only">GVRZE Store — premium streetwear</h1>
+      <h1 className="sr-only">Gstore — premium streetwear</h1>
 
       <img
         src={SF_ASSETS.hero.src}

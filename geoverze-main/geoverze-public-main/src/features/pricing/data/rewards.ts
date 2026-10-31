@@ -16,7 +16,7 @@ export const rewardSteps: RewardStep[] = [
   },
   {
     icon: Store,
-    title: "Redeem in the GVRZE Store",
+    title: "Redeem in the Gstore",
     description: "Spend credits on atlases, question packs, cosmetics and physical merchandise.",
   },
   {

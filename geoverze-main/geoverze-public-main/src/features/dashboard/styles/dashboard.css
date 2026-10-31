@@ -2619,7 +2619,7 @@
   }
 }
 
-/* Mini GVRZE Store widget styles live in dashboard-geostore-widget.css. */
+/* Mini Gstore widget styles live in dashboard-geostore-widget.css. */
 
 /* ── Quiz progress (premium expedition record panel) ───────────────────── */
 
@@ -2645,17 +2645,49 @@
   gap: 0.85rem;
 }
 
+.dashboard-continue-playing .dashboard-section-label,
+.dashboard-continue-playing__lede,
+#gvrze-account .dashboard-continue-playing .dashboard-section-label,
+#gvrze-account .dashboard-continue-playing h2,
+#gvrze-account .dashboard-continue-playing__lede,
+#gvrze-account .dashboard-continue-playing > p {
+  color: #ffffff;
+}
+
+.dashboard-quiz-progress .dashboard-section-label,
+.dashboard-quiz-progress__lede,
+.dashboard-quiz-progress__status,
+.dashboard-quiz-progress__status-pill,
+.dashboard-quiz-progress__label,
+.dashboard-quiz-progress__value,
+.dashboard-quiz-progress__suffix,
+.dashboard-quiz-progress__pending,
+.dashboard-quiz-progress__row-caption,
+#gvrze-account .dashboard-quiz-progress,
+#gvrze-account .dashboard-quiz-progress .dashboard-section-label,
+#gvrze-account .dashboard-quiz-progress h2,
+#gvrze-account .dashboard-quiz-progress p,
+#gvrze-account .dashboard-quiz-progress__lede,
+#gvrze-account .dashboard-quiz-progress__status,
+#gvrze-account .dashboard-quiz-progress__status-pill,
+#gvrze-account .dashboard-quiz-progress__label,
+#gvrze-account .dashboard-quiz-progress__value,
+#gvrze-account .dashboard-quiz-progress__suffix,
+#gvrze-account .dashboard-quiz-progress__pending,
+#gvrze-account .dashboard-quiz-progress__row-caption {
+  color: #ffffff;
+}
+
 .dashboard-quiz-progress__lede {
   margin-top: 0.5rem;
   font-size: 0.875rem;
   line-height: 1.45;
-  color: color-mix(in oklab, var(--foreground) 50%, transparent);
 }
 
 .dashboard-quiz-progress__status {
   margin-top: 1.25rem;
   font-size: 0.875rem;
-  color: color-mix(in oklab, var(--foreground) 50%, transparent);
+  color: #ffffff;
 }
 
 .dashboard-quiz-progress__status-pill {
@@ -2672,7 +2704,7 @@
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--foreground) 56%, transparent);
+  color: #ffffff;
   white-space: nowrap;
 }
 
@@ -2756,7 +2788,7 @@
 
 .dashboard-quiz-progress__row-caption {
   font-size: 0.64rem;
-  color: color-mix(in oklab, var(--foreground) 44%, transparent);
+  color: #ffffff;
 }
 
 /* Hover-capable pointers only — avoids sticky hover on touch. */
@@ -2769,7 +2801,7 @@
   }
 
   .dashboard-quiz-progress__row:hover .dashboard-quiz-progress__value {
-    color: color-mix(in oklab, var(--bronze-glow) 18%, white 92%);
+    color: #ffffff;
   }
 
   .dashboard-quiz-progress__row:hover .dashboard-quiz-progress__row-bar [role="progressbar"] {
@@ -2802,7 +2834,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--foreground) 82%, transparent);
+  color: #ffffff;
 }
 
 .dashboard-quiz-progress__emoji {
@@ -2830,7 +2862,7 @@
   font-weight: 700;
   letter-spacing: 0.02em;
   line-height: 1;
-  color: color-mix(in oklab, var(--foreground) 94%, transparent);
+  color: #ffffff;
   transition: color 240ms ease-out;
 }
 
@@ -2842,7 +2874,7 @@
 }
 
 .dashboard-quiz-progress__pending {
-  color: color-mix(in oklab, var(--foreground) 40%, transparent);
+  color: #ffffff;
 }
 
 @container (max-width: 300px) {
@@ -3468,4 +3500,67 @@
   .dashboard-achievement-burst {
     display: none;
   }
+}
+
+/*
+ * Upcoming / Recently viewed / Saved explorations — white type on the
+ * existing frosted cards. Backgrounds, blur and layout stay untouched.
+ */
+#gvrze-account .dashboard-upcoming .dashboard-section-label,
+#gvrze-account .dashboard-recently-viewed .dashboard-section-label,
+#gvrze-account .dashboard-saved-explorations .dashboard-section-label,
+#gvrze-account .dashboard-upcoming h2,
+#gvrze-account .dashboard-recently-viewed h2,
+#gvrze-account .dashboard-saved-explorations h2 {
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
+#gvrze-account .dashboard-upcoming .dashboard-section-label svg,
+#gvrze-account .dashboard-recently-viewed .dashboard-section-label svg,
+#gvrze-account .dashboard-saved-explorations .dashboard-section-label svg {
+  color: #ffffff;
+}
+
+#gvrze-account .dashboard-upcoming p.text-sm,
+#gvrze-account .dashboard-recently-viewed .text-sm.text-foreground\/85,
+#gvrze-account .dashboard-saved-explorations .text-sm.text-foreground\/85,
+#gvrze-account .dashboard-upcoming__lock-label {
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
+#gvrze-account .dashboard-upcoming [class*="text-bronze"],
+#gvrze-account .dashboard-recently-viewed [class*="text-bronze"],
+#gvrze-account .dashboard-saved-explorations [class*="text-bronze"],
+#gvrze-account .dashboard-upcoming [class*="text-bronze-glow"],
+#gvrze-account .dashboard-recently-viewed [class*="text-bronze-glow"],
+#gvrze-account .dashboard-saved-explorations [class*="text-bronze-glow"],
+#gvrze-account .dashboard-recently-viewed .dashboard-shelf-all,
+#gvrze-account .dashboard-saved-explorations .dashboard-shelf-all,
+#gvrze-account .dashboard-recently-viewed .dashboard-shelf-all:hover,
+#gvrze-account .dashboard-saved-explorations .dashboard-shelf-all:hover {
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
+#gvrze-account .dashboard-upcoming p.text-xs,
+#gvrze-account .dashboard-upcoming p.text-foreground\/50,
+#gvrze-account .dashboard-recently-viewed p,
+#gvrze-account .dashboard-saved-explorations p,
+#gvrze-account .dashboard-recently-viewed [class*="text-foreground\/50"],
+#gvrze-account .dashboard-saved-explorations [class*="text-foreground\/50"] {
+  color: #cbd5e1;
+  -webkit-text-fill-color: #cbd5e1;
+}
+
+#gvrze-account .dashboard-recently-viewed .dashboard-editorial-card .text-sm,
+#gvrze-account .dashboard-saved-explorations .dashboard-editorial-card .text-sm {
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
+#gvrze-account .dashboard-upcoming__lock-icon,
+#gvrze-account .dashboard-upcoming__lock-icon svg {
+  color: #ffffff;
 }

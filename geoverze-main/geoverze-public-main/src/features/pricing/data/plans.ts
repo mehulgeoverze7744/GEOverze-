@@ -34,7 +34,7 @@ export type PricingPlan = {
   featured: boolean;
   badge?: string;
   cta: string;
-  /** Bronze callout rendered above the feature list (GVRZE Store member discount). */
+  /** Bronze callout rendered above the feature list (Gstore member discount). */
   storePerk?: string;
   prices: Record<BillingCycle, PlanPrice>;
 };
@@ -69,7 +69,7 @@ export const TIER_PRESENTATION: Record<TierId, TierPresentation> = {
     summary: "A full month of quizzes and a steady credit grant without going unlimited.",
     cta: "Choose Basic",
     featured: false,
-    storePerk: "3% OFF on any GVRZE Store purchase",
+    storePerk: "3% OFF on any Gstore purchase",
     extraFeatures: [
       "Limited GVRZE Library access",
       "Global leaderboard entry",
@@ -83,7 +83,7 @@ export const TIER_PRESENTATION: Record<TierId, TierPresentation> = {
     cta: "Choose Pro",
     featured: true,
     badge: "Most chosen",
-    storePerk: "10% OFF on any GVRZE Store purchase",
+    storePerk: "10% OFF on any Gstore purchase",
     extraFeatures: [
       "Full GVRZE Library access",
       "PvP duels and multiplayer rooms",

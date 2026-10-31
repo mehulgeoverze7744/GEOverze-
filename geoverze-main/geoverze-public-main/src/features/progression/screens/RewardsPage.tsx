@@ -24,7 +24,7 @@ export function RewardsPage() {
           </h1>
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-foreground/60 md:text-base">
             Credits, XP, achievements, merchandise, seasonal drops, and platform rewards. Claim
-            digital GVRZE Store rewards with credits today; other catalogue sections are still
+            digital Gstore rewards with credits today; other catalogue sections are still
             expanding.
           </p>
         </AnimatedSection>

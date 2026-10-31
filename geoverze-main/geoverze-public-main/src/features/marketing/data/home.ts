@@ -88,7 +88,7 @@ export const ecosystem: {
   },
   {
     icon: Store,
-    title: "GVRZE Store",
+    title: "Gstore",
     description: "Atlases, collections and profile pieces to unlock as you explore.",
     to: "/geostore",
     imageSrc: "/assets/home/ecosystem/gvrze-geostore.jpg",

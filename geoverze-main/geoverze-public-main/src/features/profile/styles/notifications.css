@@ -94,9 +94,10 @@ div.nc > * {
   gap: 0.15rem;
   padding: 0.18rem;
   border-radius: 999px;
-  border: 1px solid oklch(1 0 0 / 0.08);
-  background: oklch(0.1 0.008 62 / 0.42);
-  backdrop-filter: blur(16px);
+  border: 1px solid #d9dee5;
+  background: #ffffff;
+  backdrop-filter: blur(0);
+  -webkit-backdrop-filter: blur(0);
 }
 
 .nc-segment-btn {
@@ -104,11 +105,11 @@ div.nc > * {
   padding: 0.28rem 0.9rem;
   border: 1px solid transparent;
   border-radius: 999px;
-  background: transparent;
+  background: #ffffff;
   font-size: 0.78rem;
   font-weight: 500;
   letter-spacing: -0.01em;
-  color: var(--nc-muted);
+  color: #17191d;
   transition:
     background 220ms var(--nc-ease),
     color 220ms var(--nc-ease),
@@ -116,22 +117,42 @@ div.nc > * {
 }
 
 .nc-segment-btn:hover {
-  color: var(--nc-ink);
+  background: #f4f6f8;
+  color: #17191d;
 }
 
-.nc-segment-btn.is-active {
-  border-color: color-mix(in oklab, var(--bronze) 22%, transparent);
-  background: color-mix(in oklab, var(--bronze) 16%, oklch(0.16 0.02 70 / 0.55));
-  color: var(--nc-ink);
+.nc-segment-btn.is-active,
+.nc-segment-btn.is-active:hover {
+  border-color: #000000;
+  background: #000000;
+  color: #ffffff;
 }
 
 .nc-segment-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.1rem;
   margin-left: 0.28rem;
+  padding: 0.05rem 0.32rem;
+  border-radius: 999px;
+  background: #e8ecf0;
   font-size: 0.68rem;
-  color: var(--nc-muted);
+  font-weight: 600;
+  line-height: 1.2;
+  color: #17191d;
 }
 
-.nc-segment-btn:focus-visible,
+.nc-segment-btn.is-active .nc-segment-count {
+  background: #e8ecf0;
+  color: #17191d;
+}
+
+.nc-segment-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #d9dee5;
+}
+
 .nc-action:focus-visible,
 .nc-read:focus-visible,
 .nc-dismiss:focus-visible {
@@ -492,8 +513,7 @@ div.nc > * {
 #gvrze-account .nc .nc-name,
 #gvrze-account .nc .nc-group-label,
 #gvrze-account .nc .nc-new,
-#gvrze-account .nc .nc-empty h2,
-#gvrze-account .nc .nc-segment-btn.is-active {
+#gvrze-account .nc .nc-empty h2 {
   color: #111111;
   -webkit-text-fill-color: #111111;
   text-shadow: none;
@@ -510,12 +530,45 @@ div.nc > * {
 #gvrze-account .nc .nc-unread-count,
 #gvrze-account .nc .nc-time,
 #gvrze-account .nc .nc-read,
-#gvrze-account .nc .nc-action,
-#gvrze-account .nc .nc-segment-btn,
-#gvrze-account .nc .nc-segment-count {
+#gvrze-account .nc .nc-action {
   color: #667085;
   -webkit-text-fill-color: #667085;
   text-shadow: none;
+}
+
+#gvrze-account .nc .nc-segment {
+  background: #ffffff;
+  border-color: #d9dee5;
+  backdrop-filter: blur(0);
+  -webkit-backdrop-filter: blur(0);
+}
+
+#gvrze-account .nc .nc-segment-btn {
+  background: #ffffff;
+  color: #17191d;
+  -webkit-text-fill-color: #17191d;
+  text-shadow: none;
+}
+
+#gvrze-account .nc .nc-segment-btn:hover {
+  background: #f4f6f8;
+  color: #17191d;
+  -webkit-text-fill-color: #17191d;
+}
+
+#gvrze-account .nc .nc-segment-btn.is-active,
+#gvrze-account .nc .nc-segment-btn.is-active:hover {
+  background: #000000;
+  border-color: #000000;
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
+#gvrze-account .nc .nc-segment-count,
+#gvrze-account .nc .nc-segment-btn.is-active .nc-segment-count {
+  background: #e8ecf0;
+  color: #17191d;
+  -webkit-text-fill-color: #17191d;
 }
 
 #gvrze-account .nc .nc-dismiss,

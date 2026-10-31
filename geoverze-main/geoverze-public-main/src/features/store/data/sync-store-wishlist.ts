@@ -40,7 +40,7 @@ export async function hydrateStoreWishlist(user: User) {
       lastHydratedUserId = user.id;
     }
   } catch (error) {
-    console.error("Failed to hydrate GVRZE Store wishlist", error);
+    console.error("Failed to hydrate Gstore wishlist", error);
   }
 }
 

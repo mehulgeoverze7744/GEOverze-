@@ -1,5 +1,5 @@
 /*
- * GVRZE storefront (/geostore).
+ * Gstorefront (/geostore).
  *
  * Every rule here is keyed to #gvrze-storefront, so nothing leaks into other
  * pages even though the stylesheet stays loaded after navigating away.
@@ -14,7 +14,7 @@
  */
 div:has(> main #gvrze-storefront) > header,
 body:has(#gvrze-storefront) #geoverze-universe-background,
-body:has(#gvrze-storefront) [aria-label="GVRZE Store actions"] {
+body:has(#gvrze-storefront) [aria-label="Gstore actions"] {
   display: none !important;
 }
 

@@ -1,5 +1,5 @@
 /**
- * GVRZE Store taxonomy.
+ * Gstore taxonomy.
  *
  * One source of truth for groups, categories and facet options so the
  * storefront, browse filters and category shelves never drift apart.

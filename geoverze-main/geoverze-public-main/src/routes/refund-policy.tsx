@@ -6,7 +6,7 @@ import { legalHead } from "@/features/legal/legal-head";
 
 const title = "Refund and Replacement Policy";
 const description =
-  "Change-of-mind returns are not accepted. Defective, damaged, or incorrect GEOstore products can be replaced or refunded subject to applicable law.";
+  "Change-of-mind returns are not accepted. Defective, damaged, or incorrect Gstore products can be replaced or refunded subject to applicable law.";
 
 export const Route = createFileRoute("/refund-policy")({
   head: () => legalHead(title, description, "/refund-policy"),

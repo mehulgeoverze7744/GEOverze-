@@ -220,7 +220,7 @@ function NotificationsPanel() {
       />
       <SettingsRow
         title="Store activity"
-        subtitle="Order confirmations and restocks from the GVRZE Store."
+        subtitle="Order confirmations and restocks from the Gstore."
         control={<PrefSwitch toggle="notifyStore" label="Store activity" />}
         static
       />

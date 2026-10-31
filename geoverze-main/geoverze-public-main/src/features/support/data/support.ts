@@ -37,7 +37,7 @@ export const supportCategories: readonly SupportCategory[] = [
   },
   {
     id: "geostore",
-    title: "GVRZE Store",
+    title: "Gstore",
     description: "Orders, products and delivery",
     icon: "🛍️",
     to: "/geostore",

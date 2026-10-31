@@ -27,7 +27,7 @@ export function CreditBalanceSummary() {
           <span className="text-lg text-foreground/60">{balance === 1 ? "Credit" : "Credits"}</span>
         </p>
         <p className="mt-3 text-[0.83rem] leading-relaxed text-foreground/55">
-          Your wallet balance is reconciled on the server after every earn and GVRZE Store purchase.
+          Your wallet balance is reconciled on the server after every earn and Gstore purchase.
         </p>
       </div>
     </GameCard>

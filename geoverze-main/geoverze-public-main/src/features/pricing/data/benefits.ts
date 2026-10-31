@@ -38,8 +38,8 @@ export const membershipBenefits: MembershipBenefit[] = [
   },
   {
     icon: ShoppingBag,
-    title: "GVRZE Store savings",
-    description: "Member discounts on every GVRZE Store purchase — up to 10% off with Pro.",
+    title: "Gstore savings",
+    description: "Member discounts on every Gstore purchase — up to 10% off with Pro.",
   },
   {
     icon: Gift,

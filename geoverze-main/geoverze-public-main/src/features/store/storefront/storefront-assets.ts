@@ -1,5 +1,5 @@
 /**
- * Image and icon assets for the GVRZE storefront, exported from the
+ * Image and icon assets for the Gstorefront, exported from the
  * "thegvrze" Figma file (frame "Frame 11"). Photos are WebP at the original
  * Figma source resolution; icons are the original Figma SVGs.
  */

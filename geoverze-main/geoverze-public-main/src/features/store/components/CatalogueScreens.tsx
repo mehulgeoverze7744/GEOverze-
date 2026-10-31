@@ -500,10 +500,10 @@ export function ProductScreen() {
       <ProductPageFrame>
         <PageShell>
           <PageHeader
-            eyebrow="GVRZE Store"
+            eyebrow="Gstore"
             title="We couldn't find that item"
             description="It may have sold out or been retired from the collection."
-            breadcrumb={[{ label: "GVRZE Store", to: "/geostore" }, { label: "Not found" }]}
+            breadcrumb={[{ label: "Gstore", to: "/geostore" }, { label: "Not found" }]}
           />
           <SectionContainer>
             <EmptyState
@@ -535,11 +535,11 @@ export function ProductScreen() {
     <ProductPageFrame>
       <PageShell>
         <PageHeader
-          eyebrow={categoryById(product.category)?.label ?? "GVRZE Store"}
+          eyebrow={categoryById(product.category)?.label ?? "Gstore"}
           title={product.name}
           description={product.tagline}
           breadcrumb={[
-            { label: "GVRZE Store", to: "/geostore" },
+            { label: "Gstore", to: "/geostore" },
             { label: "Browse", to: "/geostore/browse" },
             { label: product.name },
           ]}

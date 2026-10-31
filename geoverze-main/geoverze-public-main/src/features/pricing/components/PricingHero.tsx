@@ -34,7 +34,10 @@ export function PricingHero({
             <BillingToggle cycle={cycle} onChange={onCycleChange} className="mt-6 md:mt-7" />
           </AnimatedSection>
 
-          <AnimatedSection delay={120} className="flex justify-center lg:justify-end">
+          <AnimatedSection
+            delay={120}
+            className="flex justify-center overflow-visible lg:justify-end"
+          >
             <OrbitalMark />
           </AnimatedSection>
         </div>

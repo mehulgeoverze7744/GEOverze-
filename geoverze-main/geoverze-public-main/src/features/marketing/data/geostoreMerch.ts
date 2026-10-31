@@ -53,7 +53,7 @@ export function initialMerchColorIndex(
 /** Merch IDs hidden from visible shelves (V2 catalog curation). */
 const HIDDEN_MERCH_IDS = new Set(["tshirt-my-country-is-better", "tshirt-common-sense"]);
 
-/** Static frontend catalogue — replaceable with server GVRZE Store data later. */
+/** Static frontend catalogue — replaceable with server Gstore data later. */
 export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
   {
     id: "tshirt-born-to-roam",
@@ -261,7 +261,7 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
   },
 ] as const;
 
-/** GVRZE Store category route slugs backed by static merchandise. */
+/** Gstore category route slugs backed by static merchandise. */
 export type MerchStoreCategorySlug = "tshirts" | "hoodies";
 
 export function isMerchStoreCategory(slug: string): slug is MerchStoreCategorySlug {

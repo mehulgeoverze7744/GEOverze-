@@ -285,7 +285,7 @@ function CarouselCard({
   );
 }
 
-/** Overlapping carousel for GVRZE Store digital product categories. */
+/** Overlapping carousel for Gstore digital product categories. */
 export function DigitalProductsCarousel() {
   const reducedMotion = useReducedMotion();
   const transitionMs = reducedMotion ? 0 : 550;

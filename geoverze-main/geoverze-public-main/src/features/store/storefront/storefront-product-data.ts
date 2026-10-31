@@ -1,5 +1,5 @@
 /**
- * Product data for the four GVRZE Storefront Signature T-shirts:
+ * Product data for the four Gstorefront Signature T-shirts:
  * Midnight Black, Cherry Blossom, Golden Arc, and New Age.
  *
  * These products are the hero "Best Sellers" of the GvrzeStorefront and link

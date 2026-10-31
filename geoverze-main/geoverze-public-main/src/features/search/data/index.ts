@@ -24,7 +24,7 @@ export const SEARCH_GROUPS: readonly SearchGroup[] = [
   { id: "articles", label: "Articles", icon: BookOpen },
   { id: "creators", label: "Creators", icon: Users },
   { id: "posts", label: "Community", icon: MessageSquare },
-  { id: "store", label: "GVRZE Store", icon: ShoppingBag },
+  { id: "store", label: "Gstore", icon: ShoppingBag },
 ] as const;
 
 export type SearchRecord = {
@@ -120,7 +120,7 @@ export const SEARCH_INDEX: readonly SearchRecord[] = [
     id: "s-s1",
     group: "store",
     title: "Bronze relief atlas",
-    meta: "GVRZE Store · Plate",
+    meta: "Gstore · Plate",
     keywords: ["bronze", "atlas", "relief", "print"],
     to: "/geostore",
   },
@@ -128,7 +128,7 @@ export const SEARCH_INDEX: readonly SearchRecord[] = [
     id: "s-s2",
     group: "store",
     title: "Season pass",
-    meta: "GVRZE Store · Subscription",
+    meta: "Gstore · Subscription",
     keywords: ["season", "pass", "subscription"],
     to: "/geostore",
   },
@@ -136,7 +136,7 @@ export const SEARCH_INDEX: readonly SearchRecord[] = [
     id: "s-s3",
     group: "store",
     title: "Explorer notebook",
-    meta: "GVRZE Store · Merch",
+    meta: "Gstore · Merch",
     keywords: ["notebook", "merch", "paper"],
     to: "/geostore",
   },
@@ -202,5 +202,5 @@ export const SEARCH_SUGGESTIONS: readonly {
   { label: "Solo mode", to: "/play/lobby", search: { mode: "solo", quiz: undefined }, icon: Zap },
   { label: "PvP duels", to: "/play/pvp", icon: Gamepad2 },
   { label: "Browse the GVRZE Library", to: "/geolibrary", icon: BookOpen },
-  { label: "See what's new in GVRZE Store", to: "/geostore", icon: Sparkles },
+  { label: "See what's new in Gstore", to: "/geostore", icon: Sparkles },
 ] as const;

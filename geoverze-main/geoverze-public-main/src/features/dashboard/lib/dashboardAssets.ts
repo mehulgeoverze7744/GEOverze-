@@ -24,7 +24,7 @@ export const RECOMMENDED_IMAGES: Record<string, string> = {
   rec3: flagStickers,
 };
 
-/** Non-GVRZE Library dashboard thumbnails (GVRZE Store, Let's Play, etc.). */
+/** Non-GVRZE Library dashboard thumbnails (Gstore, Let's Play, etc.). */
 const DASHBOARD_NON_GEOLIBRARY_THUMBNAILS: Readonly<Record<string, string>> = {
   r2: explorersCompass,
   r3: continentStickers,

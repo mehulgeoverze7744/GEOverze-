@@ -1,4 +1,4 @@
-/** Money and credit formatting for the GVRZE Store. */
+/** Money and credit formatting for the Gstore. */
 
 /** Formats minor units as USD. `null` renders as an em dash. */
 export function money(minor: number | null): string {

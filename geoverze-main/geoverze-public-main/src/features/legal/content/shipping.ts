@@ -16,7 +16,7 @@ export const shippingSections: LegalSection[] = [
     blocks: [
       {
         kind: "p",
-        text: "This policy is for physical products offered in GEOstore, including merchandise shown in the catalogue such as T-shirts, hoodies, caps, mugs, stickers, and globes.",
+        text: "This policy is for physical products offered in Gstore, including merchandise shown in the catalogue such as T-shirts, hoodies, caps, mugs, stickers, and globes.",
       },
       {
         kind: "p",

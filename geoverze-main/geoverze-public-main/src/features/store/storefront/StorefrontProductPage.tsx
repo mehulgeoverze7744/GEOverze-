@@ -1,5 +1,5 @@
 /**
- * Unified product detail page for the GVRZE storefront.
+ * Unified product detail page for the Gstorefront.
  *
  * Matches the clean white / light-grey Figma reference design:
  *   - Vertical thumbnail strip + large main image (left column)

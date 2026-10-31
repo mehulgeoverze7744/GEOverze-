@@ -17,7 +17,7 @@ export function RewardSummary() {
     <div>
       <p className="hr-panel-label">Rewards</p>
       <p className="hr-muted mb-4 max-w-lg text-sm">
-        Your exploration has value — credits earned through play can be redeemed for GVRZE Store
+        Your exploration has value — credits earned through play can be redeemed for Gstore
         rewards.
       </p>
 

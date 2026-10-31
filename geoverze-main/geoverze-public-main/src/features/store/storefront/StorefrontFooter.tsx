@@ -30,7 +30,7 @@ export function StorefrontFooter() {
       <div className={`${SF_SHELL} pt-[clamp(40px,4.9vw,71px)]`}>
         <div className="flex flex-col gap-10 lg:flex-row lg:justify-between">
           <div>
-            <Link to="/geostore" aria-label="GVRZE Store home" className="inline-block rounded-sm">
+            <Link to="/geostore" aria-label="Gstore home" className="inline-block rounded-sm">
               <img
                 src={SF_ASSETS.logo.src}
                 width={SF_ASSETS.logo.width}

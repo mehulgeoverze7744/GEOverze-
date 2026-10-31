@@ -8,7 +8,7 @@ export const refundSections: LegalSection[] = [
     blocks: [
       {
         kind: "p",
-        text: "GEOstore products are not eligible for a return or refund only because you changed your mind, dislike the item, or ordered the wrong size, colour, or variant. That rule is subject to applicable consumer law. It does not let GVRZE refuse a remedy that the law requires.",
+        text: "Gstore products are not eligible for a return or refund only because you changed your mind, dislike the item, or ordered the wrong size, colour, or variant. That rule is subject to applicable consumer law. It does not let GVRZE refuse a remedy that the law requires.",
       },
     ],
   },

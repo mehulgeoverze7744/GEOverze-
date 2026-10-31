@@ -145,7 +145,7 @@ export const TooClosePerfectProductPage = memo(function TooClosePerfectProductPa
               activeOptions={{ exact: true }}
               className="transition-colors hover:text-bronze"
             >
-              Back to GVRZE Store
+              Back to Gstore
             </Link>
             <span className="text-foreground/25" aria-hidden>
               &gt;

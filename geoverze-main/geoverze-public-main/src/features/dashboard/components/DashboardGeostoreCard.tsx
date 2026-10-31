@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 import "./dashboard-geostore-widget.css";
 
-/** Promotional GVRZE Store banner — live credits plus the storefront hero. */
+/** Promotional Gstore banner — live credits plus the storefront hero. */
 export function DashboardGeostoreCard({ className }: { className?: string }) {
   const credits = useProgressionStore(selectPlayer).credits;
   const creditLabel = Number.isFinite(credits) ? Math.max(0, credits).toLocaleString() : "0";
@@ -18,9 +18,9 @@ export function DashboardGeostoreCard({ className }: { className?: string }) {
     >
       <div className="dashboard-geostore__grid">
         <div className="dashboard-geostore__copy">
-          <p className="dashboard-geostore__label">GVRZE STORE</p>
+          <p className="dashboard-geostore__label">Gstore</p>
           <h2 id="dashboard-geostore-heading" className="dashboard-geostore__title">
-            Explore the GVRZE Store
+            Explore the Gstore
           </h2>
           <p className="dashboard-geostore__dek">
             Discover exclusive drops, premium merchandise and rewards.
@@ -31,7 +31,7 @@ export function DashboardGeostoreCard({ className }: { className?: string }) {
           </p>
           <div className="dashboard-geostore__actions">
             <Link to="/geostore" className="dashboard-geostore__cta">
-              VISIT GVRZE STORE
+              VISIT Gstore
             </Link>
             <Link to="/geostore/rewards" className="dashboard-geostore__link">
               VIEW REWARDS

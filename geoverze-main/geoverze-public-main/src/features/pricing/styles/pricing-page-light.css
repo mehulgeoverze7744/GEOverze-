@@ -352,24 +352,15 @@ body:has(#gvrze-pricing-page) footer a:hover {
   background-color: #f4f6f8 !important;
 }
 
-/* Emblem — keep asset, drop gold orbit. */
+#gvrze-pricing-page .pricing-hero {
+  overflow: visible;
+}
+
 @media (max-width: 767px) {
-  #gvrze-pricing-page .pricing-hero [aria-hidden] {
-    max-width: 14.5rem;
+  #gvrze-pricing-page .pricing-orbital-mark {
+    width: min(70%, 14rem);
+    margin-inline: auto;
   }
-}
-
-#gvrze-pricing-page .pricing-hero [aria-hidden] > div.absolute.inset-0 {
-  background: radial-gradient(circle at 50% 50%, rgb(17 17 17 / 0.06) 0%, transparent 62%) !important;
-}
-
-#gvrze-pricing-page .pricing-hero svg circle {
-  stroke: #2a2f36;
-}
-
-#gvrze-pricing-page .pricing-hero .border-bronze\/30 {
-  border-color: rgb(17 17 17 / 0.16);
-  box-shadow: none;
 }
 
 /* Lower sections — readable on the same icy plate. */

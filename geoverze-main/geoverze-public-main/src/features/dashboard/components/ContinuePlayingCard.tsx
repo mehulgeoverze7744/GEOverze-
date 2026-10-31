@@ -86,7 +86,7 @@ export function ContinuePlayingCard({ className }: { className?: string }) {
   return (
     <section
       className={cn(
-        "flex h-full flex-col rounded-2xl border border-bronze/16 bg-charcoal/30 p-6 backdrop-blur-sm",
+        "dashboard-continue-playing flex h-full flex-col rounded-2xl border border-bronze/16 bg-charcoal/30 p-6 backdrop-blur-sm",
         className,
       )}
       aria-labelledby="continue-playing-heading"
@@ -94,7 +94,7 @@ export function ContinuePlayingCard({ className }: { className?: string }) {
       <h2 id="continue-playing-heading" className="dashboard-section-label">
         Continue playing
       </h2>
-      <p className="mt-2 text-sm text-foreground/50">Jump back into a live mode.</p>
+      <p className="dashboard-continue-playing__lede mt-2 text-sm">Jump back into a live mode.</p>
 
       {/* Wrapper centres cards vertically in the remaining section height */}
       <div className="mt-5 flex flex-1 items-center">

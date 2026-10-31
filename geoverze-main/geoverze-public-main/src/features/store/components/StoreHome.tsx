@@ -23,7 +23,7 @@ import { money } from "../lib/format";
 import { useStoreActions } from "../lib/useStoreActions";
 import { useStoreCreditsState } from "../lib/useStoreCredits";
 
-/** GVRZE Store front page: hero, credit balance, categories and merchandising rails. */
+/** Gstore front page: hero, credit balance, categories and merchandising rails. */
 export function StoreHome() {
   const [quickView, setQuickView] = useState<Product | null>(null);
   const { addProduct, wishlistToggle, wishlist } = useStoreActions();

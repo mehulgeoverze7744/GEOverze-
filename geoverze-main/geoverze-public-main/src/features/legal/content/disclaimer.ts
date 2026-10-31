@@ -61,7 +61,7 @@ export const disclaimerSections: LegalSection[] = [
     blocks: [
       {
         kind: "p",
-        text: "Photographs, colours, and mockups of GEOstore products are illustrative. Small differences in colour or finish can occur between a screen and a physical item. That does not excuse a product that is materially different from the description, size, or variant you ordered.",
+        text: "Photographs, colours, and mockups of Gstore products are illustrative. Small differences in colour or finish can occur between a screen and a physical item. That does not excuse a product that is materially different from the description, size, or variant you ordered.",
       },
     ],
   },

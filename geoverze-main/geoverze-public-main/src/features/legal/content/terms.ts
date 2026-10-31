@@ -36,7 +36,7 @@ export const termsSections: LegalSection[] = [
     blocks: [
       {
         kind: "p",
-        text: "The service that is actually open includes geography quizzes and Solo play, PvP, and Multiplayer, Draw & Guess, GEOsus, and emoji-style quiz sets where those areas are available in the product. It also includes the GVRZE Library, profiles, achievements and in-mode scores, community spaces, the GEOstore catalogue, and the membership plans shown on the pricing page.",
+        text: "The service that is actually open includes geography quizzes and Solo play, PvP, and Multiplayer, Draw & Guess, GEOsus, and emoji-style quiz sets where those areas are available in the product. It also includes the GVRZE Library, profiles, achievements and in-mode scores, community spaces, the Gstore catalogue, and the membership plans shown on the pricing page.",
       },
       {
         kind: "p",
@@ -100,7 +100,7 @@ export const termsSections: LegalSection[] = [
   },
   {
     id: "store",
-    title: "GEOstore purchases",
+    title: "Gstore purchases",
     blocks: [
       {
         kind: "p",

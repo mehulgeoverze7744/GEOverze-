@@ -1,90 +1,169 @@
-@import url("https://fonts.googleapis.com/css2?family=Michroma&display=swap");
-
-/* Scoped to Home page GEOstore showcase only */
+/* Scoped to Home page Gstore showcase only */
 
 .geostore-showcase {
-  padding-top: calc(var(--space-section-sm) * 0.65);
+  padding-top: calc(var(--space-section-sm) * 0.55);
   padding-bottom: var(--space-section-sm);
 }
 
 @media (min-width: 768px) {
   .geostore-showcase {
-    padding-top: calc(var(--space-section) * 0.55);
+    padding-top: calc(var(--space-section) * 0.45);
     padding-bottom: var(--space-section);
   }
 }
 
 .geostore-showcase-intro {
-  max-width: 42rem;
-}
-
-.geostore-showcase-intro__eyebrow {
-  margin-bottom: 0.75rem;
-  font-size: 0.6875rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.32em;
-  color: var(--bronze);
-}
-
-@media (min-width: 640px) {
-  .geostore-showcase-intro__eyebrow {
-    letter-spacing: 0.48em;
-  }
+  max-width: none;
+  margin: 0;
 }
 
 .geostore-showcase-intro__heading {
-  margin-bottom: 0.75rem;
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
-  font-weight: 300;
-  line-height: 1.12;
-  letter-spacing: -0.02em;
-  color: var(--foreground);
-}
-
-.geostore-showcase-intro__copy {
-  font-size: 0.875rem;
-  font-weight: 400;
-  line-height: 1.5;
-}
-
-@media (min-width: 768px) {
-  .geostore-showcase-intro__copy {
-    font-size: 0.9375rem;
-  }
+  margin: 0;
+  font-size: clamp(1.15rem, 2.2vw, 1.85rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #111111;
 }
 
 .geostore-showcase__row {
-  margin-top: 1.5rem;
-}
-
-.geostore-showcase__row--hoodies {
-  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 1.35rem;
+  padding: 0;
+  list-style: none;
 }
 
 @media (min-width: 768px) {
   .geostore-showcase__row {
-    margin-top: 1.75rem;
-  }
-
-  .geostore-showcase__row--hoodies {
-    margin-top: 1.75rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 14px;
+    margin-top: 1.65rem;
   }
 }
 
-.geostore-showcase__cta {
-  margin-top: 2.5rem;
+.geostore-home-card {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #d9dee5;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #17191d;
+  text-decoration: none;
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+}
+
+.geostore-home-card:hover {
+  border-color: #c5ccd6;
+  box-shadow: 0 16px 36px rgb(23 25 29 / 0.08);
+  transform: translateY(-2px);
+}
+
+.geostore-home-card:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px #ffffff,
+    0 0 0 4px #17191d;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .geostore-home-card,
+  .geostore-home-card:hover {
+    transition: none;
+    transform: none;
+  }
+}
+
+.geostore-home-card__media {
+  position: relative;
+  aspect-ratio: 438 / 347;
+  overflow: hidden;
+  background: #e8eef3;
+}
+
+.geostore-home-card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 420ms ease;
+}
+
+.geostore-home-card:hover .geostore-home-card__media img {
+  transform: scale(1.03);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .geostore-home-card__media img,
+  .geostore-home-card:hover .geostore-home-card__media img {
+    transition: none;
+    transform: none;
+  }
+}
+
+.geostore-home-card__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  padding: 1.05rem 1.1rem 1.2rem;
+  background: #f4f7fa;
+}
+
+#gvrze-home .geostore-showcase .geostore-home-card__title,
+.geostore-home-card__title {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: #111111;
 }
 
 @media (min-width: 768px) {
-  .geostore-showcase__cta {
-    margin-top: 2.75rem;
+  .geostore-home-card__title {
+    font-size: 0.98rem;
   }
 }
 
-/* Michroma ships a single 400 weight; bold via stroke to avoid inconsistent faux-bold */
-.geostore-showcase__cta .home-hero-cta {
-  font-family: "Michroma", "Chakra Petch", sans-serif;
+#gvrze-home .geostore-showcase .geostore-home-card__copy,
+.geostore-home-card__copy {
+  margin: 0.4rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: #17191d;
+}
+
+#gvrze-home .geostore-showcase .geostore-home-card__price,
+.geostore-home-card__price {
+  margin: 0.8rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 0.65rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: #111111;
+}
+
+#gvrze-home .geostore-showcase .geostore-home-card__credits,
+.geostore-home-card__credits {
+  font-size: 0.76rem;
   font-weight: 400;
-  -webkit-text-stroke: 0.55px currentColor;
+  color: #3d4450;
+}
+
+.geostore-home-card__title-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }

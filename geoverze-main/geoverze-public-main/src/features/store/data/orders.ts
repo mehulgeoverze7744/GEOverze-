@@ -1,5 +1,5 @@
 /**
- * GVRZE Store order ledger.
+ * Gstore order ledger.
  *
  * Placeholder order history plus the shared order shape. A real backend would
  * return the same fields, so only this module changes when it lands.

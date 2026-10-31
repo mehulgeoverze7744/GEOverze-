@@ -6,12 +6,12 @@ import { SF_FONTS_HREF } from "@/features/store/storefront/storefront-assets";
 export const Route = createFileRoute("/geostore/")({
   head: () => ({
     meta: [
-      { title: "GVRZE Store — GVRZE Store | GVRZE" },
+      { title: "Gstore — GVRZE" },
       {
         name: "description",
         content: "Redeem credits, unlock digital packs and shop GVRZE merchandise.",
       },
-      { property: "og:title", content: "GVRZE Store — GVRZE Store | GVRZE" },
+      { property: "og:title", content: "Gstore — GVRZE" },
       {
         property: "og:description",
         content: "Redeem credits, unlock digital packs and shop GVRZE merchandise.",

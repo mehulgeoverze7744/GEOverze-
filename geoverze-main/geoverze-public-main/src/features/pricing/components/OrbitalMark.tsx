@@ -1,50 +1,57 @@
 import { memo } from "react";
 
-import { BrandMark } from "@/components/shared/BrandMark";
+import "./orbital-mark.css";
+
+const ORBIT_PATH = "M 1110 258 A 520 118 0 1 1 90 258 A 520 118 0 1 1 1110 258";
 
 /**
- * Hero illustration: emblem with a single bronze orbit ring.
- * CSS + SVG only — the 3D globe stays on Home.
+ * Pricing hero wordmark: official GVRZE letters with a live elliptical orbit.
+ * Used only on the Pricing page — not the shared navbar mark.
  */
 export const OrbitalMark = memo(function OrbitalMark() {
   return (
-    <div
-      aria-hidden
-      className="relative flex aspect-square w-full max-w-[22rem] items-center justify-center md:max-w-[24rem]"
-    >
-      <div
-        className="absolute inset-0 rounded-full opacity-70"
-        style={{
-          background:
-            "radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--bronze) 16%, transparent) 0%, transparent 62%)",
-        }}
-      />
-
+    <div className="pricing-orbital-mark" aria-hidden="true">
       <svg
-        viewBox="0 0 100 100"
-        className="absolute inset-[8%] animate-spin motion-reduce:animate-none"
-        style={{ animationDuration: "42s", animationTimingFunction: "linear" }}
+        className="pricing-orbital-mark__svg"
+        viewBox="0 0 1200 520"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
       >
-        <circle
-          cx="50"
-          cy="50"
-          r="48"
-          fill="none"
-          stroke="var(--bronze)"
-          strokeWidth="0.45"
-          strokeDasharray="2 10"
-          opacity={0.42}
+        <title>GVRZE</title>
+        <g className="pricing-orbital-mark__orbit" transform="rotate(-18 600 258)">
+          <path
+            id="pricing-orbit-path"
+            d={ORBIT_PATH}
+            className="pricing-orbital-mark__path"
+          />
+          <circle className="pricing-orbital-mark__cap" cx="90" cy="258" r="11" />
+          <circle className="pricing-orbital-mark__cap" cx="1110" cy="258" r="7.25" />
+          <circle className="pricing-orbit-planet pricing-orbit-planet--live" r="6">
+            <animateMotion dur="18s" repeatCount="indefinite" calcMode="linear">
+              <mpath href="#pricing-orbit-path" />
+            </animateMotion>
+          </circle>
+          <circle
+            className="pricing-orbit-planet pricing-orbit-planet--static"
+            cx="1072"
+            cy="218"
+            r="6"
+          />
+        </g>
+
+        <image
+          href="/assets/home/gvrze-wordmark.png"
+          x="145"
+          y="196"
+          width="840"
+          height="136"
+          preserveAspectRatio="xMidYMid meet"
         />
+        <text className="pricing-orbital-mark__tm" x="996" y="228">
+          ™
+        </text>
       </svg>
-
-      <div
-        className="absolute rounded-full border border-bronze/30"
-        style={{ inset: "18%", boxShadow: "var(--glow-bronze)" }}
-      />
-
-      <span className="relative flex aspect-square w-[72%] items-center justify-center">
-        <BrandMark size="fill" />
-      </span>
     </div>
   );
 });

@@ -6,7 +6,7 @@ import { legalHead } from "@/features/legal/legal-head";
 
 const title = "Shipping Policy";
 const description =
-  "How physical GEOstore orders will be processed and shipped once a paid order is accepted. No delivery promise is made.";
+  "How physical Gstore orders will be processed and shipped once a paid order is accepted. No delivery promise is made.";
 
 export const Route = createFileRoute("/shipping-policy")({
   head: () => legalHead(title, description, "/shipping-policy"),
@@ -18,7 +18,7 @@ function ShippingPolicyPage() {
     <LegalPageView
       path="/shipping-policy"
       title={title}
-      description="Rules for physical GEOstore merchandise. Digital access is not shipped, and no delivery time is confirmed."
+      description="Rules for physical Gstore merchandise. Digital access is not shipped, and no delivery time is confirmed."
       sections={shippingSections}
     />
   );

@@ -1,7 +1,7 @@
 /**
  * StorefrontCategoryPage
  *
- * Wrapper used by every GVRZE Store category / collection listing page:
+ * Wrapper used by every Gstore category / collection listing page:
  *   /geostore/category/$slug (T-Shirts, Hoodies, Accessories, etc.)
  *   /geostore/browse          (All Products)
  *

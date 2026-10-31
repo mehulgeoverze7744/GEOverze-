@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-/** Shared fixed GVRZE Store icon-only action control (wishlist, cart, search). */
+/** Shared fixed Gstore icon-only action control (wishlist, cart, search). */
 export function geostoreActionLinkClass(active: boolean) {
   return cn(
     "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border backdrop-blur transition-all motion-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",

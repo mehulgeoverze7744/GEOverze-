@@ -28,7 +28,7 @@ import vintageWorldGlobe from "@/assets/geostore/vintage-world-globe-studio.jpg"
 
 import { merchProductById } from "@/features/marketing/data/geostoreMerch";
 
-/** Product photography overrides for GVRZE Store cards (slug-keyed). */
+/** Product photography overrides for Gstore cards (slug-keyed). */
 export type ProductImage = {
   src: string;
   alt: string;
@@ -151,7 +151,7 @@ const PRODUCT_IMAGES: Readonly<Record<string, ProductImage>> = {
   },
 };
 
-/** Artwork for the GVRZE Store Rewards shelf cards only. */
+/** Artwork for the Gstore Rewards shelf cards only. */
 const REWARD_SHELF_IMAGES: Readonly<Record<string, ProductImage>> = {
   "avatar-navigator": {
     src: rewardNavigatorAvatar,

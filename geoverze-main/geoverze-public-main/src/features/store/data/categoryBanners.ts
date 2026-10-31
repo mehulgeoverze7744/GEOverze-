@@ -1,4 +1,4 @@
-/** Merchandise category banner artwork for GVRZE Store home tiles. Keyed by category id. */
+/** Merchandise category banner artwork for Gstore home tiles. Keyed by category id. */
 export type CategoryBanner = {
   src: string;
   alt: string;

@@ -57,10 +57,10 @@ export function RewardsExplainer() {
           id="rewards-heading"
           eyebrow="Rewards"
           title="How credits work"
-          description="One currency across the platform. You earn it by exploring and spend it in the GVRZE Store."
+          description="One currency across the platform. You earn it by exploring and spend it in the Gstore."
           action={
             <GeoButton asChild variant="ghost" size="sm">
-              <Link to="/geostore">Visit the GVRZE Store</Link>
+              <Link to="/geostore">Visit the Gstore</Link>
             </GeoButton>
           }
         />

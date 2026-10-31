@@ -1,88 +1,50 @@
-import { Link } from "@tanstack/react-router";
 import { memo, useMemo } from "react";
 
-import { AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
+import { AnimatedSection, SectionContainer } from "@/components/shared";
 
-import { merchProductsForStoreCategory } from "../../data/geostoreMerch";
+import { merchProductById } from "../../data/geostoreMerch";
 import { GeostoreMerchCard } from "./GeostoreMerchCard";
 import { GeostoreShowcaseIntro } from "./GeostoreShowcaseIntro";
 import { GeostoreViewAllCard } from "./GeostoreViewAllCard";
 
-import "../home-hero.css";
 import "./geostore-showcase.css";
 
-/** Homepage GVRZE Store merchandise showcase — static frontend only. */
+/** Homepage Gstore merchandise showcase — static frontend only. */
 export const GeostoreShowcase = memo(function GeostoreShowcase() {
-  const tshirtProducts = useMemo(() => merchProductsForStoreCategory("tshirts"), []);
-  const hoodieProducts = useMemo(() => merchProductsForStoreCategory("hoodies"), []);
-  const tshirts = useMemo(() => tshirtProducts.slice(0, 2), [tshirtProducts]);
-  const hoodies = useMemo(() => hoodieProducts.slice(0, 2), [hoodieProducts]);
-  const tshirtViewAll = tshirtProducts[2];
-  const hoodieViewAll = hoodieProducts[2];
+  const bornToRoam = useMemo(() => merchProductById("tshirt-born-to-roam"), []);
+  const knowTheCapital = useMemo(() => merchProductById("tshirt-know-the-capital"), []);
+  const viewAllShirt = useMemo(() => merchProductById("tshirt-recalculating"), []);
+
+  const featured = [bornToRoam, knowTheCapital].filter(
+    (product): product is NonNullable<typeof product> => Boolean(product),
+  );
 
   return (
     <section id="geostore-merch" className="geostore-showcase relative">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,var(--bloom-bronze),transparent_68%)]"
-      />
-
       <SectionContainer size="wide" className="relative">
         <GeostoreShowcaseIntro />
 
-        <ul
-          className="geostore-showcase__row grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-3"
-          aria-label="Featured T-shirts"
-        >
-          {tshirts.map((product, index) => (
+        <ul className="geostore-showcase__row" aria-label="Featured T-shirts">
+          {featured.map((product, index) => (
             <li key={product.id} className="min-w-0">
               <AnimatedSection delay={80 + index * 40} className="h-full">
-                <GeostoreMerchCard product={product} seamlessSurface coverMedia />
+                <GeostoreMerchCard product={product} />
               </AnimatedSection>
             </li>
           ))}
-          <li className="min-w-0">
-            <AnimatedSection delay={160} className="h-full">
-              <GeostoreViewAllCard
-                slug="tshirts"
-                categoryLabel="T-SHIRT"
-                label="VIEW ALL T-SHIRTS"
-                image={tshirtViewAll.image}
-                imageAlt={tshirtViewAll.alt}
-              />
-            </AnimatedSection>
-          </li>
-        </ul>
-
-        <ul
-          className="geostore-showcase__row geostore-showcase__row--hoodies grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-3"
-          aria-label="Featured hoodies"
-        >
-          {hoodies.map((product, index) => (
-            <li key={product.id} className="min-w-0">
-              <AnimatedSection delay={200 + index * 40} className="h-full">
-                <GeostoreMerchCard product={product} seamlessSurface coverMedia />
+          {viewAllShirt ? (
+            <li className="min-w-0">
+              <AnimatedSection delay={160} className="h-full">
+                <GeostoreViewAllCard
+                  slug="tshirts"
+                  label="View All T-Shirts"
+                  image={viewAllShirt.image}
+                  imageAlt={viewAllShirt.alt}
+                />
               </AnimatedSection>
             </li>
-          ))}
-          <li className="min-w-0">
-            <AnimatedSection delay={280} className="h-full">
-              <GeostoreViewAllCard
-                slug="hoodies"
-                categoryLabel="HOODIE"
-                label="VIEW ALL HOODIES"
-                image={hoodieViewAll.image}
-                imageAlt={hoodieViewAll.alt}
-              />
-            </AnimatedSection>
-          </li>
+          ) : null}
         </ul>
-
-        <AnimatedSection className="geostore-showcase__cta text-center" delay={120}>
-          <GeoButton asChild variant="solid" size="lg" className="home-hero-cta">
-            <Link to="/geostore">Explore GVRZE Store</Link>
-          </GeoButton>
-        </AnimatedSection>
       </SectionContainer>
     </section>
   );

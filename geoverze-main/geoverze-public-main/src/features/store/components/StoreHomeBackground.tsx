@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import storeStoneBg from "@/assets/geostore/tshirts-category-bg.jpg";
 
 /**
- * Page-level dark stone backdrop for the GVRZE Store home.
+ * Page-level dark stone backdrop for the Gstore home.
  * Reuses the existing store stone texture (not the composite hero merch shot)
  * and hides the global starfield while this route is mounted.
  */

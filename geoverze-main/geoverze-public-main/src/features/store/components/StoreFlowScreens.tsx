@@ -27,7 +27,7 @@ import { useStoreCredits, useStoreCreditsState } from "../lib/useStoreCredits";
 import { toast } from "sonner";
 
 function crumbs(label: string) {
-  return [{ label: "GVRZE Store", to: "/geostore" as const }, { label }];
+  return [{ label: "Gstore", to: "/geostore" as const }, { label }];
 }
 
 /** Basket + saved for later. */
@@ -49,7 +49,7 @@ export function CartScreen() {
   return (
     <PageShell>
       <PageHeader
-        eyebrow="GVRZE Store"
+        eyebrow="Gstore"
         title="Your cart"
         description="Review your picks before checkout."
         breadcrumb={crumbs("Cart")}
@@ -151,7 +151,7 @@ export function CheckoutScreen() {
   return (
     <PageShell>
       <PageHeader
-        eyebrow="GVRZE Store"
+        eyebrow="Gstore"
         title="Checkout"
         description="A demonstration flow — no card is charged and no credits leave your balance permanently."
         breadcrumb={crumbs("Checkout")}
@@ -218,7 +218,7 @@ export function OrdersScreen() {
   return (
     <PageShell>
       <PageHeader
-        eyebrow="GVRZE Store"
+        eyebrow="Gstore"
         title="Your orders"
         description="Every claim and purchase you've made."
         breadcrumb={crumbs("Orders")}
@@ -256,7 +256,7 @@ export function RewardsScreen() {
   return (
     <PageShell>
       <PageHeader
-        eyebrow="GVRZE Store"
+        eyebrow="Gstore"
         title="Redeem with credits"
         description={
           signedIn
@@ -291,7 +291,7 @@ export function WishlistScreen() {
   return (
     <PageShell>
       <PageHeader
-        eyebrow="GVRZE Store"
+        eyebrow="Gstore"
         title="Wishlist"
         description="Products you've saved for later."
         breadcrumb={crumbs("Wishlist")}
@@ -304,7 +304,7 @@ export function WishlistScreen() {
             description="Tap the heart on any product to save it here. Wishlist and cart work independently."
             action={
               <GeoButton asChild variant="solid">
-                <Link to="/geostore">Explore GVRZE Store</Link>
+                <Link to="/geostore">Explore Gstore</Link>
               </GeoButton>
             }
           />

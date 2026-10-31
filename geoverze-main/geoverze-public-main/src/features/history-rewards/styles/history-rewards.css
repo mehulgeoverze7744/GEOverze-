@@ -664,3 +664,47 @@
     transform: none;
   }
 }
+
+/* Reward product cards — replace dark / bronze store tiles on this page only. */
+#gvrze-quiz-history .store-product-card--light {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  box-shadow: 0 14px 32px -22px rgb(17 17 17 / 0.18);
+}
+
+#gvrze-quiz-history .store-product-card--light [class*="bg-[oklch"],
+#gvrze-quiz-history .store-product-card--light [class*="from-charcoal"] {
+  background: #f5f6f8;
+  background-image: none;
+}
+
+#gvrze-account #gvrze-quiz-history .store-product-card--light h3,
+#gvrze-account #gvrze-quiz-history .store-product-card--light h3 a,
+#gvrze-quiz-history .store-product-card--light h3,
+#gvrze-quiz-history .store-product-card--light h3 a {
+  color: #111111;
+}
+
+#gvrze-account #gvrze-quiz-history .hr-claim-btn,
+#gvrze-account #gvrze-quiz-history .hr-claim-btn:hover,
+#gvrze-account #gvrze-quiz-history .hr-claim-btn:disabled,
+#gvrze-quiz-history .hr-claim-btn,
+#gvrze-quiz-history .hr-claim-btn:hover,
+#gvrze-quiz-history .hr-claim-btn:disabled {
+  background: #ffffff !important;
+  background-image: none !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 9999px !important;
+  color: #111111 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+#gvrze-account #gvrze-quiz-history .hr-claim-btn:hover:not(:disabled),
+#gvrze-quiz-history .hr-claim-btn:hover:not(:disabled) {
+  background: #eaeaea !important;
+}
+
+#gvrze-quiz-history .hr-claim-btn svg {
+  color: #111111;
+}

@@ -15,7 +15,7 @@ import { searchStoreProducts } from "../lib/filter";
 import { credits as formatCredits, money } from "../lib/format";
 
 /**
- * Fixed GVRZE Store search icon — opens the product search panel.
+ * Fixed Gstore search icon — opens the product search panel.
  * `renderTrigger` lets a surface with its own visual language (the storefront)
  * supply the opener while reusing the same search panel and recent searches.
  */
@@ -75,7 +75,7 @@ export function GeostoreSearchButton({
         <button
           type="button"
           onClick={() => setOpen(true)}
-          aria-label="Search GVRZE Store"
+          aria-label="Search Gstore"
           title="Search"
           className={cn(geostoreActionLinkClass(open), className)}
         >
@@ -89,7 +89,7 @@ export function GeostoreSearchButton({
           if (!next) close();
           else setOpen(true);
         }}
-        title="Search GVRZE Store"
+        title="Search Gstore"
         description="Find exact products from the catalogue."
       >
         <div className="space-y-5">
@@ -97,7 +97,7 @@ export function GeostoreSearchButton({
             <SearchBar
               id={inputId}
               ref={inputRef}
-              label="Search GVRZE Store products"
+              label="Search Gstore products"
               placeholder="Search hoodies, mugs, packs…"
               value={query}
               onChange={(event) => {
@@ -186,7 +186,7 @@ export function GeostoreSearchButton({
               <div className="rounded-2xl border border-bronze/15 bg-charcoal/45 px-5 py-8 text-center">
                 <p className="text-sm text-foreground/70">No products found</p>
                 <p className="mt-2 text-xs leading-relaxed text-foreground/50">
-                  No GVRZE Store matches for “{submittedQuery}”. Try another name or category.
+                  No Gstore matches for “{submittedQuery}”. Try another name or category.
                 </p>
               </div>
             )
@@ -213,7 +213,7 @@ export function GeostoreSearchButton({
                 </ul>
               ) : (
                 <p className="rounded-xl border border-bronze/12 bg-charcoal/40 px-4 py-5 text-xs leading-relaxed text-foreground/50">
-                  Your previous GVRZE Store searches will appear here after you search for a product.
+                  Your previous Gstore searches will appear here after you search for a product.
                 </p>
               )}
             </div>
