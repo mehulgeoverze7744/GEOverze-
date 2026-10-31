@@ -2,7 +2,7 @@
 
 #home-hero .rewards-card-motion {
   position: absolute;
-  top: 50%;
+  top: 56%;
   right: clamp(1.15rem, 3.4vw, 3rem);
   z-index: 15;
   width: min(30rem, calc(100vw - 39rem));

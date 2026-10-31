@@ -184,7 +184,7 @@ export function HomeHero() {
 
       <div
         ref={panel2}
-        className="pointer-events-none absolute inset-x-6 bottom-24 opacity-0 will-change-transform max-md:hidden md:inset-x-auto md:left-12 md:top-1/2 md:bottom-auto md:max-w-[30rem] md:-translate-y-1/2"
+        className="home-hero-explore pointer-events-none absolute inset-x-6 bottom-24 opacity-0 will-change-transform max-md:hidden md:inset-x-auto md:left-12 md:top-1/2 md:bottom-auto md:max-w-[30rem] md:-translate-y-1/2"
       >
         <p className="eyebrow">One planet, endless ground to cover</p>
         <h2 className="mt-4 font-light leading-[1.05] tracking-tight text-foreground text-[clamp(1.7rem,3.6vw,2.9rem)]">

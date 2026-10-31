@@ -220,14 +220,17 @@ body:has(#gvrze-home) footer input::placeholder {
   color: #374151;
 }
 
-/* Intro heading + tagline only — champagne gold over the lunar sky and globe. */
-#gvrze-home #home-hero .home-hero-intro .eyebrow,
-#gvrze-home #home-hero .home-hero-intro h1,
-#gvrze-home #home-hero .home-hero-intro > p:not(.eyebrow) {
-  color: #c6a15b;
+/*
+ * Second hero panel only — champagne gold on the two specified lines.
+ * Does not touch .home-hero-intro ("Discover Earth Like Never Before")
+ * or the later "Begin the journey" panel.
+ */
+#gvrze-home #home-hero .home-hero-explore .eyebrow,
+#gvrze-home #home-hero .home-hero-explore h2 {
+  color: #d4af70;
   text-shadow:
-    0 1px 1px rgb(15 23 32 / 0.2),
-    0 2px 10px rgb(15 23 32 / 0.1);
+    0 1px 1px rgb(15 23 32 / 0.22),
+    0 2px 10px rgb(15 23 32 / 0.12);
 }
 
 /* Navbar — pale, transparent, navy. Other routes never get data-surface="home". */
