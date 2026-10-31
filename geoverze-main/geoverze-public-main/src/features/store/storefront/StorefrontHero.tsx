@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles } from "lucide-react";
 
 import { SF_ASSETS } from "./storefront-assets";
 
@@ -57,23 +56,18 @@ export function StorefrontHero() {
 
         <Link
           to="/geostore/try-on"
-          className="group/tryon inline-flex min-h-11 items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-2 text-[14px] font-semibold text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white/20 motion-reduce:transition-none"
+          className="group/tryon inline-flex min-h-11 flex-col items-center justify-center gap-1.5 text-[16px] font-semibold text-white"
           aria-label="Open Try-On Studio"
         >
-          <Sparkles
-            size={15}
-            strokeWidth={2}
+          <span>Try-On Studio</span>
+          <img
+            src={SF_ASSETS.heroUnderline.src}
+            width={SF_ASSETS.heroUnderline.width}
+            height={SF_ASSETS.heroUnderline.height}
+            alt=""
             aria-hidden="true"
-            className="opacity-80"
+            className="h-px w-[110px] transition-[width] duration-300 group-hover/tryon:w-[140px] motion-reduce:transition-none"
           />
-          Try-On Studio
-          <span
-            className="rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-black"
-            style={{ background: "#fff", letterSpacing: "0.14em" }}
-            aria-hidden="true"
-          >
-            AI
-          </span>
         </Link>
       </div>
     </section>

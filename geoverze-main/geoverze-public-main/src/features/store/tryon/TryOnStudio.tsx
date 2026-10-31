@@ -1,120 +1,103 @@
 /**
  * GVRZE Virtual Try-On Studio
  *
- * Three-panel layout:
- *  LEFT   — product catalogue (filtered to apparel eligible for try-on)
- *  CENTRE — AI try-on preview (upload → generate → result)
- *  RIGHT  — view controls, size/colour selection, Add to Bag / Buy Now
+ * Editorial Figma layout:
+ *   left  — product, categories, colours, upload, bag / buy
+ *   stage — garment preview or generated try-on
  *
- * AI calls are routed through the server function in tryOnApi.ts so that
- * API credentials never appear in the browser bundle.
- *
- * Privacy: user photos are processed in memory and sent only to the
- * server-side AI endpoint; they are never persisted unless the user
- * explicitly downloads their result.
+ * Photos stay in memory. AI calls go through the server function so keys
+ * never ship to the browser.
  */
 import "./try-on.css";
+import "../storefront/storefront.css";
 
-import { Link } from "@tanstack/react-router";
-import {
-  ArrowLeft,
-  ArrowRight,
-  BadgeCheck,
-  ChevronLeft,
-  ChevronRight,
-  Download,
-  Eye,
-  RefreshCw,
-  ShieldCheck,
-  ShoppingBag,
-  Sparkles,
-  Upload,
-  X,
-  Zap,
-} from "lucide-react";
-import { useCallback, useRef, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { ArrowLeft, ArrowRight, ShieldCheck, Upload, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 
+import { cn } from "@/lib/utils";
 import { useCartStore } from "@/stores/cartStore";
 
-import { productImageForSlug } from "../data/productImages";
 import { toCartLine } from "../lib/cart";
-import { useStoreActions } from "../lib/useStoreActions";
-import { runVirtualTryOn, type TryOnResult } from "./tryOnApi";
+import { StorefrontNav } from "../storefront/StorefrontNav";
+import { getTryOnStatus, runVirtualTryOn } from "./tryOnApi";
+import { ACCEPTED_MIME_TYPES, fileToTryOnPayload, urlToTryOnPayload } from "./tryOnImage";
 import {
-  formatTryOnPrice,
-  getTryOnProducts,
+  getTryOnGarments,
+  TRY_ON_CATEGORY_IDS,
   TRY_ON_CATEGORY_LABELS,
+  tryOnColorById,
+  tryOnGarmentImage,
   type TryOnCategoryId,
+  type TryOnGarment,
 } from "./tryOnProducts";
 
-// ─── constants ───────────────────────────────────────────────────────────────
+const CONSENT_KEY = "gvrze-tryon-consent";
+const DEFAULT_SLUG = "cherry-blossom-tshirt";
 
-const SWATCH_COLOURS: Record<string, string> = {
-  Charcoal: "#4a4a4a",
-  "Deep space": "#1c2a3a",
-  "Bronze sand": "#c9a96e",
-  White: "#f5f5f0",
-  Black: "#111111",
-  "Olive green": "#6b7c52",
-  "Off-white": "#f0ede6",
-  Burgundy: "#7c2d3b",
-  Blue: "#2b5a8a",
-  Brown: "#7a5c3a",
-  Pink: "#e8a0a0",
+type StudioMode = "page" | "overlay";
+
+type PhotoState = {
+  objectUrl: string;
+  base64: string;
+  mime: "image/jpeg" | "image/png" | "image/webp";
 };
 
-const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10 MB
-const ACCEPTED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
-type AcceptedMime = (typeof ACCEPTED_MIME_TYPES)[number];
-
-// ─── types ───────────────────────────────────────────────────────────────────
-
-type TryOnState =
+type GenerateState =
   | { phase: "idle" }
-  | { phase: "ready"; userPhotoUrl: string; userPhotoBase64: string; userPhotoMime: AcceptedMime }
-  | { phase: "generating"; userPhotoUrl: string; userPhotoBase64: string; userPhotoMime: AcceptedMime }
-  | { phase: "result"; resultUrl: string; view: "front" | "back"; userPhotoUrl: string; userPhotoBase64: string; userPhotoMime: AcceptedMime }
-  | { phase: "error"; message: string; userPhotoUrl?: string; userPhotoBase64?: string; userPhotoMime?: AcceptedMime };
+  | { phase: "generating"; view: "front" | "back" }
+  | { phase: "error"; message: string; unconfigured?: boolean };
 
-// ─── privacy consent overlay ─────────────────────────────────────────────────
+type TryOnStudioProps = {
+  mode?: StudioMode;
+  onClose?: () => void;
+};
 
-function ConsentOverlay({ onAccept, onDecline }: { onAccept: () => void; onDecline: () => void }) {
+function hasConsent(): boolean {
+  try {
+    return sessionStorage.getItem(CONSENT_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function rememberConsent() {
+  try {
+    sessionStorage.setItem(CONSENT_KEY, "1");
+  } catch {
+    /* session-only; ignore quota / private mode */
+  }
+}
+
+function ConsentDialog({ onAccept, onDecline }: { onAccept: () => void; onDecline: () => void }) {
   return (
-    <div className="tryon-consent-overlay" role="dialog" aria-modal="true" aria-labelledby="consent-title">
-      <div className="tryon-consent-modal">
-        <div className="tryon-consent-modal__icon">
-          <ShieldCheck size={28} strokeWidth={1.8} aria-hidden />
-        </div>
-        <h2 id="consent-title" className="tryon-consent-modal__title">
-          Your Privacy Matters
+    <div
+      className="tryon-consent"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tryon-consent-title"
+    >
+      <div className="tryon-consent__card">
+        <ShieldCheck size={22} strokeWidth={1.7} aria-hidden />
+        <h2 id="tryon-consent-title" className="tryon-consent__title">
+          Photo consent
         </h2>
-        <p className="tryon-consent-modal__body">
-          To try on GVRZE clothing virtually, you&apos;ll upload a photo of yourself.
-          Please review how we handle it:
+        <p className="tryon-consent__body">
+          Your photo is sent securely to the try-on service so we can show the selected garment on
+          you. It is processed in memory and is not stored on GVRZE after the session unless you
+          save the result yourself.
         </p>
-        <ul className="tryon-consent-modal__points">
-          <li className="tryon-consent-modal__point">
-            <BadgeCheck size={16} strokeWidth={2} className="tryon-consent-modal__point-icon" aria-hidden />
-            Your photo is sent securely to our AI service for processing only.
-          </li>
-          <li className="tryon-consent-modal__point">
-            <BadgeCheck size={16} strokeWidth={2} className="tryon-consent-modal__point-icon" aria-hidden />
-            We do not permanently store your photo unless you save the result yourself.
-          </li>
-          <li className="tryon-consent-modal__point">
-            <BadgeCheck size={16} strokeWidth={2} className="tryon-consent-modal__point-icon" aria-hidden />
-            Your photo is never shared with third parties beyond our AI provider.
-          </li>
-          <li className="tryon-consent-modal__point">
-            <BadgeCheck size={16} strokeWidth={2} className="tryon-consent-modal__point-icon" aria-hidden />
-            You can reset your session at any time to clear all uploaded data.
-          </li>
+        <ul className="tryon-consent__list">
+          <li>Use a front-facing, well-lit full-body photo.</li>
+          <li>JPEG, PNG or WebP, up to 10 MB.</li>
+          <li>You can replace or remove the photo at any time.</li>
         </ul>
-        <div className="tryon-consent-actions">
-          <button type="button" className="tryon-consent-accept" onClick={onAccept}>
+        <div className="tryon-consent__actions">
+          <button type="button" className="tryon-btn tryon-btn--solid" onClick={onAccept}>
             I understand — continue
           </button>
-          <button type="button" className="tryon-consent-decline" onClick={onDecline}>
+          <button type="button" className="tryon-btn tryon-btn--ghost" onClick={onDecline}>
             Cancel
           </button>
         </div>
@@ -123,756 +106,510 @@ function ConsentOverlay({ onAccept, onDecline }: { onAccept: () => void; onDecli
   );
 }
 
-// ─── main component ───────────────────────────────────────────────────────────
-
-export function TryOnStudio() {
-  // catalogue state
-  const allProducts = getTryOnProducts();
-  const [categoryFilter, setCategoryFilter] = useState<TryOnCategoryId | "all">("all");
-  const filteredProducts =
-    categoryFilter === "all"
-      ? allProducts
-      : allProducts.filter((p) => p.category === categoryFilter);
-
-  const [selectedProductIdx, setSelectedProductIdx] = useState(0);
-  const selectedProduct = filteredProducts[selectedProductIdx] ?? filteredProducts[0];
-
-  // option selection
-  const sizeOption = selectedProduct?.options.find((o) => o.label === "Size");
-  const colourOption = selectedProduct?.options.find((o) => o.label === "Colour");
-  const [selectedSize, setSelectedSize] = useState<string>(() => sizeOption?.values[0] ?? "M");
-  const [selectedColour, setSelectedColour] = useState<string>(() => colourOption?.values[0] ?? "Charcoal");
-
-  // studio state
-  const [tryOnState, setTryOnState] = useState<TryOnState>({ phase: "idle" });
-  const [view, setView] = useState<"front" | "back">("front");
-  const [consentGiven, setConsentGiven] = useState(false);
-  const [showConsent, setShowConsent] = useState(false);
-
-  // pending file waiting for consent
-  const pendingFile = useRef<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // cart
-  const { addProduct } = useStoreActions();
-  const add = useCartStore((s) => s.add);
-
-  // ── product selection ──────────────────────────────────────────────────────
-
-  const handleSelectProduct = useCallback(
-    (idx: number) => {
-      setSelectedProductIdx(idx);
-      const p = filteredProducts[idx];
-      if (p) {
-        const sz = p.options.find((o) => o.label === "Size")?.values[0] ?? "M";
-        const cl = p.options.find((o) => o.label === "Colour")?.values[0] ?? "Charcoal";
-        setSelectedSize(sz);
-        setSelectedColour(cl);
-      }
-      // reset result when product changes but keep photo
-      setTryOnState((prev) =>
-        prev.phase === "result"
-          ? {
-              phase: "ready",
-              userPhotoUrl: prev.userPhotoUrl,
-              userPhotoBase64: prev.userPhotoBase64,
-              userPhotoMime: prev.userPhotoMime,
-            }
-          : prev,
-      );
-    },
-    [filteredProducts],
+export function TryOnStudio({ mode = "page", onClose }: TryOnStudioProps) {
+  const garments = useMemo(() => getTryOnGarments(), []);
+  const [category, setCategory] = useState<TryOnCategoryId>("tshirts");
+  const filtered = useMemo(
+    () => garments.filter((item) => item.category === category),
+    [garments, category],
   );
 
-  const handleCategoryFilter = (cat: TryOnCategoryId | "all") => {
-    setCategoryFilter(cat);
-    setSelectedProductIdx(0);
-  };
+  const [selectedSlug, setSelectedSlug] = useState(() => {
+    if (garments.some((item) => item.slug === DEFAULT_SLUG)) return DEFAULT_SLUG;
+    return garments[0]?.slug ?? "";
+  });
 
-  // ── photo upload ───────────────────────────────────────────────────────────
+  const selected: TryOnGarment | undefined =
+    filtered.find((item) => item.slug === selectedSlug) ?? filtered[0];
 
-  const processFile = useCallback((file: File) => {
-    if (!ACCEPTED_MIME_TYPES.includes(file.type as AcceptedMime)) {
-      setTryOnState({ phase: "error", message: "Please upload a JPEG, PNG or WebP image." });
-      return;
-    }
-    if (file.size > MAX_FILE_BYTES) {
-      setTryOnState({ phase: "error", message: "Image is too large. Maximum file size is 10 MB." });
-      return;
-    }
+  const [colorId, setColorId] = useState(selected?.defaultColorId ?? "");
+  const [size, setSize] = useState(
+    selected?.sizes.includes("M") ? "M" : (selected?.sizes[0] ?? "M"),
+  );
+  const [view, setView] = useState<"front" | "back">("front");
+  const [photo, setPhoto] = useState<PhotoState | null>(null);
+  const [results, setResults] = useState<{ front?: string; back?: string }>({});
+  const [generate, setGenerate] = useState<GenerateState>({ phase: "idle" });
+  const [configured, setConfigured] = useState<boolean | null>(null);
+  const [showConsent, setShowConsent] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const pendingFile = useRef<File | null>(null);
 
-    const url = URL.createObjectURL(file);
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = reader.result as string;
-      // strip the "data:image/…;base64," prefix
-      const base64 = dataUrl.split(",")[1] ?? "";
-      setTryOnState({
-        phase: "ready",
-        userPhotoUrl: url,
-        userPhotoBase64: base64,
-        userPhotoMime: file.type as AcceptedMime,
-      });
-    };
-    reader.readAsDataURL(file);
+  const addLine = useCartStore((state) => state.add);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    void getTryOnStatus().then((status) => setConfigured(status.configured));
   }, []);
 
-  const handleUploadClick = () => {
-    if (!consentGiven) {
-      setShowConsent(true);
-    } else {
-      fileInputRef.current?.click();
-    }
+  useEffect(() => {
+    const next = garments.find((item) => item.slug === selectedSlug);
+    if (!next) return;
+    setColorId(next.defaultColorId);
+    setSize(next.sizes.includes("M") ? "M" : (next.sizes[0] ?? "M"));
+    setView("front");
+    setResults({});
+    setGenerate({ phase: "idle" });
+  }, [garments, selectedSlug]);
+
+  useEffect(() => {
+    if (mode !== "overlay" || !onClose) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mode, onClose]);
+
+  useEffect(() => {
+    return () => {
+      if (photo?.objectUrl) URL.revokeObjectURL(photo.objectUrl);
+    };
+  }, [photo?.objectUrl]);
+
+  const selectedColor = selected ? tryOnColorById(selected, colorId) : undefined;
+  const frontSrc = selected ? tryOnGarmentImage(selected, colorId, "front") : "";
+  const backSrc = selected ? tryOnGarmentImage(selected, colorId, "back") : "";
+  const hasDistinctBack = Boolean(
+    selectedColor?.backImage && selectedColor.backImage !== selectedColor.image,
+  );
+  const selectedIndex = selected ? filtered.findIndex((item) => item.slug === selected.slug) : -1;
+
+  const selectCategory = (next: TryOnCategoryId) => {
+    setCategory(next);
+    const first = garments.find((item) => item.category === next);
+    if (first) setSelectedSlug(first.slug);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) processFile(file);
-    // reset input so the same file can be re-selected
-    e.target.value = "";
+  const stepProduct = (dir: -1 | 1) => {
+    if (!filtered.length || selectedIndex < 0) return;
+    const next = filtered[selectedIndex + dir];
+    if (next) setSelectedSlug(next.slug);
+  };
+
+  const processFile = useCallback(async (file: File) => {
+    try {
+      const payload = await fileToTryOnPayload(file);
+      setPhoto((prev) => {
+        if (prev?.objectUrl) URL.revokeObjectURL(prev.objectUrl);
+        return payload;
+      });
+      setResults({});
+      setGenerate({ phase: "idle" });
+    } catch (error) {
+      setGenerate({
+        phase: "error",
+        message: error instanceof Error ? error.message : "Could not read that photo.",
+      });
+    }
+  }, []);
+
+  const openFilePicker = () => fileInputRef.current?.click();
+
+  const handleUploadClick = () => {
+    if (!hasConsent()) {
+      setShowConsent(true);
+      return;
+    }
+    openFilePicker();
   };
 
   const handleConsentAccept = () => {
-    setConsentGiven(true);
+    rememberConsent();
     setShowConsent(false);
     if (pendingFile.current) {
-      processFile(pendingFile.current);
+      void processFile(pendingFile.current);
       pendingFile.current = null;
     } else {
-      fileInputRef.current?.click();
+      openFilePicker();
     }
   };
 
-  const handleConsentDecline = () => {
-    setShowConsent(false);
-    pendingFile.current = null;
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (file) void processFile(file);
   };
 
-  // drag and drop
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (!file) return;
-    if (!consentGiven) {
-      pendingFile.current = file;
-      setShowConsent(true);
-    } else {
-      processFile(file);
-    }
+  const clearPhoto = () => {
+    setPhoto((prev) => {
+      if (prev?.objectUrl) URL.revokeObjectURL(prev.objectUrl);
+      return null;
+    });
+    setResults({});
+    setGenerate({ phase: "idle" });
   };
-
-  // ── generate try-on ────────────────────────────────────────────────────────
 
   const handleGenerate = async () => {
-    if (!selectedProduct) return;
-    const photoState =
-      tryOnState.phase === "ready" ||
-      tryOnState.phase === "result" ||
-      (tryOnState.phase === "error" && tryOnState.userPhotoBase64)
-        ? tryOnState
-        : null;
+    if (!selected || !photo) return;
+    if (configured === false) {
+      setGenerate({
+        phase: "error",
+        unconfigured: true,
+        message:
+          "AI try-on is not configured yet. Add TRYON_API_KEY to the server environment (optional TRYON_PROVIDER=fal|fashn) and reload. Your photo was not sent.",
+      });
+      return;
+    }
 
-    if (!photoState || !("userPhotoBase64" in photoState) || !photoState.userPhotoBase64) return;
+    const garmentUrl = tryOnGarmentImage(selected, colorId, view);
+    if (!garmentUrl) {
+      setGenerate({ phase: "error", message: "This look has no garment image to try on." });
+      return;
+    }
 
-    const productImageUrl = selectedProduct
-      ? productImageForSlug(selectedProduct.slug)?.src ?? ""
-      : "";
-
-    setTryOnState({
-      phase: "generating",
-      userPhotoUrl: photoState.userPhotoUrl ?? "",
-      userPhotoBase64: photoState.userPhotoBase64,
-      userPhotoMime: photoState.userPhotoMime ?? "image/jpeg",
-    });
-
-    let result: TryOnResult;
+    setGenerate({ phase: "generating", view });
     try {
-      result = await runVirtualTryOn({
+      const garment = await urlToTryOnPayload(garmentUrl);
+      const result = await runVirtualTryOn({
         data: {
-          modelPhotoBase64: photoState.userPhotoBase64,
-          modelPhotoMime: photoState.userPhotoMime ?? "image/jpeg",
-          garmentImageUrl: productImageUrl,
-          garmentDescription: `${selectedProduct.name} — ${selectedProduct.tagline}`,
+          modelPhotoBase64: photo.base64,
+          modelPhotoMime: photo.mime,
+          garmentImageBase64: garment.base64,
+          garmentImageMime: garment.mime,
+          garmentDescription: `${selected.name} — ${selectedColor?.label ?? ""} ${view}`,
           view,
         },
       });
-    } catch (err) {
-      result = {
-        ok: false,
-        error: err instanceof Error ? err.message : "Unexpected error during try-on generation.",
-      };
-    }
 
-    if (result.ok) {
-      setTryOnState({
-        phase: "result",
-        resultUrl: result.resultUrl,
-        view: result.view,
-        userPhotoUrl: photoState.userPhotoUrl ?? "",
-        userPhotoBase64: photoState.userPhotoBase64,
-        userPhotoMime: photoState.userPhotoMime ?? "image/jpeg",
-      });
-    } else {
-      const errState: TryOnState = {
+      if (!result.ok) {
+        setGenerate({
+          phase: "error",
+          unconfigured: result.code === "not_configured",
+          message: result.error,
+        });
+        return;
+      }
+
+      setResults((prev) => ({ ...prev, [result.view]: result.resultUrl }));
+      setGenerate({ phase: "idle" });
+    } catch (error) {
+      setGenerate({
         phase: "error",
-        message: result.error,
-      };
-      if ("userPhotoUrl" in photoState && photoState.userPhotoUrl) {
-        (errState as { userPhotoUrl?: string }).userPhotoUrl = photoState.userPhotoUrl;
-      }
-      if (photoState.userPhotoBase64) {
-        (errState as { userPhotoBase64?: string }).userPhotoBase64 = photoState.userPhotoBase64;
-      }
-      if (photoState.userPhotoMime) {
-        (errState as { userPhotoMime?: AcceptedMime }).userPhotoMime = photoState.userPhotoMime;
-      }
-      setTryOnState(errState);
+        message: error instanceof Error ? error.message : "Try-on failed. Please try again.",
+      });
     }
   };
-
-  const handleReset = () => {
-    setTryOnState({ phase: "idle" });
-    setView("front");
-  };
-
-  // ── add to bag / buy now ───────────────────────────────────────────────────
 
   const buildOptions = () => {
-    const opts: Record<string, string> = {};
-    if (sizeOption && selectedSize) opts[sizeOption.label] = selectedSize;
-    if (colourOption && selectedColour) opts[colourOption.label] = selectedColour;
-    return opts;
+    const options: Record<string, string> = {};
+    if (size) options.Size = size;
+    if (selectedColor) options.Colour = selectedColor.label;
+    return options;
   };
 
   const handleAddToBag = () => {
-    if (!selectedProduct) return;
-    addProduct(selectedProduct, buildOptions());
+    if (!selected) return;
+    if (selected.comingSoon || selected.stock === "sold-out") {
+      toast.error("This look is not available to purchase.");
+      return;
+    }
+    addLine(toCartLine(selected.product, buildOptions(), 1));
+    toast.success(`${selected.name} added`, {
+      description: "Waiting in your cart.",
+      action: { label: "View cart", onClick: () => void navigate({ to: "/geostore/cart" }) },
+    });
   };
 
   const handleBuyNow = () => {
-    if (!selectedProduct) return;
-    add(toCartLine(selectedProduct, buildOptions(), 1));
-    void (window.location.href = "/geostore/cart");
+    if (!selected) return;
+    if (selected.comingSoon || selected.stock === "sold-out") {
+      toast.error("This look is not available to purchase.");
+      return;
+    }
+    addLine(toCartLine(selected.product, buildOptions(), 1));
+    toast.success(`${selected.name} added`, { description: "Taking you to checkout." });
+    void navigate({ to: "/geostore/cart" });
   };
 
-  // ── download result ────────────────────────────────────────────────────────
+  const resultFront = results.front;
+  const resultBack = results.back;
+  const showingResult = Boolean(resultFront || resultBack);
+  const isGenerating = generate.phase === "generating";
 
-  const handleDownload = () => {
-    if (tryOnState.phase !== "result") return;
-    const a = document.createElement("a");
-    a.href = tryOnState.resultUrl;
-    a.download = `gvrze-tryon-${selectedProduct?.slug ?? "result"}.jpg`;
-    a.click();
-  };
-
-  // ─── computed booleans ─────────────────────────────────────────────────────
-
-  const hasPhoto =
-    tryOnState.phase === "ready" ||
-    tryOnState.phase === "generating" ||
-    tryOnState.phase === "result" ||
-    (tryOnState.phase === "error" && Boolean(tryOnState.userPhotoBase64));
-
-  const canGenerate =
-    hasPhoto && selectedProduct !== undefined && tryOnState.phase !== "generating";
-
-  const isGenerating = tryOnState.phase === "generating";
-
-  // ── render ─────────────────────────────────────────────────────────────────
+  const shellClass = mode === "page" ? "gvrze-tryon-page" : undefined;
 
   return (
-    <div id="gvrze-tryon-studio">
-      {/* hidden file input */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept={ACCEPTED_MIME_TYPES.join(",")}
-        className="sr-only"
-        aria-label="Upload your photo for try-on"
-        onChange={handleFileChange}
-      />
+    <div
+      id="gvrze-tryon-studio"
+      className={cn(mode === "overlay" && "tryon--overlay")}
+      data-tryon-mode={mode}
+    >
+      <div id={mode === "page" ? "gvrze-storefront" : undefined} className={shellClass}>
+        <StorefrontNav variant="solid" showTryOn />
+        <div className="tryon-shell">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept={ACCEPTED_MIME_TYPES.join(",")}
+            className="sr-only"
+            aria-label="Upload your photo for try-on"
+            onChange={handleFileChange}
+          />
 
-      {/* privacy consent overlay */}
-      {showConsent ? (
-        <ConsentOverlay onAccept={handleConsentAccept} onDecline={handleConsentDecline} />
-      ) : null}
+          {showConsent ? (
+            <ConsentDialog
+              onAccept={handleConsentAccept}
+              onDecline={() => {
+                setShowConsent(false);
+                pendingFile.current = null;
+              }}
+            />
+          ) : null}
 
-      {/* ── top bar ── */}
-      <header className="tryon-topbar">
-        <Link to="/geostore" className="tryon-topbar__back" aria-label="Back to Gstore">
-          <ArrowLeft size={16} strokeWidth={2} aria-hidden />
-          <span>Gstore</span>
-        </Link>
-        <span className="tryon-topbar__title">Try-On Studio</span>
-        <span className="tryon-topbar__badge">AI-powered</span>
-      </header>
+          <main className="tryon-layout" aria-label="Try-On Studio">
+            <aside className="tryon-info">
+              <div>
+                <p className="tryon-info__kicker">Try-On Studio</p>
+                <h1 className="tryon-info__name">{selected?.name ?? "Select a look"}</h1>
+                {selected ? <p className="tryon-info__price">{selected.priceLabel}</p> : null}
+              </div>
 
-      {/* ── three-panel workspace ── */}
-      <main className="tryon-workspace" aria-label="Try-On Studio workspace">
+              <div className="tryon-pills" role="group" aria-label="Product category">
+                {TRY_ON_CATEGORY_IDS.map((id) => (
+                  <button
+                    key={id}
+                    type="button"
+                    className="tryon-pill"
+                    aria-pressed={category === id}
+                    onClick={() => selectCategory(id)}
+                  >
+                    {TRY_ON_CATEGORY_LABELS[id]}
+                  </button>
+                ))}
+              </div>
 
-        {/* ── LEFT: catalogue ── */}
-        <aside className="tryon-catalogue" aria-label="Product catalogue">
-          <div className="tryon-catalogue__header">
-            <p className="tryon-catalogue__heading">Select garment</p>
-            <div className="tryon-catalogue__filters" role="group" aria-label="Category filter">
-              <button
-                type="button"
-                className="tryon-catalogue__filter"
-                aria-pressed={categoryFilter === "all"}
-                onClick={() => handleCategoryFilter("all")}
-              >
-                All
-              </button>
-              {(Object.keys(TRY_ON_CATEGORY_LABELS) as TryOnCategoryId[]).map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  className="tryon-catalogue__filter"
-                  aria-pressed={categoryFilter === cat}
-                  onClick={() => handleCategoryFilter(cat)}
-                >
-                  {TRY_ON_CATEGORY_LABELS[cat]}
-                </button>
-              ))}
-            </div>
-          </div>
+              {filtered.length > 1 ? (
+                <label className="tryon-look-select">
+                  <span className="sr-only">Choose a look</span>
+                  <select
+                    value={selected?.slug ?? ""}
+                    onChange={(event) => setSelectedSlug(event.target.value)}
+                  >
+                    {filtered.map((item) => (
+                      <option key={item.slug} value={item.slug}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              ) : null}
 
-          <ul className="tryon-catalogue__list" aria-label="Eligible garments">
-            {filteredProducts.map((product, idx) => {
-              const img = productImageForSlug(product.slug);
-              return (
-                <li key={product.id}>
+              {selected && selected.colors.length > 1 ? (
+                <div>
+                  <p className="tryon-field-label">Colour — {selectedColor?.label}</p>
+                  <div className="tryon-swatches" role="group" aria-label="Colour">
+                    {selected.colors.map((color) => (
+                      <button
+                        key={color.id}
+                        type="button"
+                        className="tryon-swatch"
+                        style={{ background: color.hex }}
+                        aria-pressed={color.id === selectedColor?.id}
+                        aria-label={color.label}
+                        title={color.label}
+                        onClick={() => {
+                          setColorId(color.id);
+                          setResults({});
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {selected && selected.sizes.length ? (
+                <div>
+                  <p className="tryon-field-label">Size</p>
+                  <div className="tryon-sizes" role="group" aria-label="Size">
+                    {selected.sizes.map((value) => (
+                      <button
+                        key={value}
+                        type="button"
+                        className="tryon-size"
+                        aria-pressed={size === value}
+                        onClick={() => setSize(value)}
+                      >
+                        {value}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              <div className="tryon-upload">
+                {photo ? (
+                  <div className="tryon-upload__row">
+                    <img
+                      src={photo.objectUrl}
+                      alt="Your uploaded photo"
+                      className="tryon-upload__thumb"
+                    />
+                    <div>
+                      <button
+                        type="button"
+                        className="tryon-upload__link"
+                        onClick={handleUploadClick}
+                      >
+                        Replace photo
+                      </button>
+                      <br />
+                      <button type="button" className="tryon-upload__link" onClick={clearPhoto}>
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button type="button" className="tryon-upload__link" onClick={handleUploadClick}>
+                    <Upload size={13} strokeWidth={2} aria-hidden /> Upload your photo
+                  </button>
+                )}
+                <p className="tryon-upload__hint">
+                  Front-facing, well-lit, full body. JPEG, PNG or WebP.
+                </p>
+                {photo ? (
                   <button
                     type="button"
-                    className="tryon-catalogue__item"
-                    aria-selected={idx === selectedProductIdx}
-                    onClick={() => handleSelectProduct(idx)}
+                    className="tryon-btn tryon-btn--ghost"
+                    disabled={isGenerating}
+                    onClick={() => void handleGenerate()}
                   >
-                    <img
-                      src={img?.src ?? ""}
-                      alt={img?.alt ?? product.name}
-                      className="tryon-catalogue__item-img"
-                      width={56}
-                      height={64}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <span className="tryon-catalogue__item-info">
-                      <span className="tryon-catalogue__item-tag">
-                        {TRY_ON_CATEGORY_LABELS[product.category as TryOnCategoryId] ??
-                          product.category}
-                      </span>
-                      <span className="tryon-catalogue__item-name">{product.name}</span>
-                      <span className="tryon-catalogue__item-price">
-                        {formatTryOnPrice(product)}
-                      </span>
-                    </span>
+                    {isGenerating ? "Generating…" : "Generate try-on"}
                   </button>
-                </li>
-              );
-            })}
-          </ul>
-        </aside>
-
-        {/* ── CENTRE: preview ── */}
-        <section
-          className="tryon-preview"
-          aria-label="Try-on preview"
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={handleDrop}
-        >
-          <div className="tryon-preview__stage">
-            {/* generating overlay */}
-            {isGenerating ? (
-              <div className="tryon-preview__loading" aria-live="polite" aria-label="Generating try-on">
-                <div className="tryon-spinner" aria-hidden="true" />
-                <p className="tryon-preview__loading-title">Generating your look…</p>
-                <p className="tryon-preview__loading-body">
-                  Our AI is fitting the garment to your photo.
-                  <br />
-                  This usually takes 10–30 seconds.
-                </p>
+                ) : null}
+                {photo && configured === false ? (
+                  <p className="tryon-upload__hint">
+                    AI try-on needs TRYON_API_KEY on the server. Your photo stays on this device
+                    until then.
+                  </p>
+                ) : null}
               </div>
-            ) : null}
 
-            {/* result view */}
-            {tryOnState.phase === "result" ? (
-              <div className="tryon-preview__result">
-                <div className="tryon-preview__result-img-wrap">
-                  <img
-                    src={tryOnState.resultUrl}
-                    alt={`Virtual try-on result: ${selectedProduct?.name ?? "garment"}`}
-                    className="tryon-preview__result-img"
-                  />
+              <div className="tryon-actions">
+                <button
+                  type="button"
+                  className="tryon-btn tryon-btn--ghost"
+                  disabled={!selected}
+                  onClick={handleAddToBag}
+                >
+                  Add to Bag
+                </button>
+                <button
+                  type="button"
+                  className="tryon-btn tryon-btn--solid"
+                  disabled={!selected}
+                  onClick={handleBuyNow}
+                >
+                  Buy Now
+                </button>
+              </div>
+            </aside>
+
+            <section className="tryon-stage" aria-label="Try-on preview">
+              {!selected || filtered.length === 0 ? (
+                <div className="tryon-empty">
+                  {category === "sweatshirts"
+                    ? "Sweatshirts are coming soon."
+                    : "No looks in this category yet."}
                 </div>
-              </div>
-            ) : null}
-
-            {/* split view: user photo + product (ready / idle) */}
-            {(tryOnState.phase === "ready" ||
-              tryOnState.phase === "idle" ||
-              (tryOnState.phase === "error" && tryOnState.userPhotoBase64)) &&
-            !isGenerating ? (
-              <div className="tryon-preview__split">
-                {/* user photo */}
-                <div className="tryon-preview__frame">
-                  <span className="tryon-preview__frame-label">Your photo</span>
-                  <div className="tryon-preview__frame-img-wrap">
-                    {hasPhoto && "userPhotoUrl" in tryOnState && tryOnState.userPhotoUrl ? (
+              ) : showingResult ? (
+                <div className="tryon-models">
+                  {resultFront ? (
+                    <div className="tryon-result">
+                      <img src={resultFront} alt={`${selected.name} try-on, front`} />
+                    </div>
+                  ) : null}
+                  {resultBack ? (
+                    <div className="tryon-result">
+                      <img src={resultBack} alt={`${selected.name} try-on, back`} />
+                    </div>
+                  ) : null}
+                </div>
+              ) : (
+                <div className="tryon-models">
+                  <div className="tryon-model">
+                    {frontSrc ? (
                       <img
-                        src={tryOnState.userPhotoUrl}
-                        alt="Your uploaded photo"
-                        className="tryon-preview__frame-img"
+                        key={`${selected.slug}-${colorId}-front`}
+                        src={frontSrc}
+                        alt={`${selected.name}${selectedColor ? `, ${selectedColor.label}` : ""}`}
                       />
-                    ) : (
-                      <div
-                        className="tryon-preview__frame-placeholder"
-                        style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}
-                        aria-hidden
-                      >
-                        <Upload size={32} strokeWidth={1.5} />
-                      </div>
-                    )}
+                    ) : null}
                   </div>
+                  {hasDistinctBack && backSrc ? (
+                    <div className="tryon-model">
+                      <img
+                        key={`${selected.slug}-${colorId}-back`}
+                        src={backSrc}
+                        alt={`${selected.name}, back view`}
+                      />
+                    </div>
+                  ) : null}
                 </div>
+              )}
 
-                {/* product flat */}
-                <div className="tryon-preview__frame">
-                  <span className="tryon-preview__frame-label">
-                    {selectedProduct?.name ?? "Select a product"}
-                  </span>
-                  <div className="tryon-preview__frame-img-wrap">
-                    {selectedProduct ? (
-                      <ProductImage product={selectedProduct} />
-                    ) : (
-                      <div
-                        className="tryon-preview__frame-placeholder"
-                        style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}
-                        aria-hidden
-                      >
-                        <Eye size={32} strokeWidth={1.5} />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ) : null}
-
-            {/* empty / upload prompt (truly idle — no photo) */}
-            {tryOnState.phase === "idle" && !hasPhoto ? (
-              <div className="tryon-preview__empty">
-                <div className="tryon-preview__empty-icon" aria-hidden>
-                  <Sparkles size={28} strokeWidth={1.8} />
-                </div>
-                <div>
-                  <p className="tryon-preview__empty-title">Upload your photo</p>
-                  <p className="tryon-preview__empty-body">
-                    Select a garment from the left, then upload a photo of yourself to see
-                    how it looks with our AI Try-On engine.
-                    <br />
-                    <br />
-                    Drop an image here or click the button below.
+              {isGenerating ? (
+                <div className="tryon-stage__loading" aria-live="polite">
+                  <div className="tryon-spinner" aria-hidden />
+                  <p className="tryon-stage__title">Fitting your look…</p>
+                  <p className="tryon-stage__body">
+                    The garment is being placed on your photo. This usually takes a few seconds.
                   </p>
                 </div>
-                <button type="button" className="tryon-upload-btn" onClick={handleUploadClick}>
-                  <Upload size={16} strokeWidth={2} aria-hidden />
-                  Upload photo
-                </button>
-              </div>
-            ) : null}
+              ) : null}
 
-            {/* error state */}
-            {tryOnState.phase === "error" ? (
-              <div className="tryon-error-banner" role="alert">
-                <X size={16} strokeWidth={2} aria-hidden style={{ flexShrink: 0, marginTop: 1 }} />
-                <span>{tryOnState.message}</span>
-              </div>
-            ) : null}
+              {generate.phase === "error" ? (
+                <div className="tryon-stage__message" role="alert">
+                  <X size={16} strokeWidth={2} aria-hidden />
+                  <p className="tryon-stage__body">{generate.message}</p>
+                </div>
+              ) : null}
 
-            {/* navigation arrows (previous / next product) */}
-            {filteredProducts.length > 1 ? (
-              <>
-                <div className="tryon-preview__nav tryon-preview__nav--prev">
+              {hasDistinctBack || showingResult ? (
+                <div className="tryon-views" role="group" aria-label="View">
                   <button
                     type="button"
-                    className="tryon-preview__nav-btn"
-                    aria-label="Previous garment"
-                    disabled={selectedProductIdx === 0 || isGenerating}
-                    onClick={() => handleSelectProduct(selectedProductIdx - 1)}
+                    className="tryon-view"
+                    aria-pressed={view === "front"}
+                    onClick={() => setView("front")}
                   >
-                    <ChevronLeft size={20} strokeWidth={2} aria-hidden />
+                    Front
+                  </button>
+                  <button
+                    type="button"
+                    className="tryon-view"
+                    aria-pressed={view === "back"}
+                    onClick={() => setView("back")}
+                  >
+                    Back
                   </button>
                 </div>
-                <div className="tryon-preview__nav tryon-preview__nav--next">
-                  <button
-                    type="button"
-                    className="tryon-preview__nav-btn"
-                    aria-label="Next garment"
-                    disabled={selectedProductIdx >= filteredProducts.length - 1 || isGenerating}
-                    onClick={() => handleSelectProduct(selectedProductIdx + 1)}
-                  >
-                    <ChevronRight size={20} strokeWidth={2} aria-hidden />
-                  </button>
-                </div>
-              </>
-            ) : null}
+              ) : null}
+            </section>
+          </main>
+
+          <div className="tryon-arrows">
+            <button
+              type="button"
+              className="tryon-arrow"
+              aria-label="Previous look"
+              disabled={selectedIndex <= 0}
+              onClick={() => stepProduct(-1)}
+            >
+              <ArrowLeft size={18} strokeWidth={1.8} aria-hidden />
+            </button>
+            <button
+              type="button"
+              className="tryon-arrow"
+              aria-label="Next look"
+              disabled={selectedIndex < 0 || selectedIndex >= filtered.length - 1}
+              onClick={() => stepProduct(1)}
+            >
+              <ArrowRight size={18} strokeWidth={1.8} aria-hidden />
+            </button>
           </div>
-
-          {/* action bar */}
-          <div className="tryon-preview__actions">
-            {!hasPhoto ? (
-              <button type="button" className="tryon-upload-btn" onClick={handleUploadClick}>
-                <Upload size={16} strokeWidth={2} aria-hidden />
-                Upload your photo
-              </button>
-            ) : null}
-
-            {hasPhoto && tryOnState.phase !== "result" ? (
-              <>
-                <button
-                  type="button"
-                  className="tryon-upload-btn"
-                  onClick={handleUploadClick}
-                  disabled={isGenerating}
-                  aria-label="Change your photo"
-                >
-                  <RefreshCw size={15} strokeWidth={2} aria-hidden />
-                  Change photo
-                </button>
-                <button
-                  type="button"
-                  className="tryon-generate-btn"
-                  disabled={!canGenerate}
-                  onClick={() => void handleGenerate()}
-                  aria-label="Generate virtual try-on"
-                >
-                  <Sparkles size={16} strokeWidth={2} aria-hidden />
-                  {isGenerating ? "Generating…" : "Try it on"}
-                </button>
-              </>
-            ) : null}
-
-            {tryOnState.phase === "result" ? (
-              <>
-                <button
-                  type="button"
-                  className="tryon-reset-btn"
-                  onClick={handleReset}
-                  aria-label="Reset try-on session"
-                >
-                  <RefreshCw size={14} strokeWidth={2} aria-hidden />
-                  Reset
-                </button>
-                <button
-                  type="button"
-                  className="tryon-generate-btn"
-                  disabled={!canGenerate}
-                  onClick={() => void handleGenerate()}
-                  aria-label="Regenerate try-on"
-                >
-                  <Sparkles size={16} strokeWidth={2} aria-hidden />
-                  Regenerate
-                </button>
-              </>
-            ) : null}
-          </div>
-        </section>
-
-        {/* ── RIGHT: controls ── */}
-        <aside className="tryon-controls" aria-label="Product controls and actions">
-
-          {/* selected product info */}
-          {selectedProduct ? (
-            <div className="tryon-controls__section">
-              <p className="tryon-controls__label">Selected garment</p>
-              <span className="tryon-controls__product-category">
-                {TRY_ON_CATEGORY_LABELS[selectedProduct.category as TryOnCategoryId] ??
-                  selectedProduct.category}
-              </span>
-              <p className="tryon-controls__product-name">{selectedProduct.name}</p>
-              <p className="tryon-controls__product-price">{formatTryOnPrice(selectedProduct)}</p>
-            </div>
-          ) : (
-            <div className="tryon-controls__section">
-              <p className="tryon-controls__label">Selected garment</p>
-              <p style={{ fontSize: 13, color: "#aaa" }}>No product selected yet.</p>
-            </div>
-          )}
-
-          <hr className="tryon-controls__divider" />
-
-          {/* view toggle */}
-          <div className="tryon-controls__section">
-            <p className="tryon-controls__label">View</p>
-            <div className="tryon-view-toggle" role="group" aria-label="Garment view">
-              <button
-                type="button"
-                className="tryon-view-toggle__btn"
-                aria-pressed={view === "front"}
-                onClick={() => setView("front")}
-              >
-                Front
-              </button>
-              <button
-                type="button"
-                className="tryon-view-toggle__btn"
-                aria-pressed={view === "back"}
-                onClick={() => setView("back")}
-              >
-                Back
-              </button>
-            </div>
-          </div>
-
-          {/* colour swatches */}
-          {colourOption ? (
-            <div className="tryon-controls__section">
-              <p className="tryon-controls__label">
-                Colour — <span style={{ fontWeight: 700, color: "#1a1a1a" }}>{selectedColour}</span>
-              </p>
-              <div className="tryon-swatches" role="group" aria-label="Colour selection">
-                {colourOption.values.map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    className="tryon-swatch"
-                    style={{ background: SWATCH_COLOURS[c] ?? "#888" }}
-                    aria-pressed={selectedColour === c}
-                    aria-label={c}
-                    title={c}
-                    onClick={() => setSelectedColour(c)}
-                  />
-                ))}
-              </div>
-            </div>
-          ) : null}
-
-          {/* size */}
-          {sizeOption ? (
-            <div className="tryon-controls__section">
-              <p className="tryon-controls__label">Size</p>
-              <div className="tryon-sizes" role="group" aria-label="Size selection">
-                {sizeOption.values.map((sz) => (
-                  <button
-                    key={sz}
-                    type="button"
-                    className="tryon-size-btn"
-                    aria-pressed={selectedSize === sz}
-                    onClick={() => setSelectedSize(sz)}
-                  >
-                    {sz}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : null}
-
-          <hr className="tryon-controls__divider" />
-
-          {/* add to bag / buy now */}
-          <div className="tryon-controls__section">
-            <p className="tryon-controls__label">Add to your order</p>
-            <div className="tryon-controls__cta-row">
-              <button
-                type="button"
-                className="tryon-cta-primary"
-                disabled={!selectedProduct}
-                onClick={handleAddToBag}
-                aria-label={`Add ${selectedProduct?.name ?? "product"} to bag`}
-              >
-                <ShoppingBag size={16} strokeWidth={2} aria-hidden />
-                Add to Bag
-              </button>
-              <button
-                type="button"
-                className="tryon-cta-secondary"
-                disabled={!selectedProduct}
-                onClick={handleBuyNow}
-                aria-label={`Buy ${selectedProduct?.name ?? "product"} now`}
-              >
-                <Zap size={16} strokeWidth={2} aria-hidden />
-                Buy Now
-              </button>
-            </div>
-          </div>
-
-          {/* result actions */}
-          {tryOnState.phase === "result" ? (
-            <>
-              <hr className="tryon-controls__divider" />
-              <div className="tryon-controls__section">
-                <p className="tryon-controls__label">Your result</p>
-                <div className="tryon-result-actions">
-                  <button
-                    type="button"
-                    className="tryon-result-action"
-                    onClick={handleDownload}
-                    aria-label="Download try-on result"
-                  >
-                    <Download size={15} strokeWidth={2} aria-hidden />
-                    Download result
-                  </button>
-                  <Link
-                    to="/geostore/product/$slug"
-                    params={{ slug: selectedProduct?.slug ?? "" }}
-                    className="tryon-result-action"
-                    style={{ textDecoration: "none" }}
-                    aria-label={`View full product page for ${selectedProduct?.name ?? ""}`}
-                  >
-                    <ArrowRight size={15} strokeWidth={2} aria-hidden />
-                    View product page
-                  </Link>
-                </div>
-              </div>
-            </>
-          ) : null}
-
-          <hr className="tryon-controls__divider" />
-
-          <p className="tryon-privacy-note">
-            Photos are processed securely and never stored permanently without your consent.{" "}
-            <Link to="/geostore" style={{ color: "inherit", textDecoration: "underline" }}>
-              Privacy info
-            </Link>
-          </p>
-        </aside>
-      </main>
-    </div>
-  );
-}
-
-// ─── tiny helper: product image in centre panel ───────────────────────────────
-
-function ProductImage({ product }: { product: { slug: string; name: string } }) {
-  const img = productImageForSlug(product.slug);
-
-  if (!img?.src) {
-    return (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "#ccc",
-        }}
-        aria-hidden
-      >
-        <Eye size={32} strokeWidth={1.5} />
+        </div>
       </div>
-    );
-  }
-
-  return (
-    <img
-      src={img.src}
-      alt={img.alt}
-      className="tryon-preview__frame-img"
-      width={320}
-      height={427}
-      loading="lazy"
-      decoding="async"
-    />
+    </div>
   );
 }

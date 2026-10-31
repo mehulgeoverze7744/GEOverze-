@@ -47,7 +47,8 @@ function applyRewardsGlobeScroll(
     const y = t * (compact ? -64 : -148);
     const scale = restScale * (1 - t * (compact ? 0.1 : 0.14));
     const opacity = 1 - t;
-    rewards.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${scale.toFixed(4)})`;
+    const restY = compact ? "0px" : "-50%";
+    rewards.style.transform = `translate3d(${x.toFixed(2)}px, calc(${restY} + ${y.toFixed(2)}px), 0) scale(${scale.toFixed(4)})`;
     rewards.style.opacity = String(opacity);
     rewards.style.filter = t > 0.04 ? `blur(${(t * 4.5).toFixed(2)}px)` : "blur(0.01px)";
     rewards.style.pointerEvents = opacity > 0.22 ? "auto" : "none";

@@ -71,6 +71,11 @@ type StorefrontNavProps = {
    * `solid` — inner store pages: in-flow bar so content never sits underneath.
    */
   variant?: "overlay" | "solid";
+  /**
+   * Try-On Studio is launched from the GStore hero / homepage nav only.
+   * Defaults to the homepage (`overlay`) so category and product pages stay clean.
+   */
+  showTryOn?: boolean;
 };
 
 /**
@@ -78,8 +83,9 @@ type StorefrontNavProps = {
  * once the page scrolls. Cart, wishlist, search and account all stay wired to
  * the existing store state; the menu carries the rest of the store and site.
  */
-export function StorefrontNav({ variant = "overlay" }: StorefrontNavProps) {
+export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavProps) {
   const solid = variant === "solid";
+  const tryOnLink = showTryOn ?? !solid;
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const cartCount = useCartStore(selectCartCount);
@@ -144,28 +150,15 @@ export function StorefrontNav({ variant = "overlay" }: StorefrontNavProps) {
               Collections
             </a>
           )}
-          <Link
-            to="/geostore/try-on"
-            className={`${navLink} inline-flex items-center gap-1.5`}
-            aria-label="Open Try-On Studio"
-          >
-            <span
-              className="inline-flex h-[18px] items-center gap-1 rounded px-1.5 text-[9px] font-bold uppercase tracking-widest"
-              style={{ background: "#1a1a1a", color: "#fff", letterSpacing: "0.15em" }}
-              aria-hidden="true"
-            >
-              AI
-            </span>
-            Try-On Studio
-          </Link>
+          {tryOnLink ? (
+            <Link to="/geostore/try-on" className={navLink} aria-label="Open Try-On Studio">
+              Try-On Studio
+            </Link>
+          ) : null}
         </nav>
         <div className="min-w-0 md:hidden" aria-hidden="true" />
 
-        <Link
-          to="/geostore"
-          aria-label="Gstore home"
-          className="justify-self-center rounded-sm"
-        >
+        <Link to="/geostore" aria-label="Gstore home" className="justify-self-center rounded-sm">
           <img
             src={SF_ASSETS.logo.src}
             width={SF_ASSETS.logo.width}
@@ -274,19 +267,15 @@ export function StorefrontNav({ variant = "overlay" }: StorefrontNavProps) {
               >
                 Accessories
               </Link>
-              <Link
-                to="/geostore/try-on"
-                onClick={closeMenu}
-                className="flex items-center justify-between border-b border-black/10 py-3.5 text-[15px] text-black"
-              >
-                <span>Try-On Studio</span>
-                <span
-                  className="rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white"
-                  style={{ background: "#1a1a1a", letterSpacing: "0.15em" }}
+              {tryOnLink ? (
+                <Link
+                  to="/geostore/try-on"
+                  onClick={closeMenu}
+                  className="border-b border-black/10 py-3.5 text-[15px] text-black"
                 >
-                  AI
-                </span>
-              </Link>
+                  Try-On Studio
+                </Link>
+              ) : null}
               {STORE_LINKS.map((item) => (
                 <Link
                   key={item.to}

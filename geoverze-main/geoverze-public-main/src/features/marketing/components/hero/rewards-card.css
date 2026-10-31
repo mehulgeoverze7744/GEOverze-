@@ -2,10 +2,11 @@
 
 #home-hero .rewards-card-motion {
   position: absolute;
-  top: calc(var(--nav-height) + 1.5rem);
+  top: 50%;
   right: clamp(1.15rem, 3.4vw, 3rem);
   z-index: 15;
   width: min(30rem, calc(100vw - 39rem));
+  transform: translateY(-50%);
   transform-origin: 88% 8%;
   will-change: transform, opacity, filter;
   pointer-events: none;
@@ -27,8 +28,7 @@
   gap: 1.05rem;
   padding: 1.35rem 1.35rem 1.2rem;
   border-radius: 1.65rem;
-  background:
-    linear-gradient(180deg, rgb(255 255 255 / 0.92) 0%, rgb(241 247 252 / 0.86) 100%);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.92) 0%, rgb(241 247 252 / 0.86) 100%);
   border: 1px solid rgb(255 255 255 / 0.88);
   box-shadow:
     0 22px 48px -22px rgb(36 68 96 / 0.28),
@@ -339,6 +339,7 @@
     width: auto;
     max-width: 28rem;
     margin-inline: auto;
+    transform: none;
     transform-origin: 50% 100%;
   }
 }
