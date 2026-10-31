@@ -130,7 +130,7 @@ export function StorefrontNav({ variant = "overlay" }: StorefrontNavProps) {
       >
         <nav
           aria-label="Gstore"
-          className="hidden min-w-0 items-center gap-[clamp(16px,2.2vw,32px)] md:flex"
+          className="hidden min-w-0 items-center gap-[clamp(16px,2.2vw,28px)] md:flex"
         >
           <Link to="/geostore/browse" className={navLink}>
             Shop
@@ -144,6 +144,20 @@ export function StorefrontNav({ variant = "overlay" }: StorefrontNavProps) {
               Collections
             </a>
           )}
+          <Link
+            to="/geostore/try-on"
+            className={`${navLink} inline-flex items-center gap-1.5`}
+            aria-label="Open Try-On Studio"
+          >
+            <span
+              className="inline-flex h-[18px] items-center gap-1 rounded px-1.5 text-[9px] font-bold uppercase tracking-widest"
+              style={{ background: "#1a1a1a", color: "#fff", letterSpacing: "0.15em" }}
+              aria-hidden="true"
+            >
+              AI
+            </span>
+            Try-On Studio
+          </Link>
         </nav>
         <div className="min-w-0 md:hidden" aria-hidden="true" />
 
@@ -259,6 +273,19 @@ export function StorefrontNav({ variant = "overlay" }: StorefrontNavProps) {
                 className="border-b border-black/10 py-3.5 text-[15px] text-black"
               >
                 Accessories
+              </Link>
+              <Link
+                to="/geostore/try-on"
+                onClick={closeMenu}
+                className="flex items-center justify-between border-b border-black/10 py-3.5 text-[15px] text-black"
+              >
+                <span>Try-On Studio</span>
+                <span
+                  className="rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white"
+                  style={{ background: "#1a1a1a", letterSpacing: "0.15em" }}
+                >
+                  AI
+                </span>
               </Link>
               {STORE_LINKS.map((item) => (
                 <Link

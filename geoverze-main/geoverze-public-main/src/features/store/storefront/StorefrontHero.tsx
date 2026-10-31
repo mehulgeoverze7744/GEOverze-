@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { Sparkles } from "lucide-react";
 
 import { SF_ASSETS } from "./storefront-assets";
 
@@ -34,20 +35,47 @@ export function StorefrontHero() {
         className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[16%] min-h-24 w-full object-cover"
       />
 
-      <Link
-        to="/geostore/browse"
-        className="group/shop absolute bottom-[clamp(24px,3.05vw,44px)] left-1/2 inline-flex min-h-11 -translate-x-1/2 flex-col items-center justify-center gap-1.5 text-[16px] font-semibold text-white"
-      >
-        <span>Shop Now</span>
-        <img
-          src={SF_ASSETS.heroUnderline.src}
-          width={SF_ASSETS.heroUnderline.width}
-          height={SF_ASSETS.heroUnderline.height}
-          alt=""
-          aria-hidden="true"
-          className="h-px w-[83px] transition-[width] duration-300 group-hover/shop:w-[110px] motion-reduce:transition-none"
-        />
-      </Link>
+      {/* CTA row — Shop Now + Try-On Studio */}
+      <div className="absolute bottom-[clamp(20px,2.8vw,40px)] left-1/2 flex -translate-x-1/2 items-end gap-6">
+        <Link
+          to="/geostore/browse"
+          className="group/shop inline-flex min-h-11 flex-col items-center justify-center gap-1.5 text-[16px] font-semibold text-white"
+        >
+          <span>Shop Now</span>
+          <img
+            src={SF_ASSETS.heroUnderline.src}
+            width={SF_ASSETS.heroUnderline.width}
+            height={SF_ASSETS.heroUnderline.height}
+            alt=""
+            aria-hidden="true"
+            className="h-px w-[83px] transition-[width] duration-300 group-hover/shop:w-[110px] motion-reduce:transition-none"
+          />
+        </Link>
+
+        {/* divider */}
+        <span className="mb-1.5 inline-block h-5 w-px bg-white/30" aria-hidden="true" />
+
+        <Link
+          to="/geostore/try-on"
+          className="group/tryon inline-flex min-h-11 items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-2 text-[14px] font-semibold text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white/20 motion-reduce:transition-none"
+          aria-label="Open Try-On Studio"
+        >
+          <Sparkles
+            size={15}
+            strokeWidth={2}
+            aria-hidden="true"
+            className="opacity-80"
+          />
+          Try-On Studio
+          <span
+            className="rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-black"
+            style={{ background: "#fff", letterSpacing: "0.14em" }}
+            aria-hidden="true"
+          >
+            AI
+          </span>
+        </Link>
+      </div>
     </section>
   );
 }

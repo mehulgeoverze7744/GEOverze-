@@ -71,6 +71,7 @@ import { Route as GeostoreCheckoutRouteImport } from './routes/geostore.checkout
 import { Route as GeostoreOffersRouteImport } from './routes/geostore.offers'
 import { Route as GeostoreOrdersRouteImport } from './routes/geostore.orders'
 import { Route as GeostoreRewardsRouteImport } from './routes/geostore.rewards'
+import { Route as GeostoreTryOnRouteImport } from './routes/geostore.try-on'
 import { Route as GeostoreWishlistRouteImport } from './routes/geostore.wishlist'
 import { Route as PlayIndexRouteImport } from './routes/play.index'
 import { Route as PlayCatalogueRouteImport } from './routes/play.catalogue'
@@ -455,6 +456,11 @@ const GeostoreOrdersRoute = GeostoreOrdersRouteImport.update({
 const GeostoreRewardsRoute = GeostoreRewardsRouteImport.update({
   id: '/rewards',
   path: '/rewards',
+  getParentRoute: () => GeostoreRoute,
+} as any)
+const GeostoreTryOnRoute = GeostoreTryOnRouteImport.update({
+  id: '/try-on',
+  path: '/try-on',
   getParentRoute: () => GeostoreRoute,
 } as any)
 const GeostoreWishlistRoute = GeostoreWishlistRouteImport.update({
@@ -895,6 +901,7 @@ export interface FileRoutesByFullPath {
   '/geostore/offers': typeof GeostoreOffersRoute
   '/geostore/orders': typeof GeostoreOrdersRoute
   '/geostore/rewards': typeof GeostoreRewardsRoute
+  '/geostore/try-on': typeof GeostoreTryOnRoute
   '/geostore/wishlist': typeof GeostoreWishlistRoute
   '/play/catalogue': typeof PlayCatalogueRoute
   '/play/credit-history': typeof PlayCreditHistoryRoute
@@ -1026,6 +1033,7 @@ export interface FileRoutesByTo {
   '/geostore/offers': typeof GeostoreOffersRoute
   '/geostore/orders': typeof GeostoreOrdersRoute
   '/geostore/rewards': typeof GeostoreRewardsRoute
+  '/geostore/try-on': typeof GeostoreTryOnRoute
   '/geostore/wishlist': typeof GeostoreWishlistRoute
   '/play/catalogue': typeof PlayCatalogueRoute
   '/play/credit-history': typeof PlayCreditHistoryRoute
@@ -1161,6 +1169,7 @@ export interface FileRoutesById {
   '/geostore/offers': typeof GeostoreOffersRoute
   '/geostore/orders': typeof GeostoreOrdersRoute
   '/geostore/rewards': typeof GeostoreRewardsRoute
+  '/geostore/try-on': typeof GeostoreTryOnRoute
   '/geostore/wishlist': typeof GeostoreWishlistRoute
   '/play/catalogue': typeof PlayCatalogueRoute
   '/play/credit-history': typeof PlayCreditHistoryRoute
@@ -1301,6 +1310,7 @@ export interface FileRouteTypes {
     | '/geostore/offers'
     | '/geostore/orders'
     | '/geostore/rewards'
+    | '/geostore/try-on'
     | '/geostore/wishlist'
     | '/play/catalogue'
     | '/play/credit-history'
@@ -1432,6 +1442,7 @@ export interface FileRouteTypes {
     | '/geostore/offers'
     | '/geostore/orders'
     | '/geostore/rewards'
+    | '/geostore/try-on'
     | '/geostore/wishlist'
     | '/play/catalogue'
     | '/play/credit-history'
@@ -1566,6 +1577,7 @@ export interface FileRouteTypes {
     | '/geostore/offers'
     | '/geostore/orders'
     | '/geostore/rewards'
+    | '/geostore/try-on'
     | '/geostore/wishlist'
     | '/play/catalogue'
     | '/play/credit-history'
@@ -2115,6 +2127,13 @@ declare module '@tanstack/react-router' {
       path: '/rewards'
       fullPath: '/geostore/rewards'
       preLoaderRoute: typeof GeostoreRewardsRouteImport
+      parentRoute: typeof GeostoreRoute
+    }
+    '/geostore/try-on': {
+      id: '/geostore/try-on'
+      path: '/try-on'
+      fullPath: '/geostore/try-on'
+      preLoaderRoute: typeof GeostoreTryOnRouteImport
       parentRoute: typeof GeostoreRoute
     }
     '/geostore/wishlist': {
@@ -2756,6 +2775,7 @@ interface GeostoreRouteChildren {
   GeostoreOffersRoute: typeof GeostoreOffersRoute
   GeostoreOrdersRoute: typeof GeostoreOrdersRoute
   GeostoreRewardsRoute: typeof GeostoreRewardsRoute
+  GeostoreTryOnRoute: typeof GeostoreTryOnRoute
   GeostoreWishlistRoute: typeof GeostoreWishlistRoute
   GeostoreIndexRoute: typeof GeostoreIndexRoute
   GeostoreCategorySlugRoute: typeof GeostoreCategorySlugRoute
@@ -2769,6 +2789,7 @@ const GeostoreRouteChildren: GeostoreRouteChildren = {
   GeostoreOffersRoute: GeostoreOffersRoute,
   GeostoreOrdersRoute: GeostoreOrdersRoute,
   GeostoreRewardsRoute: GeostoreRewardsRoute,
+  GeostoreTryOnRoute: GeostoreTryOnRoute,
   GeostoreWishlistRoute: GeostoreWishlistRoute,
   GeostoreIndexRoute: GeostoreIndexRoute,
   GeostoreCategorySlugRoute: GeostoreCategorySlugRoute,
