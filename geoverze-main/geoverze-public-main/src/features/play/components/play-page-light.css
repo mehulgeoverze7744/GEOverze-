@@ -14,15 +14,22 @@ body:has(#lets-play-page) #geoverze-universe-background > div:not(:first-child) 
   display: none !important;
 }
 
+body:has(#lets-play-page) #geoverze-universe-background > div:first-child {
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-attachment: scroll !important;
+}
+
 @media (max-width: 767px) {
   body:has(#lets-play-page) #geoverze-universe-background > div:first-child {
-    background-position: 58% center !important;
+    background-position: 28% 24% !important;
   }
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
   body:has(#lets-play-page) #geoverze-universe-background > div:first-child {
-    background-position: 52% center !important;
+    background-position: 34% center !important;
   }
 }
 

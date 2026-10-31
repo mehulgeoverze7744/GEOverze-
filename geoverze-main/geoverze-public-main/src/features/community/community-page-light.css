@@ -18,6 +18,22 @@ body:has(#gvrze-community-page) #geoverze-universe-background > div:not(:first-c
 
 body:has(#gvrze-community-page) #geoverze-universe-background > div:first-child {
   opacity: 1;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-attachment: scroll !important;
+}
+
+@media (max-width: 767px) {
+  body:has(#gvrze-community-page) #geoverze-universe-background > div:first-child {
+    background-position: 28% 22% !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  body:has(#gvrze-community-page) #geoverze-universe-background > div:first-child {
+    background-position: 34% center !important;
+  }
 }
 
 /* Site header — white, dark type, active COMMUNITY underline. */

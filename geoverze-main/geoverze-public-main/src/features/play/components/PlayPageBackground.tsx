@@ -20,7 +20,7 @@ const PRESETS: Record<
     filter: "brightness(0.58) saturate(0.82) contrast(1.08)",
   },
   geo: {
-    image: "url(/assets/play/lets-play-geo-bg.jpg)",
+    image: "url(/assets/gvrze-geography-light-bg.jpg)",
     size: "cover",
     position: "center center",
     repeat: "no-repeat",
@@ -50,6 +50,7 @@ export function PlayPageBackground({ preset = "doodle" }: { preset?: PlayBackgro
       backgroundSize: layer.style.backgroundSize,
       backgroundPosition: layer.style.backgroundPosition,
       backgroundRepeat: layer.style.backgroundRepeat,
+      backgroundAttachment: layer.style.backgroundAttachment,
       filter: layer.style.filter,
       transform: layer.style.transform,
       willChange: layer.style.willChange,
@@ -59,6 +60,7 @@ export function PlayPageBackground({ preset = "doodle" }: { preset?: PlayBackgro
     layer.style.backgroundSize = look.size;
     layer.style.backgroundPosition = look.position;
     layer.style.backgroundRepeat = look.repeat;
+    layer.style.backgroundAttachment = "scroll";
     layer.style.filter = look.filter;
     layer.style.transform = "none";
     layer.style.willChange = "auto";
@@ -68,6 +70,7 @@ export function PlayPageBackground({ preset = "doodle" }: { preset?: PlayBackgro
       layer.style.backgroundSize = prev.backgroundSize;
       layer.style.backgroundPosition = prev.backgroundPosition;
       layer.style.backgroundRepeat = prev.backgroundRepeat;
+      layer.style.backgroundAttachment = prev.backgroundAttachment;
       layer.style.filter = prev.filter;
       layer.style.transform = prev.transform;
       layer.style.willChange = prev.willChange;

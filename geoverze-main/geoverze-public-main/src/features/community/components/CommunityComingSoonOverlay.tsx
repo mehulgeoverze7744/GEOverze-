@@ -51,7 +51,7 @@ export function CommunityComingSoonOverlay() {
         style={{
           backgroundImage: `
             radial-gradient(ellipse 80% 60% at 50% 0%, #c8d8e5 0%, transparent 62%),
-            url(/assets/community/community-geo-bg.jpg)
+            url(/assets/gvrze-geography-light-bg.jpg)
           `,
           backgroundSize: "cover",
           backgroundPosition: "center",

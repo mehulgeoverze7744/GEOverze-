@@ -16,15 +16,17 @@ export function CommunityPageBackground() {
       backgroundSize: layer.style.backgroundSize,
       backgroundPosition: layer.style.backgroundPosition,
       backgroundRepeat: layer.style.backgroundRepeat,
+      backgroundAttachment: layer.style.backgroundAttachment,
       filter: layer.style.filter,
       transform: layer.style.transform,
       willChange: layer.style.willChange,
     };
 
-    layer.style.backgroundImage = "url(/assets/community/community-geo-bg.jpg)";
+    layer.style.backgroundImage = "url(/assets/gvrze-geography-light-bg.jpg)";
     layer.style.backgroundSize = "cover";
     layer.style.backgroundPosition = "center center";
     layer.style.backgroundRepeat = "no-repeat";
+    layer.style.backgroundAttachment = "scroll";
     layer.style.filter = "none";
     layer.style.transform = "none";
     layer.style.willChange = "auto";
@@ -34,6 +36,7 @@ export function CommunityPageBackground() {
       layer.style.backgroundSize = prev.backgroundSize;
       layer.style.backgroundPosition = prev.backgroundPosition;
       layer.style.backgroundRepeat = prev.backgroundRepeat;
+      layer.style.backgroundAttachment = prev.backgroundAttachment;
       layer.style.filter = prev.filter;
       layer.style.transform = prev.transform;
       layer.style.willChange = prev.willChange;
