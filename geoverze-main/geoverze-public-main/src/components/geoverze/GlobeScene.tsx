@@ -6,6 +6,9 @@ import { BronzeGlobe } from "./BronzeGlobe";
 import { EARTH_SUN_POSITION } from "./earthGlobeAssets";
 import { HeroAstronaut } from "./HeroAstronaut";
 
+/** Flip to `true` to restore the homepage hero astronaut. */
+const SHOW_HERO_ASTRONAUT = false;
+
 function easeInOut(t: number) {
   return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 }
@@ -98,7 +101,7 @@ function Scene({ progress }: { progress: RefObject<number> }) {
       <pointLight position={[0, -3.5, 4]} intensity={1.5} distance={24} color="#c9dceb" />
       <StudioEnvironment />
       <BronzeGlobe progress={progress} {...layout} />
-      <HeroAstronaut progress={progress} />
+      {SHOW_HERO_ASTRONAUT ? <HeroAstronaut progress={progress} /> : null}
     </>
   );
 }

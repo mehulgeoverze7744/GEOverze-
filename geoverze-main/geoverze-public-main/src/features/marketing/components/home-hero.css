@@ -113,6 +113,11 @@
   .home-hero-scroll-cue {
     display: none;
   }
+
+  /* Restore the intro copy on phones without changing the desktop pin. */
+  #home-hero .home-hero-intro {
+    overflow-wrap: anywhere;
+  }
 }
 
 @keyframes home-hero-scroll-float {

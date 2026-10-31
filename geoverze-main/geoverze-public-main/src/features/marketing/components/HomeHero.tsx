@@ -90,18 +90,18 @@ export function HomeHero() {
 
       {SHOW_HOME_REWARDS_CARD ? <RewardsCard scrollProgress={progress} /> : null}
 
-      {/* Scroll-synced copy */}
+      {/* Scroll-synced copy — visible on mobile; desktop placement unchanged. */}
       <div
         ref={panel1}
-        className="pointer-events-none absolute inset-x-6 bottom-24 will-change-transform max-md:hidden md:inset-x-auto md:left-12 md:bottom-auto md:max-w-[34rem] md:top-[calc(var(--nav-height)+1.75rem)]"
+        className="home-hero-intro pointer-events-none absolute left-5 right-5 top-[calc(var(--nav-height)+0.85rem)] z-10 min-w-0 will-change-transform md:inset-x-auto md:left-12 md:right-auto md:bottom-auto md:max-w-[34rem] md:top-[calc(var(--nav-height)+1.75rem)]"
       >
         <p className="eyebrow">Know Earth</p>
-        <h1 className="mt-6 font-semibold leading-[1.03] tracking-tight text-foreground text-[clamp(2.15rem,5.2vw,4.25rem)]">
+        <h1 className="mt-4 max-w-full break-words font-semibold leading-[1.06] tracking-tight text-foreground text-[clamp(1.9rem,8.2vw,2.45rem)] md:mt-6 md:text-[clamp(2.15rem,5.2vw,4.25rem)] md:leading-[1.03]">
           Discover Earth
           <br />
           Like Never Before
         </h1>
-        <p className="mt-7 max-w-lg text-[0.9375rem] font-light leading-[1.7] text-foreground/65 md:text-base">
+        <p className="mt-5 max-w-lg text-[0.9rem] font-light leading-[1.65] text-foreground/65 md:mt-7 md:text-base md:leading-[1.7]">
           Explore countries, flags, capitals, maps, cultures, landmarks and geography through
           beautifully designed interactive experiences, quizzes, challenges and a global community.
         </p>
