@@ -1,0 +1,331 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&display=swap");
+
+/*
+ * Light theme for /play only. Every rule is keyed to #lets-play-page or
+ * body:has(#lets-play-page) so other routes keep the dark universe chrome.
+ */
+
+body:has(#lets-play-page) #geoverze-universe-background {
+  background: #f3f5f7;
+}
+
+/* Drop the dark vignette, dim overlay and grain so the geo plate stays clean. */
+body:has(#lets-play-page) #geoverze-universe-background > div:not(:first-child) {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+  body:has(#lets-play-page) #geoverze-universe-background > div:first-child {
+    background-position: 58% center !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  body:has(#lets-play-page) #geoverze-universe-background > div:first-child {
+    background-position: 52% center !important;
+  }
+}
+
+/* Site header — readable on the icy plate without changing other routes. */
+body:has(#lets-play-page) header {
+  background: transparent;
+  border-color: transparent;
+}
+
+body:has(#lets-play-page) header[data-scrolled="true"] {
+  background-color: rgb(244 246 248 / 0.92);
+  border-bottom: 1px solid rgb(23 32 51 / 0.08);
+  backdrop-filter: blur(16px) saturate(1.05);
+  box-shadow: none;
+}
+
+body:has(#lets-play-page) header .gvrze-home-wordmark {
+  display: block;
+  height: 1.15rem;
+  width: auto;
+}
+
+@media (min-width: 768px) {
+  body:has(#lets-play-page) header .gvrze-home-wordmark {
+    height: 1.5rem;
+  }
+}
+
+body:has(#lets-play-page) header nav[aria-label="Main"] a {
+  color: #172033;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+body:has(#lets-play-page) header nav[aria-label="Main"] a:hover,
+body:has(#lets-play-page) header nav[aria-label="Main"] a[data-status="active"] {
+  color: #111111;
+}
+
+body:has(#lets-play-page) header nav[aria-label="Main"] a[data-status="active"] {
+  text-decoration: underline;
+  text-underline-offset: 7px;
+  text-decoration-thickness: 1px;
+}
+
+body:has(#lets-play-page) header button[aria-label="Open search"],
+body:has(#lets-play-page) header button[aria-label="Notifications"],
+body:has(#lets-play-page) header button[aria-label^="Notifications,"],
+body:has(#lets-play-page) header button[aria-label="Account menu"],
+body:has(#lets-play-page) header button[aria-label="Open menu"] {
+  border-color: #172033;
+  background: transparent;
+  color: #172033;
+}
+
+body:has(#lets-play-page) header a[href="/auth/signup"] {
+  border-color: #172033;
+  background: #111111;
+  color: #ffffff;
+  box-shadow: none;
+  font-weight: 800;
+}
+
+#lets-play-page {
+  --lp-ink: #111111;
+  --lp-ink-soft: #2a2f38;
+  --lp-muted: #5b616b;
+  --lp-line: rgb(17 17 17 / 0.1);
+  --lp-card: rgb(255 255 255 / 0.86);
+  --lp-card-solid: #ffffff;
+  color: var(--lp-ink-soft);
+}
+
+#lets-play-page .eyebrow {
+  color: #3d4450;
+}
+
+#lets-play-page h1,
+#lets-play-page h2,
+#lets-play-page h3 {
+  color: var(--lp-ink);
+}
+
+#lets-play-page .text-gradient-bronze {
+  background: none;
+  -webkit-text-fill-color: var(--lp-ink);
+  color: var(--lp-ink);
+}
+
+#lets-play-page .text-foreground {
+  color: var(--lp-ink-soft);
+}
+
+#lets-play-page p {
+  color: var(--lp-muted);
+}
+
+#lets-play-page .game-surface,
+#lets-play-page .game-surface-raised {
+  background-color: var(--lp-card);
+  border: 1px solid var(--lp-line);
+  box-shadow: 0 10px 28px -20px rgb(17 24 39 / 0.35);
+}
+
+#lets-play-page .game-lift:hover {
+  border-color: rgb(17 17 17 / 0.22);
+  box-shadow: 0 16px 36px -20px rgb(17 24 39 / 0.42);
+}
+
+/* Black primary / outlined secondary — no gold fills on this page. */
+#lets-play-page button.bg-gradient-bronze,
+#lets-play-page a.bg-gradient-bronze {
+  background-image: none !important;
+  background-color: #111111 !important;
+  border-color: #111111 !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 22px -16px rgb(0 0 0 / 0.55);
+}
+
+#lets-play-page button.bg-gradient-bronze:hover,
+#lets-play-page a.bg-gradient-bronze:hover {
+  background-color: #252525 !important;
+  filter: none;
+}
+
+#lets-play-page .game-surface-raised.inline-flex,
+#lets-play-page a.game-surface-raised,
+#lets-play-page button.game-surface-raised {
+  background-color: #ffffff;
+  border-color: var(--lp-line);
+  color: var(--lp-ink);
+}
+
+#lets-play-page .play-hub-nav-strip {
+  border-color: var(--lp-line);
+  background: rgb(255 255 255 / 0.78);
+  box-shadow: 0 8px 20px -18px rgb(17 24 39 / 0.4);
+}
+
+#lets-play-page .play-hub-nav-link {
+  border-color: var(--lp-line);
+  background: #ffffff;
+  color: var(--lp-ink);
+  box-shadow: none;
+}
+
+#lets-play-page .play-hub-nav-icon {
+  color: var(--lp-ink);
+}
+
+#lets-play-page .play-hub-nav-link:hover {
+  filter: none;
+  background: #f4f5f7;
+  box-shadow: none;
+}
+
+#lets-play-page .play-hub-nav-link.is-active {
+  filter: none;
+  background: #111111;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+#lets-play-page .play-hub-nav-link.is-active .play-hub-nav-icon {
+  color: #ffffff;
+}
+
+#lets-play-page .play-hub-nav-link.is-locked {
+  opacity: 0.55;
+  filter: none;
+}
+
+#lets-play-page select,
+#lets-play-page input[type="search"],
+#lets-play-page input[type="text"] {
+  background-color: #ffffff !important;
+  border-color: var(--lp-line) !important;
+  color: var(--lp-ink) !important;
+}
+
+#lets-play-page .text-bronze,
+#lets-play-page .text-bronze-glow {
+  color: var(--lp-ink);
+}
+
+/*
+ * Ultra-bold typography — /play only.
+ * Montserrat 700–900 so every label, heading and number is visibly heavy.
+ */
+#lets-play-page {
+  font-family: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+#lets-play-page :where(p, span, li, dt, dd, label, small, caption, figcaption, legend, th, td, a, button, input, select, textarea, h1, h2, h3, h4, h5, h6) {
+  font-family: inherit;
+}
+
+#lets-play-page h1 {
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  overflow: visible;
+}
+
+#lets-play-page h1 span,
+#lets-play-page h2 span,
+#lets-play-page h3 span {
+  font-weight: inherit;
+}
+
+#lets-play-page h2,
+#lets-play-page h3,
+#lets-play-page h4 {
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  overflow: visible;
+}
+
+#lets-play-page .eyebrow {
+  font-weight: 800;
+  letter-spacing: 0.28em;
+}
+
+#lets-play-page p {
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+#lets-play-page a,
+#lets-play-page label,
+#lets-play-page li,
+#lets-play-page span,
+#lets-play-page small,
+#lets-play-page dt,
+#lets-play-page dd {
+  font-weight: 700;
+}
+
+#lets-play-page button,
+#lets-play-page [role="button"],
+#lets-play-page a.inline-flex,
+#lets-play-page .cta-pulse {
+  font-weight: 800;
+}
+
+#lets-play-page .tabular-nums,
+#lets-play-page [class*="tabular-nums"] {
+  font-weight: 900;
+}
+
+#lets-play-page .font-light,
+#lets-play-page .font-normal,
+#lets-play-page .font-medium,
+#lets-play-page .font-semibold,
+#lets-play-page .font-bold,
+#lets-play-page .font-extrabold {
+  font-weight: 800;
+}
+
+#lets-play-page .font-black {
+  font-weight: 900;
+}
+
+#lets-play-page h1.font-light,
+#lets-play-page h1.font-normal,
+#lets-play-page h1.font-medium,
+#lets-play-page h1.font-semibold,
+#lets-play-page h1.font-bold,
+#lets-play-page h1.font-extrabold,
+#lets-play-page h1.font-black,
+#lets-play-page h2.font-light,
+#lets-play-page h2.font-normal,
+#lets-play-page h2.font-medium,
+#lets-play-page h2.font-semibold,
+#lets-play-page h2.font-bold,
+#lets-play-page h2.font-extrabold,
+#lets-play-page h2.font-black,
+#lets-play-page h3.font-light,
+#lets-play-page h3.font-normal,
+#lets-play-page h3.font-medium,
+#lets-play-page h3.font-semibold,
+#lets-play-page h3.font-bold,
+#lets-play-page h3.font-extrabold,
+#lets-play-page h3.font-black {
+  font-weight: 900;
+}
+
+#lets-play-page .play-hub-nav-link {
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+#lets-play-page input,
+#lets-play-page select,
+#lets-play-page textarea {
+  font-weight: 700 !important;
+}
+
+#lets-play-page [data-slot="tooltip-content"],
+#lets-play-page [role="tooltip"] {
+  font-weight: 700;
+}

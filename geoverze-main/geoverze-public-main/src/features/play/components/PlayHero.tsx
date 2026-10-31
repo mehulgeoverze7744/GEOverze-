@@ -25,10 +25,10 @@ export function PlayHero({ onRandom }: { onRandom: () => void }) {
     <section className="pt-[calc(var(--nav-height)+2.5rem)] pb-[var(--space-section-sm)]">
       <SectionContainer size="wide">
         <p className="eyebrow">Quiz hub</p>
-        <h1 className="mt-3 font-semibold leading-[1] tracking-tight text-foreground text-[clamp(2.4rem,6vw,4.2rem)]">
+        <h1 className="mt-3 font-black leading-[1] tracking-tight text-foreground text-[clamp(2.4rem,6vw,4.2rem)]">
           Let&apos;s <span className="text-gradient-bronze">Play</span>
         </h1>
-        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-foreground/60 md:text-base">
+        <p className="mt-4 max-w-2xl text-sm font-bold leading-relaxed text-foreground/60 md:text-base">
           Challenge yourself. Explore the world. Become a geography master.
         </p>
 
@@ -56,13 +56,13 @@ export function PlayHero({ onRandom }: { onRandom: () => void }) {
                 </span>
               </span>
               <span className="min-w-0">
-                <span className="block text-[0.62rem] uppercase tracking-[0.18em] text-foreground/50">
+                <span className="block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-foreground/50">
                   {stat.label}
                 </span>
-                <span className="block text-lg font-semibold tracking-tight text-foreground">
+                <span className="block text-lg font-black tracking-tight text-foreground">
                   <AnimatedCounter value={stat.value} />
                   {"suffix" in stat ? (
-                    <span className="text-xs font-normal text-foreground/50">{stat.suffix}</span>
+                    <span className="text-xs font-bold text-foreground/50">{stat.suffix}</span>
                   ) : null}
                 </span>
               </span>
