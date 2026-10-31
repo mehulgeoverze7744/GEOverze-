@@ -1,11 +1,21 @@
 /* Homepage hero — light rectangular Monthly Rewards card */
 
-#home-hero .rewards-card {
+#home-hero .rewards-card-motion {
   position: absolute;
   top: calc(var(--nav-height) + 1.5rem);
   right: clamp(1.15rem, 3.4vw, 3rem);
   z-index: 15;
   width: min(30rem, calc(100vw - 39rem));
+  transform-origin: 88% 8%;
+  will-change: transform, opacity, filter;
+  pointer-events: none;
+}
+
+#home-hero .rewards-card {
+  position: relative;
+  top: auto;
+  right: auto;
+  width: 100%;
   transform: none;
   pointer-events: none;
 }
@@ -309,7 +319,7 @@
 }
 
 @media (max-width: 1279px) {
-  #home-hero .rewards-card {
+  #home-hero .rewards-card-motion {
     width: min(26.5rem, calc(100vw - 36rem));
     right: 1.15rem;
   }
@@ -321,41 +331,25 @@
 }
 
 @media (max-width: 1023px) {
-  #home-hero:has(.rewards-card) {
-    height: auto;
-    min-height: 100dvh;
-    overflow: visible;
-  }
-
-  #home-hero:has(.rewards-card) .home-hero-intro {
-    position: relative;
-    inset: auto;
+  #home-hero .rewards-card-motion {
     top: auto;
-    left: auto;
-    right: auto;
-    margin-top: calc(var(--nav-height) + 0.85rem);
-    margin-inline: 1.25rem;
-    max-width: none;
-  }
-
-  #home-hero .rewards-card {
-    position: relative;
-    top: auto;
-    right: auto;
-    width: min(32rem, calc(100% - 2.5rem));
-    margin: 1.35rem auto 2rem;
-    transform: none;
+    bottom: 0.7rem;
+    left: 1.15rem;
+    right: 1.15rem;
+    width: auto;
+    max-width: 28rem;
+    margin-inline: auto;
+    transform-origin: 50% 100%;
   }
 }
 
 @media (max-width: 767px) {
-  #home-hero:has(.rewards-card) .home-hero-intro {
-    margin-inline: 1.25rem;
-  }
-
-  #home-hero .rewards-card {
-    width: min(100%, calc(100% - 2rem));
-    margin: 1.15rem auto 1.75rem;
+  #home-hero .rewards-card-motion {
+    left: 0.85rem;
+    right: 0.85rem;
+    bottom: 0.5rem;
+    max-width: none;
+    transform-origin: 50% 100%;
   }
 
   .rewards-card__shell {
@@ -406,6 +400,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  #home-hero .rewards-card-motion {
+    will-change: auto;
+    filter: none;
+  }
+
   .rewards-card__tile,
   .rewards-card__btn {
     transition: none;

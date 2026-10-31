@@ -30,12 +30,50 @@ function band(p: number, a: number, b: number, c: number, d: number) {
  * All scroll-driven work is written imperatively to the DOM from a single rAF
  * flush — the component itself never re-renders while scrolling.
  */
+function applyRewardsGlobeScroll(
+  p: number,
+  rewards: HTMLElement | null,
+  globe: HTMLElement | null,
+) {
+  const compact = window.matchMedia("(max-width: 1023px)").matches;
+  const exitStart = compact ? 0.02 : 0.04;
+  const exitSpan = compact ? 0.22 : 0.32;
+  const exit = clamp01((p - exitStart) / exitSpan);
+  const t = exit * exit * (3 - 2 * exit);
+
+  if (rewards) {
+    const restScale = compact ? 0.7 : 1;
+    const x = t * (compact ? 20 : 84);
+    const y = t * (compact ? -64 : -148);
+    const scale = restScale * (1 - t * (compact ? 0.1 : 0.14));
+    const opacity = 1 - t;
+    rewards.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${scale.toFixed(4)})`;
+    rewards.style.opacity = String(opacity);
+    rewards.style.filter = t > 0.04 ? `blur(${(t * 4.5).toFixed(2)}px)` : "blur(0.01px)";
+    rewards.style.pointerEvents = opacity > 0.22 ? "auto" : "none";
+    rewards.setAttribute("aria-hidden", opacity < 0.15 ? "true" : "false");
+    const shell = rewards.querySelector<HTMLElement>(".rewards-card__shell");
+    if (shell) shell.style.pointerEvents = opacity > 0.22 ? "auto" : "none";
+  }
+
+  if (globe) {
+    const appearStart = compact ? 0.04 : 0.08;
+    const appearSpan = compact ? 0.24 : 0.3;
+    const g = clamp01((p - appearStart) / appearSpan);
+    const ge = g * g * (3 - 2 * g);
+    globe.style.opacity = String(ge);
+    globe.style.pointerEvents = ge > 0.35 ? "auto" : "none";
+  }
+}
+
 export function HomeHero() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const panel1 = useRef<HTMLDivElement>(null);
   const panel2 = useRef<HTMLDivElement>(null);
   const panel3 = useRef<HTMLDivElement>(null);
   const cueRef = useRef<HTMLDivElement>(null);
+  const rewardsRef = useRef<HTMLDivElement>(null);
+  const globeRef = useRef<HTMLDivElement>(null);
   const [webgl, setWebgl] = useState(true);
   const [demoOpen, setDemoOpen] = useState(false);
 
@@ -66,6 +104,12 @@ export function HomeHero() {
     set(panel3.current, c, (1 - c) * 26);
 
     if (cueRef.current) cueRef.current.style.opacity = String(clamp01(1 - p / 0.12));
+
+    applyRewardsGlobeScroll(p, rewardsRef.current, globeRef.current);
+  });
+
+  useEffect(() => {
+    applyRewardsGlobeScroll(progress.current, rewardsRef.current, globeRef.current);
   });
 
   return (
@@ -79,7 +123,9 @@ export function HomeHero() {
       {webgl ? (
         <ClientOnly fallback={null}>
           <Suspense fallback={null}>
-            <GlobeScene progress={progress} />
+            <div ref={globeRef} className="home-hero-globe">
+              <GlobeScene progress={progress} />
+            </div>
           </Suspense>
         </ClientOnly>
       ) : null}
@@ -129,7 +175,11 @@ export function HomeHero() {
         </div>
       </div>
 
-      {SHOW_HOME_REWARDS_CARD ? <RewardsCard /> : null}
+      {SHOW_HOME_REWARDS_CARD ? (
+        <div ref={rewardsRef} className="rewards-card-motion">
+          <RewardsCard />
+        </div>
+      ) : null}
 
       <div
         ref={panel2}

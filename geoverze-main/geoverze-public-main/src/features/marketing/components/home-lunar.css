@@ -198,8 +198,11 @@ body:has(#gvrze-home) footer input::placeholder {
   display: none;
 }
 
-/* Keep the supplied moon photograph as the only hero backdrop. */
-#gvrze-home #home-hero canvas {
+/* Globe starts hidden over the moon photo; HomeHero raises opacity on scroll. */
+#gvrze-home #home-hero .home-hero-globe {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
   opacity: 0;
   pointer-events: none;
 }

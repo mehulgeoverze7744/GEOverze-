@@ -150,7 +150,7 @@ export default function GlobeScene({ progress }: { progress: RefObject<number> }
   const active = useRenderGate(host);
 
   return (
-    <div ref={host} aria-hidden className="absolute inset-0">
+    <div ref={host} aria-hidden className="absolute inset-0 z-[1]">
       <Canvas
         className="!absolute inset-0"
         dpr={[1, 2]}
