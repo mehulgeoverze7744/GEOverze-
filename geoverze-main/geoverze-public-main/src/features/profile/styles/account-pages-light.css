@@ -1,0 +1,494 @@
+/*
+ * Light Earth-and-orbital chrome for the signed-in account area only.
+ * Keyed to #gvrze-account / header[data-surface="account"] so Homepage,
+ * Play, Store, Library, Community and Pricing stay untouched.
+ */
+
+body:has(#gvrze-account) {
+  background: #eef2f5;
+  color: #17191d;
+  overflow-x: hidden;
+}
+
+body:has(#gvrze-account) #geoverze-universe-background {
+  display: none !important;
+}
+
+#gvrze-account {
+  position: relative;
+  isolation: isolate;
+  min-height: 100%;
+}
+
+.gvrze-account-bg {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-color: #eef2f5;
+  background-image: url("/assets/gvrze-profile-bg.jpg");
+  background-image: -webkit-image-set(
+    url("/assets/gvrze-profile-bg.webp") type("image/webp"),
+    url("/assets/gvrze-profile-bg.jpg") type("image/jpeg")
+  );
+  background-image: image-set(
+    url("/assets/gvrze-profile-bg.webp") type("image/webp"),
+    url("/assets/gvrze-profile-bg.jpg") type("image/jpeg")
+  );
+  background-size: cover;
+  background-position: 72% center;
+  background-repeat: no-repeat;
+  image-rendering: auto;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .gvrze-account-bg {
+    background-position: 80% 42%;
+  }
+}
+
+@media (max-width: 767px) {
+  .gvrze-account-bg {
+    background-image: url("/assets/gvrze-profile-bg-sm.webp");
+    background-image: -webkit-image-set(
+      url("/assets/gvrze-profile-bg-sm.webp") type("image/webp"),
+      url("/assets/gvrze-profile-bg.jpg") type("image/jpeg")
+    );
+    background-image: image-set(
+      url("/assets/gvrze-profile-bg-sm.webp") type("image/webp"),
+      url("/assets/gvrze-profile-bg.jpg") type("image/jpeg")
+    );
+    background-position: 92% 38%;
+  }
+}
+
+#gvrze-account > *:not(.gvrze-account-bg) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Header — Play-matched charcoal chrome, readable on the icy plate. */
+header[data-surface="account"] {
+  background: transparent;
+  border-color: transparent;
+}
+
+header[data-surface="account"][data-scrolled="true"] {
+  background-color: rgb(244 246 248 / 0.92);
+  border-bottom: 1px solid rgb(23 32 51 / 0.08);
+  backdrop-filter: blur(16px) saturate(1.05);
+  box-shadow: none;
+}
+
+header[data-surface="account"] .gvrze-home-wordmark {
+  display: block;
+  height: 1.15rem;
+  width: auto;
+}
+
+@media (min-width: 768px) {
+  header[data-surface="account"] .gvrze-home-wordmark {
+    height: 1.5rem;
+  }
+}
+
+header[data-surface="account"] nav[aria-label="Main"] a {
+  color: #172033;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+header[data-surface="account"] nav[aria-label="Main"] a:hover,
+header[data-surface="account"] nav[aria-label="Main"] a[data-status="active"] {
+  color: #111111;
+}
+
+header[data-surface="account"] nav[aria-label="Main"] a[data-status="active"] {
+  text-decoration: underline;
+  text-underline-offset: 7px;
+  text-decoration-thickness: 1px;
+}
+
+header[data-surface="account"] button[aria-label="Open search"],
+header[data-surface="account"] button[aria-label="Notifications"],
+header[data-surface="account"] button[aria-label^="Notifications,"],
+header[data-surface="account"] button[aria-label="Account menu"],
+header[data-surface="account"] button[aria-label="Open menu"] {
+  border-color: #172033;
+  background: transparent;
+  color: #172033;
+}
+
+header[data-surface="account"] button[aria-label="Open search"]:hover,
+header[data-surface="account"] button[aria-label="Notifications"]:hover,
+header[data-surface="account"] button[aria-label^="Notifications,"]:hover,
+header[data-surface="account"] button[aria-label="Account menu"]:hover,
+header[data-surface="account"] button[aria-label="Open menu"]:hover {
+  border-color: #172033;
+  background: rgb(23 32 51 / 0.06);
+  color: #172033;
+}
+
+header[data-surface="account"] a[href="/auth/signup"] {
+  border-color: #172033;
+  background: #111111;
+  color: #ffffff;
+  box-shadow: none;
+  font-weight: 800;
+}
+
+body:has(header[data-surface="account"]) footer {
+  background: rgb(255 255 255 / 0.82);
+  border-color: #d5dbe1;
+  color: #17191d;
+}
+
+body:has(header[data-surface="account"]) footer :is(p, a, li, span, label) {
+  color: #5c636c;
+}
+
+body:has(header[data-surface="account"]) footer :is(p, a, li, span, label)[class*="text-bronze"] {
+  color: #17191d;
+}
+
+body:has(header[data-surface="account"]) footer a:hover,
+body:has(header[data-surface="account"]) footer a:focus-visible,
+body:has(header[data-surface="account"]) footer [class*="hover:text-bronze"]:hover,
+body:has(header[data-surface="account"]) footer [class*="focus-visible:text-bronze"]:focus-visible {
+  color: #17191d;
+}
+
+body:has(header[data-surface="account"]) footer input {
+  background: rgb(255 255 255 / 0.72);
+  color: #172033;
+  border-color: rgb(23 32 51 / 0.16);
+}
+
+body:has(header[data-surface="account"]) footer input::placeholder {
+  color: rgb(23 32 51 / 0.42);
+}
+
+body:has(header[data-surface="account"]) footer button {
+  border-color: #111111;
+  background: #111111;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+body:has(header[data-surface="account"]) footer [class*="border-bronze"] {
+  border-color: #d5dbe1;
+}
+
+body:has(header[data-surface="account"]) footer span[aria-label$="coming soon"] {
+  border-color: #d5dbe1;
+  background: rgb(255 255 255 / 0.72);
+  color: #172033;
+}
+
+/* Type */
+#gvrze-account h1,
+#gvrze-account h2,
+#gvrze-account h3,
+#gvrze-account .text-foreground {
+  color: #17191d;
+}
+
+#gvrze-account .text-foreground\/90,
+#gvrze-account .text-foreground\/85,
+#gvrze-account .text-foreground\/80 {
+  color: #2a3038;
+}
+
+#gvrze-account .text-foreground\/75,
+#gvrze-account .text-foreground\/72,
+#gvrze-account .text-foreground\/70,
+#gvrze-account .text-foreground\/65,
+#gvrze-account .text-foreground\/60,
+#gvrze-account .text-foreground\/55,
+#gvrze-account .text-foreground\/50,
+#gvrze-account .text-foreground\/45,
+#gvrze-account .text-foreground\/42 {
+  color: #5c636c;
+}
+
+#gvrze-account p {
+  color: #5c636c;
+}
+
+#gvrze-account .text-bronze,
+#gvrze-account .text-bronze-glow,
+#gvrze-account .text-bronze\/90,
+#gvrze-account .text-bronze\/85,
+#gvrze-account .text-bronze\/80 {
+  color: #3d6d8f;
+}
+
+#gvrze-account .text-gradient-bronze {
+  background: none;
+  -webkit-text-fill-color: #17191d;
+  color: #17191d;
+}
+
+/* Cards */
+#gvrze-account .glass-panel,
+#gvrze-account .glass-panel-strong,
+#gvrze-account .glass-panel.surface-gradient {
+  background-color: rgb(255 255 255 / 0.9);
+  background-image: none;
+  border-color: #d8dee6;
+  box-shadow: 0 12px 32px -22px rgb(23 25 29 / 0.28);
+  color: #17191d;
+}
+
+#gvrze-account .glass-panel:hover,
+#gvrze-account .glass-panel-strong:hover {
+  border-color: #c5ced8;
+  box-shadow: 0 16px 36px -20px rgb(23 25 29 / 0.22);
+}
+
+#gvrze-account .border-bronze\/10,
+#gvrze-account .border-bronze\/12,
+#gvrze-account .border-bronze\/15,
+#gvrze-account .border-bronze\/20,
+#gvrze-account .border-bronze\/25,
+#gvrze-account .border-bronze\/35,
+#gvrze-account .border-bronze\/40,
+#gvrze-account .border-bronze\/45,
+#gvrze-account .border-bronze\/50 {
+  border-color: #d8dee6;
+}
+
+#gvrze-account .bg-bronze\/15,
+#gvrze-account .bg-bronze\/12,
+#gvrze-account .bg-bronze\/10,
+#gvrze-account .bg-bronze\/8,
+#gvrze-account .bg-bronze\/5 {
+  background-color: rgb(61 109 143 / 0.1);
+}
+
+#gvrze-account .bg-charcoal\/50,
+#gvrze-account .bg-charcoal\/45,
+#gvrze-account .bg-charcoal\/40,
+#gvrze-account .bg-background\/40,
+#gvrze-account .bg-background\/50 {
+  background-color: rgb(255 255 255 / 0.82);
+}
+
+/* Buttons — black primary, white secondary */
+#gvrze-account .dashboard-cta-expedition,
+#gvrze-account a.bg-bronze\/15,
+#gvrze-account button.bg-bronze\/15,
+#gvrze-account a.bg-gradient-bronze,
+#gvrze-account button.bg-gradient-bronze,
+#gvrze-account .profile-edit-save {
+  background: #111111 !important;
+  border-color: #111111 !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+#gvrze-account .dashboard-cta-secondary,
+#gvrze-account .profile-hero-btn-secondary,
+#gvrze-account .profile-edit-cancel,
+#gvrze-account a.glass-panel {
+  background: #ffffff !important;
+  border-color: #111111 !important;
+  color: #111111 !important;
+  box-shadow: none !important;
+}
+
+/* Dashboard — drop the in-card Earth so the page plate is the only sky */
+#gvrze-account .dashboard-earth-layer,
+#gvrze-account .dashboard-hero-glow,
+#gvrze-account .dashboard-hero-content-shade,
+#gvrze-account .dashboard-hero-atmosphere {
+  display: none !important;
+}
+
+#gvrze-account .dashboard-hero {
+  min-height: auto;
+  border: 1px solid #d8dee6;
+  border-radius: 1.5rem;
+  background: rgb(255 255 255 / 0.9);
+  box-shadow: 0 14px 36px -22px rgb(23 25 29 / 0.24);
+}
+
+#gvrze-account .dashboard-hero-surface {
+  display: none;
+}
+
+#gvrze-account .dashboard-section-label,
+#gvrze-account .dashboard-current-plan__label,
+#gvrze-account .dashboard-quick-status__item dt {
+  color: #5c636c;
+}
+
+#gvrze-account .dashboard-current-plan,
+#gvrze-account .dashboard-quick-status,
+#gvrze-account .dashboard-quick-status__item,
+#gvrze-account .dashboard-credits,
+#gvrze-account .dashboard-featured,
+#gvrze-account .dashboard-rec-card,
+#gvrze-account .dashboard-hero-cta-cluster {
+  background: rgb(255 255 255 / 0.88);
+  border-color: #d8dee6;
+  box-shadow: 0 10px 28px -20px rgb(23 25 29 / 0.2);
+}
+
+#gvrze-account .dashboard-current-plan__name,
+#gvrze-account .dashboard-quick-status__item dd {
+  color: #17191d;
+}
+
+#gvrze-account .dashboard-quick-status__bg {
+  display: none;
+}
+
+#gvrze-account .dashboard-dock-card,
+#gvrze-account .dashboard-gamecard,
+#gvrze-account .dashboard-hero-cta-cluster {
+  background: rgb(255 255 255 / 0.9);
+  border-color: #d8dee6;
+  box-shadow: 0 12px 32px -22px rgb(23 25 29 / 0.22);
+  color: #17191d;
+}
+
+#gvrze-account .dashboard-gamecard-badge,
+#gvrze-account .dashboard-gamecard-icon-ring {
+  background: rgb(61 109 143 / 0.1);
+  border-color: #c5d4df;
+  color: #3d6d8f;
+}
+
+/* Profile hero — no starfield card; the page plate is the sky */
+#gvrze-account .profile-hero {
+  background: rgb(255 255 255 / 0.9);
+  border-color: #d8dee6;
+  box-shadow: 0 14px 36px -22px rgb(23 25 29 / 0.24);
+  backdrop-filter: none;
+}
+
+#gvrze-account .profile-hero-bg,
+#gvrze-account .profile-hero-scrim {
+  display: none;
+}
+
+#gvrze-account .profile-bio,
+#gvrze-account .profile-meta {
+  color: #5c636c;
+}
+
+#gvrze-account .profile-upgrade-card {
+  background: rgb(255 255 255 / 0.92);
+  border-color: #d8dee6;
+  box-shadow: 0 10px 24px -18px rgb(23 25 29 / 0.2);
+}
+
+/* Edit profile */
+#gvrze-account .profile-edit-card {
+  background-color: rgb(255 255 255 / 0.92) !important;
+  border-color: #d8dee6 !important;
+  box-shadow: 0 12px 32px -22px rgb(23 25 29 / 0.22);
+}
+
+#gvrze-account .profile-edit-card input,
+#gvrze-account .profile-edit-card textarea,
+#gvrze-account .profile-edit-card select {
+  background: #ffffff;
+  border-color: #d5dbe1;
+  color: #17191d;
+}
+
+#gvrze-account .profile-edit-card input::placeholder,
+#gvrze-account .profile-edit-card textarea::placeholder {
+  color: #8a9199;
+}
+
+#gvrze-account .profile-edit-avatar {
+  border-color: #d8dee6;
+  background: #ffffff;
+}
+
+#gvrze-account .profile-edit-avatar--selected {
+  border-color: #111111;
+}
+
+#gvrze-account .profile-edit-chip {
+  background: #ffffff;
+  border-color: #d8dee6;
+  color: #17191d;
+}
+
+#gvrze-account .profile-edit-chip--selected {
+  background: #111111;
+  border-color: #111111;
+  color: #ffffff;
+}
+
+/* Settings / bookmarks / history / notifications / billing */
+#gvrze-account .settings-eyebrow,
+#gvrze-account .bookmarks-eyebrow,
+#gvrze-account .hr-eyebrow,
+#gvrze-account .bm-kicker,
+#gvrze-account .settings-group-label,
+#gvrze-account .bookmarks-summary {
+  color: #5c636c;
+}
+
+#gvrze-account .settings-description,
+#gvrze-account .bookmarks-description,
+#gvrze-account .hr-description,
+#gvrze-account .bm-lede,
+#gvrze-account .bm-note {
+  color: #5c636c;
+}
+
+#gvrze-account .settings-back {
+  color: #3d6d8f;
+}
+
+#gvrze-account .settings-group,
+#gvrze-account .hr-stat,
+#gvrze-account .bm-card,
+#gvrze-account .nc [class*="card"] {
+  background: rgb(255 255 255 / 0.9);
+  border-color: #d8dee6;
+  box-shadow: 0 10px 28px -20px rgb(23 25 29 / 0.2);
+}
+
+#gvrze-account .settings-row,
+#gvrze-account .hr-stat-value,
+#gvrze-account .hr-stat-value--accent,
+#gvrze-account .bm-title,
+#gvrze-account .nc-kicker {
+  color: #17191d;
+  background: none;
+  -webkit-text-fill-color: #17191d;
+}
+
+#gvrze-account .hr-stat-value--accent {
+  color: #3d6d8f;
+  -webkit-text-fill-color: #3d6d8f;
+}
+
+#gvrze-account div.bm::before,
+#gvrze-account div.nc::before {
+  display: none;
+}
+
+#gvrze-account .bookmarks-toolbar {
+  border-color: #d8dee6;
+}
+
+#gvrze-account input,
+#gvrze-account select,
+#gvrze-account textarea {
+  color: #17191d;
+}
+
+/* Progress / XP — restrained electric blue */
+#gvrze-account [class*="progress"] [class*="bg-bronze"],
+#gvrze-account .bg-gradient-to-r.from-bronze\/80 {
+  background-image: linear-gradient(to right, #3d6d8f, #6ea3c7);
+  background-color: #3d6d8f;
+}

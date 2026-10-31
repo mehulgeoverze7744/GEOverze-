@@ -43,6 +43,18 @@ export function Navbar() {
   const isPlayHub = pathname === "/play";
   const isCommunity = pathname.startsWith("/community");
   const isPricing = pathname === "/pricing" || pathname === "/pricing/";
+  const isLibrary = pathname.startsWith("/geolibrary");
+  const isAccount =
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/profile") ||
+    pathname.startsWith("/settings") ||
+    pathname.startsWith("/bookmarks") ||
+    pathname.startsWith("/quiz-history") ||
+    pathname.startsWith("/achievements") ||
+    pathname.startsWith("/billing") ||
+    pathname.startsWith("/progress") ||
+    pathname === "/notifications" ||
+    pathname.startsWith("/notifications/");
   const signedIn = useAuthStore(selectIsSignedIn);
   const navigate = useNavigate();
 
@@ -86,7 +98,19 @@ export function Navbar() {
       ref={headerRef}
       data-scrolled="false"
       data-surface={
-        isHome ? "home" : isPlayHub ? "play" : isCommunity ? "community" : isPricing ? "pricing" : undefined
+        isHome
+          ? "home"
+          : isPlayHub
+            ? "play"
+            : isCommunity
+              ? "community"
+              : isPricing
+                ? "pricing"
+                : isLibrary
+                  ? "library"
+                  : isAccount
+                    ? "account"
+                    : undefined
       }
       className="group fixed inset-x-0 top-0 z-50 h-[var(--nav-height)] border-b border-transparent transition-all motion-base data-[scrolled=true]:glass-panel data-[scrolled=true]:rounded-none data-[scrolled=true]:shadow-[var(--shadow-float)]"
     >
@@ -97,7 +121,7 @@ export function Navbar() {
           aria-label={`${site.name} home`}
           className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
         >
-          {isHome || isPlayHub || isCommunity || isPricing ? (
+          {isHome || isPlayHub || isCommunity || isPricing || isLibrary || isAccount ? (
             <img
               src="/assets/home/gvrze-wordmark.png"
               alt=""

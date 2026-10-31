@@ -105,6 +105,29 @@ export function HomeHero() {
           Explore countries, flags, capitals, maps, cultures, landmarks and geography through
           beautifully designed interactive experiences, quizzes, challenges and a global community.
         </p>
+        <div className="home-hero-intro-ctas pointer-events-auto mt-6 flex w-full max-w-[19.5rem] flex-col gap-3 min-[400px]:max-w-[22.5rem] min-[400px]:flex-row md:hidden">
+          <GeoButton
+            asChild
+            variant="solid"
+            size="lg"
+            className="home-hero-cta min-h-12 w-full flex-1 px-6 font-bold uppercase tracking-[0.2em]"
+          >
+            <Link
+              to="/play"
+              className="flex flex-col items-center leading-none font-cta text-[0.95rem]"
+            >
+              <span>LET'S PLAY</span>
+            </Link>
+          </GeoButton>
+          <GeoButton
+            variant="solid"
+            size="lg"
+            onClick={() => setDemoOpen(true)}
+            className="home-hero-cta home-hero-cta-secondary min-h-12 w-full flex-1 px-6 font-bold uppercase tracking-[0.2em]"
+          >
+            <span className="font-cta text-[0.7rem]">Watch Demo</span>
+          </GeoButton>
+        </div>
       </div>
 
       <div

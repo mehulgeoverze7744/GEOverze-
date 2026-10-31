@@ -19,7 +19,8 @@ body:has(#gvrze-library-home) #geoverze-universe-background {
   overflow-x: clip;
 }
 
-/* Full-bleed icy atlas under Explore by Subject, rails, cards, studio. */
+/* Full-bleed icy atlas under Explore by Subject, rails, cards, studio.
+   High-res WebP (3840) with JPEG fallback — never the desk hero photograph. */
 #gvrze-library-home .gvrze-library-home__content {
   position: relative;
   isolation: isolate;
@@ -27,10 +28,19 @@ body:has(#gvrze-library-home) #geoverze-universe-background {
   min-width: 0;
   background-color: #f3f6fb;
   background-image: url("/assets/gvrze-library-page-bg.jpg");
+  background-image: -webkit-image-set(
+    url("/assets/gvrze-library-page-bg.webp") type("image/webp"),
+    url("/assets/gvrze-library-page-bg.jpg") type("image/jpeg")
+  );
+  background-image: image-set(
+    url("/assets/gvrze-library-page-bg.webp") type("image/webp"),
+    url("/assets/gvrze-library-page-bg.jpg") type("image/jpeg")
+  );
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
   background-attachment: scroll;
+  image-rendering: auto;
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
@@ -41,6 +51,15 @@ body:has(#gvrze-library-home) #geoverze-universe-background {
 
 @media (max-width: 767px) {
   #gvrze-library-home .gvrze-library-home__content {
+    background-image: url("/assets/gvrze-library-page-bg-sm.webp");
+    background-image: -webkit-image-set(
+      url("/assets/gvrze-library-page-bg-sm.webp") type("image/webp"),
+      url("/assets/gvrze-library-page-bg.jpg") type("image/jpeg")
+    );
+    background-image: image-set(
+      url("/assets/gvrze-library-page-bg-sm.webp") type("image/webp"),
+      url("/assets/gvrze-library-page-bg.jpg") type("image/jpeg")
+    );
     background-position: 32% 28%;
   }
 }

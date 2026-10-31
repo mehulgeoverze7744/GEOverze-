@@ -1,0 +1,123 @@
+/*
+ * Site chrome for /geolibrary* only. Header matches Let's Play exactly.
+ * A restrained frost keeps charcoal type readable on the desk hero and on
+ * darker Library sub-routes. Footer follows the light Community/Pricing treatment.
+ * Other routes never set data-surface="library".
+ */
+
+header[data-surface="library"] {
+  background: transparent;
+  border-color: transparent;
+}
+
+header[data-surface="library"][data-scrolled="true"] {
+  background-color: rgb(244 246 248 / 0.92);
+  border-bottom: 1px solid rgb(23 32 51 / 0.08);
+  backdrop-filter: blur(16px) saturate(1.05);
+  box-shadow: none;
+}
+
+header[data-surface="library"] .gvrze-home-wordmark {
+  display: block;
+  height: 1.15rem;
+  width: auto;
+}
+
+@media (min-width: 768px) {
+  header[data-surface="library"] .gvrze-home-wordmark {
+    height: 1.5rem;
+  }
+}
+
+header[data-surface="library"] nav[aria-label="Main"] a {
+  color: #172033;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+header[data-surface="library"] nav[aria-label="Main"] a:hover,
+header[data-surface="library"] nav[aria-label="Main"] a[data-status="active"] {
+  color: #111111;
+}
+
+header[data-surface="library"] nav[aria-label="Main"] a[data-status="active"] {
+  text-decoration: underline;
+  text-underline-offset: 7px;
+  text-decoration-thickness: 1px;
+}
+
+header[data-surface="library"] button[aria-label="Open search"],
+header[data-surface="library"] button[aria-label="Notifications"],
+header[data-surface="library"] button[aria-label^="Notifications,"],
+header[data-surface="library"] button[aria-label="Account menu"],
+header[data-surface="library"] button[aria-label="Open menu"] {
+  border-color: #172033;
+  background: transparent;
+  color: #172033;
+}
+
+header[data-surface="library"] button[aria-label="Open search"]:hover,
+header[data-surface="library"] button[aria-label="Notifications"]:hover,
+header[data-surface="library"] button[aria-label^="Notifications,"]:hover,
+header[data-surface="library"] button[aria-label="Account menu"]:hover,
+header[data-surface="library"] button[aria-label="Open menu"]:hover {
+  border-color: #172033;
+  background: rgb(23 32 51 / 0.06);
+  color: #172033;
+}
+
+header[data-surface="library"] a[href="/auth/signup"] {
+  border-color: #172033;
+  background: #111111;
+  color: #ffffff;
+  box-shadow: none;
+  font-weight: 800;
+}
+
+body:has(header[data-surface="library"]) footer {
+  background: rgb(255 255 255 / 0.82);
+  border-color: #d5dbe1;
+  color: #17191d;
+}
+
+body:has(header[data-surface="library"]) footer :is(p, a, li, span, label) {
+  color: #5c636c;
+}
+
+body:has(header[data-surface="library"]) footer :is(p, a, li, span, label)[class*="text-bronze"] {
+  color: #17191d;
+}
+
+body:has(header[data-surface="library"]) footer a:hover,
+body:has(header[data-surface="library"]) footer a:focus-visible,
+body:has(header[data-surface="library"]) footer [class*="hover:text-bronze"]:hover,
+body:has(header[data-surface="library"]) footer [class*="focus-visible:text-bronze"]:focus-visible {
+  color: #17191d;
+}
+
+body:has(header[data-surface="library"]) footer input {
+  background: rgb(255 255 255 / 0.72);
+  color: #172033;
+  border-color: rgb(23 32 51 / 0.16);
+}
+
+body:has(header[data-surface="library"]) footer input::placeholder {
+  color: rgb(23 32 51 / 0.42);
+}
+
+body:has(header[data-surface="library"]) footer button {
+  border-color: #111111;
+  background: #111111;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+body:has(header[data-surface="library"]) footer [class*="border-bronze"] {
+  border-color: #d5dbe1;
+}
+
+body:has(header[data-surface="library"]) footer span[aria-label$="coming soon"] {
+  border-color: #d5dbe1;
+  background: rgb(255 255 255 / 0.72);
+  color: #172033;
+}

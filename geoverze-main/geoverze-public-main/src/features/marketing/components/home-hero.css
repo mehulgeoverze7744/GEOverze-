@@ -63,6 +63,29 @@
   outline-offset: 3px;
 }
 
+/* Mobile-only outline treatment for Watch Demo. Desktop CTAs stay as they are. */
+#home-hero .home-hero-cta-secondary,
+#home-hero .home-hero-cta-secondary * {
+  background-color: #ffffff;
+  background-image: none !important;
+  border-color: #111111 !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111;
+  box-shadow: none;
+}
+
+#home-hero .home-hero-cta-secondary:hover {
+  background-color: #f4f4f4;
+  filter: none;
+  color: #111111 !important;
+  box-shadow: none;
+}
+
+#home-hero .home-hero-cta-secondary:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 3px;
+}
+
 .home-hero-cta:active {
   transform: translateY(0);
 }
@@ -117,6 +140,15 @@
   /* Restore the intro copy on phones without changing the desktop pin. */
   #home-hero .home-hero-intro {
     overflow-wrap: anywhere;
+  }
+
+  #home-hero .home-hero-intro-ctas {
+    position: relative;
+    z-index: 2;
+  }
+
+  #home-hero .home-hero-intro-ctas .home-hero-cta {
+    min-height: 3rem;
   }
 }
 
