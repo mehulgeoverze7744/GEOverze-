@@ -234,9 +234,67 @@ body:has(#gvrze-library-home) #geoverze-universe-background {
 }
 
 /* Card category pill sitting on the photograph */
-#gvrze-library-home .gvrze-library-home__content span.absolute.right-3.top-3 {
+#gvrze-library-home .gvrze-library-home__content span.absolute.right-3.top-3,
+#gvrze-library-home .library-article-card__category.absolute {
   background: rgb(23 25 29 / 0.82);
   border-color: transparent;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/*
+ * Article cards only — bolder editorial hierarchy, black / charcoal type.
+ * Explore by Subject, hero, studio, and rail chrome stay untouched.
+ */
+#gvrze-library-home .library-article-card .text-bronze,
+#gvrze-library-home .library-article-card .text-bronze-glow,
+#gvrze-library-home .library-article-card .text-bronze\/90,
+#gvrze-library-home .library-article-card .text-bronze\/85,
+#gvrze-library-home .library-article-card .hover\:text-bronze:hover,
+#gvrze-library-home .library-article-card .hover\:text-bronze-glow:hover,
+#gvrze-library-home .library-article-card .group-hover\:text-bronze-glow {
+  color: #17191d;
+}
+
+#gvrze-library-home .library-article-card .library-article-card__title,
+#gvrze-library-home .library-article-card .library-article-card__title-text,
+#gvrze-library-home .library-article-card h3,
+#gvrze-library-home .library-article-card h3 span {
+  font-weight: 700;
+  color: #17191d;
+}
+
+#gvrze-library-home .library-article-card:hover .library-article-card__title,
+#gvrze-library-home .library-article-card:hover .library-article-card__title-text {
+  color: #17191d;
+}
+
+#gvrze-library-home .library-article-card .library-article-card__dek,
+#gvrze-library-home .library-article-card p.library-article-card__dek {
+  font-weight: 500;
+  color: #4b5563;
+}
+
+#gvrze-library-home .library-article-card .library-article-card__meta,
+#gvrze-library-home .library-article-card .library-article-card__reading-time,
+#gvrze-library-home .library-article-card .library-article-card__difficulty,
+#gvrze-library-home .library-article-card .library-article-card__stats,
+#gvrze-library-home .library-article-card .library-article-card__stats span,
+#gvrze-library-home .library-article-card .library-article-card__progress-label {
+  font-weight: 600;
+  color: #4b5563;
+}
+
+#gvrze-library-home .library-article-card .library-article-card__author,
+#gvrze-library-home .library-article-card a.library-article-card__author,
+#gvrze-library-home .library-article-card a.library-article-card__author:hover,
+#gvrze-library-home .library-article-card .library-article-card__cta,
+#gvrze-library-home .library-article-card .library-article-card__cta * {
+  font-weight: 600;
+  color: #17191d;
+}
+
+#gvrze-library-home .library-article-card .library-article-card__category.absolute {
   color: #ffffff;
 }
 

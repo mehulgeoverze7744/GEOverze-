@@ -17,12 +17,16 @@ export function GeoDropdown({
   align = "end",
   children,
   className,
+  labelClassName,
+  separatorClassName,
 }: {
   trigger: ReactNode;
   label?: string;
   align?: "start" | "center" | "end";
   children: ReactNode;
   className?: string;
+  labelClassName?: string;
+  separatorClassName?: string;
 }) {
   return (
     <DropdownMenu>
@@ -37,10 +41,15 @@ export function GeoDropdown({
       >
         {label ? (
           <>
-            <DropdownMenuLabel className="px-3 py-2 text-[0.6rem] uppercase tracking-[0.28em] text-bronze/90">
+            <DropdownMenuLabel
+              className={cn(
+                "px-3 py-2 text-[0.6rem] uppercase tracking-[0.28em] text-bronze/90",
+                labelClassName,
+              )}
+            >
               {label}
             </DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-bronze/12" />
+            <DropdownMenuSeparator className={cn("bg-bronze/12", separatorClassName)} />
           </>
         ) : null}
         {children}

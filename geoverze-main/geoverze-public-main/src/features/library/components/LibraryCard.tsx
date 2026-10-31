@@ -73,17 +73,19 @@ export function LibraryCard({
 
   const meta = (
     <>
-      <span className="inline-flex items-center gap-1.5">
+      <span className="library-article-card__reading-time inline-flex items-center gap-1.5 font-medium">
         <Clock className="h-3 w-3" strokeWidth={1.6} aria-hidden="true" />
         {article.minutes} min
       </span>
       <span aria-hidden="true">·</span>
-      <span>{difficultyLabel(article.difficulty)}</span>
+      <span className="library-article-card__difficulty font-semibold">
+        {difficultyLabel(article.difficulty)}
+      </span>
     </>
   );
 
   const stats = (
-    <div className="flex items-center gap-4 text-[0.68rem] text-foreground/50">
+    <div className="library-article-card__stats flex items-center gap-4 text-[0.68rem] font-medium text-foreground/50">
       <span className="inline-flex items-center gap-1.5">
         <Eye className="h-3 w-3" strokeWidth={1.6} aria-hidden="true" />
         <span className="sr-only">Views: </span>
@@ -131,7 +133,10 @@ export function LibraryCard({
 
   const cardTitle = (
     <span
-      className={cn(!restricted && "transition-colors motion-fast group-hover:text-bronze-glow")}
+      className={cn(
+        "library-article-card__title-text font-bold",
+        !restricted && "transition-colors motion-fast group-hover:text-bronze-glow",
+      )}
     >
       {article.title}
     </span>
@@ -141,7 +146,7 @@ export function LibraryCard({
     return (
       <article
         className={cn(
-          "glass-panel surface-gradient group relative grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 rounded-2xl p-4 transition-all motion-base hover:border-bronze/35 sm:flex sm:gap-5",
+          "library-article-card glass-panel surface-gradient group relative grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 rounded-2xl p-4 transition-all motion-base hover:border-bronze/35 sm:flex sm:gap-5",
           restricted && "opacity-90",
           !restricted && "cursor-pointer",
           className,
@@ -166,7 +171,7 @@ export function LibraryCard({
         </div>
         <div className="pointer-events-none relative z-[1] min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="text-[0.6rem] uppercase tracking-[0.22em] text-bronze/90">
+            <p className="library-article-card__category text-[0.6rem] font-semibold uppercase tracking-[0.22em] text-bronze/90">
               {categoryLabel(article.category)}
             </p>
             {showTierBadge && article.minAccessTier ? (
@@ -177,15 +182,15 @@ export function LibraryCard({
               />
             ) : null}
           </div>
-          <h3 className="mt-2 truncate text-base font-light tracking-tight text-foreground">
+          <h3 className="library-article-card__title mt-2 truncate text-base font-bold tracking-tight text-foreground">
             {cardTitle}
           </h3>
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-[0.68rem] text-foreground/50">
+          <div className="library-article-card__meta mt-2 flex flex-wrap items-center gap-2 text-[0.68rem] font-semibold text-foreground/50">
             {meta}
             {author ? (
               <>
                 <span aria-hidden="true">·</span>
-                <span>{author.name}</span>
+                <span className="library-article-card__author font-semibold">{author.name}</span>
               </>
             ) : null}
           </div>
@@ -203,7 +208,7 @@ export function LibraryCard({
     <article
       {...(inRail ? { "data-rail-item": true } : {})}
       className={cn(
-        "glass-panel surface-gradient group relative flex flex-col rounded-2xl transition-all motion-base",
+        "library-article-card glass-panel surface-gradient group relative flex flex-col rounded-2xl transition-all motion-base",
         restricted
           ? "opacity-95"
           : "cursor-pointer hover:-translate-y-1 hover:border-bronze/40 hover:shadow-[var(--glow-bronze)] motion-reduce:hover:translate-y-0",
@@ -237,7 +242,7 @@ export function LibraryCard({
             className="h-full w-full bg-transparent"
           />
         </div>
-        <span className="absolute right-3 top-3 rounded-full border border-bronze/35 bg-[oklch(0.12_0.006_60/0.85)] px-3 py-1 text-[0.58rem] uppercase tracking-[0.2em] text-bronze/85">
+        <span className="library-article-card__category absolute right-3 top-3 rounded-full border border-bronze/35 bg-[oklch(0.12_0.006_60/0.85)] px-3 py-1 text-[0.58rem] font-semibold uppercase tracking-[0.2em] text-bronze/85">
           {categoryLabel(article.category)}
         </span>
         {headerAction ? (
@@ -270,12 +275,12 @@ export function LibraryCard({
           continueReading ? "shrink-0" : "min-h-0 flex-1",
         )}
       >
-        <div className="flex flex-wrap items-center gap-2 text-[0.68rem] text-foreground/50">
+        <div className="library-article-card__meta flex flex-wrap items-center gap-2 text-[0.68rem] font-semibold text-foreground/50">
           {meta}
         </div>
         <h3
           className={cn(
-            "line-clamp-2 text-base font-light leading-snug tracking-tight text-foreground",
+            "library-article-card__title line-clamp-2 text-base font-bold leading-snug tracking-tight text-foreground",
             continueReading ? "mt-3" : "mt-2.5",
           )}
         >
@@ -284,7 +289,7 @@ export function LibraryCard({
         {!continueReading ? (
           <p
             className={cn(
-              "mt-2.5 line-clamp-2 text-[0.8rem] leading-relaxed text-foreground/50",
+              "library-article-card__dek mt-2.5 line-clamp-2 text-[0.8rem] font-medium leading-relaxed text-foreground/50",
               inRail ? "shrink-0" : "flex-1",
             )}
           >
@@ -294,7 +299,7 @@ export function LibraryCard({
 
         {continueReading && progress > 0 ? (
           <div className="mt-4 space-y-1.5">
-            <p className="text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-bronze/90">
+            <p className="library-article-card__progress-label text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-bronze/90">
               {Math.round(progress)}% read
             </p>
             <div
@@ -316,7 +321,7 @@ export function LibraryCard({
         {continueReading ? (
           <div className="mt-5 border-t border-bronze/10 pt-3">
             <div className="flex items-center justify-between gap-3">
-              <p className="inline-flex min-w-0 items-center gap-1.5 text-[0.72rem] font-medium uppercase tracking-[0.14em] text-bronze-glow">
+              <p className="library-article-card__cta inline-flex min-w-0 items-center gap-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-bronze-glow">
                 Continue reading
                 <ArrowRight className="h-3.5 w-3.5 shrink-0" strokeWidth={2} aria-hidden />
               </p>
@@ -331,13 +336,15 @@ export function LibraryCard({
             <div className="min-w-0 flex-1">
               {author ? (
                 restricted ? (
-                  <span className="block truncate text-xs text-foreground/60">{author.name}</span>
+                  <span className="library-article-card__author block truncate text-xs font-semibold text-foreground/60">
+                    {author.name}
+                  </span>
                 ) : (
                   <Link
                     to="/geolibrary/creators/$handle"
                     params={{ handle: author.handle }}
                     onClick={(event) => event.stopPropagation()}
-                    className="pointer-events-auto relative z-[2] block truncate text-xs text-foreground/60 transition-colors motion-fast hover:text-bronze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+                    className="library-article-card__author pointer-events-auto relative z-[2] block truncate text-xs font-semibold text-foreground/60 transition-colors motion-fast hover:text-bronze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
                   >
                     {author.name}
                   </Link>

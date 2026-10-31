@@ -1,0 +1,368 @@
+/*
+ * Light editorial theme for COMPANY and LEGAL pages only.
+ * Keyed to #gvrze-info / header[data-surface="info"] so homepage, Play,
+ * Store, Community, Library, Pricing and account routes stay untouched.
+ */
+
+body:has(#gvrze-info) {
+  background: #f4f6f8;
+}
+
+body:has(#gvrze-info) #geoverze-universe-background {
+  display: none !important;
+}
+
+#gvrze-info {
+  --info-bg: #ffffff;
+  --info-wash: #f4f6f8;
+  --info-ice: #eaf1f7;
+  --info-ink: #17191d;
+  --info-muted: #555e68;
+  --info-line: #dde2e7;
+  position: relative;
+  isolation: isolate;
+  min-height: 100%;
+  background: var(--info-wash);
+  color: var(--info-ink);
+}
+
+#gvrze-info::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0 0 auto;
+  height: 18rem;
+  background: linear-gradient(180deg, var(--info-ice) 0%, var(--info-wash) 100%);
+  z-index: 0;
+}
+
+#gvrze-info > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Header — readable on the light plate. */
+header[data-surface="info"] {
+  background: rgb(255 255 255 / 0.78);
+  border-bottom: 1px solid rgb(23 25 29 / 0.08) !important;
+  box-shadow: none !important;
+}
+
+header[data-surface="info"][data-scrolled="true"] {
+  background-color: rgb(255 255 255 / 0.94) !important;
+  border-bottom: 1px solid rgb(23 25 29 / 0.1) !important;
+  backdrop-filter: blur(16px) saturate(1.05);
+  box-shadow: 0 8px 24px -20px rgb(23 25 29 / 0.28) !important;
+}
+
+header[data-surface="info"] .gvrze-home-wordmark {
+  display: block;
+  height: 1.15rem;
+  width: auto;
+}
+
+@media (min-width: 768px) {
+  header[data-surface="info"] .gvrze-home-wordmark {
+    height: 1.5rem;
+  }
+}
+
+header[data-surface="info"] nav[aria-label="Main"] a {
+  color: #17191d;
+  font-weight: 700;
+}
+
+header[data-surface="info"] nav[aria-label="Main"] a:hover,
+header[data-surface="info"] nav[aria-label="Main"] a[data-status="active"] {
+  color: #111111;
+}
+
+header[data-surface="info"] nav[aria-label="Main"] a[data-status="active"] {
+  text-decoration: underline;
+  text-underline-offset: 7px;
+  text-decoration-thickness: 1px;
+}
+
+header[data-surface="info"] button[aria-label="Open search"],
+header[data-surface="info"] button[aria-label="Notifications"],
+header[data-surface="info"] button[aria-label^="Notifications,"],
+header[data-surface="info"] button[aria-label="Account menu"],
+header[data-surface="info"] button[aria-label="Open menu"] {
+  border-color: #17191d;
+  background: transparent;
+  color: #17191d;
+}
+
+header[data-surface="info"] button[aria-label="Open search"]:hover,
+header[data-surface="info"] button[aria-label="Notifications"]:hover,
+header[data-surface="info"] button[aria-label^="Notifications,"]:hover,
+header[data-surface="info"] button[aria-label="Account menu"]:hover,
+header[data-surface="info"] button[aria-label="Open menu"]:hover {
+  border-color: #17191d;
+  background: rgb(23 25 29 / 0.06);
+  color: #17191d;
+}
+
+header[data-surface="info"] a[href="/auth/signup"] {
+  border-color: #111111;
+  background: #111111;
+  color: #ffffff;
+  box-shadow: none;
+  font-weight: 700;
+}
+
+/* Footer — same structure, light chrome. */
+body:has(header[data-surface="info"]) footer {
+  background: rgb(255 255 255 / 0.92);
+  border-color: #dde2e7;
+  color: #17191d;
+}
+
+body:has(header[data-surface="info"]) footer :is(p, a, li, span, label) {
+  color: #555e68;
+}
+
+body:has(header[data-surface="info"]) footer :is(p, a, li, span, label)[class*="text-bronze"] {
+  color: #17191d;
+}
+
+body:has(header[data-surface="info"]) footer a:hover,
+body:has(header[data-surface="info"]) footer a:focus-visible,
+body:has(header[data-surface="info"]) footer [class*="hover:text-bronze"]:hover,
+body:has(header[data-surface="info"]) footer [class*="focus-visible:text-bronze"]:focus-visible {
+  color: #17191d;
+}
+
+body:has(header[data-surface="info"]) footer input {
+  background: #ffffff;
+  color: #17191d;
+  border-color: #dde2e7;
+}
+
+body:has(header[data-surface="info"]) footer input::placeholder {
+  color: rgb(85 94 104 / 0.62);
+}
+
+body:has(header[data-surface="info"]) footer button {
+  border-color: #111111;
+  background: #111111;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+body:has(header[data-surface="info"]) footer [class*="border-bronze"] {
+  border-color: #dde2e7;
+}
+
+body:has(header[data-surface="info"]) footer span[aria-label$="coming soon"] {
+  border-color: #dde2e7;
+  background: #ffffff;
+  color: #17191d;
+}
+
+/* Page header / breadcrumb / type */
+#gvrze-info .eyebrow,
+#gvrze-info [class*="tracking-[0.28em]"],
+#gvrze-info [class*="tracking-[0.24em]"] {
+  color: #555e68;
+  font-weight: 600;
+}
+
+#gvrze-info h1 {
+  color: #17191d;
+  font-weight: 700;
+  font-size: clamp(2.25rem, 5vw, 3rem);
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+}
+
+#gvrze-info h2 {
+  color: #17191d;
+  font-weight: 700;
+  font-size: clamp(1.25rem, 2.2vw, 1.55rem);
+}
+
+#gvrze-info h3 {
+  color: #17191d;
+  font-weight: 700;
+}
+
+#gvrze-info p,
+#gvrze-info li,
+#gvrze-info .text-foreground\/60,
+#gvrze-info .text-foreground\/55,
+#gvrze-info .text-foreground\/50 {
+  color: #555e68;
+}
+
+#gvrze-info .text-foreground,
+#gvrze-info .text-bronze,
+#gvrze-info .text-bronze-glow,
+#gvrze-info .text-bronze\/90,
+#gvrze-info .text-bronze\/85,
+#gvrze-info .hover\:text-bronze:hover,
+#gvrze-info .hover\:text-bronze-glow:hover {
+  color: #17191d;
+}
+
+#gvrze-info nav[aria-label="Breadcrumb"] a,
+#gvrze-info nav[aria-label="Breadcrumb"] span {
+  color: #555e68;
+}
+
+#gvrze-info nav[aria-label="Breadcrumb"] a:hover,
+#gvrze-info nav[aria-label="Breadcrumb"] span.text-bronze {
+  color: #17191d;
+}
+
+/* Cards and glass surfaces */
+#gvrze-info .glass-panel,
+#gvrze-info .glass-panel-strong,
+#gvrze-info .glass-panel.surface-gradient {
+  background-color: #ffffff;
+  background-image: none;
+  border-color: #dde2e7;
+  box-shadow: 0 12px 32px -22px rgb(23 25 29 / 0.22);
+  color: #17191d;
+}
+
+#gvrze-info .glass-panel:hover,
+#gvrze-info .glass-panel-strong:hover {
+  border-color: #cfd6dc;
+  box-shadow: 0 16px 36px -20px rgb(23 25 29 / 0.18);
+}
+
+#gvrze-info .border-bronze\/10,
+#gvrze-info .border-bronze\/12,
+#gvrze-info .border-bronze\/15,
+#gvrze-info .border-bronze\/20,
+#gvrze-info .border-bronze\/25,
+#gvrze-info .border-bronze\/30,
+#gvrze-info .border-bronze\/35 {
+  border-color: #dde2e7;
+}
+
+#gvrze-info .bg-bronze\/10,
+#gvrze-info .bg-bronze\/5 {
+  background-color: #eaf1f7;
+}
+
+#gvrze-info [class*="text-bronze"] svg,
+#gvrze-info .text-bronze {
+  color: #17191d;
+}
+
+/* Legal document */
+#gvrze-info .gvrze-info-doc {
+  background: #ffffff;
+  border: 1px solid #dde2e7;
+  border-radius: 1.25rem;
+  box-shadow: 0 12px 32px -22px rgb(23 25 29 / 0.2);
+  padding: 1.5rem 1.35rem 2rem;
+}
+
+@media (min-width: 640px) {
+  #gvrze-info .gvrze-info-doc {
+    padding: 2rem 2.25rem 2.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  #gvrze-info .gvrze-info-doc {
+    padding: 2.75rem 3rem 3rem;
+  }
+}
+
+#gvrze-info .gvrze-info-doc__meta {
+  color: #555e68;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+#gvrze-info .gvrze-info-doc__lede,
+#gvrze-info .gvrze-info-doc article p,
+#gvrze-info .gvrze-info-doc article li {
+  color: #555e68;
+  font-size: 1rem;
+  font-weight: 450;
+  line-height: 1.75;
+}
+
+#gvrze-info .gvrze-info-doc nav {
+  border-color: #dde2e7;
+}
+
+#gvrze-info .gvrze-info-doc nav a {
+  color: #17191d;
+  font-weight: 500;
+}
+
+#gvrze-info .gvrze-info-doc nav a:hover {
+  color: #111111;
+}
+
+#gvrze-info .gvrze-info-doc article section {
+  padding-top: 1.75rem;
+  border-top: 1px solid #dde2e7;
+}
+
+#gvrze-info .gvrze-info-doc article section:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+#gvrze-info .gvrze-info-doc h2 {
+  font-size: clamp(1.25rem, 2vw, 1.55rem);
+  font-weight: 700;
+  color: #17191d;
+}
+
+#gvrze-info .gvrze-info-related {
+  border-color: #dde2e7;
+}
+
+#gvrze-info .gvrze-info-related a {
+  color: #17191d;
+  font-weight: 600;
+}
+
+#gvrze-info .gvrze-info-related a:hover {
+  color: #111111;
+}
+
+/* About principle cards */
+#gvrze-info .gvrze-info-principles [class*="text-bronze"],
+#gvrze-info .gvrze-info-principles .text-bronze {
+  color: #17191d;
+}
+
+#gvrze-info .gvrze-info-principles span.inline-flex {
+  border-color: #dde2e7;
+  background: #eaf1f7;
+  color: #17191d;
+}
+
+#gvrze-info .gvrze-info-note {
+  background: #ffffff;
+  border: 1px solid #dde2e7;
+}
+
+/* Mobile drawer on these routes */
+body:has(#gvrze-info) [data-slot="drawer-content"],
+body:has(#gvrze-info) [role="dialog"] {
+  background: #ffffff;
+  color: #17191d;
+}
+
+@media (max-width: 767px) {
+  #gvrze-info h1 {
+    font-size: 2.15rem;
+  }
+
+  #gvrze-info .gvrze-info-doc article p,
+  #gvrze-info .gvrze-info-doc article li {
+    font-size: 0.95rem;
+  }
+}

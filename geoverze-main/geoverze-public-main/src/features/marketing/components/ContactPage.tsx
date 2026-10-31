@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { PageShell } from "@/components/layout/PageShell";
 import { Breadcrumb } from "@/components/shared/Breadcrumb";
 import { SectionContainer } from "@/components/shared/SectionContainer";
+import { InfoPageShell } from "@/features/legal/components/InfoPageShell";
 import { contactChannels } from "../data/contact";
 import "../styles/contact.css";
 
@@ -48,6 +49,7 @@ export function ContactPage() {
   }
 
   return (
+    <InfoPageShell>
     <PageShell>
       <SectionContainer className="ct">
         <Breadcrumb
@@ -170,5 +172,6 @@ export function ContactPage() {
         </div>
       </SectionContainer>
     </PageShell>
+    </InfoPageShell>
   );
 }

@@ -1,0 +1,54 @@
+/*
+ * Desktop Account menu panel only. Other GeoDropdowns (notifications,
+ * community, studio) keep their own colours.
+ */
+.gvrze-account-menu {
+  color: #171717;
+  background-color: rgb(255 255 255 / 0.88);
+  border-color: #e5e7eb;
+}
+
+.gvrze-account-menu .gvrze-account-menu__label,
+.gvrze-account-menu [class*="uppercase"],
+.gvrze-account-menu [role="menuitem"],
+.gvrze-account-menu [role="menuitem"] svg,
+.gvrze-account-menu [role="menuitem"] span {
+  color: #171717;
+}
+
+.gvrze-account-menu [role="menuitem"]:hover,
+.gvrze-account-menu [role="menuitem"]:focus,
+.gvrze-account-menu [role="menuitem"]:focus-visible,
+.gvrze-account-menu [role="menuitem"][data-highlighted],
+.gvrze-account-menu [role="menuitem"][data-highlighted="true"] {
+  background-color: #f3f4f6 !important;
+  color: #171717 !important;
+  box-shadow: none;
+  outline: none;
+}
+
+.gvrze-account-menu [role="menuitem"]:hover svg,
+.gvrze-account-menu [role="menuitem"]:focus svg,
+.gvrze-account-menu [role="menuitem"]:focus-visible svg,
+.gvrze-account-menu [role="menuitem"][data-highlighted] svg,
+.gvrze-account-menu [role="menuitem"][data-highlighted="true"] svg {
+  color: #171717 !important;
+}
+
+.gvrze-account-menu [role="separator"] {
+  background-color: #e5e7eb;
+}
+
+.gvrze-account-menu [role="menuitem"].gvrze-account-menu__signout {
+  background-color: rgb(255 255 255 / 0.92);
+  border: 1px solid #e5e7eb;
+  color: #171717;
+}
+
+.gvrze-account-menu [role="menuitem"].gvrze-account-menu__signout:hover,
+.gvrze-account-menu [role="menuitem"].gvrze-account-menu__signout:focus,
+.gvrze-account-menu [role="menuitem"].gvrze-account-menu__signout[data-highlighted] {
+  background-color: #f3f4f6 !important;
+  color: #171717 !important;
+  border-color: #d4d4d4;
+}

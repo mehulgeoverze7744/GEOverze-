@@ -23,6 +23,11 @@ import { scrollToHomeHero } from "@/lib/scrollToHomeHero";
 import { signOut } from "@/lib/supabase/auth-sync";
 import { selectIsSignedIn, useAuthStore } from "@/stores/authStore";
 
+import "./account-dropdown.css";
+
+const accountItemClass =
+  "text-[#171717] hover:bg-neutral-100 hover:text-[#171717] focus:bg-neutral-100 focus:text-[#171717] data-[highlighted]:bg-neutral-100 data-[highlighted]:text-[#171717] [&_svg]:text-[#171717]";
+
 const accountLinks = [
   { label: "Profile Dashboard", to: "/dashboard", icon: LayoutDashboard },
   { label: "Quiz History & Rewards", to: "/quiz-history-and-rewards", icon: Trophy },
@@ -44,6 +49,14 @@ export function Navbar() {
   const isCommunity = pathname.startsWith("/community");
   const isPricing = pathname === "/pricing" || pathname === "/pricing/";
   const isLibrary = pathname.startsWith("/geolibrary");
+  const isInfo =
+    pathname === "/about" ||
+    pathname === "/contact" ||
+    pathname === "/privacy-policy" ||
+    pathname === "/shipping-policy" ||
+    pathname === "/refund-policy" ||
+    pathname === "/disclaimer" ||
+    pathname === "/terms-of-service";
   const isAccount =
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/profile") ||
@@ -108,9 +121,11 @@ export function Navbar() {
                 ? "pricing"
                 : isLibrary
                   ? "library"
-                  : isAccount
-                    ? "account"
-                    : undefined
+                  : isInfo
+                    ? "info"
+                    : isAccount
+                      ? "account"
+                      : undefined
       }
       className="group fixed inset-x-0 top-0 z-50 h-[var(--nav-height)] border-b border-transparent transition-all motion-base data-[scrolled=true]:glass-panel data-[scrolled=true]:rounded-none data-[scrolled=true]:shadow-[var(--shadow-float)]"
     >
@@ -121,7 +136,7 @@ export function Navbar() {
           aria-label={`${site.name} home`}
           className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
         >
-          {isHome || isPlayHub || isCommunity || isPricing || isLibrary || isAccount ? (
+          {isHome || isPlayHub || isCommunity || isPricing || isLibrary || isInfo || isAccount ? (
             <img
               src="/assets/home/gvrze-wordmark.png"
               alt=""
@@ -152,6 +167,9 @@ export function Navbar() {
           <NotificationBell />
           <GeoDropdown
             label="Account"
+            className="gvrze-account-menu border-neutral-200"
+            labelClassName="gvrze-account-menu__label text-[#171717]"
+            separatorClassName="bg-neutral-200"
             trigger={
               <button
                 type="button"
@@ -165,8 +183,8 @@ export function Navbar() {
             {signedIn ? (
               <>
                 {accountLinks.map((item) => (
-                  <GeoDropdownItem key={item.to} asChild>
-                    <Link to={item.to} className="flex items-center gap-3">
+                  <GeoDropdownItem key={item.to} asChild className={accountItemClass}>
+                    <Link to={item.to} className="flex items-center gap-3 text-[#171717]">
                       <item.icon className="h-4 w-4" strokeWidth={1.5} />
                       {item.label}
                     </Link>
@@ -174,17 +192,17 @@ export function Navbar() {
                 ))}
                 <GeoDropdownItem
                   onSelect={handleSignOut}
-                  className="mt-1 border-t border-bronze/12 pt-3 text-bronze/90"
+                  className={`gvrze-account-menu__signout mt-1 border border-neutral-200 bg-white/90 ${accountItemClass}`}
                 >
-                  <span className="flex items-center gap-3">
+                  <span className="flex items-center gap-3 text-[#171717]">
                     <LogOut className="h-4 w-4" strokeWidth={1.5} />
                     Sign out
                   </span>
                 </GeoDropdownItem>
               </>
             ) : (
-              <GeoDropdownItem asChild className="text-bronze/90">
-                <Link to="/auth/login" className="flex items-center gap-3">
+              <GeoDropdownItem asChild className={accountItemClass}>
+                <Link to="/auth/login" className="flex items-center gap-3 text-[#171717]">
                   <LogIn className="h-4 w-4" strokeWidth={1.5} />
                   Sign in
                 </Link>
