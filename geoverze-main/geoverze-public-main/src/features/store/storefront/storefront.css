@@ -68,3 +68,44 @@ body:has(#gvrze-storefront) [aria-label="GVRZE Store actions"] {
 #gvrze-storefront.gvrze-storefront-product {
   overflow-x: clip;
 }
+
+/* ─── Editorial category pages ─────────────────────────────────────────────
+ * Applied to every category and collection listing page that wraps its
+ * content in #gvrze-storefront (T-Shirts, Hoodies, Accessories, Browse, etc.)
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/*
+ * Give cards a 3:2-ish minimum height on mobile so the gradient + info bar
+ * have room to breathe even before the desktop grid-auto-rows kicks in.
+ */
+#gvrze-storefront .gvrze-editorial-card {
+  min-height: 200px;
+}
+
+@media (min-width: 640px) {
+  #gvrze-storefront .gvrze-editorial-card {
+    min-height: 240px;
+  }
+}
+
+/*
+ * On large screens the CSS grid drives row heights (280 px via Tailwind
+ * [grid-auto-rows:280px]), so the min-height must be reset to let the grid
+ * control the card proportions.
+ */
+@media (min-width: 1024px) {
+  #gvrze-storefront .gvrze-editorial-card {
+    min-height: 0;
+  }
+}
+
+/*
+ * The hero tile (first card on pages with ≥3 items) spans 2 columns × 2 rows
+ * via the `lg:col-span-2 lg:row-span-2` Tailwind classes already on the
+ * element. The image hover scale uses the `group` class but the article itself
+ * must form a stacking context so the overflow:hidden clips correctly.
+ */
+#gvrze-storefront .gvrze-editorial-card {
+  isolation: isolate;
+}
+

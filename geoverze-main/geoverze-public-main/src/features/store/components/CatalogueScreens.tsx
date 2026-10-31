@@ -6,15 +6,12 @@ import { PageShell } from "@/components/layout/PageShell";
 import {
   AnimatedSection,
   EmptyState,
-  FilterChips,
   GeoButton,
   PageHeader,
   SectionContainer,
 } from "@/components/shared";
 import { useStoreStore } from "@/stores/storeStore";
 import { cn } from "@/lib/utils";
-import { GeostoreMerchCard } from "@/features/marketing/components/home/GeostoreMerchCard";
-import { TshirtsCategoryBackground } from "./TshirtsCategoryBackground";
 import {
   isMerchStoreCategory,
   merchProductById,
@@ -29,6 +26,8 @@ import {
   type StorefrontTeeProduct,
 } from "../storefront/storefront-product-data";
 import { StorefrontTeeProductPage } from "../storefront/StorefrontProductPage";
+import { StorefrontCategoryPage } from "../storefront/StorefrontCategoryPage";
+import { type EditorialItem } from "../storefront/EditorialCard";
 import { ProductCard } from "./ProductCard";
 import { ProductGallery } from "./ProductGallery";
 import { ProductRail } from "./ProductRail";
@@ -64,7 +63,9 @@ import {
 } from "../data/taxonomy";
 import { filterProducts, sortProducts } from "../lib/filter";
 import { defaultOptions } from "../lib/cart";
+import { money } from "../lib/format";
 import { useStoreActions } from "../lib/useStoreActions";
+import { productImageForSlug } from "../data/productImages";
 import { useStoreCredits, useStoreCreditsState } from "../lib/useStoreCredits";
 import { useCreditPurchase } from "../hooks/useCreditPurchase";
 import { isProductOwned, useEntitlements } from "../hooks/useEntitlements";
@@ -73,6 +74,76 @@ import { catalogueProductBySlug } from "../lib/mergeCatalogue";
 import { isPurchasableRewardSlug } from "../lib/rewards";
 
 const ALL = { id: "all", label: "All" } as const;
+
+/* ─── Editorial adapters ──────────────────────────────────────────────────── */
+
+/** Converts a `GeostoreMerchProduct` to the `EditorialItem` shape. */
+function merchToEditorial(m: ReturnType<typeof merchProductsForStoreCategory>[number]): EditorialItem {
+  return {
+    id: m.id,
+    slug: m.id,
+    name: m.title,
+    priceLabel: money(m.price),
+    image: m.image,
+    alt: m.alt,
+  };
+}
+
+/** Converts a `Product` record to the `EditorialItem` shape. */
+function productToEditorial(p: Product): EditorialItem {
+  const img = productImageForSlug(p.slug);
+  return {
+    id: p.id,
+    slug: p.slug,
+    name: p.name,
+    priceLabel: p.price !== null ? money(p.price) : `${p.credits ?? 0} credits`,
+    image: img?.src ?? "",
+    alt: img?.alt ?? p.name,
+  };
+}
+
+/* ─── Browse filter chips (light-themed) ─────────────────────────────────── */
+
+function LightChipRow({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: { id: string; label: string }[];
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <span
+        className="block text-[11px] font-semibold uppercase tracking-[0.22em] text-black/40"
+        style={{ fontFamily: "var(--sf-font-ui)" }}
+      >
+        {label}
+      </span>
+      <div className="flex flex-wrap gap-1.5">
+        {options.map((opt) => (
+          <button
+            key={opt.id}
+            type="button"
+            onClick={() => onChange(opt.id)}
+            className={cn(
+              "rounded-full px-3.5 py-1 text-[12px] font-medium transition-colors duration-150",
+              opt.id === value
+                ? "bg-black text-white"
+                : "border border-black/15 bg-white text-black/70 hover:border-black/30 hover:text-black",
+            )}
+            style={{ fontFamily: "var(--sf-font-ui)" }}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function useCardFactory(
   onQuickView: (p: Product) => void,
@@ -103,12 +174,8 @@ function useCardFactory(
   };
 }
 
-/** Faceted catalogue browse. */
+/** Faceted catalogue browse — editorial storefront layout. */
 export function StoreBrowse() {
-  const [quickView, setQuickView] = useState<Product | null>(null);
-  const card = useCardFactory(setQuickView, {
-    blendCoverFor: (product) => product.category === "tshirts" || product.category === "hoodies",
-  });
   const { addProduct } = useStoreActions();
   const balance = useStoreCredits();
 
@@ -137,189 +204,160 @@ export function StoreBrowse() {
     [group, category, price, creditFilter, availability, query, balance, sort],
   );
 
-  return (
-    <PageShell>
-      <PageHeader
-        eyebrow="GVRZE Store"
-        title="Browse the catalogue"
-        description="GVRZE merchandise — filtered any way you like."
-        breadcrumb={[{ label: "GVRZE Store", to: "/geostore" }, { label: "Browse" }]}
-      />
-      <SectionContainer size="wide">
-        <AnimatedSection className="rounded-2xl border border-bronze/12 bg-charcoal/45 p-6">
-          <label className="block">
-            <span className="text-[0.58rem] uppercase tracking-[0.24em] text-foreground/50">
-              Search
-            </span>
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Hoodie, capitals, globe…"
-              className="mt-2 w-full rounded-xl border border-bronze/15 bg-charcoal/60 px-4 py-3 text-sm text-foreground placeholder:text-foreground/50 focus:border-bronze/45 focus:outline-none"
-            />
-          </label>
-          <div className="mt-6 grid gap-5 sm:grid-cols-2">
-            <FilterChips
-              label="Group"
-              options={[
-                ALL,
-                ...STORE_GROUPS.filter((g) => BROWSE_GROUP_IDS.has(g.id)).map((g) => ({
-                  id: g.id,
-                  label: g.label,
-                })),
-              ]}
-              value={group}
-              onChange={(id) => {
-                setGroup(id);
-                setCategory("all");
-              }}
-            />
-            <FilterChips
-              label="Category"
-              options={[
-                ALL,
-                ...STORE_CATEGORIES.filter(
-                  (c) => BROWSE_CATEGORY_IDS.has(c.id) && (group === "all" || c.group === group),
-                ).map((c) => ({
-                  id: c.id,
-                  label: c.label,
-                })),
-              ]}
-              value={category}
-              onChange={setCategory}
-            />
-            <FilterChips
-              label="Price"
-              options={[ALL, ...PRICE_BANDS.map((b) => ({ id: b.id, label: b.label }))]}
-              value={price}
-              onChange={setPrice}
-            />
-            <FilterChips
-              label="Credits"
-              options={[ALL, ...CREDIT_FILTERS.map((c) => ({ id: c.id, label: c.label }))]}
-              value={creditFilter}
-              onChange={setCreditFilter}
-            />
-            <FilterChips
-              label="Availability"
-              options={[ALL, ...AVAILABILITY.map((a) => ({ id: a.id, label: a.label }))]}
-              value={availability}
-              onChange={setAvailability}
-            />
-            <FilterChips
-              label="Sort"
-              options={STORE_SORTS.map((s) => ({ id: s.id, label: s.label }))}
-              value={sort}
-              onChange={setSort}
-            />
-          </div>
-        </AnimatedSection>
+  /** Convert browse results to EditorialItem (prefer merch image if available). */
+  const editorialItems: EditorialItem[] = results.map((product) => {
+    const merch = browseMerchForSlug(product.slug);
+    if (merch) {
+      return {
+        id: merch.id,
+        slug: merch.id,
+        name: merch.title,
+        priceLabel: money(merch.price),
+        image: merch.image,
+        alt: merch.alt,
+      };
+    }
+    return productToEditorial(product);
+  });
 
+  function handleAdd(item: EditorialItem) {
+    const product = BROWSE_PRODUCTS.find((p) => p.slug === item.slug);
+    if (product && !isPurchaseLocked(product)) {
+      addProduct(product, defaultOptions(product));
+    }
+  }
+
+  function clearFilters() {
+    setGroup("all");
+    setCategory("all");
+    setPrice("all");
+    setCreditFilter("all");
+    setAvailability("all");
+    setQuery("");
+  }
+
+  /* Key resets StorefrontCategoryPage pagination whenever filters change. */
+  const filterKey = [group, category, price, creditFilter, availability, query, sort].join("|");
+
+  const controls = (
+    <div className="mb-8 rounded-2xl border border-black/8 bg-white/90 p-5 shadow-sm backdrop-blur-sm">
+      <label className="block">
+        <span
+          className="block text-[11px] font-semibold uppercase tracking-[0.22em] text-black/40"
+          style={{ fontFamily: "var(--sf-font-ui)" }}
+        >
+          Search
+        </span>
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Hoodie, capitals, globe…"
+          className="mt-2 w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm text-black placeholder:text-black/35 focus:border-black/30 focus:outline-none focus:ring-2 focus:ring-black/8"
+        />
+      </label>
+      <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <LightChipRow
+          label="Group"
+          options={[
+            ALL,
+            ...STORE_GROUPS.filter((g) => BROWSE_GROUP_IDS.has(g.id)).map((g) => ({
+              id: g.id,
+              label: g.label,
+            })),
+          ]}
+          value={group}
+          onChange={(id) => {
+            setGroup(id);
+            setCategory("all");
+          }}
+        />
+        <LightChipRow
+          label="Category"
+          options={[
+            ALL,
+            ...STORE_CATEGORIES.filter(
+              (c) => BROWSE_CATEGORY_IDS.has(c.id) && (group === "all" || c.group === group),
+            ).map((c) => ({ id: c.id, label: c.label })),
+          ]}
+          value={category}
+          onChange={setCategory}
+        />
+        <LightChipRow
+          label="Price"
+          options={[ALL, ...PRICE_BANDS.map((b) => ({ id: b.id, label: b.label }))]}
+          value={price}
+          onChange={setPrice}
+        />
+        <LightChipRow
+          label="Credits"
+          options={[ALL, ...CREDIT_FILTERS.map((c) => ({ id: c.id, label: c.label }))]}
+          value={creditFilter}
+          onChange={setCreditFilter}
+        />
+        <LightChipRow
+          label="Availability"
+          options={[ALL, ...AVAILABILITY.map((a) => ({ id: a.id, label: a.label }))]}
+          value={availability}
+          onChange={setAvailability}
+        />
+        <LightChipRow
+          label="Sort"
+          options={STORE_SORTS.map((s) => ({ id: s.id, label: s.label }))}
+          value={sort}
+          onChange={(v) => setSort(v as StoreSortId)}
+        />
+      </div>
+      <div className="mt-4 flex items-center justify-between">
         <p
-          className="mt-8 text-[0.66rem] uppercase tracking-[0.18em] text-foreground/50"
+          className="text-[11px] font-semibold uppercase tracking-[0.22em] text-black/40"
           aria-live="polite"
+          style={{ fontFamily: "var(--sf-font-ui)" }}
         >
           {results.length} {results.length === 1 ? "item" : "items"}
         </p>
+        <button
+          type="button"
+          onClick={clearFilters}
+          className="text-[12px] text-black/50 underline underline-offset-2 hover:text-black transition-colors"
+          style={{ fontFamily: "var(--sf-font-ui)" }}
+        >
+          Clear filters
+        </button>
+      </div>
+    </div>
+  );
 
-        {results.length === 0 ? (
-          <EmptyState
-            icon={ShoppingBag}
-            title="Nothing matches those filters"
-            description="Try widening the price band or clearing the credit filter."
-            action={
-              <GeoButton
-                variant="ghost"
-                onClick={() => {
-                  setGroup("all");
-                  setCategory("all");
-                  setPrice("all");
-                  setCreditFilter("all");
-                  setAvailability("all");
-                  setQuery("");
-                }}
-              >
-                Clear filters
-              </GeoButton>
-            }
-          />
-        ) : (
-          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {results.map((product) => {
-              const merch = browseMerchForSlug(product.slug);
-              const blendMerch = merch?.category === "t-shirt" || merch?.category === "hoodie";
-              return merch ? (
-                <GeostoreMerchCard
-                  key={product.slug}
-                  product={merch}
-                  {...(blendMerch ? { seamlessSurface: true, coverMedia: true } : {})}
-                />
-              ) : (
-                card(product)
-              );
-            })}
-          </div>
-        )}
-      </SectionContainer>
-      <QuickViewModal
-        product={quickView}
-        onClose={() => setQuickView(null)}
-        onAdd={(p, o) => addProduct(p, o)}
-      />
-    </PageShell>
+  return (
+    <StorefrontCategoryPage
+      key={filterKey}
+      title="All Products"
+      description="GVRZE merchandise — filtered any way you like."
+      items={editorialItems}
+      onAdd={handleAdd}
+      controls={controls}
+    />
   );
 }
 
-/** Static merchandise shelf (T-shirts / Hoodies). */
+/** Static merchandise shelf (T-shirts / Hoodies) — editorial storefront layout. */
 function MerchCategoryShelf({ slug }: { slug: "tshirts" | "hoodies" }) {
   const category = categoryById(slug);
-  const items = merchProductsForStoreCategory(slug);
+  const merch = merchProductsForStoreCategory(slug);
+  const items = merch.map(merchToEditorial);
+  const { addProduct } = useStoreActions();
 
-  const isTshirts = slug === "tshirts";
+  function handleAdd(item: EditorialItem) {
+    const product = productBySlug(item.slug);
+    if (product) addProduct(product, defaultOptions(product));
+  }
 
   return (
-    <PageShell>
-      <TshirtsCategoryBackground />
-      <div className="relative z-10">
-        <PageHeader
-          eyebrow="GVRZE Store"
-          title={category?.label ?? "Merchandise"}
-          description={category?.blurb ?? "Premium GVRZE apparel."}
-          breadcrumb={[
-            { label: "GVRZE Store", to: "/geostore" },
-            { label: "Browse", to: "/geostore/browse" },
-            { label: category?.label ?? "Merchandise" },
-          ]}
-        />
-        <SectionContainer size="wide">
-          {items.length === 0 ? (
-            <EmptyState
-              icon={ShoppingBag}
-              title="Nothing on this shelf yet"
-              description="New pieces land here first — check the full catalogue in the meantime."
-              action={
-                <GeoButton asChild variant="ghost">
-                  <Link to="/geostore/browse">Browse everything</Link>
-                </GeoButton>
-              }
-            />
-          ) : (
-            <div
-              className={cn("grid gap-6 sm:grid-cols-2 lg:grid-cols-3", isTshirts && "items-start")}
-            >
-              {items.map((product) => (
-                <GeostoreMerchCard
-                  key={product.id}
-                  product={product}
-                  fitNaturalImage={isTshirts}
-                  seamlessSurface
-                />
-              ))}
-            </div>
-          )}
-        </SectionContainer>
-      </div>
-    </PageShell>
+    <StorefrontCategoryPage
+      title={category?.label ?? "Merchandise"}
+      description={category?.blurb ?? "Premium GVRZE apparel."}
+      items={items}
+      onAdd={handleAdd}
+    />
   );
 }
 
@@ -331,116 +369,66 @@ const ACCESSORIES_GLOBE_SLUGS = [
 
 const ACCESSORIES_PUBLICATION_SLUG = "field-notebook";
 
-/** Accessories lookbook — labelled shelves, same product cards as the catalogue. */
+/** Accessories editorial category page. */
 function AccessoriesCategoryShelf() {
-  const [quickView, setQuickView] = useState<Product | null>(null);
-  const card = useCardFactory(setQuickView);
-  const { addProduct } = useStoreActions();
   const category = categoryById("accessories");
-  const globes = ACCESSORIES_GLOBE_SLUGS.map(productBySlug).filter((product): product is Product =>
-    Boolean(product),
+  const globes = ACCESSORIES_GLOBE_SLUGS.map(productBySlug).filter(
+    (p): p is Product => Boolean(p),
   );
   const publication = productBySlug(ACCESSORIES_PUBLICATION_SLUG);
+  const allProducts = [...globes, ...(publication ? [publication] : [])];
+  const items = allProducts.map(productToEditorial);
+  const { addProduct } = useStoreActions();
+
+  function handleAdd(item: EditorialItem) {
+    const product = productBySlug(item.slug);
+    if (product && !isPurchaseLocked(product)) addProduct(product, defaultOptions(product));
+  }
 
   return (
-    <PageShell>
-      <TshirtsCategoryBackground />
-      <div className="relative z-10">
-        <PageHeader
-          eyebrow="GVRZE Store"
-          title={category?.label ?? "Accessories"}
-          description={category?.blurb ?? "Totes, pins and desk pieces."}
-          breadcrumb={[
-            { label: "GVRZE Store", to: "/geostore" },
-            { label: "Browse", to: "/geostore/browse" },
-            { label: category?.label ?? "Accessories" },
-          ]}
-        />
-        <SectionContainer size="wide">
-          <section>
-            <h2 className="mb-3 text-[0.58rem] font-medium uppercase tracking-[0.3em] text-bronze">
-              Globes
-            </h2>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{globes.map(card)}</div>
-          </section>
-          {publication ? (
-            <section className="mt-10">
-              <h2 className="mb-3 text-[0.58rem] font-medium uppercase tracking-[0.3em] text-bronze">
-                Publications
-              </h2>
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{card(publication)}</div>
-            </section>
-          ) : null}
-        </SectionContainer>
-      </div>
-      <QuickViewModal
-        product={quickView}
-        onClose={() => setQuickView(null)}
-        onAdd={(product, options) => addProduct(product, options)}
-      />
-    </PageShell>
+    <StorefrontCategoryPage
+      title={category?.label ?? "Accessories"}
+      description={category?.blurb ?? "Totes, pins and desk pieces."}
+      items={items}
+      onAdd={handleAdd}
+    />
   );
 }
 
-/** Mock catalogue category shelf (rewards, accessories, etc.). */
+/** Generic catalogue category page — editorial storefront layout. */
 function CatalogCategoryShelf({ slug }: { slug: string }) {
-  const [quickView, setQuickView] = useState<Product | null>(null);
-  const card = useCardFactory(setQuickView);
-  const { addProduct } = useStoreActions();
   const category = categoryById(slug);
-  const items = sortProducts(productsInCategory(slug), "popular");
+  const products = sortProducts(productsInCategory(slug), "popular");
   const locked = isComingSoonCategory(slug);
-  const useClothBackground = slug === "mugs" || slug === "stickers";
+  const items = products.map(productToEditorial);
+  const { addProduct } = useStoreActions();
+
+  function handleAdd(item: EditorialItem) {
+    const product = productBySlug(item.slug);
+    if (product && !isPurchaseLocked(product)) addProduct(product, defaultOptions(product));
+  }
+
+  const notice = locked ? (
+    <div className="mb-8 flex items-start gap-3 rounded-2xl border border-black/12 bg-black/5 px-5 py-4">
+      <Lock className="mt-0.5 h-4 w-4 shrink-0 text-black/50" strokeWidth={1.6} />
+      <div>
+        <ComingSoonLockChip />
+        <p className="mt-2 text-sm leading-relaxed text-black/55">
+          This collection is on the way. You can browse the lookbook — purchasing opens when we
+          launch.
+        </p>
+      </div>
+    </div>
+  ) : undefined;
 
   return (
-    <PageShell>
-      {useClothBackground ? <TshirtsCategoryBackground /> : null}
-      <div className={useClothBackground ? "relative z-10" : undefined}>
-        <PageHeader
-          eyebrow="GVRZE Store"
-          title={category?.label ?? "Category"}
-          description={category?.blurb ?? "This shelf is still being filled."}
-          breadcrumb={[
-            { label: "GVRZE Store", to: "/geostore" },
-            { label: "Browse", to: "/geostore/browse" },
-            { label: category?.label ?? "Category" },
-          ]}
-        />
-        <SectionContainer size="wide">
-          {locked ? (
-            <div className="mb-8 flex items-start gap-3 rounded-2xl border border-bronze/20 bg-charcoal/50 px-5 py-4">
-              <Lock className="mt-0.5 h-4 w-4 shrink-0 text-bronze" strokeWidth={1.6} />
-              <div>
-                <ComingSoonLockChip />
-                <p className="mt-2 text-sm leading-relaxed text-foreground/55">
-                  This collection is on the way. You can browse the lookbook — purchasing opens when
-                  we launch.
-                </p>
-              </div>
-            </div>
-          ) : null}
-          {items.length === 0 ? (
-            <EmptyState
-              icon={ShoppingBag}
-              title="Nothing on this shelf yet"
-              description="New pieces land here first — check the full catalogue in the meantime."
-              action={
-                <GeoButton asChild variant="ghost">
-                  <Link to="/geostore/browse">Browse everything</Link>
-                </GeoButton>
-              }
-            />
-          ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{items.map(card)}</div>
-          )}
-        </SectionContainer>
-      </div>
-      <QuickViewModal
-        product={quickView}
-        onClose={() => setQuickView(null)}
-        onAdd={(product, options) => addProduct(product, options)}
-      />
-    </PageShell>
+    <StorefrontCategoryPage
+      title={category?.label ?? "Category"}
+      description={category?.blurb ?? "This shelf is still being filled."}
+      items={items}
+      onAdd={handleAdd}
+      notice={notice}
+    />
   );
 }
 
