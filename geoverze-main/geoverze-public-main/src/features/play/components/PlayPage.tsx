@@ -26,6 +26,7 @@ import { FeaturedCarousel } from "./FeaturedCarousel";
 import { GameTypeCard } from "./GameTypeCard";
 import { FilterBar } from "./FilterBar";
 import { ModeCard } from "./ModeCard";
+import { PLAY_CIRCLE_MODE_IDS, PlayModeCircle } from "./PlayModeCircle";
 import { PlayHero } from "./PlayHero";
 import { PlayHubNav } from "./PlayHubNav";
 import { PlayPageBackground } from "./PlayPageBackground";
@@ -153,8 +154,17 @@ export function PlayPage() {
               title="Choose how you play"
               description="Same question engine, different pressure. Every mode shares your XP, streak and ranking."
             />
+            <div className="play-mode-circles mt-7">
+              {GAME_MODES.filter((mode) =>
+                (PLAY_CIRCLE_MODE_IDS as readonly string[]).includes(mode.id),
+              ).map((mode) => (
+                <PlayModeCircle key={mode.id} mode={mode} onSelect={playMode} />
+              ))}
+            </div>
             <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {GAME_MODES.map((mode) => (
+              {GAME_MODES.filter(
+                (mode) => !(PLAY_CIRCLE_MODE_IDS as readonly string[]).includes(mode.id),
+              ).map((mode) => (
                 <ModeCard key={mode.id} mode={mode} onSelect={playMode} />
               ))}
             </div>

@@ -6,7 +6,8 @@
  *   /geostore/browse          (All Products)
  *
  * Imports storefront.css which hides the global dark site chrome and activates
- * the storefront-specific nav / footer while this page is mounted.
+ * the storefront-specific nav while this page is mounted. The shared site
+ * footer stays visible so category pages match the homepage footer.
  */
 import "./storefront.css";
 
@@ -15,7 +16,6 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-import { StorefrontFooter } from "./StorefrontFooter";
 import { StorefrontNav } from "./StorefrontNav";
 import { SF_SHELL } from "./storefront-ui";
 import { EditorialCard, type EditorialItem } from "./EditorialCard";
@@ -160,9 +160,10 @@ export function StorefrontCategoryPage({
   return (
     /*
      * #gvrze-storefront activates the rules in storefront.css that:
-     *  - hide the global site navbar and footer
+     *  - hide the global site navbar
      *  - hide the floating geostore icon row
      *  - set the light-canvas CSS variables
+     *  - restyle the shared site footer to match the homepage
      */
     <div id="gvrze-storefront">
       <StorefrontNav variant="solid" />
@@ -213,8 +214,6 @@ export function StorefrontCategoryPage({
           <Pagination current={page} total={totalPages} onChange={handlePageChange} />
         </div>
       </main>
-
-      <StorefrontFooter />
     </div>
   );
 }

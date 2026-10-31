@@ -4,6 +4,8 @@ import { Bell, BellRing } from "lucide-react";
 import { GeoDropdown } from "@/components/shared/GeoDropdown";
 import { useNotificationsStore } from "@/stores/notificationsStore";
 
+import "./notifications-dropdown.css";
+
 /**
  * Notification surface. It reads the real store so the moment features start
  * pushing notices, this lights up with no further wiring.
@@ -16,6 +18,10 @@ export function NotificationBell() {
   return (
     <GeoDropdown
       label="Notifications"
+      surface="solid"
+      className="gvrze-notifications-menu min-w-[19rem]"
+      labelClassName="gvrze-notifications-menu__label"
+      separatorClassName="gvrze-notifications-menu__rule"
       trigger={
         <button
           type="button"
@@ -34,36 +40,41 @@ export function NotificationBell() {
           ) : null}
         </button>
       }
-      className="min-w-[19rem]"
     >
       {items.length === 0 ? (
         <div className="px-3 py-6 text-center">
-          <p className="text-sm text-foreground/55">You're all caught up</p>
-          <p className="mt-2 text-xs leading-relaxed text-foreground/50">
+          <p className="gvrze-notifications-menu__empty-title text-sm">You're all caught up</p>
+          <p className="gvrze-notifications-menu__empty-copy mt-2 text-xs leading-relaxed">
             Season results, rewards and store activity will appear here.
           </p>
         </div>
       ) : (
-        <div className="max-h-80 space-y-1 overflow-y-auto">
+        <div className="gvrze-notifications-menu__list max-h-80 overflow-y-auto">
           {items.slice(0, 6).map((item) => (
-            <div key={item.id} className="rounded-xl px-3 py-2.5">
-              <p className="text-sm text-foreground/80">{item.title}</p>
+            <div
+              key={item.id}
+              className="gvrze-notifications-menu__item px-3 py-2.5"
+              data-unread={item.readAt ? undefined : "true"}
+            >
+              <p className="gvrze-notifications-menu__title text-sm">{item.title}</p>
               {item.body ? (
-                <p className="mt-1 text-xs leading-relaxed text-foreground/50">{item.body}</p>
+                <p className="gvrze-notifications-menu__body mt-1 text-xs leading-relaxed">
+                  {item.body}
+                </p>
               ) : null}
             </div>
           ))}
-          <div className="mt-1 flex items-center justify-between gap-2 border-t border-bronze/12 pt-2">
+          <div className="gvrze-notifications-menu__actions mt-1 flex items-center justify-between gap-2 border-t pt-2">
             <Link
               to="/notifications"
-              className="rounded-xl px-3 py-2 text-[0.62rem] uppercase tracking-[0.24em] text-bronze/90 transition-colors hover:text-bronze"
+              className="rounded-xl px-3 py-2 text-[0.62rem] uppercase tracking-[0.24em] transition-colors"
             >
               View all
             </Link>
             <button
               type="button"
               onClick={markAll}
-              className="rounded-xl px-3 py-2 text-[0.62rem] uppercase tracking-[0.24em] text-foreground/50 transition-colors hover:text-foreground/70"
+              className="rounded-xl px-3 py-2 text-[0.62rem] uppercase tracking-[0.24em] transition-colors"
             >
               Clear
             </button>

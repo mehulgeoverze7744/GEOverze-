@@ -19,6 +19,7 @@ export function GeoDropdown({
   className,
   labelClassName,
   separatorClassName,
+  surface = "glass",
 }: {
   trigger: ReactNode;
   label?: string;
@@ -27,6 +28,8 @@ export function GeoDropdown({
   className?: string;
   labelClassName?: string;
   separatorClassName?: string;
+  /** `solid` is used by the shared notifications panel; other menus stay glass. */
+  surface?: "glass" | "solid";
 }) {
   return (
     <DropdownMenu>
@@ -35,7 +38,10 @@ export function GeoDropdown({
         align={align}
         sideOffset={12}
         className={cn(
-          "glass-panel-strong min-w-56 rounded-2xl border-bronze/20 bg-transparent p-2 text-foreground",
+          "min-w-56 rounded-2xl p-2",
+          surface === "glass"
+            ? "glass-panel-strong border-bronze/20 bg-transparent text-foreground"
+            : "border border-[#E5E7EB] bg-[#FFFFFF] text-[#111111] shadow-[0_1px_2px_rgb(17_17_17_/_0.04),0_12px_28px_-16px_rgb(17_17_17_/_0.16)]",
           className,
         )}
       >

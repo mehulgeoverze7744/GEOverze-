@@ -26,6 +26,8 @@ footer .gvrze-footer-wordmark {
 body:has(#gvrze-home) footer .gvrze-footer-wordmark,
 body:has(#gvrze-community-page) footer .gvrze-footer-wordmark,
 body:has(#gvrze-pricing-page) footer .gvrze-footer-wordmark,
+body:has(#lets-play-page) footer .gvrze-footer-wordmark,
+body:has(#gvrze-storefront) footer .gvrze-footer-wordmark,
 body:has(header[data-surface="account"]) footer .gvrze-footer-wordmark,
 body:has(header[data-surface="info"]) footer .gvrze-footer-wordmark,
 body:has(header[data-surface="library"]) footer .gvrze-footer-wordmark {

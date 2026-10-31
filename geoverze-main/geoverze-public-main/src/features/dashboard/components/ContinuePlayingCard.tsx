@@ -14,8 +14,6 @@ const MODES: readonly {
   description: string;
   badge: string;
   icon: LucideIcon;
-  imageSrc: string;
-  ctaIcon: string;
   ctaText: string;
   to: "/play/lobby" | "/play/pvp" | "/play/multiplayer";
 }[] = [
@@ -25,8 +23,6 @@ const MODES: readonly {
     description: "Your pace, your clock.",
     badge: "Free play",
     icon: User,
-    imageSrc: "/assets/play/solo.jpg",
-    ctaIcon: "▶",
     ctaText: "Play solo",
     to: "/play/lobby",
   },
@@ -36,8 +32,6 @@ const MODES: readonly {
     description: "One-on-one duels.",
     badge: "1 v 1",
     icon: Swords,
-    imageSrc: "/assets/play/pvp.jpg",
-    ctaIcon: "👥",
     ctaText: "Find new players to win more credits",
     to: "/play/pvp",
   },
@@ -47,8 +41,6 @@ const MODES: readonly {
     description: "Shared rooms, live.",
     badge: "Up to 16 players",
     icon: Users,
-    imageSrc: "/assets/play/multiplayer.jpg",
-    ctaIcon: "🪙",
     ctaText: "Gets most credits",
     to: "/play/multiplayer",
   },
@@ -59,26 +51,13 @@ function CardContent({ mode, locked }: { mode: (typeof MODES)[number]; locked: b
 
   return (
     <>
-      {/* Artwork layer */}
-      <div
-        className="dashboard-gamecard-bg"
-        style={{ backgroundImage: `url(${mode.imageSrc})` }}
-        aria-hidden="true"
-      />
-      {/* Radial gradient overlay */}
-      <div className="dashboard-gamecard-overlay" aria-hidden="true" />
-      {/* HUD concentric rings */}
-      <div className="dashboard-gamecard-hud" aria-hidden="true" />
-      {/* Lock dim */}
       {locked ? <div className="dashboard-gamecard-lock" aria-hidden="true" /> : null}
 
-      {/* Status badge */}
       <span className="dashboard-gamecard-badge">{mode.badge}</span>
 
-      {/* Icon + title + subtitle */}
       <div className="dashboard-gamecard-mid">
         <span className="dashboard-gamecard-icon-ring" aria-hidden="true">
-          <Icon className="h-4 w-4" strokeWidth={1.4} />
+          <Icon className="h-4 w-4" strokeWidth={1.6} />
         </span>
         <p className="dashboard-gamecard-title">{mode.title}</p>
         <p className="dashboard-gamecard-subtitle">
@@ -86,16 +65,12 @@ function CardContent({ mode, locked }: { mode: (typeof MODES)[number]; locked: b
         </p>
       </div>
 
-      {/* CTA pill */}
       <span
         className={cn(
           "dashboard-gamecard-cta",
           mode.id === "pvp" && !locked && "dashboard-gamecard-cta--pvp",
         )}
       >
-        <span className="dashboard-gamecard-cta-icon" aria-hidden="true">
-          {locked ? "🔒" : mode.ctaIcon}
-        </span>
         {locked ? "Upgrade to unlock" : mode.ctaText}
       </span>
     </>
@@ -134,6 +109,7 @@ export function ContinuePlayingCard({ className }: { className?: string }) {
                     to="/play/lobby"
                     search={{ mode: "solo", quiz: undefined }}
                     className="dashboard-gamecard absolute inset-0"
+                    data-mode={mode.id}
                     aria-label={`${mode.title}: ${mode.description}`}
                   >
                     <CardContent mode={mode} locked={false} />
@@ -142,6 +118,7 @@ export function ContinuePlayingCard({ className }: { className?: string }) {
                   <Link
                     to={mode.to}
                     className="dashboard-gamecard absolute inset-0"
+                    data-mode={mode.id}
                     aria-label={`${mode.title}: ${mode.description}`}
                   >
                     <CardContent mode={mode} locked={false} />
@@ -150,6 +127,7 @@ export function ContinuePlayingCard({ className }: { className?: string }) {
                   <Link
                     to="/pricing"
                     className="dashboard-gamecard dashboard-gamecard--locked absolute inset-0"
+                    data-mode={mode.id}
                     aria-label={`${mode.title}: upgrade required`}
                   >
                     <CardContent mode={mode} locked />

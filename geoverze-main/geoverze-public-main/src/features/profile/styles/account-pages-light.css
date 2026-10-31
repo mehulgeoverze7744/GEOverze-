@@ -453,7 +453,6 @@ body:has(header[data-surface="account"]) footer span[aria-label$="coming soon"] 
 }
 
 #gvrze-account .dashboard-dock-card,
-#gvrze-account .dashboard-gamecard,
 #gvrze-account .dashboard-hero-cta-cluster {
   background: rgb(255 255 255 / 0.9);
   border-color: #d8dee6;
@@ -461,11 +460,24 @@ body:has(header[data-surface="account"]) footer span[aria-label$="coming soon"] 
   color: #17191d;
 }
 
-#gvrze-account .dashboard-gamecard-badge,
+#gvrze-account .dashboard-gamecard {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  box-shadow: 0 14px 32px -22px rgb(17 17 17 / 0.22);
+  color: #111111;
+  backdrop-filter: none;
+}
+
+#gvrze-account .dashboard-gamecard-badge {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  color: #111111;
+}
+
 #gvrze-account .dashboard-gamecard-icon-ring {
-  background: rgb(61 109 143 / 0.1);
-  border-color: #c5d4df;
-  color: #3d6d8f;
+  background: #dceaf7;
+  border-color: #c9dcea;
+  color: #1f3a55;
 }
 
 /* Profile hero — no starfield card; the page plate is the sky */

@@ -7,8 +7,8 @@
  *   - Tabbed content: Product Description / Shipping / Washcare
  *   - "You may also like" section with product cards
  *
- * Wraps in #gvrze-storefront so storefront.css hides the global nav/footer
- * and injects the StorefrontNav + StorefrontFooter instead.
+ * Wraps in #gvrze-storefront so storefront.css hides the global nav
+ * and injects the StorefrontNav. The shared site footer stays visible.
  */
 
 import "./storefront.css";
@@ -21,7 +21,6 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useStoreStore } from "@/stores/storeStore";
 
-import { StorefrontFooter } from "./StorefrontFooter";
 import { StorefrontNav } from "./StorefrontNav";
 import { SF_SHELL, SF_UI_FONT } from "./storefront-ui";
 
@@ -199,7 +198,8 @@ type Tab = "description" | "shipping" | "washcare";
 
 /**
  * Unified storefront product detail page.
- * Renders its own nav and footer via the #gvrze-storefront wrapper.
+ * Renders its own nav via the #gvrze-storefront wrapper; the shared site
+ * footer stays visible so product pages match the homepage.
  */
 export function StorefrontProductPage({
   slug,
@@ -529,8 +529,6 @@ export function StorefrontProductPage({
           </section>
         )}
       </main>
-
-      <StorefrontFooter />
     </div>
   );
 }

@@ -1,0 +1,122 @@
+/*
+ * Shared Notifications dropdown only. Other GeoDropdowns keep their own
+ * colours and glass treatment.
+ */
+.gvrze-notifications-menu,
+.gvrze-notifications-menu.glass-panel-strong {
+  color: #111111;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow:
+    0 1px 2px rgb(17 17 17 / 0.04),
+    0 12px 28px -16px rgb(17 17 17 / 0.16);
+  /* LightningCSS drops `none`; blur(0) is the reliable kill switch. */
+  backdrop-filter: blur(0) !important;
+  -webkit-backdrop-filter: blur(0) !important;
+  overflow-x: hidden;
+  color-scheme: light;
+}
+
+.gvrze-notifications-menu::before,
+.gvrze-notifications-menu::after {
+  display: none;
+}
+
+.gvrze-notifications-menu__label,
+.gvrze-notifications-menu [class*="uppercase"]:not(a):not(button) {
+  color: #111111 !important;
+  letter-spacing: 0.28em;
+}
+
+.gvrze-notifications-menu [role="separator"],
+.gvrze-notifications-menu__rule {
+  background-color: #e5e7eb !important;
+}
+
+.gvrze-notifications-menu p,
+.gvrze-notifications-menu span,
+.gvrze-notifications-menu time,
+.gvrze-notifications-menu li {
+  color: #333333;
+}
+
+.gvrze-notifications-menu__title,
+.gvrze-notifications-menu .gvrze-notifications-menu__title {
+  color: #111111 !important;
+}
+
+.gvrze-notifications-menu__body,
+.gvrze-notifications-menu .gvrze-notifications-menu__body {
+  color: #333333 !important;
+}
+
+.gvrze-notifications-menu__time,
+.gvrze-notifications-menu time {
+  color: #4b5563 !important;
+}
+
+.gvrze-notifications-menu__empty-title {
+  color: #111111 !important;
+}
+
+.gvrze-notifications-menu__empty-copy {
+  color: #333333 !important;
+}
+
+.gvrze-notifications-menu a,
+.gvrze-notifications-menu button {
+  color: #333333;
+}
+
+.gvrze-notifications-menu a:hover,
+.gvrze-notifications-menu button:hover {
+  color: #111111;
+}
+
+.gvrze-notifications-menu__item {
+  border-radius: 0;
+}
+
+.gvrze-notifications-menu__item + .gvrze-notifications-menu__item {
+  border-top: 1px solid #e5e7eb;
+}
+
+.gvrze-notifications-menu__item[data-unread="true"] .gvrze-notifications-menu__title {
+  font-weight: 600;
+  color: #111111 !important;
+}
+
+.gvrze-notifications-menu__actions {
+  border-top-color: #e5e7eb !important;
+}
+
+.gvrze-notifications-menu,
+.gvrze-notifications-menu__list {
+  scrollbar-width: thin;
+  scrollbar-color: #9ca3af #f3f4f6;
+}
+
+.gvrze-notifications-menu::-webkit-scrollbar,
+.gvrze-notifications-menu__list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.gvrze-notifications-menu::-webkit-scrollbar-track,
+.gvrze-notifications-menu__list::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 999px;
+}
+
+.gvrze-notifications-menu::-webkit-scrollbar-thumb,
+.gvrze-notifications-menu__list::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 999px;
+  border: 2px solid #f3f4f6;
+}
+
+.gvrze-notifications-menu::-webkit-scrollbar-corner,
+.gvrze-notifications-menu__list::-webkit-scrollbar-corner {
+  background: #f3f4f6;
+}

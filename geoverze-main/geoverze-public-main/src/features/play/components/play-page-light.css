@@ -93,6 +93,101 @@ body:has(#lets-play-page) header a[href="/auth/signup"] {
   font-weight: 800;
 }
 
+/*
+ * Let's Play footer only. Hero, hub nav and quiz surfaces stay on the
+ * existing play-page rules above / below.
+ */
+body:has(#lets-play-page) footer {
+  background: #ffffff;
+  border-top: 1px solid #d5dbe1;
+  color: #17191d;
+  overflow-x: clip;
+}
+
+body:has(#lets-play-page) footer :is(p, a, li, span, label) {
+  color: #5c636c;
+}
+
+body:has(#lets-play-page) footer :is(p, a, li, span, label)[class*="text-bronze"] {
+  color: #17191d;
+}
+
+body:has(#lets-play-page) footer nav[aria-label="Footer"] > div > p {
+  color: #2a2f36;
+  letter-spacing: 0.3em;
+}
+
+body:has(#lets-play-page) footer nav[aria-label="Footer"] a,
+body:has(#lets-play-page) footer nav[aria-label="Footer"] span {
+  color: #2a2f36;
+}
+
+body:has(#lets-play-page) footer a:hover,
+body:has(#lets-play-page) footer a:focus-visible,
+body:has(#lets-play-page) footer [class*="hover:text-bronze"]:hover,
+body:has(#lets-play-page) footer [class*="focus-visible:text-bronze"]:focus-visible {
+  color: #111111;
+}
+
+body:has(#lets-play-page) footer input {
+  background: #ffffff;
+  color: #111111;
+  border-color: #d5dbe1;
+}
+
+body:has(#lets-play-page) footer input::placeholder {
+  color: #4b5563;
+}
+
+body:has(#lets-play-page) footer input:focus {
+  border-color: #111111;
+  box-shadow: none;
+}
+
+body:has(#lets-play-page) footer button {
+  border-color: #111111;
+  background: #111111;
+  background-image: none;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+body:has(#lets-play-page) footer button:hover {
+  background: #2a2f36;
+  border-color: #2a2f36;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+body:has(#lets-play-page) footer button:focus-visible {
+  box-shadow: 0 0 0 2px rgb(17 17 17 / 0.22);
+}
+
+body:has(#lets-play-page) footer :not(button)[class*="border-bronze"] {
+  border-color: #d5dbe1;
+}
+
+body:has(#lets-play-page) footer button {
+  border-color: #111111;
+}
+
+body:has(#lets-play-page) footer span[aria-label$="coming soon"] {
+  border-color: #d5dbe1;
+  background: #f4f6f8;
+  color: #111111;
+}
+
+body:has(#lets-play-page) footer span[aria-label$="coming soon"]:hover {
+  background: #111111;
+  border-color: #111111;
+  color: #ffffff;
+}
+
+body:has(#lets-play-page) footer .mt-16.border-t {
+  border-top-color: #d5dbe1;
+  color: #5c636c;
+}
+
 #lets-play-page {
   --lp-ink: #111111;
   --lp-ink-soft: #2a2f38;
@@ -335,4 +430,185 @@ body:has(#lets-play-page) header a[href="/auth/signup"] {
 #lets-play-page [data-slot="tooltip-content"],
 #lets-play-page [role="tooltip"] {
   font-weight: 700;
+}
+
+/*
+ * Solo / PvP / Multiplayer circular cards only.
+ * Replaces the old gold ModeCard treatment for these three modes.
+ */
+#lets-play-page .play-mode-circles {
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  gap: 1.35rem;
+  width: 100%;
+}
+
+@media (min-width: 720px) {
+  #lets-play-page .play-mode-circles {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    gap: 1.5rem;
+  }
+}
+
+#lets-play-page .play-mode-circle {
+  --pmc-ink: #111111;
+  --pmc-muted: #6b7280;
+  --pmc-line: #e5e7eb;
+  --pmc-ice: #dceaf7;
+  box-sizing: border-box;
+  display: flex;
+  width: min(100%, 20.5rem);
+  aspect-ratio: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.42rem;
+  padding: 13% 14% 12%;
+  overflow: hidden;
+  border: 1px solid var(--pmc-line);
+  border-radius: 50%;
+  background: #ffffff;
+  background-image: none;
+  box-shadow: 0 14px 32px -22px rgb(17 17 17 / 0.22);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  text-align: center;
+}
+
+#lets-play-page .play-mode-circle::before,
+#lets-play-page .play-mode-circle::after {
+  display: none;
+}
+
+#lets-play-page .play-mode-circle__badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  max-width: 88%;
+  align-items: center;
+  justify-content: center;
+  padding: 0.22rem 0.62rem;
+  border: 1px solid var(--pmc-line);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--pmc-ink);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+#lets-play-page .play-mode-circle__icon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 2.55rem;
+  height: 2.55rem;
+  border: 1px solid #c9dcea;
+  border-radius: 50%;
+  background: var(--pmc-ice);
+  color: #1f3a55;
+  box-shadow: none;
+}
+
+#lets-play-page .play-mode-circle__icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  color: #1f3a55;
+}
+
+#lets-play-page .play-mode-circle__title {
+  margin: 0.1rem 0 0;
+  max-width: 90%;
+  color: var(--pmc-ink);
+  font-size: 0.92rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+#lets-play-page .play-mode-circle__desc {
+  margin: 0;
+  max-width: 86%;
+  color: var(--pmc-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+}
+
+#lets-play-page .play-mode-circle__cta {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  max-width: 82%;
+  min-height: 2.15rem;
+  margin-top: 0.2rem;
+  padding: 0.42rem 0.9rem;
+  border: 1px solid #111111;
+  border-radius: 999px;
+  background: #111111;
+  background-image: none;
+  color: #ffffff;
+  box-shadow: none;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  line-height: 1.25;
+  text-align: center;
+  text-transform: uppercase;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
+}
+
+#lets-play-page .play-mode-circle[data-mode="pvp"] .play-mode-circle__cta {
+  white-space: normal;
+  max-width: 78%;
+}
+
+#lets-play-page .play-mode-circle__cta:hover,
+#lets-play-page .play-mode-circle__cta:focus-visible {
+  background: #e5e7eb;
+  border-color: #e5e7eb;
+  color: #111111;
+  box-shadow: none;
+}
+
+#lets-play-page .play-mode-circle__cta:focus-visible {
+  outline: 2px solid rgb(17 17 17 / 0.28);
+  outline-offset: 2px;
+}
+
+@media (max-width: 719px) {
+  #lets-play-page .play-mode-circle {
+    width: min(100%, 18.75rem);
+    gap: 0.36rem;
+    padding: 12% 13%;
+  }
+
+  #lets-play-page .play-mode-circle__icon {
+    width: 2.3rem;
+    height: 2.3rem;
+  }
+
+  #lets-play-page .play-mode-circle__title {
+    font-size: 0.84rem;
+  }
+
+  #lets-play-page .play-mode-circle__desc {
+    font-size: 0.68rem;
+  }
+
+  #lets-play-page .play-mode-circle__cta {
+    min-height: 2rem;
+    font-size: 0.54rem;
+    padding: 0.36rem 0.75rem;
+  }
 }

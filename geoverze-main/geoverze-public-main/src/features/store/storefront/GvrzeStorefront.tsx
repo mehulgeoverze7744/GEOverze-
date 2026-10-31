@@ -4,16 +4,15 @@ import { StorefrontBestSellers } from "./StorefrontBestSellers";
 import { StorefrontBrandStatement } from "./StorefrontBrandStatement";
 import { StorefrontCategories } from "./StorefrontCategories";
 import { StorefrontFeatured } from "./StorefrontFeatured";
-import { StorefrontFooter } from "./StorefrontFooter";
 import { StorefrontHero } from "./StorefrontHero";
 import { StorefrontNav } from "./StorefrontNav";
 
 /**
  * GVRZE Store front page (/geostore), redesigned from the "thegvrze" Figma file.
  *
- * Everything is scoped to #gvrze-storefront. The site-wide navbar, footer and
+ * Everything is scoped to #gvrze-storefront. The site-wide navbar and
  * backdrop are hidden only while this page is mounted (see storefront.css);
- * every other route keeps the normal chrome.
+ * the shared site footer stays visible so the store matches the homepage.
  */
 export function GvrzeStorefront() {
   return (
@@ -24,7 +23,6 @@ export function GvrzeStorefront() {
       <StorefrontCategories />
       <StorefrontFeatured />
       <StorefrontBrandStatement />
-      <StorefrontFooter />
     </div>
   );
 }

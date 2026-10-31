@@ -6,16 +6,119 @@
  */
 
 /*
- * The storefront ships its own navigation, footer and light canvas. The
- * site-wide chrome (navbar, footer, universe backdrop and the old floating
- * store icon row) is hidden only while the storefront is mounted. These
- * selectors stop matching the moment the storefront unmounts.
+ * The storefront ships its own navigation and light canvas. The site-wide
+ * navbar, universe backdrop and the old floating store icon row are hidden
+ * only while the storefront is mounted. The shared site footer stays visible
+ * so /geostore matches the homepage footer. These selectors stop matching
+ * the moment the storefront unmounts.
  */
 div:has(> main #gvrze-storefront) > header,
-div:has(> main #gvrze-storefront) > footer,
 body:has(#gvrze-storefront) #geoverze-universe-background,
 body:has(#gvrze-storefront) [aria-label="GVRZE Store actions"] {
   display: none !important;
+}
+
+/*
+ * Shared homepage footer on the store. Scoped to the storefront mount so
+ * other routes keep their own footer chrome. Does not edit home-lunar.css.
+ */
+body:has(#gvrze-storefront) > div > footer,
+body:has(#gvrze-storefront) footer {
+  background:
+    radial-gradient(ellipse 70% 80% at 12% 0%, rgb(255 255 255 / 0.55), transparent 55%),
+    linear-gradient(180deg, #e7f1f7 0%, #f5f8fb 55%, #e4eef5 100%);
+  border-top: 1px solid rgb(23 32 51 / 0.1);
+  color: #1a2c42;
+  overflow-x: clip;
+}
+
+body:has(#gvrze-storefront) footer :is(p, a, li, span, label) {
+  color: rgb(26 44 66 / 0.82);
+}
+
+body:has(#gvrze-storefront) footer :is(p, a, li, span, label)[class*="text-bronze"] {
+  color: #111111;
+}
+
+body:has(#gvrze-storefront) footer nav[aria-label="Footer"] > div > p {
+  color: #111111;
+  letter-spacing: 0.3em;
+}
+
+body:has(#gvrze-storefront) footer nav[aria-label="Footer"] a,
+body:has(#gvrze-storefront) footer nav[aria-label="Footer"] span {
+  color: #111111;
+}
+
+body:has(#gvrze-storefront) footer a:hover,
+body:has(#gvrze-storefront) footer a:focus-visible,
+body:has(#gvrze-storefront) footer [class*="hover:text-bronze"]:hover,
+body:has(#gvrze-storefront) footer [class*="focus-visible:text-bronze"]:focus-visible {
+  color: #111111;
+}
+
+body:has(#gvrze-storefront) footer input {
+  background: rgb(255 255 255 / 0.72);
+  color: #172033;
+  border-color: rgb(23 32 51 / 0.16);
+}
+
+body:has(#gvrze-storefront) footer input::placeholder {
+  color: rgb(23 32 51 / 0.42);
+}
+
+body:has(#gvrze-storefront) footer input:focus {
+  border-color: #111111;
+  box-shadow: none;
+}
+
+body:has(#gvrze-storefront) footer button,
+body:has(#gvrze-storefront) footer button * {
+  -webkit-text-fill-color: unset;
+}
+
+body:has(#gvrze-storefront) footer button {
+  border-color: #111111;
+  background: #111111;
+  background-image: none;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+body:has(#gvrze-storefront) footer button:hover {
+  background: #2a2f36;
+  border-color: #2a2f36;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+body:has(#gvrze-storefront) footer button:focus-visible {
+  box-shadow: 0 0 0 2px rgb(17 17 17 / 0.22);
+}
+
+body:has(#gvrze-storefront) footer :not(button)[class*="border-bronze"] {
+  border-color: rgb(23 32 51 / 0.16);
+}
+
+body:has(#gvrze-storefront) footer button {
+  border-color: #111111;
+}
+
+body:has(#gvrze-storefront) footer span[aria-label$="coming soon"] {
+  border-color: rgb(23 32 51 / 0.16);
+  background: #ffffff;
+  color: #111111;
+}
+
+body:has(#gvrze-storefront) footer span[aria-label$="coming soon"]:hover {
+  background: #111111;
+  border-color: #111111;
+  color: #ffffff;
+}
+
+body:has(#gvrze-storefront) footer .mt-16.border-t {
+  border-top-color: rgb(23 32 51 / 0.1);
+  color: rgb(26 44 66 / 0.82);
 }
 
 #gvrze-storefront {
