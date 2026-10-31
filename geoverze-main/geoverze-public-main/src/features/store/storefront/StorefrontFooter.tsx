@@ -85,11 +85,6 @@ export function StorefrontFooter() {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/geostore/offers" className={linkClass}>
-                    Offers
-                  </Link>
-                </li>
-                <li>
                   <Link to="/geostore/rewards" className={linkClass}>
                     Rewards
                   </Link>

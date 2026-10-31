@@ -29,7 +29,6 @@ const BADGE =
 
 const STORE_LINKS: { label: string; to: NavLink }[] = [
   { label: "Shop all", to: "/geostore/browse" },
-  { label: "Offers", to: "/geostore/offers" },
   { label: "Rewards", to: "/geostore/rewards" },
   { label: "Orders", to: "/geostore/orders" },
   { label: "Wishlist", to: "/geostore/wishlist" },

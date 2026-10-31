@@ -1,0 +1,284 @@
+/*
+ * Light cartographic theme for /geolibrary home only.
+ * Every rule is keyed to #gvrze-library-home or body:has(#gvrze-library-home)
+ * so browse, collections, articles, creators, and the rest of the site stay dark.
+ */
+
+body:has(#gvrze-library-home) {
+  background: #f3f6fb;
+  overflow-x: hidden;
+}
+
+/* Hide the shared starfield while Library home is mounted. The desk hero
+   has its own photograph; the icy map lives on the content plate below. */
+body:has(#gvrze-library-home) #geoverze-universe-background {
+  display: none !important;
+}
+
+#gvrze-library-home {
+  overflow-x: clip;
+}
+
+/* Full-bleed icy atlas under Explore by Subject, rails, cards, studio. */
+#gvrze-library-home .gvrze-library-home__content {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  min-width: 0;
+  background-color: #f3f6fb;
+  background-image: url("/assets/gvrze-library-page-bg.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  #gvrze-library-home .gvrze-library-home__content {
+    background-position: 38% center;
+  }
+}
+
+@media (max-width: 767px) {
+  #gvrze-library-home .gvrze-library-home__content {
+    background-position: 32% 28%;
+  }
+}
+
+/* Soft join from the desk photograph into the icy plate — fade only. */
+#gvrze-library-home .geolibrary-hero__fade {
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgb(243 246 251 / 0.35) 48%,
+    rgb(243 246 251 / 0.92) 100%
+  );
+}
+
+/* Type — black primary, charcoal secondary, icy-blue accent. */
+#gvrze-library-home .gvrze-library-home__content h2,
+#gvrze-library-home .gvrze-library-home__content h3,
+#gvrze-library-home .gvrze-library-home__content .text-foreground {
+  color: #17191d;
+}
+
+#gvrze-library-home .gvrze-library-home__content .text-foreground\/90,
+#gvrze-library-home .gvrze-library-home__content .text-foreground\/85,
+#gvrze-library-home .gvrze-library-home__content .text-foreground\/80,
+#gvrze-library-home .gvrze-library-home__content .text-foreground\/75,
+#gvrze-library-home .gvrze-library-home__content .text-foreground\/72,
+#gvrze-library-home .gvrze-library-home__content .text-foreground\/70,
+#gvrze-library-home .gvrze-library-home__content .text-foreground\/60,
+#gvrze-library-home .gvrze-library-home__content .text-foreground\/55,
+#gvrze-library-home .gvrze-library-home__content .text-foreground\/50,
+#gvrze-library-home .gvrze-library-home__content .text-foreground\/45,
+#gvrze-library-home .gvrze-library-home__content .text-foreground\/42 {
+  color: #626b75;
+}
+
+#gvrze-library-home .gvrze-library-home__content p {
+  color: #626b75;
+}
+
+#gvrze-library-home .gvrze-library-home__content .text-bronze,
+#gvrze-library-home .gvrze-library-home__content .text-bronze-glow,
+#gvrze-library-home .gvrze-library-home__content .text-bronze\/90,
+#gvrze-library-home .gvrze-library-home__content .text-bronze\/85,
+#gvrze-library-home .gvrze-library-home__content .text-bronze\/80,
+#gvrze-library-home .gvrze-library-home__content .hover\:text-bronze:hover,
+#gvrze-library-home .gvrze-library-home__content .hover\:text-bronze-glow:hover,
+#gvrze-library-home .gvrze-library-home__content .group-hover\:text-bronze-glow {
+  color: #5d7d94;
+}
+
+#gvrze-library-home .gvrze-library-home__content .fill-bronze,
+#gvrze-library-home .gvrze-library-home__content .fill-current {
+  color: #5d7d94;
+}
+
+/* White / translucent cards — map remains visible around them. */
+#gvrze-library-home .gvrze-library-home__content .glass-panel,
+#gvrze-library-home .gvrze-library-home__content .glass-panel.surface-gradient,
+#gvrze-library-home .gvrze-library-home__content article.glass-panel,
+#gvrze-library-home .gvrze-library-home__content a.glass-panel {
+  background-color: rgb(255 255 255 / 0.88);
+  background-image: none;
+  border-color: #d8dee6;
+  box-shadow: 0 10px 28px -20px rgb(23 25 29 / 0.28);
+  color: #17191d;
+}
+
+#gvrze-library-home .gvrze-library-home__content .glass-panel:hover,
+#gvrze-library-home .gvrze-library-home__content article.glass-panel:hover,
+#gvrze-library-home .gvrze-library-home__content a.glass-panel:hover {
+  border-color: #c5ced8;
+  box-shadow: 0 14px 32px -18px rgb(23 25 29 / 0.22);
+}
+
+#gvrze-library-home .gvrze-library-home__content .hover\:shadow-\[var\(--glow-bronze\)\]:hover,
+#gvrze-library-home .gvrze-library-home__content .hover\:border-bronze\/40:hover,
+#gvrze-library-home .gvrze-library-home__content .hover\:border-bronze\/35:hover {
+  border-color: #c5ced8;
+  box-shadow: 0 14px 32px -18px rgb(23 25 29 / 0.22);
+}
+
+#gvrze-library-home .gvrze-library-home__content .border-bronze\/10,
+#gvrze-library-home .gvrze-library-home__content .border-bronze\/20,
+#gvrze-library-home .gvrze-library-home__content .border-bronze\/25,
+#gvrze-library-home .gvrze-library-home__content .border-bronze\/35,
+#gvrze-library-home .gvrze-library-home__content .border-bronze\/45,
+#gvrze-library-home .gvrze-library-home__content .border-bronze\/50,
+#gvrze-library-home .gvrze-library-home__content .border-bronze\/60 {
+  border-color: #d8dee6;
+}
+
+#gvrze-library-home .gvrze-library-home__content .bg-bronze\/15,
+#gvrze-library-home .gvrze-library-home__content .bg-bronze\/12,
+#gvrze-library-home .gvrze-library-home__content .bg-bronze\/10,
+#gvrze-library-home .gvrze-library-home__content .bg-bronze\/8 {
+  background-color: rgb(93 125 148 / 0.1);
+}
+
+#gvrze-library-home .gvrze-library-home__content .bg-charcoal\/50,
+#gvrze-library-home .gvrze-library-home__content .bg-charcoal\/45,
+#gvrze-library-home .gvrze-library-home__content .bg-charcoal\/40 {
+  background-color: rgb(255 255 255 / 0.82);
+}
+
+#gvrze-library-home .gvrze-library-home__content .bg-gradient-to-r.from-bronze\/80 {
+  background-image: linear-gradient(to right, #5d7d94, #7a9bb4);
+}
+
+/* Category chips — drop burnished bronze for icy white / charcoal. */
+#gvrze-library-home .library-category-metal {
+  --lbm-top: #ffffff;
+  --lbm-mid: #f7f9fb;
+  --lbm-base: #f4f6f8;
+  --lbm-edge: #d5dce3;
+  --lbm-highlight: #ffffff;
+  --lbm-shadow: #d8dee6;
+  --lbm-gold-soft: transparent;
+  --lbm-gold-mid: transparent;
+  --lbm-gold-bright: transparent;
+  border-color: #d5dce3;
+  background: rgb(255 255 255 / 0.9);
+  color: #17191d;
+  box-shadow: 0 1px 2px rgb(23 25 29 / 0.06);
+}
+
+#gvrze-library-home .library-category-metal::before,
+#gvrze-library-home .library-category-metal::after {
+  display: none;
+}
+
+#gvrze-library-home .library-category-metal:hover {
+  transform: translateY(-1px);
+  border-color: #b8c4d0;
+  box-shadow: 0 4px 14px -8px rgb(23 25 29 / 0.2);
+}
+
+#gvrze-library-home .library-category-metal-active {
+  background: #17191d;
+  border-color: #17191d;
+  color: #ffffff;
+  box-shadow: 0 4px 14px -8px rgb(23 25 29 / 0.28);
+}
+
+#gvrze-library-home .library-category-metal-icon {
+  color: #5d7d94;
+}
+
+#gvrze-library-home .library-category-metal-active .library-category-metal-icon {
+  color: #ffffff;
+}
+
+/* Rail arrows + View all */
+#gvrze-library-home .gvrze-library-home__content button.rounded-full {
+  background: rgb(255 255 255 / 0.88);
+  border-color: #d5dce3;
+  color: #17191d;
+}
+
+#gvrze-library-home .gvrze-library-home__content button.rounded-full:hover {
+  border-color: #b8c4d0;
+  color: #17191d;
+}
+
+#gvrze-library-home .gvrze-library-home__content a.text-bronze,
+#gvrze-library-home .gvrze-library-home__content a[class*="text-bronze"] {
+  color: #5d7d94;
+}
+
+#gvrze-library-home .gvrze-library-home__content a.text-bronze:hover,
+#gvrze-library-home .gvrze-library-home__content a[class*="text-bronze"]:hover {
+  color: #17191d;
+}
+
+/* Card category pill sitting on the photograph */
+#gvrze-library-home .gvrze-library-home__content span.absolute.right-3.top-3 {
+  background: rgb(23 25 29 / 0.82);
+  border-color: transparent;
+  color: #ffffff;
+}
+
+/* Bookmark control */
+#gvrze-library-home .gvrze-library-home__content button[aria-pressed] {
+  background: rgb(255 255 255 / 0.92);
+  border-color: #d5dce3;
+  color: #626b75;
+}
+
+#gvrze-library-home .gvrze-library-home__content button[aria-pressed="true"] {
+  background: #17191d;
+  border-color: #17191d;
+  color: #ffffff;
+}
+
+#gvrze-library-home .gvrze-library-home__content button[aria-pressed]:hover {
+  border-color: #17191d;
+  color: #17191d;
+}
+
+#gvrze-library-home .gvrze-library-home__content button[aria-pressed="true"]:hover {
+  color: #ffffff;
+}
+
+/* Restricted photo scrim — keep photographs, drop the charcoal wash. */
+#gvrze-library-home .library-card-photo-scrim {
+  background: rgb(255 255 255 / 0.18);
+}
+
+/* Studio callout */
+#gvrze-library-home .gvrze-library-studio {
+  background: rgb(255 255 255 / 0.9);
+  border: 1px solid #d8dee6;
+  box-shadow: 0 10px 28px -20px rgb(23 25 29 / 0.22);
+}
+
+#gvrze-library-home .gvrze-library-studio:hover {
+  border-color: #c5ced8;
+  box-shadow: 0 14px 32px -18px rgb(23 25 29 / 0.2);
+}
+
+#gvrze-library-home .gvrze-library-studio__eyebrow {
+  color: #5d7d94;
+}
+
+#gvrze-library-home .gvrze-library-studio__title {
+  color: #17191d;
+}
+
+#gvrze-library-home .gvrze-library-studio__cta {
+  background: #17191d !important;
+  border-color: #17191d !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+#gvrze-library-home .gvrze-library-studio__cta:hover {
+  background: #000000 !important;
+}
+
+#gvrze-library-home .gvrze-library-studio [aria-hidden].absolute {
+  display: none;
+}

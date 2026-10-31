@@ -8,20 +8,17 @@ type LibraryHeroProps = {
   bookmarkCount: number;
 };
 
-/** GVRZE Library cinematic atlas hero — map/compass/books background. */
+/** GVRZE Library hero — bright editorial desk with globe, atlas and mountains. */
 export function LibraryHero({ bookmarkCount }: LibraryHeroProps) {
   return (
     <header
       className="geolibrary-hero"
-      style={{ backgroundImage: "url('/assets/geolibrary/hero-atlas.jpg')" }}
+      style={{ backgroundImage: "url('/assets/geolibrary/hero-library-desk.jpg')" }}
     >
-      {/* Cinematic gradient overlay — darker left for text, image visible right */}
+      {/* Soft left veil only — keeps the photograph bright and the copy readable. */}
       <div className="geolibrary-hero__overlay" aria-hidden />
 
-      {/* Subtle cartographic grid */}
-      <div className="geolibrary-hero__grid" aria-hidden />
-
-      <SectionContainer className="relative z-10 flex h-full flex-col justify-end pb-14 pt-[calc(var(--nav-height)+3.5rem)] sm:pb-16 sm:pt-[calc(var(--nav-height)+4rem)]">
+      <SectionContainer className="relative z-10 flex h-full flex-col justify-center pb-16 pt-[calc(var(--nav-height)+2.5rem)] sm:pb-20 sm:pt-[calc(var(--nav-height)+3rem)]">
         <p className="geolibrary-hero__eyebrow">GVRZE Library</p>
 
         <h1 className="geolibrary-hero__title">
@@ -37,13 +34,11 @@ export function LibraryHero({ bookmarkCount }: LibraryHeroProps) {
         </p>
 
         <div className="mt-8 flex flex-wrap items-center gap-3 sm:gap-4">
-          {/* Primary CTA */}
           <Link to="/geolibrary/browse" className="geolibrary-hero__cta-primary">
             Browse Everything
             <ArrowRight className="ml-2 h-4 w-4 shrink-0" strokeWidth={1.8} aria-hidden />
           </Link>
 
-          {/* Secondary actions */}
           <Link to="/geolibrary/collections" className="geolibrary-hero__cta-secondary">
             <Library className="mr-1.5 h-3.5 w-3.5 shrink-0" strokeWidth={1.6} aria-hidden />
             Collections
@@ -58,7 +53,7 @@ export function LibraryHero({ bookmarkCount }: LibraryHeroProps) {
         </div>
       </SectionContainer>
 
-      {/* Bottom fade into starfield */}
+      {/* Soft join into the existing Library page below. */}
       <div className="geolibrary-hero__fade" aria-hidden />
     </header>
   );

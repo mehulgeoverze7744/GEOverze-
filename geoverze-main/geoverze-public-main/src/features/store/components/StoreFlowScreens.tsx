@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Coins, Gift, Heart, Package, ShoppingBag, Sparkles } from "lucide-react";
+import { Coins, Gift, Heart, Package, ShoppingBag } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
 import {
@@ -13,13 +13,11 @@ import { useCartStore } from "@/stores/cartStore";
 
 import { CartLineRow } from "./CartLineRow";
 import { OrderCard } from "./OrderCard";
-import { BundleCard } from "./BundleCard";
 import { ProductCard } from "./ProductCard";
 import { StorefrontRewardsCatalog } from "./StorefrontRewardsCatalog";
 import { productBySlug } from "../data/products";
 import { isComingSoonCategory } from "../data/taxonomy";
 import { SEED_ORDERS } from "../data/orders";
-import { BUNDLES, DEALS } from "../data/offers";
 import { isProductOwned, useEntitlements } from "../hooks/useEntitlements";
 import { useStoreCatalogue } from "../hooks/useStoreCatalogue";
 import { money } from "../lib/format";
@@ -278,45 +276,6 @@ export function RewardsScreen() {
         ) : (
           <StorefrontRewardsCatalog products={rewardProducts} />
         )}
-      </SectionContainer>
-    </PageShell>
-  );
-}
-
-/** Bundles and deals. */
-export function OffersScreen() {
-  return (
-    <PageShell>
-      <PageHeader
-        eyebrow="GVRZE Store"
-        title="Bundles & deals"
-        description="Curated sets at a better price."
-        breadcrumb={crumbs("Offers")}
-      />
-      <SectionContainer size="wide">
-        <div className="grid gap-6 lg:grid-cols-2">
-          {BUNDLES.map((bundle) => (
-            <BundleCard key={bundle.id} bundle={bundle} />
-          ))}
-        </div>
-        {DEALS.length > 0 ? (
-          <section className="mt-14">
-            <h2 className="text-sm uppercase tracking-[0.2em] text-foreground/50">Running deals</h2>
-            <ul className="mt-5 grid gap-4 sm:grid-cols-2">
-              {DEALS.map((deal) => (
-                <li
-                  key={deal.id}
-                  className="rounded-2xl border border-bronze/12 bg-charcoal/45 p-5"
-                >
-                  <p className="inline-flex items-center gap-2 text-sm text-bronze">
-                    <Sparkles className="h-3.5 w-3.5" /> {deal.title}
-                  </p>
-                  <p className="mt-2 text-xs text-foreground/55">{deal.blurb}</p>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ) : null}
       </SectionContainer>
     </PageShell>
   );

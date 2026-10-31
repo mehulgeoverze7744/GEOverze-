@@ -22,7 +22,7 @@ export function ProductRail({
 }: {
   title: string;
   description?: string;
-  to?: "/geostore/browse" | "/geostore/rewards" | "/geostore/offers" | "/geostore/orders";
+  to?: "/geostore/browse" | "/geostore/rewards" | "/geostore/orders";
   linkLabel?: string;
   children: ReactNode;
   columns?: 3 | 4;

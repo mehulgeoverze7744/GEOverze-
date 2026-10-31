@@ -5,7 +5,6 @@ import { toast } from "sonner";
 import { useCartStore } from "@/stores/cartStore";
 import { useStoreStore } from "@/stores/storeStore";
 
-import { BUNDLES, type Bundle } from "../data/offers";
 import { isPurchaseLocked, productBySlug, type Product } from "../data/products";
 import { cartLineIdForProduct, defaultOptions, toCartLine } from "./cart";
 import { isProductionRewardSlug } from "./rewards";
@@ -66,21 +65,6 @@ export function useStoreActions() {
     });
   };
 
-  const addBundle = (bundle: Bundle) => {
-    const items = bundle.slugs.map(productBySlug).filter((p): p is Product => {
-      if (!p) return false;
-      return !isPurchaseLocked(p);
-    });
-    if (items.length === 0) {
-      toast.message("Coming soon", {
-        description: `${bundle.name} isn’t available to purchase yet.`,
-      });
-      return;
-    }
-    for (const item of items) add(toCartLine(item, defaultOptions(item), 1));
-    toast.success(`${bundle.name} added`, { description: `${items.length} items in your cart.` });
-  };
-
   const wishlistToggle = (slug: string) => {
     const saved = wishlist.includes(slug);
     toggleWishlist(slug);
@@ -89,5 +73,5 @@ export function useStoreActions() {
     });
   };
 
-  return { addProduct, removeProduct, addBundle, wishlistToggle, wishlist, bundles: BUNDLES };
+  return { addProduct, removeProduct, wishlistToggle, wishlist };
 }
