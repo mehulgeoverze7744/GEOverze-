@@ -1,8 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&display=swap");
 
 /*
- * Light theme for /play only. Every rule is keyed to #lets-play-page or
- * body:has(#lets-play-page) so other routes keep the dark universe chrome.
+ * Light theme for every /play* route. The play layout mounts #lets-play-page
+ * so nested quizzes, lobbies and catalogues inherit this language.
  */
 
 body:has(#lets-play-page) #geoverze-universe-background {
@@ -33,13 +33,13 @@ body:has(#lets-play-page) #geoverze-universe-background > div:first-child {
   }
 }
 
-/* Site header — readable on the icy plate without changing other routes. */
-body:has(#lets-play-page) header {
+/* Site chrome only — do not bleach in-quiz / in-game headers. */
+body:has(#lets-play-page) header:has(nav[aria-label="Main"]) {
   background: transparent;
   border-color: transparent;
 }
 
-body:has(#lets-play-page) header[data-scrolled="true"] {
+body:has(#lets-play-page) header:has(nav[aria-label="Main"])[data-scrolled="true"] {
   background-color: rgb(244 246 248 / 0.92);
   border-bottom: 1px solid rgb(23 32 51 / 0.08);
   backdrop-filter: blur(16px) saturate(1.05);
@@ -189,12 +189,14 @@ body:has(#lets-play-page) footer .mt-16.border-t {
 }
 
 #lets-play-page {
-  --lp-ink: #111111;
-  --lp-ink-soft: #2a2f38;
-  --lp-muted: #5b616b;
-  --lp-line: rgb(17 17 17 / 0.1);
-  --lp-card: rgb(255 255 255 / 0.86);
+  --lp-ink: #111827;
+  --lp-ink-soft: #111827;
+  --lp-muted: #64748b;
+  --lp-line: #e2e8f0;
+  --lp-card: #ffffff;
   --lp-card-solid: #ffffff;
+  --lp-card-soft: #f8fafc;
+  --lp-blue: #2b74c4;
   color: var(--lp-ink-soft);
 }
 
@@ -224,9 +226,12 @@ body:has(#lets-play-page) footer .mt-16.border-t {
 
 #lets-play-page .game-surface,
 #lets-play-page .game-surface-raised {
-  background-color: var(--lp-card);
-  border: 1px solid var(--lp-line);
-  box-shadow: 0 10px 28px -20px rgb(17 24 39 / 0.35);
+  background-color: #ffffff;
+  background-image: none;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 12px 32px -22px rgb(17 24 39 / 0.28);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 #lets-play-page .game-lift:hover {
@@ -260,7 +265,7 @@ body:has(#lets-play-page) footer .mt-16.border-t {
 
 #lets-play-page .play-hub-nav-strip {
   border-color: var(--lp-line);
-  background: rgb(255 255 255 / 0.78);
+  background: #ffffff;
   box-shadow: 0 8px 20px -18px rgb(17 24 39 / 0.4);
 }
 
@@ -307,7 +312,7 @@ body:has(#lets-play-page) footer .mt-16.border-t {
 
 #lets-play-page .text-bronze,
 #lets-play-page .text-bronze-glow {
-  color: var(--lp-ink);
+  color: var(--lp-blue);
 }
 
 /*
@@ -321,7 +326,32 @@ body:has(#lets-play-page) footer .mt-16.border-t {
   text-rendering: geometricPrecision;
 }
 
-#lets-play-page :where(p, span, li, dt, dd, label, small, caption, figcaption, legend, th, td, a, button, input, select, textarea, h1, h2, h3, h4, h5, h6) {
+#lets-play-page
+  :where(
+    p,
+    span,
+    li,
+    dt,
+    dd,
+    label,
+    small,
+    caption,
+    figcaption,
+    legend,
+    th,
+    td,
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6
+  ) {
   font-family: inherit;
 }
 
@@ -613,12 +643,69 @@ body:has(#lets-play-page) footer .mt-16.border-t {
   }
 }
 
-/* Featured banner — white titles, filter tabs, circular arrows. */
+/* Featured banner — full-bleed image, chrome overlaid on top. */
+#lets-play-page .featured-carousel {
+  position: relative;
+  height: 20.5rem;
+  padding: 0;
+  overflow: hidden;
+  background: #111827;
+}
+
+@media (min-width: 768px) {
+  #lets-play-page .featured-carousel {
+    height: 24.5rem;
+  }
+}
+
+#lets-play-page .featured-carousel-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+  animation: featured-carousel-fade 320ms ease;
+}
+
+#lets-play-page .featured-carousel-media picture,
+#lets-play-page .featured-carousel-media img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  object-fit: cover;
+  object-position: center;
+}
+
+#lets-play-page .featured-carousel-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to top,
+    rgb(0 0 0 / 0.72) 0%,
+    rgb(0 0 0 / 0.28) 48%,
+    rgb(0 0 0 / 0.04) 100%
+  );
+}
+
 #lets-play-page .featured-carousel-filters {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  padding: 0.85rem 1rem 0;
+  padding: 0.85rem 1rem;
 }
 
 #lets-play-page .featured-carousel-filter {
@@ -649,29 +736,46 @@ body:has(#lets-play-page) footer .mt-16.border-t {
   cursor: not-allowed;
 }
 
-#lets-play-page .featured-carousel-scrim {
-  background: linear-gradient(
-    to top,
-    rgb(0 0 0 / 0.72) 0%,
-    rgb(0 0 0 / 0.28) 48%,
-    rgb(0 0 0 / 0.04) 100%
-  );
-}
-
 #lets-play-page h2.featured-carousel-title,
 #lets-play-page .featured-carousel-title {
   color: #ffffff;
-  text-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 18px rgb(0 0 0 / 0.35);
+  text-shadow:
+    0 1px 2px rgb(0 0 0 / 0.4),
+    0 8px 18px rgb(0 0 0 / 0.35);
 }
 
-#lets-play-page .featured-carousel-media {
-  animation: featured-carousel-fade 320ms ease;
+#lets-play-page .featured-carousel-copy {
+  position: absolute;
+  right: 0;
+  bottom: 2.35rem;
+  left: 0;
+  z-index: 3;
+  padding: 0 1.5rem 0;
+}
+
+@media (min-width: 768px) {
+  #lets-play-page .featured-carousel-copy {
+    bottom: 2.6rem;
+    padding: 0 2rem 0;
+  }
+}
+
+#lets-play-page .featured-carousel-dots {
+  position: absolute;
+  right: 0;
+  bottom: 0.7rem;
+  left: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 #lets-play-page .featured-carousel-arrow {
   position: absolute;
-  top: 1.15rem;
-  z-index: 2;
+  top: 50%;
+  z-index: 3;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -682,6 +786,7 @@ body:has(#lets-play-page) footer .mt-16.border-t {
   background: #ffffff;
   color: #17191d;
   box-shadow: 0 8px 18px -12px rgb(17 24 39 / 0.45);
+  transform: translateY(-50%);
 }
 
 #lets-play-page .featured-carousel-arrow svg {
@@ -703,7 +808,6 @@ body:has(#lets-play-page) footer .mt-16.border-t {
 
 @media (max-width: 767px) {
   #lets-play-page .featured-carousel-arrow {
-    top: 0.85rem;
     width: 2rem;
     height: 2rem;
   }
@@ -735,4 +839,96 @@ body:has(#lets-play-page) footer .mt-16.border-t {
   to {
     opacity: 1;
   }
+}
+
+/*
+ * Let's Play cards — solid white / soft grey, no dark glass.
+ * Shared by every quiz lobby, game lobby, settings, record, reward and
+ * question surface under #lets-play-page.
+ */
+#lets-play-page .lp-card {
+  background-color: #ffffff;
+  background-image: none;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 12px 32px -22px rgb(17 24 39 / 0.28);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+#lets-play-page .lp-card-soft {
+  background-color: #f8fafc;
+  background-image: none;
+  border: 1px solid #e2e8f0;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+#lets-play-page .glass-panel,
+#lets-play-page .glass-panel-strong {
+  background-color: #ffffff;
+  background-image: none;
+  border-color: #e2e8f0;
+  box-shadow: 0 12px 32px -22px rgb(17 24 39 / 0.28);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/*
+ * Dark oklch fills used by lobby, settings, score, filter and game cards.
+ * Only low-lightness tokens (0.0x–0.2x) are forced to white so semantic
+ * green/red answer states (0.66+) stay intact.
+ */
+#lets-play-page [class*="rounded"][class*="border"][class*="bg-[oklch(0.0"],
+#lets-play-page [class*="rounded"][class*="border"][class*="bg-[oklch(0.1"],
+#lets-play-page [class*="rounded"][class*="border"][class*="bg-[oklch(0.2"] {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+#lets-play-page [class*="rounded"][class*="border"][class*="bg-[oklch(0.18"],
+#lets-play-page [class*="rounded"][class*="border"][class*="bg-[oklch(0.2"] {
+  background-color: #f8fafc !important;
+  box-shadow: none;
+}
+
+#lets-play-page [class*="backdrop-blur-xl"],
+#lets-play-page [class*="backdrop-blur-md"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+#lets-play-page .bg-charcoal,
+#lets-play-page [class*="bg-charcoal/"] {
+  background-color: #ffffff;
+}
+
+#lets-play-page header.sticky {
+  background-color: #ffffff !important;
+  border-bottom-color: #e2e8f0 !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+#lets-play-page [class*="bg-bronze/10"],
+#lets-play-page [class*="bg-bronze/12"],
+#lets-play-page [class*="bg-bronze/15"],
+#lets-play-page [class*="bg-bronze/18"],
+#lets-play-page [class*="bg-bronze/22"],
+#lets-play-page [class*="bg-bronze/25"] {
+  background-color: rgb(43 116 196 / 0.1) !important;
+  border-color: rgb(43 116 196 / 0.28) !important;
+  color: #2b74c4;
+}
+
+#lets-play-page [class*="ring-white/8"],
+#lets-play-page [class*="ring-white/10"] {
+  --tw-ring-color: #e2e8f0;
+}
+
+#lets-play-page select option {
+  background-color: #ffffff;
+  color: #111827;
 }

@@ -11,7 +11,6 @@ import {
   SectionContainer,
 } from "@/components/shared";
 import { CategoryCard } from "../components/CategoryCard";
-import { PlayPageBackground } from "../components/PlayPageBackground";
 import { QUIZ_CATEGORIES, type Difficulty, type QuizCategory } from "../data/categories";
 import { DIFFICULTY_OPTIONS } from "../data/filters";
 
@@ -45,7 +44,6 @@ export function CataloguePage() {
 
   return (
     <PageShell>
-      <PlayPageBackground />
       <SectionContainer
         size="wide"
         className="pt-[calc(var(--nav-height)+var(--space-section-sm))] pb-[var(--space-section-sm)]"
@@ -85,11 +83,11 @@ export function CataloguePage() {
                 onChange={(event) => setDifficulty(event.target.value as DifficultyFilter)}
                 className="game-surface-raised rounded-xl px-3 py-2.5 text-[0.8rem] text-foreground/85 outline-none transition-colors motion-snap focus:border-bronze/60"
               >
-                <option value="any" className="bg-[oklch(0.16_0.008_60)]">
+                <option value="any" className="bg-[#FFFFFF] text-[#111827]">
                   Any difficulty
                 </option>
                 {DIFFICULTY_OPTIONS.map((level) => (
-                  <option key={level} value={level} className="bg-[oklch(0.16_0.008_60)]">
+                  <option key={level} value={level} className="bg-[#FFFFFF] text-[#111827]">
                     {level}
                   </option>
                 ))}

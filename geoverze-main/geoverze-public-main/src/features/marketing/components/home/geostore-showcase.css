@@ -1,6 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Montserrat:wght@700;800&display=swap");
+
 /* Scoped to Home page Gstore showcase only */
 
 .geostore-showcase {
+  --sf-font-ui: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --sf-font-body: "Montserrat", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   padding-top: calc(var(--space-section-sm) * 0.55);
   padding-bottom: var(--space-section-sm);
 }
@@ -19,30 +23,29 @@
 
 .geostore-showcase-intro__heading {
   margin: 0;
-  font-size: clamp(1.15rem, 2.2vw, 1.85rem);
+  font-family: var(--sf-font-ui);
+  font-size: 18px;
   font-weight: 600;
   line-height: 1.15;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #111111;
-}
-
-.geostore-showcase__row {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-  margin-top: 1.35rem;
-  padding: 0;
-  list-style: none;
+  color: #000000;
 }
 
 @media (min-width: 768px) {
-  .geostore-showcase__row {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    align-items: stretch;
-    gap: 14px;
-    margin-top: 1.65rem;
+  .geostore-showcase-intro__heading {
+    font-size: 20px;
   }
+}
+
+.geostore-showcase__categories {
+  margin-top: clamp(20px, 3.2vw, 46px);
+}
+
+.geostore-showcase .sf-category-card,
+.geostore-showcase .sf-category-card__label {
+  font-family: var(--sf-font-body);
+  color: #ffffff;
 }
 
 .geostore-home-card {

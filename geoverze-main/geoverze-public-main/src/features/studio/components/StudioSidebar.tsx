@@ -22,7 +22,7 @@ export function StudioSidebar() {
     <aside
       aria-label="Creator Studio navigation"
       className={cn(
-        "sticky top-0 hidden h-dvh shrink-0 flex-col border-r border-bronze/12 bg-[oklch(0.145_0.006_60/0.92)] backdrop-blur-xl transition-[width] motion-fast md:flex",
+        "sticky top-0 hidden h-dvh shrink-0 flex-col border-r border-[#e2e8f0] bg-[#ffffff] transition-[width] motion-fast md:flex",
         collapsed ? "w-[4.5rem]" : "w-[15.5rem]",
       )}
     >

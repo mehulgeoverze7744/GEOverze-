@@ -1,0 +1,340 @@
+/*
+ * Shared GVRZE white / light-grey design language.
+ *
+ * Existing section files (home-lunar, play-page-light, storefront, community,
+ * pricing, account, info, library-chrome) keep their unique plates.
+ * This file covers leftover routes that still sat on the starfield:
+ * auth, studio, leftover Gstore flows, leftover Library interiors,
+ * support, leaderboard, and 404.
+ *
+ * Do not target #gvrze-home or #gvrze-storefront here.
+ */
+
+:root {
+  --gvrze-bg: #ffffff;
+  --gvrze-bg-soft: #f5f6f8;
+  --gvrze-bg-muted: #eef1f4;
+  --gvrze-card: #ffffff;
+  --gvrze-ink: #111827;
+  --gvrze-muted: #64748b;
+  --gvrze-line: #e2e8f0;
+  --gvrze-blue: #2b74c4;
+}
+
+body:has(#gvrze-light),
+body:has(#gvrze-auth),
+body:has(#gvrze-studio),
+body:has(#gvrze-store-flow) {
+  background: var(--gvrze-bg-soft);
+  color: var(--gvrze-ink);
+}
+
+body:has(#gvrze-light) #geoverze-universe-background,
+body:has(#gvrze-auth) #geoverze-universe-background,
+body:has(#gvrze-studio) #geoverze-universe-background,
+body:has(#gvrze-store-flow) #geoverze-universe-background {
+  display: none !important;
+}
+
+/* Auth — quiet frost, no space plate. */
+body:has(#gvrze-auth) {
+  background:
+    radial-gradient(ellipse 70% 42% at 88% 0%, rgb(43 116 196 / 0.07), transparent 58%),
+    linear-gradient(180deg, #ffffff 0%, #f5f6f8 48%, #eef1f4 100%);
+}
+
+/* Studio — product workspace. */
+body:has(#gvrze-studio) {
+  background: #f5f6f8;
+}
+
+/* Leftover Gstore flows — fashion-adjacent white. */
+body:has(#gvrze-store-flow) {
+  background: #ffffff;
+}
+
+#gvrze-light,
+#gvrze-auth,
+#gvrze-studio,
+#gvrze-store-flow,
+#gvrze-library-page,
+#lets-play-page {
+  --background: #f5f6f8;
+  --foreground: #111827;
+  --charcoal: #ffffff;
+  --card: #ffffff;
+  --muted-foreground: #64748b;
+  --gvrze-ink: #111827;
+  --gvrze-muted: #64748b;
+  --gvrze-line: #e2e8f0;
+  --gvrze-card: #ffffff;
+  color: var(--gvrze-ink);
+}
+
+#gvrze-light .eyebrow,
+#gvrze-auth .eyebrow,
+#gvrze-studio .eyebrow,
+#gvrze-store-flow .eyebrow,
+#gvrze-library-page .eyebrow {
+  color: #475569;
+}
+
+#gvrze-light h1,
+#gvrze-light h2,
+#gvrze-light h3,
+#gvrze-auth h1,
+#gvrze-auth h2,
+#gvrze-auth h3,
+#gvrze-studio h1,
+#gvrze-studio h2,
+#gvrze-studio h3,
+#gvrze-store-flow h1,
+#gvrze-store-flow h2,
+#gvrze-store-flow h3,
+#gvrze-library-page h1,
+#gvrze-library-page h2,
+#gvrze-library-page h3 {
+  color: var(--gvrze-ink);
+}
+
+#gvrze-light .text-foreground,
+#gvrze-auth .text-foreground,
+#gvrze-studio .text-foreground,
+#gvrze-store-flow .text-foreground,
+#gvrze-library-page .text-foreground {
+  color: var(--gvrze-ink);
+}
+
+#gvrze-light p,
+#gvrze-auth p,
+#gvrze-studio p,
+#gvrze-store-flow p,
+#gvrze-library-page p {
+  color: var(--gvrze-muted);
+}
+
+#gvrze-light .text-gradient-bronze,
+#gvrze-auth .text-gradient-bronze,
+#gvrze-studio .text-gradient-bronze,
+#gvrze-store-flow .text-gradient-bronze,
+#gvrze-library-page .text-gradient-bronze {
+  background: none;
+  -webkit-text-fill-color: var(--gvrze-ink);
+  color: var(--gvrze-ink);
+}
+
+#gvrze-light .text-bronze,
+#gvrze-light .text-bronze-glow,
+#gvrze-auth .text-bronze,
+#gvrze-auth .text-bronze-glow,
+#gvrze-studio .text-bronze,
+#gvrze-studio .text-bronze-glow,
+#gvrze-store-flow .text-bronze,
+#gvrze-store-flow .text-bronze-glow,
+#gvrze-library-page .text-bronze,
+#gvrze-library-page .text-bronze-glow {
+  color: var(--gvrze-ink);
+}
+
+#gvrze-light .glass-panel,
+#gvrze-light .glass-panel-strong,
+#gvrze-auth .glass-panel,
+#gvrze-auth .glass-panel-strong,
+#gvrze-studio .glass-panel,
+#gvrze-studio .glass-panel-strong,
+#gvrze-store-flow .glass-panel,
+#gvrze-store-flow .glass-panel-strong,
+#gvrze-library-page .glass-panel,
+#gvrze-library-page .glass-panel-strong,
+#gvrze-light .game-surface,
+#gvrze-light .game-surface-raised,
+#gvrze-store-flow .game-surface,
+#gvrze-store-flow .game-surface-raised,
+#gvrze-library-page .game-surface,
+#gvrze-library-page .game-surface-raised {
+  background-color: var(--gvrze-card);
+  background-image: none;
+  border: 1px solid var(--gvrze-line);
+  box-shadow: 0 12px 32px -24px rgb(17 24 39 / 0.28);
+  backdrop-filter: none;
+}
+
+#gvrze-light .bg-charcoal,
+#gvrze-auth .bg-charcoal,
+#gvrze-studio .bg-charcoal,
+#gvrze-store-flow .bg-charcoal,
+#gvrze-library-page .bg-charcoal {
+  background-color: #ffffff;
+}
+
+#gvrze-light input,
+#gvrze-light textarea,
+#gvrze-light select,
+#gvrze-auth input,
+#gvrze-auth textarea,
+#gvrze-auth select,
+#gvrze-studio input,
+#gvrze-studio textarea,
+#gvrze-studio select,
+#gvrze-store-flow input,
+#gvrze-store-flow textarea,
+#gvrze-store-flow select {
+  background-color: #ffffff;
+  color: var(--gvrze-ink);
+  border-color: var(--gvrze-line);
+}
+
+#gvrze-studio [class*="bg-[oklch(0.16"],
+#gvrze-studio [class*="bg-[oklch(0.175"] {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0;
+}
+
+#gvrze-light button.bg-gradient-bronze,
+#gvrze-light a.bg-gradient-bronze,
+#gvrze-auth button.bg-gradient-bronze,
+#gvrze-auth a.bg-gradient-bronze,
+#gvrze-studio button.bg-gradient-bronze,
+#gvrze-studio a.bg-gradient-bronze,
+#gvrze-store-flow button.bg-gradient-bronze,
+#gvrze-store-flow a.bg-gradient-bronze {
+  background-image: none !important;
+  background-color: #111111 !important;
+  border-color: #111111 !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 22px -16px rgb(0 0 0 / 0.45);
+}
+
+/* Shared light header chrome for leftover surfaces. */
+body:has(#gvrze-store-flow) header,
+header[data-surface="auth"],
+header[data-surface="studio"],
+header[data-surface="light"] {
+  background: transparent;
+  border-color: transparent;
+}
+
+body:has(#gvrze-store-flow) header[data-scrolled="true"],
+header[data-surface="auth"][data-scrolled="true"],
+header[data-surface="studio"][data-scrolled="true"],
+header[data-surface="light"][data-scrolled="true"] {
+  background-color: rgb(245 246 248 / 0.94);
+  border-bottom: 1px solid rgb(226 232 240 / 0.95);
+  backdrop-filter: blur(16px) saturate(1.05);
+  box-shadow: none;
+}
+
+body:has(#gvrze-store-flow) header .gvrze-home-wordmark,
+header[data-surface="auth"] .gvrze-home-wordmark,
+header[data-surface="studio"] .gvrze-home-wordmark,
+header[data-surface="light"] .gvrze-home-wordmark {
+  display: block;
+  height: 1.15rem;
+  width: auto;
+}
+
+@media (min-width: 768px) {
+  body:has(#gvrze-store-flow) header .gvrze-home-wordmark,
+  header[data-surface="auth"] .gvrze-home-wordmark,
+  header[data-surface="studio"] .gvrze-home-wordmark,
+  header[data-surface="light"] .gvrze-home-wordmark {
+    height: 1.5rem;
+  }
+}
+
+body:has(#gvrze-store-flow) header nav[aria-label="Main"] a,
+header[data-surface="auth"] nav[aria-label="Main"] a,
+header[data-surface="studio"] nav[aria-label="Main"] a,
+header[data-surface="light"] nav[aria-label="Main"] a {
+  color: #172033;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+body:has(#gvrze-store-flow) header nav[aria-label="Main"] a:hover,
+body:has(#gvrze-store-flow) header nav[aria-label="Main"] a[data-status="active"],
+header[data-surface="auth"] nav[aria-label="Main"] a:hover,
+header[data-surface="auth"] nav[aria-label="Main"] a[data-status="active"],
+header[data-surface="studio"] nav[aria-label="Main"] a:hover,
+header[data-surface="studio"] nav[aria-label="Main"] a[data-status="active"],
+header[data-surface="light"] nav[aria-label="Main"] a:hover,
+header[data-surface="light"] nav[aria-label="Main"] a[data-status="active"] {
+  color: #111111;
+}
+
+header[data-surface="auth"] button[aria-label="Open search"],
+header[data-surface="auth"] button[aria-label="Notifications"],
+header[data-surface="auth"] button[aria-label^="Notifications,"],
+header[data-surface="auth"] button[aria-label="Account menu"],
+header[data-surface="auth"] button[aria-label="Open menu"],
+header[data-surface="studio"] button[aria-label="Open search"],
+header[data-surface="studio"] button[aria-label="Notifications"],
+header[data-surface="studio"] button[aria-label^="Notifications,"],
+header[data-surface="studio"] button[aria-label="Account menu"],
+header[data-surface="studio"] button[aria-label="Open menu"],
+header[data-surface="light"] button[aria-label="Open search"],
+header[data-surface="light"] button[aria-label="Notifications"],
+header[data-surface="light"] button[aria-label^="Notifications,"],
+header[data-surface="light"] button[aria-label="Account menu"],
+header[data-surface="light"] button[aria-label="Open menu"] {
+  border-color: #172033;
+  background: transparent;
+  color: #172033;
+}
+
+header[data-surface="auth"] a[href="/auth/signup"],
+header[data-surface="studio"] a[href="/auth/signup"],
+header[data-surface="light"] a[href="/auth/signup"] {
+  border-color: #172033;
+  background: #111111;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+body:has(#gvrze-light) footer,
+body:has(#gvrze-auth) footer,
+body:has(#gvrze-studio) footer,
+body:has(#gvrze-store-flow) footer,
+body:has(#gvrze-library-page) footer {
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  color: #111827;
+}
+
+body:has(#gvrze-light) footer :is(p, a, li, span, label),
+body:has(#gvrze-auth) footer :is(p, a, li, span, label),
+body:has(#gvrze-studio) footer :is(p, a, li, span, label),
+body:has(#gvrze-store-flow) footer :is(p, a, li, span, label),
+body:has(#gvrze-library-page) footer :is(p, a, li, span, label) {
+  color: #64748b;
+}
+
+body:has(#gvrze-light) footer :is(p, a, li, span, label)[class*="text-bronze"],
+body:has(#gvrze-auth) footer :is(p, a, li, span, label)[class*="text-bronze"],
+body:has(#gvrze-studio) footer :is(p, a, li, span, label)[class*="text-bronze"],
+body:has(#gvrze-store-flow) footer :is(p, a, li, span, label)[class*="text-bronze"],
+body:has(#gvrze-library-page) footer :is(p, a, li, span, label)[class*="text-bronze"] {
+  color: #111827;
+}
+
+body:has(#gvrze-light) footer input,
+body:has(#gvrze-auth) footer input,
+body:has(#gvrze-studio) footer input,
+body:has(#gvrze-store-flow) footer input,
+body:has(#gvrze-library-page) footer input {
+  background: #ffffff;
+  color: #111827;
+  border-color: #e2e8f0;
+}
+
+body:has(#gvrze-light) footer button,
+body:has(#gvrze-auth) footer button,
+body:has(#gvrze-studio) footer button,
+body:has(#gvrze-store-flow) footer button,
+body:has(#gvrze-library-page) footer button {
+  border-color: #111111;
+  background: #111111;
+  background-image: none;
+  color: #ffffff;
+  box-shadow: none;
+}

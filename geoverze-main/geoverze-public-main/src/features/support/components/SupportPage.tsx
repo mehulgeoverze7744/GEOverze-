@@ -6,10 +6,12 @@ import { SupportContent } from "./SupportContent";
 /** Standalone Support shell — kept for the /support redirect target fallback. */
 export function SupportPage() {
   return (
-    <PageShell>
-      <SectionContainer size="default" className="mx-auto max-w-[57.5rem]">
-        <SupportContent />
-      </SectionContainer>
-    </PageShell>
+    <div id="gvrze-light">
+      <PageShell>
+        <SectionContainer size="default" className="mx-auto max-w-[57.5rem]">
+          <SupportContent />
+        </SectionContainer>
+      </PageShell>
+    </div>
   );
 }

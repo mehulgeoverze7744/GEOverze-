@@ -1,11 +1,25 @@
-import { Outlet } from "@tanstack/react-router";
+import { Outlet, useRouterState } from "@tanstack/react-router";
 
 import { GeostoreCartButton } from "./GeostoreCartButton";
 import { GeostoreSearchButton } from "./GeostoreSearchButton";
 import { GeostoreWishlistButton } from "./GeostoreWishlistButton";
 
+function isFashionStorefront(pathname: string) {
+  return (
+    pathname === "/geostore" ||
+    pathname === "/geostore/" ||
+    pathname.startsWith("/geostore/browse") ||
+    pathname.startsWith("/geostore/category") ||
+    pathname.startsWith("/geostore/product") ||
+    pathname.startsWith("/geostore/try-on")
+  );
+}
+
 /** Shared Gstore shell — wishlist, cart, and search in one icon row. */
 export function GeostoreLayout() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const fashion = isFashionStorefront(pathname);
+
   return (
     <>
       <div
@@ -16,7 +30,13 @@ export function GeostoreLayout() {
         <GeostoreCartButton />
         <GeostoreSearchButton />
       </div>
-      <Outlet />
+      {fashion ? (
+        <Outlet />
+      ) : (
+        <div id="gvrze-store-flow">
+          <Outlet />
+        </div>
+      )}
     </>
   );
 }

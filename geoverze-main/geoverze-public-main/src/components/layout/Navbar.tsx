@@ -45,10 +45,24 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isHome = pathname === "/";
-  const isPlayHub = pathname === "/play";
+  const isPlayHub = pathname === "/play" || pathname.startsWith("/play/");
   const isCommunity = pathname.startsWith("/community");
-  const isPricing = pathname === "/pricing" || pathname === "/pricing/";
+  const isPricing = pathname === "/pricing" || pathname.startsWith("/pricing/");
   const isLibrary = pathname.startsWith("/geolibrary");
+  const isAuth = pathname.startsWith("/auth");
+  const isStudio = pathname.startsWith("/studio");
+  const isLightCatchall =
+    pathname === "/support" ||
+    pathname.startsWith("/support/") ||
+    pathname === "/leaderboard" ||
+    pathname.startsWith("/leaderboard/") ||
+    pathname === "/404" ||
+    pathname.startsWith("/geostore/cart") ||
+    pathname.startsWith("/geostore/checkout") ||
+    pathname.startsWith("/geostore/wishlist") ||
+    pathname.startsWith("/geostore/orders") ||
+    pathname.startsWith("/geostore/rewards") ||
+    pathname.startsWith("/geostore/product");
   const isInfo =
     pathname === "/about" ||
     pathname === "/contact" ||
@@ -125,7 +139,13 @@ export function Navbar() {
                     ? "info"
                     : isAccount
                       ? "account"
-                      : undefined
+                      : isAuth
+                        ? "auth"
+                        : isStudio
+                          ? "studio"
+                          : isLightCatchall
+                            ? "light"
+                            : undefined
       }
       className="group fixed inset-x-0 top-0 z-50 h-[var(--nav-height)] border-b border-transparent transition-all motion-base data-[scrolled=true]:glass-panel data-[scrolled=true]:rounded-none data-[scrolled=true]:shadow-[var(--shadow-float)]"
     >
@@ -136,7 +156,16 @@ export function Navbar() {
           aria-label={`${site.name} home`}
           className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
         >
-          {isHome || isPlayHub || isCommunity || isPricing || isLibrary || isInfo || isAccount ? (
+          {isHome ||
+          isPlayHub ||
+          isCommunity ||
+          isPricing ||
+          isLibrary ||
+          isInfo ||
+          isAccount ||
+          isAuth ||
+          isStudio ||
+          isLightCatchall ? (
             <img
               src="/assets/home/gvrze-wordmark.png"
               alt=""

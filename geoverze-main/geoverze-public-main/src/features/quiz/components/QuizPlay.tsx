@@ -196,7 +196,7 @@ export function QuizPlay({
                   "border-[oklch(0.72_0.13_150/0.5)] bg-[oklch(0.72_0.13_150/0.1)]",
                 feedback.tone === "wrong" &&
                   "border-[oklch(0.66_0.18_20/0.5)] bg-[oklch(0.66_0.18_20/0.1)]",
-                feedback.tone === "skipped" && "border-bronze/20 bg-[oklch(0.185_0.008_62)]",
+                feedback.tone === "skipped" && "border-[#E2E8F0] bg-[#F8FAFC]",
               )}
             >
               <p className="text-[0.85rem] font-semibold text-foreground">{feedback.title}</p>

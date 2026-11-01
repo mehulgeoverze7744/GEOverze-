@@ -15,7 +15,7 @@ export function StudioPanel({
   return (
     <div
       className={cn(
-        "rounded-xl border border-bronze/12 bg-[oklch(0.16_0.006_60/0.72)] backdrop-blur-md",
+        "rounded-xl border border-[#e2e8f0] bg-white shadow-[0_10px_28px_-22px_rgb(17_24_39_/_0.28)]",
         padded && "p-5",
         className,
       )}

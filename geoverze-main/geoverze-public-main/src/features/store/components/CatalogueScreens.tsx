@@ -78,7 +78,9 @@ const ALL = { id: "all", label: "All" } as const;
 /* ─── Editorial adapters ──────────────────────────────────────────────────── */
 
 /** Converts a `GeostoreMerchProduct` to the `EditorialItem` shape. */
-function merchToEditorial(m: ReturnType<typeof merchProductsForStoreCategory>[number]): EditorialItem {
+function merchToEditorial(
+  m: ReturnType<typeof merchProductsForStoreCategory>[number],
+): EditorialItem {
   return {
     id: m.id,
     slug: m.id,
@@ -372,9 +374,7 @@ const ACCESSORIES_PUBLICATION_SLUG = "field-notebook";
 /** Accessories editorial category page. */
 function AccessoriesCategoryShelf() {
   const category = categoryById("accessories");
-  const globes = ACCESSORIES_GLOBE_SLUGS.map(productBySlug).filter(
-    (p): p is Product => Boolean(p),
-  );
+  const globes = ACCESSORIES_GLOBE_SLUGS.map(productBySlug).filter((p): p is Product => Boolean(p));
   const publication = productBySlug(ACCESSORIES_PUBLICATION_SLUG);
   const allProducts = [...globes, ...(publication ? [publication] : [])];
   const items = allProducts.map(productToEditorial);
@@ -449,10 +449,10 @@ export function CategoryScreen() {
 
 function ProductPageFrame({ children }: { children: ReactNode }) {
   return (
-    <>
+    <div id="gvrze-store-flow">
       <GeostoreProductPageBackground />
       <div className="relative z-10">{children}</div>
-    </>
+    </div>
   );
 }
 

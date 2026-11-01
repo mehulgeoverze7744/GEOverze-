@@ -1,10 +1,9 @@
 import { useEffect } from "react";
 
-import everyPointWorldMapBg from "@/assets/geostore/every-point-hoodie-world-map-bg.jpg";
-
 /**
- * Shared dark world-map for every `/geostore/product/*` page.
+ * Light plate for leftover `/geostore/product/*` catalogue PDPs.
  * Hides the global starfield while a product page is mounted.
+ * Fashion storefront PDPs use #gvrze-storefront instead and never mount this.
  */
 export function GeostoreProductPageBackground() {
   useEffect(() => {
@@ -20,8 +19,10 @@ export function GeostoreProductPageBackground() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: `url(${everyPointWorldMapBg})` }}
+      className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
+      style={{
+        background: "linear-gradient(180deg, #ffffff 0%, #f5f6f8 46%, #eef1f4 100%)",
+      }}
     />
   );
 }

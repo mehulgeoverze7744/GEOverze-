@@ -10,12 +10,12 @@ export const Route = createFileRoute("/geostore/try-on")({
       {
         name: "description",
         content:
-          "Virtually try on GVRZE clothing. Upload a photo, select a garment and see how it looks before you buy.",
+          "Preview GVRZE T-shirts on the studio model. Select a design, colour and size, then add it to your bag.",
       },
       { property: "og:title", content: "Try-On Studio — Gstore | GVRZE" },
       {
         property: "og:description",
-        content: "See GVRZE garments on you before you buy, with virtual try-on.",
+        content: "See GVRZE T-shirts on the studio model before you buy.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -50,7 +50,7 @@ export function OpponentPanel({ mode }: { mode: "pvp" | "multiplayer" }) {
         {copy.roster.map((name, i) => (
           <li
             key={name}
-            className="flex items-center justify-between rounded-xl border border-bronze/12 bg-[oklch(0.185_0.008_62)] px-3 py-2 text-[0.8rem]"
+            className="lp-card-soft flex items-center justify-between rounded-xl px-3 py-2 text-[0.8rem]"
           >
             <span className={i === 0 ? "font-semibold text-bronze-glow" : "text-foreground/65"}>
               {name}

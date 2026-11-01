@@ -58,10 +58,7 @@ const CATEGORY_ICON: Record<DrawCategory, typeof Globe2> = {
 const TIMER_CHIPS = [30, 60, 80, 120, 150] as const;
 
 function lobbyCard(className?: string) {
-  return cn(
-    "rounded-[1.35rem] border border-white/8 bg-[oklch(0.145_0.008_60/0.78)] p-5 shadow-[0_12px_40px_oklch(0_0_0/0.28)] backdrop-blur-xl sm:p-6",
-    className,
-  );
+  return cn("lp-card rounded-[1.35rem] p-5 sm:p-6", className);
 }
 
 function SectionTitle({

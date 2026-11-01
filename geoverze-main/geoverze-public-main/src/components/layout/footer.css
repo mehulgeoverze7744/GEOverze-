@@ -28,8 +28,16 @@ body:has(#gvrze-community-page) footer .gvrze-footer-wordmark,
 body:has(#gvrze-pricing-page) footer .gvrze-footer-wordmark,
 body:has(#lets-play-page) footer .gvrze-footer-wordmark,
 body:has(#gvrze-storefront) footer .gvrze-footer-wordmark,
+body:has(#gvrze-light) footer .gvrze-footer-wordmark,
+body:has(#gvrze-auth) footer .gvrze-footer-wordmark,
+body:has(#gvrze-studio) footer .gvrze-footer-wordmark,
+body:has(#gvrze-store-flow) footer .gvrze-footer-wordmark,
+body:has(#gvrze-library-page) footer .gvrze-footer-wordmark,
 body:has(header[data-surface="account"]) footer .gvrze-footer-wordmark,
 body:has(header[data-surface="info"]) footer .gvrze-footer-wordmark,
-body:has(header[data-surface="library"]) footer .gvrze-footer-wordmark {
+body:has(header[data-surface="library"]) footer .gvrze-footer-wordmark,
+body:has(header[data-surface="auth"]) footer .gvrze-footer-wordmark,
+body:has(header[data-surface="studio"]) footer .gvrze-footer-wordmark,
+body:has(header[data-surface="light"]) footer .gvrze-footer-wordmark {
   filter: none;
 }

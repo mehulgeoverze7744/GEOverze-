@@ -5,7 +5,7 @@ import { ProgressBar } from "./ProgressBar";
 import { Timer } from "./Timer";
 
 const exitButtonClass =
-  "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-bronze/20 bg-[oklch(0.185_0.008_62)] text-foreground/70 transition-colors motion-snap hover:border-bronze/50 hover:text-bronze-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50";
+  "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#E2E8F0] bg-[#FFFFFF] text-[#111827] transition-colors motion-snap hover:border-[#2b74c4] hover:text-[#2b74c4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2b74c4]/40";
 
 /** Sticky top bar for the play screen: progress, position, clock and exit. */
 export function QuizHeader({
@@ -27,15 +27,14 @@ export function QuizHeader({
 }) {
   const questionLabel = (
     <>
-      Question {Math.min(index + 1, total)}{" "}
-      <span className="text-foreground/50">of {total}</span>
+      Question {Math.min(index + 1, total)} <span className="text-foreground/50">of {total}</span>
     </>
   );
 
   return (
     <header
       className={cn(
-        "sticky top-[var(--nav-height)] z-30 border-b border-bronze/12 bg-[oklch(0.09_0.005_60/0.94)] backdrop-blur-sm",
+        "sticky top-[var(--nav-height)] z-30 border-b border-[#E2E8F0] bg-[#FFFFFF]",
         className,
       )}
     >
@@ -43,11 +42,16 @@ export function QuizHeader({
         {/* Narrow viewports: two-row layout so progress, timer, and exit never compete. */}
         <div className="flex flex-col gap-2 md:hidden">
           <div className="flex min-w-0 items-center justify-between gap-3">
-            <p className="min-w-0 truncate text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-bronze/90">
+            <p className="min-w-0 truncate text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-[#2b74c4]">
               {modeLabel ? `${modeLabel} · ` : ""}
               {title}
             </p>
-            <button type="button" onClick={onExit} aria-label="Exit quiz" className={exitButtonClass}>
+            <button
+              type="button"
+              onClick={onExit}
+              aria-label="Exit quiz"
+              className={exitButtonClass}
+            >
               <X className="h-4.5 w-4.5" strokeWidth={1.8} aria-hidden />
             </button>
           </div>
@@ -60,7 +64,7 @@ export function QuizHeader({
         {/* Tablet/desktop: single premium row when width allows. */}
         <div className="hidden min-w-0 items-center gap-3 md:flex">
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-bronze/90">
+            <p className="truncate text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-[#2b74c4]">
               {modeLabel ? `${modeLabel} · ` : ""}
               {title}
             </p>

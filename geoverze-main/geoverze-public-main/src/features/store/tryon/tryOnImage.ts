@@ -1,8 +1,8 @@
 /**
- * Client-side photo helpers for Try-On Studio.
+ * Phase 2 client-side photo helpers (unwired).
  *
- * Photos are resized in memory and never written to storage. The resulting
- * object URL is revoked by the studio when the session resets.
+ * Phase 1 does not upload personal photographs. These helpers stay available
+ * for a later personal-photo try-on flow.
  */
 
 export const MAX_FILE_BYTES = 10 * 1024 * 1024;

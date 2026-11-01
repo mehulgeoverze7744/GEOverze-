@@ -33,11 +33,11 @@ export function Timer({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2 rounded-full border border-bronze/20 bg-[oklch(0.185_0.008_62)] px-3 py-1.5 text-[0.72rem] font-semibold tabular-nums text-foreground/75",
+        "inline-flex items-center gap-2 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-1.5 text-[0.72rem] font-semibold tabular-nums text-[#111827]",
         className,
       )}
     >
-      <TimerIcon className="h-3.5 w-3.5 text-bronze" strokeWidth={1.8} aria-hidden />
+      <TimerIcon className="h-3.5 w-3.5 text-[#2b74c4]" strokeWidth={1.8} aria-hidden />
       <span className="sr-only">Time elapsed</span>
       {formatDuration(elapsed)}
     </span>

@@ -33,7 +33,6 @@ import { ModeCard } from "./ModeCard";
 import { PLAY_CIRCLE_MODE_IDS, PlayModeCircle } from "./PlayModeCircle";
 import { PlayHero } from "./PlayHero";
 import { PlayHubNav } from "./PlayHubNav";
-import { PlayPageBackground } from "./PlayPageBackground";
 import { QuizCard } from "./QuizCard";
 import { QuizRail } from "./QuizRail";
 import { ViewAllQuizzesCard } from "./ViewAllQuizzesCard";
@@ -136,8 +135,6 @@ export function PlayPage() {
 
   return (
     <PageShell>
-      <div id="lets-play-page">
-      <PlayPageBackground preset="geo" />
       <PlayHero onRandom={playRandom} />
       <PlayHubNav />
 
@@ -343,7 +340,6 @@ export function PlayPage() {
           </AnimatedSection>
         </SectionContainer>
       </section>
-      </div>
     </PageShell>
   );
 }

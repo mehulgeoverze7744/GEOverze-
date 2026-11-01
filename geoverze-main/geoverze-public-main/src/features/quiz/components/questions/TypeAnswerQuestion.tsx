@@ -30,7 +30,7 @@ export function TypeAnswerQuestion({ question, value, locked, onSelect }: Questi
             ? "border-[oklch(0.72_0.13_150/0.7)] bg-[oklch(0.72_0.13_150/0.14)]"
             : graded === false
               ? "border-[oklch(0.66_0.18_20/0.7)] bg-[oklch(0.66_0.18_20/0.14)]"
-              : "border-bronze/20 bg-[oklch(0.185_0.008_62)] focus-within:border-bronze/60",
+              : "border-[#E2E8F0] bg-[#F8FAFC] focus-within:border-[#2b74c4]",
         )}
       >
         <input

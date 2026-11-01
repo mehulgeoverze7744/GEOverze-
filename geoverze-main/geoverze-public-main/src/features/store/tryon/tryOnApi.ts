@@ -1,5 +1,8 @@
 /**
- * Try-On Studio — server-side AI adapter.
+ * Phase 2 Try-On Studio — server-side AI adapter (unwired).
+ *
+ * Phase 1 uses the fixed GVRZE studio model and does not call this module.
+ * Keep the adapter so personal-photo try-on can be reconnected later.
  *
  * Credentials live in server environment variables only. They are never sent
  * to the browser. Swap providers with TRYON_PROVIDER without changing the UI.

@@ -40,17 +40,15 @@ export function AnswerCard({
       disabled={disabled}
       aria-pressed={state === "selected" || state === "correct" || state === "incorrect"}
       className={cn(
-        "group relative flex w-full items-center gap-4 rounded-2xl border p-4 text-left transition-[transform,background-color,border-color] motion-snap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/60",
+        "group relative flex w-full items-center gap-4 rounded-2xl border p-4 text-left transition-[transform,background-color,border-color] motion-snap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2b74c4]/40",
         "min-h-[3.75rem] sm:min-h-[4rem]",
         layout === "tile" && "flex-col items-stretch gap-3 p-3 text-center",
         state === "idle" &&
-          "border-bronze/14 bg-[oklch(0.185_0.008_62)] text-foreground/85 hover:border-bronze/45 hover:bg-[oklch(0.215_0.01_62)] active:scale-[0.985]",
-        state === "selected" && "border-bronze bg-bronze/18 text-bronze-glow",
-        state === "correct" &&
-          "border-[oklch(0.72_0.13_150/0.7)] bg-[oklch(0.72_0.13_150/0.16)] text-[oklch(0.88_0.12_150)]",
-        state === "incorrect" &&
-          "border-[oklch(0.66_0.18_20/0.7)] bg-[oklch(0.66_0.18_20/0.16)] text-[oklch(0.84_0.15_25)]",
-        state === "muted" && "border-bronze/10 bg-[oklch(0.16_0.006_60)] text-foreground/50",
+          "border-[#E2E8F0] bg-[#F8FAFC] text-[#111827] hover:border-[#2b74c4]/45 hover:bg-[#FFFFFF] active:scale-[0.985]",
+        state === "selected" && "border-[#2b74c4] bg-[#2b74c4]/10 text-[#1e4d86]",
+        state === "correct" && "border-emerald-300 bg-emerald-50 text-emerald-800",
+        state === "incorrect" && "border-rose-300 bg-rose-50 text-rose-800",
+        state === "muted" && "border-[#E2E8F0] bg-[#F8FAFC] text-[#64748B]",
         disabled && "cursor-default",
         className,
       )}
@@ -60,7 +58,7 @@ export function AnswerCard({
       ) : shortcut ? (
         <span
           aria-hidden
-          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-bronze/25 bg-[oklch(0.13_0.006_60)] text-[0.7rem] font-semibold text-foreground/60"
+          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] text-[0.7rem] font-semibold text-[#64748B]"
         >
           {shortcut}
         </span>

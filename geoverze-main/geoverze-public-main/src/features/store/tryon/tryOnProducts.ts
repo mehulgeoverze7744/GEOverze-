@@ -32,6 +32,8 @@ export const TRY_ON_CATEGORY_LABELS: Record<TryOnCategoryId, string> = {
 
 export const TRY_ON_SIZES = ["S", "M", "L", "XL", "XXL"] as const;
 
+export type TryOnImageLayout = "single" | "diptych";
+
 export type TryOnColor = {
   id: string;
   label: string;
@@ -40,6 +42,8 @@ export type TryOnColor = {
   image: string;
   /** Optional dedicated back-view asset. */
   backImage?: string;
+  /** Hanger sheets are front|back side by side — never stretched onto the model. */
+  layout?: TryOnImageLayout;
 };
 
 export type TryOnGarment = {
@@ -182,6 +186,7 @@ function colorsFromMerch(slug: string, merch: GeostoreMerchProduct): TryOnColor[
       label: color.label,
       hex: color.hex,
       image: color.image,
+      layout: "diptych" as const,
     }));
   }
 
@@ -353,7 +358,7 @@ export function tryOnColorById(garment: TryOnGarment, colorId: string): TryOnCol
   return garment.colors.find((color) => color.id === colorId) ?? garment.colors[0];
 }
 
-/** Garment image used for AI try-on and the editorial preview. */
+/** Garment photography for the product plate and a future Phase 2 AI flow. */
 export function tryOnGarmentImage(
   garment: TryOnGarment,
   colorId: string,

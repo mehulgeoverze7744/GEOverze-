@@ -22,10 +22,10 @@ export function ProgressBar({
       aria-valuemax={total}
       aria-valuenow={value}
       aria-valuetext={`${value} of ${total}`}
-      className={cn("h-2 w-full overflow-hidden rounded-full bg-[oklch(0.24_0.008_60)]", className)}
+      className={cn("h-2 w-full overflow-hidden rounded-full bg-[#E2E8F0]", className)}
     >
       <span
-        className="block h-full rounded-full bg-gradient-bronze transition-[width] motion-snap"
+        className="block h-full rounded-full bg-[#2b74c4] transition-[width] motion-snap"
         style={{ width: `${pct}%` }}
       />
     </div>

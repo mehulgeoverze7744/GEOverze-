@@ -136,6 +136,15 @@ body:has(#gvrze-home) {
   color: #1a2c42;
 }
 
+#gvrze-home .geostore-showcase .geostore-showcase-intro__heading {
+  color: #000000;
+}
+
+#gvrze-home .geostore-showcase .sf-category-card,
+#gvrze-home .geostore-showcase .sf-category-card :is(h2, h3, p, span) {
+  color: #ffffff;
+}
+
 #gvrze-home .geostore-showcase [class*="text-bronze"],
 #gvrze-home .geostore-showcase [class*="text-bronze-glow"] {
   color: #111111;

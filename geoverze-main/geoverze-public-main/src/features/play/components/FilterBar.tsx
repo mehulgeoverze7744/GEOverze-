@@ -34,14 +34,14 @@ function FilterSelect({
           value={value}
           onChange={(event) => onChange(event.target.value)}
           className={cn(
-            "h-10 w-full min-w-0 cursor-pointer appearance-none truncate rounded-xl border bg-[oklch(0.13_0.006_60/0.88)] px-3 pr-9 text-[0.78rem] text-foreground/88 outline-none",
+            "h-10 w-full min-w-0 cursor-pointer appearance-none truncate rounded-xl border bg-[#FFFFFF] px-3 pr-9 text-[0.78rem] text-[#111827] outline-none",
             "transition-[border-color,box-shadow,background-color] duration-200 ease-out motion-reduce:transition-none",
-            "hover:border-bronze/35 focus:border-bronze/55 focus:ring-2 focus:ring-bronze/18",
-            active ? "border-bronze/40 text-foreground" : "border-bronze/16",
+            "hover:border-[#2b74c4]/40 focus:border-[#2b74c4] focus:ring-2 focus:ring-[#2b74c4]/18",
+            active ? "border-[#2b74c4]/50 text-[#111827]" : "border-[#E2E8F0]",
           )}
         >
           {options.map((option) => (
-            <option key={option.id} value={option.id} className="bg-[oklch(0.16_0.008_60)]">
+            <option key={option.id} value={option.id} className="bg-[#FFFFFF] text-[#111827]">
               {option.label}
             </option>
           ))}
@@ -129,7 +129,7 @@ export function FilterBar({
   const chips = chipsForFilters(filters, categoryLabel);
 
   return (
-    <div className="rounded-2xl border border-bronze/14 bg-[oklch(0.11_0.006_60/0.72)] p-4 shadow-[0_12px_40px_oklch(0_0_0/0.18)] sm:p-5">
+    <div className="lp-card rounded-2xl p-4 sm:p-5">
       <SearchBar
         id="play-search"
         label="Search quizzes"
@@ -137,7 +137,7 @@ export function FilterBar({
         value={filters.query}
         onChange={(event) => onChange({ query: event.currentTarget.value })}
         onClear={() => onChange({ query: "" })}
-        className="rounded-2xl border-bronze/18 bg-[oklch(0.13_0.006_60/0.9)] py-3.5 focus:border-bronze/50 focus:ring-bronze/18"
+        className="rounded-2xl border-[#E2E8F0] bg-[#FFFFFF] py-3.5 focus:border-[#2b74c4] focus:ring-[#2b74c4]/18"
       />
 
       <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 xl:grid-cols-6 xl:gap-3">

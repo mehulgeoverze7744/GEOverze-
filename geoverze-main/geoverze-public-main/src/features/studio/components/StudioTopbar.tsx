@@ -22,7 +22,7 @@ export function StudioTopbar() {
     ) ?? STUDIO_NAV[0]?.items[0];
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-bronze/12 bg-[oklch(0.13_0.006_60/0.85)] px-4 backdrop-blur-xl md:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-[#e2e8f0] bg-[#ffffff] px-4 md:px-6">
       <button
         type="button"
         onClick={toggleSidebar}
@@ -60,7 +60,7 @@ export function StudioTopbar() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search quizzes, articles, media"
-          className="h-9 w-full rounded-lg border border-bronze/15 bg-[oklch(0.175_0.006_60)] pl-9 pr-3 text-[0.8rem] text-foreground outline-none transition-colors placeholder:text-foreground/50 focus:border-bronze/50"
+          className="h-9 w-full rounded-lg border border-[#e2e8f0] bg-[#ffffff] pl-9 pr-3 text-[0.8rem] text-[#111827] outline-none transition-colors placeholder:text-[#64748b] focus:border-[#94a3b8]"
         />
       </div>
 

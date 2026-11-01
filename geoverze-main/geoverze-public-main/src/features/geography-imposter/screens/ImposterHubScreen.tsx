@@ -57,10 +57,7 @@ const STATUS_STRIP = [
 ] as const;
 
 function lobbyCard(className?: string) {
-  return cn(
-    "rounded-[1.35rem] border border-bronze/20 bg-[oklch(0.145_0.008_60/0.78)] shadow-[0_12px_40px_oklch(0_0_0/0.28)] backdrop-blur-xl",
-    className,
-  );
+  return cn("lp-card rounded-[1.35rem]", className);
 }
 
 function ModeCard({
@@ -82,7 +79,7 @@ function ModeCard({
     <Link
       to={to}
       className={cn(
-        "group/card block h-full rounded-[1.35rem] border border-bronze/22 bg-[oklch(0.145_0.008_60/0.82)] p-6 shadow-[0_12px_36px_oklch(0_0_0/0.28)] backdrop-blur-xl",
+        "lp-card group/card block h-full rounded-[1.35rem] p-6",
         "transition-[transform,border-color,box-shadow] duration-200 motion-reduce:transition-none",
         "hover:-translate-y-0.5 hover:border-bronze/50 hover:shadow-[0_0_28px_oklch(0.72_0.1_70/0.16)] motion-reduce:hover:translate-y-0",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50",

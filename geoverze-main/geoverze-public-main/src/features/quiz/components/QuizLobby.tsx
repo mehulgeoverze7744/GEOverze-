@@ -26,20 +26,17 @@ const FORMAT_LABEL: Record<QuestionType, string> = {
 };
 
 function lobbyCardClass(className?: string) {
-  return cn(
-    "min-w-0 overflow-hidden rounded-[1.5rem] border border-white/8 bg-[oklch(0.145_0.008_60/0.78)] shadow-[0_12px_40px_oklch(0_0_0/0.28)] backdrop-blur-xl",
-    className,
-  );
+  return cn("lp-card min-w-0 overflow-hidden rounded-[1.5rem]", className);
 }
 
 function Fact({ icon: Icon, label, value }: { icon: typeof Clock; label: string; value: string }) {
   return (
-    <div className="min-w-0 rounded-[1.15rem] border border-white/6 bg-[oklch(0.2_0.01_60/0.45)] px-4 py-3.5">
-      <p className="flex items-center gap-2 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-foreground/45">
-        <Icon className="h-3.5 w-3.5 shrink-0 text-bronze" strokeWidth={1.8} aria-hidden />
+    <div className="lp-card-soft min-w-0 rounded-[1.15rem] px-4 py-3.5">
+      <p className="flex items-center gap-2 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-[#64748B]">
+        <Icon className="h-3.5 w-3.5 shrink-0 text-[#2b74c4]" strokeWidth={1.8} aria-hidden />
         <span className="min-w-0 truncate">{label}</span>
       </p>
-      <p className="mt-1.5 text-[1.05rem] font-semibold tracking-tight text-foreground">{value}</p>
+      <p className="mt-1.5 text-[1.05rem] font-semibold tracking-tight text-[#111827]">{value}</p>
     </div>
   );
 }
@@ -85,14 +82,14 @@ export function QuizLobby({ set, onStart }: { set: QuizSet; onStart: () => void 
             </MetaChip>
           </div>
 
-          <h1 className="mt-5 text-[1.75rem] font-semibold tracking-tight text-foreground sm:text-4xl">
+          <h1 className="mt-5 text-[1.75rem] font-semibold tracking-tight text-[#111827] sm:text-4xl">
             {set.title}
           </h1>
-          <p className="mt-3 max-w-2xl text-[0.95rem] leading-relaxed text-foreground/60">
+          <p className="mt-3 max-w-2xl text-[0.95rem] leading-relaxed text-[#64748B]">
             {set.description}
           </p>
-          <p className="mt-3 text-[0.8rem] text-foreground/50">
-            Created by <span className="font-medium text-bronze-glow">{set.creator}</span>
+          <p className="mt-3 text-[0.8rem] text-[#64748B]">
+            Created by <span className="font-medium text-[#2b74c4]">{set.creator}</span>
           </p>
 
           <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -137,7 +134,7 @@ export function QuizLobby({ set, onStart }: { set: QuizSet; onStart: () => void 
           <ul className="mt-7 flex min-w-0 flex-wrap gap-2">
             {types.map((type) => (
               <li key={type}>
-                <span className="inline-flex rounded-full border border-white/8 bg-[oklch(0.2_0.01_60/0.4)] px-3 py-1.5 text-[0.7rem] font-medium text-foreground/70">
+                <span className="inline-flex rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-1.5 text-[0.7rem] font-medium text-[#111827]">
                   {type}
                 </span>
               </li>
@@ -148,7 +145,7 @@ export function QuizLobby({ set, onStart }: { set: QuizSet; onStart: () => void 
 
       <aside className="flex min-w-0 flex-col gap-5">
         <section className={lobbyCardClass("p-6 sm:p-7")} aria-label="Your record">
-          <h2 className="text-[1.05rem] font-semibold tracking-tight text-foreground">
+          <h2 className="text-[1.05rem] font-semibold tracking-tight text-[#111827]">
             Your record
           </h2>
           <div className="mt-5 grid grid-cols-2 gap-3">
@@ -159,21 +156,21 @@ export function QuizLobby({ set, onStart }: { set: QuizSet; onStart: () => void 
             />
             <Fact icon={Flame} label="Best streak" value={`${set.bestStreak}`} />
           </div>
-          <h3 className="mt-7 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-foreground/45">
+          <h3 className="mt-7 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[#64748B]">
             Completion rewards
           </h3>
           <div className="mt-3 flex min-w-0 flex-wrap gap-2">
-            <span className="inline-flex rounded-full border border-bronze/30 bg-bronze/12 px-3 py-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-bronze-glow">
+            <span className="inline-flex rounded-full border border-[#2b74c4]/30 bg-[#2b74c4]/10 px-3 py-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-[#2b74c4]">
               +{set.rewards.xp} XP
             </span>
-            <span className="inline-flex rounded-full border border-bronze/30 bg-bronze/12 px-3 py-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-bronze-glow">
+            <span className="inline-flex rounded-full border border-[#2b74c4]/30 bg-[#2b74c4]/10 px-3 py-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-[#2b74c4]">
               +{set.rewards.credits} credits
             </span>
-            <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-foreground/70">
+            <span className="inline-flex rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-[#111827]">
               Streak shield
             </span>
           </div>
-          <p className="mt-4 text-[0.75rem] leading-relaxed text-foreground/50">
+          <p className="mt-4 text-[0.75rem] leading-relaxed text-[#64748B]">
             XP and credits from completed quizzes are recorded on your account when signed in.
           </p>
         </section>

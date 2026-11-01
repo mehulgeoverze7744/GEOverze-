@@ -34,49 +34,51 @@ export function AuthLayout({
   className?: string;
 }) {
   return (
-    <section className="flex min-h-[calc(100vh-var(--nav-height))] items-center py-[var(--space-section-sm)] pt-[calc(var(--nav-height)+3rem)]">
-      <SectionContainer size={width === "wide" ? "default" : "narrow"}>
-        <AnimatedSection>
-          <GlassCard
-            strong
-            className={cn(
-              "mx-auto p-7 sm:p-9 md:p-11",
-              width === "wide" ? "max-w-3xl" : "max-w-md",
-              className,
-            )}
-          >
-            <Link
-              to="/"
-              aria-label="GVRZE home"
-              className="inline-flex rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+    <div id="gvrze-auth">
+      <section className="flex min-h-[calc(100vh-var(--nav-height))] items-center py-[var(--space-section-sm)] pt-[calc(var(--nav-height)+3rem)]">
+        <SectionContainer size={width === "wide" ? "default" : "narrow"}>
+          <AnimatedSection>
+            <GlassCard
+              strong
+              className={cn(
+                "mx-auto p-7 sm:p-9 md:p-11",
+                width === "wide" ? "max-w-3xl" : "max-w-md",
+                className,
+              )}
             >
-              <BrandMark
-                size="md"
-                withWordmark
-                wordmarkClassName="text-[0.68rem] tracking-[0.36em] text-foreground/70"
-              />
-            </Link>
+              <Link
+                to="/"
+                aria-label="GVRZE home"
+                className="inline-flex rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+              >
+                <BrandMark
+                  size="md"
+                  withWordmark
+                  wordmarkClassName="text-[0.68rem] tracking-[0.36em] text-foreground/70"
+                />
+              </Link>
 
-            {eyebrow ? <p className="eyebrow mt-8 sm:mt-9">{eyebrow}</p> : null}
-            <h1 className="mt-4 font-light leading-[1.1] tracking-tight text-foreground text-[clamp(1.6rem,3vw,2.1rem)]">
-              {title}
-            </h1>
-            {description ? (
-              <p className="mt-4 text-sm leading-relaxed text-foreground/55">{description}</p>
-            ) : null}
+              {eyebrow ? <p className="eyebrow mt-8 sm:mt-9">{eyebrow}</p> : null}
+              <h1 className="mt-4 font-light leading-[1.1] tracking-tight text-foreground text-[clamp(1.6rem,3vw,2.1rem)]">
+                {title}
+              </h1>
+              {description ? (
+                <p className="mt-4 text-sm leading-relaxed text-foreground/55">{description}</p>
+              ) : null}
 
-            {aside ? <div className="mt-8">{aside}</div> : null}
+              {aside ? <div className="mt-8">{aside}</div> : null}
 
-            <div className="mt-8 sm:mt-9">{children}</div>
+              <div className="mt-8 sm:mt-9">{children}</div>
 
-            {footer ? (
-              <div className="mt-8 border-t border-bronze/12 pt-6 text-sm text-foreground/50">
-                {footer}
-              </div>
-            ) : null}
-          </GlassCard>
-        </AnimatedSection>
-      </SectionContainer>
-    </section>
+              {footer ? (
+                <div className="mt-8 border-t border-bronze/12 pt-6 text-sm text-foreground/50">
+                  {footer}
+                </div>
+              ) : null}
+            </GlassCard>
+          </AnimatedSection>
+        </SectionContainer>
+      </section>
+    </div>
   );
 }

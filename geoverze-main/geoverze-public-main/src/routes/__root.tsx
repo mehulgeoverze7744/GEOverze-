@@ -29,7 +29,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   }, [error]);
 
   return (
-    <div className="flex min-h-[80vh] flex-col items-center justify-center px-6 text-center">
+    <div
+      id="gvrze-light"
+      className="flex min-h-[80vh] flex-col items-center justify-center px-6 text-center"
+    >
       <p className="eyebrow">Signal lost</p>
       <h1 className="mt-6 text-xl font-light tracking-tight text-foreground">
         This page didn't load

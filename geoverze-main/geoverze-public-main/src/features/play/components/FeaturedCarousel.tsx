@@ -43,10 +43,7 @@ export function FeaturedCarousel({
 
   useEffect(() => {
     if (!auto || activeSlides.length < 2) return;
-    timer.current = window.setInterval(
-      () => setIndex((i) => (i + 1) % activeSlides.length),
-      6000,
-    );
+    timer.current = window.setInterval(() => setIndex((i) => (i + 1) % activeSlides.length), 6000);
     return () => {
       if (timer.current) window.clearInterval(timer.current);
     };
@@ -96,6 +93,19 @@ export function FeaturedCarousel({
         }
       }}
     >
+      <CoverArt
+        key={`${filter}-${active.id}`}
+        art={active.art}
+        ratio="fill"
+        overlay="none"
+        className="featured-carousel-media"
+        fit="cover"
+        objectPosition="center"
+        imageSrc={active.imageSrc}
+        imageAlt={active.imageAlt}
+      />
+      <div className="featured-carousel-scrim" />
+
       <div className="featured-carousel-filters" role="tablist" aria-label="Banner categories">
         {FILTERS.map((option) => {
           const selected = option.id === filter;
@@ -116,81 +126,69 @@ export function FeaturedCarousel({
         })}
       </div>
 
-      <div className="relative">
-        <CoverArt
-          key={`${filter}-${active.id}`}
-          art={active.art}
-          ratio="wide"
-          className="featured-carousel-media h-[15rem] md:h-[19rem]"
-          fit="cover"
-          imageSrc={active.imageSrc}
-          imageAlt={active.imageAlt}
-          {...(active.objectPosition ? { objectPosition: active.objectPosition } : {})}
-        />
-        <div className="featured-carousel-scrim absolute inset-0" />
-        {activeSlides.length > 1 ? (
-          <>
-            <button
-              type="button"
-              aria-label="Previous banner"
-              onClick={() => step(-1)}
-              className="featured-carousel-arrow featured-carousel-arrow--prev"
-            >
-              <ChevronLeft strokeWidth={2.2} aria-hidden />
-            </button>
-            <button
-              type="button"
-              aria-label="Next banner"
-              onClick={() => step(1)}
-              className="featured-carousel-arrow featured-carousel-arrow--next"
-            >
-              <ChevronRight strokeWidth={2.2} aria-hidden />
-            </button>
-          </>
-        ) : null}
-        <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
-          <div className="flex flex-wrap items-center gap-2">
-            <MetaChip tone="bronze">{filter === "popular" ? "Popular" : "Featured"}</MetaChip>
-            {active.difficulty ? <DifficultyBadge level={active.difficulty} /> : null}
-          </div>
-          <h2 className="featured-carousel-title mt-3 text-2xl font-semibold tracking-tight md:text-3xl">
-            {active.title}
-          </h2>
-          {hasMeta ? (
-            <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-[0.75rem] text-white/80">
-              {active.creator ? <span>by {active.creator}</span> : null}
-              {active.players != null ? (
-                <span className="inline-flex items-center gap-1.5">
-                  <Users className="h-3.5 w-3.5 text-white/90" strokeWidth={1.8} />
-                  {active.players.toLocaleString()} players
-                </span>
-              ) : null}
-              {active.rating != null ? (
-                <span className="inline-flex items-center gap-1.5">
-                  <Star className="h-3.5 w-3.5 text-white" strokeWidth={1.8} fill="currentColor" />
-                  {active.rating.toFixed(1)}
-                </span>
-              ) : null}
-              {active.questions != null && active.minutes != null ? (
-                <span>
-                  {active.questions} questions · ~{active.minutes} min
-                </span>
-              ) : null}
-            </div>
-          ) : null}
-          <GeoButton
-            variant="solid"
-            size="lg"
-            className={hasMeta ? "mt-5" : "mt-4"}
-            onClick={() => onPlay(active)}
+      {activeSlides.length > 1 ? (
+        <>
+          <button
+            type="button"
+            aria-label="Previous banner"
+            onClick={() => step(-1)}
+            className="featured-carousel-arrow featured-carousel-arrow--prev"
           >
-            <Play className="h-4 w-4" strokeWidth={2.4} />
-            Play now
-          </GeoButton>
+            <ChevronLeft strokeWidth={2.2} aria-hidden />
+          </button>
+          <button
+            type="button"
+            aria-label="Next banner"
+            onClick={() => step(1)}
+            className="featured-carousel-arrow featured-carousel-arrow--next"
+          >
+            <ChevronRight strokeWidth={2.2} aria-hidden />
+          </button>
+        </>
+      ) : null}
+
+      <div className="featured-carousel-copy">
+        <div className="flex flex-wrap items-center gap-2">
+          <MetaChip tone="bronze">{filter === "popular" ? "Popular" : "Featured"}</MetaChip>
+          {active.difficulty ? <DifficultyBadge level={active.difficulty} /> : null}
         </div>
+        <h2 className="featured-carousel-title mt-3 text-2xl font-semibold tracking-tight md:text-3xl">
+          {active.title}
+        </h2>
+        {hasMeta ? (
+          <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-[0.75rem] text-white/80">
+            {active.creator ? <span>by {active.creator}</span> : null}
+            {active.players != null ? (
+              <span className="inline-flex items-center gap-1.5">
+                <Users className="h-3.5 w-3.5 text-white/90" strokeWidth={1.8} />
+                {active.players.toLocaleString()} players
+              </span>
+            ) : null}
+            {active.rating != null ? (
+              <span className="inline-flex items-center gap-1.5">
+                <Star className="h-3.5 w-3.5 text-white" strokeWidth={1.8} fill="currentColor" />
+                {active.rating.toFixed(1)}
+              </span>
+            ) : null}
+            {active.questions != null && active.minutes != null ? (
+              <span>
+                {active.questions} questions · ~{active.minutes} min
+              </span>
+            ) : null}
+          </div>
+        ) : null}
+        <GeoButton
+          variant="solid"
+          size="lg"
+          className={hasMeta ? "mt-5" : "mt-4"}
+          onClick={() => onPlay(active)}
+        >
+          <Play className="h-4 w-4" strokeWidth={2.4} />
+          Play now
+        </GeoButton>
       </div>
 
-      <div className="flex items-center justify-center gap-2 px-6 py-4">
+      <div className="featured-carousel-dots">
         {activeSlides.map((slide, i) => (
           <button
             key={slide.id}
@@ -200,9 +198,7 @@ export function FeaturedCarousel({
             aria-current={i === index ? true : undefined}
             className={cn(
               "h-1.5 rounded-full transition-all motion-snap",
-              i === index
-                ? "w-8 bg-gradient-bronze"
-                : "w-3 bg-[oklch(0.3_0.01_60)] hover:bg-bronze/50",
+              i === index ? "w-8 bg-white" : "w-3 bg-white/45 hover:bg-white/70",
             )}
           />
         ))}
