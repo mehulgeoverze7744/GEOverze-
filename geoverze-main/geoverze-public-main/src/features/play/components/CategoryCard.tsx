@@ -28,7 +28,7 @@ export function CategoryCard({
                 imageSrc: artwork.src,
                 imageAlt: artwork.alt,
                 fit: "cover" as const,
-                overlay: "category" as const,
+                overlay: "none" as const,
                 objectPosition: artwork.objectPosition,
               }
             : {})}

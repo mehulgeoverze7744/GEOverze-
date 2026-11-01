@@ -257,9 +257,6 @@ export function LibraryCard({
             />
           </span>
         ) : null}
-        {restricted ? (
-          <span className="library-card-photo-scrim" aria-hidden />
-        ) : null}
         {progress > 0 ? (
           <span
             className="absolute inset-x-0 bottom-0 h-0.5 bg-bronze/70"

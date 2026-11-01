@@ -44,20 +44,11 @@ function CategoryTileBody({
               icon={category.icon}
               ratio={banner ? "banner" : "wide"}
               fit={banner ? "cover" : "contain"}
-              overlay={banner ? "none" : "hero"}
+              overlay="none"
               {...(compact ? { className: "aspect-[8/2.25]" } : {})}
               {...(banner ? { imageSrc: banner.src, imageAlt: banner.alt } : {})}
             />
           </div>
-          {banner ? (
-            <span
-              aria-hidden
-              className={cn(
-                "geostore-category-cover-fade",
-                compact && "geostore-category-cover-fade--compact",
-              )}
-            />
-          ) : null}
           {comingSoon ? (
             <div aria-hidden className="absolute inset-0 bg-charcoal/25 backdrop-blur-[1px]" />
           ) : null}

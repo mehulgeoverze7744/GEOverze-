@@ -48,22 +48,19 @@ export const FeatureCard = memo(function FeatureCard({
       <GlassCard
         interactive
         className={cn(
-          "group relative isolate min-h-[17.5rem] overflow-hidden p-0",
-          "!bg-transparent [background-image:none] [backdrop-filter:none]",
+          "group relative isolate overflow-hidden p-0",
         )}
       >
-        <img
-          src={imageSrc}
-          alt=""
-          aria-hidden
-          loading="lazy"
-          decoding="async"
-          className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-        />
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-gradient-to-b from-charcoal/80 via-charcoal/45 to-charcoal/20"
-        />
+        <div className="relative aspect-[16/10] overflow-hidden">
+          <img
+            src={imageSrc}
+            alt=""
+            aria-hidden
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+          />
+        </div>
         <div className="relative z-10 p-7">
           <FeatureCardContent icon={icon} title={title} description={description} />
         </div>

@@ -29,7 +29,7 @@ import { CategoryCard } from "./CategoryCard";
 import { FeaturedCarousel } from "./FeaturedCarousel";
 import { GameTypeCard } from "./GameTypeCard";
 import { FilterBar } from "./FilterBar";
-import { ModeCard } from "./ModeCard";
+import { GameModesOrbit } from "./GameModesOrbit";
 import { PLAY_CIRCLE_MODE_IDS, PlayModeCircle } from "./PlayModeCircle";
 import { PlayHero } from "./PlayHero";
 import { PlayHubNav } from "./PlayHubNav";
@@ -167,18 +167,7 @@ export function PlayPage() {
                 <PlayModeCircle key={mode.id} mode={mode} onSelect={playMode} />
               ))}
             </div>
-            <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {GAME_MODES.filter(
-                (mode) => !(PLAY_CIRCLE_MODE_IDS as readonly string[]).includes(mode.id),
-              ).map((mode) => (
-                <ModeCard key={mode.id} mode={mode} onSelect={playMode} />
-              ))}
-            </div>
-            <div className="mt-6">
-              <GeoButton asChild variant="dark" size="md">
-                <Link to="/play/modes">See every mode</Link>
-              </GeoButton>
-            </div>
+            <GameModesOrbit onSelect={playMode} />
           </AnimatedSection>
 
           <AnimatedSection className="mt-16">

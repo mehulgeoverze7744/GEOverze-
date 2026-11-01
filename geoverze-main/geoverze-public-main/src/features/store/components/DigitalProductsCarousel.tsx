@@ -261,15 +261,11 @@ function CarouselCard({
           {...(banner ? { imageSrc: banner.src, imageAlt: banner.alt } : {})}
         />
         <span aria-hidden className="absolute inset-0 bg-charcoal/25" />
-        <span
-          aria-hidden
-          className="absolute inset-x-0 bottom-0 z-[1] h-2/5 bg-gradient-to-t from-charcoal to-transparent"
-        />
         <div className="absolute right-3 top-3 z-10">
           <ComingSoonLockChip compact />
         </div>
       </div>
-      <div className="relative z-[2] -mt-5 flex shrink-0 items-start justify-between gap-3 p-4 pt-2 sm:p-5 sm:pt-2">
+      <div className="relative z-[2] flex shrink-0 items-start justify-between gap-3 bg-charcoal p-4 sm:p-5">
         <div className="min-w-0 flex-1">
           <h3 className="text-sm font-light tracking-tight text-foreground">{category.label}</h3>
           <p className="mt-1.5 line-clamp-2 min-h-[2.5rem] text-xs leading-relaxed text-foreground/50">

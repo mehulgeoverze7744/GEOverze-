@@ -57,16 +57,16 @@ body:has(#gvrze-home) {
   display: none;
 }
 
-#gvrze-home .gvrze-home-below :is(h1, h2, h3) {
+#gvrze-home .gvrze-home-below :is(h1, h2, h3):not(.community-vision__heading) {
   color: #152536;
 }
 
-#gvrze-home .gvrze-home-below :is(p, li) {
+#gvrze-home .gvrze-home-below :is(p, li):not(.community-vision__eyebrow):not(.community-vision__copy) {
   color: rgb(21 37 54 / 0.78);
 }
 
-#gvrze-home .gvrze-home-below p.eyebrow,
-#gvrze-home .gvrze-home-below p[class*="eyebrow"],
+#gvrze-home .gvrze-home-below p.eyebrow:not(.community-vision__eyebrow),
+#gvrze-home .gvrze-home-below p[class*="eyebrow"]:not(.community-vision__eyebrow),
 #gvrze-home .gvrze-home-below [class*="text-bronze"]:not([aria-hidden]),
 #gvrze-home .gvrze-home-below [class*="text-bronze-glow"],
 #gvrze-home .gvrze-home-below .why-geoverze-intro__emphasis,
@@ -157,15 +157,21 @@ body:has(#gvrze-home) footer button * {
   -webkit-text-fill-color: unset;
 }
 
+/* Homepage Community & Vision only — full-colour galaxy, white type. */
 #gvrze-home .community-vision__overlay {
-  background:
-    linear-gradient(
-      180deg,
-      rgb(232 242 248 / 0.78) 0%,
-      rgb(214 230 241 / 0.62) 46%,
-      rgb(236 245 250 / 0.82) 100%
-    ),
-    radial-gradient(circle at 50% 42%, rgb(255 255 255 / 0.35), transparent 64%);
+  display: none;
+}
+
+#gvrze-home .gvrze-home-below .community-vision :is(h2, p),
+#gvrze-home .gvrze-home-below .community-vision .community-vision__eyebrow,
+#gvrze-home .gvrze-home-below .community-vision .community-vision__heading,
+#gvrze-home .gvrze-home-below .community-vision .community-vision__copy,
+#gvrze-home .gvrze-home-below .community-vision p.eyebrow,
+#gvrze-home .gvrze-home-below .community-vision p[class*="eyebrow"] {
+  color: #ffffff;
+  background-image: none;
+  -webkit-text-fill-color: #ffffff;
+  text-shadow: 0 1px 10px rgb(0 0 0 / 0.38);
 }
 
 /* Homepage footer only. The shared footer is unchanged on every other route. */

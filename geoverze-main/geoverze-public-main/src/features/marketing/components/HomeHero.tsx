@@ -36,8 +36,8 @@ function applyRewardsGlobeScroll(
   globe: HTMLElement | null,
 ) {
   const compact = window.matchMedia("(max-width: 1023px)").matches;
-  const exitStart = compact ? 0.02 : 0.04;
-  const exitSpan = compact ? 0.22 : 0.32;
+  const exitStart = compact ? 0.01 : 0.02;
+  const exitSpan = compact ? 0.16 : 0.2;
   const exit = clamp01((p - exitStart) / exitSpan);
   const t = exit * exit * (3 - 2 * exit);
 
@@ -58,8 +58,8 @@ function applyRewardsGlobeScroll(
   }
 
   if (globe) {
-    const appearStart = compact ? 0.04 : 0.08;
-    const appearSpan = compact ? 0.24 : 0.3;
+    const appearStart = compact ? 0.02 : 0.03;
+    const appearSpan = compact ? 0.16 : 0.2;
     const g = clamp01((p - appearStart) / appearSpan);
     const ge = g * g * (3 - 2 * g);
     globe.style.opacity = String(ge);
@@ -96,15 +96,15 @@ export function HomeHero() {
       node.style.pointerEvents = value > 0.6 ? "auto" : "none";
     };
 
-    const a = 1 - clamp01((p - 0.2) / 0.14);
-    const b = band(p, 0.42, 0.52, 0.6, 0.7);
-    const c = band(p, 0.78, 0.9, 1.2, 1.4);
+    const a = 1 - clamp01((p - 0.12) / 0.12);
+    const b = band(p, 0.28, 0.38, 0.48, 0.58);
+    const c = band(p, 0.62, 0.74, 1.2, 1.4);
 
     set(panel1.current, a, (1 - a) * 26);
     set(panel2.current, b, (1 - b) * 26);
     set(panel3.current, c, (1 - c) * 26);
 
-    if (cueRef.current) cueRef.current.style.opacity = String(clamp01(1 - p / 0.12));
+    if (cueRef.current) cueRef.current.style.opacity = String(clamp01(1 - p / 0.08));
 
     applyRewardsGlobeScroll(p, rewardsRef.current, globeRef.current);
   });
@@ -113,7 +113,34 @@ export function HomeHero() {
     applyRewardsGlobeScroll(progress.current, rewardsRef.current, globeRef.current);
   });
 
+  const afterGlobeCtas = (
+    <div className="home-hero-after-globe">
+      <GeoButton
+        asChild
+        variant="solid"
+        size="lg"
+        className="home-hero-cta w-full px-8 font-bold uppercase tracking-[0.2em]"
+      >
+        <Link
+          to="/play"
+          className="flex flex-col items-center leading-none font-cta text-[1.37rem]"
+        >
+          <span>LET'S PLAY</span>
+        </Link>
+      </GeoButton>
+      <GeoButton
+        variant="solid"
+        size="lg"
+        onClick={() => setDemoOpen(true)}
+        className="home-hero-cta w-full px-8 font-bold uppercase tracking-[0.2em]"
+      >
+        <span className="font-cta text-[1.37rem]">WATCH DEMO</span>
+      </GeoButton>
+    </div>
+  );
+
   return (
+    <>
     <section ref={sectionRef} id="home-hero" className="relative h-dvh w-full overflow-hidden">
       {/* soft bronze bloom behind the globe */}
       <div
@@ -146,7 +173,7 @@ export function HomeHero() {
           Explore countries, flags, capitals, maps, cultures, landmarks and geography through
           beautifully designed interactive experiences, quizzes, challenges and a global community.
         </p>
-        <div className="home-hero-intro-ctas pointer-events-auto mt-6 flex w-full max-w-sm flex-col gap-3 sm:max-w-none sm:flex-row sm:flex-wrap md:mt-7">
+        <div className="home-hero-intro-ctas pointer-events-auto mt-6 hidden w-full max-w-sm flex-col gap-3 sm:max-w-none sm:flex-row sm:flex-wrap md:mt-7 md:flex">
           <GeoButton
             asChild
             variant="solid"
@@ -247,5 +274,7 @@ export function HomeHero() {
         <ChevronDown className="home-hero-scroll-cue__arrow" strokeWidth={1.75} aria-hidden />
       </div>
     </section>
+    {afterGlobeCtas}
+    </>
   );
 }

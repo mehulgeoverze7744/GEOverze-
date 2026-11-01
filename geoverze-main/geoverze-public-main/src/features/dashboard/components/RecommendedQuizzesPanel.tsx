@@ -5,7 +5,7 @@ import { RECOMMENDED_QUIZZES } from "@/features/dashboard/data/dashboard";
 import { RECOMMENDED_IMAGES } from "@/features/dashboard/lib/dashboardAssets";
 import { cn } from "@/lib/utils";
 
-/** Cinematic recommendation cards for the dashboard. */
+/** Recommendation cards — crisp cover, then a solid content block. */
 export function RecommendedQuizzesPanel({ className }: { className?: string }) {
   return (
     <section
@@ -29,9 +29,9 @@ export function RecommendedQuizzesPanel({ className }: { className?: string }) {
             <li key={item.id}>
               <Link
                 to="/play"
-                className="dashboard-rec-card group relative flex h-full min-h-[240px] flex-col overflow-hidden rounded-2xl border border-bronze/16 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45"
+                className="dashboard-rec-card group flex h-full flex-col overflow-hidden rounded-2xl border border-bronze/16 bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45"
               >
-                <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+                <div className="relative aspect-[16/10] overflow-hidden bg-[oklch(0.12_0.006_62)]">
                   {image ? (
                     <img
                       src={image}
@@ -41,10 +41,9 @@ export function RecommendedQuizzesPanel({ className }: { className?: string }) {
                       decoding="async"
                     />
                   ) : null}
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/75 to-background/20" />
                 </div>
 
-                <div className="relative z-[1] mt-auto flex flex-1 flex-col p-5">
+                <div className="flex flex-1 flex-col p-5">
                   <Icon
                     className="h-4 w-4 text-bronze/90"
                     strokeWidth={1.4}

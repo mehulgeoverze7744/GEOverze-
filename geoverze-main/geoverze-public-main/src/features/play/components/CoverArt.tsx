@@ -15,7 +15,7 @@ export function CoverArt({
   className,
   ratio = "video",
   fit = "contain",
-  overlay = "hero",
+  overlay: _overlay = "none",
   objectPosition,
   responsive,
   loading = "lazy",
@@ -29,7 +29,7 @@ export function CoverArt({
   ratio?: "video" | "wide" | "square" | "banner" | "fill";
   /** `contain` for label thumbnails; `cover` for cinematic hero banners. */
   fit?: "contain" | "cover";
-  /** Image overlay when `fit="cover"`. `subtle` = bottom blend only. */
+  /** Kept for callers. Card images stay unblended — overlays are not rendered. */
   overlay?: "none" | "subtle" | "hero" | "category";
   objectPosition?: string;
   /** Responsive library derivatives. Omitted for quiz and store art. */
@@ -48,7 +48,6 @@ export function CoverArt({
   const size = patternSize(cover.pattern);
   const coverImage = Boolean(imageSrc && fit === "cover");
   const showIconOnCover = Boolean(coverImage && Icon);
-  const resolvedOverlay = coverImage ? (overlay === "hero" && !Icon ? "none" : overlay) : "none";
 
   return (
     <div
@@ -98,19 +97,6 @@ export function CoverArt({
               style={objectPosition ? { objectPosition } : undefined}
             />
           </picture>
-          {resolvedOverlay === "hero" ? (
-            <span
-              aria-hidden
-              className="absolute inset-0 bg-gradient-to-b from-charcoal/55 via-charcoal/25 to-charcoal/65"
-            />
-          ) : resolvedOverlay === "subtle" ? (
-            <span
-              aria-hidden
-              className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-charcoal/55 to-transparent"
-            />
-          ) : resolvedOverlay === "category" ? (
-            <span aria-hidden className="geostore-category-cover-fade" />
-          ) : null}
           {showIconOnCover ? (
             <span className="absolute bottom-3 left-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-bronze/40 bg-[oklch(0.12_0.006_60/0.85)] text-bronze-glow">
               <Icon className="h-5 w-5" strokeWidth={1.6} />
@@ -123,7 +109,6 @@ export function CoverArt({
             className="absolute inset-0"
             style={{ backgroundImage: pattern, backgroundSize: size }}
           />
-          <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[oklch(0.1_0.004_60/0.9)] to-transparent" />
           {Icon ? (
             <span className="absolute bottom-3 left-3 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-bronze/40 bg-[oklch(0.12_0.006_60/0.85)] text-bronze-glow">
               <Icon className="h-5 w-5" strokeWidth={1.6} />

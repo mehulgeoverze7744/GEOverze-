@@ -44,7 +44,7 @@ export function QuizCard({
                 imageSrc: thumbnail.src,
                 imageAlt: thumbnail.alt,
                 fit: "cover" as const,
-                overlay: "subtle" as const,
+                overlay: "none" as const,
                 ...(thumbnail.objectPosition ? { objectPosition: thumbnail.objectPosition } : {}),
               }
             : { icon: Icon })}

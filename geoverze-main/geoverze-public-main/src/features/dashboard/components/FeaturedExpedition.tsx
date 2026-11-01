@@ -17,24 +17,22 @@ export function FeaturedExpedition({ className }: { className?: string }) {
   return (
     <section
       className={cn(
-        "dashboard-featured group relative overflow-hidden rounded-2xl border border-bronze/20",
+        "dashboard-featured overflow-hidden rounded-2xl border border-bronze/20 bg-background",
         className,
       )}
       aria-labelledby="featured-expedition-heading"
     >
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+      <div className="relative aspect-[21/9] overflow-hidden bg-[oklch(0.12_0.006_62)]">
         <img
           src={FEATURED_EXPEDITION_IMAGE}
           alt=""
-          className="h-full w-full object-cover transition-transform duration-[800ms] ease-[var(--ease-cinematic)] group-hover:scale-[1.02] motion-reduce:transform-none"
+          className="h-full w-full object-cover"
           loading="lazy"
           decoding="async"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/20" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent" />
       </div>
 
-      <div className="relative z-[1] flex min-h-[220px] flex-col justify-end p-6 sm:min-h-[260px] sm:p-8">
+      <div className="flex flex-col p-6 sm:p-8">
         <p className="dashboard-section-label">Today&apos;s expedition</p>
         <h2
           id="featured-expedition-heading"

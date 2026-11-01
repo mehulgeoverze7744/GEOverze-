@@ -5,6 +5,7 @@
   isolation: isolate;
   width: 100%;
   overflow: hidden;
+  background-color: #05060a;
   padding-top: var(--space-section-sm);
   padding-bottom: var(--space-section-sm);
 }
@@ -29,17 +30,14 @@
   width: 108%;
   object-fit: cover;
   object-position: 48% 42%;
+  filter: none;
+  opacity: 1;
   transform-origin: center center;
   will-change: transform;
 }
 
 .community-vision__overlay {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(to bottom, rgb(8 7 6 / 0.72) 0%, rgb(8 7 6 / 0.58) 42%, rgb(8 7 6 / 0.74) 100%),
-    radial-gradient(circle at 50% 40%, rgb(184 118 58 / 0.08), transparent 62%);
-  pointer-events: none;
+  display: none;
 }
 
 .community-vision__content {
@@ -60,6 +58,10 @@
 .community-vision__eyebrow,
 .community-vision__heading,
 .community-vision__copy {
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+  background-image: none;
+  text-shadow: 0 1px 10px rgb(0 0 0 / 0.38);
   will-change: transform, opacity;
 }
 

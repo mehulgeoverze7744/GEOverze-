@@ -31,10 +31,6 @@ export function PostImage({
           backgroundSize: patternSize(cover.pattern),
         }}
       />
-      <span
-        aria-hidden
-        className="absolute inset-x-0 bottom-0 h-1/2 bg-[linear-gradient(to_top,oklch(0_0_0/0.45),transparent)]"
-      />
     </div>
   );
 }

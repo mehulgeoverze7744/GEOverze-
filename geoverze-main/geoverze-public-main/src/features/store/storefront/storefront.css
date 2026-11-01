@@ -178,7 +178,7 @@ body:has(#gvrze-storefront) footer .mt-16.border-t {
  * ─────────────────────────────────────────────────────────────────────────── */
 
 /*
- * Give cards a 3:2-ish minimum height on mobile so the gradient + info bar
+ * Give cards a 3:2-ish minimum height on mobile so the image + content bar
  * have room to breathe even before the desktop grid-auto-rows kicks in.
  */
 #gvrze-storefront .gvrze-editorial-card {

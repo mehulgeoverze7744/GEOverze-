@@ -40,28 +40,23 @@ export const CommunityVision = memo(function CommunityVision() {
       gsap.registerPlugin(ScrollTrigger);
 
       const mobile = window.matchMedia("(max-width: 767px)").matches;
-      const enterScale = mobile ? 1.07 : 1.12;
-      const settleScale = mobile ? 1.02 : 1.04;
-      const enterShift = mobile ? 4 : 8;
+      const travel = mobile ? 8 : 12;
+      const scale = mobile ? 1.06 : 1.08;
 
       ctx = gsap.context(() => {
-        gsap.set(bg, { scale: enterScale, yPercent: enterShift });
+        gsap.set(bg, { scale, yPercent: travel * -0.5 });
         gsap.set([eyebrow, heading, copy], { opacity: 0, y: 22 });
 
         ScrollTrigger.create({
           trigger: section,
           start: "top 92%",
           end: "bottom 8%",
-          scrub: mobile ? 0.65 : 0.85,
+          scrub: mobile ? 0.7 : 0.95,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             const p = self.progress;
             const reveal = clamp01((p - 0.08) / 0.42);
-            const settle = clamp01((p - 0.35) / 0.4);
-            const exit = clamp01((p - 0.72) / 0.28);
-
-            const scale = enterScale - (enterScale - settleScale) * settle;
-            const yPercent = enterShift * (1 - settle) + exit * (mobile ? 3 : 5);
+            const yPercent = (p - 0.5) * travel;
 
             bg.style.transform = `translate3d(0, ${yPercent.toFixed(3)}%, 0) scale(${scale.toFixed(4)})`;
 
@@ -105,7 +100,6 @@ export const CommunityVision = memo(function CommunityVision() {
           loading="lazy"
           decoding="async"
         />
-        <div className="community-vision__overlay" />
       </div>
 
       <div className="community-vision__content">
@@ -115,13 +109,13 @@ export const CommunityVision = memo(function CommunityVision() {
         <h2
           ref={headingRef}
           id="community-vision-heading"
-          className="community-vision__heading mx-auto mt-6 max-w-3xl font-light leading-[1.18] tracking-tight text-foreground text-[clamp(1.6rem,3.4vw,2.6rem)]"
+          className="community-vision__heading mx-auto mt-6 max-w-3xl font-light leading-[1.18] tracking-tight text-[clamp(1.6rem,3.4vw,2.6rem)]"
         >
           Building the world&rsquo;s most engaging geography learning community.
         </h2>
         <p
           ref={copyRef}
-          className="community-vision__copy mx-auto mt-7 max-w-2xl text-sm leading-relaxed text-foreground/50 md:text-base"
+          className="community-vision__copy mx-auto mt-7 max-w-2xl text-sm leading-relaxed md:text-base"
         >
           GVRZE exists for the curious — for anyone who has traced a coastline on a map and
           wanted to know more. Our mission is to connect exploration, education and community so

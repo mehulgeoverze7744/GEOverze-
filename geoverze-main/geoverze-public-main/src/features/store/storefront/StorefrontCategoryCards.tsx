@@ -92,10 +92,6 @@ export function StorefrontCategoryCards({ className }: { className?: string }) {
               decoding="async"
               className="absolute inset-0 h-full w-full -translate-y-[3.6%] scale-[1.098] object-cover transition-transform duration-500 ease-out group-hover/cat:scale-[1.13] motion-reduce:transition-none"
             />
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-t from-black/35 to-transparent"
-            />
             <span className={cn(LABEL, "absolute bottom-[8.9%] left-[9%]")}>
               HOODIES &amp;
               <br />

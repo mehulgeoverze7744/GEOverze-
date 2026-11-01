@@ -33,7 +33,8 @@
     inset 0 1px 0 oklch(0.94 0.06 84 / 0.45);
 }
 
-#home-hero .home-hero-cta {
+#home-hero .home-hero-cta,
+.home-hero-after-globe .home-hero-cta {
   background-color: #080808;
   background-image: none !important;
   border-color: #3f3f3f !important;
@@ -48,7 +49,8 @@
     box-shadow var(--dur-base) var(--ease-cinematic);
 }
 
-#home-hero .home-hero-cta:hover {
+#home-hero .home-hero-cta:hover,
+.home-hero-after-globe .home-hero-cta:hover {
   background-color: #252525;
   filter: none;
   transform: translateY(-1px);
@@ -58,7 +60,8 @@
     inset 0 1px 0 rgb(255 255 255 / 0.1);
 }
 
-#home-hero .home-hero-cta:focus-visible {
+#home-hero .home-hero-cta:focus-visible,
+.home-hero-after-globe .home-hero-cta:focus-visible {
   outline: 2px solid #3f3f3f;
   outline-offset: 3px;
 }
@@ -95,7 +98,8 @@
     transition: filter var(--dur-fast) var(--ease-soft);
   }
 
-  #home-hero .home-hero-cta {
+  #home-hero .home-hero-cta,
+  .home-hero-after-globe .home-hero-cta {
     transition: background-color var(--dur-fast) var(--ease-soft);
   }
 
@@ -131,6 +135,10 @@
   animation: home-hero-scroll-float 1.85s var(--ease-soft) infinite;
 }
 
+.home-hero-after-globe {
+  display: none;
+}
+
 /* The cue's flex display would otherwise beat the mobile utility. */
 @media (max-width: 767px) {
   .home-hero-scroll-cue {
@@ -143,12 +151,25 @@
   }
 
   #home-hero .home-hero-intro-ctas {
-    position: relative;
-    z-index: 2;
+    display: none;
   }
 
-  #home-hero .home-hero-intro-ctas .home-hero-cta {
-    min-height: 3rem;
+  .home-hero-after-globe {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 100%;
+    padding: 1.35rem 1.15rem 2rem;
+  }
+
+  .home-hero-after-globe .home-hero-cta {
+    width: 100%;
+    max-width: 22.5rem;
+    min-height: 3.15rem;
   }
 }
 

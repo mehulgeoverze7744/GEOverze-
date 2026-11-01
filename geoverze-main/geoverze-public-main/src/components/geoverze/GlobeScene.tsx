@@ -17,7 +17,7 @@ function CameraRig({ progress }: { progress: RefObject<number> }) {
   const { camera } = useThree();
   useFrame(() => {
     const p = progress.current ?? 0;
-    const inClose = easeInOut(THREE.MathUtils.clamp((p - 0.35) / 0.4, 0, 1));
+    const inClose = easeInOut(THREE.MathUtils.clamp((p - 0.22) / 0.32, 0, 1));
     const target = THREE.MathUtils.lerp(6.2, 5.1, inClose);
     camera.position.z += (target - camera.position.z) * 0.08;
     camera.position.y += (Math.sin(p * Math.PI) * 0.12 - camera.position.y) * 0.06;

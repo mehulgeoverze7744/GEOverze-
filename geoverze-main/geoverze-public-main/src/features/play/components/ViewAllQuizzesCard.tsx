@@ -24,10 +24,6 @@ export function ViewAllQuizzesCard() {
           alt=""
           className="h-full w-full object-cover object-[center_36%]"
         />
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent from-[42%] via-[color-mix(in_oklab,var(--game-bg)_28%,transparent)] via-[72%] to-[var(--game-bg)]"
-        />
       </div>
 
       <div className="flex flex-1 flex-col p-5">

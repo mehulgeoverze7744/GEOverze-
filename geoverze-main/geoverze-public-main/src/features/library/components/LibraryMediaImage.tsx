@@ -17,7 +17,7 @@ type LibraryMediaImageProps = {
   className?: string | undefined;
   ratio?: "video" | "wide" | "square" | "banner";
   fit?: "contain" | "cover";
-  /** Cover treatment. Article cards pass `none` and fade the photo in the card itself. */
+  /** Cover treatment. Card images stay unblended. */
   overlay?: "none" | "subtle" | "hero" | "category" | undefined;
 };
 

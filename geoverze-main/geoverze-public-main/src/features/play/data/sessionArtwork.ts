@@ -10,7 +10,7 @@ export function coverFromThumbnail(thumbnail: SessionThumbnail | undefined) {
     imageSrc: thumbnail.src,
     imageAlt: thumbnail.alt,
     fit: "cover" as const,
-    overlay: "subtle" as const,
+    overlay: "none" as const,
     ...(thumbnail.objectPosition ? { objectPosition: thumbnail.objectPosition } : {}),
   };
 }

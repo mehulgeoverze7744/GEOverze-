@@ -312,10 +312,10 @@ export function BronzeGlobe({ progress, origin, parked, startScale, bigScale, fi
 
     const p = progress.current ?? 0;
 
-    const emerge = easeInOut(phase(p, 0, 0.4));
-    const park = easeInOut(phase(p, 0.7, 1));
-    const hold = phase(p, 0.4, 0.7);
-    const reveal = easeInOut(phase(p, 0.05, 0.18));
+    const emerge = easeInOut(phase(p, 0, 0.32));
+    const park = easeInOut(phase(p, 0.55, 1));
+    const hold = phase(p, 0.32, 0.55);
+    const reveal = easeInOut(phase(p, 0.02, 0.12));
 
     earthMaterial.opacity = reveal;
     cloudMaterial.uniforms.cloudOpacity.value = reveal;

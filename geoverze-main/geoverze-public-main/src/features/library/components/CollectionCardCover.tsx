@@ -20,7 +20,7 @@ export function CollectionCardCover({ collection }: { collection: Collection }) 
         imageAlt=""
         ratio="video"
         fit="cover"
-        overlay="subtle"
+        overlay="none"
         {...(responsive ? { responsive } : {})}
       />
     );

@@ -276,11 +276,6 @@
   color: #ffffff;
 }
 
-/* Restricted photo scrim — keep photographs, drop the charcoal wash. */
-#gvrze-library-home .library-card-photo-scrim {
-  background: rgb(255 255 255 / 0.18);
-}
-
 /* Studio callout */
 #gvrze-library-home .gvrze-library-studio {
   background: rgb(255 255 255 / 0.9);

@@ -160,17 +160,6 @@ export function ProductCard({
                 !light && isGlobeProductSlug(product.slug) && "!bg-[#0b0a09]",
               )}
             />
-            {seamlessBlend && !light ? (
-              <span
-                aria-hidden
-                className={cn(
-                  "pointer-events-none absolute z-[1]",
-                  variant === "list"
-                    ? "inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-charcoal to-transparent sm:inset-y-0 sm:left-auto sm:right-0 sm:h-full sm:w-2/5 sm:bg-gradient-to-l"
-                    : "inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-charcoal to-transparent",
-                )}
-              />
-            ) : null}
           </div>
         )}
       </Link>
@@ -267,7 +256,7 @@ export function ProductCard({
       <div
         className={cn(
           "flex min-w-0 flex-1 flex-col p-5",
-          seamlessBlend && !light && "relative z-[2] -mt-5 pt-2",
+          light ? "bg-[#FFFFFF]" : "bg-charcoal",
         )}
       >
         <p

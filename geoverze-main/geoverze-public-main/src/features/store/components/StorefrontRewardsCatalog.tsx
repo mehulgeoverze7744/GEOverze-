@@ -209,20 +209,14 @@ function RewardCategoryPicker({
                           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover/card:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover/card:scale-100"
                         />
                       ) : null}
-                      {light ? null : (
-                        <span
-                          aria-hidden
-                          className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/20 to-transparent"
-                        />
-                      )}
                     </div>
                   );
                 })}
               </div>
               <div
                 className={cn(
-                  "relative z-[1] px-4 pb-4",
-                  light ? "pt-3" : "-mt-5 pt-2",
+                  "relative z-[1] px-4 pb-4 pt-3",
+                  light ? "bg-[#FFFFFF]" : "bg-charcoal",
                 )}
               >
                 <p

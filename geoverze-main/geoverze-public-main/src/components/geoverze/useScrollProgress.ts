@@ -56,10 +56,13 @@ export function useScrollProgress(
         ScrollTrigger.create({
           trigger: section,
           start: "top top",
-          end: "+=400%",
+          // One extra viewport used to be four (+=400%), which forced a long
+          // empty scroll before the globe's main pose. ~1.7vh is enough for
+          // the same hand-off in about 3–4 ordinary wheel gestures.
+          end: "+=170%",
           pin: true,
           pinSpacing: true,
-          scrub: true,
+          scrub: 0.45,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             progress.current = self.progress;
