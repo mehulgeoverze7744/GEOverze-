@@ -29,7 +29,7 @@ export function Modal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={cn(
-          className?.includes("gvrze-global-search")
+          className?.includes("gvrze-global-search") || className?.includes("gvrze-gstore-search")
             ? "border text-foreground sm:rounded-2xl"
             : "glass-panel-strong border-bronze/25 bg-transparent text-foreground sm:rounded-2xl",
           className,

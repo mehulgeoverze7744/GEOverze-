@@ -14,6 +14,8 @@ import { categoryIcon, categoryLabel } from "../data/taxonomy";
 import { searchStoreProducts } from "../lib/filter";
 import { credits as formatCredits, money } from "../lib/format";
 
+import "./geostore-search.css";
+
 /**
  * Fixed Gstore search icon — opens the product search panel.
  * `renderTrigger` lets a surface with its own visual language (the storefront)
@@ -91,6 +93,7 @@ export function GeostoreSearchButton({
         }}
         title="Search Gstore"
         description="Find exact products from the catalogue."
+        className="gvrze-gstore-search"
       >
         <div className="space-y-5">
           <form onSubmit={handleSubmit}>
@@ -99,6 +102,7 @@ export function GeostoreSearchButton({
               ref={inputRef}
               label="Search Gstore products"
               placeholder="Search hoodies, mugs, packs…"
+              className="border-[#E2E5E9] bg-white text-[#172335] placeholder:text-[#687586] focus:border-[#2B74C4] focus:ring-[#2B74C4]/20"
               value={query}
               onChange={(event) => {
                 setQuery(event.target.value);
@@ -136,9 +140,9 @@ export function GeostoreSearchButton({
                         to="/geostore/product/$slug"
                         params={{ slug: product.slug }}
                         onClick={close}
-                        className="flex items-center gap-3 rounded-xl border border-bronze/12 bg-charcoal/55 px-3 py-2.5 transition-colors motion-fast hover:border-bronze/35 hover:bg-bronze/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+                        className="gvrze-gstore-search__result flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-colors motion-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2B74C4]/40"
                       >
-                        <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-bronze/15 bg-charcoal/80">
+                        <div className="gvrze-gstore-search__thumb h-12 w-12 shrink-0 overflow-hidden rounded-lg">
                           {image ? (
                             <img
                               src={image.src}
@@ -156,16 +160,16 @@ export function GeostoreSearchButton({
                           )}
                         </div>
                         <span className="min-w-0 flex-1">
-                          <span className="block truncate text-sm text-foreground/90">
+                          <span className="gvrze-gstore-search__result-name block truncate text-sm">
                             {product.name}
                           </span>
-                          <span className="mt-0.5 block truncate text-[0.66rem] uppercase tracking-[0.14em] text-foreground/45">
+                          <span className="gvrze-gstore-search__result-meta mt-0.5 block truncate text-[0.66rem] uppercase tracking-[0.14em]">
                             {categoryLabel(product.category)}
                           </span>
-                          <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-foreground/65">
+                          <span className="gvrze-gstore-search__result-meta mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs">
                             {product.price !== null ? <span>{money(product.price)}</span> : null}
                             {product.credits !== null ? (
-                              <span className="inline-flex items-center gap-1 text-bronze-glow">
+                              <span className="inline-flex items-center gap-1">
                                 <Coins className="h-3 w-3" strokeWidth={1.6} aria-hidden />
                                 {formatCredits(product.credits)}
                               </span>
@@ -173,7 +177,7 @@ export function GeostoreSearchButton({
                           </span>
                         </span>
                         <ShoppingBag
-                          className="h-3.5 w-3.5 shrink-0 text-bronze/80"
+                          className="gvrze-gstore-search__result-icon h-3.5 w-3.5 shrink-0"
                           strokeWidth={1.6}
                           aria-hidden
                         />
@@ -183,16 +187,16 @@ export function GeostoreSearchButton({
                 })}
               </ul>
             ) : (
-              <div className="rounded-2xl border border-bronze/15 bg-charcoal/45 px-5 py-8 text-center">
-                <p className="text-sm text-foreground/70">No products found</p>
-                <p className="mt-2 text-xs leading-relaxed text-foreground/50">
+              <div className="gvrze-gstore-search__empty rounded-2xl px-5 py-8 text-center">
+                <p className="text-sm">No products found</p>
+                <p className="mt-2 text-xs leading-relaxed">
                   No Gstore matches for “{submittedQuery}”. Try another name or category.
                 </p>
               </div>
             )
           ) : (
             <div className="space-y-3">
-              <p className="flex items-center gap-2 text-[0.6rem] uppercase tracking-[0.22em] text-bronze/90">
+              <p className="gvrze-gstore-search__recent-label">
                 <Clock3 className="h-3.5 w-3.5" strokeWidth={1.6} aria-hidden />
                 Recent searches
               </p>
@@ -203,16 +207,16 @@ export function GeostoreSearchButton({
                       <button
                         type="button"
                         onClick={() => runSearch(entry)}
-                        className="flex w-full items-center gap-3 rounded-xl border border-transparent px-3 py-2.5 text-left text-sm text-foreground/75 transition-colors motion-fast hover:border-bronze/25 hover:bg-bronze/5 hover:text-bronze-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+                        className="gvrze-gstore-search__recent-item flex min-h-11 w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors motion-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2B74C4]/40"
                       >
-                        <Search className="h-3.5 w-3.5 shrink-0 text-bronze/80" strokeWidth={1.6} />
+                        <Search className="h-3.5 w-3.5 shrink-0" strokeWidth={1.6} />
                         <span className="truncate">{entry}</span>
                       </button>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="rounded-xl border border-bronze/12 bg-charcoal/40 px-4 py-5 text-xs leading-relaxed text-foreground/50">
+                <p className="gvrze-gstore-search__empty rounded-xl px-4 py-5 text-xs leading-relaxed">
                   Your previous Gstore searches will appear here after you search for a product.
                 </p>
               )}

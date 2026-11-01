@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { LogOut } from "lucide-react";
+import { ArrowLeft, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import {
@@ -131,7 +131,8 @@ export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavP
       <div
         className={cn(
           SF_SHELL,
-          "grid h-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2",
+          "flex h-full items-center gap-1.5 md:grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-2",
+          "max-md:px-6",
         )}
       >
         <nav
@@ -156,9 +157,12 @@ export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavP
             </Link>
           ) : null}
         </nav>
-        <div className="min-w-0 md:hidden" aria-hidden="true" />
 
-        <Link to="/geostore" aria-label="Gstore home" className="justify-self-center rounded-sm">
+        <Link
+          to="/geostore"
+          aria-label="Gstore home"
+          className="shrink-0 justify-self-start rounded-sm md:justify-self-center"
+        >
           <img
             src={SF_ASSETS.logo.src}
             width={SF_ASSETS.logo.width}
@@ -171,7 +175,7 @@ export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavP
           />
         </Link>
 
-        <div className="flex min-w-0 items-center justify-end">
+        <div className="flex min-w-0 flex-1 items-center md:flex-none md:justify-end">
           <GeostoreSearchButton
             renderTrigger={({ onOpen }) => (
               <button
@@ -184,45 +188,47 @@ export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavP
               </button>
             )}
           />
-          <Link
-            to="/geostore/wishlist"
-            aria-label={wishlistCount > 0 ? `Wishlist, ${wishlistCount} items` : "Wishlist"}
-            className={cn(ICON_BUTTON, "hidden sm:inline-flex")}
-          >
-            <Icon asset={SF_ASSETS.iconWishlist} />
-            {wishlistCount > 0 ? (
-              <span className={BADGE}>{wishlistCount > 99 ? "99+" : wishlistCount}</span>
-            ) : null}
-          </Link>
-          <Link
-            to="/geostore/cart"
-            aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : "Cart"}
-            className={ICON_BUTTON}
-          >
-            <Icon asset={SF_ASSETS.iconCart} />
-            {cartCount > 0 ? (
-              <span className={BADGE}>{cartCount > 99 ? "99+" : cartCount}</span>
-            ) : null}
-          </Link>
-          <Link
-            to={signedIn ? "/dashboard" : "/auth/login"}
-            aria-label={signedIn ? "Your account" : "Sign in"}
-            className={cn(ICON_BUTTON, "hidden sm:inline-flex")}
-          >
-            <Icon asset={SF_ASSETS.iconAccount} />
-          </Link>
-          <button
-            type="button"
-            onClick={() => setMenuOpen(true)}
-            aria-label="Open menu"
-            aria-expanded={menuOpen}
-            aria-haspopup="dialog"
-            className={cn(ICON_BUTTON, "ml-0.5 w-12 rounded-lg")}
-          >
-            <span className="inline-flex h-[29px] w-[43px] items-center justify-center rounded-lg bg-white/50 ring-1 ring-black/5">
-              <Icon asset={SF_ASSETS.iconMenu} />
-            </span>
-          </button>
+          <div className="ml-auto flex min-w-0 items-center md:ml-0">
+            <Link
+              to="/geostore/wishlist"
+              aria-label={wishlistCount > 0 ? `Wishlist, ${wishlistCount} items` : "Wishlist"}
+              className={cn(ICON_BUTTON, "hidden sm:inline-flex")}
+            >
+              <Icon asset={SF_ASSETS.iconWishlist} />
+              {wishlistCount > 0 ? (
+                <span className={BADGE}>{wishlistCount > 99 ? "99+" : wishlistCount}</span>
+              ) : null}
+            </Link>
+            <Link
+              to="/geostore/cart"
+              aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : "Cart"}
+              className={ICON_BUTTON}
+            >
+              <Icon asset={SF_ASSETS.iconCart} />
+              {cartCount > 0 ? (
+                <span className={BADGE}>{cartCount > 99 ? "99+" : cartCount}</span>
+              ) : null}
+            </Link>
+            <Link
+              to={signedIn ? "/dashboard" : "/auth/login"}
+              aria-label={signedIn ? "Your account" : "Sign in"}
+              className={cn(ICON_BUTTON, "hidden sm:inline-flex")}
+            >
+              <Icon asset={SF_ASSETS.iconAccount} />
+            </Link>
+            <button
+              type="button"
+              onClick={() => setMenuOpen(true)}
+              aria-label="Open menu"
+              aria-expanded={menuOpen}
+              aria-haspopup="dialog"
+              className={cn(ICON_BUTTON, "ml-0.5 w-12 rounded-lg")}
+            >
+              <span className="inline-flex h-[29px] w-[43px] items-center justify-center rounded-lg bg-white/50 ring-1 ring-black/5">
+                <Icon asset={SF_ASSETS.iconMenu} />
+              </span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -234,11 +240,19 @@ export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavP
             DRAWER_FONT,
           )}
         >
-          <SheetHeader className="border-b border-black/10 px-7 py-6 text-left">
-            <SheetTitle className="text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-black">
-              Gstore
-            </SheetTitle>
+          <SheetHeader className="border-b border-black/10 px-7 py-5 pr-14 text-left">
+            <SheetTitle className="sr-only">Gstore menu</SheetTitle>
             <SheetDescription className="sr-only">Gstore, site and account links</SheetDescription>
+            <Link
+              to="/"
+              onClick={closeMenu}
+              aria-label="Back to GVRZE homepage"
+              className="inline-flex w-fit max-w-full items-center gap-1.5 self-start rounded-md bg-black px-2.5 py-[0.45rem] text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-white transition-opacity hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/35"
+              style={{ fontFamily: 'var(--font-cta), "Chakra Petch", sans-serif' }}
+            >
+              <ArrowLeft className="h-3.5 w-3.5 shrink-0" strokeWidth={2.2} aria-hidden="true" />
+              BACK TO GVRZE
+            </Link>
           </SheetHeader>
 
           <div className="flex-1 px-7 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
