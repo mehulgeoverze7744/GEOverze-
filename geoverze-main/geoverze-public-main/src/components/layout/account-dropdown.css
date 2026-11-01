@@ -2,10 +2,19 @@
  * Desktop Account menu panel only. Other GeoDropdowns (notifications,
  * community, studio) keep their own colours.
  */
-.gvrze-account-menu {
+.gvrze-account-menu,
+.gvrze-account-menu.glass-panel-strong {
+  --tw-backdrop-blur: blur(24px);
+  --tw-backdrop-saturate: saturate(150%);
   color: #171717;
-  background-color: rgb(255 255 255 / 0.88);
-  border-color: #e5e7eb;
+  background-color: rgb(255 255 255 / 0.65) !important;
+  background-image: none !important;
+  border: 1px solid rgb(255 255 255 / 0.65) !important;
+  box-shadow:
+    0 1px 2px rgb(23 35 53 / 0.04),
+    0 18px 42px -18px rgb(23 35 53 / 0.18) !important;
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
 }
 
 .gvrze-account-menu .gvrze-account-menu__label,
@@ -21,7 +30,7 @@
 .gvrze-account-menu [role="menuitem"]:focus-visible,
 .gvrze-account-menu [role="menuitem"][data-highlighted],
 .gvrze-account-menu [role="menuitem"][data-highlighted="true"] {
-  background-color: #f3f4f6 !important;
+  background-color: rgb(255 255 255 / 0.42) !important;
   color: #171717 !important;
   box-shadow: none;
   outline: none;
@@ -36,19 +45,26 @@
 }
 
 .gvrze-account-menu [role="separator"] {
-  background-color: #e5e7eb;
+  background-color: rgb(23 35 53 / 0.08);
 }
 
 .gvrze-account-menu [role="menuitem"].gvrze-account-menu__signout {
-  background-color: rgb(255 255 255 / 0.92);
-  border: 1px solid #e5e7eb;
+  background-color: rgb(255 255 255 / 0.78);
+  border: 1px solid rgb(255 255 255 / 0.72);
   color: #171717;
 }
 
 .gvrze-account-menu [role="menuitem"].gvrze-account-menu__signout:hover,
 .gvrze-account-menu [role="menuitem"].gvrze-account-menu__signout:focus,
 .gvrze-account-menu [role="menuitem"].gvrze-account-menu__signout[data-highlighted] {
-  background-color: #f3f4f6 !important;
+  background-color: rgb(255 255 255 / 0.9) !important;
   color: #171717 !important;
-  border-color: #d4d4d4;
+  border-color: rgb(255 255 255 / 0.85);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .gvrze-account-menu,
+  .gvrze-account-menu.glass-panel-strong {
+    background-color: rgb(255 255 255 / 0.94) !important;
+  }
 }

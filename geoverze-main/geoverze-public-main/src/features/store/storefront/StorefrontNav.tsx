@@ -21,6 +21,8 @@ import { useStoreCreditsState } from "../lib/useStoreCredits";
 import { SF_ASSETS } from "./storefront-assets";
 import { SF_SHELL, SF_UI_FONT } from "./storefront-ui";
 
+import "./storefront-drawer.css";
+
 const ICON_BUTTON =
   "relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-opacity duration-200 hover:opacity-60 motion-reduce:transition-none";
 
@@ -44,6 +46,7 @@ const ACCOUNT_LINKS: { label: string; to: NavLink }[] = [
 
 /** Drawer fonts are explicit because the sheet renders in a portal, outside the storefront scope. */
 const DRAWER_FONT = "[font-family:Montserrat,ui-sans-serif,system-ui,sans-serif]";
+const DRAWER_LINK = "sf-glass-drawer__link";
 
 function Icon({
   asset,
@@ -235,12 +238,13 @@ export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavP
       <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
         <SheetContent
           side="right"
+          overlayClassName="sf-glass-drawer-overlay bg-[rgb(23_35_53/0.16)] backdrop-blur-[16px] backdrop-saturate-120"
           className={cn(
-            "flex w-full flex-col gap-0 overflow-y-auto border-l border-black/10 bg-white p-0 text-black sm:max-w-sm",
+            "sf-glass-drawer flex w-full flex-col gap-0 overflow-y-auto bg-white/[0.68] p-0 backdrop-blur-[24px] backdrop-saturate-150 sm:max-w-sm",
             DRAWER_FONT,
           )}
         >
-          <SheetHeader className="border-b border-black/10 px-7 py-5 pr-14 text-left">
+          <SheetHeader className="sf-glass-drawer__head px-7 py-5 pr-14 text-left">
             <SheetTitle className="sr-only">Gstore menu</SheetTitle>
             <SheetDescription className="sr-only">Gstore, site and account links</SheetDescription>
             <Link
@@ -261,7 +265,7 @@ export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavP
                 to="/geostore/category/$slug"
                 params={{ slug: "tshirts" }}
                 onClick={closeMenu}
-                className="border-b border-black/10 py-3.5 text-[15px] text-black"
+                className={DRAWER_LINK}
               >
                 T-Shirts
               </Link>
@@ -269,7 +273,7 @@ export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavP
                 to="/geostore/category/$slug"
                 params={{ slug: "hoodies" }}
                 onClick={closeMenu}
-                className="border-b border-black/10 py-3.5 text-[15px] text-black"
+                className={DRAWER_LINK}
               >
                 Hoodies
               </Link>
@@ -277,7 +281,7 @@ export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavP
                 to="/geostore/category/$slug"
                 params={{ slug: "accessories" }}
                 onClick={closeMenu}
-                className="border-b border-black/10 py-3.5 text-[15px] text-black"
+                className={DRAWER_LINK}
               >
                 Accessories
               </Link>
@@ -285,7 +289,7 @@ export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavP
                 <Link
                   to="/geostore/try-on"
                   onClick={closeMenu}
-                  className="border-b border-black/10 py-3.5 text-[15px] text-black"
+                  className={DRAWER_LINK}
                 >
                   Try-On Studio
                 </Link>
@@ -295,7 +299,7 @@ export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavP
                   key={item.to}
                   to={item.to}
                   onClick={closeMenu}
-                  className="border-b border-black/10 py-3.5 text-[15px] text-black"
+                  className={DRAWER_LINK}
                 >
                   {item.label}
                   {item.to === "/geostore/cart" && cartCount > 0 ? ` (${cartCount})` : null}
@@ -306,7 +310,7 @@ export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavP
               ))}
             </nav>
 
-            <p className="mt-8 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-black/50">
+            <p className="sf-glass-drawer__label mt-8 text-[0.68rem] font-semibold uppercase tracking-[0.28em]">
               GVRZE
             </p>
             <nav aria-label="GVRZE site" className="mt-2 flex flex-col">
@@ -315,14 +319,14 @@ export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavP
                   key={item.to}
                   to={item.to}
                   onClick={closeMenu}
-                  className="border-b border-black/10 py-3.5 text-[15px] text-black"
+                  className={DRAWER_LINK}
                 >
                   {item.label}
                 </Link>
               ))}
             </nav>
 
-            <p className="mt-8 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-black/50">
+            <p className="sf-glass-drawer__label mt-8 text-[0.68rem] font-semibold uppercase tracking-[0.28em]">
               Account
             </p>
             {signedIn ? (
@@ -331,7 +335,7 @@ export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavP
                   <Link
                     to="/play/credit-history"
                     onClick={closeMenu}
-                    className="mt-2 flex items-center justify-between border-b border-black/10 py-3.5 text-[15px] text-black"
+                    className={cn(DRAWER_LINK, "mt-2 flex items-center justify-between")}
                   >
                     <span>Credits</span>
                     <span className="font-semibold">{balance}</span>
@@ -343,7 +347,7 @@ export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavP
                       key={item.to}
                       to={item.to}
                       onClick={closeMenu}
-                      className="border-b border-black/10 py-3.5 text-[15px] text-black"
+                      className={DRAWER_LINK}
                     >
                       {item.label}
                     </Link>

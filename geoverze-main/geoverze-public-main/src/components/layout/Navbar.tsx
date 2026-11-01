@@ -26,7 +26,7 @@ import { selectIsSignedIn, useAuthStore } from "@/stores/authStore";
 import "./account-dropdown.css";
 
 const accountItemClass =
-  "text-[#171717] hover:bg-neutral-100 hover:text-[#171717] focus:bg-neutral-100 focus:text-[#171717] data-[highlighted]:bg-neutral-100 data-[highlighted]:text-[#171717] [&_svg]:text-[#171717]";
+  "text-[#171717] hover:bg-white/40 hover:text-[#171717] focus:bg-white/40 focus:text-[#171717] data-[highlighted]:bg-white/40 data-[highlighted]:text-[#171717] [&_svg]:text-[#171717]";
 
 const accountLinks = [
   { label: "Profile Dashboard", to: "/dashboard", icon: LayoutDashboard },
@@ -196,9 +196,9 @@ export function Navbar() {
           <NotificationBell />
           <GeoDropdown
             label="Account"
-            className="gvrze-account-menu border-neutral-200"
+            className="gvrze-account-menu border-white/65 bg-white/[0.65] backdrop-blur-[24px] backdrop-saturate-150"
             labelClassName="gvrze-account-menu__label text-[#171717]"
-            separatorClassName="bg-neutral-200"
+            separatorClassName="bg-[rgb(23_35_53/0.08)]"
             trigger={
               <button
                 type="button"
@@ -221,7 +221,7 @@ export function Navbar() {
                 ))}
                 <GeoDropdownItem
                   onSelect={handleSignOut}
-                  className={`gvrze-account-menu__signout mt-1 border border-neutral-200 bg-white/90 ${accountItemClass}`}
+                  className={`gvrze-account-menu__signout mt-1 ${accountItemClass}`}
                 >
                   <span className="flex items-center gap-3 text-[#171717]">
                     <LogOut className="h-4 w-4" strokeWidth={1.5} />
