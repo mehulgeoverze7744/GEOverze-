@@ -68,12 +68,12 @@ export function DashboardWidgets() {
         </div>
       </SectionContainer>
 
-      <SectionContainer className="dashboard-order-viewed mt-[var(--space-section-sm)]">
-        <div className="grid gap-4 lg:grid-cols-2">
-          <AnimatedSection>
+      <SectionContainer className="dashboard-order-viewed mt-[var(--space-section-sm)] min-w-0">
+        <div className="dashboard-shelf-grid grid min-w-0 gap-4 lg:grid-cols-2">
+          <AnimatedSection className="min-w-0 max-w-full">
             <RecentlyViewedPanel className="h-full" />
           </AnimatedSection>
-          <AnimatedSection delay={60}>
+          <AnimatedSection delay={60} className="min-w-0 max-w-full">
             <SavedExplorationsPanel className="h-full" />
           </AnimatedSection>
         </div>

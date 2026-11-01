@@ -153,18 +153,10 @@ export function ArticleAtlasParchmentScreen({
             </article>
           </div>
         </div>
-        <img
-          className="article-atlas-parchment__paper-end"
-          src="/assets/geolibrary/europe-microstates-paper-mountains.png"
-          alt=""
-          decoding="async"
-          width={487}
-          height={197}
-        />
       </section>
 
-      <SectionContainer className="mb-8 mt-8 pb-12 md:mt-10">
-        <h2 className="text-lg font-light tracking-tight text-foreground">Related reading</h2>
+      <SectionContainer className="article-atlas-parchment__related mb-8 mt-8 pb-12 md:mt-10">
+        <h2 className="text-lg font-light tracking-tight">Related reading</h2>
         <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {relatedArticles(article, 3, catalogue).map((related) => (
             <LibraryCard

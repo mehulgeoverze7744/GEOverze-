@@ -12,6 +12,16 @@
   padding-bottom: var(--space-section-sm);
 }
 
+.geostore-showcase__heading-wrap {
+  position: relative;
+  z-index: 3;
+}
+
+.geostore-showcase__veil {
+  position: relative;
+  z-index: 0;
+}
+
 .geostore-showcase__scene {
   position: relative;
   z-index: 0;
@@ -116,6 +126,56 @@
     max-width: calc(100vw - 2.5rem);
     padding-inline: 1.45rem;
     letter-spacing: 0.1em;
+  }
+}
+
+/* Mobile-only: compact landscape category cards. Desktop + GStore stay unchanged. */
+@media (max-width: 767px) {
+  .geostore-showcase {
+    padding-top: 1.65rem;
+    padding-bottom: 2.15rem;
+  }
+
+  .geostore-showcase__cta-layer {
+    padding: 0.85rem 1rem;
+  }
+
+  #gvrze-home .geostore-showcase .geostore-showcase__categories,
+  .geostore-showcase .geostore-showcase__categories {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    margin-top: 0.7rem;
+  }
+
+  #gvrze-home .geostore-showcase .sf-category-card,
+  .geostore-showcase .sf-category-card {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 2 / 1;
+    height: auto;
+  }
+
+  #gvrze-home .geostore-showcase .sf-category-card img,
+  .geostore-showcase .sf-category-card img {
+    object-fit: cover;
+  }
+
+  #gvrze-home .geostore-showcase .sf-category-card:nth-child(1) img,
+  .geostore-showcase .sf-category-card:nth-child(1) img {
+    object-position: 53% 8%;
+  }
+
+  #gvrze-home .geostore-showcase .sf-category-card:nth-child(2) img,
+  .geostore-showcase .sf-category-card:nth-child(2) img {
+    object-position: 50% 18%;
+    transform: none;
+  }
+
+  #gvrze-home .geostore-showcase .sf-category-card:nth-child(3) img,
+  .geostore-showcase .sf-category-card:nth-child(3) img {
+    object-position: 50% 50%;
   }
 }
 

@@ -37,21 +37,17 @@ export function GeoDrawer({
       <SheetContent
         side={side}
         className={cn(
-          "glass-panel-strong flex max-h-[100dvh] flex-col overflow-hidden rounded-none border-bronze/20 bg-transparent p-0 text-foreground",
+          "geo-drawer flex max-h-[100dvh] flex-col overflow-hidden rounded-none border-l p-0",
           className,
         )}
       >
-        <SheetHeader className="shrink-0 border-b border-bronze/12 px-7 py-6 text-left">
-          <SheetTitle className="text-[0.68rem] uppercase tracking-[0.3em] text-bronze">
-            {title}
-          </SheetTitle>
+        <SheetHeader className="geo-drawer-header shrink-0 space-y-0 text-left">
+          <SheetTitle className="geo-drawer-title">{title}</SheetTitle>
           {description ? (
-            <SheetDescription className="text-sm text-foreground/50">
-              {description}
-            </SheetDescription>
+            <SheetDescription className="geo-drawer-description">{description}</SheetDescription>
           ) : null}
         </SheetHeader>
-        <div className="geo-drawer-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-7 py-7 pb-[max(1.75rem,env(safe-area-inset-bottom))]">
+        <div className="geo-drawer-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain pb-[max(1.75rem,env(safe-area-inset-bottom))]">
           {children}
         </div>
       </SheetContent>

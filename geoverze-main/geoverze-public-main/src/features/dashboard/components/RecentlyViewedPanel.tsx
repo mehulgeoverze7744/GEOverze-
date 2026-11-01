@@ -27,22 +27,22 @@ export function RecentlyViewedPanel({ className }: { className?: string }) {
   return (
     <section
       className={cn(
-        "dashboard-recently-viewed rounded-2xl border border-bronze/16 bg-charcoal/30 p-6 backdrop-blur-sm",
+        "dashboard-recently-viewed rounded-2xl border border-bronze/16 bg-charcoal/30 p-6",
         className,
       )}
       aria-labelledby="recently-viewed-heading"
     >
-      <div className="flex items-center justify-between gap-4">
+      <div className="dashboard-shelf-head flex items-center justify-between gap-4">
         <h2
           id="recently-viewed-heading"
-          className="dashboard-section-label flex items-center gap-2"
+          className="dashboard-section-label flex min-w-0 items-center gap-2"
         >
-          <Eye className="h-3.5 w-3.5 text-bronze/90" strokeWidth={1.5} aria-hidden="true" />
+          <Eye className="h-3.5 w-3.5 shrink-0 text-bronze/90" strokeWidth={1.5} aria-hidden="true" />
           Recently viewed
         </h2>
         <Link
           to="/geolibrary"
-          className="dashboard-shelf-all text-[0.62rem] uppercase tracking-[0.2em] text-bronze/90 transition-colors hover:text-bronze"
+          className="dashboard-shelf-all shrink-0 text-[0.62rem] uppercase tracking-[0.2em] text-bronze/90 transition-colors hover:text-bronze"
         >
           All
         </Link>
@@ -63,7 +63,7 @@ export function RecentlyViewedPanel({ className }: { className?: string }) {
                 params={{ slug: article.slug }}
                 className="dashboard-editorial-card group flex gap-4 rounded-xl border border-transparent p-2 transition-colors motion-fast hover:border-bronze/18 hover:bg-bronze/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45"
               >
-                <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-bronze/15">
+                <span className="dashboard-shelf-thumb relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-bronze/15">
                   <img
                     src={articleCardImageSrc(article.slug)}
                     alt=""
@@ -76,7 +76,7 @@ export function RecentlyViewedPanel({ className }: { className?: string }) {
                   <span className="text-[0.58rem] uppercase tracking-[0.18em] text-bronze/80">
                     {categoryLabel(article.category)}
                   </span>
-                  <span className="mt-1 block truncate text-sm text-foreground/85">
+                  <span className="dashboard-shelf-title mt-1 block truncate text-sm text-foreground/85">
                     {article.title}
                   </span>
                   <span className="mt-1 block text-[0.65rem] text-foreground/50">

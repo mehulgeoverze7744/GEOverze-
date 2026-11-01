@@ -43,7 +43,7 @@ export function ArticleExternalImage({
   return (
     <div
       className={cn(
-        "relative w-full overflow-hidden bg-[#E8D6B8]",
+        "relative w-full overflow-hidden bg-[#F1F5F9]",
         ratio === "video" && "aspect-[16/10]",
         ratio === "wide" && "aspect-[21/8]",
         ratio === "banner" && "aspect-[8/3]",

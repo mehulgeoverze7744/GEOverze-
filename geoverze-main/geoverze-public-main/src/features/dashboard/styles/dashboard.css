@@ -3564,3 +3564,152 @@
 #gvrze-account .dashboard-upcoming__lock-icon svg {
   color: #ffffff;
 }
+
+@media (min-width: 768px) {
+  .dashboard-recently-viewed,
+  .dashboard-saved-explorations {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
+
+/* Mobile-only: Recently viewed + Saved explorations — white cards, no overflow. */
+@media (max-width: 767px) {
+  #gvrze-account {
+    overflow-x: hidden;
+  }
+
+  .dashboard-order-viewed {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  .dashboard-order-viewed .dashboard-shelf-grid,
+  .dashboard-order-viewed .dashboard-shelf-grid > * {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  #gvrze-account .dashboard-recently-viewed,
+  #gvrze-account .dashboard-saved-explorations,
+  .dashboard-recently-viewed,
+  .dashboard-saved-explorations {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-inline: 0;
+    padding: 1.1rem 1rem 1.15rem;
+    border: 1px solid #e2e8f0 !important;
+    background: #ffffff !important;
+    --tw-backdrop-blur: ;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none;
+  }
+
+  .dashboard-recently-viewed + .dashboard-saved-explorations,
+  .dashboard-order-viewed .dashboard-shelf-grid {
+    gap: 0.9rem;
+  }
+
+  .dashboard-shelf-head {
+    gap: 0.55rem;
+    min-width: 0;
+  }
+
+  #gvrze-account .dashboard-recently-viewed .dashboard-section-label,
+  #gvrze-account .dashboard-saved-explorations .dashboard-section-label,
+  #gvrze-account .dashboard-recently-viewed h2,
+  #gvrze-account .dashboard-saved-explorations h2,
+  .dashboard-recently-viewed .dashboard-section-label,
+  .dashboard-saved-explorations .dashboard-section-label {
+    min-width: 0;
+    flex: 1 1 auto;
+    letter-spacing: 0.12em;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+    color: #172335 !important;
+    -webkit-text-fill-color: #172335 !important;
+  }
+
+  #gvrze-account .dashboard-recently-viewed .dashboard-section-label svg,
+  #gvrze-account .dashboard-saved-explorations .dashboard-section-label svg,
+  .dashboard-recently-viewed .dashboard-section-label svg,
+  .dashboard-saved-explorations .dashboard-section-label svg {
+    color: #2878c8 !important;
+  }
+
+  #gvrze-account .dashboard-recently-viewed .dashboard-shelf-all,
+  #gvrze-account .dashboard-saved-explorations .dashboard-shelf-all,
+  #gvrze-account .dashboard-recently-viewed .dashboard-shelf-all:hover,
+  #gvrze-account .dashboard-saved-explorations .dashboard-shelf-all:hover,
+  .dashboard-recently-viewed .dashboard-shelf-all,
+  .dashboard-saved-explorations .dashboard-shelf-all {
+    flex-shrink: 0;
+    letter-spacing: 0.14em;
+    color: #2878c8 !important;
+    -webkit-text-fill-color: #2878c8 !important;
+  }
+
+  #gvrze-account .dashboard-recently-viewed .dashboard-editorial-card,
+  #gvrze-account .dashboard-saved-explorations .dashboard-editorial-card,
+  .dashboard-recently-viewed .dashboard-editorial-card,
+  .dashboard-saved-explorations .dashboard-editorial-card {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    gap: 0.75rem;
+    padding: 0.45rem 0.2rem;
+    background: transparent;
+  }
+
+  .dashboard-recently-viewed .dashboard-editorial-card:hover,
+  .dashboard-saved-explorations .dashboard-editorial-card:hover {
+    background: #f5f7fa;
+    border-color: #e2e8f0;
+  }
+
+  .dashboard-recently-viewed .dashboard-shelf-thumb,
+  .dashboard-saved-explorations .dashboard-shelf-thumb {
+    width: 4.25rem;
+    height: 4.25rem;
+    border-color: #e2e8f0 !important;
+    background: #f5f7fa;
+  }
+
+  #gvrze-account .dashboard-recently-viewed [class*="text-bronze"],
+  #gvrze-account .dashboard-saved-explorations [class*="text-bronze"],
+  #gvrze-account .dashboard-recently-viewed [class*="text-bronze-glow"],
+  #gvrze-account .dashboard-saved-explorations [class*="text-bronze-glow"] {
+    color: #2878c8 !important;
+    -webkit-text-fill-color: #2878c8 !important;
+  }
+
+  #gvrze-account .dashboard-recently-viewed .dashboard-editorial-card .text-sm,
+  #gvrze-account .dashboard-saved-explorations .dashboard-editorial-card .text-sm,
+  .dashboard-recently-viewed .dashboard-shelf-title,
+  .dashboard-saved-explorations .dashboard-shelf-title {
+    overflow: visible;
+    text-overflow: unset;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    color: #172335 !important;
+    -webkit-text-fill-color: #172335 !important;
+  }
+
+  #gvrze-account .dashboard-recently-viewed p,
+  #gvrze-account .dashboard-saved-explorations p,
+  #gvrze-account .dashboard-recently-viewed [class*="text-foreground/50"],
+  #gvrze-account .dashboard-saved-explorations [class*="text-foreground/50"],
+  .dashboard-recently-viewed [class*="text-foreground/50"],
+  .dashboard-saved-explorations [class*="text-foreground/50"] {
+    color: #687586 !important;
+    -webkit-text-fill-color: #687586 !important;
+  }
+}

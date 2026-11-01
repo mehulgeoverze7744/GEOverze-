@@ -1,22 +1,19 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap");
 
-/* ─── Design tokens (one atlas page) ─── */
+/* ─── Design tokens (shared by every library article) ─── */
 .article-atlas-parchment__article-shell {
-  --atlas-ink: #30231b;
-  --atlas-ink-muted: #665548;
-  --atlas-ink-soft: #806b58;
-  --atlas-bronze: #8a5a32;
-  --atlas-bronze-dark: #5a3825;
-  --atlas-paper-base: #e8d6b8;
-  --atlas-paper-card: rgba(245, 233, 211, 0.9);
-  --atlas-paper-callout: rgba(239, 225, 202, 0.88);
-  --atlas-paper-border: rgba(90, 56, 37, 0.18);
-  --atlas-paper-callout-border: rgba(105, 72, 49, 0.25);
-  --atlas-paper-shadow: 0 3px 14px rgba(60, 40, 25, 0.05);
-  --atlas-paper-callout-shadow: 0 4px 18px rgba(60, 38, 25, 0.06);
-  --atlas-paper-crown-url: url("/assets/geolibrary/europe-microstates-paper-crown.png");
-  --atlas-paper-tile-url: url("/assets/geolibrary/europe-microstates-paper-tile.png");
-  --atlas-paper-mountains-url: url("/assets/geolibrary/europe-microstates-paper-mountains.png");
+  --atlas-ink: #172335;
+  --atlas-ink-muted: #536273;
+  --atlas-ink-soft: #8290a0;
+  --atlas-bronze: #2878c8;
+  --atlas-bronze-dark: #2878c8;
+  --atlas-paper-base: #f8fafc;
+  --atlas-paper-card: #ffffff;
+  --atlas-paper-callout: #eef5fb;
+  --atlas-paper-border: #e2e8f0;
+  --atlas-paper-callout-border: #d7e3ef;
+  --atlas-paper-shadow: none;
+  --atlas-paper-callout-shadow: none;
   --atlas-serif: "Playfair Display", Georgia, "Times New Roman", serif;
 
   position: relative;
@@ -24,48 +21,15 @@
   min-height: 100%;
   overflow-x: hidden;
   color: var(--atlas-ink);
-  /* Fallback if texture fails to load */
   background-color: var(--atlas-paper-base);
 }
 
-/*
- * Seamless center-crop tile only (no sheet bottom edge / mountains).
- * Top crown + mountain footer are each rendered once.
- */
 .article-atlas-parchment__paper-slab {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-color: var(--atlas-paper-base);
-  background-image: var(--atlas-paper-tile-url);
-  background-repeat: repeat-y;
-  background-position: top center;
-  background-size: 100% auto;
-}
-
-.article-atlas-parchment__paper-slab::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  aspect-ratio: 487 / 90;
-  max-height: 18vh;
-  background-image: var(--atlas-paper-crown-url);
-  background-repeat: no-repeat;
-  background-position: top center;
-  background-size: 100% 100%;
-  pointer-events: none;
+  display: none;
 }
 
 .article-atlas-parchment__article-shell::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  box-shadow: inset min(4vw, 2.75rem) 0 min(4vw, 2.75rem) rgba(48, 35, 27, 0.1);
+  display: none;
 }
 
 .article-atlas-parchment__article-main {
@@ -79,21 +43,23 @@
   z-index: 2;
   width: min(100%, 65.625rem);
   margin-inline: auto;
-  padding-inline: clamp(1.25rem, 4vw, 2.75rem);
-  padding-bottom: 1.5rem;
+  padding: 1.35rem clamp(1.25rem, 4vw, 2.75rem) 2.5rem;
+  background: #ffffff;
+  border: 1px solid var(--atlas-paper-border);
+  border-radius: 1rem;
+}
+
+@media (max-width: 767px) {
+  .article-atlas-parchment__inner {
+    width: 100%;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+  }
 }
 
 .article-atlas-parchment__paper-end {
-  position: relative;
-  z-index: 2;
-  display: block;
-  width: 100%;
-  height: auto;
-  margin: 0;
-  padding: 0;
-  vertical-align: bottom;
-  pointer-events: none;
-  user-select: none;
+  display: none;
 }
 
 /* ─── Shared paper surfaces ─── */
@@ -155,7 +121,7 @@
   margin: 3rem 0 0;
   border: none;
   height: 0;
-  border-top: 1px solid rgba(138, 90, 50, 0.22);
+  border-top: 1px solid var(--atlas-paper-border);
 }
 
 /* ─── Header chrome ─── */
@@ -173,7 +139,7 @@
   max-width: 42rem;
   font-size: clamp(1.05rem, 2.2vw, 1.2rem);
   line-height: 1.65;
-  color: var(--atlas-bronze-dark);
+  color: var(--atlas-ink-muted);
 }
 
 .article-atlas-parchment__author {
@@ -194,12 +160,12 @@
   padding: 0.35rem 0.65rem;
   border: 1px solid var(--atlas-paper-border);
   border-radius: 999px;
-  background: rgba(245, 233, 211, 0.75);
+  background: #f1f5f9;
   font-size: 0.58rem;
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--atlas-bronze-dark);
+  color: var(--atlas-ink);
 }
 
 .article-atlas-parchment__progress-label {
@@ -213,7 +179,7 @@
 .article-atlas-parchment__progress-track {
   margin-top: 0.5rem;
   height: 2px;
-  background: rgba(90, 56, 37, 0.15);
+  background: #e2e8f0;
 }
 
 .article-atlas-parchment__progress-fill {
@@ -233,7 +199,7 @@
   padding: 0.45rem 0.95rem;
   border: 1px solid var(--atlas-paper-border);
   border-radius: 999px;
-  background: rgba(245, 233, 211, 0.78);
+  background: #ffffff;
   font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.16em;
@@ -243,12 +209,13 @@
 }
 
 .article-atlas-parchment__action:hover {
-  border-color: rgba(138, 90, 50, 0.45);
-  background: rgba(245, 233, 211, 0.95);
+  border-color: #cdd6e0;
+  background: #f1f5f9;
 }
 
 .article-atlas-parchment__action--active {
   border-color: var(--atlas-bronze);
+  background: rgb(40 120 200 / 0.1);
   color: var(--atlas-bronze-dark);
 }
 
@@ -289,7 +256,7 @@
   display: block;
   width: min(12rem, 40%);
   margin-bottom: 1rem;
-  border-top: 1px solid rgba(138, 90, 50, 0.22);
+  border-top: 1px solid var(--atlas-paper-border);
 }
 
 .article-atlas-parchment__toc-title {
@@ -325,7 +292,7 @@
   max-width: 58rem;
   font-size: 1.02rem;
   line-height: 1.78;
-  color: var(--atlas-ink);
+  color: var(--atlas-ink-muted);
 }
 
 .article-atlas-parchment__body > * {
@@ -538,7 +505,7 @@
 .article-atlas-parchment__table td {
   padding: 0.75rem 0.85rem;
   text-align: left;
-  border-bottom: 1px solid rgba(90, 56, 37, 0.12);
+  border-bottom: 1px solid var(--atlas-paper-border);
 }
 
 .article-atlas-parchment__table th {
@@ -547,7 +514,7 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--atlas-bronze-dark);
-  background: rgba(239, 225, 202, 0.9);
+  background: #f1f5f9;
 }
 
 .article-atlas-parchment__table tr:last-child td {
@@ -593,7 +560,7 @@
   display: block;
   height: 0.55rem;
   border-radius: 999px;
-  background: rgba(90, 56, 37, 0.12);
+  background: #e2e8f0;
   overflow: hidden;
 }
 
@@ -601,7 +568,7 @@
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #8a5a32, #5a3825);
+  background: linear-gradient(90deg, #2878c8, #1d5f9e);
 }
 
 .article-atlas-parchment__size-value {
@@ -812,4 +779,53 @@
   margin-top: 0.2rem;
   font-size: 0.82rem;
   color: var(--atlas-ink-muted);
+}
+
+.article-atlas-parchment__related h2 {
+  color: #172335;
+}
+
+.article-atlas-parchment__hero img,
+.article-atlas-parchment__figure img {
+  filter: none;
+}
+
+.article-atlas-parchment__hero [class*="animate-pulse"],
+.article-atlas-parchment__figure [class*="animate-pulse"] {
+  background-color: #f1f5f9 !important;
+}
+
+/* Beat the shared #gvrze-library-page type rules without touching other Library pages. */
+#gvrze-library-page .article-atlas-parchment__article-shell h1,
+#gvrze-library-page .article-atlas-parchment__article-shell h2,
+#gvrze-library-page .article-atlas-parchment__article-shell h3 {
+  color: var(--atlas-ink);
+}
+
+#gvrze-library-page .article-atlas-parchment__article-shell p,
+#gvrze-library-page .article-atlas-parchment__article-shell li,
+#gvrze-library-page .article-atlas-parchment__article-shell figcaption {
+  color: var(--atlas-ink-muted);
+}
+
+#gvrze-library-page .article-atlas-parchment__title,
+#gvrze-library-page .article-atlas-parchment__body h2,
+#gvrze-library-page .article-atlas-parchment__card-title,
+#gvrze-library-page .article-atlas-parchment__glance-name,
+#gvrze-library-page .article-atlas-parchment__dual-col h3,
+#gvrze-library-page .article-atlas-parchment__profile-card h3 {
+  color: var(--atlas-ink);
+}
+
+#gvrze-library-page .article-atlas-parchment__callout-label,
+#gvrze-library-page .article-atlas-parchment__progress-label,
+#gvrze-library-page .article-atlas-parchment__toc-title,
+#gvrze-library-page .article-atlas-parchment__profile-theme {
+  color: var(--atlas-bronze);
+}
+
+#gvrze-library-page .article-atlas-parchment__action--active,
+#gvrze-library-page .article-atlas-parchment__toc-list a:hover,
+#gvrze-library-page .article-atlas-parchment__cross-links a:hover {
+  color: var(--atlas-bronze);
 }

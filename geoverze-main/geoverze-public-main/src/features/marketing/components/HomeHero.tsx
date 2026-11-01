@@ -25,7 +25,7 @@ function band(p: number, a: number, b: number, c: number, d: number) {
 
 /**
  * Scroll-pinned hero: the globe emerges on the left, dominates the frame and
- * parks on the right while three copy panels hand off to each other.
+ * parks on the right while the remaining copy panels hand off.
  *
  * All scroll-driven work is written imperatively to the DOM from a single rAF
  * flush — the component itself never re-renders while scrolling.
@@ -70,7 +70,6 @@ function applyRewardsGlobeScroll(
 export function HomeHero() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const panel1 = useRef<HTMLDivElement>(null);
-  const panel2 = useRef<HTMLDivElement>(null);
   const panel3 = useRef<HTMLDivElement>(null);
   const cueRef = useRef<HTMLDivElement>(null);
   const rewardsRef = useRef<HTMLDivElement>(null);
@@ -97,11 +96,9 @@ export function HomeHero() {
     };
 
     const a = 1 - clamp01((p - 0.12) / 0.12);
-    const b = band(p, 0.28, 0.38, 0.48, 0.58);
     const c = band(p, 0.62, 0.74, 1.2, 1.4);
 
     set(panel1.current, a, (1 - a) * 26);
-    set(panel2.current, b, (1 - b) * 26);
     set(panel3.current, c, (1 - c) * 26);
 
     if (cueRef.current) cueRef.current.style.opacity = String(clamp01(1 - p / 0.08));
@@ -119,7 +116,7 @@ export function HomeHero() {
         asChild
         variant="solid"
         size="lg"
-        className="home-hero-cta w-full px-8 font-bold uppercase tracking-[0.2em]"
+        className="home-hero-cta home-hero-after-globe__primary w-full px-8 font-bold uppercase tracking-[0.2em]"
       >
         <Link
           to="/play"
@@ -129,12 +126,25 @@ export function HomeHero() {
         </Link>
       </GeoButton>
       <GeoButton
+        asChild
+        variant="solid"
+        size="lg"
+        className="home-hero-cta home-hero-after-globe__primary w-full px-8 font-bold uppercase tracking-[0.2em]"
+      >
+        <Link
+          to="/geostore"
+          className="flex flex-col items-center leading-none font-cta text-[1.37rem]"
+        >
+          <span>GSTORE</span>
+        </Link>
+      </GeoButton>
+      <GeoButton
         variant="solid"
         size="lg"
         onClick={() => setDemoOpen(true)}
-        className="home-hero-cta w-full px-8 font-bold uppercase tracking-[0.2em]"
+        className="home-hero-cta home-hero-after-globe__secondary font-bold uppercase tracking-[0.2em]"
       >
-        <span className="font-cta text-[1.37rem]">WATCH DEMO</span>
+        <span className="font-cta">WATCH DEMO</span>
       </GeoButton>
     </div>
   );
@@ -208,16 +218,6 @@ export function HomeHero() {
           <RewardsCard />
         </div>
       ) : null}
-
-      <div
-        ref={panel2}
-        className="home-hero-explore pointer-events-none absolute inset-x-6 bottom-24 opacity-0 will-change-transform max-md:hidden md:inset-x-auto md:left-12 md:top-1/2 md:bottom-auto md:max-w-[30rem] md:-translate-y-1/2"
-      >
-        <p className="eyebrow">One planet, endless ground to cover</p>
-        <h2 className="mt-4 font-light leading-[1.05] tracking-tight text-foreground text-[clamp(1.7rem,3.6vw,2.9rem)]">
-          A world made to be explored, not memorised.
-        </h2>
-      </div>
 
       <div
         ref={panel3}

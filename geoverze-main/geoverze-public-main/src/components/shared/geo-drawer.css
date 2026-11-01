@@ -1,4 +1,224 @@
-/* Mobile drawer scroll container — iOS Safari momentum scrolling */
+/* Site-wide mobile navigation drawer — white / light-grey theme. */
+
+.geo-drawer {
+  --geo-drawer-bg: #ffffff;
+  --geo-drawer-header: #f4f6f8;
+  --geo-drawer-soft: #eef2f5;
+  --geo-drawer-ink: #172335;
+  --geo-drawer-muted: #687586;
+  --geo-drawer-line: #dfe4ea;
+  --geo-drawer-blue: #2b74c4;
+  --geo-drawer-blue-soft: rgb(43 116 196 / 0.1);
+  background-color: var(--geo-drawer-bg) !important;
+  background-image: none !important;
+  color: var(--geo-drawer-ink);
+  border-color: var(--geo-drawer-line) !important;
+  box-shadow: -16px 0 40px rgb(23 35 53 / 0.08);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.geo-drawer-header {
+  background: var(--geo-drawer-header);
+  border-bottom: 1px solid var(--geo-drawer-line);
+  padding: 1.45rem 4.25rem 1.35rem 1.65rem;
+}
+
+.geo-drawer-title {
+  margin: 0;
+  color: var(--geo-drawer-ink);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.geo-drawer-description {
+  margin: 0.4rem 0 0;
+  color: var(--geo-drawer-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+/* Sheet close control — light-grey circular hit target. */
+.geo-drawer > button {
+  top: 1.2rem;
+  right: 1.15rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  background: var(--geo-drawer-soft);
+  color: var(--geo-drawer-ink);
+  opacity: 1;
+  box-shadow: none;
+}
+
+.geo-drawer > button:hover,
+.geo-drawer > button:focus-visible {
+  background: #e4e9ee;
+  opacity: 1;
+  color: var(--geo-drawer-ink);
+}
+
+.geo-drawer > button:focus-visible {
+  outline: 2px solid var(--geo-drawer-blue);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+.geo-drawer > button svg {
+  width: 1rem;
+  height: 1rem;
+  color: var(--geo-drawer-ink);
+}
+
 .geo-drawer-scroll {
   -webkit-overflow-scrolling: touch;
+  background: var(--geo-drawer-bg);
+  padding: 0.35rem 0 1.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: #c9d1d9 transparent;
+}
+
+.geo-drawer-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.geo-drawer-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.geo-drawer-scroll::-webkit-scrollbar-thumb {
+  background: #d5dbe2;
+  border-radius: 999px;
+}
+
+.geo-drawer-nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.geo-drawer-link {
+  display: block;
+  margin: 0 1.15rem;
+  padding: 1.05rem 0.7rem;
+  border-bottom: 1px solid var(--geo-drawer-line);
+  border-radius: 0.55rem;
+  color: var(--geo-drawer-ink);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.geo-drawer-link:last-of-type {
+  border-bottom-color: var(--geo-drawer-line);
+}
+
+.geo-drawer-link:hover,
+.geo-drawer-link:focus-visible {
+  background: var(--geo-drawer-soft);
+  color: var(--geo-drawer-ink);
+  outline: none;
+}
+
+.geo-drawer-link[data-status="active"] {
+  background: var(--geo-drawer-blue-soft);
+  color: var(--geo-drawer-blue);
+}
+
+.geo-drawer-account {
+  margin: 0.55rem 1.15rem 0;
+  padding-top: 0.25rem;
+}
+
+.geo-drawer-account-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.05rem;
+  padding: 0.7rem 0.7rem;
+  border-bottom: 1px solid var(--geo-drawer-line);
+  border-radius: 0.55rem;
+  color: #3d4b5c;
+  font-size: 0.92rem;
+  line-height: 1.3;
+  text-decoration: none;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.geo-drawer-account-link:last-child {
+  border-bottom: 0;
+}
+
+.geo-drawer-account-link svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  flex-shrink: 0;
+  color: var(--geo-drawer-ink);
+}
+
+.geo-drawer-account-link:hover,
+.geo-drawer-account-link:focus-visible,
+.geo-drawer-account-link[data-status="active"] {
+  background: var(--geo-drawer-soft);
+  color: var(--geo-drawer-ink);
+  outline: none;
+}
+
+.geo-drawer-account-link[data-status="active"] {
+  background: var(--geo-drawer-blue-soft);
+  color: var(--geo-drawer-blue);
+}
+
+.geo-drawer-account-link[data-status="active"] svg {
+  color: var(--geo-drawer-blue);
+}
+
+.geo-drawer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin: 1.35rem 1.65rem 0;
+}
+
+.geo-drawer-actions a,
+.geo-drawer-actions button {
+  background-color: var(--geo-drawer-bg) !important;
+  background-image: none !important;
+  border: 1px solid var(--geo-drawer-line) !important;
+  box-shadow: none !important;
+  color: var(--geo-drawer-ink) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.geo-drawer-actions a:hover,
+.geo-drawer-actions button:hover {
+  background-color: var(--geo-drawer-soft) !important;
+  border-color: #d0d7de !important;
+  color: var(--geo-drawer-ink) !important;
+}
+
+.geo-drawer-actions a[href="/auth/signup"] {
+  background-color: var(--geo-drawer-ink) !important;
+  border-color: var(--geo-drawer-ink) !important;
+  color: #ffffff !important;
+}
+
+.geo-drawer-actions a[href="/auth/signup"]:hover {
+  background-color: #243044 !important;
+  border-color: #243044 !important;
+  color: #ffffff !important;
 }

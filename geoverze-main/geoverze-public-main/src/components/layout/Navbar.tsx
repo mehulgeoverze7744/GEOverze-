@@ -266,32 +266,30 @@ export function Navbar() {
         description="Everywhere the universe reaches."
         className="w-full sm:max-w-sm"
       >
-        <nav aria-label="Site" className="flex flex-col">
+        <nav aria-label="Site" className="geo-drawer-nav">
           {mainNav.map((item) => (
             <Link
               key={item.to}
               to={item.to}
               activeOptions={{ exact: item.to === "/" }}
-              className="border-b border-bronze/10 py-4 text-sm uppercase tracking-[0.24em] text-foreground/70 transition-colors hover:text-bronze focus-visible:outline-none focus-visible:text-bronze data-[status=active]:text-bronze"
+              className="geo-drawer-link"
             >
               {item.label}
             </Link>
           ))}
-          {signedIn
-            ? accountLinks.map((item) => (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className="flex items-center gap-3 border-b border-bronze/10 py-4 text-sm text-foreground/50 transition-colors hover:text-bronze"
-                >
-                  <item.icon className="h-4 w-4" strokeWidth={1.5} />
+          {signedIn ? (
+            <div className="geo-drawer-account">
+              {accountLinks.map((item) => (
+                <Link key={item.to} to={item.to} className="geo-drawer-account-link">
+                  <item.icon strokeWidth={1.5} />
                   {item.label}
                 </Link>
-              ))
-            : null}
+              ))}
+            </div>
+          ) : null}
         </nav>
 
-        <div className="mt-8 flex flex-col gap-3">
+        <div className="geo-drawer-actions">
           {signedIn ? (
             <GeoButton
               variant="secondary"

@@ -12,22 +12,22 @@ export function SavedExplorationsPanel({ className }: { className?: string }) {
   return (
     <section
       className={cn(
-        "dashboard-saved-explorations rounded-2xl border border-bronze/16 bg-charcoal/30 p-6 backdrop-blur-sm",
+        "dashboard-saved-explorations rounded-2xl border border-bronze/16 bg-charcoal/30 p-6",
         className,
       )}
       aria-labelledby="saved-explorations-heading"
     >
-      <div className="flex items-center justify-between gap-4">
+      <div className="dashboard-shelf-head flex items-center justify-between gap-4">
         <h2
           id="saved-explorations-heading"
-          className="dashboard-section-label flex items-center gap-2"
+          className="dashboard-section-label flex min-w-0 items-center gap-2"
         >
-          <BookMarked className="h-3.5 w-3.5 text-bronze/90" strokeWidth={1.5} aria-hidden="true" />
+          <BookMarked className="h-3.5 w-3.5 shrink-0 text-bronze/90" strokeWidth={1.5} aria-hidden="true" />
           Saved explorations
         </h2>
         <Link
           to="/bookmarks"
-          className="dashboard-shelf-all text-[0.62rem] uppercase tracking-[0.2em] text-bronze/90 transition-colors hover:text-bronze"
+          className="dashboard-shelf-all shrink-0 text-[0.62rem] uppercase tracking-[0.2em] text-bronze/90 transition-colors hover:text-bronze"
         >
           All
         </Link>
@@ -48,7 +48,7 @@ export function SavedExplorationsPanel({ className }: { className?: string }) {
                 params={{ slug: item.id.replace(/^article:/, "") }}
                 className="dashboard-editorial-card group flex gap-4 rounded-xl border border-transparent p-2 transition-colors motion-fast hover:border-bronze/18 hover:bg-bronze/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45"
               >
-                <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-bronze/15">
+                <span className="dashboard-shelf-thumb relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-bronze/15">
                   {item.imageSrc ? (
                     <img
                       src={item.imageSrc}
@@ -63,7 +63,7 @@ export function SavedExplorationsPanel({ className }: { className?: string }) {
                   <span className="text-[0.58rem] uppercase tracking-[0.18em] text-bronze/80">
                     {item.category}
                   </span>
-                  <span className="mt-1 block truncate text-sm text-foreground/85">
+                  <span className="dashboard-shelf-title mt-1 block truncate text-sm text-foreground/85">
                     {item.title}
                   </span>
                   <span className="mt-1 block text-[0.65rem] text-foreground/50">{item.meta}</span>
