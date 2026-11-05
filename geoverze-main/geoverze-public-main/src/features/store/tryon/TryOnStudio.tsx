@@ -2,7 +2,7 @@
  * GVRZE Try-On Studio — Phase 1
  *
  * Editorial layout:
- *   left  — product, colours, sizes, bag / buy
+ *   left  — product, colours, sizes, cart / buy
  *   stage — fixed GVRZE studio model + product-specific preview
  *
  * Personal photo upload and AI generation are reserved for Phase 2.
@@ -102,7 +102,7 @@ export function TryOnStudio({ mode = "page", onClose }: TryOnStudioProps) {
     return options;
   };
 
-  const handleAddToBag = () => {
+  const handleAddToCart = () => {
     if (!selected || !canPurchase) {
       toast.error("This look is not available to purchase.");
       return;
@@ -234,9 +234,9 @@ export function TryOnStudio({ mode = "page", onClose }: TryOnStudioProps) {
                   type="button"
                   className="tryon-btn tryon-btn--ghost"
                   disabled={!canPurchase}
-                  onClick={handleAddToBag}
+                  onClick={handleAddToCart}
                 >
-                  Add to Bag
+                  Add to Cart
                 </button>
                 <button
                   type="button"

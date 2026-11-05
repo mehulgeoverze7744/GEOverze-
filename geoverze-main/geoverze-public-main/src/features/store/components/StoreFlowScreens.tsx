@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useSyncExternalStore } from "react";
 import { Coins, Gift, Heart, Package, ShoppingBag } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
@@ -10,18 +11,21 @@ import {
   SectionContainer,
 } from "@/components/shared";
 import { useCartStore } from "@/stores/cartStore";
+import { useStoreStore } from "@/stores/storeStore";
 
 import { CartLineRow } from "./CartLineRow";
 import { OrderCard } from "./OrderCard";
 import { ProductCard } from "./ProductCard";
 import { StorefrontRewardsCatalog } from "./StorefrontRewardsCatalog";
-import { productBySlug } from "../data/products";
+import { type Product } from "../data/products";
 import { isComingSoonCategory } from "../data/taxonomy";
 import { SEED_ORDERS } from "../data/orders";
 import { isProductOwned, useEntitlements } from "../hooks/useEntitlements";
 import { useStoreCatalogue } from "../hooks/useStoreCatalogue";
 import { money } from "../lib/format";
 import { computeTotals, lineCredits, lineMoney } from "../lib/purchase";
+import { catalogueProductBySlug } from "../lib/mergeCatalogue";
+import { resolveStoreProduct } from "../lib/resolveStoreProduct";
 import { useStoreActions } from "../lib/useStoreActions";
 import { useStoreCredits, useStoreCreditsState } from "../lib/useStoreCredits";
 import { toast } from "sonner";
@@ -30,8 +34,33 @@ function crumbs(label: string) {
   return [{ label: "Gstore", to: "/geostore" as const }, { label }];
 }
 
+function subscribeStorePersistHydration(onStoreChange: () => void) {
+  return useStoreStore.persist.onFinishHydration(onStoreChange);
+}
+
+function storePersistHasHydrated() {
+  return useStoreStore.persist.hasHydrated();
+}
+
+function useStorePersistHydrated() {
+  return useSyncExternalStore(subscribeStorePersistHydration, storePersistHasHydrated, () => false);
+}
+
+function subscribeCartPersistHydration(onStoreChange: () => void) {
+  return useCartStore.persist.onFinishHydration(onStoreChange);
+}
+
+function cartPersistHasHydrated() {
+  return useCartStore.persist.hasHydrated();
+}
+
+function useCartPersistHydrated() {
+  return useSyncExternalStore(subscribeCartPersistHydration, cartPersistHasHydrated, () => false);
+}
+
 /** Basket + saved for later. */
 export function CartScreen() {
+  const hydrated = useCartPersistHydrated();
   const lines = useCartStore((s) => s.lines);
   const saved = useCartStore((s) => s.saved);
   const setQuantity = useCartStore((s) => s.setQuantity);
@@ -55,7 +84,9 @@ export function CartScreen() {
         breadcrumb={crumbs("Cart")}
       />
       <SectionContainer size="wide">
-        {lines.length === 0 ? (
+        {!hydrated ? (
+          <EmptyState icon={ShoppingBag} title="Loading cart…" />
+        ) : lines.length === 0 ? (
           <EmptyState
             icon={ShoppingBag}
             title="Your cart is empty"
@@ -286,7 +317,11 @@ export function WishlistScreen() {
   const balance = useStoreCredits();
   const { addProduct, wishlistToggle, wishlist } = useStoreActions();
   const entitlements = useEntitlements();
-  const items = wishlist.map(productBySlug).filter((p): p is NonNullable<typeof p> => Boolean(p));
+  const { products: catalogueProducts } = useStoreCatalogue();
+  const hydrated = useStorePersistHydrated();
+  const items = wishlist
+    .map((id) => catalogueProductBySlug(catalogueProducts, id) ?? resolveStoreProduct(id))
+    .filter((product): product is Product => Boolean(product));
 
   return (
     <PageShell>
@@ -297,7 +332,9 @@ export function WishlistScreen() {
         breadcrumb={crumbs("Wishlist")}
       />
       <SectionContainer size="wide">
-        {items.length === 0 ? (
+        {!hydrated ? (
+          <EmptyState icon={Heart} title="Loading wishlist…" />
+        ) : items.length === 0 ? (
           <EmptyState
             icon={Heart}
             title="Wishlist is empty"

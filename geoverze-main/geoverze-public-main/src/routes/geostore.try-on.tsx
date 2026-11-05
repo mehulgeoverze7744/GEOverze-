@@ -10,7 +10,7 @@ export const Route = createFileRoute("/geostore/try-on")({
       {
         name: "description",
         content:
-          "Preview GVRZE T-shirts on the studio model. Select a design, colour and size, then add it to your bag.",
+          "Preview GVRZE T-shirts on the studio model. Select a design, colour and size, then add it to your cart.",
       },
       { property: "og:title", content: "Try-On Studio — Gstore | GVRZE" },
       {

@@ -121,6 +121,9 @@ export const useStoreStore = create<StoreState>()(
     }),
     {
       name: GVRZE_PERSIST_NAMES.storeScoped,
+      // Must match persistActiveStoreSnapshot's written version, or hydrate
+      // discards the snapshot (zustand persist requires migrate when versions differ).
+      version: 3,
       storage: createJSONStorage(() => scopedStorage),
       partialize: (state) => ({
         wishlist: state.wishlist,
@@ -160,14 +163,21 @@ export const selectWishlistCount = (s: StoreState) => s.wishlist.length;
 export const selectRecentlyViewed = (s: StoreState) => s.recentlyViewed;
 export const selectRecentSearches = (s: StoreState) => s.recentSearches;
 
-/** Lift legacy single-key wishlist into scoped anon storage once. */
+/** Hydrate from scoped storage immediately; lift legacy single-key data once. */
 function bootstrapLegacyStoreSnapshot() {
+  if (typeof window === "undefined") return;
+
   const current = loadStoreSnapshotForActiveScope();
   if (
     current.wishlist.length > 0 ||
     current.recentlyViewed.length > 0 ||
     current.recentSearches.length > 0
   ) {
+    useStoreStore.setState({
+      wishlist: current.wishlist,
+      recentlyViewed: current.recentlyViewed,
+      recentSearches: current.recentSearches,
+    });
     return;
   }
 

@@ -35,7 +35,7 @@ export const PlanCard = memo(function PlanCard({
       {...(locked ? { "aria-disabled": true as const } : {})}
     >
       {plan.badge ? (
-        <AnimatedBadge className="absolute right-4 top-4 z-[1] sm:right-5 sm:top-5">
+        <AnimatedBadge className="pricing-plan-card__badge absolute right-4 top-4 z-[1] sm:right-5 sm:top-5">
           {plan.badge}
         </AnimatedBadge>
       ) : null}

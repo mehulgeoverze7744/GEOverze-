@@ -21,6 +21,8 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useStoreStore } from "@/stores/storeStore";
 
+import { resolveStoreProduct } from "../lib/resolveStoreProduct";
+import { useStoreActions } from "../lib/useStoreActions";
 import { StorefrontNav } from "./StorefrontNav";
 import { SF_SHELL, SF_UI_FONT } from "./storefront-ui";
 
@@ -226,6 +228,8 @@ export function StorefrontProductPage({
   const wishlistItems = useStoreStore((s) => s.wishlist);
   const wishlistToggleFn = useStoreStore((s) => s.toggleWishlist);
   const isSaved = wishlistItems.includes(slug);
+  const { addProduct } = useStoreActions();
+  const product = resolveStoreProduct(slug);
 
   // When a colour swatch is selected, update the displayed image to match.
   function handleColorSelect(colorId: string) {
@@ -244,14 +248,19 @@ export function StorefrontProductPage({
 
   const mainImage = galleryImages[selectedImageIdx] ?? galleryImages[0] ?? { src: "", alt: name };
 
-  function handleAddToBag() {
+  function handleAddToCart() {
     if (!selectedSize) {
-      toast.error("Please select a size before adding to bag.");
+      toast.error("Please select a size before adding to cart.");
       return;
     }
-    toast.success(`${name} (${selectedSize}) added to bag.`, {
-      description: "Merchandise checkout coming soon.",
-    });
+    if (!product) {
+      toast.error("This product isn’t available to add yet.");
+      return;
+    }
+    const options: Record<string, string> = { Size: selectedSize };
+    const color = colors?.find((entry) => entry.id === selectedColorId);
+    if (color) options.Colour = color.label;
+    addProduct(product, options, 1);
   }
 
   function handleBuyNow() {
@@ -426,10 +435,10 @@ export function StorefrontProductPage({
             <div className="mt-6 flex flex-col gap-3">
               <button
                 type="button"
-                onClick={handleAddToBag}
+                onClick={handleAddToCart}
                 className="w-full rounded-lg border border-black bg-white px-6 py-3.5 text-[13px] font-semibold tracking-wide text-black transition-colors duration-150 hover:bg-[#f0f0f0] active:bg-[#e8e8e8]"
               >
-                ADD TO BAG
+                ADD TO CART
               </button>
               <button
                 type="button"

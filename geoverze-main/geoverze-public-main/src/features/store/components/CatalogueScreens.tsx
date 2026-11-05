@@ -64,6 +64,7 @@ import {
 import { filterProducts, sortProducts } from "../lib/filter";
 import { defaultOptions } from "../lib/cart";
 import { money } from "../lib/format";
+import { resolveStoreProduct } from "../lib/resolveStoreProduct";
 import { useStoreActions } from "../lib/useStoreActions";
 import { productImageForSlug } from "../data/productImages";
 import { useStoreCredits, useStoreCreditsState } from "../lib/useStoreCredits";
@@ -349,8 +350,8 @@ function MerchCategoryShelf({ slug }: { slug: "tshirts" | "hoodies" }) {
   const { addProduct } = useStoreActions();
 
   function handleAdd(item: EditorialItem) {
-    const product = productBySlug(item.slug);
-    if (product) addProduct(product, defaultOptions(product));
+    const product = resolveStoreProduct(item.slug);
+    if (product && !isPurchaseLocked(product)) addProduct(product, defaultOptions(product));
   }
 
   return (

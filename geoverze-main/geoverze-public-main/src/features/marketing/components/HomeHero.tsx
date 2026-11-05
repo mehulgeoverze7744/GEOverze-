@@ -1,6 +1,6 @@
 import { ClientOnly, Link } from "@tanstack/react-router";
 import { ChevronDown } from "lucide-react";
-import { Suspense, lazy, useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState, type KeyboardEvent } from "react";
 
 import { useScrollProgress } from "@/components/geoverze/useScrollProgress";
 import "./home-hero.css";
@@ -16,6 +16,58 @@ const SHOW_HOME_REWARDS_CARD = true;
 
 function clamp01(v: number) {
   return v < 0 ? 0 : v > 1 ? 1 : v;
+}
+
+function isDisplayed(el: Element) {
+  return window.getComputedStyle(el).display !== "none";
+}
+
+/** First homepage `<section>` after the pinned hero (skips pin-spacers / CTA wrappers). */
+function findNextHomepageSection(hero: HTMLElement): HTMLElement | null {
+  let origin: Element = hero;
+  const parent = hero.parentElement;
+  if (parent?.classList.contains("pin-spacer") || parent?.hasAttribute("data-pin-spacer")) {
+    origin = parent;
+  }
+
+  let node: Element | null = origin.nextElementSibling;
+  while (node) {
+    if (isDisplayed(node)) {
+      if (node instanceof HTMLElement && node.matches("section") && node.id !== "home-hero") {
+        return node;
+      }
+      const nested = node.querySelectorAll("section");
+      for (const section of nested) {
+        if (
+          section instanceof HTMLElement &&
+          section.id !== "home-hero" &&
+          isDisplayed(section)
+        ) {
+          return section;
+        }
+      }
+    }
+    node = node.nextElementSibling;
+  }
+  return null;
+}
+
+function scrollToNextHomepageSection(hero: HTMLElement) {
+  const next = findNextHomepageSection(hero);
+  if (!next) return;
+
+  const navHeight =
+    getComputedStyle(document.documentElement).getPropertyValue("--nav-height").trim() ||
+    "4.75rem";
+  // The document already uses scroll-padding-top for the sticky nav.
+  // Apply a matching scroll-margin only when that padding is missing.
+  const scrollPadding = getComputedStyle(document.documentElement).scrollPaddingTop;
+  if (!scrollPadding || scrollPadding === "0px") {
+    next.style.scrollMarginTop = `calc(${navHeight} + 0.75rem)`;
+  }
+
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  next.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
 }
 
 /** Fades a panel in over [a,b] and out over [c,d]. */
@@ -71,7 +123,7 @@ export function HomeHero() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const panel1 = useRef<HTMLDivElement>(null);
   const panel3 = useRef<HTMLDivElement>(null);
-  const cueRef = useRef<HTMLDivElement>(null);
+  const cueRef = useRef<HTMLButtonElement>(null);
   const rewardsRef = useRef<HTMLDivElement>(null);
   const globeRef = useRef<HTMLDivElement>(null);
   const [webgl, setWebgl] = useState(true);
@@ -101,7 +153,13 @@ export function HomeHero() {
     set(panel1.current, a, (1 - a) * 26);
     set(panel3.current, c, (1 - c) * 26);
 
-    if (cueRef.current) cueRef.current.style.opacity = String(clamp01(1 - p / 0.08));
+    if (cueRef.current) {
+      const opacity = clamp01(1 - p / 0.08);
+      cueRef.current.style.opacity = String(opacity);
+      cueRef.current.style.pointerEvents = opacity > 0.2 ? "auto" : "none";
+      cueRef.current.tabIndex = opacity > 0.2 ? 0 : -1;
+      cueRef.current.setAttribute("aria-hidden", opacity < 0.15 ? "true" : "false");
+    }
 
     applyRewardsGlobeScroll(p, rewardsRef.current, globeRef.current);
   });
@@ -109,6 +167,24 @@ export function HomeHero() {
   useEffect(() => {
     applyRewardsGlobeScroll(progress.current, rewardsRef.current, globeRef.current);
   });
+
+  const handleScrollTheExperience = () => {
+    const hero = sectionRef.current;
+    if (hero) scrollToNextHomepageSection(hero);
+  };
+
+  const handleScrollCueKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    handleScrollTheExperience();
+  };
+
+  const scrollCueContent = (
+    <>
+      <span className="home-hero-scroll-cue__text">Scroll the experience</span>
+      <ChevronDown className="home-hero-scroll-cue__arrow" strokeWidth={1.75} aria-hidden />
+    </>
+  );
 
   const afterGlobeCtas = (
     <div className="home-hero-after-globe">
@@ -146,6 +222,14 @@ export function HomeHero() {
       >
         <span className="font-cta">WATCH DEMO</span>
       </GeoButton>
+      <button
+        type="button"
+        className="home-hero-scroll-cue home-hero-scroll-cue--follow"
+        onClick={handleScrollTheExperience}
+        onKeyDown={handleScrollCueKeyDown}
+      >
+        {scrollCueContent}
+      </button>
     </div>
   );
 
@@ -265,14 +349,15 @@ export function HomeHero() {
         </div>
       </Modal>
 
-      <div
+      <button
+        type="button"
         ref={cueRef}
-        aria-hidden
-        className="home-hero-scroll-cue pointer-events-none absolute bottom-8 left-1/2 -translate-x-1/2 max-md:hidden"
+        className="home-hero-scroll-cue absolute bottom-8 left-1/2 z-20 -translate-x-1/2 max-md:hidden"
+        onClick={handleScrollTheExperience}
+        onKeyDown={handleScrollCueKeyDown}
       >
-        <span className="home-hero-scroll-cue__text">Scroll the experience</span>
-        <ChevronDown className="home-hero-scroll-cue__arrow" strokeWidth={1.75} aria-hidden />
-      </div>
+        {scrollCueContent}
+      </button>
     </section>
     {afterGlobeCtas}
     </>

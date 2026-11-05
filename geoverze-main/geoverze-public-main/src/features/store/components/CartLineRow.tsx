@@ -4,6 +4,7 @@ import { Bookmark, Coins, Minus, Plus, Trash2 } from "lucide-react";
 import { CoverArt } from "@/features/play/components/CoverArt";
 import type { CartLine } from "@/stores/cartStore";
 
+import { productImageForSlug } from "../data/productImages";
 import { categoryIcon, categoryLabel } from "../data/taxonomy";
 import { credits as formatCredits, money } from "../lib/format";
 
@@ -47,6 +48,7 @@ export function CartLineRow({
   const optionSummary = Object.entries(line.options)
     .map(([k, v]) => `${k}: ${v}`)
     .join(" · ");
+  const image = productImageForSlug(line.slug);
 
   return (
     <div className="flex gap-4 border-b border-bronze/10 py-5 last:border-0">
@@ -56,7 +58,11 @@ export function CartLineRow({
         className="w-20 shrink-0 overflow-hidden rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
         aria-label={line.name}
       >
-        <CoverArt art={line.slug} icon={categoryIcon(line.category)} ratio="square" />
+        {image ? (
+          <img src={image.src} alt={image.alt} className="aspect-square w-full object-cover" />
+        ) : (
+          <CoverArt art={line.slug} icon={categoryIcon(line.category)} ratio="square" />
+        )}
       </Link>
 
       <div className="min-w-0 flex-1">

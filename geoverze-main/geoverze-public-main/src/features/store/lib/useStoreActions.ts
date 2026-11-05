@@ -5,10 +5,10 @@ import { toast } from "sonner";
 import { useCartStore } from "@/stores/cartStore";
 import { useStoreStore } from "@/stores/storeStore";
 
-import { isPurchaseLocked, productBySlug, type Product } from "../data/products";
+import { isPurchaseLocked, type Product } from "../data/products";
 import { cartLineIdForProduct, defaultOptions, toCartLine } from "./cart";
+import { resolveStoreProduct } from "./resolveStoreProduct";
 import { isProductionRewardSlug } from "./rewards";
-import { isMerchProductId } from "@/features/marketing/data/geostoreMerch";
 
 export function useStoreActions() {
   const add = useCartStore((s) => s.add);
@@ -21,13 +21,6 @@ export function useStoreActions() {
     if (isPurchaseLocked(product)) {
       toast.message("Coming soon", {
         description: `${product.name} isn’t available to purchase yet.`,
-      });
-      return;
-    }
-
-    if (isMerchProductId(product.slug) && !productBySlug(product.slug)) {
-      toast.message("Available soon", {
-        description: "Merchandise checkout is not live yet.",
       });
       return;
     }
@@ -69,7 +62,7 @@ export function useStoreActions() {
     const saved = wishlist.includes(slug);
     toggleWishlist(slug);
     toast[saved ? "message" : "success"](saved ? "Removed from wishlist" : "Saved to wishlist", {
-      description: productBySlug(slug)?.name ?? "",
+      description: resolveStoreProduct(slug)?.name ?? "",
     });
   };
 

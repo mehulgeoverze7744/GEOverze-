@@ -28,6 +28,8 @@ import vintageWorldGlobe from "@/assets/geostore/vintage-world-globe-studio.jpg"
 
 import { merchProductById } from "@/features/marketing/data/geostoreMerch";
 
+import { storefrontTeeById } from "../storefront/storefront-product-data";
+
 /** Product photography overrides for Gstore cards (slug-keyed). */
 export type ProductImage = {
   src: string;
@@ -193,6 +195,8 @@ export function productImageForSlug(slug: string): ProductImage | undefined {
   const mapped = PRODUCT_IMAGES[slug];
   if (mapped) return mapped;
   const merch = merchProductById(slug);
-  if (merch) return { src: merch.image, alt: merch.alt };
+  if (merch) return { src: merch.image, alt: merch.alt, fillFrame: true };
+  const tee = storefrontTeeById(slug);
+  if (tee) return { src: tee.image.src, alt: tee.image.alt, fillFrame: true };
   return undefined;
 }

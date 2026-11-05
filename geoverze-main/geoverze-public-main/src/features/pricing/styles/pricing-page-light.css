@@ -275,6 +275,12 @@ body:has(#gvrze-pricing-page) footer a:hover {
   color: #ffffff;
 }
 
+#gvrze-pricing-page .pricing-plan-card--featured .pricing-plan-card__badge {
+  background-color: #f5f5f5 !important;
+  border-color: #f5f5f5 !important;
+  color: #111111 !important;
+}
+
 #gvrze-pricing-page .pricing-plan-card--featured .text-foreground\/65,
 #gvrze-pricing-page .pricing-plan-card--featured .text-foreground\/60,
 #gvrze-pricing-page .pricing-plan-card--featured .text-foreground\/55,

@@ -118,6 +118,39 @@
   flex-direction: column;
   align-items: center;
   gap: 0.35rem;
+  margin: 0;
+  padding: 0.35rem 0.55rem;
+  border: 0;
+  background: transparent;
+  appearance: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.home-hero-scroll-cue__text,
+.home-hero-scroll-cue__arrow {
+  transition: opacity var(--dur-fast) var(--ease-soft);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .home-hero-scroll-cue:hover .home-hero-scroll-cue__text,
+  .home-hero-scroll-cue:hover .home-hero-scroll-cue__arrow {
+    opacity: 0.58;
+  }
+}
+
+.home-hero-scroll-cue:focus {
+  outline: none;
+}
+
+.home-hero-scroll-cue:focus-visible {
+  outline: 2px solid #3f3f3f;
+  outline-offset: 4px;
+  border-radius: 2px;
 }
 
 .home-hero-scroll-cue__text {
@@ -133,6 +166,7 @@
   height: 0.875rem;
   color: #252525;
   animation: home-hero-scroll-float 1.85s var(--ease-soft) infinite;
+  pointer-events: none;
 }
 
 .home-hero-after-globe {
@@ -166,6 +200,16 @@
     /* Lift the whole group into the lower globe area (~100–130px). */
     margin-top: clamp(-8.125rem, -32vw, -6.25rem);
     padding: 1.35rem 1.15rem 2.75rem;
+  }
+
+  .home-hero-after-globe .home-hero-scroll-cue {
+    display: flex;
+    position: static;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    z-index: auto;
+    margin-top: 0.15rem;
   }
 
   .home-hero-after-globe .home-hero-cta {
