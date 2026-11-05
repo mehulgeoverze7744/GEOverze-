@@ -1,118 +1,125 @@
-import {
-  Award,
-  CalendarDays,
-  Crown,
-  Gamepad2,
-  Library,
-  Radio,
-  Store,
-  Trophy,
-  UserRound,
-  Gift,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import type { NavItem } from "@/config/site";
 
 export type HomeFeature = {
-  icon: LucideIcon;
   title: string;
   description: string;
-  imageSrc?: string;
+  imageSrc: string;
+  imageAlt: string;
+  to: NavItem["to"];
+  imagePosition?: string;
 };
 
-/** Section 1 — Why GVRZE carousel imagery (unchanged from original pillars). */
-const whyCarouselImages = [
-  "/assets/home/learning.jpg",
-  "/assets/home/discovery.jpg",
-  "/assets/home/exploration.jpg",
-  "/assets/home/interactive-quizzes.jpg",
-  "/assets/home/friendly-competition.jpg",
-] as const;
-
-/** WHY GVRZE marquee — carousel copy on preserved pillar imagery. */
-const whyCarouselContent: Pick<HomeFeature, "icon" | "title" | "description">[] = [
+/** WHY GVRZE — light photo cards for every major GVRZE page. */
+export const whyCarouselCards: HomeFeature[] = [
   {
-    icon: Trophy,
-    title: "Leaderboards",
-    description: "Global and regional standings that reward accuracy as much as speed.",
+    title: "Home",
+    description: "Discover the GVRZE universe and begin your exploration.",
+    imageSrc: "/assets/home/pages/home.jpg",
+    imageAlt: "Pale-blue Earth horizon with a softly lit moon",
+    to: "/",
   },
   {
-    icon: CalendarDays,
-    title: "Daily challenges",
-    description: "One shared question set each day, played by the entire community.",
+    title: "Let's Play",
+    description: "Explore geography through interactive quizzes, challenges and tournaments.",
+    imageSrc: "/assets/home/pages/lets-play.jpg",
+    imageAlt: "Tablet showing a world map quiz on a bright desk",
+    to: "/play",
   },
   {
-    icon: Award,
-    title: "Tournaments",
-    description: "Seasonal brackets where explorers advance round by round.",
+    title: "GVRZE Library",
+    description: "Discover countries, capitals, flags, cultures and geographical knowledge.",
+    imageSrc: "/assets/home/pages/library.jpg",
+    imageAlt: "Open atlas, globe and maps on a sunlit table",
+    to: "/geolibrary",
   },
   {
-    icon: Radio,
-    title: "Live events",
-    description: "Scheduled expeditions played together in real time.",
+    title: "GStore",
+    description: "Explore GVRZE merchandise, collections and rewards.",
+    imageSrc: "/assets/home/pages/gstore.jpg",
+    imageAlt: "Geography apparel and a world-map mug in a bright studio",
+    to: "/geostore",
   },
   {
-    icon: Gift,
-    title: "Rewards",
-    description: "Recognition, credits and collectibles earned through participation.",
+    title: "Community",
+    description: "Connect with explorers and participate in the global geography community.",
+    imageSrc: "/assets/home/pages/community.jpg",
+    imageAlt: "People gathered around a world map in a bright room",
+    to: "/community",
+  },
+  {
+    title: "Leaderboard",
+    description: "Track rankings, achievements and competitive progress.",
+    imageSrc: "/assets/home/pages/leaderboard.jpg",
+    imageAlt: "Minimal stone podiums with a small globe in a white interior",
+    to: "/leaderboard",
+  },
+  {
+    title: "Pricing / Membership",
+    description: "Discover membership tiers and unlock premium experiences.",
+    imageSrc: "/assets/home/pages/pricing.jpg",
+    imageAlt: "Premium membership card and compass pin on white linen",
+    to: "/pricing",
+  },
+  {
+    title: "Profile Dashboard",
+    description: "Track your progress, quiz history, rewards, bookmarks and achievements.",
+    imageSrc: "/assets/home/pages/dashboard.jpg",
+    imageAlt: "Laptop on a white desk showing a light progress dashboard",
+    to: "/dashboard",
   },
 ];
 
-export const whyCarouselCards: HomeFeature[] = whyCarouselContent.map((item, index) => ({
-  ...item,
-  imageSrc: whyCarouselImages[index],
-}));
-
-/** Section 5 — Ecosystem. */
-export const ecosystem: {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  to: NavItem["to"];
-  imageSrc?: string;
-  comingSoon?: boolean;
-}[] = [
+/**
+ * THE ECOSYSTEM — six light photographic cards for the main GVRZE pages.
+ * Images are real Unsplash/Pexels photographs (free commercial licenses).
+ */
+export const ecosystem: HomeFeature[] = [
   {
-    icon: Gamepad2,
+    title: "Home",
+    description: "Discover the GVRZE universe and begin your exploration.",
+    imageSrc: "/assets/home/ecosystem/home-map.jpg",
+    imageAlt: "Traveler reading a paper map in bright daylight",
+    imagePosition: "center 42%",
+    to: "/",
+  },
+  {
     title: "Let's Play",
-    description: "The interactive heart of GVRZE — rounds, challenges and expeditions.",
+    description: "Play interactive geography quizzes, challenges and tournaments.",
+    imageSrc: "/assets/home/ecosystem/play-collab.jpg",
+    imageAlt: "Friends collaborating over laptops at a sunlit table",
+    imagePosition: "center 32%",
     to: "/play",
-    imageSrc: "/assets/home/ecosystem/lets-play.jpg",
   },
   {
-    icon: Library,
     title: "GVRZE Library",
-    description: "A living reference of countries, regions and landforms.",
+    description: "Explore countries, capitals, flags, cultures and geographical knowledge.",
+    imageSrc: "/assets/home/ecosystem/library-shelves.jpg",
+    imageAlt: "Curved wooden bookshelves in a bright public library",
+    imagePosition: "center center",
     to: "/geolibrary",
-    imageSrc: "/assets/home/ecosystem/geolibrary.jpg",
   },
   {
-    icon: Store,
-    title: "Gstore",
-    description: "Atlases, collections and profile pieces to unlock as you explore.",
+    title: "GStore",
+    description: "Discover GVRZE merchandise, apparel and exclusive collections.",
+    imageSrc: "/assets/home/ecosystem/apparel.jpg",
+    imageAlt: "Apparel and accessories arranged in a clean clothing boutique",
+    imagePosition: "center center",
     to: "/geostore",
-    imageSrc: "/assets/home/ecosystem/gvrze-geostore.jpg",
   },
   {
-    icon: Trophy,
-    title: "Leaderboards",
-    description: "Where standings, seasons and recognition come together.",
-    to: "/leaderboard",
-    comingSoon: true,
-    imageSrc: "/assets/home/ecosystem/leaderboards.jpg",
+    title: "Community",
+    description: "Connect with explorers and share your passion for geography.",
+    imageSrc: "/assets/home/ecosystem/community-together.jpg",
+    imageAlt: "Friends standing together by the water with arms around each other",
+    imagePosition: "center 46%",
+    to: "/community",
   },
   {
-    icon: Crown,
-    title: "Premium membership",
-    description: "Deeper content and refined experiences for dedicated explorers.",
+    title: "Pricing / Membership",
+    description: "Unlock premium features and expand your exploration.",
+    imageSrc: "/assets/home/ecosystem/membership.jpg",
+    imageAlt: "Bright premium workspace with a laptop beside floor-to-ceiling windows",
+    imagePosition: "center center",
     to: "/pricing",
-    imageSrc: "/assets/home/ecosystem/premium-membership.jpg",
-  },
-  {
-    icon: UserRound,
-    title: "User profiles",
-    description: "Your expedition log — progress, achievements and collections.",
-    to: "/profile",
-    imageSrc: "/assets/home/ecosystem/user-profiles.jpg",
   },
 ];

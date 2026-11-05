@@ -12,6 +12,10 @@
     padding-top: var(--space-section);
     padding-bottom: 1.5rem;
   }
+
+  .why-geoverze-intro__heading {
+    margin-bottom: 2.15rem;
+  }
 }
 
 .why-geoverze-intro {
@@ -34,7 +38,7 @@
 }
 
 .why-geoverze-intro__heading {
-  margin-bottom: 1.125rem;
+  margin-bottom: 1.75rem;
   font-size: clamp(1.375rem, 2.75vw, 2.125rem);
   font-weight: 300;
   line-height: 1.14;
@@ -47,35 +51,7 @@
   color: var(--bronze-glow);
 }
 
-.why-geoverze-intro__copy {
-  max-width: 42rem;
-  margin-bottom: 2.5rem;
-  font-size: 0.9375rem;
-  font-weight: 400;
-  line-height: 1.5;
-}
-
-@media (min-width: 640px) {
-  .why-geoverze-intro__copy {
-    font-size: 1rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .why-geoverze-intro__copy {
-    margin-bottom: 2.75rem;
-    font-size: 1.0625rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .why-geoverze-intro__copy {
-    font-size: 1.125rem;
-  }
-}
-
-.why-geoverze-section .why-carousel-viewport {
+.why-geoverze-section .why-carousel {
   width: 100%;
   max-width: 100%;
-  margin-top: 0;
 }

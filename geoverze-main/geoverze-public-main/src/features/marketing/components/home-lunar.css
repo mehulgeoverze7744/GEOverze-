@@ -84,38 +84,20 @@ body:has(#gvrze-home) {
   color: #111111;
 }
 
-/* Photo cards keep light type on their scrims. */
-#gvrze-home .why-carousel-card__body :is(h3, p),
-#gvrze-home .ecosystem-card__content :is(h3, p) {
-  color: #f4f8fb;
+#gvrze-home .why-carousel-card__copy h3 {
+  color: #111111;
 }
 
-#gvrze-home .why-carousel-card__body p,
-#gvrze-home .ecosystem-card__content p {
-  color: rgb(244 248 251 / 0.82);
+#gvrze-home .why-carousel-card__copy p {
+  color: #4b5563;
 }
 
-#gvrze-home .ecosystem-card__content [class*="text-bronze"]:not([aria-hidden]) {
-  color: #f4f8fb;
-  -webkit-text-fill-color: #f4f8fb;
+#gvrze-home .gvrze-home-below .ecosystem-card .ecosystem-card__copy h3 {
+  color: #ffffff;
 }
 
-#gvrze-home .why-carousel-card__overlay {
-  background: linear-gradient(
-    to top,
-    rgb(16 36 54 / 0.72) 0%,
-    rgb(16 36 54 / 0.28) 46%,
-    rgb(255 255 255 / 0.04) 100%
-  );
-}
-
-#gvrze-home .ecosystem-card__overlay {
-  background: linear-gradient(
-    180deg,
-    rgb(255 255 255 / 0.02) 0%,
-    rgb(16 36 54 / 0.12) 42%,
-    rgb(16 36 54 / 0.62) 100%
-  );
+#gvrze-home .gvrze-home-below .ecosystem-card .ecosystem-card__copy p {
+  color: rgb(255 255 255 / 0.9);
 }
 
 #gvrze-home .glass-panel,
