@@ -240,7 +240,7 @@ export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavP
           side="right"
           overlayClassName="sf-glass-drawer-overlay bg-[rgb(23_35_53/0.08)]"
           className={cn(
-            "sf-glass-drawer flex w-full flex-col gap-0 overflow-x-hidden overflow-y-auto bg-white/[0.38] p-0 backdrop-blur-[32px] backdrop-saturate-[180%] sm:max-w-sm",
+            "sf-glass-drawer flex w-full flex-col gap-0 overflow-x-hidden overflow-y-auto bg-white/50 p-0 backdrop-blur-[30px] backdrop-saturate-[160%] sm:max-w-sm",
             DRAWER_FONT,
           )}
         >

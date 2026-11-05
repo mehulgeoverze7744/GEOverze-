@@ -35,10 +35,12 @@ export function RewardsCard() {
                     style={
                       item.imagePosition ? { objectPosition: item.imagePosition } : undefined
                     }
-                    width={640}
-                    height={400}
-                    loading="lazy"
+                    width={item.imageWidth}
+                    height={item.imageHeight}
+                    sizes="(max-width: 767px) 30vw, 180px"
+                    loading="eager"
                     decoding="async"
+                    draggable={false}
                   />
                 </div>
                 <span className="rewards-card__tile-label">{item.title}</span>
