@@ -62,6 +62,8 @@ export type MockConfirmResult = {
   success: boolean;
   invoice_number?: string;
   outcome?: string;
+  /** True when the subscription was already active (idempotent retry). */
+  already_active?: boolean;
 };
 
 export class MockPaymentError extends Error {

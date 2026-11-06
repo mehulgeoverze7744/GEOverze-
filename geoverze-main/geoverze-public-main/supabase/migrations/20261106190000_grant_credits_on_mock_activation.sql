@@ -162,7 +162,7 @@ BEGIN
       ) VALUES (
         v_user_id, p_subscription_id, v_sub.plan_tier,
         COALESCE(v_plan.rollover_tier_key, v_sub.plan_tier),
-        v_plan.monthly_credit_grant, 'granted',
+        v_plan.monthly_credit_grant, 'completed', -- CHECK allows: pending/completed/skipped/failed
         v_period_start, v_period_end,
         v_grant_key,
         jsonb_build_object(
