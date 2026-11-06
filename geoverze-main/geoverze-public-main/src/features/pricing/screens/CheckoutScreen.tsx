@@ -699,8 +699,19 @@ export function CheckoutScreen() {
                   <div className="checkout-unavailable" role="status">
                     <Info className="checkout-unavailable__icon" size={16} strokeWidth={1.8} />
                     <div>
-                      <strong>Payment temporarily unavailable.</strong> Our payment gateway is being configured.
-                      {" "}To test locally, add <code style={{ fontSize: "0.75em" }}>VITE_MOCK_PAYMENTS=true</code> to <code style={{ fontSize: "0.75em" }}>.env.local</code>.
+                      <strong>Payment temporarily unavailable.</strong>{" "}
+                      Our payment gateway is being configured.
+                      {/* Show dev hint only in local dev builds, not on the live site */}
+                      {import.meta.env.DEV ? (
+                        <> To test locally, add{" "}
+                          <code style={{ fontSize: "0.75em" }}>VITE_MOCK_PAYMENTS=true</code>{" "}
+                          to <code style={{ fontSize: "0.75em" }}>.env.local</code>.
+                        </>
+                      ) : (
+                        <> Please check back soon or{" "}
+                          <a href="/contact" style={{ textDecoration: "underline" }}>contact us</a>.
+                        </>
+                      )}
                     </div>
                   </div>
                 ) : null}

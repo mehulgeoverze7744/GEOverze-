@@ -1,31 +1,43 @@
 /**
- * GVRZE Mock Payment Library — development-only helpers.
+ * GVRZE Mock Payment Library — testing helpers.
+ *
+ * Environment security model:
+ *   isMockPaymentEnabled() is controlled SOLELY by the VITE_MOCK_PAYMENTS
+ *   environment variable.  The previous import.meta.env.DEV guard has been
+ *   removed so that Vercel Preview deployments can test the full subscription
+ *   lifecycle by setting VITE_MOCK_PAYMENTS=true in their Preview env vars.
+ *
+ *   ┌─────────────────┬──────────────────────────────────────────────────┐
+ *   │ Environment     │ Expected VITE_MOCK_PAYMENTS value                │
+ *   ├─────────────────┼──────────────────────────────────────────────────┤
+ *   │ Local dev       │ true (in .env.local — never committed)           │
+ *   │ Vercel Preview  │ true  (set in Vercel → Settings → Env → Preview) │
+ *   │ Vercel Prod     │ NOT SET / empty (never enable in production)     │
+ *   └─────────────────┴──────────────────────────────────────────────────┘
  *
  * Production safety:
- *   isMockPaymentEnabled() returns false in production builds because
- *   Vite replaces `import.meta.env.DEV` with the literal `false` at
- *   build time. Even if VITE_MOCK_PAYMENTS is set in a prod env-file,
- *   the runtime value of DEV is false, so this gate never opens.
+ *   - VITE_MOCK_PAYMENTS must NOT be set in Vercel Production environment.
+ *   - MockPaymentGateway never collects card details or contacts Razorpay.
+ *   - Subscription activation happens exclusively via authenticated SQL RPCs
+ *     (begin_mock_subscription / confirm_mock_subscription) with idempotency
+ *     keys — no client-side tier grants are possible.
+ *   - The RPCs are protected by Supabase RLS (authenticated role only).
  *
- * Server-side safety:
- *   The SQL RPCs (begin_mock_subscription, confirm_mock_subscription)
- *   are callable only by the `authenticated` role. They do not check
- *   an env var on their own, but the idempotency_key ties each session
- *   to a specific user+intent and the client only calls them when
- *   isMockPaymentEnabled() is true.
- *
- * NEVER use these functions to activate memberships in real payments.
+ * NEVER use these functions to activate memberships via real payments.
  */
 
 import { supabase } from "@/lib/supabase/client";
 import type { TierId, BillingCycle } from "../data/plans";
 
-/** True only in a Vite dev build with VITE_MOCK_PAYMENTS=true. */
+/**
+ * True when VITE_MOCK_PAYMENTS=true is set in the environment.
+ *
+ * Safe for Production because that env var must NOT be set there.
+ * Safe for Preview when explicitly configured for testing.
+ * Safe for local dev via .env.local (which is git-ignored).
+ */
 export function isMockPaymentEnabled(): boolean {
-  return (
-    import.meta.env.DEV === true &&
-    import.meta.env["VITE_MOCK_PAYMENTS"] === "true"
-  );
+  return import.meta.env["VITE_MOCK_PAYMENTS"] === "true";
 }
 
 /** Data returned by beginMockSubscription. */
