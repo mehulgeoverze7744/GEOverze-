@@ -73,6 +73,7 @@ import { formatInrRupees } from "../lib/formatInr";
 import { GST_CONFIG, calcGst } from "../lib/gstConfig";
 import { MockPaymentGateway } from "../components/MockPaymentGateway";
 import { usePaymentConfig } from "../hooks/usePaymentConfig";
+import { useIsMockTester } from "../hooks/useIsMockTester";
 import "../styles/checkout.css";
 
 /* ── URL param parsing ───────────────────────────────────────────────────── */
@@ -149,6 +150,7 @@ export function CheckoutScreen() {
   // This unifies mock + razorpay config reads so changing a Vercel env var
   // is reflected immediately on the next page load — no rebuild needed.
   const { mockEnabled, razorpayEnabled: razorpayReady, configLoading } = usePaymentConfig();
+  const { isTester, testerLoading } = useIsMockTester();
 
   /* UI state */
   const [cycle, setCycle] = useState<BillingCycle>(initialCycle);
@@ -708,8 +710,8 @@ export function CheckoutScreen() {
                   </div>
                 ) : null}
 
-                {/* Config loading shimmer — prevents "unavailable" flash on first render */}
-                {configLoading ? (
+                {/* Config/tester loading shimmer — prevents "unavailable" flash on first render */}
+                {configLoading || testerLoading ? (
                   <div
                     className="checkout-unavailable"
                     role="status"
@@ -721,8 +723,8 @@ export function CheckoutScreen() {
                   </div>
                 ) : null}
 
-                {/* ── CTA: MOCK mode ─────────────────────────────────── */}
-                {!configLoading && mockEnabled && user ? (
+                {/* ── CTA: MOCK mode (only for authorized testers) ───── */}
+                {!configLoading && !testerLoading && mockEnabled && isTester && user ? (
                   <button
                     type="button"
                     className={`checkout-pay-btn checkout-pay-btn--mock${loading ? " checkout-pay-btn--loading" : ""}`}
@@ -737,7 +739,7 @@ export function CheckoutScreen() {
                 ) : null}
 
                 {/* ── CTA: RAZORPAY ───────────────────────────────────── */}
-                {!configLoading && !mockEnabled && razorpayReady && user ? (
+                {!configLoading && !testerLoading && !mockEnabled && razorpayReady && user ? (
                   <button
                     type="button"
                     className={`checkout-pay-btn${loading ? " checkout-pay-btn--loading" : ""}`}
@@ -752,7 +754,7 @@ export function CheckoutScreen() {
                 ) : null}
 
                 {/* ── UNAVAILABLE notice — only when neither mock nor Razorpay ── */}
-                {!configLoading && !mockEnabled && !razorpayReady ? (
+                {!configLoading && !testerLoading && !mockEnabled && !razorpayReady ? (
                   <div className="checkout-unavailable" role="status">
                     <Info className="checkout-unavailable__icon" size={16} strokeWidth={1.8} />
                     <div>

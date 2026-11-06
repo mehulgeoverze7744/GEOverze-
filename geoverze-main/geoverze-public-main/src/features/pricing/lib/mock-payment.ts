@@ -33,6 +33,7 @@ import type { TierId, BillingCycle } from "../data/plans";
 import {
   beginMockPaymentFn,
   confirmMockPaymentFn,
+  cancelMockSubscriptionFn,
 } from "./mockPaymentServerFns";
 
 /**
@@ -174,6 +175,36 @@ export async function confirmMockSubscription(params: {
   } catch (err) {
     throw new MockPaymentError(
       err instanceof Error ? err.message : "Failed to confirm mock payment.",
+      "RPC_ERROR",
+    );
+  }
+}
+
+/**
+ * Cancels an active mock subscription from the billing screen.
+ *
+ * Routes through cancelMockSubscriptionFn (createServerFn) which checks the
+ * tester allowlist and process.env["MOCK_PAYMENTS_ENABLED"] before forwarding.
+ * Idempotent: safe to call twice on an already-cancelled subscription.
+ *
+ * @throws MockPaymentError on network, auth, allowlist, or RPC failure.
+ */
+export async function cancelMockSubscription(params: {
+  subscription_id: string;
+}): Promise<{ success: boolean; already_cancelled?: boolean }> {
+  const access_token = await getAccessToken();
+
+  try {
+    const result = await cancelMockSubscriptionFn({
+      data: {
+        access_token,
+        subscription_id: params.subscription_id,
+      },
+    });
+    return result ?? { success: false };
+  } catch (err) {
+    throw new MockPaymentError(
+      err instanceof Error ? err.message : "Failed to cancel mock subscription.",
       "RPC_ERROR",
     );
   }

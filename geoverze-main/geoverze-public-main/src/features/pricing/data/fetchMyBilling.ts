@@ -37,6 +37,10 @@ export type MyBillingSnapshot = {
   canSwitchToAnnual: boolean;
   isPaidMembership: boolean;
   history: BillingHistoryRow[];
+  /** True when the active subscription was created via mock payment (is_mock=true). */
+  isMockSubscription: boolean;
+  /** UUID of the active mock subscription, or null if not a mock subscription. */
+  mockSubscriptionId: string | null;
 };
 
 type PlanTierRpc = {
@@ -117,7 +121,7 @@ export async function fetchMyBilling(): Promise<MyBillingSnapshot> {
   const user = userData.user;
   if (!user) throw new Error("Authentication required");
 
-  const [planResult, paymentsResult, progressionResult, grantResult] = await Promise.all([
+  const [planResult, paymentsResult, progressionResult, grantResult, activeSubResult] = await Promise.all([
     supabase.rpc("get_my_plan_tier"),
     supabase
       .from("billing_payments")
@@ -127,11 +131,20 @@ export async function fetchMyBilling(): Promise<MyBillingSnapshot> {
       .order("attempted_at", { ascending: false })
       .limit(50),
     supabase.from("user_progression").select("credits").maybeSingle(),
+    // Fixed: status = 'completed' (not 'granted' — only 'pending'/'completed'/'skipped'/'failed' are valid)
     supabase
       .from("membership_credit_grants")
       .select("credit_amount, status, grant_period_start")
-      .eq("status", "granted")
+      .eq("status", "completed")
       .order("grant_period_start", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    // Active subscription details (to detect mock subscriptions)
+    supabase
+      .from("user_subscriptions")
+      .select("id, provider_name")
+      .in("status", ["active", "trialing", "past_due"])
+      .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
   ]);
@@ -140,6 +153,8 @@ export async function fetchMyBilling(): Promise<MyBillingSnapshot> {
   if (paymentsResult.error) throw new Error(paymentsResult.error.message);
   if (progressionResult.error) throw new Error(progressionResult.error.message);
   if (grantResult.error) throw new Error(grantResult.error.message);
+  // activeSubResult errors are non-fatal (best-effort)
+  const activeSub = activeSubResult.data ?? null;
 
   const rpc = parsePlanTierRpc(planResult.data);
   const tier = parseLibraryAccessTier(asString(rpc.tier)) ?? "explorer";
@@ -177,6 +192,8 @@ export async function fetchMyBilling(): Promise<MyBillingSnapshot> {
     periodGrantAmount: grantResult.data?.credit_amount ?? null,
     canSwitchToAnnual: isPaidTier && billingInterval === "monthly" && annualPrice != null,
     isPaidMembership: isPaidTier,
+    isMockSubscription: activeSub?.provider_name === "mock",
+    mockSubscriptionId: activeSub?.provider_name === "mock" ? (activeSub.id as string) : null,
     history: payments.map((row) => {
       const historyTier = parseLibraryAccessTier(row.plan_tier);
       return {

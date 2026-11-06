@@ -342,6 +342,30 @@ function BillingPanel() {
 
   return (
     <>
+      {/* TEST MODE badge — only visible for mock subscriptions */}
+      {!loading && data?.isMockSubscription ? (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.4rem",
+            padding: "0.4rem 0.9rem",
+            marginBottom: "1rem",
+            borderRadius: "0.5rem",
+            background: "oklch(0.97 0.05 85)",
+            border: "1.5px solid oklch(0.82 0.12 85)",
+            color: "oklch(0.45 0.12 60)",
+            fontWeight: 600,
+            fontSize: "0.78rem",
+            letterSpacing: "0.04em",
+          }}
+          role="status"
+          aria-label="Test mode subscription"
+        >
+          🧪 TEST MODE — This subscription was created using mock payment. No real payment was processed.
+        </div>
+      ) : null}
+
       <SettingsGroup label="Plan">
         {/* Plan name + live status/price */}
         <SettingsRow

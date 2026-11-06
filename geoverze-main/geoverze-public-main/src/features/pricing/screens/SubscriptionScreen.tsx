@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { Coins, Download } from "lucide-react";
+import { Coins, Download, FlaskConical } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { Breadcrumb } from "@/components/shared/Breadcrumb";
@@ -13,6 +14,7 @@ import { paymentMethods } from "../data/billing";
 import { useMyBilling } from "../hooks/useMyBilling";
 import { usePricingCatalog } from "../hooks/usePricingCatalog";
 import { isRazorpayConfigured } from "../lib/checkout";
+import { cancelMockSubscription } from "../lib/mock-payment";
 import "../styles/billing-membership.css";
 
 const PAYMENT_EMOJIS: Record<string, string> = {
@@ -31,6 +33,7 @@ const UNAVAILABLE_BILLING =
 export function SubscriptionScreen() {
   const { plans } = usePricingCatalog();
   const { data, loading, error, refetch } = useMyBilling();
+  const queryClient = useQueryClient();
   const [cancelLoading, setCancelLoading] = useState(false);
   const razorpayLive = isRazorpayConfigured();
   const catalogPlan = data ? (plans.find((p) => p.id === data.tier) ?? null) : null;
@@ -103,6 +106,31 @@ export function SubscriptionScreen() {
 
               {!error && !loading && data ? (
                 <>
+                  {/* TEST MODE badge — only visible for mock subscriptions */}
+                  {data.isMockSubscription ? (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.4rem",
+                        padding: "0.35rem 0.75rem",
+                        marginBottom: "0.75rem",
+                        borderRadius: "0.5rem",
+                        background: "oklch(0.97 0.05 85)",
+                        border: "1.5px solid oklch(0.82 0.12 85)",
+                        color: "oklch(0.45 0.12 60)",
+                        fontWeight: 600,
+                        fontSize: "0.78rem",
+                        letterSpacing: "0.04em",
+                      }}
+                      role="status"
+                      aria-label="Test mode subscription"
+                    >
+                      <FlaskConical size={14} aria-hidden="true" />
+                      TEST MODE — NO REAL PAYMENT WAS PROCESSED
+                    </div>
+                  ) : null}
+
                   <div className="bm-card-head">
                     <p className="bm-label">Current plan</p>
                     <span className="bm-status">{data.statusLabel}</span>
@@ -144,7 +172,7 @@ export function SubscriptionScreen() {
                       </Link>
                     ) : null}
                   </div>
-                  {data.isPaidMembership && !data.statusLabel.includes("cancel") ? (
+                  {data.isPaidMembership && !data.isMockSubscription && !data.statusLabel.includes("cancel") ? (
                     <button
                       type="button"
                       className="bm-cancel"
@@ -156,6 +184,36 @@ export function SubscriptionScreen() {
                       {cancelLoading ? "Cancelling…" : "Cancel membership"}
                     </button>
                   ) : null}
+
+                  {/* Cancel mock subscription (test mode only) */}
+                  {data.isMockSubscription && data.mockSubscriptionId && !data.statusLabel.includes("cancel") ? (
+                    <button
+                      type="button"
+                      className="bm-cancel"
+                      disabled={cancelLoading}
+                      style={{ borderColor: "oklch(0.75 0.1 60)", color: "oklch(0.45 0.12 60)" }}
+                      onClick={() => {
+                        if (!data.mockSubscriptionId) return;
+                        void (async () => {
+                          setCancelLoading(true);
+                          try {
+                            await cancelMockSubscription({ subscription_id: data.mockSubscriptionId! });
+                            toast.success("Mock subscription cancelled. Your plan has been reset.");
+                            void refetch();
+                            void queryClient.invalidateQueries({ queryKey: ["billing"] });
+                          } catch (err) {
+                            toast.error(err instanceof Error ? err.message : "Failed to cancel mock subscription.");
+                          } finally {
+                            setCancelLoading(false);
+                          }
+                        })();
+                      }}
+                      aria-busy={cancelLoading}
+                    >
+                      {cancelLoading ? "Cancelling…" : "Cancel mock subscription (TEST MODE)"}
+                    </button>
+                  ) : null}
+
                   {data.statusLabel.includes("cancel") ? (
                     <p className="bm-note" style={{ color: "oklch(0.5 0.08 24)", marginTop: "0.5rem" }}>
                       Cancellation scheduled — active until period end.
