@@ -201,11 +201,15 @@ export function GstoreOrderLookupScreen() {
                   <span>Shipping</span>
                   <span>{order.shipping_minor === 0 ? "Free" : formatInrPaise(order.shipping_minor)}</span>
                 </div>
-                <div className="flex justify-between text-[#777]">
-                  <span>GST</span><span>{formatInrPaise(order.tax_minor)}</span>
+                <div className="flex justify-between text-[#aaa] text-[11px]">
+                  <span>GST (included)</span><span>{formatInrPaise(order.tax_minor)}</span>
                 </div>
                 <div className="flex justify-between border-t border-[#eee] pt-2 text-[15px] font-bold text-black">
-                  <span>Total</span><span>{formatInrPaise(order.total_minor)}</span>
+                  <div>
+                    <span>Total</span>
+                    <p className="text-[10px] font-normal text-[#aaa] mt-0.5">Inclusive of all taxes</p>
+                  </div>
+                  <span>{formatInrPaise(order.total_minor)}</span>
                 </div>
               </div>
 

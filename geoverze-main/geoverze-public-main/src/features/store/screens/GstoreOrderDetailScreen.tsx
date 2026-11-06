@@ -150,11 +150,15 @@ export function GstoreOrderDetailScreen() {
                 <span>Shipping</span>
                 <span>{order.shipping_minor === 0 ? "Free" : formatInrPaise(order.shipping_minor)}</span>
               </div>
-              <div className="flex justify-between text-[12px] text-foreground/60">
-                <span>GST (18%)</span><span>{formatInrPaise(order.tax_minor)}</span>
+              <div className="flex justify-between text-[12px] text-foreground/40">
+                <span>GST (included)</span><span>{formatInrPaise(order.tax_minor)}</span>
               </div>
               <div className="flex justify-between border-t border-bronze/10 pt-2.5 text-[16px] font-bold text-foreground">
-                <span>Total</span><span>{formatInrPaise(order.total_minor)}</span>
+                <div>
+                  <span>Total</span>
+                  <p className="text-[10px] font-normal text-foreground/40 mt-0.5">Inclusive of all taxes</p>
+                </div>
+                <span>{formatInrPaise(order.total_minor)}</span>
               </div>
             </div>
 

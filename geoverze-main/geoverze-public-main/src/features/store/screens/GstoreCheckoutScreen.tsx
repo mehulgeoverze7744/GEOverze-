@@ -63,6 +63,7 @@ import {
   formatInrPaise,
   computeShippingMinor,
   computeTaxMinor,
+  computeOrderTotalMinor,
   FREE_SHIPPING_THRESHOLD_MINOR,
   getProductPrice,
 } from "../lib/gstoreProductPrices";
@@ -245,9 +246,12 @@ export function GstoreCheckoutScreen() {
     return acc + (p ? p.priceMinor * item.quantity : 0);
   }, 0);
 
+  // Product prices are GST-inclusive MRPs.
+  // taxMinor = GST extracted from the inclusive subtotal (display/reporting only).
+  // totalMinor = inclusive subtotal + shipping — GST is NOT added again.
   const shippingMinor = computeShippingMinor(shippingMethod, subtotalMinor, hasPhysical);
-  const taxMinor      = computeTaxMinor(subtotalMinor, shippingMinor);
-  const totalMinor    = subtotalMinor + shippingMinor + taxMinor;
+  const taxMinor      = computeTaxMinor(subtotalMinor, shippingMinor); // extracted, not added
+  const totalMinor    = computeOrderTotalMinor(subtotalMinor, shippingMinor, 0);
 
   // Status state
   const [status, setStatus]     = useState<"idle" | "creating" | "paying" | "verifying" | "done" | "failed" | "cancelled">("idle");
@@ -1129,15 +1133,19 @@ export function GstoreCheckoutScreen() {
                   {shippingMinor === 0 ? "FREE" : formatInrPaise(shippingMinor)}
                 </span>
               </div>
+              {/* GST extracted from inclusive price — displayed for transparency, not added */}
               <div className="flex justify-between">
-                <span className="text-[#6B7280]">GST (18%)</span>
-                <span className="text-[#374151] font-medium">{formatInrPaise(taxMinor)}</span>
+                <span className="text-[#6B7280]">GST (included)</span>
+                <span className="text-[#9CA3AF]">{formatInrPaise(taxMinor)}</span>
               </div>
 
               <hr className="border-[#E5E7EB]" />
 
               <div className="flex justify-between items-baseline pt-0.5">
-                <span className="font-bold text-base text-[#111827]">Total</span>
+                <div>
+                  <span className="font-bold text-base text-[#111827]">Total</span>
+                  <p className="text-[10px] text-[#9CA3AF] font-normal mt-0.5">Inclusive of all taxes</p>
+                </div>
                 <span className="font-bold text-lg text-[#111827]">{formatInrPaise(totalMinor)}</span>
               </div>
             </div>

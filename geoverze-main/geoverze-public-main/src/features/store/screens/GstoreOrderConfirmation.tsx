@@ -227,12 +227,15 @@ function OrderDetailCard({ order }: { order: GstoreOrderDetail }) {
           <span>Shipping</span>
           <span>{order.shipping_minor === 0 ? "Free" : formatInrPaise(order.shipping_minor)}</span>
         </div>
-        <div className="flex justify-between text-[12px] text-[#777]">
-          <span>GST (18%)</span>
+        <div className="flex justify-between text-[12px] text-[#999]">
+          <span>GST (included)</span>
           <span>{formatInrPaise(order.tax_minor)}</span>
         </div>
         <div className="flex justify-between border-t border-[#e0e0e0] pt-2.5 text-[16px] font-bold text-black">
-          <span>Total paid</span>
+          <div>
+            <span>Total paid</span>
+            <p className="text-[10px] font-normal text-[#999] mt-0.5">Inclusive of all taxes</p>
+          </div>
           <span>{formatInrPaise(order.total_minor)}</span>
         </div>
       </div>

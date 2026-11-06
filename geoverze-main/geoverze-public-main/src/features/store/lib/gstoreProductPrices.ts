@@ -198,12 +198,18 @@ export const GSTORE_SHIPPING_COSTS: Record<string, number> = {
 
 export const FREE_SHIPPING_THRESHOLD_MINOR = 399_900; // ₹3,999
 
-/** GST rate for physical products (%). */
+/**
+ * GST rate applicable to Gstore physical products (18%).
+ * Product prices are MRP / GST-inclusive — the 18 % GST is already embedded
+ * in the displayed price. It must be EXTRACTED for accounting, not added again.
+ */
 export const GSTORE_GST_RATE = 0.18;
 
 /**
  * Compute the INR shipping cost for a given method and subtotal.
  * Standard shipping is free above FREE_SHIPPING_THRESHOLD_MINOR.
+ * Shipping costs are quoted as final inclusive amounts — no additional GST
+ * is charged on shipping separately.
  */
 export function computeShippingMinor(
   method: string,
@@ -216,12 +222,40 @@ export function computeShippingMinor(
 }
 
 /**
- * Compute GST (18%) on the subtotal + shipping (tax-exclusive: added on top).
- * Products sold in India require GST for physical goods.
+ * Extract the GST component from a GST-INCLUSIVE product subtotal.
+ *
+ * All Gstore product prices are GST-inclusive MRPs (the customer sees the
+ * all-in price). GST must be EXTRACTED for display / tax reporting — it must
+ * NOT be added on top of the product price.
+ *
+ * Formula:  GST_included = Inclusive_Price × Rate / (100 + Rate)
+ * Example:  ₹2,999 × 18 / 118 = ₹457.47  (extracted, not added)
+ *
+ * Order total = Subtotal (inclusive) + Shipping  ← GST already in Subtotal
+ *
+ * @param subtotalMinor  GST-inclusive product subtotal in paise
+ * @param _shippingMinor Shipping amount (kept for API compatibility; not re-taxed)
  */
-export function computeTaxMinor(subtotalMinor: number, shippingMinor: number): number {
-  const taxable = subtotalMinor + shippingMinor;
-  return Math.round(taxable * GSTORE_GST_RATE);
+export function computeTaxMinor(subtotalMinor: number, _shippingMinor: number): number {
+  // Extract GST from the inclusive product subtotal only.
+  // Uses integer-paise arithmetic; Math.round prevents half-paise drift.
+  return Math.round((subtotalMinor * GSTORE_GST_RATE) / (1 + GSTORE_GST_RATE));
+}
+
+/**
+ * Compute the final order total.
+ *
+ * Total = GST-inclusive product subtotal + shipping cost
+ *
+ * GST is already embedded in every product price — do NOT add taxMinor again.
+ * taxMinor is an extracted reporting figure only.
+ */
+export function computeOrderTotalMinor(
+  subtotalMinor: number,
+  shippingMinor: number,
+  discountMinor = 0,
+): number {
+  return subtotalMinor + shippingMinor - discountMinor;
 }
 
 /** Format paise as a rupee string: ₹2,999 */

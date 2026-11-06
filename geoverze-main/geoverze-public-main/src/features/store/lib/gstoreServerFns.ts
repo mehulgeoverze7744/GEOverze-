@@ -30,6 +30,7 @@ import {
   getProductPrice,
   computeShippingMinor,
   computeTaxMinor,
+  computeOrderTotalMinor,
 } from "./gstoreProductPrices";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -136,12 +137,15 @@ export type CreateGstoreOrderResult = {
   order_id:         string;
   order_number:     string;
   payment_id:       string;
+  /** GST-inclusive total = subtotal + shipping. */
   total_minor:      number;
   currency:         string;
-  /** Present when Razorpay is configured. */
-  rzp_order_id?:    string;
-  /** Present when mock mode is active. */
-  mock_mode?:       boolean;
+  /** Razorpay order ID — present when Razorpay is configured. */
+  rzp_order_id?:    string | null;
+  /** Razorpay publishable Key ID — always present for client modal initialisation. */
+  rzp_key_id:       string;
+  /** True when mock payment mode is active. */
+  mock_enabled:     boolean;
   idempotent:       boolean;
 };
 
@@ -185,6 +189,10 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
     }
 
     // ── Compute totals server-side ─────────────────────────────────────────
+    // Product prices are GST-inclusive MRPs.
+    // taxMinor is the GST EXTRACTED from the inclusive subtotal (for accounting).
+    // It is stored in the DB for tax reporting but NOT added to the total.
+    // Total = subtotal (inclusive) + shipping   ← no extra tax layer
     const subtotalMinor = validatedItems.reduce(
       (sum, i) => sum + i.line_total_minor, 0,
     );
@@ -194,8 +202,8 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
       subtotalMinor,
       hasPhysical,
     );
-    const taxMinor     = computeTaxMinor(subtotalMinor, shippingMinor);
-    const totalMinor   = subtotalMinor + shippingMinor + taxMinor;
+    const taxMinor   = computeTaxMinor(subtotalMinor, shippingMinor); // extracted, not added
+    const totalMinor = computeOrderTotalMinor(subtotalMinor, shippingMinor, 0);
 
     // ── Create DB order via RPC ───────────────────────────────────────────
     const sb = makeSupabaseClient(access_token);
@@ -247,7 +255,8 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
         payment_id:   result.payment_id,
         total_minor:  totalMinor,
         currency:     "INR",
-        mock_mode:    true,
+        rzp_key_id:   "",
+        mock_enabled: true,
         idempotent:   result.idempotent,
       };
     }
@@ -265,6 +274,8 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
         payment_id:   result.payment_id,
         total_minor:  totalMinor,
         currency:     "INR",
+        rzp_key_id:   "",
+        mock_enabled: false,
         idempotent:   result.idempotent,
       };
     }
@@ -305,6 +316,8 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
       total_minor:  totalMinor,
       currency:     "INR",
       rzp_order_id: rzpOrder.id,
+      rzp_key_id:   keyId,
+      mock_enabled: false,
       idempotent:   result.idempotent,
     };
   });
@@ -698,9 +711,11 @@ export const createGstoreGuestOrderFn = createServerFn({ method: "POST" })
       });
     }
 
+    // GST is extracted from the inclusive product subtotal (for accounting only).
+    // Total = inclusive subtotal + shipping — no extra tax layer.
     const shippingMinor = computeShippingMinor(data.details.shippingMethod ?? "standard", subtotalMinor, hasPhysical);
-    const taxMinor      = computeTaxMinor(subtotalMinor, shippingMinor);
-    const totalMinor    = subtotalMinor + shippingMinor + taxMinor;
+    const taxMinor      = computeTaxMinor(subtotalMinor, shippingMinor); // extracted, not added
+    const totalMinor    = computeOrderTotalMinor(subtotalMinor, shippingMinor, 0);
 
     // 2. Create DB order via service role (no auth.uid() needed for guests)
     const serviceClient = makeServiceRoleClient();
