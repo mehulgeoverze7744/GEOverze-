@@ -6,10 +6,16 @@ export const CREDIT_LEDGER_LIMIT = 200;
 
 export type CreditLedgerRow = Database["public"]["Tables"]["credit_ledger_entries"]["Row"];
 
-export type StoreOrderLineSummary = Pick<
-  Database["public"]["Tables"]["store_order_lines"]["Row"],
-  "order_id" | "product_name" | "product_slug" | "line_credits" | "quantity" | "unit_credits"
->;
+// "store_order_lines" is not in generated Supabase types yet.
+// Remove the manual type once `supabase gen types --local` is re-run.
+export type StoreOrderLineSummary = {
+  order_id: string;
+  product_name: string;
+  product_slug: string;
+  line_credits: number;
+  quantity: number;
+  unit_credits: number;
+};
 
 export type CreditLedgerRawBundle = {
   rows: CreditLedgerRow[];
@@ -64,10 +70,12 @@ export async function fetchCreditLedgerEntries(): Promise<CreditLedgerRawBundle>
 
   const orderLinesByOrderId = new Map<string, StoreOrderLineSummary[]>();
   if (orderIds.length > 0) {
-    const { data: lines, error: linesError } = await supabase
+    // "store_order_lines" is not in generated Supabase types yet.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: lines, error: linesError } = await (supabase as any)
       .from("store_order_lines")
       .select("order_id, product_name, product_slug, line_credits, quantity, unit_credits")
-      .in("order_id", orderIds);
+      .in("order_id", orderIds) as { data: StoreOrderLineSummary[] | null; error: { message: string } | null };
 
     if (linesError) throw new Error(linesError.message);
 

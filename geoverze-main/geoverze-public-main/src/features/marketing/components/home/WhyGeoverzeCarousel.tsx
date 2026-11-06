@@ -41,12 +41,12 @@ function usePrefersReducedMotion() {
 
 function handleImageError(event: SyntheticEvent<HTMLImageElement>) {
   const img = event.currentTarget;
-  if (img.dataset.fallback === "1") {
+  if (img.dataset['fallback'] === "1") {
     img.style.display = "none";
     img.parentElement?.classList.add("is-fallback");
     return;
   }
-  img.dataset.fallback = "1";
+  img.dataset['fallback'] = "1";
   img.src = FALLBACK_IMAGE;
 }
 
@@ -140,7 +140,7 @@ function setWidth(track: HTMLElement) {
   const items = track.querySelectorAll<HTMLElement>(".why-carousel-item");
   const count = whyCarouselCards.length;
   if (items.length < count * 2) return track.scrollWidth / Math.max(SETS, 1);
-  return items[count].offsetLeft - items[0].offsetLeft;
+  return items[count]!.offsetLeft - items[0]!.offsetLeft;
 }
 
 function cardStep(track: HTMLElement) {
@@ -461,3 +461,4 @@ export const WhyGeoverzeCarousel = memo(function WhyGeoverzeCarousel() {
     </div>
   );
 });
+

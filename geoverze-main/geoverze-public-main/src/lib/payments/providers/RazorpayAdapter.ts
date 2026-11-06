@@ -246,11 +246,12 @@ export class RazorpayAdapter implements PaymentProviderInterface {
       const expected = createHmac("sha256", keySecret).update(body).digest("hex");
 
       const verified = expected === verification.providerSignature;
+      // exactOptionalPropertyTypes: omit message when undefined (success case)
       return {
-        success:  verified,
+        success: verified,
         verified,
-        outcome:  verified ? "success" : "failed",
-        message:  verified ? undefined : "Razorpay signature verification failed",
+        outcome: verified ? "success" : "failed",
+        ...(verified ? {} : { message: "Razorpay signature verification failed" }),
       };
     }
 
@@ -260,11 +261,12 @@ export class RazorpayAdapter implements PaymentProviderInterface {
       const expected = createHmac("sha256", keySecret).update(body).digest("hex");
 
       const verified = expected === verification.providerSignature;
+      // exactOptionalPropertyTypes: omit message when undefined (success case)
       return {
-        success:  verified,
+        success: verified,
         verified,
-        outcome:  verified ? "success" : "failed",
-        message:  verified ? undefined : "Razorpay subscription signature verification failed",
+        outcome: verified ? "success" : "failed",
+        ...(verified ? {} : { message: "Razorpay subscription signature verification failed" }),
       };
     }
 
@@ -324,44 +326,26 @@ export class RazorpayAdapter implements PaymentProviderInterface {
 
     // Extract notes from payment entity
     const payload    = parsed.payload as Record<string, unknown> | undefined;
-    const paymentEnt = (payload?.payment as Record<string, unknown> | undefined)?.entity as Record<string, unknown> | undefined;
-    const notes      = (paymentEnt?.notes ?? {}) as Record<string, string>;
+    // Index-signature members must use bracket notation (noUncheckedIndexedAccess + exactOptionalPropertyTypes)
+    const paymentEnt = (payload?.['payment'] as Record<string, unknown> | undefined)?.['entity'] as Record<string, unknown> | undefined;
+    const notes      = (paymentEnt?.['notes'] ?? {}) as Record<string, string>;
     const orderId    = notes["order_id"];
 
     switch (eventName) {
+      // exactOptionalPropertyTypes: spread orderId only when defined
       case "payment.captured":
       case "order.paid":
-        return {
-          processed: true,
-          event:     eventName,
-          orderId,
-          outcome:   "paid",
-        };
+        return { processed: true, event: eventName, ...(orderId !== undefined && { orderId }), outcome: "paid" };
 
       case "payment.failed":
-        return {
-          processed: true,
-          event:     eventName,
-          orderId,
-          outcome:   "failed",
-        };
+        return { processed: true, event: eventName, ...(orderId !== undefined && { orderId }), outcome: "failed" };
 
       case "refund.processed":
       case "refund.created":
-        return {
-          processed: true,
-          event:     eventName,
-          orderId,
-          outcome:   "refunded",
-        };
+        return { processed: true, event: eventName, ...(orderId !== undefined && { orderId }), outcome: "refunded" };
 
       case "subscription.cancelled":
-        return {
-          processed: true,
-          event:     eventName,
-          orderId,
-          outcome:   "cancelled",
-        };
+        return { processed: true, event: eventName, ...(orderId !== undefined && { orderId }), outcome: "cancelled" };
 
       default:
         return { processed: false, event: eventName };

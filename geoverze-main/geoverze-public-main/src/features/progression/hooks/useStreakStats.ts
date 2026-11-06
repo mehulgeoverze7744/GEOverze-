@@ -21,7 +21,6 @@ export function useStreakStats() {
     enabled: signedIn && Boolean(userId),
     staleTime: 15_000,
     refetchOnWindowFocus: true,
-    placeholderData: undefined,
   });
 
   useEffect(() => {

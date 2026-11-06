@@ -21,7 +21,8 @@ type UpgradeRosterCardProps = {
 export function UpgradeRosterCard({ beat, index }: UpgradeRosterCardProps) {
   const cardRef = useRef<HTMLElement>(null);
   const number = String(index + 1).padStart(2, "0");
-  const Icon = BEAT_ICONS[beat.id];
+  // noUncheckedIndexedAccess: beat.id is always a valid key of BEAT_ICONS
+  const Icon = BEAT_ICONS[beat.id]!;
 
   useCardPointerTilt(cardRef);
 

@@ -179,16 +179,19 @@ export function BronzeGlobe({ progress, origin, parked, startScale, bigScale, fi
   ]);
 
   useEffect(() => {
-    configureEarthColorMap(dayMap, maxAnisotropy);
-    configureEarthColorMap(nightMap, maxAnisotropy);
-    configureEarthDataMap(bumpMap, maxAnisotropy);
-    configureCloudMaskMap(cloudsMap, maxAnisotropy);
+    // useLoader suspends until all textures are ready — non-null assertions are safe.
+    configureEarthColorMap(dayMap!, maxAnisotropy);
+    configureEarthColorMap(nightMap!, maxAnisotropy);
+    configureEarthDataMap(bumpMap!, maxAnisotropy);
+    configureCloudMaskMap(cloudsMap!, maxAnisotropy);
   }, [bumpMap, cloudsMap, dayMap, maxAnisotropy, nightMap]);
 
   const earthMaterial = useMemo(() => {
+    // THREE.MeshStandardMaterial requires null (not undefined) for optional
+    // texture props under exactOptionalPropertyTypes:true.
     const material = new THREE.MeshStandardMaterial({
-      map: dayMap,
-      bumpMap: bumpMap,
+      map: dayMap ?? null,
+      bumpMap: bumpMap ?? null,
       bumpScale: 0.007,
       roughness: 0.86,
       metalness: 0.02,
@@ -198,8 +201,9 @@ export function BronzeGlobe({ progress, origin, parked, startScale, bigScale, fi
     });
 
     material.onBeforeCompile = (shader) => {
-      shader.uniforms.tNight = { value: nightMap };
-      shader.uniforms.sunPosition = { value: SUN.clone() };
+      // uniforms is an index-signature type — bracket access required.
+      shader.uniforms['tNight'] = { value: nightMap ?? null };
+      shader.uniforms['sunPosition'] = { value: SUN.clone() };
 
       shader.vertexShader = `varying vec3 vWorldNormal;\n${shader.vertexShader}`;
       shader.vertexShader = shader.vertexShader.replace(
@@ -235,7 +239,7 @@ export function BronzeGlobe({ progress, origin, parked, startScale, bigScale, fi
         diffuseColor.rgb = mix(dayColor, nightColor, nightMix);`,
       );
 
-      material.userData.shader = shader;
+      material.userData['shader'] = shader;
     };
 
     material.customProgramCacheKey = () => "earth-day-night-v4";
@@ -286,10 +290,11 @@ export function BronzeGlobe({ progress, origin, parked, startScale, bigScale, fi
       earthMaterial.dispose();
       cloudMaterial.dispose();
       atmosphereMaterial.dispose();
-      dayMap.dispose();
-      nightMap.dispose();
-      bumpMap.dispose();
-      cloudsMap.dispose();
+      // useLoader guarantees these are non-null when cleanup runs.
+      dayMap!.dispose();
+      nightMap!.dispose();
+      bumpMap!.dispose();
+      cloudsMap!.dispose();
     },
     [
       atmosphereGeometry,
@@ -318,8 +323,9 @@ export function BronzeGlobe({ progress, origin, parked, startScale, bigScale, fi
     const reveal = easeInOut(phase(p, 0.02, 0.12));
 
     earthMaterial.opacity = reveal;
-    cloudMaterial.uniforms.cloudOpacity.value = reveal;
-    atmosphereMaterial.uniforms.glowStrength.value = reveal * 1;
+    // uniforms is an index-signature type — bracket access + non-null assertion required.
+    cloudMaterial.uniforms['cloudOpacity']!.value = reveal;
+    atmosphereMaterial.uniforms['glowStrength']!.value = reveal * 1;
     r.visible = reveal > 0.001;
 
     const cx = THREE.MathUtils.lerp(origin[0], 0, emerge);
@@ -339,11 +345,11 @@ export function BronzeGlobe({ progress, origin, parked, startScale, bigScale, fi
     r.rotation.x = emerge * 9 * DEG + Math.sin(idle.current * 0.45) * 0.025;
     r.rotation.z = -6 * DEG * park + Math.cos(idle.current * 0.33) * 0.018;
 
-    const earthShader = earthMaterial.userData.shader as
+    const earthShader = earthMaterial.userData['shader'] as
       { uniforms: { sunPosition: { value: THREE.Vector3 } } } | undefined;
     if (earthShader) earthShader.uniforms.sunPosition.value.copy(SUN);
-    cloudMaterial.uniforms.sunPosition.value.copy(SUN);
-    atmosphereMaterial.uniforms.sunPosition.value.copy(SUN);
+    cloudMaterial.uniforms['sunPosition']!.value.copy(SUN);
+    atmosphereMaterial.uniforms['sunPosition']!.value.copy(SUN);
   });
 
   return (

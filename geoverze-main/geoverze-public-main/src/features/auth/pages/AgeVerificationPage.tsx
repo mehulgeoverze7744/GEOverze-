@@ -10,7 +10,10 @@ import { useOnboardingStore } from "@/stores/onboardingStore";
 
 /** Persists the age answer to the DB via the SECURITY DEFINER RPC. Non-blocking. */
 async function persistAgeBracket(bracket: "adult" | "minor") {
-  const { error } = await supabase.rpc("set_age_bracket", { _bracket: bracket });
+  // "set_age_bracket" exists in DB but is not yet in the generated types;
+  // remove the cast after running `supabase gen types --local`.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase.rpc as any)("set_age_bracket", { _bracket: bracket });
   if (error) {
     console.error("Failed to persist age bracket", error);
     toast.error("Could not save your age answer. You can continue, but you may be asked again.");

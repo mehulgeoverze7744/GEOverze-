@@ -49,7 +49,7 @@ export async function fetchPublishedCollectionBySlug(
     }
 
     for (const catalogueRow of catalogueRows ?? []) {
-      catalogueById.set(catalogueRow.id, catalogueRow);
+      if (catalogueRow.id != null) catalogueById.set(catalogueRow.id, catalogueRow);
     }
   }
 

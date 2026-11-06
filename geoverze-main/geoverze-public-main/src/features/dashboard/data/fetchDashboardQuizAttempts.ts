@@ -62,7 +62,7 @@ export async function fetchDashboardQuizAttempts(
   const { data, error } = await supabase
     .from("quiz_attempts")
     .select(
-      "id, attempt_id, quiz_id, user_id, mode, score, total, credits_earned, completed_at, duration_ms",
+      "id, quiz_id, user_id, mode, score, total, credits_earned, completed_at, duration_ms",
     )
     .eq("user_id", userId)
     .not("completed_at", "is", null)

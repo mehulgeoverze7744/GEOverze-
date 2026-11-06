@@ -17,7 +17,9 @@ export function useArticleReadingProgress(slug: string, enabled: boolean) {
   const storedProgress = useLibraryStore((s) => s.progress[slug] ?? 0);
   const isCompleted = useLibraryStore((s) => s.completed.includes(slug));
 
-  const contentRef = useRef<HTMLElement | null>(null);
+  // HTMLDivElement extends HTMLElement; using the narrower type so the ref
+  // is assignable to div elements without a type assertion at the call site.
+  const contentRef = useRef<HTMLDivElement | null>(null);
   const lastPersisted = useRef(Math.max(0, Math.min(100, storedProgress)));
   const lastWriteAt = useRef(0);
   const rafId = useRef<number | null>(null);

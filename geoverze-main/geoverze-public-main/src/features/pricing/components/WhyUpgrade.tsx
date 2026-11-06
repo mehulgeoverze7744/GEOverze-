@@ -23,7 +23,7 @@ export function WhyUpgrade() {
 
     if (reduced) {
       slots.forEach((slot) => {
-        slot.dataset.revealed = "true";
+        slot.dataset['revealed'] = "true";
       });
       return;
     }
@@ -33,7 +33,7 @@ export function WhyUpgrade() {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
           const slot = entry.target as HTMLElement;
-          slot.dataset.revealed = "true";
+          slot.dataset['revealed'] = "true";
           observer.unobserve(slot);
         });
       },
@@ -41,7 +41,7 @@ export function WhyUpgrade() {
     );
 
     slots.forEach((slot, index) => {
-      slot.dataset.revealed = "false";
+      slot.dataset['revealed'] = "false";
       slot.style.transitionDelay = `${index * 100}ms`;
       observer.observe(slot);
     });
@@ -86,3 +86,4 @@ export function WhyUpgrade() {
     </section>
   );
 }
+

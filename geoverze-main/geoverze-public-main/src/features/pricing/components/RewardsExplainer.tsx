@@ -21,7 +21,7 @@ export function RewardsExplainer() {
 
     if (reduced) {
       items.forEach((item) => {
-        item.dataset.shown = "true";
+        item.dataset['shown'] = "true";
       });
       return;
     }
@@ -30,7 +30,7 @@ export function RewardsExplainer() {
       (entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
-          (entry.target as HTMLElement).dataset.shown = "true";
+          (entry.target as HTMLElement).dataset['shown'] = "true";
           observer.unobserve(entry.target);
         });
       },
@@ -38,7 +38,7 @@ export function RewardsExplainer() {
     );
 
     items.forEach((item, index) => {
-      item.dataset.shown = "false";
+      item.dataset['shown'] = "false";
       item.style.transitionDelay = `${index * 60}ms`;
       observer.observe(item);
     });
@@ -86,3 +86,4 @@ export function RewardsExplainer() {
     </section>
   );
 }
+

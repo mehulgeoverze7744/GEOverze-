@@ -167,7 +167,7 @@ export function ArticleAtlasParchmentScreen({
               progress={progress[related.slug] ?? 0}
               accessState={getResourceAccessState(
                 related.minAccessTier,
-                subscriptionTier,
+                subscriptionTier ?? "explorer",  // null = not yet loaded; default to lowest tier
                 signedIn,
               )}
             />

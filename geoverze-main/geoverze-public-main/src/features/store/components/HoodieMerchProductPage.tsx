@@ -131,7 +131,7 @@ export const HoodieMerchProductPage = memo(function HoodieMerchProductPage({
 
   const handleAddToCart = () => {
     const options: Record<string, string> = { Colour: selectedVariant.label };
-    if (selectedSize) options.Size = selectedSize;
+    if (selectedSize) options['Size'] = selectedSize;
     const signature = Object.entries(options)
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([key, value]) => `${key}:${value}`)

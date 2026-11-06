@@ -147,7 +147,7 @@ export function buildPricingPlans(
         features: buildFeatures(plan),
         monthlyCreditGrant: plan.monthly_credit_grant,
         featured: presentation.featured,
-        badge: presentation.badge,
+        ...(presentation.badge !== undefined && { badge: presentation.badge }),
         cta: presentation.cta,
         ...(presentation.storePerk ? { storePerk: presentation.storePerk } : {}),
         prices: {

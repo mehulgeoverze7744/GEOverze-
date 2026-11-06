@@ -59,10 +59,10 @@ function applySeedItems(
   const seededItems = seeds
     .map((item, index) => ({ ...item, id: `seed-${index}` }))
     .filter((item) => !dismissed.has(item.id))
-    .map((item) => ({
-      ...item,
-      readAt: prefs.readAtById[item.id] ?? item.readAt,
-    }));
+    .map((item) => {
+      const readAt = prefs.readAtById[item.id] ?? item.readAt;
+      return readAt !== undefined ? { ...item, readAt } : { ...item };
+    });
 
   const dynamicItems = existing.filter((item) => !item.id.startsWith("seed-"));
   return [...seededItems, ...dynamicItems];

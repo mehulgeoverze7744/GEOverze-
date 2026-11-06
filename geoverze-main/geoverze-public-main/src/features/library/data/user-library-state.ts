@@ -22,7 +22,7 @@ export async function fetchResourceIdsBySlugs(
 
   if (error) throw new Error(`Failed to resolve library slugs: ${error.message}`);
 
-  return new Map((data ?? []).map((row) => [row.slug, row.id]));
+  return new Map((data ?? []).filter((row) => row.slug != null && row.id != null).map((row) => [row.slug!, row.id!]));
 }
 
 /** Resource id → slug via catalogue metadata (tier-independent). */
@@ -39,7 +39,7 @@ async function fetchResourceSlugsByIds(
 
   if (error) throw new Error(`Failed to resolve library resource ids: ${error.message}`);
 
-  return new Map((data ?? []).map((row) => [row.id, row.slug]));
+  return new Map((data ?? []).filter((row) => row.id != null && row.slug != null).map((row) => [row.id!, row.slug!]));
 }
 
 /** Fetch authenticated user's library state keyed by slug. */

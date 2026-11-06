@@ -85,7 +85,7 @@ export function ContactPage() {
                   aria-describedby={errors.name ? "contact-name-error" : undefined}
                   onChange={(event) => {
                     setValues((current) => ({ ...current, name: event.target.value }));
-                    if (errors.name) setErrors((current) => ({ ...current, name: undefined }));
+                    if (errors.name) setErrors(({ name: _n, ...rest }) => rest);
                   }}
                 />
                 {errors.name ? (
@@ -109,7 +109,7 @@ export function ContactPage() {
                   aria-describedby={errors.email ? "contact-email-error" : undefined}
                   onChange={(event) => {
                     setValues((current) => ({ ...current, email: event.target.value }));
-                    if (errors.email) setErrors((current) => ({ ...current, email: undefined }));
+                    if (errors.email) setErrors(({ email: _e, ...rest }) => rest);
                   }}
                 />
                 {errors.email ? (
@@ -132,7 +132,7 @@ export function ContactPage() {
                   onChange={(event) => {
                     setValues((current) => ({ ...current, message: event.target.value }));
                     if (errors.message) {
-                      setErrors((current) => ({ ...current, message: undefined }));
+                      setErrors(({ message: _m, ...rest }) => rest);
                     }
                   }}
                 />

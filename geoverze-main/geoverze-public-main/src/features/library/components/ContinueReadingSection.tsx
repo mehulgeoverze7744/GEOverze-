@@ -1,3 +1,4 @@
+import type { Article } from "@/features/library/data/articles";
 import { useLibraryStore } from "@/stores/libraryStore";
 
 import { useContinueReadingArticles } from "../hooks/useContinueReadingArticles";

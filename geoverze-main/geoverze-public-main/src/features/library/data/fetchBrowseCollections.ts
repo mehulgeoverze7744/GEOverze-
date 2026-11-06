@@ -55,14 +55,14 @@ export async function fetchBrowseCollections(
     const { data: catalogueRows, error: catalogueError } = await supabase
       .from(LIBRARY_CATALOGUE)
       .select("id, slug")
-      .in("id", resourceIds);
+      .in("id", resourceIds as string[]);  // resourceIds is string[] — cast satisfies Supabase's type
 
     if (catalogueError) {
       throw new Error(`Failed to load collection catalogue entries: ${catalogueError.message}`);
     }
 
     for (const row of catalogueRows ?? []) {
-      slugByResourceId.set(row.id, row.slug);
+      if (row.id != null && row.slug != null) slugByResourceId.set(row.id, row.slug);
     }
   }
 

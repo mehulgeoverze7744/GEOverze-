@@ -101,7 +101,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundPage,
-  errorComponent: ErrorComponent,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  errorComponent: ErrorComponent as any,
 });
 
 function RootShell({ children }: { children: ReactNode }) {

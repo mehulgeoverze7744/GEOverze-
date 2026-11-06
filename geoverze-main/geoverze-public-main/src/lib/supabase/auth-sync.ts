@@ -124,7 +124,10 @@ async function hydrateProgression(user: User) {
 
 /** Best-effort preferences hydration. Never throws. */
 async function hydratePreferences(user: User) {
-  const { data, error } = await supabase
+  // "profile_preferences" exists in DB but not yet in generated Supabase types.
+  // Remove the cast after running `supabase gen types --local`.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase as any)
     .from("profile_preferences")
     .select("interests, skill_level, locale, motion_pref, units_pref, toggles")
     .eq("user_id", user.id)

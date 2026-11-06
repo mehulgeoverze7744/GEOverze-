@@ -46,7 +46,7 @@ export function StreakCalendar({
               <span
                 className={cn(
                   "inline-flex h-11 w-full items-center justify-center rounded-xl border",
-                  loading ? STATE_STYLE.upcoming : STATE_STYLE[day.state],
+                  loading ? STATE_STYLE['upcoming'] : STATE_STYLE[day.state],
                 )}
                 aria-hidden="true"
               >

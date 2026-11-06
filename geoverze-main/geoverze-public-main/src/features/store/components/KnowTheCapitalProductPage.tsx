@@ -111,7 +111,8 @@ export const KnowTheCapitalProductPage = memo(function KnowTheCapitalProductPage
   const [galleryOpen, setGalleryOpen] = useState(false);
   const { wishlistToggle, wishlist } = useStoreActions();
 
-  const selectedVariant = COLOR_VARIANTS[variantIndex];
+  // variantIndex is always in-bounds (clamped by stepVariant / selectVariant)
+  const selectedVariant = COLOR_VARIANTS[variantIndex]!;
   const wishlisted = wishlist.includes(product.id);
 
   const selectVariant = (variant: ColorVariant) => {

@@ -3,6 +3,13 @@ import type { ImpRoomState } from "../types";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+// Imposter-room RPCs are not yet reflected in the generated Supabase types.
+// When you run `supabase gen types --local` these casts can be removed.
+function rpc(fn: string, args: Record<string, unknown> = {}) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (supabase as any).rpc(fn, args) as Promise<{ data: unknown; error: { message: string } | null }>;
+}
+
 function parseState(data: unknown): ImpRoomState {
   return data as ImpRoomState;
 }
@@ -14,7 +21,7 @@ export async function createImpRoom(
   category: string | null,
   difficulty: string,
 ): Promise<ImpRoomState> {
-  const { data, error } = await supabase.rpc("create_imp_room", {
+  const { data, error } = await rpc("create_imp_room", {
     _max_players: maxPlayers,
     _category: category,
     _difficulty: difficulty,
@@ -24,7 +31,7 @@ export async function createImpRoom(
 }
 
 export async function joinImpRoom(roomCode: string): Promise<ImpRoomState> {
-  const { data, error } = await supabase.rpc("join_imp_room", {
+  const { data, error } = await rpc("join_imp_room", {
     _room_code: roomCode.toUpperCase().trim(),
   });
   if (error) throw new Error(error.message);
@@ -32,7 +39,7 @@ export async function joinImpRoom(roomCode: string): Promise<ImpRoomState> {
 }
 
 export async function fetchImpRoomState(roomId: string): Promise<ImpRoomState> {
-  const { data, error } = await supabase.rpc("build_imp_room_state", {
+  const { data, error } = await rpc("build_imp_room_state", {
     _room_id: roomId,
   });
   if (error) throw new Error(error.message);
@@ -40,7 +47,7 @@ export async function fetchImpRoomState(roomId: string): Promise<ImpRoomState> {
 }
 
 export async function setImpReady(roomId: string, ready: boolean): Promise<ImpRoomState> {
-  const { data, error } = await supabase.rpc("set_imp_ready", {
+  const { data, error } = await rpc("set_imp_ready", {
     _room_id: roomId,
     _ready: ready,
   });
@@ -49,7 +56,7 @@ export async function setImpReady(roomId: string, ready: boolean): Promise<ImpRo
 }
 
 export async function startImpGame(roomId: string): Promise<ImpRoomState> {
-  const { data, error } = await supabase.rpc("start_imp_game", {
+  const { data, error } = await rpc("start_imp_game", {
     _room_id: roomId,
   });
   if (error) throw new Error(error.message);
@@ -57,7 +64,7 @@ export async function startImpGame(roomId: string): Promise<ImpRoomState> {
 }
 
 export async function restartImpGame(roomId: string): Promise<ImpRoomState> {
-  const { data, error } = await supabase.rpc("restart_imp_game", {
+  const { data, error } = await rpc("restart_imp_game", {
     _room_id: roomId,
   });
   if (error) throw new Error(error.message);
@@ -65,7 +72,7 @@ export async function restartImpGame(roomId: string): Promise<ImpRoomState> {
 }
 
 export async function leaveImpRoom(roomId: string): Promise<void> {
-  const { error } = await supabase.rpc("leave_imp_room", {
+  const { error } = await rpc("leave_imp_room", {
     _room_id: roomId,
   });
   if (error) throw new Error(error.message);
@@ -74,7 +81,7 @@ export async function leaveImpRoom(roomId: string): Promise<void> {
 // ─── Gameplay ─────────────────────────────────────────────────────────────────
 
 export async function submitImpClue(roomId: string, clue: string): Promise<ImpRoomState> {
-  const { data, error } = await supabase.rpc("submit_imp_clue", {
+  const { data, error } = await rpc("submit_imp_clue", {
     _room_id: roomId,
     _clue: clue,
   });
@@ -83,7 +90,7 @@ export async function submitImpClue(roomId: string, clue: string): Promise<ImpRo
 }
 
 export async function sendImpMessage(roomId: string, body: string): Promise<void> {
-  const { error } = await supabase.rpc("send_imp_message", {
+  const { error } = await rpc("send_imp_message", {
     _room_id: roomId,
     _body: body,
   });
@@ -94,7 +101,7 @@ export async function submitImpVote(
   roomId: string,
   targetUserId: string,
 ): Promise<ImpRoomState> {
-  const { data, error } = await supabase.rpc("submit_imp_vote", {
+  const { data, error } = await rpc("submit_imp_vote", {
     _room_id: roomId,
     _target_user_id: targetUserId,
   });
@@ -103,7 +110,7 @@ export async function submitImpVote(
 }
 
 export async function advanceImpPhase(roomId: string): Promise<ImpRoomState> {
-  const { data, error } = await supabase.rpc("advance_imp_phase", {
+  const { data, error } = await rpc("advance_imp_phase", {
     _room_id: roomId,
   });
   if (error) throw new Error(error.message);
@@ -111,6 +118,6 @@ export async function advanceImpPhase(roomId: string): Promise<ImpRoomState> {
 }
 
 export async function touchImpPresence(roomId: string): Promise<void> {
-  await supabase.rpc("touch_imp_presence", { _room_id: roomId });
+  await rpc("touch_imp_presence", { _room_id: roomId });
   // Intentionally swallow errors — presence is best-effort
 }

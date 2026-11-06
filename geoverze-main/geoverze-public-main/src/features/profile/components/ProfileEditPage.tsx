@@ -146,7 +146,9 @@ export function ProfileEditPage() {
       return;
     }
 
-    const { error: preferencesError } = await supabase
+    // "profile_preferences" is not in generated Supabase types yet.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: preferencesError } = await (supabase as any)
       .from("profile_preferences")
       .upsert({ user_id: user.id, interests }, { onConflict: "user_id" });
     if (preferencesError) console.error("Failed to update preferences", preferencesError);

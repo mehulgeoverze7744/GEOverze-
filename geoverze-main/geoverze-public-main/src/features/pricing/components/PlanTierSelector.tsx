@@ -25,7 +25,7 @@ export function PlanTierSelector({ plans, value, onChange, className }: PlanTier
       variant="bronze"
       ariaLabel="Membership plan comparison"
       fullWidth
-      className={className}
+      {...(className !== undefined && { className })}
     />
   );
 }

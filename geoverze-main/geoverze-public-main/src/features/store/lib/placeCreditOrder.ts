@@ -111,10 +111,12 @@ export async function placeCreditOrder(
   const lines: PlaceCreditOrderLine[] = [{ product_id: productId, quantity }];
   const idempotencyKey = createIdempotencyKey();
 
-  const { data, error } = await supabase.rpc("place_credit_order", {
+  // "place_credit_order" is not in generated Supabase RPC types yet.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase as any).rpc("place_credit_order", {
     _lines: lines,
     _idempotency_key: idempotencyKey,
-  });
+  }) as { data: unknown; error: { message: string; code?: string } | null };
 
   if (error) throw parseCreditPurchaseError(error);
   return parsePlaceCreditOrderResult(data);

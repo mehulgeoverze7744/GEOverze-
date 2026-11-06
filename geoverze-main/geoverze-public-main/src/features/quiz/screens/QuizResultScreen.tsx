@@ -180,7 +180,9 @@ export function QuizResultScreen() {
     const baseSummary =
       liveSummary ?? hydratedResult?.summary ?? summarise(set, answersForSubmit, durationMs);
 
-    void supabase
+    // "submit_quiz_attempt" is not in generated Supabase RPC types yet.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    void (supabase as any)
       .rpc("submit_quiz_attempt", {
         _attempt_id: stableAttemptId,
         _quiz_id: set.id,
@@ -188,7 +190,7 @@ export function QuizResultScreen() {
         _duration_ms: durationMs,
         _answers: answerPayload,
       })
-      .then(({ data, error }) => {
+      .then(({ data, error }: { data: unknown; error: { message: string } | null }) => {
         if (error) {
           console.error("submit_quiz_attempt failed", error);
           setSubmitError(true);

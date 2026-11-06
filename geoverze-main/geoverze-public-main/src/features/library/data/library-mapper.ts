@@ -1,4 +1,5 @@
 import { isLibraryMediaPath } from "@/lib/supabase/library-media";
+import type { Tables, Enums } from "@/lib/supabase/database.types";
 import type { Article, ArticleBlock } from "@/features/library/data/articles";
 import { parseLibraryAccessTier } from "@/features/library/lib/access-tier";
 import type { Collection } from "@/features/library/data/collections";
@@ -77,64 +78,64 @@ export function mapBlockPayloadToArticleBlock(
     case "heading":
       return {
         kind: "heading",
-        id: String(payload.id ?? "section"),
-        text: String(payload.text ?? ""),
+        id: String(payload['id'] ?? "section"),
+        text: String(payload['text'] ?? ""),
       };
     case "paragraph":
-      return { kind: "paragraph", text: String(payload.text ?? "") };
+      return { kind: "paragraph", text: String(payload['text'] ?? "") };
     case "list":
       return {
         kind: "list",
-        items: (payload.items as string[] | undefined) ?? [],
-        ordered: Boolean(payload.ordered),
+        items: (payload['items'] as string[] | undefined) ?? [],
+        ordered: Boolean(payload['ordered']),
       };
     case "quote":
       return {
         kind: "quote",
-        text: String(payload.text ?? ""),
-        ...(payload.attribution ? { attribution: String(payload.attribution) } : {}),
+        text: String(payload['text'] ?? ""),
+        ...(payload['attribution'] ? { attribution: String(payload['attribution']) } : {}),
       };
     case "image": {
-      const storagePath = payload.storage_path
-        ? String(payload.storage_path)
-        : isLibraryMediaPath(String(payload.art ?? ""))
-          ? String(payload.art)
+      const storagePath = payload['storage_path']
+        ? String(payload['storage_path'])
+        : isLibraryMediaPath(String(payload['art'] ?? ""))
+          ? String(payload['art'])
           : undefined;
-      const externalSrc = payload.external_src ? String(payload.external_src) : undefined;
+      const externalSrc = payload['external_src'] ? String(payload['external_src']) : undefined;
       return {
         kind: "image",
-        art: String(payload.art ?? ""),
-        caption: String(payload.caption ?? ""),
+        art: String(payload['art'] ?? ""),
+        caption: String(payload['caption'] ?? ""),
         ...(storagePath ? { storagePath } : {}),
         ...(externalSrc ? { externalSrc } : {}),
-        ...(payload.credit ? { credit: String(payload.credit) } : {}),
+        ...(payload['credit'] ? { credit: String(payload['credit']) } : {}),
       };
     }
     case "map":
       return {
         kind: "map",
-        region: String(payload.region ?? ""),
-        caption: String(payload.caption ?? ""),
+        region: String(payload['region'] ?? ""),
+        caption: String(payload['caption'] ?? ""),
       };
     case "facts":
       return {
         kind: "facts",
-        title: String(payload.title ?? ""),
-        facts: (payload.facts as { label: string; value: string }[] | undefined) ?? [],
-        ...(payload.layout === "survival-cards" ? { layout: "survival-cards" as const } : {}),
+        title: String(payload['title'] ?? ""),
+        facts: (payload['facts'] as { label: string; value: string }[] | undefined) ?? [],
+        ...(payload['layout'] === "survival-cards" ? { layout: "survival-cards" as const } : {}),
       };
     case "table":
       return {
         kind: "table",
-        ...(payload.title ? { title: String(payload.title) } : {}),
-        columns: (payload.columns as string[] | undefined) ?? [],
-        rows: (payload.rows as string[][] | undefined) ?? [],
+        ...(payload['title'] ? { title: String(payload['title']) } : {}),
+        columns: (payload['columns'] as string[] | undefined) ?? [],
+        rows: (payload['rows'] as string[][] | undefined) ?? [],
       };
     case "didYouKnow":
       return {
         kind: "didYouKnow",
-        ...(payload.text ? { text: String(payload.text) } : {}),
-        ...(payload.items ? { items: payload.items as string[] } : {}),
+        ...(payload['text'] ? { text: String(payload['text']) } : {}),
+        ...(payload['items'] ? { items: payload['items'] as string[] } : {}),
       };
     case "reference":
       return mapReferencePayloadToArticleBlock(payload);
@@ -144,62 +145,62 @@ export function mapBlockPayloadToArticleBlock(
 }
 
 function mapReferencePayloadToArticleBlock(payload: Record<string, unknown>): ArticleBlock {
-  const blockType = String(payload.blockType ?? payload.block ?? "");
+  const blockType = String(payload['blockType'] ?? payload['block'] ?? "");
   switch (blockType) {
     case "callout":
       return {
         kind: "callout",
-        variant: payload.variant as Extract<ArticleBlock, { kind: "callout" }>["variant"],
-        text: String(payload.text ?? ""),
+        variant: payload['variant'] as Extract<ArticleBlock, { kind: "callout" }>["variant"],
+        text: String(payload['text'] ?? ""),
       };
     case "sizeComparison":
       return {
         kind: "sizeComparison",
-        ...(payload.title ? { title: String(payload.title) } : {}),
-        items: (payload.items as { label: string; areaKm2: number }[] | undefined) ?? [],
+        ...(payload['title'] ? { title: String(payload['title']) } : {}),
+        items: (payload['items'] as { label: string; areaKm2: number }[] | undefined) ?? [],
       };
     case "timeline":
       return {
         kind: "timeline",
-        ...(payload.title ? { title: String(payload.title) } : {}),
-        events: (payload.events as { date: string; text: string }[] | undefined) ?? [],
+        ...(payload['title'] ? { title: String(payload['title']) } : {}),
+        events: (payload['events'] as { date: string; text: string }[] | undefined) ?? [],
       };
     case "stateGlance":
       return {
         kind: "stateGlance",
-        ...(payload.title ? { title: String(payload.title) } : {}),
+        ...(payload['title'] ? { title: String(payload['title']) } : {}),
         states:
-          (payload.states as
+          (payload['states'] as
             { name: string; fields: { label: string; value: string }[] }[] | undefined) ?? [],
       };
     case "geoDiagram":
       return {
         kind: "geoDiagram",
-        ...(payload.title ? { title: String(payload.title) } : {}),
-        nodes: (payload.nodes as string[] | undefined) ?? [],
+        ...(payload['title'] ? { title: String(payload['title']) } : {}),
+        nodes: (payload['nodes'] as string[] | undefined) ?? [],
       };
     case "dualCompare":
       return {
         kind: "dualCompare",
-        title: String(payload.title ?? ""),
-        leftTitle: String(payload.leftTitle ?? ""),
-        leftItems: (payload.leftItems as string[] | undefined) ?? [],
-        rightTitle: String(payload.rightTitle ?? ""),
-        rightItems: (payload.rightItems as string[] | undefined) ?? [],
+        title: String(payload['title'] ?? ""),
+        leftTitle: String(payload['leftTitle'] ?? ""),
+        leftItems: (payload['leftItems'] as string[] | undefined) ?? [],
+        rightTitle: String(payload['rightTitle'] ?? ""),
+        rightItems: (payload['rightItems'] as string[] | undefined) ?? [],
       };
     case "profileStrip":
       return {
         kind: "profileStrip",
-        ...(payload.title ? { title: String(payload.title) } : {}),
+        ...(payload['title'] ? { title: String(payload['title']) } : {}),
         profiles:
-          (payload.profiles as { name: string; theme: string; text: string }[] | undefined) ?? [],
+          (payload['profiles'] as { name: string; theme: string; text: string }[] | undefined) ?? [],
       };
     case "crossLinks":
       return {
         kind: "crossLinks",
-        ...(payload.title ? { title: String(payload.title) } : {}),
+        ...(payload['title'] ? { title: String(payload['title']) } : {}),
         links:
-          (payload.links as { label: string; href: string; description?: string }[] | undefined) ??
+          (payload['links'] as { label: string; href: string; description?: string }[] | undefined) ??
           [],
       };
     default:
@@ -214,14 +215,14 @@ export function mapResourceRowToArticle(
   const engagement = readEngagement(row);
 
   return {
-    slug: row.slug,
-    resourceId: "id" in row && row.id ? row.id : undefined,
-    title: row.title,
-    dek: row.dek,
-    category: asCategoryId(row.subject_category),
-    continent: asContinentId(row.continent),
-    difficulty: asDifficultyId(row.difficulty),
-    minutes: row.read_time_minutes,
+    slug: row.slug ?? "",
+    ...("id" in row && row.id ? { resourceId: row.id } : {}),
+    title: row.title ?? "",
+    dek: row.dek ?? "",
+    category: asCategoryId(row.subject_category ?? ""),
+    continent: asContinentId(row.continent ?? ""),
+    difficulty: asDifficultyId((row.difficulty ?? "beginner") as Enums<"library_difficulty">),
+    minutes: row.read_time_minutes ?? 0,
     publishedAt:
       row.published_at?.slice(0, 10) ??
       ("created_at" in row && row.created_at ? row.created_at.slice(0, 10) : ""),
@@ -280,3 +281,4 @@ export type PublishedCollectionRow = CollectionRow & {
   library_collection_items?:
     { position: number; library_resources: Pick<ResourceRow, "slug"> | null }[] | null;
 };
+

@@ -97,7 +97,7 @@ export function CoverArt({
               style={objectPosition ? { objectPosition } : undefined}
             />
           </picture>
-          {showIconOnCover ? (
+          {showIconOnCover && Icon != null ? (
             <span className="absolute bottom-3 left-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-bronze/40 bg-[oklch(0.12_0.006_60/0.85)] text-bronze-glow">
               <Icon className="h-5 w-5" strokeWidth={1.6} />
             </span>

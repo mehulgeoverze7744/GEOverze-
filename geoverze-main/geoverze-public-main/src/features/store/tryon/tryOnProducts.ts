@@ -118,7 +118,7 @@ function merchToProduct(merch: GeostoreMerchProduct, category: TryOnCategoryId):
     name: merch.title,
     tagline: merch.tagline,
     description: merch.tagline,
-    category,
+    category: category as import("../data/taxonomy").StoreCategoryId,
     group: "merch",
     price: merch.price,
     compareAt: null,
@@ -185,7 +185,7 @@ function colorsFromMerch(slug: string, merch: GeostoreMerchProduct): TryOnColor[
       id: color.id,
       label: color.label,
       hex: color.hex,
-      image: color.image,
+      image: color.image ?? "",
       layout: "diptych" as const,
     }));
   }
@@ -196,7 +196,7 @@ function colorsFromMerch(slug: string, merch: GeostoreMerchProduct): TryOnColor[
       id: color.id,
       label: color.label,
       hex: color.hex,
-      image: color.image,
+      image: color.image ?? "",
     }));
   }
 
@@ -369,3 +369,5 @@ export function tryOnGarmentImage(
   if (view === "back" && color.backImage) return color.backImage;
   return color.image;
 }
+
+

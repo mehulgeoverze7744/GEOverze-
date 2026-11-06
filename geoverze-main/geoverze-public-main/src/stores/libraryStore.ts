@@ -50,7 +50,7 @@ type LibraryState = {
   clear: () => void;
 };
 
-function maybeSync(userId: string | undefined, fn: () => Promise<void>) {
+function maybeSync(userId: string | undefined, fn: () => Promise<unknown>) {
   if (!userId) return;
   void fn().catch((error) => console.error("GVRZE Library sync failed", error));
 }

@@ -15,7 +15,10 @@ import { BLOCKS as landmarks } from "./the-landmarks-everyone-misplaces";
 import { BLOCKS as topoMap } from "./how-to-read-a-topographic-map";
 import { BLOCKS as megacities } from "./megacities-and-the-limits-of-growth";
 
-export const EXPANDED_ARTICLE_BLOCKS: Record<string, readonly ArticleBlock[]> = {
+// No explicit Record<string,…> annotation — keep literal keys so
+// noUncheckedIndexedAccess doesn't add `| undefined` on known key access.
+// satisfies still validates all values are readonly ArticleBlock[].
+export const EXPANDED_ARTICLE_BLOCKS = {
   "why-some-countries-have-two-capitals": twoCapitals,
   "how-the-himalayas-keep-growing": himalayas,
   "the-sahel-explained": sahel,
@@ -29,8 +32,8 @@ export const EXPANDED_ARTICLE_BLOCKS: Record<string, readonly ArticleBlock[]> = 
   "the-landmarks-everyone-misplaces": landmarks,
   "how-to-read-a-topographic-map": topoMap,
   "megacities-and-the-limits-of-growth": megacities,
-};
+} satisfies Record<string, readonly ArticleBlock[]>;
 
 export function expandedBlocksForSlug(slug: string): readonly ArticleBlock[] | undefined {
-  return EXPANDED_ARTICLE_BLOCKS[slug];
+  return (EXPANDED_ARTICLE_BLOCKS as Record<string, readonly ArticleBlock[]>)[slug];
 }

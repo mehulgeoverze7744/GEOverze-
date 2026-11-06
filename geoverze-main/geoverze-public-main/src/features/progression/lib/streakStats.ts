@@ -64,7 +64,7 @@ export function calendarDateInZone(instant: Date, timeZone = STREAK_CALENDAR_TIM
 
 function parseDateOnly(value: string): Date {
   const [year, month, day] = value.split("-").map(Number);
-  return new Date(Date.UTC(year, (month ?? 1) - 1, day ?? 1));
+  return new Date(Date.UTC(year ?? 0, (month ?? 1) - 1, day ?? 1));
 }
 
 function addUtcDays(dateOnly: string, days: number): string {

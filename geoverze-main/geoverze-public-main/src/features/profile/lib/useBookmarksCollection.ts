@@ -35,9 +35,9 @@ function articleBookmarks(
       actionLabel: "Read article",
       to: "/geolibrary/article/$slug" as const,
       params: { slug: article.slug },
-      imageSrc: articleCardImageSrc(article.slug),
+      ...(articleCardImageSrc(article.slug) !== undefined && { imageSrc: articleCardImageSrc(article.slug) }),
       imageAlt: "",
-    }));
+    })) as SavedBookmark[];
 }
 
 function quizBookmarks(
@@ -60,12 +60,12 @@ function quizBookmarks(
         actionLabel: "Open quiz",
         to: "/play/quiz" as const,
         search: { quiz: quiz.id },
-        imageSrc: thumbnail?.src,
+        ...(thumbnail?.src !== undefined && { imageSrc: thumbnail.src }),
         imageAlt: thumbnail?.alt ?? "",
         art: quiz.art,
         categoryId: quiz.categoryId,
       };
-    });
+    }) as SavedBookmark[];
 }
 
 export function useBookmarksCollection() {
@@ -115,7 +115,8 @@ export function useBookmarksCollection() {
 
   function removeBookmark(item: SavedBookmark) {
     if (item.kind === "articles") {
-      const slug = item.params && "slug" in item.params ? item.params.slug : undefined;
+      const paramsObj = item.params && typeof item.params === "object" ? (item.params as Record<string, unknown>) : null;
+      const slug = paramsObj && "slug" in paramsObj ? paramsObj["slug"] : undefined;
       if (typeof slug === "string") toggleArticleBookmark(slug);
       return;
     }

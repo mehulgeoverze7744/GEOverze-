@@ -72,13 +72,16 @@ export function OnboardingPage() {
           .then(({ error }) => {
             if (error) console.error("Failed to persist avatar_id", error);
           }),
-        supabase
+        // "profile_preferences" exists in DB but is not yet in generated types;
+        // remove the cast after running `supabase gen types --local`.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (supabase as any)
           .from("profile_preferences")
           .upsert(
             { user_id: userId, interests, skill_level: skillLevel },
             { onConflict: "user_id" },
           )
-          .then(({ error }) => {
+          .then(({ error }: { error: { message: string } | null }) => {
             if (error) {
               console.error("Failed to persist preferences", error);
               toast.error(

@@ -5,6 +5,7 @@ import {
   calendarDateInZone,
   completionDatesFromTimestamps,
   computeStreakStats,
+  type StreakDayState,
   type StreakStats,
 } from "../lib/streakStats";
 
@@ -29,7 +30,7 @@ function fromRpc(payload: RpcStreakPayload, today: string): StreakStats | null {
     Array.isArray(weekDone) && weekDone.length === 7
       ? computed.week.map((day, index) => {
           const done = Boolean(weekDone[index]);
-          const state = done
+          const state: StreakDayState = done
             ? "done"
             : day.isToday
               ? "today"

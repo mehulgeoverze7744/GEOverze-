@@ -5,8 +5,8 @@ import { QuizHistoryAndRewardsPage } from "@/features/history-rewards";
 export const Route = createFileRoute("/_app/quiz-history-and-rewards")({
   validateSearch: (search: Record<string, unknown>) => ({
     tab:
-      search.tab === "achievements" || search.tab === "rewards"
-        ? search.tab
+      search['tab'] === "achievements" || search['tab'] === "rewards"
+        ? search['tab']
         : "history",
   }),
   head: () => ({

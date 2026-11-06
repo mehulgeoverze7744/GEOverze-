@@ -62,7 +62,8 @@ export const FeatureCard = memo(function FeatureCard({
           />
         </div>
         <div className="relative z-10 p-7">
-          <FeatureCardContent icon={icon} title={title} description={description} />
+          {/* exactOptionalPropertyTypes: spread icon only when defined */}
+          <FeatureCardContent {...(icon !== undefined && { icon })} title={title} description={description} />
         </div>
       </GlassCard>
     );
@@ -70,7 +71,7 @@ export const FeatureCard = memo(function FeatureCard({
 
   return (
     <GlassCard interactive className="p-7">
-      <FeatureCardContent icon={icon} title={title} description={description} />
+      <FeatureCardContent {...(icon !== undefined && { icon })} title={title} description={description} />
     </GlassCard>
   );
 });

@@ -14,12 +14,12 @@ const FALLBACK_IMAGE = "/assets/home/ecosystem/fallback.jpg";
 
 function handleImageError(event: SyntheticEvent<HTMLImageElement>) {
   const img = event.currentTarget;
-  if (img.dataset.fallback === "1") {
+  if (img.dataset['fallback'] === "1") {
     img.style.display = "none";
     img.parentElement?.classList.add("is-fallback");
     return;
   }
-  img.dataset.fallback = "1";
+  img.dataset['fallback'] = "1";
   img.src = FALLBACK_IMAGE;
 }
 
@@ -70,3 +70,4 @@ export const Ecosystem = memo(function Ecosystem() {
     </section>
   );
 });
+

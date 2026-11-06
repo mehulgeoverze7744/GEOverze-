@@ -181,7 +181,7 @@ export function GstorePaymentAdminScreen() {
       const result = await getAdminPaymentAuditLogFn({
         data: { access_token: tok, limit: 100 },
       });
-      setAuditLogs(result.logs as AuditLogRow[]);
+      setAuditLogs((result as { logs: AuditLogRow[] }).logs);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to load audit log");
     } finally {
@@ -204,7 +204,7 @@ export function GstorePaymentAdminScreen() {
         <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-6 text-center">
           <ShieldAlert className="h-10 w-10 text-[#999]" />
           <p className="text-[16px] text-[#555]">Sign in to access the admin panel.</p>
-          <Link to="/auth" className="text-sm font-medium underline">Sign in</Link>
+          <Link to="/auth/login" className="text-sm font-medium underline">Sign in</Link>
         </div>
       </div>
     );

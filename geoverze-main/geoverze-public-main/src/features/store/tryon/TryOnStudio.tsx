@@ -97,8 +97,8 @@ export function TryOnStudio({ mode = "page", onClose }: TryOnStudioProps) {
 
   const buildOptions = () => {
     const options: Record<string, string> = {};
-    if (size) options.Size = size;
-    if (selectedColor) options.Colour = selectedColor.label;
+    if (size) options['Size'] = size;
+    if (selectedColor) options['Colour'] = selectedColor.label;
     return options;
   };
 

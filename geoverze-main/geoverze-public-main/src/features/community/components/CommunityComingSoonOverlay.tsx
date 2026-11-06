@@ -84,7 +84,8 @@ export function CommunityComingSoonOverlay() {
             className="min-h-11 min-w-[11.5rem] rounded-full bg-[#17191D] px-10 font-semibold uppercase tracking-[0.22em] text-white shadow-none"
           >
             {signedIn ? (
-              <Link to="/app/settings" search={{ section: "notifications" }}>
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              <Link to="/settings" search={{} as any}>
                 Notify me
               </Link>
             ) : (

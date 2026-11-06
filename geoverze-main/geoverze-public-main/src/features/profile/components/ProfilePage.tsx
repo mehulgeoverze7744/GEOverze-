@@ -47,7 +47,7 @@ export function ProfilePage() {
                 size="sm"
                 className="profile-hero-btn-secondary"
               >
-                <Link to="/settings">
+                <Link to="/settings" search={{} as never}>
                   <Settings2 className="mr-1.5 h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
                   Settings
                 </Link>

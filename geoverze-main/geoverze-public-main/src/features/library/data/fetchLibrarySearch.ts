@@ -35,7 +35,7 @@ export async function fetchLibrarySearchHits(
   return (data ?? []).map((row, index) => ({
     id: `lib-${row.slug}`,
     group: "articles" as const,
-    title: row.title,
+    title: row.title ?? "",   // Supabase DB column is NOT NULL; ?? "" keeps type happy
     meta: `GVRZE Library · ${row.read_time_minutes} min read`,
     to: `/geolibrary/article/${row.slug}` as NonNullable<LinkProps["to"]>,
     score: 100 - index,
@@ -58,11 +58,11 @@ export async function fetchLibraryScopedHits(query: string, limit = 24): Promise
   return (data ?? []).map((row, index) => ({
     id: `a-${row.slug}`,
     kind: "article" as const,
-    title: row.title,
+    title: row.title ?? "",
     meta: `Article · ${row.read_time_minutes} min read`,
     score: 100 - index,
     icon: kindIcon("article"),
-    target: { type: "article" as const, slug: row.slug },
+    target: { type: "article" as const, slug: row.slug ?? "" },
   }));
 }
 

@@ -51,22 +51,22 @@ function firstImageUrl(json: unknown): string | undefined {
   if (!json || typeof json !== "object") return undefined;
   const record = json as Record<string, unknown>;
 
-  const image = record.image;
+  const image = record['image'];
   if (image && typeof image === "object" && typeof (image as { url?: unknown }).url === "string") {
     return (image as { url: string }).url;
   }
 
-  const images = record.images;
+  const images = record['images'];
   if (Array.isArray(images) && images[0] && typeof images[0] === "object") {
     const url = (images[0] as { url?: unknown }).url;
     if (typeof url === "string") return url;
   }
 
-  const output = record.output;
+  const output = record['output'];
   if (typeof output === "string") return output;
   if (Array.isArray(output) && typeof output[0] === "string") return output[0];
 
-  if (typeof record.result === "string") return record.result;
+  if (typeof record['result'] === "string") return record['result'];
   return undefined;
 }
 

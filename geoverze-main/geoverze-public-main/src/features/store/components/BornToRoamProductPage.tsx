@@ -114,7 +114,8 @@ export const BornToRoamProductPage = memo(function BornToRoamProductPage({
   const [galleryAspect, setGalleryAspect] = useState<number | null>(null);
   const { wishlistToggle, wishlist } = useStoreActions();
 
-  const selectedVariant = COLOR_VARIANTS[variantIndex];
+  // variantIndex is always in-bounds (clamped by stepVariant / selectVariant)
+  const selectedVariant = COLOR_VARIANTS[variantIndex]!;
   const wishlisted = wishlist.includes(product.id);
 
   const selectVariant = (variant: ColorVariant) => {

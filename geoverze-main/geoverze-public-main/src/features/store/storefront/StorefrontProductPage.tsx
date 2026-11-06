@@ -260,7 +260,7 @@ export function StorefrontProductPage({
     }
     const options: Record<string, string> = { Size: selectedSize };
     const color = colors?.find((entry) => entry.id === selectedColorId);
-    if (color) options.Colour = color.label;
+    if (color) options['Colour'] = color.label;
     addProduct(product, options, 1);
   }
 

@@ -59,7 +59,8 @@ import { stripeAdapter } from "./providers/StripeAdapter.stub";
 import { paypalAdapter } from "./providers/PayPalAdapter.stub";
 
 type ProviderFactory = () => PaymentProviderInterface;
-const PROVIDER_REGISTRY: Map<ProviderId, ProviderFactory> = new Map([
+// Explicit type parameters avoid an overload resolution issue with literal-union key types.
+const PROVIDER_REGISTRY = new Map<ProviderId, ProviderFactory>([
   ["razorpay", () => razorpayAdapter],
   ["stripe",   () => stripeAdapter],
   ["paypal",   () => paypalAdapter],
@@ -217,17 +218,18 @@ export class PaymentRouter {
 
     const result = await provider.verifyPayment(verification);
 
+    // exactOptionalPropertyTypes: spread optional fields only when defined
     audit({
-      event:               result.verified ? "payment_verified" : "payment_failed",
-      provider:            provider.id,
-      billingType:         verification.billingType,
-      purpose:             verification.purpose,
-      orderId:             verification.orderId,
-      paymentId:           verification.paymentId,
-      providerOrderId:     verification.providerOrderId,
-      providerPaymentId:   verification.providerPaymentId,
-      success:             result.verified,
-      error:               result.message,
+      event:            result.verified ? "payment_verified" : "payment_failed",
+      provider:         provider.id,
+      billingType:      verification.billingType,
+      purpose:          verification.purpose,
+      orderId:          verification.orderId,
+      paymentId:        verification.paymentId,
+      providerOrderId:  verification.providerOrderId,
+      providerPaymentId: verification.providerPaymentId,
+      success:          result.verified,
+      ...(result.message !== undefined && { error: result.message }),
     });
 
     return result;
@@ -301,13 +303,14 @@ export class PaymentRouter {
 
     const result = await provider.processWebhook(event);
 
+    // exactOptionalPropertyTypes: spread orderId only when defined
     audit({
-      event:     "webhook_processed",
-      provider:  provider.id,
+      event:       "webhook_processed",
+      provider:    provider.id,
       billingType: "ONE_TIME",
-      purpose:   "GSTORE_ORDER",
-      orderId:   result.orderId,
-      success:   result.processed,
+      purpose:     "GSTORE_ORDER",
+      success:     result.processed,
+      ...(result.orderId !== undefined && { orderId: result.orderId }),
     });
 
     return result;

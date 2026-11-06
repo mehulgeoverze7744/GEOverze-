@@ -35,8 +35,9 @@ export function ArticleExternalImage({
   const responsive = resolvedSrc ? libraryResponsiveProps(resolvedSrc, imageSlot) : null;
 
   if (failed && !staticFallbackSrc) {
+    // exactOptionalPropertyTypes: spread className only when defined
     return (
-      <CoverArt art={fallbackArt} ratio={ratio} fit="cover" overlay="none" className={className} />
+      <CoverArt art={fallbackArt} ratio={ratio} fit="cover" overlay="none" {...(className !== undefined && { className })} />
     );
   }
 

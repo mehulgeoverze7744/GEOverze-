@@ -168,7 +168,7 @@ export function GlobalSearch() {
                         ) : (
                           <Link
                             to={hit.to}
-                            search={hit.search}
+                            {...(hit.search !== undefined && { search: hit.search })}
                             onClick={() => setOpen(false)}
                             className="flex items-center justify-between gap-4 rounded-xl border border-transparent px-3 py-2.5 motion-fast transition-colors hover:border-bronze/25 hover:bg-bronze/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/45"
                           >
@@ -204,7 +204,8 @@ export function GlobalSearch() {
                   className="w-full justify-start"
                   onClick={() => setOpen(false)}
                 >
-                  <Link to={item.to} search={item.search}>
+                  {/* exactOptionalPropertyTypes: omit search when undefined */}
+                  <Link to={item.to} {...(item.search !== undefined && { search: item.search })}>
                     <item.icon className="h-4 w-4" strokeWidth={1.5} />
                     {item.label}
                   </Link>

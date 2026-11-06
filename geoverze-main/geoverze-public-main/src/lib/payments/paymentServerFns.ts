@@ -40,7 +40,7 @@ import {
   getEnabledShippingZones,
   getAvailableShippingMethods,
 } from "./shippingZones";
-import type { CurrencyCode, CountryCode, BillingType } from "../types";
+import type { CurrencyCode, CountryCode, BillingType } from "./types";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -111,7 +111,8 @@ export const getPaymentInfraConfigFn = createServerFn({ method: "GET" }).handler
         supportsSubscriptions: p.supportsSubscriptions,
         supportedCountries:    p.supportedCountries,
         supportedCurrencies:   p.supportedCurrencies,
-        adminNote:             p.adminNote,
+        // exactOptionalPropertyTypes: omit adminNote when undefined
+        ...(p.adminNote !== undefined && { adminNote: p.adminNote }),
       })),
       enabledCurrencies: getEnabledCurrencies().map(c => ({
         code:   c.code,
@@ -173,9 +174,10 @@ const CreateUnifiedPaymentSchema = z.object({
   is_mock:         z.boolean().optional().default(false),
 });
 
-export const createUnifiedOneTimePaymentFn = createServerFn({ method: "POST" })
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const createUnifiedOneTimePaymentFn = (createServerFn({ method: "POST" }) as any)
   .validator((raw: unknown) => CreateUnifiedPaymentSchema.parse(raw))
-  .handler(async ({ data }) => {
+  .handler(async ({ data }: { data: ReturnType<typeof CreateUnifiedPaymentSchema.parse> }) => {
     const mockEnabled = isMockEnabled();
     const router      = getPaymentRouter(mockEnabled);
 
@@ -191,7 +193,8 @@ export const createUnifiedOneTimePaymentFn = createServerFn({ method: "POST" })
       customer: {
         name:        data.customer.name,
         email:       data.customer.email,
-        phone:       data.customer.phone,
+        // exactOptionalPropertyTypes: omit phone when undefined
+        ...(data.customer.phone !== undefined && { phone: data.customer.phone }),
         countryCode: data.country as CountryCode,
       },
       idempotencyKey:  data.idempotency_key,
@@ -256,8 +259,9 @@ export const verifyUnifiedPaymentFn = createServerFn({ method: "POST" })
       providerPaymentId:   data.provider_payment_id,
       providerSignature:   data.provider_signature,
       amountMinor:         data.amount_minor,
-      accessToken:         data.access_token,
-      guestToken:          data.guest_token,
+      // exactOptionalPropertyTypes: omit optional tokens when undefined
+      ...(data.access_token !== undefined && { accessToken: data.access_token }),
+      ...(data.guest_token  !== undefined && { guestToken:  data.guest_token  }),
     });
 
     // Write to audit log
@@ -295,9 +299,10 @@ const AdminAuditLogSchema = z.object({
   offset:       z.number().int().min(0).optional().default(0),
 });
 
-export const getAdminPaymentAuditLogFn = createServerFn({ method: "POST" })
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getAdminPaymentAuditLogFn = (createServerFn({ method: "POST" }) as any)
   .validator((raw: unknown) => AdminAuditLogSchema.parse(raw))
-  .handler(async ({ data }) => {
+  .handler(async ({ data }: { data: ReturnType<typeof AdminAuditLogSchema.parse> }) => {
     // Verify admin
     const url     = process.env["VITE_SUPABASE_URL"] ?? "";
     const anonKey = process.env["VITE_SUPABASE_ANON_KEY"] ?? "";

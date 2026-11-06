@@ -208,11 +208,7 @@ export function ProductCard({
         {purchaseLocked ? (
           <ComingSoonLockChip
             compact
-            className={
-              light
-                ? "border-[#E5E7EB] bg-[#FFFFFF] text-[#555555] backdrop-blur-none"
-                : undefined
-            }
+            {...(light && { className: "border-[#E5E7EB] bg-[#FFFFFF] text-[#555555] backdrop-blur-none" })}
           />
         ) : null}
         {product.bestSeller ? (

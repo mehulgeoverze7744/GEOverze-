@@ -7,6 +7,13 @@ import type {
   DrawStrokePayload,
 } from "../types";
 
+// Game-room RPCs are not yet reflected in the generated Supabase types.
+// When you run `supabase gen types --local` these casts can be removed.
+function rpc(fn: string, args: Record<string, unknown> = {}) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (supabase as any).rpc(fn, args) as Promise<{ data: unknown; error: { message: string } | null }>;
+}
+
 function parseState(data: unknown): DrawRoomState {
   if (!data || typeof data !== "object") {
     throw new Error("Invalid room state response");
@@ -21,7 +28,7 @@ export async function createDrawRoom(input: {
   difficulty: string;
   turnSeconds: number;
 }): Promise<DrawRoomState> {
-  const { data, error } = await supabase.rpc("create_draw_room", {
+  const { data, error } = await rpc("create_draw_room", {
     _rounds: input.rounds,
     _max_players: input.maxPlayers,
     _categories: input.categories,
@@ -33,7 +40,7 @@ export async function createDrawRoom(input: {
 }
 
 export async function joinDrawRoom(roomCode: string): Promise<DrawRoomState> {
-  const { data, error } = await supabase.rpc("join_draw_room", {
+  const { data, error } = await rpc("join_draw_room", {
     _room_code: roomCode.toUpperCase(),
   });
   if (error) throw new Error(error.message);
@@ -41,13 +48,13 @@ export async function joinDrawRoom(roomCode: string): Promise<DrawRoomState> {
 }
 
 export async function fetchDrawRoomState(roomId: string): Promise<DrawRoomState> {
-  const { data, error } = await supabase.rpc("build_draw_room_state", { _room_id: roomId });
+  const { data, error } = await rpc("build_draw_room_state", { _room_id: roomId });
   if (error) throw new Error(error.message);
   return parseState(data);
 }
 
 export async function setDrawReady(roomId: string, ready: boolean): Promise<DrawRoomState> {
-  const { data, error } = await supabase.rpc("set_draw_ready", {
+  const { data, error } = await rpc("set_draw_ready", {
     _room_id: roomId,
     _ready: ready,
   });
@@ -56,25 +63,25 @@ export async function setDrawReady(roomId: string, ready: boolean): Promise<Draw
 }
 
 export async function startDrawGame(roomId: string): Promise<DrawRoomState> {
-  const { data, error } = await supabase.rpc("start_draw_game", { _room_id: roomId });
+  const { data, error } = await rpc("start_draw_game", { _room_id: roomId });
   if (error) throw new Error(error.message);
   return parseState(data);
 }
 
 export async function restartDrawGame(roomId: string): Promise<DrawRoomState> {
-  const { data, error } = await supabase.rpc("restart_draw_game", { _room_id: roomId });
+  const { data, error } = await rpc("restart_draw_game", { _room_id: roomId });
   if (error) throw new Error(error.message);
   return parseState(data);
 }
 
 export async function leaveDrawRoom(roomId: string): Promise<DrawLeaveResult> {
-  const { data, error } = await supabase.rpc("leave_draw_room", { _room_id: roomId });
+  const { data, error } = await rpc("leave_draw_room", { _room_id: roomId });
   if (error) throw new Error(error.message);
   return data as DrawLeaveResult;
 }
 
 export async function chooseDrawWord(turnId: string, wordId: string): Promise<DrawRoomState> {
-  const { data, error } = await supabase.rpc("choose_draw_word", {
+  const { data, error } = await rpc("choose_draw_word", {
     _turn_id: turnId,
     _word_id: wordId,
   });
@@ -83,7 +90,7 @@ export async function chooseDrawWord(turnId: string, wordId: string): Promise<Dr
 }
 
 export async function sendDrawMessage(roomId: string, message: string): Promise<DrawMessageResult> {
-  const { data, error } = await supabase.rpc("send_draw_message", {
+  const { data, error } = await rpc("send_draw_message", {
     _room_id: roomId,
     _message: message,
   });
@@ -93,13 +100,13 @@ export async function sendDrawMessage(roomId: string, message: string): Promise<
 }
 
 export async function advanceDrawTurn(roomId: string): Promise<DrawRoomState> {
-  const { data, error } = await supabase.rpc("advance_draw_turn", { _room_id: roomId });
+  const { data, error } = await rpc("advance_draw_turn", { _room_id: roomId });
   if (error) throw new Error(error.message);
   return parseState(data);
 }
 
 export async function touchDrawPresence(roomId: string): Promise<void> {
-  const { error } = await supabase.rpc("touch_draw_presence", { _room_id: roomId });
+  const { error } = await rpc("touch_draw_presence", { _room_id: roomId });
   if (error) throw new Error(error.message);
 }
 
@@ -112,7 +119,7 @@ export async function submitDrawStroke(input: {
   size?: number;
   tool?: "brush" | "eraser";
 }): Promise<number> {
-  const { data, error } = await supabase.rpc("submit_draw_stroke", {
+  const { data, error } = await rpc("submit_draw_stroke", {
     _room_id: input.roomId,
     _turn_id: input.turnId,
     _kind: input.kind,
@@ -126,7 +133,7 @@ export async function submitDrawStroke(input: {
 }
 
 export async function fetchDrawStrokesSince(turnId: string, afterId = 0): Promise<DrawStroke[]> {
-  const { data, error } = await supabase.rpc("fetch_draw_strokes_since", {
+  const { data, error } = await rpc("fetch_draw_strokes_since", {
     _turn_id: turnId,
     _after_id: afterId,
   });

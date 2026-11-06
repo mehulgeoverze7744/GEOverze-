@@ -26,7 +26,8 @@ export async function fetchSubscriptionCatalog(): Promise<SubscriptionCatalog> {
   if (promotionsResult.error) throw new Error(promotionsResult.error.message);
 
   return {
-    plans: plansResult.data ?? [],
-    promotions: promotionsResult.data ?? [],
+    // Cast: SELECT uses a subset of columns; SubscriptionPlanRow has the full schema.
+    plans: (plansResult.data ?? []) as unknown as SubscriptionPlanRow[],
+    promotions: (promotionsResult.data ?? []) as unknown as PlanPromotionRow[],
   };
 }

@@ -6,8 +6,8 @@ import { isSettingsSection } from "@/features/settings/lib/settingsSections";
 export const Route = createFileRoute("/_app/settings")({
   validateSearch: (search: Record<string, unknown>) => ({
     section:
-      typeof search.section === "string" && isSettingsSection(search.section)
-        ? search.section
+      typeof search['section'] === "string" && isSettingsSection(search['section'] as string)
+        ? (search['section'] as string)
         : undefined,
   }),
   head: () => ({

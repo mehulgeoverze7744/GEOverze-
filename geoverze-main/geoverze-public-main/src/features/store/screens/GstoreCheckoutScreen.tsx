@@ -40,6 +40,7 @@ import { toast } from "sonner";
 import "@/features/store/styles/checkout-light.css";
 
 import { cn } from "@/lib/utils";
+import { supabase } from "@/lib/supabase/client";
 import { useAuthStore, selectUser } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
 import { usePaymentConfig } from "@/features/pricing/hooks/usePaymentConfig";
@@ -180,7 +181,6 @@ function Card({ children, className }: { children: React.ReactNode; className?: 
 
 export function GstoreCheckoutScreen() {
   const user    = useAuthStore(selectUser);
-  const session = useAuthStore(s => s.session);
   const navigate = useNavigate();
 
   const search = useSearch({ from: "/geostore/checkout" }) as {
@@ -194,19 +194,17 @@ export function GstoreCheckoutScreen() {
   const cartLines = useCartStore(s => s.lines);
   const clearCart = useCartStore(s => s.clear);
 
-  const { data: paymentConfig } = usePaymentConfig();
-  const mockEnabled    = paymentConfig?.mockEnabled ?? false;
-  const rzpConfigured  = !!(paymentConfig?.razorpayKeyId);
+  const { mockEnabled, razorpayEnabled: rzpConfigured } = usePaymentConfig();
 
   // Guest mode toggle
   const [guestMode, setGuestMode] = useState(!user);
 
   // Form state
   const [form, setForm] = useState<FormState>({
-    customerName:    user?.user_metadata?.["full_name"] ?? "",
+    customerName:    user?.displayName ?? "",
     customerEmail:   user?.email ?? "",
     customerPhone:   "",
-    shippingName:    user?.user_metadata?.["full_name"] ?? "",
+    shippingName:    user?.displayName ?? "",
     shippingLine1:   "",
     shippingLine2:   "",
     shippingCity:    "",
@@ -312,7 +310,7 @@ export function GstoreCheckoutScreen() {
     const search: Record<string, string> = { order_id: orderId, order_number: orderNumber };
     if (guestToken) {
       localStorage.setItem(`gstore_guest_${orderNumber}`, guestToken);
-      search.guest_token = guestToken;
+      search['guest_token'] = guestToken;
     }
     void navigate({ to: "/geostore/order-confirmation", search });
   }
@@ -360,11 +358,12 @@ export function GstoreCheckoutScreen() {
                 },
               });
             } else {
+              const { data: { session: authSession } } = await supabase.auth.getSession();
               await verifyGstorePaymentFn({
                 data: {
                   order_id:       orderId,
                   payment_id:     paymentId,
-                  access_token:   session!.access_token,
+                  access_token:   authSession?.access_token ?? "",
                   rzp_order_id:   response.razorpay_order_id,
                   rzp_payment_id: response.razorpay_payment_id,
                   rzp_signature:  response.razorpay_signature,
@@ -389,9 +388,10 @@ export function GstoreCheckoutScreen() {
                 await confirmMockGstoreGuestPaymentFn({
                   data: { order_id: orderId, payment_id: paymentId, guest_token: guestToken, outcome: "cancel" },
                 });
-              } else if (session) {
+              } else {
+                const { data: { session: s } } = await supabase.auth.getSession();
                 await confirmMockGstorePaymentFn({
-                  data: { order_id: orderId, payment_id: paymentId, access_token: session.access_token, outcome: "cancel" },
+                  data: { order_id: orderId, payment_id: paymentId, access_token: s?.access_token ?? "", outcome: "cancel" },
                 });
               }
             } catch { /* best effort */ }
@@ -439,22 +439,24 @@ export function GstoreCheckoutScreen() {
         orderNumber      = result.order_number;
         paymentId        = result.payment_id;
         guestToken       = result.guest_token;
-        rzpOrderId       = result.rzp_order_id;
+        rzpOrderId       = result.rzp_order_id ?? null;  // optional → null
         rzpKeyId         = result.rzp_key_id;
         mockEnabledResult = result.mock_enabled;
       } else {
+        // AuthState has no session field — fetch the token live at submit time
+        const { data: { session: authSession } } = await supabase.auth.getSession();
         const result = await createGstoreOrderFn({
           data: {
             items:           checkoutItems,
             details,
-            access_token:    session!.access_token,
+            access_token:    authSession?.access_token ?? "",
             idempotency_key: idempotencyKey.current,
           },
         });
         orderId          = result.order_id;
         orderNumber      = result.order_number;
         paymentId        = result.payment_id;
-        rzpOrderId       = result.rzp_order_id;
+        rzpOrderId       = result.rzp_order_id ?? null;  // optional → null
         rzpKeyId         = result.rzp_key_id;
         mockEnabledResult = result.mock_enabled;
       }
@@ -518,28 +520,31 @@ export function GstoreCheckoutScreen() {
         orderNumber      = result.order_number;
         paymentId        = result.payment_id;
         guestToken       = result.guest_token;
-        rzpOrderId       = result.rzp_order_id;
+        rzpOrderId       = result.rzp_order_id ?? null;  // optional → null
         rzpKeyId         = result.rzp_key_id;
         mockEnabledResult = result.mock_enabled;
       } else {
+        // AuthState has no session field — fetch the token live at submit time
+        const { data: { session: authSession } } = await supabase.auth.getSession();
         const result = await createGstoreOrderFn({
           data: {
             items:           checkoutItems,
             details,
-            access_token:    session!.access_token,
+            access_token:    authSession?.access_token ?? "",
             idempotency_key: idempotencyKey.current,
           },
         });
         orderId          = result.order_id;
         orderNumber      = result.order_number;
         paymentId        = result.payment_id;
-        rzpOrderId       = result.rzp_order_id;
+        rzpOrderId       = result.rzp_order_id ?? null;  // optional → null
         rzpKeyId         = result.rzp_key_id;
         mockEnabledResult = result.mock_enabled;
       }
 
       if (mockEnabledResult) {
-        setPendingOrder({ orderId, paymentId, orderNumber, guestToken });
+        // exactOptionalPropertyTypes: spread guestToken only when defined
+        setPendingOrder({ orderId, paymentId, orderNumber, ...(guestToken !== undefined && { guestToken }) });
         setStatus("paying");
         inflight.current = false;
         return;
@@ -569,8 +574,9 @@ export function GstoreCheckoutScreen() {
           data: { order_id: orderId, payment_id: paymentId, guest_token: guestToken, outcome },
         });
       } else {
+        const { data: { session: authSession } } = await supabase.auth.getSession();
         await confirmMockGstorePaymentFn({
-          data: { order_id: orderId, payment_id: paymentId, access_token: session!.access_token, outcome },
+          data: { order_id: orderId, payment_id: paymentId, access_token: authSession?.access_token ?? "", outcome },
         });
       }
       if (outcome === "success") {
@@ -701,7 +707,7 @@ export function GstoreCheckoutScreen() {
                   Continue as Guest
                 </button>
                 <Link
-                  to="/auth"
+                  to="/auth/login"
                   className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium border border-[#E5E7EB] text-[#374151] hover:border-[#9CA3AF] bg-white transition-all text-center"
                 >
                   <UserCheck className="w-4 h-4" />
@@ -1052,9 +1058,9 @@ export function GstoreCheckoutScreen() {
 
             <p className="text-xs text-[#9CA3AF] text-center mt-4">
               By placing this order, you agree to our{" "}
-              <Link to="/legal/terms" className="underline hover:text-[#6B7280] transition-colors">Terms of Service</Link>
+              <Link to="/disclaimer" className="underline hover:text-[#6B7280] transition-colors">Terms of Service</Link>
               {" "}and{" "}
-              <Link to="/legal/privacy" className="underline hover:text-[#6B7280] transition-colors">Privacy Policy</Link>.
+              <Link to="/privacy-policy" className="underline hover:text-[#6B7280] transition-colors">Privacy Policy</Link>.
             </p>
           </Card>
         </div>

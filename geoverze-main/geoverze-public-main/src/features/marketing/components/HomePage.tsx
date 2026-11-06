@@ -11,7 +11,8 @@ import "./home-lunar.css";
 
 /** Home page — the only route with the 3D globe. */
 export function HomePage() {
-  const historyAction = useRouterState({ select: (s) => s.historyAction });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const historyAction = useRouterState({ select: (s) => (s as any).historyAction as string | undefined });
 
   useEffect(() => {
     // POP = browser back/forward — TanStack scrollRestoration restores position.
@@ -22,6 +23,7 @@ export function HomePage() {
       return () => window.clearTimeout(timer);
     }
     scrollToHomeHero("auto");
+    return undefined;
   }, [historyAction]);
 
   return (
