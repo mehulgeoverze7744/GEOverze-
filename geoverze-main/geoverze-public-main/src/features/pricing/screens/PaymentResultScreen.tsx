@@ -12,7 +12,7 @@
  *   cancelled   — user dismissed the modal
  */
 
-import { ArrowLeft, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Clock, FlaskConical, XCircle } from "lucide-react";
 import { Link, useSearch } from "@tanstack/react-router";
 
 import "../styles/payment-result.css";
@@ -105,6 +105,7 @@ export function PaymentResultScreen() {
   const planName = planRaw.charAt(0).toUpperCase() + planRaw.slice(1);
   const paymentId = typeof raw.payment_id === "string" ? raw.payment_id : null;
   const reason = typeof raw.reason === "string" && raw.reason.length > 0 ? raw.reason : undefined;
+  const isMock = typeof paymentId === "string" && paymentId.startsWith("mock_");
 
   const config = getConfig(status, planName, reason);
   const { iconRingClass, Icon, iconSize, heading, body, primaryLabel, primaryTo, secondaryLabel, secondaryTo } =
@@ -113,6 +114,30 @@ export function PaymentResultScreen() {
   return (
     <div id="gvrze-payment-result">
       <div className="pr-shell">
+        {/* Mock mode badge */}
+        {isMock ? (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              marginBottom: "1rem",
+              padding: "0.55rem 0.9rem",
+              borderRadius: "0.6rem",
+              background: "#fef3c7",
+              border: "1px solid #fcd34d",
+              fontSize: "0.72rem",
+              color: "#78350f",
+              fontWeight: 600,
+              letterSpacing: "0.08em",
+            }}
+            role="status"
+          >
+            <FlaskConical size={13} strokeWidth={2.2} aria-hidden />
+            MOCK / TEST MODE — development only
+          </div>
+        ) : null}
+
         <article className="pr-card" role="main" aria-label={`Payment ${status}`}>
           <div className={iconRingClass} aria-hidden="true">
             <Icon size={iconSize} strokeWidth={1.6} />
@@ -123,7 +148,7 @@ export function PaymentResultScreen() {
 
           {paymentId ? (
             <div className="pr-detail-chip" aria-label={`Payment ID: ${paymentId}`}>
-              <span>Payment ID</span>
+              <span>{isMock ? "Mock Ref" : "Payment ID"}</span>
               <span style={{ fontFamily: "monospace", fontSize: "0.7rem" }}>
                 {paymentId}
               </span>
@@ -147,11 +172,23 @@ export function PaymentResultScreen() {
           </nav>
 
           <p className="pr-help">
-            Questions?{" "}
-            <Link to="/support" className="underline-offset-2">
-              Contact GVRZE support
-            </Link>
-            .
+            {isMock ? (
+              <>
+                Testing?{" "}
+                <Link to="/pricing/checkout" className="underline-offset-2">
+                  Try another payment scenario
+                </Link>
+                .
+              </>
+            ) : (
+              <>
+                Questions?{" "}
+                <Link to="/support" className="underline-offset-2">
+                  Contact GVRZE support
+                </Link>
+                .
+              </>
+            )}
           </p>
         </article>
       </div>

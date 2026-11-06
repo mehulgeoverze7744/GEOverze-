@@ -17,6 +17,44 @@
  *   Focus ring: #BFDBFE  (pale blue)
  */
 
+/* ── Mock-mode indicator banner ──────────────────────────────────────────── */
+.checkout-mock-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+  padding: 0.65rem 1rem;
+  border-radius: 0.6rem;
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  font-size: 0.78rem;
+  color: #78350f;
+  line-height: 1.5;
+}
+
+.checkout-mock-banner svg {
+  flex-shrink: 0;
+}
+
+.checkout-mock-banner code {
+  font-family: ui-monospace, monospace;
+  font-size: 0.85em;
+  background: #fef9c3;
+  padding: 0.1em 0.35em;
+  border-radius: 0.25em;
+}
+
+/* ── Mock pay button variant (amber accent) ──────────────────────────────── */
+.checkout-pay-btn--mock {
+  background: #92400e !important;
+  box-shadow: 0 2px 10px -2px rgb(146 64 14 / 0.3) !important;
+}
+
+.checkout-pay-btn--mock:hover:not(:disabled) {
+  background: #78350f !important;
+  box-shadow: 0 4px 16px -4px rgb(146 64 14 / 0.4) !important;
+}
+
 /* ── Page shell ──────────────────────────────────────────────────────────── */
 body:has(#gvrze-checkout) {
   background: #eaf4fa;

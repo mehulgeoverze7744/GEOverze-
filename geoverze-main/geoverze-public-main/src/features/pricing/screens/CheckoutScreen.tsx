@@ -1,28 +1,33 @@
 /**
  * CheckoutScreen — /pricing/checkout?plan=<tier>&cycle=<monthly|annual>
  *
- * Complete membership purchase journey:
- *  1. Reads plan + cycle from URL search params (validated, falls back to Pro monthly).
- *  2. Fetches the catalog to show authoritative prices from Supabase.
- *  3. Shows GST breakdown (base + GST + total) using centralized GST_CONFIG.
- *  4. Collects billing address + optional GSTIN for B2B invoicing.
- *  5. Accepts an optional promo/coupon code.
- *  6. When the user confirms, calls create-razorpay-subscription (Edge Function)
- *     and opens the Razorpay checkout modal.
- *  7. On payment success → /pricing/payment-result?status=processing
- *  8. On dismissal / failure → shows inline error; never navigates to "success".
+ * Payment paths (mutually exclusive):
  *
- * Security rules (NEVER violate):
- *  - NEVER fake a successful payment.
- *  - NEVER activate a subscription from client-side alone.
- *  - Subscription state is set server-side by the Razorpay webhook handler only.
- *  - inflight.current prevents duplicate payment windows.
+ *   1. MOCK MODE  (import.meta.env.DEV && VITE_MOCK_PAYMENTS=true)
+ *      → beginMockSubscription() creates pending DB records server-side.
+ *      → MockPaymentGateway modal lets the developer choose Success/Fail/Cancel.
+ *      → confirmMockSubscription() activates or cancels the subscription.
+ *      → Never collects card details. Never contacts Razorpay.
+ *
+ *   2. RAZORPAY  (VITE_RAZORPAY_KEY_ID is set)
+ *      → createCheckoutSession() calls the Edge Function to create a
+ *        Razorpay Subscription. The modal collects real payment.
+ *      → Webhook activates the subscription server-side.
+ *
+ *   3. UNAVAILABLE  (neither mock nor Razorpay is configured)
+ *      → Shows a clear "Payment unavailable" notice.
+ *
+ * Security rules (never violate):
+ *   - Subscriptions are activated server-side only (SQL RPC or webhook).
+ *   - inflight.current prevents duplicate payment windows.
+ *   - Mock mode only active when import.meta.env.DEV === true.
  */
 
 import {
   Check,
   ChevronDown,
   ChevronUp,
+  FlaskConical,
   Info,
   Lock,
   RefreshCw,
@@ -51,8 +56,16 @@ import {
   type RazorpaySuccessResponse,
   type RazorpayError as RzpError,
 } from "../lib/razorpay-client";
+import {
+  isMockPaymentEnabled,
+  beginMockSubscription,
+  generateIdempotencyKey,
+  MockPaymentError,
+  type MockSession,
+} from "../lib/mock-payment";
 import { formatInrRupees } from "../lib/formatInr";
 import { GST_CONFIG, calcGst } from "../lib/gstConfig";
+import { MockPaymentGateway } from "../components/MockPaymentGateway";
 import "../styles/checkout.css";
 
 /* ── URL param parsing ───────────────────────────────────────────────────── */
@@ -104,8 +117,9 @@ function validateBilling(d: BillingDetails): Partial<Record<keyof BillingDetails
     errors.pincode = "Enter a valid 6-digit PIN code";
   }
   if (d.gstin.trim()) {
-    const gstinPattern = /^\d{2}[A-Z]{5}\d{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
-    if (!gstinPattern.test(d.gstin.trim().toUpperCase())) {
+    if (!/^\d{2}[A-Z]{5}\d{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(
+      d.gstin.trim().toUpperCase(),
+    )) {
       errors.gstin = "Enter a valid GSTIN (e.g. 29ABCDE1234F1Z5)";
     }
   }
@@ -119,6 +133,10 @@ export function CheckoutScreen() {
   const navigate = useNavigate();
   const user = useAuthStore(selectUser);
 
+  /* Payment mode detection (evaluated once at render) */
+  const mockEnabled   = isMockPaymentEnabled();
+  const razorpayReady = isRazorpayConfigured();
+
   /* UI state */
   const [cycle, setCycle] = useState<BillingCycle>(initialCycle);
   const [coupon, setCoupon] = useState("");
@@ -131,29 +149,29 @@ export function CheckoutScreen() {
   const [billingErrors, setBillingErrors] = useState<Partial<Record<keyof BillingDetails, string>>>({});
   const [showBillingAddress, setShowBillingAddress] = useState(true);
 
-  /* Plan data from catalog */
+  /* Mock gateway state */
+  const [mockSession, setMockSession] = useState<MockSession | null>(null);
+
+  /* Plan data */
   const { plans, loading: catalogLoading, error: catalogError } = usePricingCatalog();
   const plan = plans.find((p) => p.id === initialPlan) ?? null;
   const price = plan?.prices[cycle];
 
   /* Duplicate-payment guard */
   const inflight = useRef(false);
-  const razorpayReady = isRazorpayConfigured();
 
-  /* ── GST calculation ────────────────────────────────────────────────── */
-  // Catalog prices are in whole INR rupees. calcGst() does the tax math.
-  // plan.prices[cycle].amount is formatted like "₹499" — strip non-digits to parse.
+  /* ── GST calculation ──────────────────────────────────────────────────── */
   function getApproxRupees(): number {
     if (!plan) return 0;
     const p = plan.prices[cycle];
     if (p.amount === "Free") return 0;
-    // Strip everything except digits and dots; handles "₹4,999" → "4999"
     const numeric = parseFloat(p.amount.replace(/[^\d.]/g, ""));
     return isNaN(numeric) ? 0 : numeric;
   }
 
   const approxRupees = getApproxRupees();
   const gst = calcGst(approxRupees);
+  const displayTotal = gst.totalRupees > 0 ? gst.totalRupees : approxRupees;
 
   /* Annual savings label */
   const annualSavingLabel = (() => {
@@ -169,51 +187,81 @@ export function CheckoutScreen() {
     return `Save ${formatInrRupees(savings)} vs monthly`;
   })();
 
-  /* ── Billing field helpers ──────────────────────────────────────────── */
+  /* ── Helpers ──────────────────────────────────────────────────────────── */
   function handleBillingChange(field: keyof BillingDetails, value: string) {
     setBillingDetails((prev) => ({ ...prev, [field]: value }));
     if (billingErrors[field]) {
-      setBillingErrors((prev) => {
-        const next = { ...prev };
-        delete next[field];
-        return next;
-      });
+      setBillingErrors((prev) => { const n = { ...prev }; delete n[field]; return n; });
     }
   }
 
-  /* ── Coupon apply ───────────────────────────────────────────────────── */
   function handleApplyCoupon() {
     const code = coupon.trim().toUpperCase();
     if (!code) return;
-    // Client-side stub — the Edge Function validates the code server-side.
-    // We just save the code and show a pending confirmation.
     setCouponApplied(`Code "${code}" saved — discount will be applied at payment.`);
     setCouponError(null);
   }
 
-  /* ── Payment handler ────────────────────────────────────────────────── */
-  async function handlePay() {
-    if (!plan || !price || inflight.current) return;
-
+  /* Shared pre-payment validation */
+  function validate(): boolean {
     if (!agreed) {
       toast.error("Please agree to the Terms before continuing.");
-      return;
+      return false;
     }
     if (!user) {
       toast.error("Sign in to continue to checkout.");
-      return;
+      return false;
     }
-
-    /* Validate billing address */
     const errors = validateBilling(billingDetails);
     if (Object.keys(errors).length > 0) {
       setBillingErrors(errors);
       setShowBillingAddress(true);
       toast.error("Please complete your billing details before continuing.");
-      return;
+      return false;
     }
+    return true;
+  }
 
-    /* Lock against duplicate invocations */
+  /* ── MOCK payment handler ─────────────────────────────────────────────── */
+  async function handleMockPay() {
+    if (!plan || !price || !user || inflight.current) return;
+    if (!validate()) return;
+
+    inflight.current = true;
+    setLoading(true);
+    setPaymentError(null);
+
+    try {
+      const idempotencyKey = generateIdempotencyKey(user.id, plan.id, cycle);
+      const session = await beginMockSubscription({
+        plan_tier:            plan.id,
+        billing_interval:     cycle,
+        base_amount_minor:    Math.round(gst.baseRupees * 100),
+        gst_amount_minor:     Math.round(gst.gstRupees * 100),
+        charge_amount_minor:  Math.round(gst.totalRupees * 100),
+        idempotency_key:      idempotencyKey,
+      });
+      setMockSession(session);
+    } catch (err) {
+      inflight.current = false;
+      const msg =
+        err instanceof MockPaymentError
+          ? err.message
+          : err instanceof Error
+            ? err.message
+            : "Could not start mock payment. Check your Supabase connection.";
+      setPaymentError(msg);
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  /* ── RAZORPAY payment handler ─────────────────────────────────────────── */
+  async function handleRazorpayPay() {
+    if (!plan || !price || !user || inflight.current) return;
+    if (!validate()) return;
+
     inflight.current = true;
     setLoading(true);
     setPaymentError(null);
@@ -243,9 +291,6 @@ export function CheckoutScreen() {
         throw new Error("Razorpay SDK did not load. Try refreshing the page.");
       }
 
-      /* Use server-authoritative amounts from the Edge Function response */
-      const totalRupees = session.charge_amount_minor / 100;
-
       const rzp = new window.Razorpay({
         key: keyId,
         subscription_id: session.razorpay_subscription_id,
@@ -264,9 +309,6 @@ export function CheckoutScreen() {
         },
         theme: { color: "#1e3a5f" },
         handler: (response: RazorpaySuccessResponse) => {
-          /* Payment captured — navigate to result page.
-             Subscription is NOT yet active; the webhook activates it.
-             NEVER set subscription active from client-side alone. */
           void navigate({
             to: "/pricing/payment-result",
             search: {
@@ -281,9 +323,7 @@ export function CheckoutScreen() {
           ondismiss: () => {
             setLoading(false);
             inflight.current = false;
-            setPaymentError(
-              "Payment window closed. No charge was made — you can try again.",
-            );
+            setPaymentError("Payment window closed. No charge was made — you can try again.");
           },
         },
       });
@@ -302,10 +342,6 @@ export function CheckoutScreen() {
       });
 
       rzp.open();
-
-      // Note: setLoading(false) is called in ondismiss or payment.failed.
-      // On success we navigate away, so we don't reset loading here.
-      void totalRupees; // suppress unused-var lint; amount shown to user below
     } catch (err) {
       inflight.current = false;
       setLoading(false);
@@ -322,400 +358,364 @@ export function CheckoutScreen() {
 
   /* ── Render ─────────────────────────────────────────────────────────── */
 
-  const displayTotal = gst.totalRupees > 0 ? gst.totalRupees : approxRupees;
-
   return (
-    <div id="gvrze-checkout">
-      <div className="checkout-shell">
-        <Breadcrumb
-          items={[
-            { label: "Home", to: "/" },
-            { label: "Membership", to: "/pricing" },
-            { label: "Checkout" },
-          ]}
-          className="checkout-crumb"
+    <>
+      {/* Mock gateway modal — rendered outside the page flow for z-index */}
+      {mockSession ? (
+        <MockPaymentGateway
+          session={mockSession}
+          planName={plan?.name ?? initialPlan}
+          planTier={initialPlan}
+          billingCycle={cycle}
+          onCancel={() => {
+            setMockSession(null);
+            inflight.current = false;
+          }}
         />
+      ) : null}
 
-        {catalogError ? (
-          <div className="checkout-unavailable" role="alert">
-            <Info className="checkout-unavailable__icon" size={16} />
-            <span>Unable to load plan details. {catalogError}</span>
-          </div>
-        ) : null}
+      <div id="gvrze-checkout">
+        <div className="checkout-shell">
+          <Breadcrumb
+            items={[
+              { label: "Home", to: "/" },
+              { label: "Membership", to: "/pricing" },
+              { label: "Checkout" },
+            ]}
+            className="checkout-crumb"
+          />
 
-        {catalogLoading ? (
-          <div className="checkout-grid">
-            <div className="checkout-skeleton" style={{ height: "28rem" }} aria-hidden />
-            <div className="checkout-skeleton" style={{ height: "36rem" }} aria-hidden />
-          </div>
-        ) : null}
-
-        {!catalogLoading && !catalogError && !plan ? (
-          <div className="checkout-unavailable" style={{ maxWidth: "32rem" }}>
-            <Info className="checkout-unavailable__icon" size={16} />
-            <div>
-              Plan not found.{" "}
-              <Link to="/pricing" className="underline underline-offset-2">
-                Return to pricing
-              </Link>{" "}
-              to choose a membership.
+          {/* Mock mode indicator banner */}
+          {mockEnabled ? (
+            <div
+              className="checkout-mock-banner"
+              role="status"
+              aria-label="Development mock payment mode active"
+            >
+              <FlaskConical size={14} strokeWidth={2} aria-hidden />
+              <span>
+                <strong>Mock Payment Mode</strong> — Development only. No real payments.
+                Set <code>VITE_MOCK_PAYMENTS=true</code> in <code>.env.local</code>.
+              </span>
             </div>
-          </div>
-        ) : null}
+          ) : null}
 
-        {!catalogLoading && !catalogError && plan ? (
-          <div className="checkout-grid">
-            {/* ── LEFT: Order Summary ─────────────────────────────────── */}
-            <article className="checkout-summary" aria-label="Order summary">
-              <p className="checkout-summary__kicker">Order summary</p>
-              <h1 className="checkout-summary__plan-name">{plan.name}</h1>
-              <p className="checkout-summary__positioning">{plan.positioning}</p>
+          {catalogError ? (
+            <div className="checkout-unavailable" role="alert">
+              <Info className="checkout-unavailable__icon" size={16} />
+              <span>Unable to load plan details. {catalogError}</span>
+            </div>
+          ) : null}
 
-              {/* Price + cadence */}
-              <div className="checkout-summary__price-block">
-                {price?.compareAt ? (
-                  <span className="checkout-summary__compare-at">{price.compareAt}</span>
-                ) : null}
-                <span className="checkout-summary__price-amount">{price?.amount}</span>
-                <span className="checkout-summary__price-cadence">{price?.cadence}</span>
-              </div>
+          {catalogLoading ? (
+            <div className="checkout-grid">
+              <div className="checkout-skeleton" style={{ height: "28rem" }} aria-hidden />
+              <div className="checkout-skeleton" style={{ height: "36rem" }} aria-hidden />
+            </div>
+          ) : null}
 
-              {/* GST breakdown */}
-              {approxRupees > 0 ? (
-                <div className="checkout-gst-table" aria-label="Tax breakdown">
-                  <div className="checkout-gst-row">
-                    <span>Subscription {cycle === "annual" ? "(annual)" : "(monthly)"}</span>
-                    <span>{formatInrRupees(gst.baseRupees)}</span>
-                  </div>
-                  <div className="checkout-gst-row">
-                    <span>{GST_CONFIG.taxLabel}</span>
-                    <span>{formatInrRupees(gst.gstRupees)}</span>
-                  </div>
-                  <div className="checkout-gst-row checkout-gst-row--total">
-                    <span>Total payable</span>
-                    <strong>{formatInrRupees(gst.totalRupees)}</strong>
-                  </div>
-                </div>
-              ) : null}
-
-              {/* Savings / promo badges */}
-              {price?.compareAt ? (
-                <div className="checkout-summary__promo-badge" aria-live="polite">
-                  <span>🎁</span>
-                  <span>Introductory price applied</span>
-                </div>
-              ) : null}
-
-              {annualSavingLabel ? (
-                <div className="checkout-summary__promo-badge" aria-live="polite">
-                  <span>✨</span>
-                  <span>{annualSavingLabel}</span>
-                </div>
-              ) : null}
-
-              {price?.note ? (
-                <p className="checkout-summary__note">{price.note}</p>
-              ) : null}
-
-              <hr className="checkout-summary__divider" />
-
-              {/* Plan features */}
-              <ul className="checkout-summary__features" aria-label="Plan features">
-                {plan.features.map((f) => (
-                  <li key={f} className="checkout-summary__feature">
-                    <Check
-                      className="checkout-summary__feature-icon"
-                      size={14}
-                      strokeWidth={2.4}
-                      aria-hidden
-                    />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-
-              {/* Renewal reminder */}
-              <p className="checkout-renew-note">
-                🔄 Renews automatically {cycle === "annual" ? "annually" : "every month"}.
-                Cancel anytime from your billing dashboard.
-              </p>
-            </article>
-
-            {/* ── RIGHT: Payment Form ─────────────────────────────────── */}
-            <section className="checkout-form-card" aria-label="Payment details">
-              <h2 className="checkout-form-card__title">Complete your membership</h2>
-
-              {/* Billing cycle toggle */}
+          {!catalogLoading && !catalogError && !plan ? (
+            <div className="checkout-unavailable" style={{ maxWidth: "32rem" }}>
+              <Info className="checkout-unavailable__icon" size={16} />
               <div>
-                <div className="checkout-cycle-row">
-                  <span className="checkout-cycle-label">Billing</span>
-                  <div className="checkout-cycle-tabs" role="group" aria-label="Billing cycle">
-                    {(["monthly", "annual"] as BillingCycle[]).map((c) => (
-                      <button
-                        key={c}
-                        type="button"
-                        className="checkout-cycle-tab"
-                        aria-pressed={cycle === c}
-                        onClick={() => {
-                          setCycle(c);
-                          setPaymentError(null);
-                        }}
-                      >
-                        {c === "monthly" ? "Monthly" : "Annual"}
-                      </button>
-                    ))}
-                  </div>
-                  {cycle === "annual" && annualSavingLabel ? (
-                    <span className="checkout-cycle-save-pill">{annualSavingLabel}</span>
+                Plan not found.{" "}
+                <Link to="/pricing" className="underline underline-offset-2">
+                  Return to pricing
+                </Link>{" "}
+                to choose a membership.
+              </div>
+            </div>
+          ) : null}
+
+          {!catalogLoading && !catalogError && plan ? (
+            <div className="checkout-grid">
+              {/* ── LEFT: Order Summary ─────────────────────────────────── */}
+              <article className="checkout-summary" aria-label="Order summary">
+                <p className="checkout-summary__kicker">Order summary</p>
+                <h1 className="checkout-summary__plan-name">{plan.name}</h1>
+                <p className="checkout-summary__positioning">{plan.positioning}</p>
+
+                <div className="checkout-summary__price-block">
+                  {price?.compareAt ? (
+                    <span className="checkout-summary__compare-at">{price.compareAt}</span>
                   ) : null}
+                  <span className="checkout-summary__price-amount">{price?.amount}</span>
+                  <span className="checkout-summary__price-cadence">{price?.cadence}</span>
                 </div>
-              </div>
 
-              {/* Promo / coupon code */}
-              <div>
-                <div className="checkout-coupon-row">
-                  <GeoInput
-                    id="checkout-coupon"
-                    label="Promo code (optional)"
-                    placeholder="GVRZE2024"
-                    value={coupon}
-                    maxLength={32}
-                    autoComplete="off"
-                    onChange={(e) => {
-                      setCoupon(e.target.value.toUpperCase());
-                      setCouponApplied(null);
-                      setCouponError(null);
-                    }}
-                  />
-                  <button
-                    type="button"
-                    className="checkout-coupon-apply-btn"
-                    disabled={!coupon.trim() || loading}
-                    onClick={handleApplyCoupon}
-                    aria-label="Apply promo code"
-                  >
-                    <Tag size={12} aria-hidden />
-                    Apply
-                  </button>
-                </div>
-                {couponApplied ? (
-                  <p className="checkout-coupon-feedback checkout-coupon-feedback--ok" role="status">
-                    <Check size={12} strokeWidth={2.4} aria-hidden /> {couponApplied}
-                  </p>
-                ) : null}
-                {couponError ? (
-                  <p className="checkout-coupon-feedback checkout-coupon-feedback--err" role="alert">
-                    {couponError}
-                  </p>
-                ) : null}
-              </div>
-
-              {/* Billing address (collapsible accordion) */}
-              <div className="checkout-billing-section">
-                <button
-                  type="button"
-                  className="checkout-billing-toggle"
-                  aria-expanded={showBillingAddress}
-                  onClick={() => setShowBillingAddress((v) => !v)}
-                >
-                  <span>Billing address &amp; GST details</span>
-                  <span className="checkout-billing-toggle__required">Required</span>
-                  {showBillingAddress
-                    ? <ChevronUp size={15} strokeWidth={1.8} aria-hidden />
-                    : <ChevronDown size={15} strokeWidth={1.8} aria-hidden />}
-                </button>
-
-                {showBillingAddress ? (
-                  <div className="checkout-billing-fields">
-                    <GeoInput
-                      id="billing-name"
-                      label="Full name / Business name"
-                      placeholder="Rahul Sharma"
-                      value={billingDetails.displayName}
-                      error={billingErrors.displayName}
-                      onChange={(e) => handleBillingChange("displayName", e.target.value)}
-                    />
-                    <GeoInput
-                      id="billing-line1"
-                      label="Address line 1"
-                      placeholder="123, MG Road"
-                      value={billingDetails.line1}
-                      error={billingErrors.line1}
-                      onChange={(e) => handleBillingChange("line1", e.target.value)}
-                    />
-                    <GeoInput
-                      id="billing-line2"
-                      label="Address line 2 (optional)"
-                      placeholder="Apartment, floor, landmark"
-                      value={billingDetails.line2}
-                      onChange={(e) => handleBillingChange("line2", e.target.value)}
-                    />
-                    <div className="checkout-billing-row2">
-                      <GeoInput
-                        id="billing-city"
-                        label="City"
-                        placeholder="Bengaluru"
-                        value={billingDetails.city}
-                        error={billingErrors.city}
-                        onChange={(e) => handleBillingChange("city", e.target.value)}
-                      />
-                      <GeoInput
-                        id="billing-state"
-                        label="State"
-                        placeholder="Karnataka"
-                        value={billingDetails.state}
-                        error={billingErrors.state}
-                        onChange={(e) => handleBillingChange("state", e.target.value)}
-                      />
+                {approxRupees > 0 ? (
+                  <div className="checkout-gst-table" aria-label="Tax breakdown">
+                    <div className="checkout-gst-row">
+                      <span>Subscription ({cycle === "annual" ? "annual" : "monthly"})</span>
+                      <span>{formatInrRupees(gst.baseRupees)}</span>
                     </div>
-                    <GeoInput
-                      id="billing-pincode"
-                      label="PIN code"
-                      placeholder="560001"
-                      maxLength={6}
-                      inputMode="numeric"
-                      value={billingDetails.pincode}
-                      error={billingErrors.pincode}
-                      onChange={(e) =>
-                        handleBillingChange("pincode", e.target.value.replace(/\D/g, ""))
-                      }
-                    />
-                    <div className="checkout-gstin-section">
-                      <GeoInput
-                        id="billing-gstin"
-                        label="GSTIN (optional — for business invoices)"
-                        placeholder="29ABCDE1234F1Z5"
-                        maxLength={15}
-                        value={billingDetails.gstin}
-                        error={billingErrors.gstin}
-                        onChange={(e) =>
-                          handleBillingChange("gstin", e.target.value.toUpperCase())
-                        }
-                      />
-                      <p className="checkout-gstin-note">
-                        Provide your GSTIN to receive a B2B GST invoice. Leave blank for a standard
-                        consumer receipt.
-                      </p>
+                    <div className="checkout-gst-row">
+                      <span>{GST_CONFIG.taxLabel}</span>
+                      <span>{formatInrRupees(gst.gstRupees)}</span>
+                    </div>
+                    <div className="checkout-gst-row checkout-gst-row--total">
+                      <span>Total payable</span>
+                      <strong>{formatInrRupees(gst.totalRupees)}</strong>
                     </div>
                   </div>
-                ) : (
-                  <p className="checkout-billing-collapsed-hint">
-                    {Object.keys(billingErrors).length > 0
-                      ? "⚠ Billing details required — please expand and complete."
-                      : "Expand to add your billing address and optional GSTIN."}
-                  </p>
-                )}
-              </div>
+                ) : null}
 
-              {/* Terms agreement */}
-              <div className="checkout-terms-row">
-                <input
-                  id="checkout-terms"
-                  type="checkbox"
-                  className="checkout-terms-checkbox"
-                  checked={agreed}
-                  onChange={(e) => setAgreed(e.target.checked)}
-                  aria-required="true"
-                />
-                <label htmlFor="checkout-terms" className="checkout-terms-label">
-                  I agree to GVRZE's{" "}
-                  <Link to="/terms" target="_blank" rel="noopener noreferrer">
-                    Terms of Service
-                  </Link>{" "}
-                  and{" "}
-                  <Link to="/privacy" target="_blank" rel="noopener noreferrer">
-                    Privacy Policy
-                  </Link>
-                  , and I authorise GVRZE to charge {price?.amount} {price?.cadence} (incl.{" "}
-                  {GST_CONFIG.ratePercent}% GST). My subscription renews automatically until I
-                  cancel.
-                </label>
-              </div>
+                {price?.compareAt ? (
+                  <div className="checkout-summary__promo-badge" aria-live="polite">
+                    <span>🎁</span>
+                    <span>Introductory price applied</span>
+                  </div>
+                ) : null}
+                {annualSavingLabel ? (
+                  <div className="checkout-summary__promo-badge" aria-live="polite">
+                    <span>✨</span>
+                    <span>{annualSavingLabel}</span>
+                  </div>
+                ) : null}
+                {price?.note ? (
+                  <p className="checkout-summary__note">{price.note}</p>
+                ) : null}
 
-              {/* Payment gateway not configured */}
-              {!razorpayReady ? (
-                <div className="checkout-unavailable" role="status">
-                  <Info className="checkout-unavailable__icon" size={16} strokeWidth={1.8} />
-                  <div>
-                    <strong>Payment temporarily unavailable.</strong> Our payment gateway is being
-                    configured. Your plan selection is saved — check back soon.
+                <hr className="checkout-summary__divider" />
+
+                <ul className="checkout-summary__features" aria-label="Plan features">
+                  {plan.features.map((f) => (
+                    <li key={f} className="checkout-summary__feature">
+                      <Check className="checkout-summary__feature-icon" size={14} strokeWidth={2.4} aria-hidden />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+
+                <p className="checkout-renew-note">
+                  🔄 Renews automatically {cycle === "annual" ? "annually" : "every month"}.
+                  Cancel anytime from your billing dashboard.
+                </p>
+              </article>
+
+              {/* ── RIGHT: Payment Form ─────────────────────────────────── */}
+              <section className="checkout-form-card" aria-label="Payment details">
+                <h2 className="checkout-form-card__title">Complete your membership</h2>
+
+                {/* Billing cycle toggle */}
+                <div>
+                  <div className="checkout-cycle-row">
+                    <span className="checkout-cycle-label">Billing</span>
+                    <div className="checkout-cycle-tabs" role="group" aria-label="Billing cycle">
+                      {(["monthly", "annual"] as BillingCycle[]).map((c) => (
+                        <button
+                          key={c}
+                          type="button"
+                          className="checkout-cycle-tab"
+                          aria-pressed={cycle === c}
+                          onClick={() => { setCycle(c); setPaymentError(null); }}
+                        >
+                          {c === "monthly" ? "Monthly" : "Annual"}
+                        </button>
+                      ))}
+                    </div>
+                    {cycle === "annual" && annualSavingLabel ? (
+                      <span className="checkout-cycle-save-pill">{annualSavingLabel}</span>
+                    ) : null}
                   </div>
                 </div>
-              ) : null}
 
-              {/* Not signed in */}
-              {!user ? (
-                <div className="checkout-unavailable" role="status">
-                  <Info className="checkout-unavailable__icon" size={16} strokeWidth={1.8} />
-                  <div>
-                    <Link to="/auth/login" className="font-semibold underline underline-offset-2">
-                      Sign in
-                    </Link>{" "}
-                    or{" "}
-                    <Link to="/auth/signup" className="font-semibold underline underline-offset-2">
-                      create an account
-                    </Link>{" "}
-                    to complete your purchase.
-                  </div>
-                </div>
-              ) : null}
-
-              {/* Payment error */}
-              {paymentError ? (
-                <div className="checkout-unavailable" role="alert" aria-live="assertive">
-                  <Info className="checkout-unavailable__icon" size={16} strokeWidth={1.8} />
-                  <div>
-                    <span>{paymentError}</span>
+                {/* Promo code */}
+                <div>
+                  <div className="checkout-coupon-row">
+                    <GeoInput
+                      id="checkout-coupon"
+                      label="Promo code (optional)"
+                      placeholder="GVRZE2024"
+                      value={coupon}
+                      maxLength={32}
+                      autoComplete="off"
+                      onChange={(e) => {
+                        setCoupon(e.target.value.toUpperCase());
+                        setCouponApplied(null);
+                        setCouponError(null);
+                      }}
+                    />
                     <button
                       type="button"
-                      className="checkout-retry-link"
-                      onClick={() => {
-                        setPaymentError(null);
-                        inflight.current = false;
-                        setLoading(false);
-                      }}
+                      className="checkout-coupon-apply-btn"
+                      disabled={!coupon.trim() || loading}
+                      onClick={handleApplyCoupon}
+                      aria-label="Apply promo code"
                     >
-                      <RefreshCw size={11} aria-hidden /> Try again
+                      <Tag size={12} aria-hidden />
+                      Apply
                     </button>
                   </div>
+                  {couponApplied ? (
+                    <p className="checkout-coupon-feedback checkout-coupon-feedback--ok" role="status">
+                      <Check size={12} strokeWidth={2.4} aria-hidden /> {couponApplied}
+                    </p>
+                  ) : null}
+                  {couponError ? (
+                    <p className="checkout-coupon-feedback checkout-coupon-feedback--err" role="alert">
+                      {couponError}
+                    </p>
+                  ) : null}
                 </div>
-              ) : null}
 
-              {/* Pay button */}
-              {razorpayReady && user ? (
-                <button
-                  type="button"
-                  className={`checkout-pay-btn${loading ? " checkout-pay-btn--loading" : ""}`}
-                  disabled={loading || !agreed}
-                  onClick={() => void handlePay()}
-                  aria-busy={loading}
-                  aria-label={
-                    loading
-                      ? "Opening payment window…"
-                      : `Pay ${formatInrRupees(displayTotal)} and activate ${plan.name}`
-                  }
-                >
-                  <Lock size={14} strokeWidth={2} aria-hidden />
-                  {loading
-                    ? "Opening payment window…"
-                    : `Pay ${formatInrRupees(displayTotal)} · ${plan.name}`}
-                </button>
-              ) : null}
+                {/* Billing address */}
+                <div className="checkout-billing-section">
+                  <button
+                    type="button"
+                    className="checkout-billing-toggle"
+                    aria-expanded={showBillingAddress}
+                    onClick={() => setShowBillingAddress((v) => !v)}
+                  >
+                    <span>Billing address &amp; GST details</span>
+                    <span className="checkout-billing-toggle__required">Required</span>
+                    {showBillingAddress
+                      ? <ChevronUp size={15} strokeWidth={1.8} aria-hidden />
+                      : <ChevronDown size={15} strokeWidth={1.8} aria-hidden />}
+                  </button>
 
-              {/* Back link */}
-              <Link to="/pricing" className="checkout-back-link" aria-label="Back to pricing">
-                ← Back to pricing
-              </Link>
+                  {showBillingAddress ? (
+                    <div className="checkout-billing-fields">
+                      <GeoInput id="billing-name" label="Full name / Business name" placeholder="Rahul Sharma"
+                        value={billingDetails.displayName} error={billingErrors.displayName}
+                        onChange={(e) => handleBillingChange("displayName", e.target.value)} />
+                      <GeoInput id="billing-line1" label="Address line 1" placeholder="123, MG Road"
+                        value={billingDetails.line1} error={billingErrors.line1}
+                        onChange={(e) => handleBillingChange("line1", e.target.value)} />
+                      <GeoInput id="billing-line2" label="Address line 2 (optional)" placeholder="Apartment, floor, landmark"
+                        value={billingDetails.line2}
+                        onChange={(e) => handleBillingChange("line2", e.target.value)} />
+                      <div className="checkout-billing-row2">
+                        <GeoInput id="billing-city" label="City" placeholder="Bengaluru"
+                          value={billingDetails.city} error={billingErrors.city}
+                          onChange={(e) => handleBillingChange("city", e.target.value)} />
+                        <GeoInput id="billing-state" label="State" placeholder="Karnataka"
+                          value={billingDetails.state} error={billingErrors.state}
+                          onChange={(e) => handleBillingChange("state", e.target.value)} />
+                      </div>
+                      <GeoInput id="billing-pincode" label="PIN code" placeholder="560001"
+                        maxLength={6} inputMode="numeric"
+                        value={billingDetails.pincode} error={billingErrors.pincode}
+                        onChange={(e) => handleBillingChange("pincode", e.target.value.replace(/\D/g, ""))} />
+                      <div className="checkout-gstin-section">
+                        <GeoInput id="billing-gstin" label="GSTIN (optional — for business invoices)"
+                          placeholder="29ABCDE1234F1Z5" maxLength={15}
+                          value={billingDetails.gstin} error={billingErrors.gstin}
+                          onChange={(e) => handleBillingChange("gstin", e.target.value.toUpperCase())} />
+                        <p className="checkout-gstin-note">
+                          Provide your GSTIN to receive a B2B GST invoice. Leave blank for a standard consumer receipt.
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="checkout-billing-collapsed-hint">
+                      {Object.keys(billingErrors).length > 0
+                        ? "⚠ Billing details required — please expand and complete."
+                        : "Expand to add your billing address and optional GSTIN."}
+                    </p>
+                  )}
+                </div>
 
-              {/* Security note */}
-              <p className="checkout-secure-note">
-                <Shield size={12} strokeWidth={1.8} aria-hidden />
-                Payments processed securely by Razorpay. Card details are never stored by GVRZE.
-              </p>
-            </section>
-          </div>
-        ) : null}
+                {/* Terms */}
+                <div className="checkout-terms-row">
+                  <input id="checkout-terms" type="checkbox" className="checkout-terms-checkbox"
+                    checked={agreed} aria-required="true"
+                    onChange={(e) => setAgreed(e.target.checked)} />
+                  <label htmlFor="checkout-terms" className="checkout-terms-label">
+                    I agree to GVRZE's{" "}
+                    <Link to="/terms" target="_blank" rel="noopener noreferrer">Terms of Service</Link>{" "}
+                    and{" "}
+                    <Link to="/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</Link>
+                    , and I authorise GVRZE to charge {price?.amount} {price?.cadence} (incl.{" "}
+                    {GST_CONFIG.ratePercent}% GST). My subscription renews automatically until I cancel.
+                  </label>
+                </div>
+
+                {/* Not signed in */}
+                {!user ? (
+                  <div className="checkout-unavailable" role="status">
+                    <Info className="checkout-unavailable__icon" size={16} strokeWidth={1.8} />
+                    <div>
+                      <Link to="/auth/login" className="font-semibold underline underline-offset-2">Sign in</Link>{" "}
+                      or{" "}
+                      <Link to="/auth/signup" className="font-semibold underline underline-offset-2">create an account</Link>{" "}
+                      to complete your purchase.
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* Payment error */}
+                {paymentError ? (
+                  <div className="checkout-unavailable" role="alert" aria-live="assertive">
+                    <Info className="checkout-unavailable__icon" size={16} strokeWidth={1.8} />
+                    <div>
+                      <span>{paymentError}</span>
+                      <button type="button" className="checkout-retry-link"
+                        onClick={() => { setPaymentError(null); inflight.current = false; setLoading(false); }}>
+                        <RefreshCw size={11} aria-hidden /> Try again
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* ── CTA: MOCK mode ─────────────────────────────────── */}
+                {mockEnabled && user ? (
+                  <button
+                    type="button"
+                    className={`checkout-pay-btn checkout-pay-btn--mock${loading ? " checkout-pay-btn--loading" : ""}`}
+                    disabled={loading || !agreed}
+                    onClick={() => void handleMockPay()}
+                    aria-busy={loading}
+                    aria-label={loading ? "Starting mock payment…" : "Pay & Activate (Mock Mode)"}
+                  >
+                    <FlaskConical size={14} strokeWidth={2} aria-hidden />
+                    {loading ? "Starting mock payment…" : `Pay ${formatInrRupees(displayTotal)} · Mock Mode`}
+                  </button>
+                ) : null}
+
+                {/* ── CTA: RAZORPAY ───────────────────────────────────── */}
+                {!mockEnabled && razorpayReady && user ? (
+                  <button
+                    type="button"
+                    className={`checkout-pay-btn${loading ? " checkout-pay-btn--loading" : ""}`}
+                    disabled={loading || !agreed}
+                    onClick={() => void handleRazorpayPay()}
+                    aria-busy={loading}
+                    aria-label={loading ? "Opening payment window…" : `Pay ${formatInrRupees(displayTotal)} and activate ${plan.name}`}
+                  >
+                    <Lock size={14} strokeWidth={2} aria-hidden />
+                    {loading ? "Opening payment window…" : `Pay ${formatInrRupees(displayTotal)} · ${plan.name}`}
+                  </button>
+                ) : null}
+
+                {/* ── UNAVAILABLE notice — only when neither mock nor Razorpay ── */}
+                {!mockEnabled && !razorpayReady ? (
+                  <div className="checkout-unavailable" role="status">
+                    <Info className="checkout-unavailable__icon" size={16} strokeWidth={1.8} />
+                    <div>
+                      <strong>Payment temporarily unavailable.</strong> Our payment gateway is being configured.
+                      {" "}To test locally, add <code style={{ fontSize: "0.75em" }}>VITE_MOCK_PAYMENTS=true</code> to <code style={{ fontSize: "0.75em" }}>.env.local</code>.
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* Back link */}
+                <Link to="/pricing" className="checkout-back-link" aria-label="Back to pricing">
+                  ← Back to pricing
+                </Link>
+
+                {/* Security note */}
+                <p className="checkout-secure-note">
+                  <Shield size={12} strokeWidth={1.8} aria-hidden />
+                  {mockEnabled
+                    ? "Development mock mode — no real payments processed."
+                    : "Payments processed securely by Razorpay. Card details are never stored by GVRZE."}
+                </p>
+              </section>
+            </div>
+          ) : null}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

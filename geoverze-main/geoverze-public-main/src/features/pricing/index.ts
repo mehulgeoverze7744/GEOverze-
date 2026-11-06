@@ -15,3 +15,5 @@ export { isRazorpayConfigured, checkoutHref } from "./lib/checkout";
 export { formatInrRupees, formatInrPaise, formatMinorAmount } from "./lib/formatInr";
 export { GST_CONFIG, calcGst, gstBreakdownSummary } from "./lib/gstConfig";
 export type { GstConfig } from "./lib/gstConfig";
+export { isMockPaymentEnabled } from "./lib/mock-payment";
+export { MockPaymentGateway } from "./components/MockPaymentGateway";
