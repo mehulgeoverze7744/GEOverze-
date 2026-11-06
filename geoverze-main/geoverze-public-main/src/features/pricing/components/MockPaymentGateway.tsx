@@ -35,6 +35,8 @@ import {
 } from "../lib/mock-payment";
 import { formatInrRupees } from "../lib/formatInr";
 import { GST_CONFIG } from "../lib/gstConfig";
+import { refreshProgression } from "@/lib/supabase/auth-sync";
+import { useAuthStore } from "@/stores/authStore";
 import "../styles/mock-payment.css";
 
 type GatewayState = "ready" | "processing" | "success" | "failed" | "cancelled";
@@ -59,6 +61,7 @@ export function MockPaymentGateway({
 }: MockPaymentGatewayProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const userId = useAuthStore((s) => s.user?.id);
   const [state, setState] = useState<GatewayState>("ready");
   const [invoiceNumber, setInvoiceNumber] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -81,6 +84,11 @@ export function MockPaymentGateway({
       if (outcome === "success" && result.success) {
         setInvoiceNumber(result.invoice_number ?? null);
         setState("success");
+
+        // Re-hydrate progressionStore from DB so the homepage Rewards Card
+        // (and any other surface reading useProgressionStore.player.credits)
+        // immediately reflects the newly granted membership credits.
+        if (userId) void refreshProgression(userId);
 
         // Invalidate cached queries so Settings, Billing, Dashboard, and
         // credit balance all show the updated plan and credits immediately.

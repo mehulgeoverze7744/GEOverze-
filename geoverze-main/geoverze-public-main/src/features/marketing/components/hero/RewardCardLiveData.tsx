@@ -9,7 +9,9 @@ import {
 } from "@/features/marketing/lib/rewardCountdown";
 import { useStoreCreditsState } from "@/features/store/lib/useStoreCredits";
 import { refreshProgression } from "@/lib/supabase/auth-sync";
+import { supabase } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/authStore";
+import { useProgressionStore } from "@/stores/progressionStore";
 
 /** Isolated 1 Hz tick — only this subtree re-renders. */
 function useRewardCountdownTick() {
@@ -62,18 +64,64 @@ export const RewardCardCountdown = memo(function RewardCardCountdown() {
 export const RewardCardCredits = memo(function RewardCardCredits() {
   const userId = useAuthStore((s) => s.user?.id);
   const { balance, signedIn, authReady } = useStoreCreditsState();
-  const credits = !authReady || !signedIn ? 0 : (balance ?? 0);
 
+  // Signed-in but balance not yet resolved → show loading shimmer
+  const isLoading = !authReady || (signedIn && balance === null);
+  const credits = isLoading || !signedIn ? 0 : (balance ?? 0);
+
+  // 1. Refresh on mount so the balance is fresh when the user arrives on
+  //    the homepage — covers logins in other tabs, session restores, etc.
   useEffect(() => {
     if (!signedIn || !userId) return;
+    void refreshProgression(userId);
+  }, [signedIn, userId]);
 
+  // 2. Refresh when the user returns to the tab.
+  useEffect(() => {
+    if (!signedIn || !userId) return;
     const onVisible = () => {
       if (document.visibilityState === "visible") void refreshProgression(userId);
     };
-
     document.addEventListener("visibilitychange", onVisible);
     return () => document.removeEventListener("visibilitychange", onVisible);
   }, [signedIn, userId]);
+
+  // 3. Supabase Realtime — subscribe to UPDATE events on the authenticated
+  //    user's user_progression row. When credits change (quiz reward, spend,
+  //    membership grant), patch progressionStore directly — no extra round
+  //    trip needed. Falls back gracefully if Realtime is not enabled.
+  useEffect(() => {
+    if (!userId || !signedIn) return;
+
+    const channel = supabase
+      .channel(`wallet-credits-${userId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "user_progression",
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          const incoming = payload.new as { credits?: unknown };
+          if (typeof incoming.credits === "number") {
+            const current = useProgressionStore.getState().player;
+            useProgressionStore.getState().setPlayer({
+              ...current,
+              credits: incoming.credits,
+            });
+          }
+        },
+      )
+      .subscribe();
+
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [userId, signedIn]);
+
+  const unitLabel = credits === 1 ? "Credit" : "Credits";
 
   return (
     <div className="rewards-card__credits" aria-live="polite" aria-atomic="true">
@@ -81,12 +129,21 @@ export const RewardCardCredits = memo(function RewardCardCredits() {
         <Coins className="rewards-card__section-icon" strokeWidth={1.75} aria-hidden />
         <span className="rewards-card__stat-label">Your Credits</span>
       </div>
-      <div className="rewards-card__balance">
-        <span className="rewards-card__balance-value">{credits.toLocaleString()}</span>
-        <span className="rewards-card__balance-unit">{credits === 1 ? "Credit" : "Credits"}</span>
+      <div className={`rewards-card__balance${isLoading ? " rewards-card__balance--loading" : ""}`}>
+        {isLoading ? (
+          <span
+            className="rewards-card__balance-value rewards-card__balance-value--loading"
+            aria-label="Loading credits"
+          />
+        ) : (
+          <span className="rewards-card__balance-value">{credits.toLocaleString()}</span>
+        )}
+        <span className="rewards-card__balance-unit">{isLoading ? "\u00a0" : unitLabel}</span>
       </div>
       <span className="rewards-card__credits-hint">
-        Play quizzes and challenges to earn more credits.
+        {signedIn
+          ? "Play quizzes and challenges to earn more credits."
+          : "Sign in to see your credits balance."}
       </span>
     </div>
   );
