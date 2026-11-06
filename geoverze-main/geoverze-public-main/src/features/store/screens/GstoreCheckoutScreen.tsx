@@ -567,8 +567,26 @@ export function GstoreCheckoutScreen() {
 
   async function handleMockOutcome(outcome: "success" | "failed" | "cancel") {
     if (!pendingOrder) return;
-    setStatus("verifying");
+
     const { orderId, paymentId, orderNumber, guestToken } = pendingOrder;
+
+    // Cancelled outcome: no server call needed — just show the cancelled UI
+    // so the user can try again or choose a different option.
+    if (outcome === "cancel") {
+      setStatus("cancelled");
+      return;
+    }
+
+    setStatus("verifying");
+
+    // 30-second timeout guard so the UI never hangs indefinitely on a
+    // network error or unresponsive server function.
+    const TIMEOUT_MS = 30_000;
+    let timedOut = false;
+    const timeoutId = setTimeout(() => {
+      timedOut = true;
+    }, TIMEOUT_MS);
+
     try {
       if (guestToken) {
         await confirmMockGstoreGuestPaymentFn({
@@ -576,24 +594,45 @@ export function GstoreCheckoutScreen() {
         });
       } else {
         const { data: { session: authSession } } = await supabase.auth.getSession();
+        if (!authSession?.access_token) {
+          throw new Error("Session expired — please sign in again and retry.");
+        }
         await confirmMockGstorePaymentFn({
-          data: { order_id: orderId, payment_id: paymentId, access_token: authSession?.access_token ?? "", outcome },
+          data: { order_id: orderId, payment_id: paymentId, access_token: authSession.access_token, outcome },
         });
       }
+
+      if (timedOut) {
+        // Server eventually responded but we already told the user it timed out —
+        // show the error state; they can safely retry (idempotent RPC).
+        setStatus("failed");
+        setErrorMsg("Payment confirmation timed out. Please try again — your order was not charged.");
+        return;
+      }
+
       if (outcome === "success") {
         setStatus("done");
         navToConfirmation(orderId, orderNumber, guestToken);
-      } else if (outcome === "failed") {
-        setStatus("failed");
-        setErrorMsg("Mock payment failed — payment declined.");
       } else {
-        setStatus("cancelled");
+        // outcome === "failed"
+        setStatus("failed");
+        setErrorMsg("Mock payment failed — payment was declined. Please try a different test card.");
       }
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Failed to process mock outcome";
+      const raw = err instanceof Error ? err.message : "Failed to process mock payment";
+
+      // Surface a user-friendly version of common backend errors
+      const friendlyMsg =
+        raw.includes("Session expired") ? raw
+        : raw.includes("not enabled")   ? "Mock payments are not enabled in this environment."
+        : raw.includes("not found")      ? "Order not found — please start a new checkout."
+        : `Payment confirmation failed: ${raw}`;
+
       setStatus("failed");
-      setErrorMsg(msg);
-      toast.error(msg);
+      setErrorMsg(friendlyMsg);
+      toast.error(friendlyMsg);
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
 

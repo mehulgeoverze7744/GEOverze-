@@ -293,25 +293,54 @@ export function MockPaymentGateway({
     }
   }
 
-  // Run the processing animation then resolve the outcome
+  // ── Helpers ───────────────────────────────────────────────────────────────
+
+  /** Map internal → external outcome (pending times-out → failed). */
+  function toExternal(raw: InternalOutcome): "success" | "failed" | "cancel" {
+    if (raw === "success") return "success";
+    if (raw === "cancel")  return "cancel";
+    return "failed"; // covers "failed" and "pending" (timed-out)
+  }
+
+  /**
+   * Animate through the step labels and set state so the ProcessingOverlay
+   * renders.  Returns WITHOUT calling onOutcome — the caller is responsible
+   * for finishing the flow.
+   */
   async function runProcessing(outcome: InternalOutcome, steps: string[]) {
     setInternalOutcome(outcome);
     setProcessing(true);
-    // Animate through steps
     for (const step of steps) {
       setProcessingStep(step);
       await new Promise<void>(r => setTimeout(r, 500));
     }
+    // The final step label stays visible in the overlay until we call
+    // setProcessing(false).  For "pending" we let ProcessingOverlay's
+    // countdown do that (via onDone).  For everything else the caller
+    // calls resolveOutcome() immediately after this function returns.
   }
 
-  function handleProcessingDone() {
+  /**
+   * Finish a mock payment: hide the processing overlay and propagate the
+   * external outcome to the parent.
+   *
+   * Receives the outcome directly so we never rely on potentially-stale
+   * React state captured in a closure.
+   */
+  function resolveOutcome(raw: InternalOutcome) {
     setProcessing(false);
-    // Map internal → external outcome (pending → failed with timeout)
-    const external =
-      internalOutcome === "success" ? "success"
-      : internalOutcome === "cancel" ? "cancel"
-      : "failed"; // covers "failed" and "pending" (timed-out)
-    onOutcome(external);
+    onOutcome(toExternal(raw));
+  }
+
+  /**
+   * Called by ProcessingOverlay.onDone after the "pending" timeout countdown
+   * completes.  At this point internalOutcome state is definitely "pending"
+   * (set before the first await in runProcessing and committed long before
+   * the 7-second countdown ends).
+   */
+  function handleProcessingDone() {
+    // internalOutcome is "pending" here — toExternal maps it to "failed"
+    resolveOutcome(internalOutcome ?? "failed");
   }
 
   async function handlePay() {
@@ -338,6 +367,22 @@ export function MockPaymentGateway({
     }
 
     await runProcessing(outcome, steps);
+
+    /*
+     * BUG FIX — infinite "Confirming payment…" spinner
+     *
+     * ProcessingOverlay only transitions its internal phase to "done"
+     * (which triggers onDone()) for the "pending" outcome, via a 2-second
+     * delay → 5-second countdown.  For success / failed / cancel, no
+     * phase transition ever fires, so the spinner never resolves.
+     *
+     * Fix: resolve non-pending outcomes immediately after the step
+     * animation completes.  "pending" is still handled by the overlay's
+     * countdown — we do NOT call resolveOutcome() for it here.
+     */
+    if (outcome !== "pending") {
+      resolveOutcome(outcome);
+    }
   }
 
   function handleCancel() {
@@ -347,6 +392,10 @@ export function MockPaymentGateway({
   // Developer force controls
   async function forceOutcome(outcome: InternalOutcome) {
     await runProcessing(outcome, STEPS_NORMAL.slice(0, 3));
+    // Same fix applies to forced outcomes
+    if (outcome !== "pending") {
+      resolveOutcome(outcome);
+    }
   }
 
   // ── Processing overlay ────────────────────────────────────────────────────

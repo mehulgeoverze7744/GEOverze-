@@ -292,6 +292,15 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
     });
 
     if (rpcError) throw new Error(`Failed to create order: ${rpcError.message}`);
+    if (!rpcResult) {
+      // The RPC returned NULL — this usually means the idempotency RETURN fired
+      // before the INSERT ran.  Apply migration
+      // 20261107010000_fix_gstore_order_idempotency.sql to fix the function.
+      throw new Error(
+        "Order creation returned an empty result. " +
+        "Please apply the latest Supabase migration and try again.",
+      );
+    }
     const result = rpcResult as {
       order_id: string; order_number: string; payment_id: string; idempotent: boolean;
     };
