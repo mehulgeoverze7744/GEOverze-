@@ -185,6 +185,13 @@
   pointer-events: none !important;
 }
 
+@media (min-width: 1024px) {
+  /* Optical lift (~50px) while staying centered below the navbar. */
+  #home-hero .home-hero-intro {
+    padding-bottom: 6.25rem;
+  }
+}
+
 #home-hero .home-hero-intro-ctas {
   pointer-events: auto;
 }
@@ -192,7 +199,7 @@
 /* Tablet/phone: keep the copy group in the space above the bottom rewards card. */
 @media (max-width: 1023px) {
   #home-hero .home-hero-intro {
-    padding-bottom: clamp(7.5rem, 36vh, 20rem);
+    padding-bottom: clamp(9.5rem, 40vh, 22.5rem);
   }
 }
 
@@ -200,6 +207,16 @@
 @media (max-width: 767px) {
   .home-hero-scroll-cue {
     display: none;
+  }
+
+  #home-hero .home-hero-scroll-cue {
+    display: flex;
+    bottom: clamp(10.75rem, 42vh, 19rem);
+  }
+
+  #home-hero .home-hero-expedition {
+    max-width: 28rem;
+    padding-inline: 0.15rem;
   }
 
   /* Restore the intro copy on phones without changing the desktop pin. */

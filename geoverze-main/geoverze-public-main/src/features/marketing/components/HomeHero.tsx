@@ -18,56 +18,109 @@ function clamp01(v: number) {
   return v < 0 ? 0 : v > 1 ? 1 : v;
 }
 
-function isDisplayed(el: Element) {
-  return window.getComputedStyle(el).display !== "none";
+/** ScrollTrigger progress where “Your expedition starts here” is fully in. */
+const EXPEDITION_PROGRESS = 0.82;
+const JOURNEY_MS = 5600;
+
+function cinematicEase(t: number) {
+  const easeIn = 0.2;
+  const easeOut = 0.22;
+  if (t <= 0) return 0;
+  if (t >= 1) return 1;
+  if (t < easeIn) {
+    const u = t / easeIn;
+    return 0.14 * (u * u * (3 - 2 * u));
+  }
+  if (t > 1 - easeOut) {
+    const u = (t - (1 - easeOut)) / easeOut;
+    return 0.86 + 0.14 * (u * u * (3 - 2 * u));
+  }
+  return 0.14 + ((t - easeIn) / (1 - easeIn - easeOut)) * 0.72;
 }
 
-/** First homepage `<section>` after the pinned hero (skips pin-spacers / CTA wrappers). */
-function findNextHomepageSection(hero: HTMLElement): HTMLElement | null {
-  let origin: Element = hero;
+function pinMetrics(hero: HTMLElement) {
   const parent = hero.parentElement;
-  if (parent?.classList.contains("pin-spacer") || parent?.hasAttribute("data-pin-spacer")) {
-    origin = parent;
+  const pinned =
+    parent &&
+    (parent.classList.contains("pin-spacer") || parent.hasAttribute("data-pin-spacer"));
+  if (pinned && parent) {
+    return {
+      start: parent.getBoundingClientRect().top + window.scrollY,
+      distance: Math.max(0, parent.offsetHeight - hero.offsetHeight),
+    };
   }
-
-  let node: Element | null = origin.nextElementSibling;
-  while (node) {
-    if (isDisplayed(node)) {
-      if (node instanceof HTMLElement && node.matches("section") && node.id !== "home-hero") {
-        return node;
-      }
-      const nested = node.querySelectorAll("section");
-      for (const section of nested) {
-        if (
-          section instanceof HTMLElement &&
-          section.id !== "home-hero" &&
-          isDisplayed(section)
-        ) {
-          return section;
-        }
-      }
-    }
-    node = node.nextElementSibling;
-  }
-  return null;
+  return {
+    start: hero.getBoundingClientRect().top + window.scrollY,
+    distance: window.innerHeight * 1.7,
+  };
 }
 
-function scrollToNextHomepageSection(hero: HTMLElement) {
-  const next = findNextHomepageSection(hero);
-  if (!next) return;
+type GlobeJourney = { raf: number; stop: () => void };
 
-  const navHeight =
-    getComputedStyle(document.documentElement).getPropertyValue("--nav-height").trim() ||
-    "4.75rem";
-  // The document already uses scroll-padding-top for the sticky nav.
-  // Apply a matching scroll-margin only when that padding is missing.
-  const scrollPadding = getComputedStyle(document.documentElement).scrollPaddingTop;
-  if (!scrollPadding || scrollPadding === "0px") {
-    next.style.scrollMarginTop = `calc(${navHeight} + 0.75rem)`;
+let activeJourney: GlobeJourney | null = null;
+
+function stopGlobeJourney() {
+  if (!activeJourney) return;
+  cancelAnimationFrame(activeJourney.raf);
+  activeJourney.stop();
+  activeJourney = null;
+}
+
+function playGlobeJourney(hero: HTMLElement) {
+  const { start, distance } = pinMetrics(hero);
+  const targetY = Math.round(start + distance * EXPEDITION_PROGRESS);
+  const fromY = window.scrollY;
+  const delta = targetY - fromY;
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  stopGlobeJourney();
+
+  if (Math.abs(delta) < 4 || reduced) {
+    window.scrollTo({ top: targetY, behavior: "auto" });
+    return;
   }
 
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  next.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+  const fullSpan = Math.max(distance * EXPEDITION_PROGRESS, 1);
+  const duration = Math.round(Math.max(2400, JOURNEY_MS * Math.min(1, Math.abs(delta) / fullSpan)));
+  const started = performance.now();
+
+  const onUserInterrupt = () => stopGlobeJourney();
+  const onKeyInterrupt = (event: globalThis.KeyboardEvent) => {
+    if (
+      event.key === "ArrowDown" ||
+      event.key === "ArrowUp" ||
+      event.key === "PageDown" ||
+      event.key === "PageUp" ||
+      event.key === "Home" ||
+      event.key === "End" ||
+      event.key === " "
+    ) {
+      stopGlobeJourney();
+    }
+  };
+
+  const stop = () => {
+    window.removeEventListener("wheel", onUserInterrupt);
+    window.removeEventListener("touchmove", onUserInterrupt);
+    window.removeEventListener("keydown", onKeyInterrupt);
+  };
+
+  window.addEventListener("wheel", onUserInterrupt, { passive: true });
+  window.addEventListener("touchmove", onUserInterrupt, { passive: true });
+  window.addEventListener("keydown", onKeyInterrupt);
+
+  const tick = (now: number) => {
+    if (!activeJourney) return;
+    const t = Math.min(1, (now - started) / duration);
+    window.scrollTo(0, fromY + delta * cinematicEase(t));
+    if (t < 1) {
+      activeJourney.raf = requestAnimationFrame(tick);
+      return;
+    }
+    stopGlobeJourney();
+  };
+
+  activeJourney = { raf: requestAnimationFrame(tick), stop };
 }
 
 /** Fades a panel in over [a,b] and out over [c,d]. */
@@ -168,9 +221,11 @@ export function HomeHero() {
     applyRewardsGlobeScroll(progress.current, rewardsRef.current, globeRef.current);
   });
 
+  useEffect(() => () => stopGlobeJourney(), []);
+
   const handleScrollTheExperience = () => {
     const hero = sectionRef.current;
-    if (hero) scrollToNextHomepageSection(hero);
+    if (hero) playGlobeJourney(hero);
   };
 
   const handleScrollCueKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
@@ -225,6 +280,7 @@ export function HomeHero() {
       <button
         type="button"
         className="home-hero-scroll-cue home-hero-scroll-cue--follow"
+        aria-label="Scroll the experience"
         onClick={handleScrollTheExperience}
         onKeyDown={handleScrollCueKeyDown}
       >
@@ -305,7 +361,7 @@ export function HomeHero() {
 
       <div
         ref={panel3}
-        className="pointer-events-none absolute inset-x-6 bottom-20 opacity-0 will-change-transform max-md:hidden md:inset-x-auto md:left-12 md:top-1/2 md:bottom-auto md:max-w-[28rem] md:-translate-y-1/2"
+        className="home-hero-expedition pointer-events-none absolute inset-x-6 bottom-20 opacity-0 will-change-transform md:inset-x-auto md:left-12 md:top-1/2 md:bottom-auto md:max-w-[28rem] md:-translate-y-1/2"
       >
         <p className="eyebrow">Begin the journey</p>
         <h2 className="mt-4 font-light leading-[1.05] tracking-tight text-foreground text-[clamp(1.7rem,3.4vw,2.7rem)]">
@@ -352,7 +408,8 @@ export function HomeHero() {
       <button
         type="button"
         ref={cueRef}
-        className="home-hero-scroll-cue absolute bottom-8 left-1/2 z-20 -translate-x-1/2 max-md:hidden"
+        className="home-hero-scroll-cue absolute bottom-8 left-1/2 z-20 -translate-x-1/2"
+        aria-label="Scroll the experience"
         onClick={handleScrollTheExperience}
         onKeyDown={handleScrollCueKeyDown}
       >
