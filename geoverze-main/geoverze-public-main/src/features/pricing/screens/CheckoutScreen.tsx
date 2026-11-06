@@ -278,11 +278,11 @@ export function CheckoutScreen() {
         billing_details: {
           display_name: billingDetails.displayName.trim(),
           line1: billingDetails.line1.trim(),
-          line2: billingDetails.line2.trim() || undefined,
           city: billingDetails.city.trim(),
           state: billingDetails.state.trim(),
           pincode: billingDetails.pincode.trim(),
-          gstin: billingDetails.gstin.trim().toUpperCase() || undefined,
+          ...(billingDetails.line2.trim() ? { line2: billingDetails.line2.trim() } : {}),
+          ...(billingDetails.gstin.trim() ? { gstin: billingDetails.gstin.trim().toUpperCase() } : {}),
         },
       });
 
@@ -577,30 +577,36 @@ export function CheckoutScreen() {
                   {showBillingAddress ? (
                     <div className="checkout-billing-fields">
                       <GeoInput id="billing-name" label="Full name / Business name" placeholder="Rahul Sharma"
-                        value={billingDetails.displayName} error={billingErrors.displayName}
+                        value={billingDetails.displayName}
+                        {...(billingErrors.displayName ? { error: billingErrors.displayName } : {})}
                         onChange={(e) => handleBillingChange("displayName", e.target.value)} />
                       <GeoInput id="billing-line1" label="Address line 1" placeholder="123, MG Road"
-                        value={billingDetails.line1} error={billingErrors.line1}
+                        value={billingDetails.line1}
+                        {...(billingErrors.line1 ? { error: billingErrors.line1 } : {})}
                         onChange={(e) => handleBillingChange("line1", e.target.value)} />
                       <GeoInput id="billing-line2" label="Address line 2 (optional)" placeholder="Apartment, floor, landmark"
                         value={billingDetails.line2}
                         onChange={(e) => handleBillingChange("line2", e.target.value)} />
                       <div className="checkout-billing-row2">
                         <GeoInput id="billing-city" label="City" placeholder="Bengaluru"
-                          value={billingDetails.city} error={billingErrors.city}
+                          value={billingDetails.city}
+                          {...(billingErrors.city ? { error: billingErrors.city } : {})}
                           onChange={(e) => handleBillingChange("city", e.target.value)} />
                         <GeoInput id="billing-state" label="State" placeholder="Karnataka"
-                          value={billingDetails.state} error={billingErrors.state}
+                          value={billingDetails.state}
+                          {...(billingErrors.state ? { error: billingErrors.state } : {})}
                           onChange={(e) => handleBillingChange("state", e.target.value)} />
                       </div>
                       <GeoInput id="billing-pincode" label="PIN code" placeholder="560001"
                         maxLength={6} inputMode="numeric"
-                        value={billingDetails.pincode} error={billingErrors.pincode}
+                        value={billingDetails.pincode}
+                        {...(billingErrors.pincode ? { error: billingErrors.pincode } : {})}
                         onChange={(e) => handleBillingChange("pincode", e.target.value.replace(/\D/g, ""))} />
                       <div className="checkout-gstin-section">
                         <GeoInput id="billing-gstin" label="GSTIN (optional — for business invoices)"
                           placeholder="29ABCDE1234F1Z5" maxLength={15}
-                          value={billingDetails.gstin} error={billingErrors.gstin}
+                          value={billingDetails.gstin}
+                          {...(billingErrors.gstin ? { error: billingErrors.gstin } : {})}
                           onChange={(e) => handleBillingChange("gstin", e.target.value.toUpperCase())} />
                         <p className="checkout-gstin-note">
                           Provide your GSTIN to receive a B2B GST invoice. Leave blank for a standard consumer receipt.
