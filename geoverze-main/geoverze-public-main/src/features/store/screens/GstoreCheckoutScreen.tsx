@@ -693,6 +693,21 @@ export function GstoreCheckoutScreen() {
                   <span className="text-[#6B7280]">Sign in to track your orders easily.</span>
                 </span>
               </div>
+
+              {/* Mock-mode guest warning */}
+              {mockEnabled && guestMode && (
+                <div className="flex items-start gap-2.5 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-3">
+                  <FlaskConical className="w-3.5 h-3.5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <p className="text-xs text-amber-700 leading-relaxed">
+                    <strong>Test mode tip:</strong> Guest checkout requires the{" "}
+                    <code className="bg-amber-100 px-1 rounded text-[0.68rem]">SUPABASE_SERVICE_ROLE_KEY</code>{" "}
+                    env var. The easiest way to test mock payments is to{" "}
+                    <Link to="/auth/login" className="underline font-medium">sign in</Link>{" "}
+                    — authenticated checkout works without that key.
+                  </p>
+                </div>
+              )}
+
               <div className="flex gap-2.5">
                 <button
                   type="button"
@@ -925,8 +940,31 @@ export function GstoreCheckoutScreen() {
               <div className="mb-4 flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl p-4">
                 <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="font-medium text-red-700 text-sm">Payment failed</p>
-                  {errorMsg && <p className="text-xs mt-1 text-red-600">{errorMsg}</p>}
+                  <p className="font-medium text-red-700 text-sm">
+                    {errorMsg?.includes("service role") || errorMsg?.includes("SERVICE_ROLE")
+                      ? "Configuration required"
+                      : "Payment failed"}
+                  </p>
+                  {errorMsg?.includes("service role") || errorMsg?.includes("SERVICE_ROLE") ? (
+                    <div className="text-xs mt-1.5 text-red-600 space-y-1">
+                      <p>
+                        Guest checkout needs <code className="bg-red-100 px-1 rounded text-[0.68rem]">SUPABASE_SERVICE_ROLE_KEY</code> configured.
+                      </p>
+                      {mockEnabled && (
+                        <p>
+                          <strong>Quickest fix:</strong>{" "}
+                          <Link to="/auth/login" className="underline font-medium">Sign in</Link>{" "}
+                          — authenticated mock payments work without that key.
+                        </p>
+                      )}
+                      <p className="text-red-500">
+                        Or add <code className="bg-red-100 px-1 rounded text-[0.68rem]">SUPABASE_SERVICE_ROLE_KEY</code>{" "}
+                        to <code className="bg-red-100 px-1 rounded text-[0.68rem]">.env.local</code> (get it from Supabase Dashboard → Project Settings → API).
+                      </p>
+                    </div>
+                  ) : errorMsg ? (
+                    <p className="text-xs mt-1 text-red-600">{errorMsg}</p>
+                  ) : null}
                   <button
                     type="button"
                     onClick={() => {

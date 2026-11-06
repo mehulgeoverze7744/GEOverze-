@@ -51,10 +51,24 @@ function isMockEnabled(): boolean {
   );
 }
 
+/**
+ * Creates a Supabase admin client for the payment audit log and admin queries.
+ * Accepts SUPABASE_URL (Vercel integration) or VITE_SUPABASE_URL (GVRZE naming).
+ * Failures here are non-fatal for the payment flow — callers must catch or ignore.
+ */
 function makeServiceClient() {
-  const url         = process.env["VITE_SUPABASE_URL"] ?? "";
+  const url = (
+    process.env["SUPABASE_URL"] ??
+    process.env["VITE_SUPABASE_URL"] ??
+    ""
+  );
   const serviceRole = process.env["SUPABASE_SERVICE_ROLE_KEY"] ?? "";
-  if (!url || !serviceRole) throw new Error("Supabase service role not configured.");
+  if (!url || !serviceRole) {
+    throw new Error(
+      "Supabase service role not configured. " +
+      "Add SUPABASE_SERVICE_ROLE_KEY to .env.local or Vercel Environment Variables.",
+    );
+  }
   return createClient(url, serviceRole, { auth: { persistSession: false } });
 }
 

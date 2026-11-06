@@ -75,10 +75,48 @@ function isMockEnabled(): boolean {
   return false;
 }
 
+/**
+ * Returns the Supabase project URL.
+ * Accepts both the standard Vercel Supabase integration name (SUPABASE_URL)
+ * and the VITE_-prefixed name used by the GVRZE client bundle.
+ */
+function getSupabaseUrl(): string {
+  return (
+    process.env["SUPABASE_URL"] ??
+    process.env["VITE_SUPABASE_URL"] ??
+    ""
+  );
+}
+
+/**
+ * Creates a Supabase admin client using the service-role key.
+ * Required for guest orders and admin operations that bypass RLS.
+ *
+ * Missing SUPABASE_SERVICE_ROLE_KEY causes an actionable error:
+ *   1. Open your Supabase dashboard → Project Settings → API.
+ *   2. Copy the service_role secret (never expose it to the browser).
+ *   3. Add it to .env.local:  SUPABASE_SERVICE_ROLE_KEY=<value>
+ *   4. On Vercel: Settings → Environment Variables → add it there too.
+ *
+ * For mock-mode testing without guest checkout, sign in first — the
+ * authenticated path does NOT require the service-role key.
+ */
 function makeServiceRoleClient(): SupabaseClient {
-  const url         = process.env["VITE_SUPABASE_URL"];
+  const url         = getSupabaseUrl();
   const serviceRole = process.env["SUPABASE_SERVICE_ROLE_KEY"];
-  if (!url || !serviceRole) throw new Error("Supabase service role not configured.");
+
+  if (!url || !serviceRole) {
+    const missing: string[] = [];
+    if (!url)         missing.push("SUPABASE_URL (or VITE_SUPABASE_URL)");
+    if (!serviceRole) missing.push("SUPABASE_SERVICE_ROLE_KEY");
+    throw new Error(
+      `Supabase service role not configured. Missing: ${missing.join(", ")}. ` +
+      "Get it from Supabase Dashboard → Project Settings → API → service_role secret. " +
+      "Add it to .env.local (local) or Vercel Environment Variables (deployed). " +
+      "Tip: for mock-payment testing, sign in first — authenticated checkout does not need the service-role key.",
+    );
+  }
+
   return createClient(url, serviceRole, { auth: { persistSession: false } });
 }
 
@@ -683,6 +721,23 @@ export const createGstoreGuestOrderFn = createServerFn({ method: "POST" })
     const mockEnabled = isMockEnabled();
     const keyId       = getRazorpayKeyId();
     const keySecret   = getRazorpaySecret();
+
+    // Early service-role check with a mock-mode-aware hint.
+    // Guest orders (no auth.uid()) need the service-role key to bypass RLS.
+    // For authenticated mock testing, sign in first — the auth path never needs this key.
+    const svcUrl  = getSupabaseUrl();
+    const svcKey  = process.env["SUPABASE_SERVICE_ROLE_KEY"];
+    if (!svcUrl || !svcKey) {
+      throw new Error(
+        mockEnabled
+          ? "Guest checkout requires SUPABASE_SERVICE_ROLE_KEY. " +
+            "Either sign in (authenticated mock checkout works without this key) " +
+            "or add SUPABASE_SERVICE_ROLE_KEY to .env.local — " +
+            "get it from Supabase Dashboard → Project Settings → API → service_role secret."
+          : "Supabase service role not configured. " +
+            "Add SUPABASE_SERVICE_ROLE_KEY to .env.local or Vercel Environment Variables.",
+      );
+    }
 
     // 1. Validate items and compute totals (server-side, never trust client)
     type ItemRow = {
