@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 
 import { AnimatedSection } from "@/components/shared/AnimatedSection";
-import { SUBSCRIPTION } from "@/features/dashboard/data/dashboard";
+import { useLibrarySubscriptionTier } from "@/features/library/hooks/useLibrarySubscriptionTier";
 import { LOCALE_LABELS, type SettingsSection } from "@/features/settings/lib/settingsSections";
 import { usePreferencesStore } from "@/stores/preferencesStore";
 
@@ -11,6 +11,7 @@ import { SettingsGroup, SettingsRow } from "./SettingsRow";
 export function SettingsHome() {
   const navigate = useNavigate({ from: "/settings" });
   const locale = usePreferencesStore((s) => s.locale);
+  const { displayName: planDisplayName } = useLibrarySubscriptionTier();
 
   const open = (section: SettingsSection) => {
     void navigate({ search: { section } });
@@ -84,7 +85,7 @@ export function SettingsHome() {
           icon="💳"
           title="Subscription"
           subtitle="Manage your GVRZE plan"
-          value={SUBSCRIPTION.plan}
+          value={planDisplayName}
           onClick={() => open("billing")}
         />
         <SettingsRow

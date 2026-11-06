@@ -3,7 +3,6 @@ import { ChevronLeft, Database, Lock, LockKeyhole, Mail, TriangleAlert } from "l
 
 import { AnimatedSection } from "@/components/shared/AnimatedSection";
 import { GeoButton } from "@/components/shared/GeoButton";
-import { SUBSCRIPTION } from "@/features/dashboard/data/dashboard";
 import { useProfile } from "@/features/profile/lib/useProfile";
 import { notAvailable, PrefSwitch } from "@/features/settings/lib/settingsControls";
 import {
@@ -12,8 +11,8 @@ import {
   SECTION_TITLES,
   type SettingsSection,
 } from "@/features/settings/lib/settingsSections";
+import { useMyBilling } from "@/features/pricing/hooks/useMyBilling";
 import { cn } from "@/lib/utils";
-import { useProgressionStore } from "@/stores/progressionStore";
 import { usePreferencesStore, type UnitSystem } from "@/stores/preferencesStore";
 
 import { SettingsGroup, SettingsRow } from "./SettingsRow";
@@ -26,7 +25,6 @@ type SettingsDetailProps = {
 export function SettingsDetail({ section }: SettingsDetailProps) {
   const navigate = useNavigate({ from: "/settings" });
   const profile = useProfile();
-  const walletBalance = useProgressionStore((s) => s.player.credits);
   const units = usePreferencesStore((s) => s.units);
   const setUnits = usePreferencesStore((s) => s.setUnits);
   const locale = usePreferencesStore((s) => s.locale);
@@ -57,7 +55,7 @@ export function SettingsDetail({ section }: SettingsDetailProps) {
         {section === "notifications" ? <NotificationsPanel /> : null}
         {section === "privacy" ? <PrivacyPanel /> : null}
         {section === "security" ? <SecurityPanel profile={profile} /> : null}
-        {section === "billing" ? <BillingPanel walletBalance={walletBalance} /> : null}
+        {section === "billing" ? <BillingPanel /> : null}
         {section === "data" ? <DataPanel /> : null}
       </div>
     </AnimatedSection>
@@ -313,19 +311,61 @@ function SecurityPanel({ profile }: { profile: ReturnType<typeof useProfile> }) 
   );
 }
 
-function BillingPanel({ walletBalance }: { walletBalance: number }) {
+/** Capitalise the first letter of a string. */
+function cap(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function BillingPanel() {
+  const { data, loading } = useMyBilling();
+
+  const isPaid = data?.isPaidMembership ?? false;
+
+  /* ── Current plan row ──────────────────────────────────────── */
+  const planName = loading ? "…" : (data?.planName ?? "Explorer");
+
+  const planSubtitle = loading
+    ? "Loading membership details…"
+    : isPaid && data
+      ? `${cap(data.statusLabel)} · ${cap(data.billingInterval)} · ${data.priceAmount} ${data.priceCadence}`
+      : "No billing on the free tier";
+
+  /* ── Credits ───────────────────────────────────────────────── */
+  const availableCredits = data?.availableCredits ?? 0;
+  const creditGrant = data?.monthlyCreditGrant ?? 0;
+
+  const creditsSubtitle = loading
+    ? "Loading…"
+    : isPaid
+      ? `${availableCredits.toLocaleString()} available · ${creditGrant} granted per month`
+      : `${availableCredits.toLocaleString()} credits available`;
+
   return (
     <>
       <SettingsGroup label="Plan">
+        {/* Plan name + live status/price */}
         <SettingsRow
           title="Current plan"
-          subtitle={SUBSCRIPTION.renewal}
-          value={SUBSCRIPTION.plan}
+          subtitle={planSubtitle}
+          value={planName}
           static
         />
+
+        {/* Paid-only: dates */}
+        {!loading && isPaid && data ? (
+          <>
+            <SettingsRow
+              title="Member since"
+              subtitle={`Renews ${data.renewsLabel}`}
+              value={data.memberSinceLabel}
+              static
+            />
+          </>
+        ) : null}
+
         <SettingsRow
           title="Manage membership"
-          subtitle="View plan details and billing options."
+          subtitle="View plan details, billing history and options."
           control={
             <GeoButton asChild variant="primary" size="sm">
               <Link to="/billing">Manage</Link>
@@ -335,19 +375,20 @@ function BillingPanel({ walletBalance }: { walletBalance: number }) {
         />
         <SettingsRow
           title="Compare memberships"
-          subtitle="Explorer, Pro and Advance side by side."
+          subtitle="Explorer, Basic, Pro and Advance side by side."
           control={
             <GeoButton asChild variant="secondary" size="sm">
-              <Link to="/pricing/compare">Compare</Link>
+              <Link to="/pricing">Compare</Link>
             </GeoButton>
           }
           static
         />
       </SettingsGroup>
+
       <SettingsGroup label="Credits">
         <SettingsRow
           title="GVRZE Credits"
-          subtitle={`${walletBalance.toLocaleString()} credits available in your wallet`}
+          subtitle={creditsSubtitle}
           control={
             <GeoButton asChild variant="secondary" size="sm">
               <Link to="/geostore">Spend</Link>
@@ -357,7 +398,11 @@ function BillingPanel({ walletBalance }: { walletBalance: number }) {
         />
         <SettingsRow
           title="Payment methods"
-          subtitle="No card on file — the free tier never asks for one."
+          subtitle={
+            isPaid
+              ? "Payment method management coming soon."
+              : "No card on file — the free tier never asks for one."
+          }
           control={
             <button
               type="button"

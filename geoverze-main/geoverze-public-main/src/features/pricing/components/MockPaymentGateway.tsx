@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 
 import {
   confirmMockSubscription,
@@ -57,6 +58,7 @@ export function MockPaymentGateway({
   onCancel,
 }: MockPaymentGatewayProps) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [state, setState] = useState<GatewayState>("ready");
   const [invoiceNumber, setInvoiceNumber] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -79,6 +81,12 @@ export function MockPaymentGateway({
       if (outcome === "success" && result.success) {
         setInvoiceNumber(result.invoice_number ?? null);
         setState("success");
+
+        // Invalidate cached billing + subscription-tier queries so that
+        // Settings, Billing page, and Dashboard all show the new plan
+        // immediately after the user is redirected.
+        void queryClient.invalidateQueries({ queryKey: ["billing"] });
+        void queryClient.invalidateQueries({ queryKey: ["librarySubscriptionTier"] });
 
         // After 2 s, navigate to the payment-result page
         setTimeout(() => {
