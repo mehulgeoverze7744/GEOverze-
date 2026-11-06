@@ -10,10 +10,11 @@
  *      → Never collects card details. Never contacts Razorpay.
  *
  *      To enable:
- *        Local:          VITE_MOCK_PAYMENTS=true in .env.local
- *        Vercel Preview: Vercel Dashboard → Project → Settings →
- *                        Environment Variables → add VITE_MOCK_PAYMENTS=true
- *                        with scope "Preview" (never Production) → Redeploy.
+ *        Local:            VITE_MOCK_PAYMENTS=true in .env.local
+ *        Vercel Preview:   VITE_MOCK_PAYMENTS=true (scope: Preview) → Redeploy
+ *        Vercel Production: VITE_MOCK_PAYMENTS=true OR MOCK_PAYMENTS_ENABLED=true
+ *                           (scope: Production) → Redeploy to bake into bundle.
+ *                           Remove the variable when testing ends.
  *
  *   2. RAZORPAY  (VITE_RAZORPAY_KEY_ID is set)
  *      → createCheckoutSession() calls the Edge Function to create a
@@ -26,7 +27,8 @@
  * Security rules (never violate):
  *   - Subscriptions are activated server-side only (SQL RPC or webhook).
  *   - inflight.current prevents duplicate payment windows.
- *   - VITE_MOCK_PAYMENTS must NOT be set in Vercel Production env vars.
+ *   - VITE_MOCK_PAYMENTS (or MOCK_PAYMENTS_ENABLED) must be removed from
+ *     Vercel Production after testing ends.
  *   - Mock RPCs (begin/confirm_mock_subscription) require authentication
  *     and are marked is_mock=true — never usable for real payment flow.
  */
@@ -73,7 +75,6 @@ import { formatInrRupees } from "../lib/formatInr";
 import { GST_CONFIG, calcGst } from "../lib/gstConfig";
 import { MockPaymentGateway } from "../components/MockPaymentGateway";
 import { usePaymentConfig } from "../hooks/usePaymentConfig";
-import { useIsMockTester } from "../hooks/useIsMockTester";
 import "../styles/checkout.css";
 
 /* ── URL param parsing ───────────────────────────────────────────────────── */
@@ -150,7 +151,6 @@ export function CheckoutScreen() {
   // This unifies mock + razorpay config reads so changing a Vercel env var
   // is reflected immediately on the next page load — no rebuild needed.
   const { mockEnabled, razorpayEnabled: razorpayReady, configLoading } = usePaymentConfig();
-  const { isTester, testerLoading } = useIsMockTester();
 
   /* UI state */
   const [cycle, setCycle] = useState<BillingCycle>(initialCycle);
@@ -710,8 +710,8 @@ export function CheckoutScreen() {
                   </div>
                 ) : null}
 
-                {/* Config/tester loading shimmer — prevents "unavailable" flash on first render */}
-                {configLoading || testerLoading ? (
+                {/* Config loading shimmer — prevents "unavailable" flash on first render */}
+                {configLoading ? (
                   <div
                     className="checkout-unavailable"
                     role="status"
@@ -723,8 +723,8 @@ export function CheckoutScreen() {
                   </div>
                 ) : null}
 
-                {/* ── CTA: MOCK mode (only for authorized testers) ───── */}
-                {!configLoading && !testerLoading && mockEnabled && isTester && user ? (
+                {/* ── CTA: MOCK mode — any authenticated user when mock mode is enabled ── */}
+                {!configLoading && mockEnabled && user ? (
                   <button
                     type="button"
                     className={`checkout-pay-btn checkout-pay-btn--mock${loading ? " checkout-pay-btn--loading" : ""}`}
@@ -739,7 +739,7 @@ export function CheckoutScreen() {
                 ) : null}
 
                 {/* ── CTA: RAZORPAY ───────────────────────────────────── */}
-                {!configLoading && !testerLoading && !mockEnabled && razorpayReady && user ? (
+                {!configLoading && !mockEnabled && razorpayReady && user ? (
                   <button
                     type="button"
                     className={`checkout-pay-btn${loading ? " checkout-pay-btn--loading" : ""}`}
@@ -754,7 +754,7 @@ export function CheckoutScreen() {
                 ) : null}
 
                 {/* ── UNAVAILABLE notice — only when neither mock nor Razorpay ── */}
-                {!configLoading && !testerLoading && !mockEnabled && !razorpayReady ? (
+                {!configLoading && !mockEnabled && !razorpayReady ? (
                   <div className="checkout-unavailable" role="status">
                     <Info className="checkout-unavailable__icon" size={16} strokeWidth={1.8} />
                     <div>

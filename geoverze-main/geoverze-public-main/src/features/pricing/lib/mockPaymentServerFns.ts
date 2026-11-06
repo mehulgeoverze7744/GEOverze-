@@ -1,19 +1,21 @@
 /**
  * Mock Payment Server Functions — server-side gates for mock checkout RPCs.
  *
+ * SECURITY MODEL:
+ *   The environment variable is the authoritative gate.  When
+ *   MOCK_PAYMENTS_ENABLED=true OR VITE_MOCK_PAYMENTS=true is set in Vercel,
+ *   any authenticated user can use mock payments.  Only the site admin can
+ *   set Vercel env vars, so this is sufficient access control.
+ *
  * SECURITY LAYERS (defence in depth):
- *   1. UI        — mock checkout button only shown to authenticated testers
- *                  when mockEnabled=true (via usePaymentConfig + useIsMockTester).
- *   2. Env gate  — these createServerFn handlers check process.env at
- *                  request time; calls are rejected if mock mode is off.
- *                  Reads MOCK_PAYMENTS_ENABLED (preferred, server-only) OR
- *                  VITE_MOCK_PAYMENTS (convenience alias).
- *   3. Allowlist — assertIsTester() calls get_my_tester_status() with the
- *                  user's JWT before forwarding to the main RPC.
- *   4. Auth      — the caller's Supabase access_token is forwarded; auth.uid()
- *                  rejects unauthenticated / expired token calls.
- *   5. DB        — SECURITY DEFINER RPCs check mock_testers allowlist and mark
- *                  all records is_mock=true; constraints are never bypassed.
+ *   1. Env gate   — assertMockEnabled() checks process.env at request time;
+ *                   calls are rejected if mock mode is off.  Reads
+ *                   MOCK_PAYMENTS_ENABLED (preferred, server-only, never
+ *                   bundled) OR VITE_MOCK_PAYMENTS (convenience alias).
+ *   2. Auth        — the caller's Supabase access_token is forwarded;
+ *                   auth.uid() rejects unauthenticated / expired tokens.
+ *   3. DB          — SECURITY DEFINER RPCs mark all records is_mock=true;
+ *                   constraints are never bypassed.
  *
  * NEVER:
  *   - Use the service-role key here (we use the anon key + user JWT only).
@@ -38,8 +40,8 @@ function assertMockEnabled(): void {
   if (!enabled) {
     throw new Error(
       "Mock payments are not enabled in this environment. " +
-      "Set MOCK_PAYMENTS_ENABLED=true in Vercel env vars. " +
-      "No rebuild is required — the change takes effect on the next request."
+      "Set MOCK_PAYMENTS_ENABLED=true (or VITE_MOCK_PAYMENTS=true) in " +
+      "Vercel env vars under the Production scope, then redeploy."
     );
   }
 }
@@ -58,23 +60,6 @@ function makeAuthenticatedClient(accessToken: string): SupabaseClient {
     auth: { persistSession: false },
     global: { headers: { Authorization: `Bearer ${accessToken}` } },
   });
-}
-
-/**
- * Throws if the calling user is not on the mock_testers allowlist.
- * Uses the same user JWT that the main RPC will use, so auth.uid() matches.
- */
-async function assertIsTester(sb: SupabaseClient): Promise<void> {
-  const { data, error } = await sb.rpc("get_my_tester_status");
-  if (error) {
-    throw new Error("Could not verify tester status. Check your Supabase connection.");
-  }
-  if (!data) {
-    throw new Error(
-      "Your account is not authorised for mock payment testing. " +
-      "Ask the site admin to add your account to the tester allowlist."
-    );
-  }
 }
 
 // ── begin_mock_subscription ───────────────────────────────────────────────────
@@ -97,7 +82,6 @@ export const beginMockPaymentFn = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<BeginMockPaymentResult> => {
     assertMockEnabled();
     const sb = makeAuthenticatedClient(data.access_token);
-    await assertIsTester(sb);
 
     const { data: result, error } = await sb.rpc("begin_mock_subscription", {
       p_plan_tier:            data.plan_tier,
@@ -135,7 +119,6 @@ export const confirmMockPaymentFn = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<ConfirmMockPaymentResult> => {
     assertMockEnabled();
     const sb = makeAuthenticatedClient(data.access_token);
-    await assertIsTester(sb);
 
     const { data: result, error } = await sb.rpc("confirm_mock_subscription", {
       p_subscription_id: data.subscription_id,
@@ -161,7 +144,6 @@ export const cancelMockSubscriptionFn = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<CancelMockPaymentResult> => {
     assertMockEnabled();
     const sb = makeAuthenticatedClient(data.access_token);
-    await assertIsTester(sb);
 
     const { data: result, error } = await sb.rpc("cancel_mock_subscription", {
       p_subscription_id: data.subscription_id,
