@@ -911,17 +911,35 @@ div.bm > * {
 }
 
 /* ── Cancellation confirmation modal ─────────────────────────────────────── */
+/*
+ * BUG FIX: `position` is intentionally NOT set here.
+ *
+ * Radix UI's DialogContent applies `position: fixed` via the Tailwind `fixed`
+ * class.  If we set `position: relative` here, it overrides `fixed` because
+ * both rules have equal specificity (one-class selector) and this stylesheet
+ * is loaded *after* Tailwind's utility layer — so the last declaration wins.
+ * The result: the modal content renders in normal document flow while the dark
+ * overlay still appears, making it look like the backdrop is there but the
+ * dialog is invisible.  Removing `position` lets `fixed` apply correctly.
+ */
 .bm-modal {
-  position: relative;
   max-width: 26rem !important;
   padding: 1.6rem 1.65rem 1.4rem;
   border-radius: 1.15rem !important;
   border: 1px solid #e2e8f0 !important;
   background: #ffffff !important;
+  color: #111827 !important;             /* override dark-theme foreground */
   box-shadow:
-    0 4px 24px rgb(0 0 0 / 0.08),
-    0 1px 4px rgb(0 0 0 / 0.04) !important;
+    0 4px 24px rgb(0 0 0 / 0.12),
+    0 1px 4px rgb(0 0 0 / 0.06) !important;
   gap: 0 !important;
+}
+
+/* Hide the Radix-generated close button — SubscriptionScreen renders its
+   own .bm-modal__close so we never want two X buttons in the corner. */
+.bm-modal > [data-radix-dialog-close],
+.bm-modal > button:last-child:not(.bm-modal__close):not(.bm-btn):not(.bm-modal__confirm-btn) {
+  display: none !important;
 }
 
 .bm-modal__icon-wrap {
@@ -944,15 +962,17 @@ div.bm > * {
 
 .bm-modal__title {
   margin: 0 0 0.5rem;
-  text-align: center;
+  /* !important beats Radix DialogHeader's sm:text-left responsive class */
+  text-align: center !important;
   font-size: 1.05rem !important;
   font-weight: 600 !important;
-  color: #111827;
+  color: #111827 !important;
   letter-spacing: -0.015em;
 }
 
 .bm-modal__desc {
-  text-align: center;
+  /* !important beats Radix DialogHeader's sm:text-left responsive class */
+  text-align: center !important;
   font-size: 0.84rem !important;
   line-height: 1.55;
   color: #64748b !important;

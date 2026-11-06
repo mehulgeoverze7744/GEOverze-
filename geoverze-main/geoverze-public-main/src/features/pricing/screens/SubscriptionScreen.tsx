@@ -500,7 +500,8 @@ export function SubscriptionScreen() {
 
       {/* ── Cancellation confirmation / success modal ─────────────────────── */}
       <Dialog open={cancelModalOpen} onOpenChange={(open) => { if (!open) closeCancelModal(); }}>
-        <DialogContent className={cn("bm-modal", cancelSuccess && "bm-modal--success")}>
+        {/* showCloseButton=false — SubscriptionScreen renders its own .bm-modal__close */}
+        <DialogContent className={cn("bm-modal", cancelSuccess && "bm-modal--success")} showCloseButton={false}>
 
           {/* ── Success view ─────────────────────────────────────────────── */}
           {cancelSuccess ? (
@@ -565,9 +566,12 @@ export function SubscriptionScreen() {
                   Are you sure you want to cancel your subscription?
                 </DialogTitle>
                 <DialogDescription className="bm-modal__desc">
-                  Your subscription will remain active until the end of your current billing period.
-                  You will not be charged for the next billing cycle, and your membership will not
-                  renew automatically.
+                  Your{planName ? ` ${planName}` : ""} membership will remain active
+                  {data?.accessUntilLabel && data.accessUntilLabel !== "—"
+                    ? <> until <strong className="bm-modal__accent">{data.accessUntilLabel}</strong></>
+                    : " until the end of your current billing period"}
+                  . You will not be charged for the next billing cycle, and your subscription
+                  will not renew automatically.
                 </DialogDescription>
               </DialogHeader>
 
@@ -575,10 +579,16 @@ export function SubscriptionScreen() {
               <div className="bm-modal__plan-info">
                 <div className="bm-modal__plan-row">
                   <span className="bm-modal__plan-label">Current plan</span>
-                  <span className="bm-modal__plan-value">{planName}</span>
+                  <span className="bm-modal__plan-value">{planName || "—"}</span>
                 </div>
                 <div className="bm-modal__plan-row">
-                  <span className="bm-modal__plan-label">Billing period ends</span>
+                  <span className="bm-modal__plan-label">Billing cycle</span>
+                  <span className="bm-modal__plan-value" style={{ textTransform: "capitalize" }}>
+                    {data?.billingInterval ?? "—"}
+                  </span>
+                </div>
+                <div className="bm-modal__plan-row">
+                  <span className="bm-modal__plan-label">Current access expires</span>
                   <span className="bm-modal__plan-value">
                     {data?.accessUntilLabel && data.accessUntilLabel !== "—"
                       ? data.accessUntilLabel
