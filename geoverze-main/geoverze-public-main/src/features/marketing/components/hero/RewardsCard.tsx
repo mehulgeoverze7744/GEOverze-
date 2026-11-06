@@ -23,9 +23,13 @@ export function RewardsCard() {
           {HERO_REWARDS.map((item) => (
             <li key={item.id}>
               <Link
-                to="/geostore/rewards"
-                className="rewards-card__tile"
-                aria-label={`View ${item.title} rewards`}
+                to={item.to ?? "/geostore/rewards"}
+                className={
+                  item.to ? "rewards-card__tile rewards-card__tile--store" : "rewards-card__tile"
+                }
+                aria-label={
+                  item.to ? `Open GStore — ${item.title}` : `View ${item.title} rewards`
+                }
               >
                 <div className="rewards-card__tile-media">
                   <img

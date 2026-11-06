@@ -30,12 +30,12 @@ function EcosystemCard({ page }: { page: HomeFeature }) {
         <img
           src={page.imageSrc}
           alt={page.imageAlt}
-          width={1200}
-          height={900}
+          width={1280}
+          height={720}
           loading="eager"
           decoding="async"
           className="ecosystem-card__img"
-          style={{ objectPosition: page.imagePosition ?? "center center" }}
+          style={page.imagePosition ? { objectPosition: page.imagePosition } : undefined}
           onError={handleImageError}
         />
         <div className="ecosystem-card__overlay" aria-hidden />

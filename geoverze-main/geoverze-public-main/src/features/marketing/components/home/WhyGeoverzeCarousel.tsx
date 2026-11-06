@@ -1,6 +1,16 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
-import { memo, useCallback, useEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type MouseEvent,
+  type PointerEvent,
+  type SyntheticEvent,
+} from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -9,8 +19,11 @@ import { whyCarouselCards } from "../../data/home";
 
 import "./why-geoverze-carousel.css";
 
-const AUTOPLAY_PX_PER_SEC = 34;
+const SETS = 3;
+const LOOP_SECONDS = 36;
 const INTERACT_RESUME_MS = 1600;
+const ARROW_MS = 480;
+const FALLBACK_IMAGE = "/assets/home/ecosystem/fallback.jpg";
 
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
@@ -24,6 +37,17 @@ function usePrefersReducedMotion() {
   }, []);
 
   return reduced;
+}
+
+function handleImageError(event: SyntheticEvent<HTMLImageElement>) {
+  const img = event.currentTarget;
+  if (img.dataset.fallback === "1") {
+    img.style.display = "none";
+    img.parentElement?.classList.add("is-fallback");
+    return;
+  }
+  img.dataset.fallback = "1";
+  img.src = FALLBACK_IMAGE;
 }
 
 function CarouselCard({
@@ -51,12 +75,15 @@ function CarouselCard({
           src={page.imageSrc}
           alt={clone ? "" : page.imageAlt}
           width={960}
-          height={396}
+          height={540}
           loading={eager ? "eager" : "lazy"}
           decoding="async"
           draggable={false}
           className="why-carousel-card__img"
+          style={page.imagePosition ? { objectPosition: page.imagePosition } : undefined}
+          onError={handleImageError}
         />
+        <div className="why-carousel-card__overlay" aria-hidden />
       </div>
       <div className="why-carousel-card__body">
         <div className="why-carousel-card__copy">
@@ -71,46 +98,104 @@ function CarouselCard({
   );
 }
 
-function loopWidth(scroller: HTMLElement) {
-  const items = scroller.querySelectorAll<HTMLElement>(".why-carousel-item");
+function layoutCards(viewport: HTMLElement) {
+  const vw = viewport.clientWidth;
+  let visible = 1.32;
+  let gap = 16;
+  if (vw >= 480) {
+    visible = 1.55;
+    gap = 16;
+  }
+  if (vw >= 640) {
+    visible = 1.95;
+    gap = 18;
+  }
+  if (vw >= 768) {
+    visible = 2.4;
+    gap = 18;
+  }
+  if (vw >= 1024) {
+    visible = 3.15;
+    gap = 20;
+  }
+  if (vw >= 1280) {
+    visible = 3.45;
+    gap = 20;
+  }
+  if (vw >= 1536) {
+    visible = 3.85;
+    gap = 22;
+  }
+  if (vw >= 1920) {
+    visible = 4.35;
+    gap = 24;
+  }
+
+  const cardWidth = Math.max(220, (vw - gap * (visible - 1)) / visible);
+  viewport.style.setProperty("--why-card-width", `${cardWidth}px`);
+  viewport.style.setProperty("--why-card-gap", `${gap}px`);
+}
+
+function setWidth(track: HTMLElement) {
+  const items = track.querySelectorAll<HTMLElement>(".why-carousel-item");
   const count = whyCarouselCards.length;
-  if (items.length < count * 2) return scroller.scrollWidth / 2;
+  if (items.length < count * 2) return track.scrollWidth / Math.max(SETS, 1);
   return items[count].offsetLeft - items[0].offsetLeft;
 }
 
-function cardStep(scroller: HTMLElement) {
-  const card = scroller.querySelector<HTMLElement>(".why-carousel-card");
-  const styles = getComputedStyle(scroller);
-  const gap = Number.parseFloat(styles.columnGap || styles.gap) || 20;
-  return card ? card.getBoundingClientRect().width + gap : scroller.clientWidth * 0.8;
+function cardStep(track: HTMLElement) {
+  const card = track.querySelector<HTMLElement>(".why-carousel-card");
+  const styles = getComputedStyle(track);
+  const gap = Number.parseFloat(styles.columnGap || styles.gap) || 16;
+  return card ? card.getBoundingClientRect().width + gap : 320;
 }
 
-function wrapScroll(scroller: HTMLElement) {
-  const half = loopWidth(scroller);
-  if (half <= 0) return;
-  if (scroller.scrollLeft >= half) scroller.scrollLeft -= half;
-  else if (scroller.scrollLeft < 0) scroller.scrollLeft += half;
+function easeOutCubic(t: number) {
+  return 1 - (1 - t) ** 3;
 }
 
 /** Horizontal landscape carousel with seamless right-to-left autoplay. */
 export const WhyGeoverzeCarousel = memo(function WhyGeoverzeCarousel() {
   const reducedMotion = usePrefersReducedMotion();
-  const scrollerRef = useRef<HTMLDivElement>(null);
-  const dragRef = useRef({
-    active: false,
-    moved: false,
-    startX: 0,
-    startScroll: 0,
-  });
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const offsetRef = useRef(0);
+  const loopRef = useRef(0);
+  const primedRef = useRef(false);
   const hoveringRef = useRef(false);
   const focusingRef = useRef(false);
   const interactingRef = useRef(false);
   const pausedRef = useRef(false);
-  const programmaticRef = useRef(false);
   const resumeTimer = useRef(0);
+  const dragRef = useRef({
+    active: false,
+    moved: false,
+    startX: 0,
+    startOffset: 0,
+  });
+  const arrowAnim = useRef<{ from: number; to: number; start: number } | null>(null);
   const [dragging, setDragging] = useState(false);
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(true);
+
+  const trackItems = useMemo(
+    () => (reducedMotion ? whyCarouselCards : Array.from({ length: SETS }, () => whyCarouselCards).flat()),
+    [reducedMotion],
+  );
+
+  const applyTransform = useCallback(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    track.style.transform = `translate3d(${-offsetRef.current}px, 0, 0)`;
+  }, []);
+
+  const wrapOffset = useCallback(() => {
+    const span = loopRef.current;
+    if (span <= 0) return;
+    const max = span * (SETS - 1);
+    while (offsetRef.current >= max) offsetRef.current -= span;
+    while (offsetRef.current < span) offsetRef.current += span;
+  }, []);
 
   const refreshPaused = useCallback(() => {
     pausedRef.current =
@@ -118,7 +203,8 @@ export const WhyGeoverzeCarousel = memo(function WhyGeoverzeCarousel() {
       hoveringRef.current ||
       focusingRef.current ||
       interactingRef.current ||
-      dragRef.current.active;
+      dragRef.current.active ||
+      Boolean(arrowAnim.current);
   }, [reducedMotion]);
 
   const pauseForInteraction = useCallback(() => {
@@ -131,10 +217,9 @@ export const WhyGeoverzeCarousel = memo(function WhyGeoverzeCarousel() {
     }, INTERACT_RESUME_MS);
   }, [refreshPaused]);
 
-  const updateScrollState = useCallback(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    if (!reducedMotion) {
+  const updateReducedButtons = useCallback(() => {
+    const el = viewportRef.current;
+    if (!el || !reducedMotion) {
       setCanPrev(true);
       setCanNext(true);
       return;
@@ -144,28 +229,42 @@ export const WhyGeoverzeCarousel = memo(function WhyGeoverzeCarousel() {
   }, [reducedMotion]);
 
   useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
+    const viewport = viewportRef.current;
+    const track = trackRef.current;
+    if (!viewport || !track) return;
 
-    updateScrollState();
-    const onScroll = () => {
-      if (!reducedMotion && !programmaticRef.current) wrapScroll(el);
-      updateScrollState();
+    const measure = () => {
+      layoutCards(viewport);
+      if (reducedMotion) {
+        updateReducedButtons();
+        return;
+      }
+      const span = setWidth(track);
+      if (span <= 0) return;
+      loopRef.current = span;
+      if (!primedRef.current) {
+        offsetRef.current = span;
+        primedRef.current = true;
+      }
+      wrapOffset();
+      applyTransform();
     };
 
-    el.addEventListener("scroll", onScroll, { passive: true });
-    const observer = new ResizeObserver(updateScrollState);
-    observer.observe(el);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(viewport);
+    observer.observe(track);
+    viewport.addEventListener("scroll", updateReducedButtons, { passive: true });
 
     return () => {
-      el.removeEventListener("scroll", onScroll);
       observer.disconnect();
+      viewport.removeEventListener("scroll", updateReducedButtons);
     };
-  }, [reducedMotion, updateScrollState]);
+  }, [applyTransform, reducedMotion, updateReducedButtons, wrapOffset]);
 
   useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el || reducedMotion) return;
+    const track = trackRef.current;
+    if (!track || reducedMotion) return;
 
     let frame = 0;
     let last = 0;
@@ -175,71 +274,97 @@ export const WhyGeoverzeCarousel = memo(function WhyGeoverzeCarousel() {
       const dt = Math.min(48, now - last);
       last = now;
 
-      if (!pausedRef.current) {
-        el.scrollLeft += (AUTOPLAY_PX_PER_SEC * dt) / 1000;
-        wrapScroll(el);
+      const anim = arrowAnim.current;
+      if (anim) {
+        const t = Math.min(1, (now - anim.start) / ARROW_MS);
+        offsetRef.current = anim.from + (anim.to - anim.from) * easeOutCubic(t);
+        if (t >= 1) {
+          offsetRef.current = anim.to;
+          arrowAnim.current = null;
+          wrapOffset();
+          refreshPaused();
+        }
+      } else if (!pausedRef.current && loopRef.current > 0) {
+        offsetRef.current += (loopRef.current / LOOP_SECONDS / 1000) * dt;
+        wrapOffset();
+      } else {
+        wrapOffset();
       }
 
+      applyTransform();
       frame = requestAnimationFrame(tick);
     };
 
-    pausedRef.current = false;
     frame = requestAnimationFrame(tick);
 
     return () => {
       cancelAnimationFrame(frame);
       window.clearTimeout(resumeTimer.current);
+      arrowAnim.current = null;
     };
-  }, [reducedMotion]);
+  }, [applyTransform, reducedMotion, refreshPaused, wrapOffset]);
 
   const scrollByCard = (dir: -1 | 1) => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    const step = cardStep(el);
+    const viewport = viewportRef.current;
+    const track = trackRef.current;
+    if (!viewport || !track) return;
     pauseForInteraction();
-    programmaticRef.current = true;
 
-    if (!reducedMotion && dir < 0 && el.scrollLeft < step + 8) {
-      el.scrollLeft += loopWidth(el);
+    if (reducedMotion) {
+      viewport.scrollBy({ left: dir * cardStep(track), behavior: "smooth" });
+      return;
     }
 
-    el.scrollBy({ left: dir * step, behavior: reducedMotion ? "auto" : "smooth" });
-    window.setTimeout(() => {
-      if (!reducedMotion) wrapScroll(el);
-      programmaticRef.current = false;
-    }, 520);
+    const step = cardStep(track);
+    const span = loopRef.current;
+    let from = offsetRef.current;
+    let to = from + dir * step;
+    if (span > 0) {
+      if (to >= span * (SETS - 1)) {
+        from -= span;
+        to -= span;
+        offsetRef.current = from;
+      } else if (to < span) {
+        from += span;
+        to += span;
+        offsetRef.current = from;
+      }
+    }
+    arrowAnim.current = { from, to, start: performance.now() };
+    refreshPaused();
   };
 
   const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    const el = scrollerRef.current;
-    if (!el) return;
+    if (reducedMotion) return;
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    const target = event.target;
+    if (target instanceof HTMLElement && target.closest(".why-carousel__btn")) return;
+
     pauseForInteraction();
-    if (event.pointerType !== "mouse" || event.button !== 0) return;
     dragRef.current = {
       active: true,
       moved: false,
       startX: event.clientX,
-      startScroll: el.scrollLeft,
+      startOffset: offsetRef.current,
     };
     refreshPaused();
-    el.setPointerCapture(event.pointerId);
+    event.currentTarget.setPointerCapture(event.pointerId);
     setDragging(true);
   };
 
   const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
     const drag = dragRef.current;
-    const el = scrollerRef.current;
-    if (!drag.active || !el) return;
+    if (!drag.active) return;
     const dx = event.clientX - drag.startX;
     if (Math.abs(dx) > 6) drag.moved = true;
-    el.scrollLeft = drag.startScroll - dx;
-    wrapScroll(el);
+    offsetRef.current = drag.startOffset - dx;
+    wrapOffset();
+    applyTransform();
   };
 
   const endDrag = (event: PointerEvent<HTMLDivElement>) => {
-    const el = scrollerRef.current;
-    if (dragRef.current.active && el?.hasPointerCapture(event.pointerId)) {
-      el.releasePointerCapture(event.pointerId);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
     }
     dragRef.current.active = false;
     setDragging(false);
@@ -256,32 +381,18 @@ export const WhyGeoverzeCarousel = memo(function WhyGeoverzeCarousel() {
     }
   };
 
-  const track = reducedMotion ? whyCarouselCards : [...whyCarouselCards, ...whyCarouselCards];
+  const pauseHover = () => {
+    hoveringRef.current = true;
+    refreshPaused();
+  };
+
+  const resumeHover = () => {
+    hoveringRef.current = false;
+    refreshPaused();
+  };
 
   return (
-    <div
-      className="why-carousel"
-      onMouseEnter={() => {
-        hoveringRef.current = true;
-        refreshPaused();
-      }}
-      onMouseLeave={() => {
-        hoveringRef.current = false;
-        refreshPaused();
-      }}
-      onFocusCapture={(event) => {
-        const target = event.target;
-        if (!(target instanceof HTMLElement) || target.closest(".why-carousel__btn")) return;
-        focusingRef.current = true;
-        refreshPaused();
-      }}
-      onBlurCapture={(event) => {
-        const next = event.relatedTarget;
-        if (next instanceof Node && event.currentTarget.contains(next)) return;
-        focusingRef.current = false;
-        refreshPaused();
-      }}
-    >
+    <div className={cn("why-carousel", reducedMotion && "is-reduced")}>
       <div className="why-carousel__controls">
         <button
           type="button"
@@ -304,38 +415,48 @@ export const WhyGeoverzeCarousel = memo(function WhyGeoverzeCarousel() {
       </div>
 
       <div
-        ref={scrollerRef}
-        className={cn(
-          "why-carousel-scroller",
-          dragging && "is-dragging",
-          !reducedMotion && "is-autoplay",
-        )}
+        ref={viewportRef}
+        className={cn("why-carousel-scroller", dragging && "is-dragging", !reducedMotion && "is-autoplay")}
         role="list"
         aria-label="GVRZE pages"
         aria-roledescription="carousel"
+        onPointerEnter={pauseHover}
+        onPointerLeave={resumeHover}
+        onFocusCapture={() => {
+          focusingRef.current = true;
+          refreshPaused();
+        }}
+        onBlurCapture={(event) => {
+          const next = event.relatedTarget;
+          if (next instanceof Node && event.currentTarget.contains(next)) return;
+          focusingRef.current = false;
+          refreshPaused();
+        }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
       >
-        {track.map((page, index) => {
-          const clone = !reducedMotion && index >= whyCarouselCards.length;
-          return (
-            <div
-              key={`${page.to}-${index}`}
-              className="why-carousel-item"
-              role={clone ? "presentation" : "listitem"}
-              aria-hidden={clone || undefined}
-            >
-              <CarouselCard
-                page={page}
-                eager={!clone && index < 2}
-                clone={clone}
-                onNavigate={onCardClick}
-              />
-            </div>
-          );
-        })}
+        <div ref={trackRef} className="why-carousel-track">
+          {trackItems.map((page, index) => {
+            const clone = !reducedMotion && index >= whyCarouselCards.length;
+            return (
+              <div
+                key={`${page.to}-${index}`}
+                className="why-carousel-item"
+                role={clone ? "presentation" : "listitem"}
+                aria-hidden={clone || undefined}
+              >
+                <CarouselCard
+                  page={page}
+                  eager={!clone && index < 2}
+                  clone={clone}
+                  onNavigate={onCardClick}
+                />
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

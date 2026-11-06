@@ -1,18 +1,25 @@
-/* WHY GVRZE — light photo-card carousel */
+/* WHY GVRZE — full-viewport photo-card carousel */
 
 .why-carousel {
   position: relative;
   margin-top: 0.35rem;
-  width: 100%;
-  max-width: 100%;
-  overflow: clip;
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  overflow: hidden;
 }
 
 .why-carousel__controls {
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
-  margin-bottom: 1rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 80rem;
+  margin: 0 auto 1rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 .why-carousel__btn {
@@ -56,28 +63,13 @@
 }
 
 .why-carousel-scroller {
-  display: flex;
-  gap: 1rem;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: 0;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-x: contain;
+  --why-card-width: min(21.75rem, 74vw);
+  --why-card-gap: 1rem;
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
   cursor: grab;
-  padding-bottom: 0.55rem;
-  touch-action: pan-x;
-}
-
-.why-carousel-scroller::-webkit-scrollbar {
-  display: none;
-}
-
-.why-carousel-scroller.is-dragging,
-.why-carousel-scroller.is-autoplay {
-  scroll-snap-type: none;
+  touch-action: pan-y;
 }
 
 .why-carousel-scroller.is-dragging {
@@ -85,38 +77,68 @@
   user-select: none;
 }
 
+.why-carousel.is-reduced .why-carousel-scroller {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x;
+  cursor: auto;
+}
+
+.why-carousel.is-reduced .why-carousel-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.why-carousel-track {
+  display: flex;
+  gap: var(--why-card-gap);
+  width: max-content;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.why-carousel.is-reduced .why-carousel-track {
+  will-change: auto;
+  transform: none !important;
+}
+
 .why-carousel-item {
-  flex: 0 0 min(21.75rem, 74vw);
+  flex: 0 0 var(--why-card-width);
   min-width: 0;
+}
+
+.why-carousel.is-reduced .why-carousel-item {
   scroll-snap-align: start;
 }
 
-.why-carousel-scroller.is-autoplay .why-carousel-item {
-  scroll-snap-align: none;
-}
-
 .why-carousel-card {
-  display: flex;
+  position: relative;
+  display: block;
+  isolation: isolate;
   height: 100%;
-  flex-direction: column;
+  aspect-ratio: 1.68 / 1;
   overflow: hidden;
   border-radius: 1.15rem;
-  border: 1px solid #e8eaee;
-  background: #ffffff;
+  background: #d7dee6;
   text-decoration: none;
   color: inherit;
-  box-shadow: 0 10px 28px rgb(15 23 42 / 0.05);
-  transition:
-    transform 280ms ease,
-    box-shadow 280ms ease,
-    border-color 280ms ease;
+  box-shadow: 0 10px 28px rgb(15 23 42 / 0.08);
+  transition: box-shadow 280ms ease;
 }
 
 .why-carousel-card__media {
-  position: relative;
-  aspect-ratio: 2.3 / 1;
+  position: absolute;
+  inset: 0;
   overflow: hidden;
-  background: #f3f4f6;
+  background: #d7dee6;
+}
+
+.why-carousel-card__media.is-fallback {
+  background-image: linear-gradient(180deg, #e8eef4 0%, #cfd8e2 100%);
 }
 
 .why-carousel-card__img {
@@ -125,16 +147,35 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
+  transform: scale(1.02);
+  transform-origin: center center;
   transition: transform 480ms ease;
 }
 
+.why-carousel-card__overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgb(8 14 22 / 0) 0%,
+    rgb(8 14 22 / 0.08) 42%,
+    rgb(8 14 22 / 0.46) 76%,
+    rgb(8 14 22 / 0.66) 100%
+  );
+}
+
 .why-carousel-card__body {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 1;
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 0.7rem;
-  padding: 0.5rem 0.95rem 0.55rem;
-  background: #ffffff;
+  padding: 1rem 0.95rem 0.95rem;
+  background: transparent;
 }
 
 .why-carousel-card__copy {
@@ -147,15 +188,17 @@
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.22;
-  color: #111111;
+  color: #ffffff;
+  text-shadow: 0 1px 10px rgb(0 0 0 / 0.3);
 }
 
 .why-carousel-card__copy p {
-  margin: 0.2rem 0 0;
+  margin: 0.22rem 0 0;
   font-size: 0.78rem;
   font-weight: 400;
   line-height: 1.4;
-  color: #4b5563;
+  color: rgb(255 255 255 / 0.92);
+  text-shadow: 0 1px 8px rgb(0 0 0 / 0.28);
 }
 
 .why-carousel-card__go {
@@ -165,10 +208,12 @@
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  margin-top: 0.05rem;
+  margin-bottom: 0.08rem;
   border-radius: 9999px;
-  border: 1px solid #e5e7eb;
-  color: #111111;
+  border: 1px solid rgb(255 255 255 / 0.42);
+  background: rgb(255 255 255 / 0.14);
+  color: #ffffff;
+  backdrop-filter: blur(10px);
   transition:
     transform 220ms ease,
     background-color 220ms ease,
@@ -182,49 +227,42 @@
 
 .why-carousel-card:hover,
 .why-carousel-card:focus-visible {
-  transform: translateY(-4px);
-  border-color: #d7dbe2;
-  box-shadow: 0 18px 36px rgb(15 23 42 / 0.1);
+  box-shadow: 0 18px 36px rgb(15 23 42 / 0.16);
   outline: none;
 }
 
 .why-carousel-card:focus-visible {
   box-shadow:
-    0 18px 36px rgb(15 23 42 / 0.1),
-    0 0 0 2px #3f3f3f;
+    0 18px 36px rgb(15 23 42 / 0.16),
+    0 0 0 2px #ffffff,
+    0 0 0 4px #3f3f3f;
 }
 
 .why-carousel-card:hover .why-carousel-card__img,
 .why-carousel-card:focus-visible .why-carousel-card__img {
-  transform: scale(1.045);
+  transform: scale(1.06);
 }
 
 .why-carousel-card:hover .why-carousel-card__go,
 .why-carousel-card:focus-visible .why-carousel-card__go {
   transform: translate(1px, -1px);
-  background: #f8fafc;
-  border-color: #d1d5db;
+  background: rgb(255 255 255 / 0.22);
+  border-color: rgb(255 255 255 / 0.58);
 }
 
 @media (min-width: 768px) {
   .why-carousel__controls {
     margin-bottom: 1.15rem;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
   }
 
-  .why-carousel-scroller {
-    gap: 1.15rem;
-  }
-
-  .why-carousel-item {
-    flex-basis: 25rem;
-  }
-
-  .why-carousel-card__media {
-    aspect-ratio: 2.35 / 1;
+  .why-carousel-card {
+    aspect-ratio: 1.75 / 1;
   }
 
   .why-carousel-card__body {
-    padding: 0.52rem 1.05rem 0.58rem;
+    padding: 1.05rem 1.05rem 1.05rem;
   }
 
   .why-carousel-card__copy h3 {
@@ -237,21 +275,12 @@
 }
 
 @media (min-width: 1024px) {
-  .why-carousel-scroller {
-    gap: 1.2rem;
-  }
-
-  .why-carousel-item {
-    flex-basis: 26.5rem;
-  }
-
-  .why-carousel-card__media {
-    aspect-ratio: 2.42 / 1;
+  .why-carousel-card {
+    aspect-ratio: 1.78 / 1;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .why-carousel-scroller,
   .why-carousel-card,
   .why-carousel-card__img,
   .why-carousel-card__go,
@@ -259,13 +288,8 @@
     transition: none;
   }
 
-  .why-carousel-card:hover,
-  .why-carousel-card:focus-visible {
-    transform: none;
-  }
-
   .why-carousel-card:hover .why-carousel-card__img,
   .why-carousel-card:focus-visible .why-carousel-card__img {
-    transform: none;
+    transform: scale(1.02);
   }
 }

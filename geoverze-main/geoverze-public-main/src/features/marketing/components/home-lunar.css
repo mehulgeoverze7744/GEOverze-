@@ -84,12 +84,12 @@ body:has(#gvrze-home) {
   color: #111111;
 }
 
-#gvrze-home .why-carousel-card__copy h3 {
-  color: #111111;
+#gvrze-home .gvrze-home-below .why-carousel-card .why-carousel-card__copy h3 {
+  color: #ffffff;
 }
 
-#gvrze-home .why-carousel-card__copy p {
-  color: #4b5563;
+#gvrze-home .gvrze-home-below .why-carousel-card .why-carousel-card__copy p {
+  color: rgb(255 255 255 / 0.92);
 }
 
 #gvrze-home .gvrze-home-below .ecosystem-card .ecosystem-card__copy h3 {

@@ -1,3 +1,5 @@
+import type { NavItem } from "@/config/site";
+
 export type HeroRewardItem = {
   id: string;
   title: string;
@@ -7,6 +9,8 @@ export type HeroRewardItem = {
   imageHeight: number;
   /** object-position for cover-fit inside the reward slot */
   imagePosition?: string;
+  /** When set, the whole tile navigates here instead of the rewards catalogue. */
+  to?: NavItem["to"];
 };
 
 /** Monthly hero reward tiles — native HD sources, no downscaled thumbnails. */
@@ -30,12 +34,13 @@ export const HERO_REWARDS: HeroRewardItem[] = [
     imagePosition: "70% center",
   },
   {
-    id: "merch",
-    title: "Exclusive GVRZE Merchandise",
-    image: "/assets/rewards/gvrze-merchandise.jpg",
-    imageAlt: "Exclusive GVRZE hoodies and branded merchandise collection",
+    id: "fashion",
+    title: "GVRZE Fashion",
+    image: "/assets/rewards/gvrze-fashion.jpg",
+    imageAlt: "Black GVRZE T-shirts, hoodies and caps from the GVRZE Fashion collection",
     imageWidth: 1280,
     imageHeight: 720,
-    imagePosition: "center 58%",
+    imagePosition: "center 50%",
+    to: "/geostore",
   },
 ];

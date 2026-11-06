@@ -6,6 +6,7 @@ import { SectionContainer } from "@/components/shared";
 import { StorefrontCategoryCards } from "@/features/store/storefront/StorefrontCategoryCards";
 
 import { GeostoreShowcaseIntro } from "./GeostoreShowcaseIntro";
+import { GeostoreSignatureTeeRow } from "./GeostoreSignatureTeeRow";
 
 import "./geostore-showcase.css";
 
@@ -16,6 +17,8 @@ export const GeostoreShowcase = memo(function GeostoreShowcase() {
       <SectionContainer size="wide" className="geostore-showcase__heading-wrap">
         <GeostoreShowcaseIntro />
       </SectionContainer>
+
+      <GeostoreSignatureTeeRow />
 
       <div className="geostore-showcase__veil">
         <div className="geostore-showcase__scene" aria-hidden="true" inert>

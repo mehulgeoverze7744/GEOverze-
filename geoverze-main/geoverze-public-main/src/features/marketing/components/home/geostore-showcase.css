@@ -225,7 +225,7 @@
 }
 
 .geostore-showcase__categories {
-  margin-top: clamp(20px, 3.2vw, 46px);
+  margin-top: 0;
 }
 
 .geostore-showcase .sf-category-card,
@@ -375,4 +375,129 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
+}
+
+/* Signature T-shirt row — scoped to this section, never blurred. */
+.geostore-showcase .geostore-tee-row {
+  position: relative;
+  z-index: 3;
+  margin-top: clamp(1.15rem, 2.6vw, 2rem);
+  margin-bottom: clamp(1.35rem, 3vw, 2.35rem);
+  filter: none;
+  -webkit-filter: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.geostore-showcase .geostore-tee-row__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.geostore-showcase .geostore-tee-row__item {
+  min-width: 0;
+}
+
+.geostore-showcase .geostore-tee-card {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #d9dee5;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #17191d;
+  text-decoration: none;
+  filter: none;
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+}
+
+.geostore-showcase .geostore-tee-card:hover {
+  border-color: #c5ccd6;
+  box-shadow: 0 16px 36px rgb(23 25 29 / 0.08);
+  transform: translateY(-2px);
+}
+
+.geostore-showcase .geostore-tee-card:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px #ffffff,
+    0 0 0 4px #17191d;
+}
+
+.geostore-showcase .geostore-tee-card__media {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: #f4f7fa;
+}
+
+.geostore-showcase .geostore-tee-card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: none;
+  transition: transform 420ms ease;
+}
+
+.geostore-showcase .geostore-tee-card:hover .geostore-tee-card__media img {
+  transform: scale(1.03);
+}
+
+#gvrze-home .geostore-showcase .geostore-tee-card__name,
+.geostore-showcase .geostore-tee-card__name {
+  display: block;
+  margin: 0;
+  padding: 0.95rem 1.05rem 1.1rem;
+  background: #f4f7fa;
+  font-family: var(--sf-font-ui);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: #111111;
+}
+
+@media (min-width: 640px) {
+  .geostore-showcase .geostore-tee-row__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.75rem, 1.8vw, 1.35rem);
+  }
+}
+
+@media (min-width: 768px) {
+  .geostore-showcase .geostore-tee-card__name {
+    font-size: 0.98rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .geostore-showcase .geostore-tee-row {
+    margin-top: 1rem;
+    margin-bottom: 1.15rem;
+  }
+
+  .geostore-showcase .geostore-tee-row__grid {
+    gap: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .geostore-showcase .geostore-tee-card,
+  .geostore-showcase .geostore-tee-card:hover,
+  .geostore-showcase .geostore-tee-card__media img,
+  .geostore-showcase .geostore-tee-card:hover .geostore-tee-card__media img {
+    transition: none;
+    transform: none;
+  }
 }

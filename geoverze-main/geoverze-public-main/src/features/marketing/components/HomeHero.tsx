@@ -264,8 +264,8 @@ export function HomeHero() {
           Like Never Before
         </h1>
         <p className="mt-5 max-w-lg text-[0.9rem] font-light leading-[1.65] text-foreground/65 md:mt-7 md:text-base md:leading-[1.7]">
-          Explore countries, flags, capitals, maps, cultures, landmarks and geography through
-          beautifully designed interactive experiences, quizzes, challenges and a global community.
+          Explore. Play. Create. Earn. From thrilling geography challenges to exclusive fashion
+          rewards and creative experiences — your world of discovery starts here.
         </p>
         <div className="home-hero-intro-ctas pointer-events-auto mt-6 hidden w-full max-w-sm flex-col gap-3 sm:max-w-none sm:flex-row sm:flex-wrap md:mt-7 md:flex">
           <GeoButton

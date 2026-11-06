@@ -13,8 +13,8 @@ export const WhyGeoverze = memo(function WhyGeoverze() {
     <section className="why-geoverze-section">
       <SectionContainer size="wide">
         <WhyGeoverzeIntro />
-        <WhyGeoverzeCarousel />
       </SectionContainer>
+      <WhyGeoverzeCarousel />
     </section>
   );
 });

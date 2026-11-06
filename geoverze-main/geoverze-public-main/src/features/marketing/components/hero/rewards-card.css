@@ -89,6 +89,10 @@
     box-shadow 220ms ease;
 }
 
+.rewards-card__tile--store {
+  cursor: pointer;
+}
+
 .rewards-card__tile:hover,
 .rewards-card__tile:focus-visible {
   transform: translateY(-2px);
