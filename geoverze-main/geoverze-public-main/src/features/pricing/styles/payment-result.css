@@ -1,11 +1,27 @@
 /*
- * Payment result page — GVRZE light theme.
+ * Payment result page — GVRZE premium light theme.
  * Scoped to #gvrze-payment-result.
  */
 
+/* ── Page shell ──────────────────────────────────────────────────────────── */
+body:has(#gvrze-payment-result) {
+  background: #eaf4fa;
+}
+
+body:has(#gvrze-payment-result) #geoverze-universe-background {
+  display: none !important;
+}
+
+body:has(#gvrze-payment-result) header {
+  background: rgb(255 255 255 / 0.85) !important;
+  border-bottom: 1px solid #dce5ed !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(14px) saturate(1.1);
+}
+
 #gvrze-payment-result {
   min-height: 100dvh;
-  padding-top: calc(var(--nav-height, 4rem) + 2rem);
+  padding-top: calc(var(--nav-height, 4rem) + 2.5rem);
   padding-bottom: 4rem;
   display: flex;
   align-items: flex-start;
@@ -19,12 +35,15 @@
   padding-inline: clamp(1.25rem, 5vw, 2rem);
 }
 
+/* ── Card ────────────────────────────────────────────────────────────────── */
 .pr-card {
-  border-radius: 1.5rem;
+  border-radius: 1.25rem;
   padding: clamp(2rem, 5vw, 2.75rem);
-  background: rgb(255 255 255 / 0.9);
-  border: 1px solid rgb(23 25 29 / 0.1);
-  box-shadow: 0 4px 32px -8px rgb(23 25 29 / 0.1);
+  background: #ffffff;
+  border: 1px solid #dce5ed;
+  box-shadow:
+    0 1px 3px rgb(23 35 56 / 0.04),
+    0 8px 24px -8px rgb(23 35 56 / 0.08);
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -44,26 +63,30 @@
 }
 
 .pr-icon-ring--success {
-  background: oklch(0.55 0.14 148 / 0.12);
-  color: oklch(0.45 0.14 148);
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
 }
 
 .pr-icon-ring--failed {
-  background: oklch(0.55 0.18 24 / 0.1);
-  color: oklch(0.5 0.18 24);
+  background: #fff1f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
 }
 
 .pr-icon-ring--processing {
-  background: oklch(0.6 0.08 62 / 0.1);
-  color: oklch(0.5 0.08 62);
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
 }
 
 .pr-icon-ring--cancelled {
-  background: oklch(0.5 0.01 62 / 0.08);
-  color: oklch(0.5 0.01 62 / 0.65);
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #dce5ed;
 }
 
-/* Spin for processing state */
+/* Spin animation for processing state */
 .pr-icon-ring--processing svg {
   animation: pr-spin 1.4s linear infinite;
 }
@@ -84,29 +107,29 @@
   font-weight: 300;
   letter-spacing: -0.025em;
   line-height: 1.1;
-  color: oklch(0.18 0.015 62);
+  color: #172338;
   margin: 0 0 0.75rem;
 }
 
 .pr-body {
   font-size: 0.88rem;
   line-height: 1.6;
-  color: oklch(0.4 0.01 62 / 0.72);
+  color: #64748b;
   max-width: 26rem;
   margin: 0 0 2rem;
 }
 
-/* ── Detail chip (plan name, payment ID) ─────────────────────────────────── */
+/* ── Detail chip (plan / payment ID) ─────────────────────────────────────── */
 .pr-detail-chip {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.5rem;
   padding: 0.4rem 0.9rem;
   border-radius: 999px;
-  background: oklch(0.6 0.08 62 / 0.08);
-  border: 1px solid oklch(0.6 0.08 62 / 0.18);
+  background: #f7fafc;
+  border: 1px solid #dce5ed;
   font-size: 0.75rem;
-  color: oklch(0.4 0.08 62);
+  color: #64748b;
   margin-bottom: 2rem;
 }
 
@@ -124,14 +147,14 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.7rem 1.4rem;
+  padding: 0.75rem 1.4rem;
   border-radius: 0.7rem;
   font-size: 0.84rem;
-  font-weight: 500;
-  letter-spacing: 0.04em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
   cursor: pointer;
   text-decoration: none;
-  transition: opacity 0.15s, transform 0.12s;
+  transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
 }
 
 .pr-btn:active {
@@ -139,34 +162,41 @@
 }
 
 .pr-btn--primary {
-  background: oklch(0.6 0.08 62);
-  color: #fff;
+  background: #1e3a5f;
+  color: #ffffff;
   border: none;
+  box-shadow: 0 2px 8px -2px rgb(30 58 95 / 0.3);
 }
 
 .pr-btn--primary:hover {
-  opacity: 0.88;
+  background: #162d4a;
+  box-shadow: 0 4px 12px -4px rgb(30 58 95 / 0.4);
 }
 
 .pr-btn--secondary {
-  background: transparent;
-  color: oklch(0.4 0.01 62);
-  border: 1px solid rgb(23 25 29 / 0.16);
+  background: #f7fafc;
+  color: #172338;
+  border: 1px solid #dce5ed;
 }
 
 .pr-btn--secondary:hover {
-  background: rgb(23 25 29 / 0.04);
+  background: #eaf4fa;
+  border-color: #c8d5e0;
 }
 
 /* ── Help line ───────────────────────────────────────────────────────────── */
 .pr-help {
   margin-top: 1.75rem;
   font-size: 0.72rem;
-  color: oklch(0.45 0.01 62 / 0.55);
+  color: #94a3b8;
 }
 
 .pr-help a {
-  color: oklch(0.5 0.08 62);
+  color: #1e6aba;
   text-decoration: underline;
   text-underline-offset: 0.15em;
+}
+
+.pr-help a:hover {
+  color: #1e3a5f;
 }

@@ -94,7 +94,9 @@ import { Route as PlaySearchRouteImport } from './routes/play.search'
 import { Route as PlayStreakRouteImport } from './routes/play.streak'
 import { Route as PlayWeeklyChallengesRouteImport } from './routes/play.weekly-challenges'
 import { Route as PricingIndexRouteImport } from './routes/pricing.index'
+import { Route as PricingCheckoutRouteImport } from './routes/pricing.checkout'
 import { Route as PricingCompareRouteImport } from './routes/pricing.compare'
+import { Route as PricingPaymentResultRouteImport } from './routes/pricing.payment-result'
 import { Route as StudioIndexRouteImport } from './routes/studio.index'
 import { Route as StudioAnalyticsRouteImport } from './routes/studio.analytics'
 import { Route as StudioAudienceRouteImport } from './routes/studio.audience'
@@ -573,9 +575,19 @@ const PricingIndexRoute = PricingIndexRouteImport.update({
   path: '/',
   getParentRoute: () => PricingRoute,
 } as any)
+const PricingCheckoutRoute = PricingCheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => PricingRoute,
+} as any)
 const PricingCompareRoute = PricingCompareRouteImport.update({
   id: '/compare',
   path: '/compare',
+  getParentRoute: () => PricingRoute,
+} as any)
+const PricingPaymentResultRoute = PricingPaymentResultRouteImport.update({
+  id: '/payment-result',
+  path: '/payment-result',
   getParentRoute: () => PricingRoute,
 } as any)
 const StudioIndexRoute = StudioIndexRouteImport.update({
@@ -922,7 +934,9 @@ export interface FileRoutesByFullPath {
   '/play/search': typeof PlaySearchRoute
   '/play/streak': typeof PlayStreakRoute
   '/play/weekly-challenges': typeof PlayWeeklyChallengesRoute
+  '/pricing/checkout': typeof PricingCheckoutRoute
   '/pricing/compare': typeof PricingCompareRoute
+  '/pricing/payment-result': typeof PricingPaymentResultRoute
   '/studio/analytics': typeof StudioAnalyticsRoute
   '/studio/audience': typeof StudioAudienceRoute
   '/studio/earnings': typeof StudioEarningsRoute
@@ -1049,7 +1063,9 @@ export interface FileRoutesByTo {
   '/play/search': typeof PlaySearchRoute
   '/play/streak': typeof PlayStreakRoute
   '/play/weekly-challenges': typeof PlayWeeklyChallengesRoute
+  '/pricing/checkout': typeof PricingCheckoutRoute
   '/pricing/compare': typeof PricingCompareRoute
+  '/pricing/payment-result': typeof PricingPaymentResultRoute
   '/studio/analytics': typeof StudioAnalyticsRoute
   '/studio/audience': typeof StudioAudienceRoute
   '/studio/earnings': typeof StudioEarningsRoute
@@ -1190,7 +1206,9 @@ export interface FileRoutesById {
   '/play/search': typeof PlaySearchRoute
   '/play/streak': typeof PlayStreakRoute
   '/play/weekly-challenges': typeof PlayWeeklyChallengesRoute
+  '/pricing/checkout': typeof PricingCheckoutRoute
   '/pricing/compare': typeof PricingCompareRoute
+  '/pricing/payment-result': typeof PricingPaymentResultRoute
   '/studio/analytics': typeof StudioAnalyticsRoute
   '/studio/audience': typeof StudioAudienceRoute
   '/studio/earnings': typeof StudioEarningsRoute
@@ -1331,7 +1349,9 @@ export interface FileRouteTypes {
     | '/play/search'
     | '/play/streak'
     | '/play/weekly-challenges'
+    | '/pricing/checkout'
     | '/pricing/compare'
+    | '/pricing/payment-result'
     | '/studio/analytics'
     | '/studio/audience'
     | '/studio/earnings'
@@ -1458,7 +1478,9 @@ export interface FileRouteTypes {
     | '/play/search'
     | '/play/streak'
     | '/play/weekly-challenges'
+    | '/pricing/checkout'
     | '/pricing/compare'
+    | '/pricing/payment-result'
     | '/studio/analytics'
     | '/studio/audience'
     | '/studio/earnings'
@@ -1598,7 +1620,9 @@ export interface FileRouteTypes {
     | '/play/search'
     | '/play/streak'
     | '/play/weekly-challenges'
+    | '/pricing/checkout'
     | '/pricing/compare'
+    | '/pricing/payment-result'
     | '/studio/analytics'
     | '/studio/audience'
     | '/studio/earnings'
@@ -2290,11 +2314,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricingIndexRouteImport
       parentRoute: typeof PricingRoute
     }
+    '/pricing/checkout': {
+      id: '/pricing/checkout'
+      path: '/checkout'
+      fullPath: '/pricing/checkout'
+      preLoaderRoute: typeof PricingCheckoutRouteImport
+      parentRoute: typeof PricingRoute
+    }
     '/pricing/compare': {
       id: '/pricing/compare'
       path: '/compare'
       fullPath: '/pricing/compare'
       preLoaderRoute: typeof PricingCompareRouteImport
+      parentRoute: typeof PricingRoute
+    }
+    '/pricing/payment-result': {
+      id: '/pricing/payment-result'
+      path: '/payment-result'
+      fullPath: '/pricing/payment-result'
+      preLoaderRoute: typeof PricingPaymentResultRouteImport
       parentRoute: typeof PricingRoute
     }
     '/studio/': {
@@ -2954,12 +2992,16 @@ const PlayRouteChildren: PlayRouteChildren = {
 const PlayRouteWithChildren = PlayRoute._addFileChildren(PlayRouteChildren)
 
 interface PricingRouteChildren {
+  PricingCheckoutRoute: typeof PricingCheckoutRoute
   PricingCompareRoute: typeof PricingCompareRoute
+  PricingPaymentResultRoute: typeof PricingPaymentResultRoute
   PricingIndexRoute: typeof PricingIndexRoute
 }
 
 const PricingRouteChildren: PricingRouteChildren = {
+  PricingCheckoutRoute: PricingCheckoutRoute,
   PricingCompareRoute: PricingCompareRoute,
+  PricingPaymentResultRoute: PricingPaymentResultRoute,
   PricingIndexRoute: PricingIndexRoute,
 }
 

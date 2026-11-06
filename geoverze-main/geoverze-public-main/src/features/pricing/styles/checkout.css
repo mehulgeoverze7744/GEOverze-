@@ -398,6 +398,9 @@ body:has(#gvrze-checkout) header[data-scrolled="true"] {
   white-space: nowrap;
   height: 2.75rem;
   letter-spacing: 0.03em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .checkout-coupon-apply-btn:hover {
@@ -640,6 +643,23 @@ body:has(#gvrze-checkout) header[data-scrolled="true"] {
   position: relative;
   pointer-events: none;
   opacity: 0.75;
+}
+
+/* ── Retry link inside error box ─────────────────────────────────────────── */
+.checkout-retry-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.4rem;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1e3a5f;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }
 
 /* ── Back link ───────────────────────────────────────────────────────────── */

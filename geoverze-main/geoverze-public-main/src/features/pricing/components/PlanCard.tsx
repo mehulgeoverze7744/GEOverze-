@@ -1,6 +1,6 @@
 import { Check, Lock } from "lucide-react";
 import { memo } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useAuthStore, selectIsSignedIn } from "@/stores/authStore";
 
 import { AnimatedBadge } from "@/components/shared/AnimatedBadge";
@@ -12,7 +12,16 @@ import type { BillingCycle, PricingPlan } from "../data/plans";
 
 import "../../marketing/components/home-hero.css";
 
-/** Single membership tier column. Pure presentation plus one checkout seam. */
+/**
+ * Single membership tier column.
+ *
+ * CTA strategy:
+ *  - Explorer (free)  → <Link> to /auth/signup (signed-out) or / (signed-in)
+ *  - Basic / Pro      → <Link> to /pricing/checkout?plan=...&cycle=...
+ *                       (asChild keeps GeoButton styling; real <a> means right-click,
+ *                        middle-click and browser-native navigation all work)
+ *  - Advance          → disabled button (plan not released)
+ */
 export const PlanCard = memo(function PlanCard({
   plan,
   cycle,
@@ -20,7 +29,6 @@ export const PlanCard = memo(function PlanCard({
   plan: PricingPlan;
   cycle: BillingCycle;
 }) {
-  const navigate = useNavigate();
   const isSignedIn = useAuthStore(selectIsSignedIn);
   const price = plan.prices[cycle];
   const locked = plan.id === "advance";
@@ -43,11 +51,13 @@ export const PlanCard = memo(function PlanCard({
           {plan.badge}
         </AnimatedBadge>
       ) : null}
+
       <div className="relative">
         <p className="text-[0.66rem] uppercase tracking-[0.3em] text-bronze">{plan.name}</p>
       </div>
       <p className="mt-3 text-sm text-foreground/50">{plan.positioning}</p>
 
+      {/* Price display */}
       <div className="mt-7">
         {price.compareAt ? (
           <p className="text-sm text-foreground/45 line-through">{price.compareAt}</p>
@@ -91,8 +101,10 @@ export const PlanCard = memo(function PlanCard({
 
       <div className="pricing-plan-card__spacer mt-10 flex-1" />
 
-      {/* CTA button */}
+      {/* ── CTA button ───────────────────────────────────────────────── */}
+
       {locked ? (
+        /* Advance — not yet available */
         <GeoButton
           variant="secondary"
           disabled
@@ -102,8 +114,9 @@ export const PlanCard = memo(function PlanCard({
           <Lock className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden />
           Coming soon
         </GeoButton>
+
       ) : isFree ? (
-        /* Explorer free plan — navigate to sign up or dashboard */
+        /* Explorer — free; skip checkout entirely */
         isSignedIn ? (
           <GeoButton
             variant="secondary"
@@ -118,34 +131,40 @@ export const PlanCard = memo(function PlanCard({
             variant="secondary"
             className="w-full min-h-11"
             asChild
-            aria-label="Create a free GVRZE account"
+            aria-label="Create a free GVRZE account — no card needed"
           >
             <Link to="/auth/signup">Start free — no card needed</Link>
           </GeoButton>
         )
+
       ) : (
+        /* Basic / Pro — navigate to checkout via a real <a> element.
+           asChild merges GeoButton's classes onto the Link, rendering a styled
+           anchor tag. This is the most reliable click mechanism: it works with
+           right-click, middle-click, keyboard navigation, and touch. */
         <GeoButton
           variant={plan.featured ? "primary" : "secondary"}
           className="w-full min-h-11"
-          onClick={() => {
-            void navigate({
-              to: "/pricing/checkout",
-              search: { plan: plan.id, cycle },
-            });
-          }}
-          aria-label={`${plan.cta} — ${plan.name} plan`}
+          asChild
+          aria-label={`${plan.cta} — ${plan.name} membership`}
         >
-          {plan.cta}
+          <Link
+            to="/pricing/checkout"
+            search={{ plan: plan.id, cycle }}
+          >
+            {plan.cta}
+          </Link>
         </GeoButton>
       )}
 
-      {/* GST notice for paid plans */}
+      {/* GST notice — only for paid, available plans */}
       {!isFree && !locked ? (
         <p className="mt-2 text-center text-[0.6rem] text-foreground/35 tracking-wide">
           Prices incl. 18% GST · Billed in INR
         </p>
       ) : null}
 
+      {/* Frost overlay — Advance plan only */}
       {locked ? (
         <div
           aria-hidden
