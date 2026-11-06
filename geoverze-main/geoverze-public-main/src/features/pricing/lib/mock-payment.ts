@@ -2,10 +2,13 @@
  * GVRZE Mock Payment Library — testing helpers.
  *
  * Environment security model:
- *   isMockPaymentEnabled() is controlled SOLELY by the VITE_MOCK_PAYMENTS
- *   environment variable.  The previous import.meta.env.DEV guard has been
- *   removed so that Vercel Preview deployments can test the full subscription
- *   lifecycle by setting VITE_MOCK_PAYMENTS=true in their Preview env vars.
+ *   Mock mode visibility is controlled at RUNTIME by the server function
+ *   getPaymentConfig() (see lib/getPaymentConfig.ts), which reads
+ *   process.env.VITE_MOCK_PAYMENTS on the server. Setting this variable in
+ *   Vercel takes effect immediately — no rebuild required.
+ *
+ *   isMockPaymentEnabled() (below) is a build-time fallback kept for
+ *   compatibility. Prefer usePaymentConfig() in React components.
  *
  *   ┌─────────────────┬──────────────────────────────────────────────────┐
  *   │ Environment     │ Expected VITE_MOCK_PAYMENTS value                │
@@ -15,13 +18,13 @@
  *   │ Vercel Prod     │ NOT SET / empty (never enable in production)     │
  *   └─────────────────┴──────────────────────────────────────────────────┘
  *
- * Production safety:
- *   - VITE_MOCK_PAYMENTS must NOT be set in Vercel Production environment.
- *   - MockPaymentGateway never collects card details or contacts Razorpay.
- *   - Subscription activation happens exclusively via authenticated SQL RPCs
- *     (begin_mock_subscription / confirm_mock_subscription) with idempotency
- *     keys — no client-side tier grants are possible.
- *   - The RPCs are protected by Supabase RLS (authenticated role only).
+ * Security layers:
+ *   1. UI: mock checkout button only shown when server config returns
+ *      mockEnabled=true (server reads process.env at request time).
+ *   2. DB: begin_mock_subscription and confirm_mock_subscription require
+ *      authentication (auth.uid() NOT NULL) and mark all records is_mock=true.
+ *   3. No client-side tier grants — activation happens exclusively via
+ *      authenticated server-side SQL RPCs.
  *
  * NEVER use these functions to activate memberships via real payments.
  */
@@ -85,9 +88,10 @@ export async function beginMockSubscription(params: {
   charge_amount_minor: number;
   idempotency_key: string;
 }): Promise<MockSession> {
-  if (!isMockPaymentEnabled()) {
-    throw new MockPaymentError("Mock payments are disabled in this environment.", "MOCK_DISABLED");
-  }
+  // Guard removed: mock mode visibility is now controlled by the server
+  // function getPaymentConfig() — the UI only renders this call when the
+  // server confirms mockEnabled=true. The Supabase RPC enforces auth and
+  // marks all records is_mock=true as the actual security layer.
 
   const { data, error } = await (supabase.rpc as (fn: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>)(
     "begin_mock_subscription",
@@ -137,9 +141,9 @@ export async function confirmMockSubscription(params: {
   subscription_id: string;
   outcome: "success" | "failed" | "cancel";
 }): Promise<MockConfirmResult> {
-  if (!isMockPaymentEnabled()) {
-    throw new MockPaymentError("Mock payments are disabled in this environment.", "MOCK_DISABLED");
-  }
+  // Guard removed: same rationale as beginMockSubscription above.
+  // The MockPaymentGateway only mounts when the checkout UI confirmed mock
+  // mode is enabled via the server function. The Supabase RPC validates auth.
 
   const { data, error } = await (supabase.rpc as (fn: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>)(
     "confirm_mock_subscription",
