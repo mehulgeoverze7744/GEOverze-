@@ -2,42 +2,44 @@
  * GVRZE Mock Payment Library — testing helpers.
  *
  * Environment security model:
- *   Mock mode visibility is controlled at RUNTIME by the server function
- *   getPaymentConfig() (see lib/getPaymentConfig.ts), which reads
- *   process.env.VITE_MOCK_PAYMENTS on the server. Setting this variable in
- *   Vercel takes effect immediately — no rebuild required.
- *
- *   isMockPaymentEnabled() (below) is a build-time fallback kept for
- *   compatibility. Prefer usePaymentConfig() in React components.
+ *   Mock mode is controlled at RUNTIME by server functions that read
+ *   process.env["VITE_MOCK_PAYMENTS"] on the Node.js server. Setting this
+ *   variable in Vercel takes effect immediately — no rebuild required.
  *
  *   ┌─────────────────┬──────────────────────────────────────────────────┐
- *   │ Environment     │ Expected VITE_MOCK_PAYMENTS value                │
- *   ├─────────────────┼──────────────────────────────────────────────────┤
  *   │ Local dev       │ true (in .env.local — never committed)           │
- *   │ Vercel Preview  │ true  (set in Vercel → Settings → Env → Preview) │
- *   │ Vercel Prod     │ NOT SET / empty (never enable in production)     │
+ *   │ Vercel Preview  │ true (Vercel → Settings → Env Vars → Preview)   │
+ *   │ Vercel Prod     │ true ONLY during temporary authorized testing;   │
+ *   │                 │ MUST be cleared / unset when testing ends        │
  *   └─────────────────┴──────────────────────────────────────────────────┘
  *
- * Security layers:
- *   1. UI: mock checkout button only shown when server config returns
- *      mockEnabled=true (server reads process.env at request time).
- *   2. DB: begin_mock_subscription and confirm_mock_subscription require
- *      authentication (auth.uid() NOT NULL) and mark all records is_mock=true.
- *   3. No client-side tier grants — activation happens exclusively via
- *      authenticated server-side SQL RPCs.
+ * Security layers (defence in depth):
+ *   1. UI   — mock checkout button only shown when server config returns
+ *             mockEnabled=true (via usePaymentConfig).
+ *   2. Gate — beginMockPaymentFn / confirmMockPaymentFn are TanStack Start
+ *             server functions that reject calls when VITE_MOCK_PAYMENTS is
+ *             not "true" in process.env on the server.
+ *   3. Auth — the caller's Supabase access_token is forwarded to the RPC;
+ *             auth.uid() rejects unauthenticated / expired token calls.
+ *   4. DB   — SECURITY DEFINER RPCs mark every record is_mock=true so
+ *             production billing reports can filter mock data at all times.
  *
  * NEVER use these functions to activate memberships via real payments.
+ * NEVER set VITE_MOCK_PAYMENTS=true in Vercel Production permanently.
  */
 
 import { supabase } from "@/lib/supabase/client";
 import type { TierId, BillingCycle } from "../data/plans";
+import {
+  beginMockPaymentFn,
+  confirmMockPaymentFn,
+} from "./mockPaymentServerFns";
 
 /**
- * True when VITE_MOCK_PAYMENTS=true is set in the environment.
+ * True when VITE_MOCK_PAYMENTS=true is set in the BUILD-TIME environment.
  *
- * Safe for Production because that env var must NOT be set there.
- * Safe for Preview when explicitly configured for testing.
- * Safe for local dev via .env.local (which is git-ignored).
+ * This is a build-time fallback only — prefer usePaymentConfig() in React
+ * components (which reads the RUNTIME server value via getPaymentConfig).
  */
 export function isMockPaymentEnabled(): boolean {
   return import.meta.env["VITE_MOCK_PAYMENTS"] === "true";
@@ -77,10 +79,28 @@ export class MockPaymentError extends Error {
 }
 
 /**
+ * Returns the current user's Supabase access token.
+ * Throws MockPaymentError if the user is not authenticated.
+ */
+async function getAccessToken(): Promise<string> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.access_token) {
+    throw new MockPaymentError(
+      "Sign in to continue to checkout.",
+      "UNAUTHENTICATED",
+    );
+  }
+  return session.access_token;
+}
+
+/**
  * Creates a pending mock subscription + payment record server-side.
+ *
+ * Routes through beginMockPaymentFn (createServerFn) which checks
+ * process.env["VITE_MOCK_PAYMENTS"] before forwarding to the Supabase RPC.
  * Idempotent: safe to call twice with the same idempotency_key.
  *
- * @throws MockPaymentError on network or RPC failure.
+ * @throws MockPaymentError on network, auth, or RPC failure.
  */
 export async function beginMockSubscription(params: {
   plan_tier: TierId;
@@ -90,79 +110,73 @@ export async function beginMockSubscription(params: {
   charge_amount_minor: number;
   idempotency_key: string;
 }): Promise<MockSession> {
-  // Guard removed: mock mode visibility is now controlled by the server
-  // function getPaymentConfig() — the UI only renders this call when the
-  // server confirms mockEnabled=true. The Supabase RPC enforces auth and
-  // marks all records is_mock=true as the actual security layer.
+  const access_token = await getAccessToken();
 
-  const { data, error } = await (supabase.rpc as (fn: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>)(
-    "begin_mock_subscription",
-    {
-      p_plan_tier:           params.plan_tier,
-      p_billing_interval:    params.billing_interval,
-      p_base_amount_minor:   params.base_amount_minor,
-      p_gst_amount_minor:    params.gst_amount_minor,
-      p_charge_amount_minor: params.charge_amount_minor,
-      p_idempotency_key:     params.idempotency_key,
-    },
-  );
+  try {
+    const result = await beginMockPaymentFn({
+      data: {
+        access_token,
+        plan_tier:            params.plan_tier,
+        billing_interval:     params.billing_interval,
+        charge_amount_minor:  params.charge_amount_minor,
+        base_amount_minor:    params.base_amount_minor,
+        gst_amount_minor:     params.gst_amount_minor,
+        idempotency_key:      params.idempotency_key,
+      },
+    });
 
-  if (error) {
+    return {
+      subscription_id:     result.subscription_id,
+      mock_session_id:     result.mock_session_id,
+      base_amount_minor:   params.base_amount_minor,
+      gst_amount_minor:    params.gst_amount_minor,
+      charge_amount_minor: params.charge_amount_minor,
+    };
+  } catch (err) {
     throw new MockPaymentError(
-      error.message ?? "Failed to create mock payment session.",
-      error.code ?? "RPC_ERROR",
+      err instanceof Error ? err.message : "Failed to create mock payment session.",
+      "RPC_ERROR",
     );
   }
-
-  const result = data as { subscription_id: string; mock_session_id: string } | null;
-  if (!result?.subscription_id) {
-    throw new MockPaymentError("Invalid response from begin_mock_subscription.", "BAD_RESPONSE");
-  }
-
-  return {
-    subscription_id:    result.subscription_id,
-    mock_session_id:    result.mock_session_id,
-    base_amount_minor:  params.base_amount_minor,
-    gst_amount_minor:   params.gst_amount_minor,
-    charge_amount_minor: params.charge_amount_minor,
-  };
 }
 
 /**
  * Resolves a pending mock subscription to a final outcome.
  *
- * - 'success'  → activates subscription, issues invoice, marks payment succeeded
+ * Routes through confirmMockPaymentFn (createServerFn) which checks
+ * process.env["VITE_MOCK_PAYMENTS"] before forwarding to the Supabase RPC.
+ *
+ * - 'success'  → activates subscription, issues invoice, grants credits
  * - 'failed'   → marks payment failed, cancels subscription
  * - 'cancel'   → marks payment cancelled, cancels subscription
  *
- * Idempotent: safe to call twice with 'success' on an already-active sub.
+ * Idempotent: calling 'success' on an already-active subscription returns
+ * the existing invoice (already_active: true) without granting duplicate credits.
  *
- * @throws MockPaymentError on network or RPC failure.
+ * @throws MockPaymentError on network, auth, or RPC failure.
  */
 export async function confirmMockSubscription(params: {
   subscription_id: string;
   outcome: "success" | "failed" | "cancel";
 }): Promise<MockConfirmResult> {
-  // Guard removed: same rationale as beginMockSubscription above.
-  // The MockPaymentGateway only mounts when the checkout UI confirmed mock
-  // mode is enabled via the server function. The Supabase RPC validates auth.
+  const access_token = await getAccessToken();
 
-  const { data, error } = await (supabase.rpc as (fn: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>)(
-    "confirm_mock_subscription",
-    {
-      p_subscription_id: params.subscription_id,
-      p_outcome:         params.outcome,
-    },
-  );
+  try {
+    const result = await confirmMockPaymentFn({
+      data: {
+        access_token,
+        subscription_id: params.subscription_id,
+        outcome:         params.outcome,
+      },
+    });
 
-  if (error) {
+    return result ?? { success: false };
+  } catch (err) {
     throw new MockPaymentError(
-      error.message ?? "Failed to confirm mock payment.",
-      error.code ?? "RPC_ERROR",
+      err instanceof Error ? err.message : "Failed to confirm mock payment.",
+      "RPC_ERROR",
     );
   }
-
-  return (data as MockConfirmResult) ?? { success: false };
 }
 
 /** Generates a stable idempotency key from user ID + plan + cycle + timestamp. */

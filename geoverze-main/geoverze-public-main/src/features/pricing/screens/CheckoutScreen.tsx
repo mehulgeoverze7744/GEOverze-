@@ -418,24 +418,31 @@ export function CheckoutScreen() {
             className="checkout-crumb"
           />
 
-          {/* Mock mode indicator banner */}
-          {mockEnabled ? (
-            <div
-              className="checkout-mock-banner"
-              role="status"
-              aria-label="Mock payment mode active — no real payments processed"
-            >
-              <FlaskConical size={14} strokeWidth={2} aria-hidden />
-              <span>
-                <strong>Mock Payment Mode</strong> — No real payment processed.
-                {import.meta.env.DEV ? (
-                  <> Local: <code>VITE_MOCK_PAYMENTS=true</code> in <code>.env.local</code>.</>
-                ) : (
-                  <> Preview build — <code>VITE_MOCK_PAYMENTS=true</code> is set in Vercel env vars.</>
-                )}
-              </span>
-            </div>
-          ) : null}
+            {/* Mock mode indicator banner — TEST MODE — NO REAL PAYMENTS */}
+            {mockEnabled ? (
+              <div
+                className="checkout-mock-banner"
+                role="status"
+                aria-label="TEST MODE — No real payments processed"
+              >
+                <FlaskConical size={14} strokeWidth={2} aria-hidden />
+                <span>
+                  <strong>TEST MODE — NO REAL PAYMENTS</strong>
+                  {import.meta.env.DEV ? (
+                    <>
+                      {" "}Local mock mode active (<code>VITE_MOCK_PAYMENTS=true</code> in{" "}
+                      <code>.env.local</code>). No amount will be charged.
+                    </>
+                  ) : (
+                    <>
+                      {" "}Authorized test mode — <code>VITE_MOCK_PAYMENTS=true</code> is set in
+                      Vercel env vars. All subscriptions are labeled <strong>is_mock=true</strong>.
+                      No real charge is made.
+                    </>
+                  )}
+                </span>
+              </div>
+            ) : null}
 
           {catalogError ? (
             <div className="checkout-unavailable" role="alert">
@@ -783,7 +790,7 @@ export function CheckoutScreen() {
                 <p className="checkout-secure-note">
                   <Shield size={12} strokeWidth={1.8} aria-hidden />
                   {mockEnabled
-                    ? "Development mock mode — no real payments processed."
+                    ? "TEST MODE — No real payment processed. Subscription records are labeled is_mock=true."
                     : "Payments processed securely by Razorpay. Card details are never stored by GVRZE."}
                 </p>
               </section>

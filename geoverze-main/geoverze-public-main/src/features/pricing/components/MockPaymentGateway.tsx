@@ -245,8 +245,10 @@ export function MockPaymentGateway({
 
             {/* Warning notice */}
             <p className="mock-gateway-notice" role="note">
-              🧪 This is a development-only mock gateway. No real payment details are
-              collected or processed. Choose an outcome to test the full subscription lifecycle.
+              ⚙ TEST MODE — No real payment details are collected or processed.
+              Activated subscriptions are marked <strong>is_mock=true</strong> in billing records
+              and can be identified in billing reports. Choose an outcome to test the
+              full subscription lifecycle.
             </p>
 
             {/* Error message */}
