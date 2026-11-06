@@ -3,11 +3,17 @@
  *
  * Payment paths (mutually exclusive):
  *
- *   1. MOCK MODE  (import.meta.env.DEV && VITE_MOCK_PAYMENTS=true)
+ *   1. MOCK MODE  (VITE_MOCK_PAYMENTS=true)
  *      → beginMockSubscription() creates pending DB records server-side.
- *      → MockPaymentGateway modal lets the developer choose Success/Fail/Cancel.
+ *      → MockPaymentGateway modal lets the tester choose Success/Fail/Cancel.
  *      → confirmMockSubscription() activates or cancels the subscription.
  *      → Never collects card details. Never contacts Razorpay.
+ *
+ *      To enable:
+ *        Local:          VITE_MOCK_PAYMENTS=true in .env.local
+ *        Vercel Preview: Vercel Dashboard → Project → Settings →
+ *                        Environment Variables → add VITE_MOCK_PAYMENTS=true
+ *                        with scope "Preview" (never Production) → Redeploy.
  *
  *   2. RAZORPAY  (VITE_RAZORPAY_KEY_ID is set)
  *      → createCheckoutSession() calls the Edge Function to create a
@@ -20,7 +26,9 @@
  * Security rules (never violate):
  *   - Subscriptions are activated server-side only (SQL RPC or webhook).
  *   - inflight.current prevents duplicate payment windows.
- *   - Mock mode only active when import.meta.env.DEV === true.
+ *   - VITE_MOCK_PAYMENTS must NOT be set in Vercel Production env vars.
+ *   - Mock RPCs (begin/confirm_mock_subscription) require authentication
+ *     and are marked is_mock=true — never usable for real payment flow.
  */
 
 import {
@@ -222,10 +230,30 @@ export function CheckoutScreen() {
     return true;
   }
 
+  /**
+   * Lightweight validation for mock mode.
+   *
+   * Billing address is intentionally skipped — it is NOT sent to
+   * beginMockSubscription (the RPC only takes plan_tier, billing_interval,
+   * and amounts). Requiring a real address for a simulated payment is
+   * unnecessary friction when testing the subscription lifecycle.
+   */
+  function validateForMock(): boolean {
+    if (!agreed) {
+      toast.error("Please agree to the Terms before continuing.");
+      return false;
+    }
+    if (!user) {
+      toast.error("Sign in to continue to checkout.");
+      return false;
+    }
+    return true;
+  }
+
   /* ── MOCK payment handler ─────────────────────────────────────────────── */
   async function handleMockPay() {
     if (!plan || !price || !user || inflight.current) return;
-    if (!validate()) return;
+    if (!validateForMock()) return;
 
     inflight.current = true;
     setLoading(true);
@@ -390,12 +418,16 @@ export function CheckoutScreen() {
             <div
               className="checkout-mock-banner"
               role="status"
-              aria-label="Development mock payment mode active"
+              aria-label="Mock payment mode active — no real payments processed"
             >
               <FlaskConical size={14} strokeWidth={2} aria-hidden />
               <span>
-                <strong>Mock Payment Mode</strong> — Development only. No real payments.
-                Set <code>VITE_MOCK_PAYMENTS=true</code> in <code>.env.local</code>.
+                <strong>Mock Payment Mode</strong> — No real payment processed.
+                {import.meta.env.DEV ? (
+                  <> Local: <code>VITE_MOCK_PAYMENTS=true</code> in <code>.env.local</code>.</>
+                ) : (
+                  <> Preview build — <code>VITE_MOCK_PAYMENTS=true</code> is set in Vercel env vars.</>
+                )}
               </span>
             </div>
           ) : null}
@@ -701,14 +733,22 @@ export function CheckoutScreen() {
                     <div>
                       <strong>Payment temporarily unavailable.</strong>{" "}
                       Our payment gateway is being configured.
-                      {/* Show dev hint only in local dev builds, not on the live site */}
                       {import.meta.env.DEV ? (
-                        <> To test locally, add{" "}
+                        // Local dev: direct actionable hint
+                        <>
+                          {" "}To enable mock payments locally, add{" "}
                           <code style={{ fontSize: "0.75em" }}>VITE_MOCK_PAYMENTS=true</code>{" "}
-                          to <code style={{ fontSize: "0.75em" }}>.env.local</code>.
+                          to <code style={{ fontSize: "0.75em" }}>.env.local</code> and restart the dev server.
                         </>
                       ) : (
-                        <> Please check back soon or{" "}
+                        // Deployed build (Vercel Preview / Production)
+                        <>
+                          {" "}To enable mock checkout on a Vercel Preview deployment, add{" "}
+                          <code style={{ fontSize: "0.75em" }}>VITE_MOCK_PAYMENTS=true</code>{" "}
+                          as a <strong>Preview-only</strong> environment variable in the Vercel dashboard,
+                          then trigger a new deployment. For production, configure{" "}
+                          <code style={{ fontSize: "0.75em" }}>VITE_RAZORPAY_KEY_ID</code>.
+                          {" "}Or{" "}
                           <a href="/contact" style={{ textDecoration: "underline" }}>contact us</a>.
                         </>
                       )}

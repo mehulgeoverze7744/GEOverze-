@@ -1,16 +1,18 @@
 /**
- * MockPaymentGateway — DEVELOPMENT-ONLY modal payment simulator.
+ * MockPaymentGateway — test/preview modal payment simulator.
  *
- * Renders a premium GVRZE-light-themed overlay that lets developers
- * test the entire subscription lifecycle without Razorpay credentials.
+ * Renders a GVRZE-light-themed overlay that lets testers simulate the
+ * full subscription lifecycle without Razorpay credentials or real charges.
  *
  * Security model:
- *   - This component is ONLY rendered when isMockPaymentEnabled() === true.
- *   - isMockPaymentEnabled() uses import.meta.env.DEV, which Vite replaces
- *     with `false` at production build time — making this component dead code
- *     in any production bundle.
+ *   - Rendered ONLY when isMockPaymentEnabled() === true.
+ *   - isMockPaymentEnabled() checks VITE_MOCK_PAYMENTS === "true" at build
+ *     time — this variable must NOT be set in Vercel Production env vars.
  *   - Subscription activation happens exclusively via confirmMockSubscription()
- *     → PostgreSQL RPC → server-side validation. No client-side tier grants.
+ *     → PostgreSQL RPC → server-side validation, is_mock=true marking,
+ *     and idempotency guards. No client-side tier grants are possible.
+ *   - All mock DB records are explicitly labelled is_mock=true and can be
+ *     filtered out of production billing reports.
  *
  * NEVER collect real card numbers, CVVs, or banking credentials here.
  */
