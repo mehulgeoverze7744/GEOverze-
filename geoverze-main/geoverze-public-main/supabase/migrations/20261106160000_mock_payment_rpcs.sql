@@ -151,6 +151,7 @@ BEGIN
   RETURNING id INTO v_sub_id;
 
   -- Create pending payment
+  -- Note: webhook_event_id and price_snapshot_id are UUID columns — left NULL for mock payments.
   INSERT INTO public.billing_payments (
     user_id,
     subscription_id,
@@ -162,8 +163,6 @@ BEGIN
     charge_amount_minor,
     charge_currency,
     catalog_usd_amount_cents,   -- field name legacy; stores INR rupees catalog value
-    price_snapshot_id,
-    webhook_event_id,
     metadata
   )
   VALUES (
@@ -177,8 +176,6 @@ BEGIN
     p_charge_amount_minor,
     'INR',
     p_charge_amount_minor,      -- same value for catalog snapshot
-    'mock_snapshot',
-    'mock_pending_no_webhook',
     jsonb_build_object(
       'is_mock',           true,
       'base_amount_minor', p_base_amount_minor,
@@ -277,10 +274,10 @@ BEGIN
     WHERE  id = p_subscription_id;
 
     -- Mark payment succeeded
+    -- webhook_event_id is UUID type — left unchanged (NULL) for mock payments
     UPDATE public.billing_payments
     SET    status = 'succeeded',
-           paid_at = NOW(),
-           webhook_event_id = 'mock_confirmed_success'
+           paid_at = NOW()
     WHERE  subscription_id = p_subscription_id
       AND  status = 'pending';
 
@@ -354,13 +351,13 @@ BEGIN
   -- ── FAILURE / CANCEL PATH ─────────────────────────────────────────────────
   ELSE
     -- Mark payment as failed or cancelled
+    -- webhook_event_id is UUID type — left unchanged (NULL) for mock payments
     UPDATE public.billing_payments
     SET    status = p_outcome,
            failure_reason = CASE p_outcome
              WHEN 'failed' THEN 'Simulated payment failure (mock mode)'
              ELSE               'User cancelled payment (mock mode)'
-           END,
-           webhook_event_id = 'mock_confirmed_' || p_outcome
+           END
     WHERE  subscription_id = p_subscription_id
       AND  status = 'pending';
 
