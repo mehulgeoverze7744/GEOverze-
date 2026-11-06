@@ -20,12 +20,12 @@ export function PricingCta() {
               Start free. Upgrade when the planet gets interesting.
             </h2>
             <p className="pricing-cta-note">
-              Nothing is billable while GVRZE is in development — plans describe intent, not a
-              live checkout. Your account, credits and progress carry into launch.
+              Explorer is free forever — no credit card required. Upgrade to Basic, Pro, or Advance
+              whenever you're ready to unlock the full experience.
             </p>
             <div className="pricing-cta-actions">
               <GeoButton asChild variant="primary" size="lg">
-                <Link to="/auth/signup">Create account</Link>
+                <Link to="/auth/signup">Start free</Link>
               </GeoButton>
               <GeoButton asChild variant="secondary" size="lg">
                 <Link to="/pricing/compare">Compare plans</Link>

@@ -1,6 +1,7 @@
 import { Check, Lock } from "lucide-react";
 import { memo } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useAuthStore, selectIsSignedIn } from "@/stores/authStore";
 
 import { AnimatedBadge } from "@/components/shared/AnimatedBadge";
 import { GeoButton } from "@/components/shared/GeoButton";
@@ -8,7 +9,6 @@ import { GlassCard } from "@/components/shared/GlassCard";
 import { cn } from "@/lib/utils";
 
 import type { BillingCycle, PricingPlan } from "../data/plans";
-import { checkoutHref } from "../lib/checkout";
 
 import "../../marketing/components/home-hero.css";
 
@@ -21,8 +21,10 @@ export const PlanCard = memo(function PlanCard({
   cycle: BillingCycle;
 }) {
   const navigate = useNavigate();
+  const isSignedIn = useAuthStore(selectIsSignedIn);
   const price = plan.prices[cycle];
   const locked = plan.id === "advance";
+  const isFree = plan.id === "explorer";
 
   return (
     <GlassCard
@@ -88,6 +90,8 @@ export const PlanCard = memo(function PlanCard({
       </ul>
 
       <div className="pricing-plan-card__spacer mt-10 flex-1" />
+
+      {/* CTA button */}
       {locked ? (
         <GeoButton
           variant="secondary"
@@ -98,12 +102,32 @@ export const PlanCard = memo(function PlanCard({
           <Lock className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden />
           Coming soon
         </GeoButton>
+      ) : isFree ? (
+        /* Explorer free plan — navigate to sign up or dashboard */
+        isSignedIn ? (
+          <GeoButton
+            variant="secondary"
+            className="w-full min-h-11"
+            asChild
+            aria-label="Go to your GVRZE dashboard"
+          >
+            <Link to="/">Start exploring</Link>
+          </GeoButton>
+        ) : (
+          <GeoButton
+            variant="secondary"
+            className="w-full min-h-11"
+            asChild
+            aria-label="Create a free GVRZE account"
+          >
+            <Link to="/auth/signup">Start free — no card needed</Link>
+          </GeoButton>
+        )
       ) : (
         <GeoButton
           variant={plan.featured ? "primary" : "secondary"}
           className="w-full min-h-11"
           onClick={() => {
-            if (plan.id === "explorer") return;
             void navigate({
               to: "/pricing/checkout",
               search: { plan: plan.id, cycle },
@@ -114,6 +138,13 @@ export const PlanCard = memo(function PlanCard({
           {plan.cta}
         </GeoButton>
       )}
+
+      {/* GST notice for paid plans */}
+      {!isFree && !locked ? (
+        <p className="mt-2 text-center text-[0.6rem] text-foreground/35 tracking-wide">
+          Prices incl. 18% GST · Billed in INR
+        </p>
+      ) : null}
 
       {locked ? (
         <div

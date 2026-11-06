@@ -7,7 +7,7 @@ import {
   type LibraryAccessTier,
 } from "@/features/library/lib/access-tier";
 import { TIER_PRESENTATION } from "./plans";
-import { formatUsdCents } from "../lib/formatPrice";
+import { formatMinorAmount, formatInrRupees } from "../lib/formatInr";
 
 export type BillingPaymentStatus = "paid" | "pending" | "refunded" | "failed" | "cancelled";
 
@@ -98,17 +98,8 @@ function membershipStatusLabel(subscription: SubscriptionRpc | null, isPaidTier:
 }
 
 function formatCharge(amountMinor: number, currency: string): string {
-  const code = currency.trim().toUpperCase();
-  try {
-    return (amountMinor / 100).toLocaleString("en-US", {
-      style: "currency",
-      currency: code.length === 3 ? code : "USD",
-      minimumFractionDigits: amountMinor % 100 === 0 ? 0 : 2,
-      maximumFractionDigits: 2,
-    });
-  } catch {
-    return formatUsdCents(amountMinor);
-  }
+  // charge_amount_minor is in paise (INR minor units); formatMinorAmount divides by 100
+  return formatMinorAmount(amountMinor, currency);
 }
 
 function parsePlanTierRpc(data: Json): PlanTierRpc {
@@ -174,11 +165,12 @@ export async function fetchMyBilling(): Promise<MyBillingSnapshot> {
     billingInterval,
     memberSinceLabel: formatDateLabel(asString(subscription?.started_at) ?? user.created_at),
     renewsLabel: formatDateLabel(asString(subscription?.current_period_end)),
-    priceAmount: isPaidTier ? formatUsdCents(priceCents) : "Free",
+    // monthly_price_cents / annual_price_cents store whole INR rupees (not paise)
+    priceAmount: isPaidTier ? formatInrRupees(priceCents) : "Free",
     priceCadence: isPaidTier
       ? billingInterval === "annual"
-        ? "per year"
-        : "per month"
+        ? "/ year"
+        : "/ month"
       : "forever",
     monthlyCreditGrant,
     availableCredits: progressionResult.data?.credits ?? 0,

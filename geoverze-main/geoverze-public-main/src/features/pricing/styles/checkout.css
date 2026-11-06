@@ -400,7 +400,135 @@
   box-shadow: 0 0 0 3px oklch(0.6 0.08 62 / 0.12);
 }
 
-/* Loading skeleton */
+/* ── GST breakdown table ─────────────────────────────────────────────────── */
+.checkout-gst-table {
+  margin-top: 1rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgb(23 25 29 / 0.1);
+  overflow: hidden;
+}
+
+.checkout-gst-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.78rem;
+  color: oklch(0.4 0.01 62 / 0.72);
+  background: rgb(23 25 29 / 0.02);
+}
+
+.checkout-gst-row + .checkout-gst-row {
+  border-top: 1px solid rgb(23 25 29 / 0.07);
+}
+
+.checkout-gst-row--total {
+  background: rgb(23 25 29 / 0.05);
+  font-weight: 560;
+  color: oklch(0.22 0.015 62);
+  font-size: 0.85rem;
+}
+
+/* ── Renewal note ────────────────────────────────────────────────────────── */
+.checkout-renew-note {
+  margin-top: 1rem;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: oklch(0.45 0.01 62 / 0.6);
+}
+
+/* ── Billing address section ─────────────────────────────────────────────── */
+.checkout-billing-section {
+  border: 1px solid rgb(23 25 29 / 0.12);
+  border-radius: 0.9rem;
+  overflow: hidden;
+}
+
+.checkout-billing-toggle {
+  appearance: none;
+  border: none;
+  background: transparent;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: oklch(0.3 0.015 62);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.checkout-billing-toggle:hover {
+  background: rgb(23 25 29 / 0.03);
+}
+
+.checkout-billing-toggle__required {
+  margin-left: auto;
+  font-size: 0.6rem;
+  font-weight: 580;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: oklch(0.6 0.08 62);
+  padding: 0.15rem 0.4rem;
+  border-radius: 999px;
+  background: oklch(0.6 0.08 62 / 0.1);
+}
+
+.checkout-billing-fields {
+  padding: 1rem;
+  border-top: 1px solid rgb(23 25 29 / 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  background: rgb(255 255 255 / 0.5);
+}
+
+.checkout-billing-row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+
+.checkout-billing-collapsed-hint {
+  padding: 0.65rem 1rem;
+  font-size: 0.75rem;
+  color: oklch(0.45 0.01 62 / 0.6);
+  border-top: 1px solid rgb(23 25 29 / 0.06);
+}
+
+/* ── GSTIN section ───────────────────────────────────────────────────────── */
+.checkout-gstin-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.checkout-gstin-note {
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: oklch(0.45 0.01 62 / 0.6);
+  margin: 0;
+}
+
+/* ── Back link ───────────────────────────────────────────────────────────── */
+.checkout-back-link {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  color: oklch(0.45 0.01 62 / 0.65);
+  text-decoration: none;
+  transition: color 0.15s;
+  align-self: flex-start;
+}
+
+.checkout-back-link:hover {
+  color: oklch(0.3 0.01 62);
+}
+
+/* ── Loading skeleton */
 .checkout-skeleton {
   border-radius: 0.5rem;
   background: linear-gradient(

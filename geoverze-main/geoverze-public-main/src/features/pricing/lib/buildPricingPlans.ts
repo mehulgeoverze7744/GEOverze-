@@ -1,9 +1,22 @@
 import type { PlanPromotionRow, SubscriptionPlanRow } from "../data/fetchSubscriptionCatalog";
 import type { BillingCycle, PlanPrice, PricingPlan, TierId } from "../data/plans";
 import { TIER_ORDER, TIER_PRESENTATION } from "../data/plans";
-import { formatUsdCents } from "./formatPrice";
+import { formatInrRupees } from "./formatInr";
+import { GST_CONFIG } from "./gstConfig";
+
+/**
+ * NOTE on catalog amounts:
+ * subscription_plans.monthly_price_cents / annual_price_cents store WHOLE INR RUPEES
+ * despite the _cents suffix. Use formatInrRupees() (no division by 100).
+ * e.g. 499 → ₹499/month
+ */
 
 const EMPTY_PROVIDER_IDS = { stripe: null, razorpay: null } as const;
+
+/** GST suffix appended to prices on the pricing page. */
+const GST_SUFFIX = GST_CONFIG.taxInclusive
+  ? " incl. GST"
+  : " + GST";
 
 function findPromotion(
   promotions: PlanPromotionRow[],
@@ -18,7 +31,7 @@ function buildMonthlyPrice(plan: SubscriptionPlanRow, promotions: PlanPromotionR
     return {
       amount: "Free",
       cadence: "forever",
-      note: "No card, no expiry.",
+      note: "No credit card required. No expiry.",
       providerPriceId: { ...EMPTY_PROVIDER_IDS },
     };
   }
@@ -27,22 +40,22 @@ function buildMonthlyPrice(plan: SubscriptionPlanRow, promotions: PlanPromotionR
   if (promo) {
     const standard = plan.monthly_price_cents;
     const introNote = promo.intro_period_months
-      ? `First ${promo.intro_period_months} months, then ${formatUsdCents(standard)} per month. Billed monthly, cancel anytime.`
-      : "Billed monthly, cancel anytime.";
+      ? `First ${promo.intro_period_months} months, then ${formatInrRupees(standard)}/month.${GST_SUFFIX}. Billed monthly, cancel anytime.`
+      : `${GST_SUFFIX}. Billed monthly, cancel anytime.`;
 
     return {
-      amount: formatUsdCents(promo.price_cents),
-      compareAt: formatUsdCents(standard),
-      cadence: "per month",
+      amount: formatInrRupees(promo.price_cents),
+      compareAt: formatInrRupees(standard),
+      cadence: "/ month",
       note: introNote,
       providerPriceId: { ...EMPTY_PROVIDER_IDS },
     };
   }
 
   return {
-    amount: formatUsdCents(plan.monthly_price_cents),
-    cadence: "per month",
-    note: "Billed monthly, cancel anytime.",
+    amount: formatInrRupees(plan.monthly_price_cents),
+    cadence: "/ month",
+    note: `${GST_SUFFIX}. Billed monthly, cancel anytime.`,
     providerPriceId: { ...EMPTY_PROVIDER_IDS },
   };
 }
@@ -52,21 +65,22 @@ function buildAnnualPrice(plan: SubscriptionPlanRow): PlanPrice {
     return {
       amount: "Free",
       cadence: "forever",
-      note: "No card, no expiry.",
+      note: "No credit card required. No expiry.",
       providerPriceId: { ...EMPTY_PROVIDER_IDS },
     };
   }
 
-  const tenMonthEquivalent = plan.monthly_price_cents * 10;
-  const savings = tenMonthEquivalent - plan.annual_price_cents;
+  // Savings: annual vs 12 × monthly (not 10×, to show true annual savings)
+  const twelveMonthlyCost = plan.monthly_price_cents * 12;
+  const savings = twelveMonthlyCost - plan.annual_price_cents;
   const note =
     savings > 0
-      ? `Save ${formatUsdCents(savings)} versus ten monthly payments. Billed annually, cancel anytime.`
-      : "Billed annually, cancel anytime.";
+      ? `Save ${formatInrRupees(savings)} vs twelve monthly payments.${GST_SUFFIX}. Billed annually, cancel anytime.`
+      : `${GST_SUFFIX}. Billed annually, cancel anytime.`;
 
   return {
-    amount: formatUsdCents(plan.annual_price_cents),
-    cadence: "per year",
+    amount: formatInrRupees(plan.annual_price_cents),
+    cadence: "/ year",
     note,
     providerPriceId: { ...EMPTY_PROVIDER_IDS },
   };

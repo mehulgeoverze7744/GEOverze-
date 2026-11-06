@@ -12,3 +12,6 @@ export type { PricingPlan, BillingCycle, TierId } from "./data/plans";
 export { resolveEntitlements, meetsMinTier, minTierLabel } from "./lib/entitlements";
 export type { Entitlements } from "./lib/entitlements";
 export { isRazorpayConfigured, checkoutHref } from "./lib/checkout";
+export { formatInrRupees, formatInrPaise, formatMinorAmount } from "./lib/formatInr";
+export { GST_CONFIG, calcGst, gstBreakdownSummary } from "./lib/gstConfig";
+export type { GstConfig } from "./lib/gstConfig";

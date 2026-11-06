@@ -211,16 +211,37 @@ Deno.serve(async (req: Request) => {
 
         // Also record the payment if present
         if (payment && payment.status === "captured") {
-          // Find the internal subscription to get user_id and price_snapshot_id
           const { data: internalSub } = await admin
             .from("user_subscriptions")
-            .select("id, user_id, current_price_snapshot_id, plan_tier")
+            .select("id, user_id, current_price_snapshot_id, plan_tier, billing_interval, billing_address_id")
             .eq("provider_subscription_id", sub.id)
             .eq("provider_name", "razorpay")
             .maybeSingle();
 
           if (internalSub) {
-            await admin.rpc("record_razorpay_payment", {
+            // Fetch GST config for invoice
+            const { data: gstRow } = await admin
+              .from("billing_gst_config")
+              .select("rate_percent, tax_inclusive")
+              .eq("id", 1)
+              .maybeSingle();
+
+            const rateDecimal = gstRow ? Number(gstRow.rate_percent) / 100 : 0.18;
+            const taxInclusive = gstRow ? Boolean(gstRow.tax_inclusive) : true;
+
+            // Calculate GST breakdown from charge amount (in paise)
+            const totalPaise = payment.amount;
+            let basePaise: number;
+            let gstPaise: number;
+            if (taxInclusive) {
+              basePaise = Math.round(totalPaise / (1 + rateDecimal));
+              gstPaise = totalPaise - basePaise;
+            } else {
+              gstPaise = Math.round(totalPaise * rateDecimal);
+              basePaise = totalPaise - gstPaise;
+            }
+
+            const { data: paymentRow } = await admin.rpc("record_razorpay_payment", {
               p_subscription_id: internalSub.id,
               p_user_id: internalSub.user_id,
               p_price_snapshot_id: internalSub.current_price_snapshot_id,
@@ -230,11 +251,28 @@ Deno.serve(async (req: Request) => {
               p_plan_tier: internalSub.plan_tier,
               p_charge_currency: payment.currency,
               p_charge_amount_minor: payment.amount,
-              p_catalog_usd_amount_cents: payment.amount, // approx; exact FX stored in snapshot
+              p_catalog_usd_amount_cents: payment.amount,
               p_status: "succeeded",
               p_period_start: unixToIso(sub.current_start),
               p_period_end: unixToIso(sub.current_end),
               p_webhook_event_id: webhookEventId ?? null,
+            });
+
+            // Create GST invoice
+            await admin.rpc("create_billing_invoice", {
+              p_user_id: internalSub.user_id,
+              p_subscription_id: internalSub.id,
+              p_payment_id: paymentRow ?? null,
+              p_plan_tier: internalSub.plan_tier,
+              p_billing_interval: internalSub.billing_interval ?? "monthly",
+              p_base_amount_minor: basePaise,
+              p_gst_amount_minor: gstPaise,
+              p_total_amount_minor: totalPaise,
+              p_gst_rate_percent: gstRow?.rate_percent ?? 18,
+              p_currency: payment.currency,
+              p_billing_address_id: internalSub.billing_address_id ?? null,
+              p_period_start: unixToIso(sub.current_start),
+              p_period_end: unixToIso(sub.current_end),
             });
           }
         }
