@@ -420,6 +420,16 @@ export function GstoreAdminScreen() {
               </button>
             </div>
           )}
+
+          {/* Payment infrastructure link */}
+          <div className="mt-6 flex justify-center">
+            <Link
+              to="/geostore/admin/payments"
+              className="flex items-center gap-1.5 text-[12px] text-[#777] hover:text-black border border-[#ddd] px-4 py-2 rounded-lg hover:bg-[#f5f5f5] transition-colors"
+            >
+              Payment Infrastructure & Audit Log →
+            </Link>
+          </div>
         </div>
       </main>
     </div>

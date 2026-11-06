@@ -116,6 +116,7 @@ import { Route as GeolibraryCollectionsIndexRouteImport } from './routes/geolibr
 import { Route as GeolibraryCollectionsSlugRouteImport } from './routes/geolibrary.collections.$slug'
 import { Route as GeolibraryCreatorsIndexRouteImport } from './routes/geolibrary.creators.index'
 import { Route as GeolibraryCreatorsHandleRouteImport } from './routes/geolibrary.creators.$handle'
+import { Route as GeostoreAdminPaymentsRouteImport } from './routes/geostore.admin.payments'
 import { Route as GeostoreCategorySlugRouteImport } from './routes/geostore.category.$slug'
 import { Route as GeostoreOrderOrderIdRouteImport } from './routes/geostore.order.$orderId'
 import { Route as GeostoreProductSlugRouteImport } from './routes/geostore.product.$slug'
@@ -693,6 +694,11 @@ const GeolibraryCreatorsHandleRoute =
     path: '/creators/$handle',
     getParentRoute: () => GeolibraryRoute,
   } as any)
+const GeostoreAdminPaymentsRoute = GeostoreAdminPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => GeostoreAdminRoute,
+} as any)
 const GeostoreCategorySlugRoute = GeostoreCategorySlugRouteImport.update({
   id: '/category/$slug',
   path: '/category/$slug',
@@ -932,7 +938,7 @@ export interface FileRoutesByFullPath {
   '/community/topics': typeof CommunityTopicsRoute
   '/geolibrary/bookmarks': typeof GeolibraryBookmarksRoute
   '/geolibrary/browse': typeof GeolibraryBrowseRoute
-  '/geostore/admin': typeof GeostoreAdminRoute
+  '/geostore/admin': typeof GeostoreAdminRouteWithChildren
   '/geostore/browse': typeof GeostoreBrowseRoute
   '/geostore/cart': typeof GeostoreCartRoute
   '/geostore/checkout': typeof GeostoreCheckoutRoute
@@ -983,6 +989,7 @@ export interface FileRoutesByFullPath {
   '/geolibrary/article/$slug': typeof GeolibraryArticleSlugRoute
   '/geolibrary/collections/$slug': typeof GeolibraryCollectionsSlugRoute
   '/geolibrary/creators/$handle': typeof GeolibraryCreatorsHandleRoute
+  '/geostore/admin/payments': typeof GeostoreAdminPaymentsRoute
   '/geostore/category/$slug': typeof GeostoreCategorySlugRoute
   '/geostore/order/$orderId': typeof GeostoreOrderOrderIdRoute
   '/geostore/product/$slug': typeof GeostoreProductSlugRoute
@@ -1070,7 +1077,7 @@ export interface FileRoutesByTo {
   '/community/topics': typeof CommunityTopicsRoute
   '/geolibrary/bookmarks': typeof GeolibraryBookmarksRoute
   '/geolibrary/browse': typeof GeolibraryBrowseRoute
-  '/geostore/admin': typeof GeostoreAdminRoute
+  '/geostore/admin': typeof GeostoreAdminRouteWithChildren
   '/geostore/browse': typeof GeostoreBrowseRoute
   '/geostore/cart': typeof GeostoreCartRoute
   '/geostore/checkout': typeof GeostoreCheckoutRoute
@@ -1116,6 +1123,7 @@ export interface FileRoutesByTo {
   '/geolibrary/article/$slug': typeof GeolibraryArticleSlugRoute
   '/geolibrary/collections/$slug': typeof GeolibraryCollectionsSlugRoute
   '/geolibrary/creators/$handle': typeof GeolibraryCreatorsHandleRoute
+  '/geostore/admin/payments': typeof GeostoreAdminPaymentsRoute
   '/geostore/category/$slug': typeof GeostoreCategorySlugRoute
   '/geostore/order/$orderId': typeof GeostoreOrderOrderIdRoute
   '/geostore/product/$slug': typeof GeostoreProductSlugRoute
@@ -1212,7 +1220,7 @@ export interface FileRoutesById {
   '/community/topics': typeof CommunityTopicsRoute
   '/geolibrary/bookmarks': typeof GeolibraryBookmarksRoute
   '/geolibrary/browse': typeof GeolibraryBrowseRoute
-  '/geostore/admin': typeof GeostoreAdminRoute
+  '/geostore/admin': typeof GeostoreAdminRouteWithChildren
   '/geostore/browse': typeof GeostoreBrowseRoute
   '/geostore/cart': typeof GeostoreCartRoute
   '/geostore/checkout': typeof GeostoreCheckoutRoute
@@ -1263,6 +1271,7 @@ export interface FileRoutesById {
   '/geolibrary/article/$slug': typeof GeolibraryArticleSlugRoute
   '/geolibrary/collections/$slug': typeof GeolibraryCollectionsSlugRoute
   '/geolibrary/creators/$handle': typeof GeolibraryCreatorsHandleRoute
+  '/geostore/admin/payments': typeof GeostoreAdminPaymentsRoute
   '/geostore/category/$slug': typeof GeostoreCategorySlugRoute
   '/geostore/order/$orderId': typeof GeostoreOrderOrderIdRoute
   '/geostore/product/$slug': typeof GeostoreProductSlugRoute
@@ -1410,6 +1419,7 @@ export interface FileRouteTypes {
     | '/geolibrary/article/$slug'
     | '/geolibrary/collections/$slug'
     | '/geolibrary/creators/$handle'
+    | '/geostore/admin/payments'
     | '/geostore/category/$slug'
     | '/geostore/order/$orderId'
     | '/geostore/product/$slug'
@@ -1543,6 +1553,7 @@ export interface FileRouteTypes {
     | '/geolibrary/article/$slug'
     | '/geolibrary/collections/$slug'
     | '/geolibrary/creators/$handle'
+    | '/geostore/admin/payments'
     | '/geostore/category/$slug'
     | '/geostore/order/$orderId'
     | '/geostore/product/$slug'
@@ -1689,6 +1700,7 @@ export interface FileRouteTypes {
     | '/geolibrary/article/$slug'
     | '/geolibrary/collections/$slug'
     | '/geolibrary/creators/$handle'
+    | '/geostore/admin/payments'
     | '/geostore/category/$slug'
     | '/geostore/order/$orderId'
     | '/geostore/product/$slug'
@@ -2517,6 +2529,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GeolibraryCreatorsHandleRouteImport
       parentRoute: typeof GeolibraryRoute
     }
+    '/geostore/admin/payments': {
+      id: '/geostore/admin/payments'
+      path: '/payments'
+      fullPath: '/geostore/admin/payments'
+      preLoaderRoute: typeof GeostoreAdminPaymentsRouteImport
+      parentRoute: typeof GeostoreAdminRoute
+    }
     '/geostore/category/$slug': {
       id: '/geostore/category/$slug'
       path: '/category/$slug'
@@ -2883,8 +2902,20 @@ const GeolibraryRouteWithChildren = GeolibraryRoute._addFileChildren(
   GeolibraryRouteChildren,
 )
 
+interface GeostoreAdminRouteChildren {
+  GeostoreAdminPaymentsRoute: typeof GeostoreAdminPaymentsRoute
+}
+
+const GeostoreAdminRouteChildren: GeostoreAdminRouteChildren = {
+  GeostoreAdminPaymentsRoute: GeostoreAdminPaymentsRoute,
+}
+
+const GeostoreAdminRouteWithChildren = GeostoreAdminRoute._addFileChildren(
+  GeostoreAdminRouteChildren,
+)
+
 interface GeostoreRouteChildren {
-  GeostoreAdminRoute: typeof GeostoreAdminRoute
+  GeostoreAdminRoute: typeof GeostoreAdminRouteWithChildren
   GeostoreBrowseRoute: typeof GeostoreBrowseRoute
   GeostoreCartRoute: typeof GeostoreCartRoute
   GeostoreCheckoutRoute: typeof GeostoreCheckoutRoute
@@ -2902,7 +2933,7 @@ interface GeostoreRouteChildren {
 }
 
 const GeostoreRouteChildren: GeostoreRouteChildren = {
-  GeostoreAdminRoute: GeostoreAdminRoute,
+  GeostoreAdminRoute: GeostoreAdminRouteWithChildren,
   GeostoreBrowseRoute: GeostoreBrowseRoute,
   GeostoreCartRoute: GeostoreCartRoute,
   GeostoreCheckoutRoute: GeostoreCheckoutRoute,
