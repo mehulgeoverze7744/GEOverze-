@@ -625,10 +625,14 @@ export function GstoreCheckoutScreen() {
      *   - Forces light background on the checkout content area, overriding
      *     the dark site theme for this route only.
      *   - Does NOT affect the global site nav, footer, or any other route.
+     *   - pt-[var(--nav-height)]: offsets the fixed GVRZE navbar (4.75 rem)
+     *     so the checkout sub-header appears directly below the navbar, not
+     *     hidden beneath it.  Every other page applies the same offset.
      */
-    <div className="gvrze-checkout min-h-screen bg-[#F3F4F6]">
+    <div className="gvrze-checkout min-h-screen bg-[#F3F4F6] pt-[var(--nav-height)]">
 
-      {/* ── Page header (replaces the old dark header bar) ─────────────────── */}
+      {/* ── Checkout sub-header (Back to Store / Secure Checkout) ─────────── */}
+      {/* Normal document flow — sits flush below the fixed navbar, no overlap. */}
       <div className="bg-white border-b border-[#E5E7EB]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-3">
           {/* Back link */}
