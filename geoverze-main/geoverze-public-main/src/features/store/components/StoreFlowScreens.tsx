@@ -10,6 +10,14 @@ import {
   PageHeader,
   SectionContainer,
 } from "@/components/shared";
+
+// StorefrontNav + storefront.css: activated for the Cart page so it
+// renders the same icon bar (Wishlist, Cart, Search, Account) as every
+// other Gstore storefront page (Homepage, Category, Product pages).
+// storefront.css hides the global site nav and floating action bar
+// whenever #gvrze-storefront is in the DOM, so both switch out cleanly.
+import "../storefront/storefront.css";
+import { StorefrontNav } from "../storefront/StorefrontNav";
 import { useCartStore } from "@/stores/cartStore";
 import { useStoreStore } from "@/stores/storeStore";
 
@@ -76,95 +84,114 @@ export function CartScreen() {
   });
 
   return (
-    <PageShell>
-      <PageHeader
-        eyebrow="Gstore"
-        title="Your cart"
-        description="Review your picks before checkout."
-        breadcrumb={crumbs("Cart")}
-      />
-      <SectionContainer size="wide">
-        {!hydrated ? (
-          <EmptyState icon={ShoppingBag} title="Loading cart…" />
-        ) : lines.length === 0 ? (
-          <EmptyState
-            icon={ShoppingBag}
-            title="Your cart is empty"
-            description="Explore the collection and add something worth carrying."
-            action={
-              <GeoButton asChild variant="solid">
-                <Link to="/geostore/browse">Browse the catalogue</Link>
-              </GeoButton>
-            }
-          />
-        ) : (
-          <div className="grid gap-8 lg:grid-cols-[1.6fr_1fr]">
-            <div className="space-y-4">
-              {lines.map((line) => (
-                <CartLineRow
-                  key={line.id}
-                  line={line}
-                  onQuantity={setQuantity}
-                  onRemove={remove}
-                  onSave={saveForLater}
-                />
-              ))}
-            </div>
-            <AnimatedSection className="h-fit rounded-2xl border border-bronze/15 bg-charcoal/50 p-6">
-              <h2 className="text-sm uppercase tracking-[0.2em] text-foreground/50">Summary</h2>
-              <dl className="mt-5 space-y-3 text-sm">
-                <div className="flex justify-between text-foreground/60">
-                  <dt>Subtotal</dt>
-                  <dd>{money(totals.subtotal)}</dd>
-                </div>
-                <div className="flex justify-between text-foreground/60">
-                  <dt>Shipping</dt>
-                  <dd>{totals.shipping === 0 ? "Free" : money(totals.shipping)}</dd>
-                </div>
-                {totals.creditsDue > 0 ? (
-                  <div className="flex justify-between text-bronze">
-                    <dt>Credits</dt>
-                    <dd className="inline-flex items-center gap-1">
-                      <Coins className="h-3.5 w-3.5" /> {totals.creditsDue}
-                    </dd>
-                  </div>
-                ) : null}
-                <div className="flex justify-between border-t border-bronze/10 pt-3 text-base text-foreground">
-                  <dt>Total</dt>
-                  <dd>{money(totals.total)}</dd>
-                </div>
-              </dl>
-              <GeoButton
-                asChild
-                variant="solid"
-                className="mt-6 w-full uppercase tracking-[0.14em]"
-              >
-                <Link to="/geostore/checkout">Checkout</Link>
-              </GeoButton>
-            </AnimatedSection>
-          </div>
-        )}
+    /*
+     * #gvrze-storefront activates the storefront.css rules that:
+     *  - hide the global site navbar (the dark charcoal one)
+     *  - hide the floating Gstore action bar ([aria-label="Gstore actions"])
+     *  - inject StorefrontNav which carries the correct Wishlist, Cart,
+     *    Search and Account icon buttons matching all other Gstore pages.
+     *
+     * The cart-content div restores the dark app background so all existing
+     * cart UI (CartLineRow, GeoButton, etc.) keep their dark-theme styling.
+     */
+    <div id="gvrze-storefront">
+      {/* ── Storefront nav — same icon buttons as homepage / category pages ── */}
+      <StorefrontNav variant="solid" />
 
-        {saved.length > 0 ? (
-          <section className="mt-14">
-            <h2 className="text-sm uppercase tracking-[0.2em] text-foreground/50">
-              Saved for later
-            </h2>
-            <div className="mt-5 space-y-4">
-              {saved.map((line) => (
-                <CartLineRow
-                  key={line.id}
-                  line={line}
-                  variant="saved"
-                  onRemove={removeSaved}
-                  onMoveToCart={moveToCart}
-                />
-              ))}
+      {/* ── Cart content — dark background preserves the existing dark-theme UI ── */}
+      <div
+        className="bg-background text-foreground min-h-[calc(100dvh-64px)] pb-[var(--space-section-sm)]"
+        id="gvrze-cart-content"
+      >
+        <PageHeader
+          eyebrow="Gstore"
+          title="Your cart"
+          description="Review your picks before checkout."
+          breadcrumb={crumbs("Cart")}
+        />
+        <SectionContainer size="wide">
+          {!hydrated ? (
+            <EmptyState icon={ShoppingBag} title="Loading cart…" />
+          ) : lines.length === 0 ? (
+            <EmptyState
+              icon={ShoppingBag}
+              title="Your cart is empty"
+              description="Explore the collection and add something worth carrying."
+              action={
+                <GeoButton asChild variant="solid">
+                  <Link to="/geostore/browse">Browse the catalogue</Link>
+                </GeoButton>
+              }
+            />
+          ) : (
+            <div className="grid gap-8 lg:grid-cols-[1.6fr_1fr]">
+              <div className="space-y-4">
+                {lines.map((line) => (
+                  <CartLineRow
+                    key={line.id}
+                    line={line}
+                    onQuantity={setQuantity}
+                    onRemove={remove}
+                    onSave={saveForLater}
+                  />
+                ))}
+              </div>
+              <AnimatedSection className="h-fit rounded-2xl border border-bronze/15 bg-charcoal/50 p-6">
+                <h2 className="text-sm uppercase tracking-[0.2em] text-foreground/50">Summary</h2>
+                <dl className="mt-5 space-y-3 text-sm">
+                  <div className="flex justify-between text-foreground/60">
+                    <dt>Subtotal</dt>
+                    <dd>{money(totals.subtotal)}</dd>
+                  </div>
+                  <div className="flex justify-between text-foreground/60">
+                    <dt>Shipping</dt>
+                    <dd>{totals.shipping === 0 ? "Free" : money(totals.shipping)}</dd>
+                  </div>
+                  {totals.creditsDue > 0 ? (
+                    <div className="flex justify-between text-bronze">
+                      <dt>Credits</dt>
+                      <dd className="inline-flex items-center gap-1">
+                        <Coins className="h-3.5 w-3.5" /> {totals.creditsDue}
+                      </dd>
+                    </div>
+                  ) : null}
+                  <div className="flex justify-between border-t border-bronze/10 pt-3 text-base text-foreground">
+                    <dt>Total</dt>
+                    <dd>{money(totals.total)}</dd>
+                  </div>
+                </dl>
+                <GeoButton
+                  asChild
+                  variant="solid"
+                  className="mt-6 w-full uppercase tracking-[0.14em]"
+                >
+                  <Link to="/geostore/checkout">Checkout</Link>
+                </GeoButton>
+              </AnimatedSection>
             </div>
-          </section>
-        ) : null}
-      </SectionContainer>
-    </PageShell>
+          )}
+
+          {saved.length > 0 ? (
+            <section className="mt-14">
+              <h2 className="text-sm uppercase tracking-[0.2em] text-foreground/50">
+                Saved for later
+              </h2>
+              <div className="mt-5 space-y-4">
+                {saved.map((line) => (
+                  <CartLineRow
+                    key={line.id}
+                    line={line}
+                    variant="saved"
+                    onRemove={removeSaved}
+                    onMoveToCart={moveToCart}
+                  />
+                ))}
+              </div>
+            </section>
+          ) : null}
+        </SectionContainer>
+      </div>
+    </div>
   );
 }
 

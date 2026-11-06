@@ -172,6 +172,21 @@ body:has(#gvrze-storefront) footer .mt-16.border-t {
   overflow-x: clip;
 }
 
+/* ─── Cart page inside the storefront shell ─────────────────────────────────
+ * CartScreen renders in #gvrze-storefront to get StorefrontNav icons.
+ * Its content sits on the dark app background — reset the storefront's
+ * light canvas and sf-ink text colour so dark-theme classes still work.
+ * ─────────────────────────────────────────────────────────────────────────── */
+#gvrze-storefront #gvrze-cart-content {
+  background: var(--background, oklch(0.06 0.004 60));
+  color: var(--foreground, oklch(0.95 0.005 60));
+}
+
+/* Re-allow the white & glass-panel styling used by some cart sub-components */
+#gvrze-storefront #gvrze-cart-content :focus-visible {
+  box-shadow: 0 0 0 2px oklch(0.55 0.08 55 / 0.5); /* bronze focus ring */
+}
+
 /* ─── Editorial category pages ─────────────────────────────────────────────
  * Applied to every category and collection listing page that wraps its
  * content in #gvrze-storefront (T-Shirts, Hoodies, Accessories, Browse, etc.)
