@@ -107,7 +107,7 @@ export function CheckoutScreen() {
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [billingDetails, setBillingDetails] = useState<BillingDetails>(EMPTY_BILLING);
   const [billingErrors, setBillingErrors] = useState<Partial<Record<keyof BillingDetails, string>>>({});
-  const [showBillingAddress, setShowBillingAddress] = useState(false);
+  const [showBillingAddress, setShowBillingAddress] = useState(true);
 
   const { plans, loading: catalogLoading, error: catalogError } = usePricingCatalog();
   const plan = plans.find((p) => p.id === initialPlan) ?? null;
@@ -582,8 +582,8 @@ export function CheckoutScreen() {
               ) : null}
 
               {!user ? (
-                <p className="text-xs text-center" style={{ color: "oklch(0.5 0.08 24)" }}>
-                  <Link to="/auth/sign-in" className="underline underline-offset-2">Sign in</Link>{" "}
+                <p className="text-xs text-center" style={{ color: "#64748b" }}>
+                  <Link to="/auth/login" className="underline underline-offset-2">Sign in</Link>{" "}
                   to complete your purchase.
                 </p>
               ) : null}
