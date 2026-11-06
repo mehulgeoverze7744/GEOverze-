@@ -171,19 +171,25 @@ export function BronzeGlobe({ progress, origin, parked, startScale, bigScale, fi
   const maxAnisotropy = useThree((state) => state.gl.capabilities.getMaxAnisotropy());
   const textureUrls = useMemo(() => earthGlobeTextures(mobile), [mobile]);
 
+  // useLoader with TextureLoader returns Texture<HTMLImageElement>[] in newer
+  // @react-three/fiber types, but our configure helpers and THREE constructors
+  // all expect Texture (Texture<unknown>).  Cast once at the destructure site
+  // so the rest of the component stays uncluttered.
+  // useLoader suspends until all textures are loaded, so they are always
+  // defined when the component renders — the cast removes | undefined.
   const [dayMap, nightMap, bumpMap, cloudsMap] = useLoader(THREE.TextureLoader, [
     textureUrls.day,
     textureUrls.night,
     textureUrls.bump,
     textureUrls.clouds,
-  ]);
+  ]) as unknown as [THREE.Texture, THREE.Texture, THREE.Texture, THREE.Texture];
 
   useEffect(() => {
-    // useLoader suspends until all textures are ready — non-null assertions are safe.
-    configureEarthColorMap(dayMap!, maxAnisotropy);
-    configureEarthColorMap(nightMap!, maxAnisotropy);
-    configureEarthDataMap(bumpMap!, maxAnisotropy);
-    configureCloudMaskMap(cloudsMap!, maxAnisotropy);
+    // All four textures are guaranteed non-null (useLoader suspends otherwise).
+    configureEarthColorMap(dayMap, maxAnisotropy);
+    configureEarthColorMap(nightMap, maxAnisotropy);
+    configureEarthDataMap(bumpMap, maxAnisotropy);
+    configureCloudMaskMap(cloudsMap, maxAnisotropy);
   }, [bumpMap, cloudsMap, dayMap, maxAnisotropy, nightMap]);
 
   const earthMaterial = useMemo(() => {
@@ -290,11 +296,11 @@ export function BronzeGlobe({ progress, origin, parked, startScale, bigScale, fi
       earthMaterial.dispose();
       cloudMaterial.dispose();
       atmosphereMaterial.dispose();
-      // useLoader guarantees these are non-null when cleanup runs.
-      dayMap!.dispose();
-      nightMap!.dispose();
-      bumpMap!.dispose();
-      cloudsMap!.dispose();
+      // Cast at destructure site guarantees non-null — no ! needed.
+      dayMap.dispose();
+      nightMap.dispose();
+      bumpMap.dispose();
+      cloudsMap.dispose();
     },
     [
       atmosphereGeometry,
