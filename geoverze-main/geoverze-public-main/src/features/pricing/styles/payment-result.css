@@ -1,0 +1,172 @@
+/*
+ * Payment result page — GVRZE light theme.
+ * Scoped to #gvrze-payment-result.
+ */
+
+#gvrze-payment-result {
+  min-height: 100dvh;
+  padding-top: calc(var(--nav-height, 4rem) + 2rem);
+  padding-bottom: 4rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.pr-shell {
+  max-width: 36rem;
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 5vw, 2rem);
+}
+
+.pr-card {
+  border-radius: 1.5rem;
+  padding: clamp(2rem, 5vw, 2.75rem);
+  background: rgb(255 255 255 / 0.9);
+  border: 1px solid rgb(23 25 29 / 0.1);
+  box-shadow: 0 4px 32px -8px rgb(23 25 29 / 0.1);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+/* ── Icon circle ─────────────────────────────────────────────────────────── */
+.pr-icon-ring {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.pr-icon-ring--success {
+  background: oklch(0.55 0.14 148 / 0.12);
+  color: oklch(0.45 0.14 148);
+}
+
+.pr-icon-ring--failed {
+  background: oklch(0.55 0.18 24 / 0.1);
+  color: oklch(0.5 0.18 24);
+}
+
+.pr-icon-ring--processing {
+  background: oklch(0.6 0.08 62 / 0.1);
+  color: oklch(0.5 0.08 62);
+}
+
+.pr-icon-ring--cancelled {
+  background: oklch(0.5 0.01 62 / 0.08);
+  color: oklch(0.5 0.01 62 / 0.65);
+}
+
+/* Spin for processing state */
+.pr-icon-ring--processing svg {
+  animation: pr-spin 1.4s linear infinite;
+}
+
+@keyframes pr-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pr-icon-ring--processing svg {
+    animation: none;
+  }
+}
+
+/* ── Heading / body ──────────────────────────────────────────────────────── */
+.pr-heading {
+  font-size: clamp(1.4rem, 4vw, 1.9rem);
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: oklch(0.18 0.015 62);
+  margin: 0 0 0.75rem;
+}
+
+.pr-body {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: oklch(0.4 0.01 62 / 0.72);
+  max-width: 26rem;
+  margin: 0 0 2rem;
+}
+
+/* ── Detail chip (plan name, payment ID) ─────────────────────────────────── */
+.pr-detail-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background: oklch(0.6 0.08 62 / 0.08);
+  border: 1px solid oklch(0.6 0.08 62 / 0.18);
+  font-size: 0.75rem;
+  color: oklch(0.4 0.08 62);
+  margin-bottom: 2rem;
+}
+
+/* ── Action buttons ──────────────────────────────────────────────────────── */
+.pr-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  width: 100%;
+  max-width: 20rem;
+}
+
+.pr-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: 0.7rem;
+  font-size: 0.84rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.15s, transform 0.12s;
+}
+
+.pr-btn:active {
+  transform: scale(0.97);
+}
+
+.pr-btn--primary {
+  background: oklch(0.6 0.08 62);
+  color: #fff;
+  border: none;
+}
+
+.pr-btn--primary:hover {
+  opacity: 0.88;
+}
+
+.pr-btn--secondary {
+  background: transparent;
+  color: oklch(0.4 0.01 62);
+  border: 1px solid rgb(23 25 29 / 0.16);
+}
+
+.pr-btn--secondary:hover {
+  background: rgb(23 25 29 / 0.04);
+}
+
+/* ── Help line ───────────────────────────────────────────────────────────── */
+.pr-help {
+  margin-top: 1.75rem;
+  font-size: 0.72rem;
+  color: oklch(0.45 0.01 62 / 0.55);
+}
+
+.pr-help a {
+  color: oklch(0.5 0.08 62);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}

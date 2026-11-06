@@ -1,14 +1,18 @@
 import { Link } from "@tanstack/react-router";
 import { Coins, Download } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { Breadcrumb } from "@/components/shared/Breadcrumb";
 import { SectionContainer } from "@/components/shared/SectionContainer";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/lib/supabase/client";
 
 import { paymentMethods } from "../data/billing";
 import { useMyBilling } from "../hooks/useMyBilling";
 import { usePricingCatalog } from "../hooks/usePricingCatalog";
+import { isRazorpayConfigured } from "../lib/checkout";
 import "../styles/billing-membership.css";
 
 const PAYMENT_EMOJIS: Record<string, string> = {
@@ -21,13 +25,51 @@ const PAYMENT_EMOJIS: Record<string, string> = {
 };
 
 const UNAVAILABLE_BILLING =
-  "This action is not connected to a billing provider yet. Your membership will not be changed.";
+  "Payment management activates once GVRZE's Razorpay integration is live.";
 
 /** Live membership, credits and payment history for the signed-in user. */
 export function SubscriptionScreen() {
   const { plans } = usePricingCatalog();
   const { data, loading, error, refetch } = useMyBilling();
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const razorpayLive = isRazorpayConfigured();
   const catalogPlan = data ? (plans.find((p) => p.id === data.tier) ?? null) : null;
+
+  async function handleCancelMembership() {
+    if (!razorpayLive) {
+      toast(UNAVAILABLE_BILLING);
+      return;
+    }
+    if (!window.confirm(
+      "Cancel membership at end of period?\n\nYou'll keep access until your current billing period ends. This cannot be undone from the app.",
+    )) {
+      return;
+    }
+    setCancelLoading(true);
+    try {
+      const { data: result, error: rpcError } = await supabase.rpc(
+        "request_cancel_subscription" as never,
+      ) as { data: { ok: boolean; reason?: string } | null; error: unknown };
+      if (rpcError || !result?.ok) {
+        const reason = result?.reason ?? "unknown";
+        if (reason === "no_active_subscription") {
+          toast.error("No active subscription found to cancel.");
+        } else {
+          toast.error("Could not request cancellation. Please contact support.");
+        }
+      } else {
+        toast.success("Membership cancellation scheduled", {
+          description:
+            "Your plan stays active until the end of your billing period.",
+        });
+        refetch();
+      }
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setCancelLoading(false);
+    }
+  }
   const planName = catalogPlan?.name ?? data?.planName ?? "";
   const planSummary = catalogPlan?.summary ?? data?.planSummary ?? "";
 
@@ -90,25 +132,34 @@ export function SubscriptionScreen() {
                       Change Plan
                     </Link>
                     {data.canSwitchToAnnual ? (
-                      <button
-                        type="button"
+                      <Link
+                        to="/pricing/checkout"
+                        search={{ plan: data.tier, cycle: "annual" }}
                         className="bm-btn bm-btn--secondary"
-                        disabled
-                        title={UNAVAILABLE_BILLING}
+                        title={!razorpayLive ? UNAVAILABLE_BILLING : "Switch to annual billing and save"}
+                        aria-disabled={!razorpayLive}
+                        onClick={!razorpayLive ? (e) => { e.preventDefault(); toast(UNAVAILABLE_BILLING); } : undefined}
                       >
                         Switch to Annual
-                      </button>
+                      </Link>
                     ) : null}
                   </div>
-                  {data.isPaidMembership ? (
+                  {data.isPaidMembership && !data.statusLabel.includes("cancel") ? (
                     <button
                       type="button"
                       className="bm-cancel"
-                      disabled
-                      title={UNAVAILABLE_BILLING}
+                      disabled={cancelLoading}
+                      title={!razorpayLive ? UNAVAILABLE_BILLING : undefined}
+                      onClick={() => void handleCancelMembership()}
+                      aria-busy={cancelLoading}
                     >
-                      Cancel membership
+                      {cancelLoading ? "Cancelling…" : "Cancel membership"}
                     </button>
+                  ) : null}
+                  {data.statusLabel.includes("cancel") ? (
+                    <p className="bm-note" style={{ color: "oklch(0.5 0.08 24)", marginTop: "0.5rem" }}>
+                      Cancellation scheduled — active until period end.
+                    </p>
                   ) : null}
                 </>
               ) : null}

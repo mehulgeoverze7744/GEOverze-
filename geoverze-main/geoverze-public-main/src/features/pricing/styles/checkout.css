@@ -1,0 +1,425 @@
+/*
+ * Checkout page — GVRZE light theme.
+ * All rules are scoped to #gvrze-checkout so they can't leak onto other pages.
+ * Inherits the light background from pricing-page-light.css via the shared
+ * #gvrze-pricing-page wrapper (checkout is a child route of /pricing).
+ */
+
+/* ── Layout ─────────────────────────────────────────────────────────────── */
+#gvrze-checkout {
+  min-height: 100dvh;
+  padding-top: calc(var(--nav-height, 4rem) + 1.75rem);
+  padding-bottom: 4rem;
+}
+
+.checkout-shell {
+  max-width: 68rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 5vw, 2.5rem);
+}
+
+.checkout-crumb {
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.2em;
+  color: oklch(0.35 0.012 62 / 0.52);
+}
+
+/* ── Two-column layout (summary left, form right on desktop) ─────────────── */
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .checkout-grid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: 2rem;
+  }
+}
+
+/* ── Plan summary card ───────────────────────────────────────────────────── */
+.checkout-summary {
+  position: relative;
+  border-radius: 1.35rem;
+  padding: 2rem;
+  background: rgb(255 255 255 / 0.72);
+  border: 1px solid rgb(23 25 29 / 0.1);
+  box-shadow: 0 2px 20px -6px rgb(23 25 29 / 0.08);
+}
+
+@media (min-width: 768px) {
+  .checkout-summary {
+    position: sticky;
+    top: calc(var(--nav-height, 4rem) + 1rem);
+  }
+}
+
+.checkout-summary__kicker {
+  font-size: 0.6rem;
+  font-weight: 580;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: oklch(0.6 0.08 62);
+  margin: 0 0 0.6rem;
+}
+
+.checkout-summary__plan-name {
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: oklch(0.18 0.015 62);
+  margin: 0;
+}
+
+.checkout-summary__positioning {
+  margin: 0.35rem 0 0;
+  font-size: 0.84rem;
+  color: oklch(0.4 0.01 62 / 0.72);
+}
+
+.checkout-summary__price-block {
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.checkout-summary__price-amount {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  color: oklch(0.18 0.015 62);
+  line-height: 1;
+}
+
+.checkout-summary__price-cadence {
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: oklch(0.45 0.01 62 / 0.65);
+}
+
+.checkout-summary__compare-at {
+  font-size: 0.88rem;
+  color: oklch(0.45 0.01 62 / 0.5);
+  text-decoration: line-through;
+}
+
+.checkout-summary__note {
+  margin-top: 0.6rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: oklch(0.45 0.01 62 / 0.65);
+}
+
+.checkout-summary__divider {
+  border: none;
+  border-top: 1px solid rgb(23 25 29 / 0.1);
+  margin: 1.5rem 0;
+}
+
+.checkout-summary__features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.checkout-summary__feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.82rem;
+  color: oklch(0.3 0.012 62 / 0.8);
+}
+
+.checkout-summary__feature-icon {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  color: oklch(0.6 0.1 62);
+}
+
+.checkout-summary__promo-badge {
+  margin-top: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 0.6rem;
+  background: oklch(0.6 0.08 62 / 0.1);
+  border: 1px solid oklch(0.6 0.08 62 / 0.22);
+  font-size: 0.75rem;
+  color: oklch(0.4 0.08 62);
+}
+
+/* ── Checkout form card ──────────────────────────────────────────────────── */
+.checkout-form-card {
+  border-radius: 1.35rem;
+  padding: 2rem;
+  background: rgb(255 255 255 / 0.9);
+  border: 1px solid rgb(23 25 29 / 0.1);
+  box-shadow: 0 2px 20px -6px rgb(23 25 29 / 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.checkout-form-card__title {
+  font-size: 1.1rem;
+  font-weight: 450;
+  letter-spacing: -0.015em;
+  color: oklch(0.18 0.015 62);
+  margin: 0;
+}
+
+/* Billing cycle toggle */
+.checkout-cycle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.checkout-cycle-label {
+  font-size: 0.62rem;
+  font-weight: 580;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: oklch(0.4 0.01 62 / 0.65);
+  flex-shrink: 0;
+}
+
+.checkout-cycle-tabs {
+  display: inline-flex;
+  border-radius: 0.6rem;
+  border: 1px solid rgb(23 25 29 / 0.12);
+  background: rgb(23 25 29 / 0.03);
+  overflow: hidden;
+}
+
+.checkout-cycle-tab {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  color: oklch(0.4 0.01 62 / 0.7);
+  transition: background 0.15s, color 0.15s;
+}
+
+.checkout-cycle-tab[aria-pressed="true"] {
+  background: oklch(0.6 0.08 62);
+  color: #fff;
+}
+
+.checkout-cycle-tab:focus-visible {
+  outline: 2px solid oklch(0.6 0.08 62 / 0.5);
+  outline-offset: -2px;
+}
+
+.checkout-cycle-save-pill {
+  font-size: 0.65rem;
+  font-weight: 560;
+  letter-spacing: 0.08em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: oklch(0.6 0.08 62 / 0.12);
+  color: oklch(0.45 0.08 62);
+  white-space: nowrap;
+}
+
+/* Coupon field */
+.checkout-coupon-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.6rem;
+  align-items: end;
+}
+
+.checkout-coupon-apply-btn {
+  appearance: none;
+  border: 1px solid rgb(23 25 29 / 0.18);
+  background: rgb(23 25 29 / 0.04);
+  border-radius: 0.75rem;
+  padding: 0.6rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: oklch(0.3 0.015 62);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  height: 2.75rem;
+}
+
+.checkout-coupon-apply-btn:hover {
+  background: rgb(23 25 29 / 0.08);
+  border-color: rgb(23 25 29 / 0.26);
+}
+
+.checkout-coupon-apply-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.checkout-coupon-feedback {
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.checkout-coupon-feedback--ok {
+  color: oklch(0.45 0.14 148);
+}
+
+.checkout-coupon-feedback--err {
+  color: oklch(0.5 0.16 24);
+}
+
+/* Terms */
+.checkout-terms-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.checkout-terms-checkbox {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.1rem;
+  accent-color: oklch(0.6 0.08 62);
+  cursor: pointer;
+}
+
+.checkout-terms-label {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: oklch(0.4 0.01 62 / 0.75);
+}
+
+.checkout-terms-label a {
+  color: oklch(0.5 0.08 62);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+/* Payment not configured notice */
+.checkout-unavailable {
+  border-radius: 0.9rem;
+  padding: 1rem 1.25rem;
+  background: oklch(0.95 0.005 50 / 0.7);
+  border: 1px solid oklch(0.6 0.08 62 / 0.2);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: oklch(0.4 0.01 62);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.checkout-unavailable__icon {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  color: oklch(0.6 0.08 62 / 0.7);
+}
+
+/* Primary CTA */
+.checkout-pay-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  min-height: 3rem;
+  border-radius: 0.75rem;
+  border: none;
+  background: oklch(0.6 0.08 62);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 540;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.12s;
+}
+
+.checkout-pay-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.checkout-pay-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.checkout-pay-btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.checkout-pay-btn--loading {
+  position: relative;
+  pointer-events: none;
+}
+
+/* Security footnote */
+.checkout-secure-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  color: oklch(0.45 0.01 62 / 0.55);
+}
+
+/* Input overrides for light theme */
+#gvrze-checkout input[type="text"],
+#gvrze-checkout input[type="email"] {
+  background: rgb(255 255 255 / 0.85);
+  border-color: rgb(23 25 29 / 0.16);
+  color: oklch(0.18 0.015 62);
+}
+
+#gvrze-checkout input[type="text"]::placeholder,
+#gvrze-checkout input[type="email"]::placeholder {
+  color: oklch(0.45 0.01 62 / 0.5);
+}
+
+#gvrze-checkout input[type="text"]:focus,
+#gvrze-checkout input[type="email"]:focus {
+  border-color: oklch(0.6 0.08 62 / 0.5);
+  box-shadow: 0 0 0 3px oklch(0.6 0.08 62 / 0.12);
+}
+
+/* Loading skeleton */
+.checkout-skeleton {
+  border-radius: 0.5rem;
+  background: linear-gradient(
+    90deg,
+    rgb(23 25 29 / 0.06) 0%,
+    rgb(23 25 29 / 0.1) 50%,
+    rgb(23 25 29 / 0.06) 100%
+  );
+  background-size: 200% 100%;
+  animation: checkout-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes checkout-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .checkout-skeleton {
+    animation: none;
+  }
+}

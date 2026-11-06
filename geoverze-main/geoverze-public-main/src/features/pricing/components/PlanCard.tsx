@@ -1,5 +1,6 @@
 import { Check, Lock } from "lucide-react";
 import { memo } from "react";
+import { useNavigate } from "@tanstack/react-router";
 
 import { AnimatedBadge } from "@/components/shared/AnimatedBadge";
 import { GeoButton } from "@/components/shared/GeoButton";
@@ -7,7 +8,7 @@ import { GlassCard } from "@/components/shared/GlassCard";
 import { cn } from "@/lib/utils";
 
 import type { BillingCycle, PricingPlan } from "../data/plans";
-import { startCheckout } from "../lib/checkout";
+import { checkoutHref } from "../lib/checkout";
 
 import "../../marketing/components/home-hero.css";
 
@@ -19,6 +20,7 @@ export const PlanCard = memo(function PlanCard({
   plan: PricingPlan;
   cycle: BillingCycle;
 }) {
+  const navigate = useNavigate();
   const price = plan.prices[cycle];
   const locked = plan.id === "advance";
 
@@ -100,7 +102,13 @@ export const PlanCard = memo(function PlanCard({
         <GeoButton
           variant={plan.featured ? "primary" : "secondary"}
           className="w-full min-h-11"
-          onClick={() => startCheckout(plan, cycle)}
+          onClick={() => {
+            if (plan.id === "explorer") return;
+            void navigate({
+              to: "/pricing/checkout",
+              search: { plan: plan.id, cycle },
+            });
+          }}
           aria-label={`${plan.cta} — ${plan.name} plan`}
         >
           {plan.cta}
