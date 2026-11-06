@@ -82,11 +82,11 @@ export function MockPaymentGateway({
         setInvoiceNumber(result.invoice_number ?? null);
         setState("success");
 
-        // Invalidate cached billing + subscription-tier queries so that
-        // Settings, Billing page, and Dashboard all show the new plan
-        // immediately after the user is redirected.
+        // Invalidate cached queries so Settings, Billing, Dashboard, and
+        // credit balance all show the updated plan and credits immediately.
         void queryClient.invalidateQueries({ queryKey: ["billing"] });
         void queryClient.invalidateQueries({ queryKey: ["librarySubscriptionTier"] });
+        void queryClient.invalidateQueries({ queryKey: ["creditHistory"] });
 
         // After 2 s, navigate to the payment-result page
         setTimeout(() => {

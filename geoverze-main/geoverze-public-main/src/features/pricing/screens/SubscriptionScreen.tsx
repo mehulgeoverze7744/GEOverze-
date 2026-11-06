@@ -166,22 +166,47 @@ export function SubscriptionScreen() {
             </article>
 
             <article className="bm-card bm-credits">
-              <p className="bm-label">Monthly credits</p>
+              <p className="bm-label">Credits</p>
               {loading ? <div className="bm-skeleton bm-skeleton--credit" aria-hidden /> : null}
               {!error && !loading && data ? (
                 <>
                   <span className="bm-credit-icon" aria-hidden="true">
                     <Coins strokeWidth={1.6} />
                   </span>
-                  <p className="bm-credit-value">{data.monthlyCreditGrant}</p>
-                  <p className="bm-credit-unit">credits / month</p>
-                  <p className="bm-credit-copy">
-                    Your membership includes {data.monthlyCreditGrant} credits every month.
-                    {data.periodGrantAmount != null
-                      ? ` This period granted ${data.periodGrantAmount}.`
-                      : ""}{" "}
-                    You currently have {data.availableCredits} available.
-                  </p>
+
+                  {/* ── Two distinct credit values ─────────────────────── */}
+                  <dl className="bm-credit-dl">
+                    <div className="bm-credit-row">
+                      <dt className="bm-credit-row__label">Available balance</dt>
+                      <dd className="bm-credit-row__value">
+                        <strong>{data.availableCredits.toLocaleString()}</strong>
+                        <span className="bm-credit-row__unit">credits</span>
+                      </dd>
+                    </div>
+                    <div className="bm-credit-row bm-credit-row--secondary">
+                      <dt className="bm-credit-row__label">Monthly allocation</dt>
+                      <dd className="bm-credit-row__value">
+                        {data.monthlyCreditGrant > 0 ? (
+                          <>
+                            <strong>{data.monthlyCreditGrant}</strong>
+                            <span className="bm-credit-row__unit">/ month</span>
+                          </>
+                        ) : (
+                          <span className="bm-credit-row__unit">None on free tier</span>
+                        )}
+                      </dd>
+                    </div>
+                    {data.periodGrantAmount != null && data.periodGrantAmount > 0 ? (
+                      <div className="bm-credit-row bm-credit-row--secondary">
+                        <dt className="bm-credit-row__label">This period granted</dt>
+                        <dd className="bm-credit-row__value">
+                          <strong>{data.periodGrantAmount}</strong>
+                          <span className="bm-credit-row__unit">credits</span>
+                        </dd>
+                      </div>
+                    ) : null}
+                  </dl>
+
                   <Link to="/geostore/rewards" className="bm-btn bm-btn--secondary">
                     Spend Credits
                   </Link>

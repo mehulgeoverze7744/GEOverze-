@@ -468,6 +468,60 @@ div.bm > * {
   height: 0.95rem;
 }
 
+/* ── Credit two-row dl layout ────────────────────────────────────────── */
+.bm-credit-dl {
+  margin: 0.9rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+}
+
+.bm-credit-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.bm-credit-row:last-child {
+  border-bottom: none;
+}
+
+.bm-credit-row--secondary {
+  opacity: 0.85;
+}
+
+.bm-credit-row__label {
+  font-size: 0.775rem;
+  color: #64748b;
+  font-weight: 400;
+  margin: 0;
+}
+
+.bm-credit-row__value {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  margin: 0;
+}
+
+.bm-credit-row__value strong {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.bm-credit-row__unit {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+/* Legacy selectors kept for backward compat */
 .bm-credit-value {
   margin: 0.7rem 0 0;
   font-size: clamp(2.15rem, 4vw, 2.65rem);

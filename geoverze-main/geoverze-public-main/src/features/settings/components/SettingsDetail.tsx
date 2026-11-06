@@ -387,8 +387,26 @@ function BillingPanel() {
 
       <SettingsGroup label="Credits">
         <SettingsRow
-          title="GVRZE Credits"
-          subtitle={creditsSubtitle}
+          title="Available balance"
+          subtitle={
+            loading
+              ? "Loading…"
+              : `${availableCredits.toLocaleString()} credits in your wallet`
+          }
+          value={loading ? "…" : `${availableCredits.toLocaleString()}`}
+          static
+        />
+        {!loading && isPaid ? (
+          <SettingsRow
+            title="Monthly allocation"
+            subtitle="Credits granted when your membership renews each month."
+            value={`${creditGrant} / month`}
+            static
+          />
+        ) : null}
+        <SettingsRow
+          title="Spend credits"
+          subtitle="Redeem credits in the Gstore."
           control={
             <GeoButton asChild variant="secondary" size="sm">
               <Link to="/geostore">Spend</Link>
