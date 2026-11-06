@@ -129,6 +129,73 @@ export const confirmMockPaymentFn = createServerFn({ method: "POST" })
     return (result as ConfirmMockPaymentResult) ?? { success: false };
   });
 
+// ── schedule_cancel_mock_subscription ─────────────────────────────────────────
+//
+// Sets cancel_at_period_end = true on the specified mock subscription.
+// Does NOT immediately cancel — access stays active until current_period_end.
+// This is the billing-screen cancellation path (cancel at next renewal).
+
+const ScheduleCancelSchema = z.object({
+  access_token:    z.string().min(10),
+  subscription_id: z.string().uuid(),
+});
+
+export type ScheduleCancelMockInput  = z.infer<typeof ScheduleCancelSchema>;
+export type ScheduleCancelMockResult = {
+  ok: boolean;
+  reason?: string;
+  period_end?: string;
+};
+
+export const scheduleCancelMockSubscriptionFn = createServerFn({ method: "POST" })
+  .validator((raw: unknown) => ScheduleCancelSchema.parse(raw))
+  .handler(async ({ data }): Promise<ScheduleCancelMockResult> => {
+    assertMockEnabled();
+    const sb = makeAuthenticatedClient(data.access_token);
+
+    const { data: result, error } = await sb.rpc(
+      "schedule_cancel_mock_subscription" as never,
+      { p_subscription_id: data.subscription_id },
+    );
+
+    if (error) {
+      throw new Error((error as { message?: string }).message ?? "schedule_cancel_mock_subscription RPC failed.");
+    }
+    return (result as ScheduleCancelMockResult) ?? { ok: false };
+  });
+
+
+// ── reactivate_mock_subscription ──────────────────────────────────────────────
+//
+// Clears cancel_at_period_end so the mock subscription renews automatically.
+// Idempotent: safe to call when subscription is not scheduled for cancellation.
+
+const ReactivateMockSchema = z.object({
+  access_token:    z.string().min(10),
+  subscription_id: z.string().uuid(),
+});
+
+export type ReactivateMockInput  = z.infer<typeof ReactivateMockSchema>;
+export type ReactivateMockResult = { ok: boolean; reason?: string };
+
+export const reactivateMockSubscriptionFn = createServerFn({ method: "POST" })
+  .validator((raw: unknown) => ReactivateMockSchema.parse(raw))
+  .handler(async ({ data }): Promise<ReactivateMockResult> => {
+    assertMockEnabled();
+    const sb = makeAuthenticatedClient(data.access_token);
+
+    const { data: result, error } = await sb.rpc(
+      "reactivate_mock_subscription" as never,
+      { p_subscription_id: data.subscription_id },
+    );
+
+    if (error) {
+      throw new Error((error as { message?: string }).message ?? "reactivate_mock_subscription RPC failed.");
+    }
+    return (result as ReactivateMockResult) ?? { ok: false };
+  });
+
+
 // ── cancel_mock_subscription ───────────────────────────────────────────────────
 
 const CancelSchema = z.object({

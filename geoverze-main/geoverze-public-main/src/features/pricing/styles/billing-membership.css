@@ -860,6 +860,56 @@ div.bm > * {
   box-shadow: 0 0 0 2px #fca5a5;
 }
 
+/* ── Reactivate subscription button ─────────────────────────────────────── */
+.bm-reactivate-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.6rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid #fdba74;
+  background: transparent;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #c2410c;
+  letter-spacing: -0.01em;
+  transition:
+    background 180ms var(--bm-ease),
+    border-color 180ms var(--bm-ease),
+    color 180ms var(--bm-ease);
+}
+
+.bm-reactivate-btn svg {
+  width: 0.7rem;
+  height: 0.7rem;
+  flex-shrink: 0;
+}
+
+.bm-reactivate-btn:hover:not(:disabled) {
+  background: #fff7ed;
+  border-color: #f97316;
+  color: #9a3412;
+}
+
+.bm-reactivate-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.bm-reactivate-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #fdba74;
+}
+
+/* Make the banner body a column-flex so the button sits under the desc */
+.bm-cancellation-banner__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
 /* ── Cancellation confirmation modal ─────────────────────────────────────── */
 .bm-modal {
   position: relative;
@@ -1011,6 +1061,74 @@ div.bm > * {
 .bm-modal__close:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+/* ── Modal plan details table ────────────────────────────────────────────── */
+/* Displayed in both the confirmation and success views to show plan/dates. */
+.bm-modal__plan-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 1rem;
+  border-radius: 0.6rem;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.bm-modal__plan-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.bm-modal__plan-row:last-child {
+  border-bottom: none;
+}
+
+.bm-modal__plan-label {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-weight: 400;
+  flex-shrink: 0;
+}
+
+.bm-modal__plan-value {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #111827;
+  text-align: right;
+}
+
+.bm-modal__plan-value--muted {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+/* ── Modal success state ─────────────────────────────────────────────────── */
+/* Applied to .bm-modal when cancelSuccess = true */
+.bm-modal--success .bm-modal__icon-wrap--success {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+
+.bm-modal--success .bm-modal__icon--success {
+  color: #16a34a;
+}
+
+/* Accent text inside the success description */
+.bm-modal__accent {
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Small spinner variant for the reactivate button */
+.bm-modal__spinner--small {
+  width: 0.72rem;
+  height: 0.72rem;
+  border-width: 1.5px;
 }
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */

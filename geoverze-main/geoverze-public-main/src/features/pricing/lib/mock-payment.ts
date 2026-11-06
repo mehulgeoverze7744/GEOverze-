@@ -34,6 +34,8 @@ import {
   beginMockPaymentFn,
   confirmMockPaymentFn,
   cancelMockSubscriptionFn,
+  scheduleCancelMockSubscriptionFn,
+  reactivateMockSubscriptionFn,
 } from "./mockPaymentServerFns";
 
 /**
@@ -205,6 +207,62 @@ export async function cancelMockSubscription(params: {
   } catch (err) {
     throw new MockPaymentError(
       err instanceof Error ? err.message : "Failed to cancel mock subscription.",
+      "RPC_ERROR",
+    );
+  }
+}
+
+/**
+ * Schedules cancellation of a mock subscription at the end of the billing period.
+ *
+ * Sets cancel_at_period_end = true on the subscription WITHOUT immediately
+ * cancelling it.  The subscription stays "active" and all membership benefits
+ * (credits, library access, etc.) continue until current_period_end.
+ *
+ * This is the correct cancellation path for the billing screen.
+ * Use cancelMockSubscription only for immediate teardown (e.g. on payment failure).
+ *
+ * @throws MockPaymentError on network, auth, or RPC failure.
+ */
+export async function scheduleCancelMockSubscription(params: {
+  subscription_id: string;
+}): Promise<{ ok: boolean; reason?: string; period_end?: string }> {
+  const access_token = await getAccessToken();
+  try {
+    const result = await scheduleCancelMockSubscriptionFn({
+      data: { access_token, subscription_id: params.subscription_id },
+    });
+    return result ?? { ok: false };
+  } catch (err) {
+    throw new MockPaymentError(
+      err instanceof Error ? err.message : "Failed to schedule mock subscription cancellation.",
+      "RPC_ERROR",
+    );
+  }
+}
+
+/**
+ * Reactivates a mock subscription that has cancel_at_period_end = true.
+ *
+ * Clears the scheduled cancellation so the subscription renews automatically
+ * at the next billing cycle.  Idempotent: safe if already active / not scheduled.
+ *
+ * Only valid while the subscription is still in its paid period (before expiry).
+ *
+ * @throws MockPaymentError on network, auth, or RPC failure.
+ */
+export async function reactivateMockSubscription(params: {
+  subscription_id: string;
+}): Promise<{ ok: boolean; reason?: string }> {
+  const access_token = await getAccessToken();
+  try {
+    const result = await reactivateMockSubscriptionFn({
+      data: { access_token, subscription_id: params.subscription_id },
+    });
+    return result ?? { ok: false };
+  } catch (err) {
+    throw new MockPaymentError(
+      err instanceof Error ? err.message : "Failed to reactivate mock subscription.",
       "RPC_ERROR",
     );
   }

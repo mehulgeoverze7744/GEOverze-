@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { AlertTriangle, Coins, Download, FlaskConical, X } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Coins, Download, FlaskConical, RefreshCw, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
@@ -21,7 +21,10 @@ import { paymentMethods } from "../data/billing";
 import { useMyBilling } from "../hooks/useMyBilling";
 import { usePricingCatalog } from "../hooks/usePricingCatalog";
 import { isRazorpayConfigured } from "../lib/checkout";
-import { cancelMockSubscription } from "../lib/mock-payment";
+import {
+  scheduleCancelMockSubscription,
+  reactivateMockSubscription,
+} from "../lib/mock-payment";
 import "../styles/billing-membership.css";
 
 const PAYMENT_EMOJIS: Record<string, string> = {
@@ -43,51 +46,86 @@ export function SubscriptionScreen() {
   const queryClient = useQueryClient();
   const [cancelLoading, setCancelLoading] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  /**
+   * cancelSuccess = true after a successful cancellation while the modal is
+   * still open.  Switches the modal to its "success" confirmation view so the
+   * user sees an explicit confirmation before the modal is closed.
+   */
+  const [cancelSuccess, setCancelSuccess] = useState(false);
+  const [reactivateLoading, setReactivateLoading] = useState(false);
   const razorpayLive = isRazorpayConfigured();
   const catalogPlan = data ? (plans.find((p) => p.id === data.tier) ?? null) : null;
 
-  /** Open the confirmation modal; show toast instead if gateway not ready. */
+  /** Open the cancellation confirmation modal; guard against unconfigured gateway. */
   function openCancelModal() {
     if (!razorpayLive && !data?.isMockSubscription) {
       toast(UNAVAILABLE_BILLING);
       return;
     }
+    setCancelSuccess(false);
     setCancelModalOpen(true);
   }
 
-  /** Runs after the user confirms cancellation inside the modal. */
+  function closeCancelModal() {
+    if (cancelLoading) return;
+    setCancelModalOpen(false);
+    // Reset success state after the modal closes so it's fresh next time.
+    setTimeout(() => setCancelSuccess(false), 300);
+  }
+
+  /**
+   * Runs after the user clicks "Yes, Cancel Subscription" in the modal.
+   *
+   * Both paths use cancel-at-period-end semantics:
+   *   - Mock: schedule_cancel_mock_subscription (sets cancel_at_period_end = true)
+   *   - Live: request_cancel_subscription (same, but via Supabase RPC + Razorpay)
+   *
+   * On success the modal switches to its confirmation view (cancelSuccess = true)
+   * and the billing data is refreshed in the background.
+   */
   async function handleConfirmCancel() {
     setCancelLoading(true);
     try {
       if (data?.isMockSubscription && data.mockSubscriptionId) {
-        // ── Mock subscription path ──────────────────────────────────────────
-        await cancelMockSubscription({ subscription_id: data.mockSubscriptionId });
-        toast.success("Mock subscription cancelled. Your plan has been reset.");
+        // ── Mock subscription path — schedule cancel at period end ──────────
+        const result = await scheduleCancelMockSubscription({
+          subscription_id: data.mockSubscriptionId,
+        });
+
+        if (!result.ok && result.reason !== "already_cancelled") {
+          toast.error("Could not schedule cancellation. Please try again.");
+          return;
+        }
+
+        setCancelSuccess(true);
         void refetch();
         void queryClient.invalidateQueries({ queryKey: ["billing"] });
+
       } else {
-        // ── Live subscription path (Razorpay) ───────────────────────────────
+        // ── Live subscription path (Razorpay) — cancel at period end ────────
+        type CancelRpcResult = { ok: boolean; reason?: string; period_end?: string } | null;
         const { data: result, error: rpcError } = await supabase.rpc(
           "request_cancel_subscription" as never,
-        ) as { data: { ok: boolean; reason?: string } | null; error: unknown };
+        ) as { data: CancelRpcResult; error: unknown };
 
         if (rpcError || !result?.ok) {
           const reason = result?.reason ?? "unknown";
-          if (reason === "no_active_subscription") {
+          if (reason === "already_cancelled") {
+            // Already scheduled — treat as success; show confirmation view.
+            setCancelSuccess(true);
+            void refetch();
+          } else if (reason === "no_active_subscription") {
             toast.error("No active subscription found to cancel.");
-          } else if (reason === "already_cancelled") {
-            toast("Your subscription is already scheduled for cancellation.");
           } else {
             toast.error("Could not request cancellation. Please contact support.");
           }
-        } else {
-          toast.success("Cancellation scheduled", {
-            description: "Your plan stays active until the end of your billing period.",
-          });
-          refetch();
+          return;
         }
+
+        setCancelSuccess(true);
+        void refetch();
+        void queryClient.invalidateQueries({ queryKey: ["billing"] });
       }
-      setCancelModalOpen(false);
     } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
@@ -95,18 +133,68 @@ export function SubscriptionScreen() {
     }
   }
 
+  /**
+   * Reactivates a subscription that has been scheduled for cancellation.
+   * Clears cancel_at_period_end so automatic renewal resumes.
+   */
+  async function handleReactivate() {
+    if (!data) return;
+    setReactivateLoading(true);
+    try {
+      if (data.isMockSubscription && data.mockSubscriptionId) {
+        // ── Mock reactivation ───────────────────────────────────────────────
+        const result = await reactivateMockSubscription({
+          subscription_id: data.mockSubscriptionId,
+        });
+        if (!result.ok && result.reason !== "not_scheduled_for_cancellation") {
+          toast.error("Could not reactivate subscription. Please try again.");
+          return;
+        }
+      } else {
+        // ── Live reactivation ───────────────────────────────────────────────
+        type ReactivateResult = { ok: boolean; reason?: string } | null;
+        const { data: result, error: rpcError } = await supabase.rpc(
+          "request_reactivate_subscription" as never,
+        ) as { data: ReactivateResult; error: unknown };
+
+        if (rpcError || !result?.ok) {
+          const reason = result?.reason ?? "unknown";
+          if (reason !== "not_scheduled_for_cancellation") {
+            toast.error("Could not reactivate subscription. Please contact support.");
+            return;
+          }
+        }
+      }
+
+      toast.success("Subscription reactivated", {
+        description: "Your plan will renew automatically at the next billing date.",
+      });
+      void refetch();
+      void queryClient.invalidateQueries({ queryKey: ["billing"] });
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setReactivateLoading(false);
+    }
+  }
+
   const planName = catalogPlan?.name ?? data?.planName ?? "";
   const planSummary = catalogPlan?.summary ?? data?.planSummary ?? "";
 
-  /** True when we should show the cancel option */
+  /** True when we should show the cancel option (active, not yet scheduled) */
   const showCancelOption =
     !loading &&
     !!data &&
     data.isPaidMembership &&
     !data.cancelAtPeriodEnd;
 
-  /** True when cancellation is already scheduled */
+  /** True when cancellation is already scheduled (cancel_at_period_end = true) */
   const isCancellationScheduled = !loading && !!data && data.cancelAtPeriodEnd;
+
+  /** True when the user can reverse a scheduled cancellation */
+  const showReactivateOption =
+    isCancellationScheduled &&
+    !!data?.reactivationSupported;
 
   return (
     <PageShell>
@@ -197,16 +285,37 @@ export function SubscriptionScreen() {
                     </div>
                   </dl>
 
-                  {/* Cancellation scheduled info banner */}
+                  {/* Cancellation scheduled info banner + optional Reactivate button */}
                   {isCancellationScheduled ? (
                     <div className="bm-cancellation-banner" role="status">
                       <AlertTriangle className="bm-cancellation-banner__icon" aria-hidden="true" />
-                      <div>
+                      <div className="bm-cancellation-banner__body">
                         <p className="bm-cancellation-banner__title">Cancellation scheduled</p>
                         <p className="bm-cancellation-banner__desc">
                           You'll keep full access to your membership benefits until{" "}
                           <strong>{data.accessUntilLabel}</strong>. No further renewals will occur.
                         </p>
+                        {showReactivateOption ? (
+                          <button
+                            type="button"
+                            className="bm-reactivate-btn"
+                            disabled={reactivateLoading}
+                            aria-busy={reactivateLoading}
+                            onClick={() => void handleReactivate()}
+                          >
+                            {reactivateLoading ? (
+                              <>
+                                <span className="bm-modal__spinner bm-modal__spinner--small" aria-hidden="true" />
+                                Reactivating…
+                              </>
+                            ) : (
+                              <>
+                                <RefreshCw size={12} aria-hidden="true" />
+                                Reactivate Subscription
+                              </>
+                            )}
+                          </button>
+                        ) : null}
                       </div>
                     </div>
                   ) : null}
@@ -389,67 +498,148 @@ export function SubscriptionScreen() {
         </section>
       </SectionContainer>
 
-      {/* ── Cancellation confirmation modal ──────────────────────────────── */}
-      <Dialog open={cancelModalOpen} onOpenChange={(open) => { if (!cancelLoading) setCancelModalOpen(open); }}>
-        <DialogContent className="bm-modal">
-          <DialogHeader>
-            <div className="bm-modal__icon-wrap" aria-hidden="true">
-              <AlertTriangle className="bm-modal__icon" />
-            </div>
-            <DialogTitle className="bm-modal__title">
-              Cancel your subscription?
-            </DialogTitle>
-            <DialogDescription className="bm-modal__desc">
-              Are you sure you want to cancel your subscription? You will continue to have access
-              to your membership benefits until the end of your current billing period
-              {data?.accessUntilLabel && data.accessUntilLabel !== "—"
-                ? ` (${data.accessUntilLabel})`
-                : ""}
-              . No further charges will be made.
-            </DialogDescription>
-          </DialogHeader>
+      {/* ── Cancellation confirmation / success modal ─────────────────────── */}
+      <Dialog open={cancelModalOpen} onOpenChange={(open) => { if (!open) closeCancelModal(); }}>
+        <DialogContent className={cn("bm-modal", cancelSuccess && "bm-modal--success")}>
 
-          {data?.isMockSubscription ? (
-            <div className="bm-modal__mock-note">
-              <FlaskConical size={13} aria-hidden="true" />
-              TEST MODE — This will immediately deactivate the mock subscription.
-            </div>
-          ) : null}
+          {/* ── Success view ─────────────────────────────────────────────── */}
+          {cancelSuccess ? (
+            <>
+              <DialogHeader>
+                <div className="bm-modal__icon-wrap bm-modal__icon-wrap--success" aria-hidden="true">
+                  <CheckCircle2 className="bm-modal__icon bm-modal__icon--success" />
+                </div>
+                <DialogTitle className="bm-modal__title">
+                  Subscription Cancelled Successfully
+                </DialogTitle>
+                <DialogDescription className="bm-modal__desc">
+                  Your subscription will remain active until{" "}
+                  <strong className="bm-modal__accent">
+                    {data?.accessUntilLabel && data.accessUntilLabel !== "—"
+                      ? data.accessUntilLabel
+                      : "the end of your billing period"}
+                  </strong>
+                  . You will not be charged for the next billing cycle, and your membership
+                  will not renew automatically.
+                </DialogDescription>
+              </DialogHeader>
 
-          <div className="bm-modal__actions">
-            <button
-              type="button"
-              className="bm-btn bm-btn--primary bm-modal__keep-btn"
-              disabled={cancelLoading}
-              onClick={() => setCancelModalOpen(false)}
-            >
-              Keep Subscription
-            </button>
-            <button
-              type="button"
-              className="bm-modal__confirm-btn"
-              disabled={cancelLoading}
-              aria-busy={cancelLoading}
-              onClick={() => void handleConfirmCancel()}
-            >
-              {cancelLoading ? (
-                <>
-                  <span className="bm-modal__spinner" aria-hidden="true" />
-                  Cancelling…
-                </>
-              ) : (
-                "Confirm Cancellation"
-              )}
-            </button>
-          </div>
+              {/* Summary of what happens */}
+              <div className="bm-modal__plan-info">
+                <div className="bm-modal__plan-row">
+                  <span className="bm-modal__plan-label">Current plan</span>
+                  <span className="bm-modal__plan-value">{planName}</span>
+                </div>
+                <div className="bm-modal__plan-row">
+                  <span className="bm-modal__plan-label">Access until</span>
+                  <span className="bm-modal__plan-value">
+                    {data?.accessUntilLabel && data.accessUntilLabel !== "—"
+                      ? data.accessUntilLabel
+                      : "End of billing period"}
+                  </span>
+                </div>
+                <div className="bm-modal__plan-row">
+                  <span className="bm-modal__plan-label">Next renewal</span>
+                  <span className="bm-modal__plan-value bm-modal__plan-value--muted">None</span>
+                </div>
+              </div>
 
-          {/* Close button */}
+              <div className="bm-modal__actions">
+                <button
+                  type="button"
+                  className="bm-btn bm-btn--primary bm-modal__keep-btn"
+                  onClick={closeCancelModal}
+                >
+                  Got it
+                </button>
+              </div>
+            </>
+          ) : (
+            /* ── Confirmation view ──────────────────────────────────────────── */
+            <>
+              <DialogHeader>
+                <div className="bm-modal__icon-wrap" aria-hidden="true">
+                  <AlertTriangle className="bm-modal__icon" />
+                </div>
+                <DialogTitle className="bm-modal__title">
+                  Are you sure you want to cancel your subscription?
+                </DialogTitle>
+                <DialogDescription className="bm-modal__desc">
+                  Your subscription will remain active until the end of your current billing period.
+                  You will not be charged for the next billing cycle, and your membership will not
+                  renew automatically.
+                </DialogDescription>
+              </DialogHeader>
+
+              {/* Plan / billing period details */}
+              <div className="bm-modal__plan-info">
+                <div className="bm-modal__plan-row">
+                  <span className="bm-modal__plan-label">Current plan</span>
+                  <span className="bm-modal__plan-value">{planName}</span>
+                </div>
+                <div className="bm-modal__plan-row">
+                  <span className="bm-modal__plan-label">Billing period ends</span>
+                  <span className="bm-modal__plan-value">
+                    {data?.accessUntilLabel && data.accessUntilLabel !== "—"
+                      ? data.accessUntilLabel
+                      : "—"}
+                  </span>
+                </div>
+                <div className="bm-modal__plan-row">
+                  <span className="bm-modal__plan-label">Next renewal date</span>
+                  <span className="bm-modal__plan-value bm-modal__plan-value--muted">
+                    {data?.cancelAtPeriodEnd
+                      ? "Already cancelled"
+                      : data?.renewsLabel && data.renewsLabel !== "—"
+                        ? data.renewsLabel
+                        : "None"}
+                  </span>
+                </div>
+              </div>
+
+              {data?.isMockSubscription ? (
+                <div className="bm-modal__mock-note">
+                  <FlaskConical size={13} aria-hidden="true" />
+                  TEST MODE — Cancellation will be scheduled at period end (mock).
+                </div>
+              ) : null}
+
+              <div className="bm-modal__actions">
+                <button
+                  type="button"
+                  className="bm-btn bm-btn--primary bm-modal__keep-btn"
+                  disabled={cancelLoading}
+                  onClick={closeCancelModal}
+                >
+                  Keep Subscription
+                </button>
+                <button
+                  type="button"
+                  className="bm-modal__confirm-btn"
+                  disabled={cancelLoading}
+                  aria-busy={cancelLoading}
+                  onClick={() => void handleConfirmCancel()}
+                >
+                  {cancelLoading ? (
+                    <>
+                      <span className="bm-modal__spinner" aria-hidden="true" />
+                      Cancelling…
+                    </>
+                  ) : (
+                    "Yes, Cancel Subscription"
+                  )}
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* Close ✕ — hidden during the loading state */}
           <button
             type="button"
             className="bm-modal__close"
             aria-label="Close"
             disabled={cancelLoading}
-            onClick={() => setCancelModalOpen(false)}
+            onClick={closeCancelModal}
           >
             <X size={16} aria-hidden="true" />
           </button>

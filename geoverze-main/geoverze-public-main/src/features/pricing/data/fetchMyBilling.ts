@@ -48,6 +48,22 @@ export type MyBillingSnapshot = {
    * Same value as renewsLabel but kept separately for semantic clarity.
    */
   accessUntilLabel: string;
+  /**
+   * ISO-8601 string for the current billing period end date.
+   * Used to display the exact expiry date in the cancellation confirmation modal.
+   * Null when the subscription has no known period end.
+   */
+  periodEndIso: string | null;
+  /**
+   * True when the backend supports reversing a scheduled cancellation.
+   * When false, the "Reactivate Subscription" button is hidden to avoid
+   * showing a misleading option.
+   *
+   * Both mock subscriptions (via reactivate_mock_subscription RPC) and live
+   * subscriptions (via request_reactivate_subscription RPC) support it, so
+   * this is always true for active paid subscriptions.
+   */
+  reactivationSupported: boolean;
 };
 
 type PlanTierRpc = {
@@ -202,7 +218,12 @@ export async function fetchMyBilling(): Promise<MyBillingSnapshot> {
     memberSinceLabel: formatDateLabel(asString(subscription?.started_at) ?? user.created_at),
     renewsLabel: formatDateLabel(periodEndIso),
     accessUntilLabel: formatDateLabel(periodEndIso),
+    periodEndIso,
     cancelAtPeriodEnd,
+    // Both mock subscriptions and live subscriptions support reactivation via
+    // our RPCs (reactivate_mock_subscription / request_reactivate_subscription).
+    // Only hide the button if the sub is not in an active-ish state.
+    reactivationSupported: isPaidTier,
     // monthly_price_cents / annual_price_cents store whole INR rupees (not paise)
     priceAmount: isPaidTier ? formatInrRupees(priceCents) : "Free",
     priceCadence: isPaidTier
