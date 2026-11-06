@@ -101,68 +101,89 @@ export const PlanCard = memo(function PlanCard({
 
       <div className="pricing-plan-card__spacer mt-10 flex-1" />
 
-      {/* ── CTA button ───────────────────────────────────────────────── */}
+      {/*
+       * ── CTA button + GST notice ─────────────────────────────────────
+       *
+       * IMPORTANT: Keep the button and the GST notice inside ONE wrapper
+       * div so they form a single grid item (row 9 of the CSS subgrid on
+       * desktop ≥ 1280 px).
+       *
+       * The card uses `grid-template-rows: subgrid; grid-row: 1 / span 9`
+       * on desktop.  Any direct child beyond the 9th overflows into an
+       * implicit grid track that collapses on top of row 9, causing the
+       * GST text to visually overlap the button.  Wrapping both in a div
+       * keeps row 9 intact and renders the GST note below the button.
+       */}
+      <div className="flex flex-col">
 
-      {locked ? (
-        /* Advance — not yet available */
-        <GeoButton
-          variant="secondary"
-          disabled
-          className="w-full min-h-11 cursor-not-allowed disabled:opacity-90"
-          aria-label="Advance plan coming soon"
-        >
-          <Lock className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden />
-          Coming soon
-        </GeoButton>
-
-      ) : isFree ? (
-        /* Explorer — free; skip checkout entirely */
-        isSignedIn ? (
+        {locked ? (
+          /* Advance — not yet available */
           <GeoButton
             variant="secondary"
-            className="w-full min-h-11"
-            asChild
-            aria-label="Go to your GVRZE dashboard"
+            disabled
+            className="w-full min-h-11 cursor-not-allowed disabled:opacity-90"
+            aria-label="Advance plan coming soon"
           >
-            <Link to="/">Start exploring</Link>
+            <Lock className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden />
+            Coming soon
           </GeoButton>
+
+        ) : isFree ? (
+          /* Explorer — free; skip checkout entirely */
+          isSignedIn ? (
+            <GeoButton
+              variant="secondary"
+              className="w-full min-h-11"
+              asChild
+              aria-label="Go to your GVRZE dashboard"
+            >
+              <Link to="/">Start exploring</Link>
+            </GeoButton>
+          ) : (
+            <GeoButton
+              variant="secondary"
+              className="w-full min-h-11"
+              asChild
+              aria-label="Create a free GVRZE account — no card needed"
+            >
+              <Link to="/auth/signup">Start free — no card needed</Link>
+            </GeoButton>
+          )
+
         ) : (
+          /*
+           * Basic / Pro — navigate to checkout via a real <a> element.
+           * asChild merges GeoButton's classes onto the Link, rendering a
+           * styled anchor tag. The entire pill surface is clickable:
+           *   • left-click    → SPA navigation
+           *   • middle-click  → opens in new tab
+           *   • right-click   → browser context menu with "Open in new tab"
+           *   • keyboard      → Enter/Space activate the link
+           *   • touch         → full touch target (min-h-11)
+           */
           <GeoButton
-            variant="secondary"
+            variant={plan.featured ? "primary" : "secondary"}
             className="w-full min-h-11"
             asChild
-            aria-label="Create a free GVRZE account — no card needed"
+            aria-label={`${plan.cta} — ${plan.name} membership`}
           >
-            <Link to="/auth/signup">Start free — no card needed</Link>
+            <Link
+              to="/pricing/checkout"
+              search={{ plan: plan.id, cycle }}
+            >
+              {plan.cta}
+            </Link>
           </GeoButton>
-        )
+        )}
 
-      ) : (
-        /* Basic / Pro — navigate to checkout via a real <a> element.
-           asChild merges GeoButton's classes onto the Link, rendering a styled
-           anchor tag. This is the most reliable click mechanism: it works with
-           right-click, middle-click, keyboard navigation, and touch. */
-        <GeoButton
-          variant={plan.featured ? "primary" : "secondary"}
-          className="w-full min-h-11"
-          asChild
-          aria-label={`${plan.cta} — ${plan.name} membership`}
-        >
-          <Link
-            to="/pricing/checkout"
-            search={{ plan: plan.id, cycle }}
-          >
-            {plan.cta}
-          </Link>
-        </GeoButton>
-      )}
+        {/* GST notice — only for paid, available plans */}
+        {!isFree && !locked ? (
+          <p className="mt-2 text-center text-[0.6rem] text-foreground/35 tracking-wide">
+            Prices incl. 18% GST · Billed in INR
+          </p>
+        ) : null}
 
-      {/* GST notice — only for paid, available plans */}
-      {!isFree && !locked ? (
-        <p className="mt-2 text-center text-[0.6rem] text-foreground/35 tracking-wide">
-          Prices incl. 18% GST · Billed in INR
-        </p>
-      ) : null}
+      </div>
 
       {/* Frost overlay — Advance plan only */}
       {locked ? (
