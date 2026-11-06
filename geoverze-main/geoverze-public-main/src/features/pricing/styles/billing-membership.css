@@ -1,25 +1,39 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   GVRZE Billing & Membership — Light Premium Theme
+   bg: #EAF4FA  card: #FFFFFF  border: #E2E8F0  navy: #1E3A5F  bronze: #B88A62
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Page background ─────────────────────────────────────────────────────── */
+body:has(div.bm) {
+  background: #eaf4fa !important;
+}
+
+body:has(div.bm) #geoverze-universe-background {
+  display: none !important;
+}
+
+/* Keep the app header readable on the light background */
+body:has(div.bm) header,
+body:has(div.bm) nav {
+  background: rgba(234, 244, 250, 0.92);
+  backdrop-filter: blur(16px) saturate(120%);
+  border-bottom-color: #dce5ed;
+}
+
+/* ── Page shell ──────────────────────────────────────────────────────────── */
 div.bm {
   --bm-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
-  --bm-radius: 1.35rem;
-  --bm-radius-sm: 1.05rem;
+  --bm-radius: 1.25rem;
+  --bm-radius-sm: 1rem;
   position: relative;
   max-width: 68rem;
   padding-top: calc(var(--nav-height) + 1.75rem);
   padding-bottom: var(--space-section-md);
 }
 
+/* Remove the dark vignette overlay */
 div.bm::before {
-  content: "";
-  pointer-events: none;
-  position: absolute;
-  z-index: 0;
-  inset: -1.5rem 0 auto;
-  height: 18rem;
-  background: radial-gradient(
-    ellipse 68% 78% at 50% 0%,
-    oklch(0.08 0.012 62 / 0.38),
-    transparent 72%
-  );
+  display: none;
 }
 
 div.bm > * {
@@ -27,10 +41,11 @@ div.bm > * {
   z-index: 1;
 }
 
+/* ── Page header ─────────────────────────────────────────────────────────── */
 .bm-crumb {
   margin-bottom: 0.85rem;
   letter-spacing: 0.2em;
-  color: oklch(0.9 0.01 80 / 0.42);
+  color: #94a3b8;
 }
 
 .bm-header {
@@ -40,10 +55,10 @@ div.bm > * {
 .bm-kicker {
   margin: 0;
   font-size: 0.62rem;
-  font-weight: 550;
+  font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--bronze) 72%, oklch(0.68 0.04 70));
+  color: #b88a62;
 }
 
 .bm-title {
@@ -52,6 +67,7 @@ div.bm > * {
   font-weight: 300;
   letter-spacing: -0.03em;
   line-height: 1.12;
+  color: #111827;
 }
 
 .bm-lede {
@@ -59,16 +75,17 @@ div.bm > * {
   max-width: 34rem;
   font-size: 0.84rem;
   line-height: 1.5;
-  color: oklch(0.9 0.01 80 / 0.5);
+  color: #64748b;
 }
 
 .bm-note {
   margin: 0.35rem 0 0;
   font-size: 0.72rem;
   line-height: 1.45;
-  color: oklch(0.9 0.01 80 / 0.38);
+  color: #94a3b8;
 }
 
+/* ── Top grid ────────────────────────────────────────────────────────────── */
 .bm-top {
   display: grid;
   grid-template-columns: minmax(0, 1.65fr) minmax(15.5rem, 0.9fr);
@@ -76,118 +93,120 @@ div.bm > * {
   align-items: stretch;
 }
 
+/* ── Card base — solid opaque white, no blur, no transparency ────────────── */
 .bm-card {
   position: relative;
   overflow: hidden;
   height: 100%;
   padding: 1.25rem 1.3rem 1.2rem;
   border-radius: var(--bm-radius);
-  border: 1px solid oklch(1 0 0 / 0.08);
-  background: oklch(0.13 0.012 62 / 0.5);
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
   box-shadow:
-    0 1px 0 oklch(1 0 0 / 0.045) inset,
-    0 12px 32px oklch(0.05 0.01 50 / 0.16);
-  backdrop-filter: blur(22px) saturate(128%);
+    0 1px 3px rgb(0 0 0 / 0.04),
+    0 4px 16px rgb(0 0 0 / 0.05);
+  backdrop-filter: none;
 }
 
+/* ── Plan / membership card ──────────────────────────────────────────────── */
 .bm-card--plan {
   isolation: isolate;
-  border: 1px solid #e6c078;
-  background: linear-gradient(
-    152deg,
-    #e0b56a 0%,
-    #d4a15f 32%,
-    #c99455 68%,
-    #c0894c 100%
-  );
+  border: 1px solid #dce5ed;
+  border-top: 3px solid #1e3a5f;
+  background: #ffffff;
   box-shadow:
-    inset 0 1px 0 #f2d7a4,
-    inset 0 -22px 36px #b88340,
-    0 14px 30px rgb(18 10 4 / 0.34);
+    0 1px 3px rgb(0 0 0 / 0.04),
+    0 6px 20px rgb(30 58 95 / 0.07);
   backdrop-filter: none;
-  color: #1c1610;
+  color: #1f2937;
 }
 
 .bm-card--plan .bm-label {
-  color: #4a3418;
+  color: #64748b;
 }
 
 .bm-card--plan .bm-status {
-  border-color: #8a5a24;
-  background: #7a4e1c;
-  color: #f3e2c0;
+  border-color: #c7d2fe;
+  background: #eef2ff;
+  color: #1e3a5f;
 }
 
 .bm-card--plan .bm-status::before {
-  background: #f0d6a0;
+  background: #1e3a5f;
 }
 
 .bm-card--plan .bm-plan-name {
-  color: #16110c;
+  color: #111827;
 }
 
 .bm-card--plan .bm-plan-copy,
 .bm-card--plan .bm-error {
-  color: #3d2d1a;
+  color: #64748b;
 }
 
 .bm-card--plan .bm-price {
-  color: #14100b;
+  color: #111827;
   font-weight: 600;
 }
 
 .bm-card--plan .bm-price span {
-  color: #3a2a16;
+  color: #64748b;
 }
 
 .bm-card--plan .bm-meta {
-  border-top-color: #a9783c;
+  border-top-color: #e2e8f0;
 }
 
 .bm-card--plan .bm-meta dt {
-  color: #5a4022;
+  color: #94a3b8;
 }
 
 .bm-card--plan .bm-meta dd {
-  color: #1c1610;
+  color: #1f2937;
 }
 
 .bm-card--plan .bm-btn--primary {
-  border-color: #1c1610;
-  background: #1c1610;
-  color: #e8c27a;
+  border-color: #1e3a5f;
+  background: #1e3a5f;
+  color: #ffffff;
 }
 
 .bm-card--plan .bm-btn--primary:hover {
-  background: #2a2116;
-  border-color: #2a2116;
-  color: #f0d6a0;
+  background: #16304f;
+  border-color: #16304f;
+  color: #ffffff;
 }
 
 .bm-card--plan .bm-btn--secondary {
-  border-color: #3a2a16;
+  border-color: #dce5ed;
   background: transparent;
-  color: #1c1610;
+  color: #1f2937;
 }
 
 .bm-card--plan .bm-btn--secondary:hover {
-  border-color: #1c1610;
-  background: #d4a15f;
-  color: #14100b;
+  border-color: #1e3a5f;
+  background: #f0f6fb;
+  color: #1e3a5f;
 }
 
 .bm-card--plan .bm-cancel {
-  color: #5c4224;
+  color: #94a3b8;
 }
 
 .bm-card--plan .bm-cancel:hover {
-  color: #3a2412;
+  color: #dc2626;
 }
 
 .bm-card--plan .bm-skeleton {
-  background: #c0894c;
+  background: #f1f5f9;
 }
 
+.bm-card--plan .bm-btn:focus-visible,
+.bm-card--plan .bm-cancel:focus-visible {
+  box-shadow: 0 0 0 2px #1e3a5f;
+}
+
+/* ── Shared button disabled state ────────────────────────────────────────── */
 .bm-btn:disabled,
 .bm-cancel:disabled {
   cursor: not-allowed;
@@ -199,11 +218,12 @@ div.bm > * {
   text-decoration: none;
 }
 
+/* ── Error / skeleton ────────────────────────────────────────────────────── */
 .bm-empty {
   margin: 0.35rem 0 0;
   padding: 1.15rem 0.15rem 0.4rem;
   font-size: 0.9rem;
-  color: oklch(0.9 0.01 80 / 0.48);
+  color: #94a3b8;
 }
 
 .bm-load-error {
@@ -213,6 +233,7 @@ div.bm > * {
 .bm-error-copy {
   margin: 0 0 0.9rem;
   font-size: 0.92rem;
+  color: #1f2937;
 }
 
 .bm-skeleton--credit {
@@ -225,17 +246,23 @@ div.bm > * {
   margin-top: 0.7rem;
 }
 
-.bm-pill--failed,
-.bm-pill--cancelled {
-  background: oklch(0.45 0.08 28 / 0.18);
-  color: oklch(0.82 0.06 28 / 0.88);
+.bm-error,
+.bm-skeleton {
+  min-height: 8rem;
 }
 
-.bm-card--plan .bm-btn:focus-visible,
-.bm-card--plan .bm-cancel:focus-visible {
-  box-shadow: 0 0 0 2px #1c1610;
+.bm-skeleton {
+  border-radius: 0.9rem;
+  background: #f1f5f9;
+  animation: bm-pulse 1.4s ease-in-out infinite;
 }
 
+@keyframes bm-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+/* ── Card head row ───────────────────────────────────────────────────────── */
 .bm-card-head {
   display: flex;
   align-items: center;
@@ -243,28 +270,30 @@ div.bm > * {
   gap: 0.75rem;
 }
 
+/* ── Section label ───────────────────────────────────────────────────────── */
 .bm-label {
   margin: 0;
   font-size: 0.62rem;
-  font-weight: 550;
+  font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--bronze) 68%, oklch(0.7 0.03 70));
+  color: #b88a62;
 }
 
+/* ── Status badge ────────────────────────────────────────────────────────── */
 .bm-status {
   display: inline-flex;
   align-items: center;
   gap: 0.38rem;
   padding: 0.22rem 0.55rem 0.22rem 0.5rem;
   border-radius: 999px;
-  border: 1px solid color-mix(in oklab, var(--bronze) 22%, transparent);
-  background: color-mix(in oklab, var(--bronze) 12%, oklch(0.16 0.02 70 / 0.4));
+  border: 1px solid #c7d2fe;
+  background: #eef2ff;
   font-size: 0.58rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--bronze-glow) 82%, white 8%);
+  color: #1e3a5f;
 }
 
 .bm-status::before {
@@ -272,15 +301,17 @@ div.bm > * {
   width: 0.35rem;
   height: 0.35rem;
   border-radius: 999px;
-  background: color-mix(in oklab, var(--bronze) 88%, var(--bronze-glow));
+  background: #22c55e;
 }
 
+/* ── Plan name & copy ────────────────────────────────────────────────────── */
 .bm-plan-name {
   margin: 0.85rem 0 0;
   font-size: clamp(1.55rem, 2.4vw, 1.95rem);
   font-weight: 450;
   letter-spacing: -0.03em;
   line-height: 1.1;
+  color: #111827;
 }
 
 .bm-plan-copy {
@@ -288,15 +319,16 @@ div.bm > * {
   max-width: 28rem;
   font-size: 0.84rem;
   line-height: 1.5;
-  color: oklch(0.9 0.01 80 / 0.52);
+  color: #64748b;
 }
 
+/* ── Price display ───────────────────────────────────────────────────────── */
 .bm-price {
   margin: 1rem 0 0;
   font-size: 1.15rem;
   font-weight: 500;
   letter-spacing: -0.02em;
-  color: oklch(0.96 0.012 82);
+  color: #111827;
 }
 
 .bm-price span {
@@ -304,22 +336,23 @@ div.bm > * {
   font-size: 0.78rem;
   font-weight: 450;
   letter-spacing: 0;
-  color: oklch(0.9 0.01 80 / 0.48);
+  color: #64748b;
 }
 
+/* ── Metadata grid ───────────────────────────────────────────────────────── */
 .bm-meta {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.85rem 1rem;
   margin: 1.15rem 0 0;
   padding-top: 1.05rem;
-  border-top: 1px solid oklch(1 0 0 / 0.07);
+  border-top: 1px solid #e2e8f0;
 }
 
 .bm-meta dt {
   font-size: 0.62rem;
   letter-spacing: 0.04em;
-  color: oklch(0.9 0.01 80 / 0.42);
+  color: #94a3b8;
 }
 
 .bm-meta dd {
@@ -328,8 +361,10 @@ div.bm > * {
   font-weight: 500;
   letter-spacing: -0.01em;
   text-transform: capitalize;
+  color: #1f2937;
 }
 
+/* ── Action buttons ──────────────────────────────────────────────────────── */
 .bm-actions {
   display: flex;
   flex-wrap: wrap;
@@ -352,38 +387,39 @@ div.bm > * {
   letter-spacing: -0.01em;
   text-decoration: none;
   transition:
-    background 200ms var(--bm-ease),
-    border-color 200ms var(--bm-ease),
-    color 200ms var(--bm-ease);
+    background 180ms var(--bm-ease),
+    border-color 180ms var(--bm-ease),
+    color 180ms var(--bm-ease);
 }
 
 .bm-btn:focus-visible,
 .bm-invoice:focus-visible,
 .bm-cancel:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--bronze) 38%, transparent);
+  box-shadow: 0 0 0 2px #93c5fd;
 }
 
 .bm-btn--primary {
-  border-color: color-mix(in oklab, var(--bronze) 28%, transparent);
-  background: color-mix(in oklab, var(--bronze) 22%, oklch(0.18 0.02 70 / 0.72));
-  color: oklch(0.97 0.015 82);
+  border-color: #1e3a5f;
+  background: #1e3a5f;
+  color: #ffffff;
 }
 
 .bm-btn--primary:hover {
-  background: color-mix(in oklab, var(--bronze) 32%, oklch(0.2 0.02 70 / 0.78));
+  background: #16304f;
+  border-color: #16304f;
 }
 
 .bm-btn--secondary {
-  border-color: oklch(1 0 0 / 0.1);
+  border-color: #dce5ed;
   background: transparent;
-  color: oklch(0.93 0.01 82 / 0.78);
+  color: #1f2937;
 }
 
 .bm-btn--secondary:hover {
-  border-color: oklch(1 0 0 / 0.16);
-  background: oklch(1 0 0 / 0.04);
-  color: oklch(0.96 0.01 82);
+  border-color: #1e3a5f;
+  background: #f0f6fb;
+  color: #1e3a5f;
 }
 
 .bm-btn svg {
@@ -391,6 +427,7 @@ div.bm > * {
   height: 0.85rem;
 }
 
+/* ── Cancel link ─────────────────────────────────────────────────────────── */
 .bm-cancel {
   display: inline-flex;
   margin-top: 0.85rem;
@@ -398,16 +435,17 @@ div.bm > * {
   border: 0;
   background: none;
   font-size: 0.78rem;
-  color: oklch(0.9 0.01 80 / 0.42);
+  color: #94a3b8;
   text-underline-offset: 0.18em;
-  transition: color 200ms var(--bm-ease);
+  transition: color 180ms var(--bm-ease);
 }
 
 .bm-cancel:hover {
-  color: oklch(0.78 0.05 28 / 0.86);
+  color: #dc2626;
   text-decoration: underline;
 }
 
+/* ── Credits card ────────────────────────────────────────────────────────── */
 .bm-credits {
   display: flex;
   flex-direction: column;
@@ -420,9 +458,9 @@ div.bm > * {
   height: 2.15rem;
   margin-top: 0.85rem;
   border-radius: 999px;
-  border: 1px solid color-mix(in oklab, var(--bronze) 20%, transparent);
-  background: color-mix(in oklab, var(--bronze) 10%, oklch(0.16 0.02 70 / 0.35));
-  color: color-mix(in oklab, var(--bronze) 82%, white 6%);
+  border: 1px solid #dce5ed;
+  background: #f0f6fb;
+  color: #1e3a5f;
 }
 
 .bm-credit-icon svg {
@@ -436,13 +474,13 @@ div.bm > * {
   font-weight: 300;
   letter-spacing: -0.04em;
   line-height: 0.95;
-  color: oklch(0.97 0.015 82);
+  color: #111827;
 }
 
 .bm-credit-unit {
   margin: 0.35rem 0 0;
   font-size: 0.78rem;
-  color: oklch(0.9 0.01 80 / 0.48);
+  color: #64748b;
 }
 
 .bm-credit-copy {
@@ -450,7 +488,7 @@ div.bm > * {
   flex: 1;
   font-size: 0.8rem;
   line-height: 1.5;
-  color: oklch(0.9 0.01 80 / 0.5);
+  color: #64748b;
 }
 
 .bm-credits .bm-btn {
@@ -458,6 +496,7 @@ div.bm > * {
   align-self: flex-start;
 }
 
+/* ── Section headers ─────────────────────────────────────────────────────── */
 .bm-section {
   margin-top: 2rem;
 }
@@ -476,24 +515,29 @@ div.bm > * {
   font-size: 1.05rem;
   font-weight: 500;
   letter-spacing: -0.02em;
+  color: #111827;
 }
 
 .bm-section-copy {
   margin: 0.22rem 0 0;
   font-size: 0.8rem;
   line-height: 1.45;
-  color: oklch(0.9 0.01 80 / 0.46);
+  color: #64748b;
 }
 
+/* ── Billing history ledger ──────────────────────────────────────────────── */
 .bm-ledger {
   overflow: hidden;
   margin: 0;
-  padding: 0.2rem 0;
+  padding: 0;
   list-style: none;
   border-radius: var(--bm-radius);
-  border: 1px solid oklch(1 0 0 / 0.08);
-  background: oklch(0.13 0.01 62 / 0.46);
-  backdrop-filter: blur(18px);
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 0.04),
+    0 4px 16px rgb(0 0 0 / 0.04);
+  backdrop-filter: none;
 }
 
 .bm-invoice {
@@ -503,10 +547,11 @@ div.bm > * {
   gap: 0.15rem 1rem;
   padding: 0.9rem 1.15rem;
   border: 0;
-  border-top: 1px solid oklch(1 0 0 / 0.06);
+  border-top: 1px solid #f1f5f9;
   background: transparent;
   text-align: left;
   transition: background 180ms var(--bm-ease);
+  cursor: default;
 }
 
 .bm-ledger li:first-child .bm-invoice {
@@ -514,18 +559,19 @@ div.bm > * {
 }
 
 .bm-invoice:hover {
-  background: oklch(1 0 0 / 0.035);
+  background: #f8fafc;
 }
 
 .bm-invoice-name {
   font-size: 0.9rem;
   font-weight: 520;
   letter-spacing: -0.015em;
+  color: #1f2937;
 }
 
 .bm-invoice-date {
   font-size: 0.75rem;
-  color: oklch(0.9 0.01 80 / 0.42);
+  color: #94a3b8;
 }
 
 .bm-invoice-side {
@@ -541,35 +587,44 @@ div.bm > * {
   gap: 0.5rem;
   font-size: 0.88rem;
   font-weight: 500;
+  color: #111827;
 }
 
+/* ── Status pills ────────────────────────────────────────────────────────── */
 .bm-pill {
   display: inline-flex;
   align-items: center;
   padding: 0.12rem 0.42rem;
   border-radius: 999px;
   font-size: 0.56rem;
-  font-weight: 650;
+  font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .bm-pill--paid {
-  background: oklch(0.55 0.06 150 / 0.16);
-  color: oklch(0.82 0.05 150 / 0.88);
+  background: #dcfce7;
+  color: #15803d;
 }
 
 .bm-pill--refunded,
 .bm-pill--pending {
-  background: oklch(1 0 0 / 0.06);
-  color: oklch(0.9 0.01 80 / 0.5);
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.bm-pill--failed,
+.bm-pill--cancelled {
+  background: #fff1f2;
+  color: #b91c1c;
 }
 
 .bm-invoice-id {
   font-size: 0.7rem;
-  color: oklch(0.9 0.01 80 / 0.38);
+  color: #94a3b8;
 }
 
+/* ── Payment methods grid ────────────────────────────────────────────────── */
 .bm-methods {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -583,9 +638,12 @@ div.bm > * {
   min-height: 7.1rem;
   padding: 0.95rem 1rem;
   border-radius: var(--bm-radius-sm);
-  border: 1px solid oklch(1 0 0 / 0.075);
-  background: oklch(0.13 0.01 62 / 0.44);
-  backdrop-filter: blur(16px);
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 0.03),
+    0 2px 8px rgb(0 0 0 / 0.04);
+  backdrop-filter: none;
 }
 
 .bm-method-icon {
@@ -595,8 +653,8 @@ div.bm > * {
   width: 2rem;
   height: 2rem;
   border-radius: 0.65rem;
-  border: 1px solid color-mix(in oklab, var(--bronze) 16%, transparent);
-  background: color-mix(in oklab, var(--bronze) 8%, oklch(0.16 0.01 62 / 0.35));
+  border: 1px solid #dce5ed;
+  background: #f0f6fb;
   font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
   font-size: 1.375rem;
   font-style: normal;
@@ -608,41 +666,33 @@ div.bm > * {
 .bm-method-name {
   margin: 0.05rem 0 0;
   font-size: 0.92rem;
-  font-weight: 550;
+  font-weight: 600;
   letter-spacing: -0.015em;
+  color: #111827;
 }
 
 .bm-method-copy {
   margin: 0.28rem 0 0;
   font-size: 0.78rem;
   line-height: 1.45;
-  color: oklch(0.9 0.01 80 / 0.48);
+  color: #64748b;
 }
 
 .bm-method-status {
   grid-column: 2;
   align-self: end;
   font-size: 0.56rem;
-  font-weight: 650;
+  font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--bronze) 70%, oklch(0.7 0.03 70));
+  color: #b88a62;
 }
 
 .bm-method-status.is-later {
-  color: oklch(0.9 0.01 80 / 0.38);
+  color: #94a3b8;
 }
 
-.bm-error,
-.bm-skeleton {
-  min-height: 8rem;
-}
-
-.bm-skeleton {
-  border-radius: 0.9rem;
-  background: oklch(1 0 0 / 0.04);
-}
-
+/* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 960px) {
   .bm-top {
     grid-template-columns: 1fr 1fr;
@@ -691,5 +741,9 @@ div.bm > * {
   .bm-invoice,
   .bm-cancel {
     transition: none;
+  }
+
+  .bm-skeleton {
+    animation: none;
   }
 }
