@@ -1,19 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { AlertTriangle, CheckCircle2, Coins, Download, FlaskConical, RefreshCw, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { Breadcrumb } from "@/components/shared/Breadcrumb";
 import { SectionContainer } from "@/components/shared/SectionContainer";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabase/client";
 
@@ -55,6 +49,29 @@ export function SubscriptionScreen() {
   const [reactivateLoading, setReactivateLoading] = useState(false);
   const razorpayLive = isRazorpayConfigured();
   const catalogPlan = data ? (plans.find((p) => p.id === data.tier) ?? null) : null;
+
+  /* ── Portal modal effects ─────────────────────────────────────────────────
+   * These run only on the client (useEffect never runs on the server).
+   *
+   * 1. Lock/restore body scroll while the modal is open.
+   * 2. Close on Escape key press (unless a backend call is in flight).
+   */
+  useEffect(() => {
+    if (!cancelModalOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = previous; };
+  }, [cancelModalOpen]);
+
+  useEffect(() => {
+    if (!cancelModalOpen) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape" && !cancelLoading) closeCancelModal();
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cancelModalOpen, cancelLoading]);
 
   /** Open the cancellation confirmation modal; guard against unconfigured gateway. */
   function openCancelModal() {
@@ -499,162 +516,222 @@ export function SubscriptionScreen() {
       </SectionContainer>
 
       {/* ── Cancellation confirmation / success modal ─────────────────────── */}
-      <Dialog open={cancelModalOpen} onOpenChange={(open) => { if (!open) closeCancelModal(); }}>
-        {/* showCloseButton=false — SubscriptionScreen renders its own .bm-modal__close */}
-        <DialogContent className={cn("bm-modal", cancelSuccess && "bm-modal--success")} showCloseButton={false}>
+      {/*
+       * WHY createPortal instead of Radix Dialog:
+       *
+       * The billing page (div.bm) has CSS rules that apply
+       * `position: relative; z-index: 1` to all direct children, and the
+       * page transition wrapper animates `opacity`. Both create stacking
+       * contexts that interfere with Radix's DialogContent `position: fixed`
+       * and animation classes (fade-in-0 / zoom-in-95 start at opacity/scale 0
+       * and require the tw-animate keyframes to complete — any CSS interference
+       * leaves the content invisible).
+       *
+       * The portal renders directly to document.body using INLINE styles for
+       * the positioning/z-index layer, making it immune to ANY parent CSS.
+       * The inner modal card uses plain class names for visual styling only.
+       */}
+      {cancelModalOpen && typeof document !== "undefined" && createPortal(
+        <>
+          {/* ── Backdrop ───────────────────────────────────────────────── */}
+          {/*
+           * z-index 9998 — above every application layer (navbar ~100,
+           * Radix portals z-50).  Inline style guarantees no CSS override.
+           */}
+          <div
+            aria-hidden="true"
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 9998,
+              backgroundColor: "oklch(0.03 0.004 60 / 0.78)",
+            }}
+            onClick={!cancelLoading ? closeCancelModal : undefined}
+          />
 
-          {/* ── Success view ─────────────────────────────────────────────── */}
-          {cancelSuccess ? (
-            <>
-              <DialogHeader>
-                <div className="bm-modal__icon-wrap bm-modal__icon-wrap--success" aria-hidden="true">
-                  <CheckCircle2 className="bm-modal__icon bm-modal__icon--success" />
-                </div>
-                <DialogTitle className="bm-modal__title">
-                  Subscription Cancelled Successfully
-                </DialogTitle>
-                <DialogDescription className="bm-modal__desc">
-                  Your subscription will remain active until{" "}
-                  <strong className="bm-modal__accent">
-                    {data?.accessUntilLabel && data.accessUntilLabel !== "—"
-                      ? data.accessUntilLabel
-                      : "the end of your billing period"}
-                  </strong>
-                  . You will not be charged for the next billing cycle, and your membership
-                  will not renew automatically.
-                </DialogDescription>
-              </DialogHeader>
-
-              {/* Summary of what happens */}
-              <div className="bm-modal__plan-info">
-                <div className="bm-modal__plan-row">
-                  <span className="bm-modal__plan-label">Current plan</span>
-                  <span className="bm-modal__plan-value">{planName}</span>
-                </div>
-                <div className="bm-modal__plan-row">
-                  <span className="bm-modal__plan-label">Access until</span>
-                  <span className="bm-modal__plan-value">
-                    {data?.accessUntilLabel && data.accessUntilLabel !== "—"
-                      ? data.accessUntilLabel
-                      : "End of billing period"}
-                  </span>
-                </div>
-                <div className="bm-modal__plan-row">
-                  <span className="bm-modal__plan-label">Next renewal</span>
-                  <span className="bm-modal__plan-value bm-modal__plan-value--muted">None</span>
-                </div>
-              </div>
-
-              <div className="bm-modal__actions">
-                <button
-                  type="button"
-                  className="bm-btn bm-btn--primary bm-modal__keep-btn"
-                  onClick={closeCancelModal}
-                >
-                  Got it
-                </button>
-              </div>
-            </>
-          ) : (
-            /* ── Confirmation view ──────────────────────────────────────────── */
-            <>
-              <DialogHeader>
-                <div className="bm-modal__icon-wrap" aria-hidden="true">
-                  <AlertTriangle className="bm-modal__icon" />
-                </div>
-                <DialogTitle className="bm-modal__title">
-                  Are you sure you want to cancel your subscription?
-                </DialogTitle>
-                <DialogDescription className="bm-modal__desc">
-                  Your{planName ? ` ${planName}` : ""} membership will remain active
-                  {data?.accessUntilLabel && data.accessUntilLabel !== "—"
-                    ? <> until <strong className="bm-modal__accent">{data.accessUntilLabel}</strong></>
-                    : " until the end of your current billing period"}
-                  . You will not be charged for the next billing cycle, and your subscription
-                  will not renew automatically.
-                </DialogDescription>
-              </DialogHeader>
-
-              {/* Plan / billing period details */}
-              <div className="bm-modal__plan-info">
-                <div className="bm-modal__plan-row">
-                  <span className="bm-modal__plan-label">Current plan</span>
-                  <span className="bm-modal__plan-value">{planName || "—"}</span>
-                </div>
-                <div className="bm-modal__plan-row">
-                  <span className="bm-modal__plan-label">Billing cycle</span>
-                  <span className="bm-modal__plan-value" style={{ textTransform: "capitalize" }}>
-                    {data?.billingInterval ?? "—"}
-                  </span>
-                </div>
-                <div className="bm-modal__plan-row">
-                  <span className="bm-modal__plan-label">Current access expires</span>
-                  <span className="bm-modal__plan-value">
-                    {data?.accessUntilLabel && data.accessUntilLabel !== "—"
-                      ? data.accessUntilLabel
-                      : "—"}
-                  </span>
-                </div>
-                <div className="bm-modal__plan-row">
-                  <span className="bm-modal__plan-label">Next renewal date</span>
-                  <span className="bm-modal__plan-value bm-modal__plan-value--muted">
-                    {data?.cancelAtPeriodEnd
-                      ? "Already cancelled"
-                      : data?.renewsLabel && data.renewsLabel !== "—"
-                        ? data.renewsLabel
-                        : "None"}
-                  </span>
-                </div>
-              </div>
-
-              {data?.isMockSubscription ? (
-                <div className="bm-modal__mock-note">
-                  <FlaskConical size={13} aria-hidden="true" />
-                  TEST MODE — Cancellation will be scheduled at period end (mock).
-                </div>
-              ) : null}
-
-              <div className="bm-modal__actions">
-                <button
-                  type="button"
-                  className="bm-btn bm-btn--primary bm-modal__keep-btn"
-                  disabled={cancelLoading}
-                  onClick={closeCancelModal}
-                >
-                  Keep Subscription
-                </button>
-                <button
-                  type="button"
-                  className="bm-modal__confirm-btn"
-                  disabled={cancelLoading}
-                  aria-busy={cancelLoading}
-                  onClick={() => void handleConfirmCancel()}
-                >
-                  {cancelLoading ? (
-                    <>
-                      <span className="bm-modal__spinner" aria-hidden="true" />
-                      Cancelling…
-                    </>
-                  ) : (
-                    "Yes, Cancel Subscription"
-                  )}
-                </button>
-              </div>
-            </>
-          )}
-
-          {/* Close ✕ — hidden during the loading state */}
-          <button
-            type="button"
-            className="bm-modal__close"
-            aria-label="Close"
-            disabled={cancelLoading}
-            onClick={closeCancelModal}
+          {/* ── Modal centering container ───────────────────────────────── */}
+          {/*
+           * z-index 9999 — above the backdrop.
+           * pointer-events: none so clicks on the empty area fall through
+           * to the backdrop (which closes the modal on click).
+           * The modal card inside restores pointer-events: auto.
+           */}
+          <div
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 9999,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "1rem",
+              pointerEvents: "none",
+            }}
           >
-            <X size={16} aria-hidden="true" />
-          </button>
-        </DialogContent>
-      </Dialog>
+            {/* ── Modal card ─────────────────────────────────────────────── */}
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="bm-cancel-modal-title"
+              className={cn(
+                "bm-portal-modal",
+                cancelSuccess && "bm-portal-modal--success",
+              )}
+              style={{ pointerEvents: "auto" }}
+            >
+              {/* ── Success view ─────────────────────────────────────────── */}
+              {cancelSuccess ? (
+                <>
+                  <div className="bm-modal__icon-wrap bm-modal__icon-wrap--success" aria-hidden="true">
+                    <CheckCircle2 className="bm-modal__icon bm-modal__icon--success" />
+                  </div>
+
+                  <h2 id="bm-cancel-modal-title" className="bm-modal__title">
+                    Subscription Cancelled Successfully
+                  </h2>
+                  <p className="bm-modal__desc">
+                    Your subscription will remain active until{" "}
+                    <strong className="bm-modal__accent">
+                      {data?.accessUntilLabel && data.accessUntilLabel !== "—"
+                        ? data.accessUntilLabel
+                        : "the end of your billing period"}
+                    </strong>
+                    . You will not be charged for the next billing cycle, and your
+                    membership will not renew automatically.
+                  </p>
+
+                  {/* Summary */}
+                  <div className="bm-modal__plan-info">
+                    <div className="bm-modal__plan-row">
+                      <span className="bm-modal__plan-label">Current plan</span>
+                      <span className="bm-modal__plan-value">{planName}</span>
+                    </div>
+                    <div className="bm-modal__plan-row">
+                      <span className="bm-modal__plan-label">Access until</span>
+                      <span className="bm-modal__plan-value">
+                        {data?.accessUntilLabel && data.accessUntilLabel !== "—"
+                          ? data.accessUntilLabel
+                          : "End of billing period"}
+                      </span>
+                    </div>
+                    <div className="bm-modal__plan-row">
+                      <span className="bm-modal__plan-label">Next renewal</span>
+                      <span className="bm-modal__plan-value bm-modal__plan-value--muted">None</span>
+                    </div>
+                  </div>
+
+                  <div className="bm-modal__actions">
+                    <button
+                      type="button"
+                      className="bm-btn bm-btn--primary bm-modal__keep-btn"
+                      onClick={closeCancelModal}
+                    >
+                      Got it
+                    </button>
+                  </div>
+                </>
+              ) : (
+                /* ── Confirmation view ─────────────────────────────────────── */
+                <>
+                  <div className="bm-modal__icon-wrap" aria-hidden="true">
+                    <AlertTriangle className="bm-modal__icon" />
+                  </div>
+
+                  <h2 id="bm-cancel-modal-title" className="bm-modal__title">
+                    Are you sure you want to cancel your subscription?
+                  </h2>
+                  <p className="bm-modal__desc">
+                    Your{planName ? ` ${planName}` : ""} membership will remain active
+                    {data?.accessUntilLabel && data.accessUntilLabel !== "—"
+                      ? <> until <strong className="bm-modal__accent">{data.accessUntilLabel}</strong></>
+                      : " until the end of your current billing period"}
+                    . You will not be charged for the next billing cycle, and your
+                    subscription will not renew automatically.
+                  </p>
+
+                  {/* Plan / billing period details */}
+                  <div className="bm-modal__plan-info">
+                    <div className="bm-modal__plan-row">
+                      <span className="bm-modal__plan-label">Current plan</span>
+                      <span className="bm-modal__plan-value">{planName || "—"}</span>
+                    </div>
+                    <div className="bm-modal__plan-row">
+                      <span className="bm-modal__plan-label">Billing cycle</span>
+                      <span className="bm-modal__plan-value" style={{ textTransform: "capitalize" }}>
+                        {data?.billingInterval ?? "—"}
+                      </span>
+                    </div>
+                    <div className="bm-modal__plan-row">
+                      <span className="bm-modal__plan-label">Current access expires</span>
+                      <span className="bm-modal__plan-value">
+                        {data?.accessUntilLabel && data.accessUntilLabel !== "—"
+                          ? data.accessUntilLabel
+                          : "—"}
+                      </span>
+                    </div>
+                    <div className="bm-modal__plan-row">
+                      <span className="bm-modal__plan-label">Next renewal date</span>
+                      <span className="bm-modal__plan-value bm-modal__plan-value--muted">
+                        {data?.cancelAtPeriodEnd
+                          ? "Already cancelled"
+                          : data?.renewsLabel && data.renewsLabel !== "—"
+                            ? data.renewsLabel
+                            : "None"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {data?.isMockSubscription ? (
+                    <div className="bm-modal__mock-note">
+                      <FlaskConical size={13} aria-hidden="true" />
+                      TEST MODE — Cancellation will be scheduled at period end (mock).
+                    </div>
+                  ) : null}
+
+                  <div className="bm-modal__actions">
+                    <button
+                      type="button"
+                      className="bm-btn bm-btn--primary bm-modal__keep-btn"
+                      disabled={cancelLoading}
+                      onClick={closeCancelModal}
+                    >
+                      Keep Subscription
+                    </button>
+                    <button
+                      type="button"
+                      className="bm-modal__confirm-btn"
+                      disabled={cancelLoading}
+                      aria-busy={cancelLoading}
+                      onClick={() => void handleConfirmCancel()}
+                    >
+                      {cancelLoading ? (
+                        <>
+                          <span className="bm-modal__spinner" aria-hidden="true" />
+                          Cancelling…
+                        </>
+                      ) : (
+                        "Yes, Cancel Subscription"
+                      )}
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {/* Close ✕ — hidden during the loading state */}
+              <button
+                type="button"
+                className="bm-modal__close"
+                aria-label="Close"
+                disabled={cancelLoading}
+                onClick={closeCancelModal}
+              >
+                <X size={16} aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+        </>,
+        document.body,
+      )}
     </PageShell>
   );
 }
