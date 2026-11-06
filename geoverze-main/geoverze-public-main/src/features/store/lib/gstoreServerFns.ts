@@ -6,15 +6,19 @@
  *     price catalog (gstoreProductPrices.ts). Client prices are never trusted.
  *   - Razorpay secret key (RAZORPAY_KEY_SECRET) is never sent to the browser.
  *   - Payment verification uses HMAC-SHA256 (Razorpay signature verification).
- *   - All DB writes go through SECURITY DEFINER RPCs that check auth.uid().
+ *   - Authenticated orders: SECURITY DEFINER RPC checks auth.uid().
+ *   - Guest orders: service role key is used (server-side only).
  *   - Mock mode requires MOCK_PAYMENTS_ENABLED=true in Vercel env vars.
  *
  * ENVIRONMENT VARIABLES (all server-side only except VITE_ ones):
- *   RAZORPAY_KEY_ID        — Razorpay Key ID (also readable as VITE_RAZORPAY_KEY_ID)
- *   RAZORPAY_KEY_SECRET    — Razorpay Key Secret (NEVER expose to client)
- *   VITE_SUPABASE_URL      — Supabase project URL
- *   VITE_SUPABASE_ANON_KEY — Supabase anon key (for authenticated RPC calls)
- *   MOCK_PAYMENTS_ENABLED  — Set to "true" for testing without real payments
+ *   RAZORPAY_KEY_ID           — Razorpay Key ID
+ *   RAZORPAY_KEY_SECRET       — Razorpay Key Secret (NEVER expose to client)
+ *   RAZORPAY_WEBHOOK_SECRET   — Razorpay Webhook Secret for webhook signature verification
+ *   VITE_SUPABASE_URL         — Supabase project URL
+ *   VITE_SUPABASE_ANON_KEY    — Supabase anon key (for authenticated RPC calls)
+ *   SUPABASE_SERVICE_ROLE_KEY — Supabase service role key (for guest orders, admin)
+ *   MOCK_PAYMENTS_ENABLED     — Set to "true" for testing without real payments
+ *   GSTORE_ADMIN_EMAILS       — Comma-separated list of admin email addresses
  */
 
 import { createServerFn } from "@tanstack/react-start";
@@ -57,6 +61,18 @@ function isMockEnabled(): boolean {
     process.env["MOCK_PAYMENTS_ENABLED"] === "true" ||
     process.env["VITE_MOCK_PAYMENTS"] === "true"
   );
+}
+
+function makeServiceRoleClient(): SupabaseClient {
+  const url         = process.env["VITE_SUPABASE_URL"];
+  const serviceRole = process.env["SUPABASE_SERVICE_ROLE_KEY"];
+  if (!url || !serviceRole) throw new Error("Supabase service role not configured.");
+  return createClient(url, serviceRole, { auth: { persistSession: false } });
+}
+
+function getAdminEmails(): string[] {
+  const raw = process.env["GSTORE_ADMIN_EMAILS"] ?? "";
+  return raw.split(",").map(e => e.trim().toLowerCase()).filter(Boolean);
 }
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -587,4 +603,451 @@ export const getGstoreOrderDetailFn = createServerFn({ method: "GET" })
       discount_minor:   o.discount_minor,
       items:            o.gstore_order_items ?? [],
     };
+  });
+
+// ── 6. createGstoreGuestOrderFn ───────────────────────────────────────────────
+//
+// Creates an order for a guest (unauthenticated) user.
+// Uses the Supabase service role key on the server to call a SECURITY DEFINER
+// RPC that bypasses auth.uid() checks.
+// Returns guest_token which the client must store securely (localStorage)
+// for order lookup later.
+
+const GuestOrderSchema = z.object({
+  items: z.array(
+    z.object({
+      slug:     z.string().min(1),
+      quantity: z.number().int().min(1).max(10),
+      options:  z.record(z.string(), z.string()),
+    }),
+  ).min(1),
+  details: z.object({
+    customerName:    z.string().min(1).max(200),
+    customerEmail:   z.string().email(),
+    customerPhone:   z.string().min(5).max(20),
+    shippingName:    z.string().min(1).max(200),
+    shippingLine1:   z.string().min(1).max(300),
+    shippingLine2:   z.string().max(300).optional().default(""),
+    shippingCity:    z.string().min(1).max(100),
+    shippingState:   z.string().min(1).max(100),
+    shippingPincode: z.string().min(4).max(10),
+    shippingCountry: z.string().min(1).max(100).optional().default("India"),
+    deliveryNotes:   z.string().max(500).optional().default(""),
+    shippingMethod:  z.enum(["standard", "tracked", "express"]).optional().default("standard"),
+  }),
+  idempotency_key: z.string().min(1).max(256),
+});
+
+export type CreateGstoreGuestOrderResult = {
+  order_id: string;
+  order_number: string;
+  payment_id: string;
+  guest_token: string;
+  total_minor: number;
+  subtotal_minor: number;
+  shipping_minor: number;
+  tax_minor: number;
+  rzp_order_id: string | null;
+  rzp_key_id: string;
+  mock_enabled: boolean;
+  idempotent: boolean;
+};
+
+export const createGstoreGuestOrderFn = createServerFn({ method: "POST" })
+  .validator((raw: unknown) => GuestOrderSchema.parse(raw))
+  .handler(async ({ data }): Promise<CreateGstoreGuestOrderResult> => {
+    const mockEnabled = isMockEnabled();
+    const keyId       = getRazorpayKeyId();
+    const keySecret   = getRazorpaySecret();
+
+    // 1. Validate items and compute totals (server-side, never trust client)
+    type ItemRow = {
+      product_id: string;
+      product_name: string;
+      product_slug: string;
+      sku: string;
+      category: string;
+      options: Record<string, string>;
+      quantity: number;
+      unit_price_minor: number;
+      line_total_minor: number;
+    };
+
+    const itemRows: ItemRow[] = [];
+    let subtotalMinor = 0;
+    const hasPhysical = data.items.some(item => {
+      const p = getProductPrice(item.slug);
+      return p?.physical ?? true;
+    });
+
+    for (const item of data.items) {
+      const product = getProductPrice(item.slug);
+      if (!product) throw new Error(`Unknown product: ${item.slug}`);
+      const lineTotal = product.priceMinor * item.quantity;
+      subtotalMinor += lineTotal;
+      itemRows.push({
+        product_id:       product.slug,
+        product_name:     product.name,
+        product_slug:     product.slug,
+        sku:              product.slug,
+        category:         product.category,
+        options:          item.options,
+        quantity:         item.quantity,
+        unit_price_minor: product.priceMinor,
+        line_total_minor: lineTotal,
+      });
+    }
+
+    const shippingMinor = computeShippingMinor(data.details.shippingMethod ?? "standard", subtotalMinor, hasPhysical);
+    const taxMinor      = computeTaxMinor(subtotalMinor, shippingMinor);
+    const totalMinor    = subtotalMinor + shippingMinor + taxMinor;
+
+    // 2. Create DB order via service role (no auth.uid() needed for guests)
+    const serviceClient = makeServiceRoleClient();
+    const { data: rpcResult, error: rpcError } = await serviceClient.rpc(
+      "create_gstore_order_guest",
+      {
+        p_customer_name:    data.details.customerName,
+        p_customer_email:   data.details.customerEmail,
+        p_customer_phone:   data.details.customerPhone,
+        p_shipping_name:    data.details.shippingName,
+        p_shipping_line1:   data.details.shippingLine1,
+        p_shipping_line2:   data.details.shippingLine2 ?? "",
+        p_shipping_city:    data.details.shippingCity,
+        p_shipping_state:   data.details.shippingState,
+        p_shipping_pincode: data.details.shippingPincode,
+        p_shipping_country: data.details.shippingCountry ?? "India",
+        p_delivery_notes:   data.details.deliveryNotes ?? "",
+        p_subtotal_minor:   subtotalMinor,
+        p_shipping_minor:   shippingMinor,
+        p_tax_minor:        taxMinor,
+        p_discount_minor:   0,
+        p_total_minor:      totalMinor,
+        p_shipping_method:  data.details.shippingMethod ?? "standard",
+        p_items:            itemRows,
+        p_idempotency_key:  data.idempotency_key,
+        p_is_mock:          mockEnabled,
+      },
+    );
+
+    if (rpcError || !rpcResult) {
+      throw new Error(rpcError?.message ?? "Failed to create guest order.");
+    }
+
+    const r = rpcResult as { order_id: string; order_number: string; payment_id: string; guest_token: string; idempotent: boolean };
+
+    // 3. If mock mode, skip Razorpay
+    if (mockEnabled) {
+      return {
+        order_id:       r.order_id,
+        order_number:   r.order_number,
+        payment_id:     r.payment_id,
+        guest_token:    r.guest_token,
+        total_minor:    totalMinor,
+        subtotal_minor: subtotalMinor,
+        shipping_minor: shippingMinor,
+        tax_minor:      taxMinor,
+        rzp_order_id:   null,
+        rzp_key_id:     keyId,
+        mock_enabled:   true,
+        idempotent:     r.idempotent,
+      };
+    }
+
+    // 4. Create Razorpay order
+    if (!keyId || !keySecret) {
+      throw new Error("Razorpay keys not configured.");
+    }
+
+    const basicAuth = Buffer.from(`${keyId}:${keySecret}`).toString("base64");
+    const rzpRes = await fetch("https://api.razorpay.com/v1/orders", {
+      method:  "POST",
+      headers: {
+        "Content-Type":  "application/json",
+        "Authorization": `Basic ${basicAuth}`,
+      },
+      body: JSON.stringify({
+        amount:          totalMinor,
+        currency:        "INR",
+        receipt:         r.order_number,
+        notes:           {
+          order_id:    r.order_id,
+          payment_id:  r.payment_id,
+          order_type:  "gstore_guest",
+        },
+      }),
+    });
+
+    if (!rzpRes.ok) {
+      const errText = await rzpRes.text();
+      throw new Error(`Razorpay order creation failed: ${errText}`);
+    }
+
+    const rzpOrder = (await rzpRes.json()) as { id: string };
+
+    return {
+      order_id:       r.order_id,
+      order_number:   r.order_number,
+      payment_id:     r.payment_id,
+      guest_token:    r.guest_token,
+      total_minor:    totalMinor,
+      subtotal_minor: subtotalMinor,
+      shipping_minor: shippingMinor,
+      tax_minor:      taxMinor,
+      rzp_order_id:   rzpOrder.id,
+      rzp_key_id:     keyId,
+      mock_enabled:   false,
+      idempotent:     r.idempotent,
+    };
+  });
+
+// ── 7. verifyGstoreGuestPaymentFn ─────────────────────────────────────────────
+
+const VerifyGuestPaymentSchema = z.object({
+  order_id:        z.string().uuid(),
+  payment_id:      z.string().uuid(),
+  guest_token:     z.string().uuid(),
+  rzp_order_id:    z.string().min(1),
+  rzp_payment_id:  z.string().min(1),
+  rzp_signature:   z.string().min(1),
+});
+
+export const verifyGstoreGuestPaymentFn = createServerFn({ method: "POST" })
+  .validator((raw: unknown) => VerifyGuestPaymentSchema.parse(raw))
+  .handler(async ({ data }) => {
+    const keySecret = getRazorpaySecret();
+    if (!keySecret) throw new Error("Razorpay not configured.");
+
+    // HMAC-SHA256 verification
+    const expectedBody = `${data.rzp_order_id}|${data.rzp_payment_id}`;
+    const expectedSig  = createHmac("sha256", keySecret)
+      .update(expectedBody)
+      .digest("hex");
+
+    if (expectedSig !== data.rzp_signature) {
+      // Confirm as failed so order is not left dangling
+      const svc = makeServiceRoleClient();
+      await svc.rpc("confirm_gstore_payment_guest", {
+        p_order_id:            data.order_id,
+        p_payment_id:          data.payment_id,
+        p_guest_token:         data.guest_token,
+        p_provider_order_id:   data.rzp_order_id,
+        p_provider_payment_id: data.rzp_payment_id,
+        p_provider_signature:  data.rzp_signature,
+        p_outcome:             "failed",
+      });
+      throw new Error("Payment signature verification failed — payment not confirmed.");
+    }
+
+    const svc = makeServiceRoleClient();
+    const { error } = await svc.rpc("confirm_gstore_payment_guest", {
+      p_order_id:            data.order_id,
+      p_payment_id:          data.payment_id,
+      p_guest_token:         data.guest_token,
+      p_provider_order_id:   data.rzp_order_id,
+      p_provider_payment_id: data.rzp_payment_id,
+      p_provider_signature:  data.rzp_signature,
+      p_outcome:             "success",
+    });
+
+    if (error) throw new Error(error.message ?? "Failed to confirm guest payment.");
+    return { success: true };
+  });
+
+// ── 8. confirmMockGstoreGuestPaymentFn ────────────────────────────────────────
+
+const MockGuestPaymentSchema = z.object({
+  order_id:    z.string().uuid(),
+  payment_id:  z.string().uuid(),
+  guest_token: z.string().uuid(),
+  outcome:     z.enum(["success", "failed", "cancel"]),
+});
+
+export const confirmMockGstoreGuestPaymentFn = createServerFn({ method: "POST" })
+  .validator((raw: unknown) => MockGuestPaymentSchema.parse(raw))
+  .handler(async ({ data }) => {
+    if (!isMockEnabled()) throw new Error("Mock payments not enabled.");
+    const svc = makeServiceRoleClient();
+    const { error } = await svc.rpc("confirm_gstore_payment_guest", {
+      p_order_id:            data.order_id,
+      p_payment_id:          data.payment_id,
+      p_guest_token:         data.guest_token,
+      p_provider_order_id:   "mock",
+      p_provider_payment_id: `mock_${Date.now()}`,
+      p_provider_signature:  "mock",
+      p_outcome:             data.outcome === "cancel" ? "cancel" : data.outcome,
+    });
+    if (error) throw new Error(error.message ?? "Failed to confirm mock guest payment.");
+    return { success: true };
+  });
+
+// ── 9. getGuestOrderDetailFn ──────────────────────────────────────────────────
+
+const GuestOrderDetailSchema = z.object({
+  order_number: z.string().min(1),
+  guest_token:  z.string().uuid(),
+});
+
+export type GuestOrderRow = {
+  id: string;
+  order_number: string;
+  order_status: string;
+  payment_status: string;
+  total_minor: number;
+  subtotal_minor: number;
+  shipping_minor: number;
+  tax_minor: number;
+  shipping_method: string;
+  tracking_number: string | null;
+  customer_name: string;
+  customer_email: string;
+  shipping_name: string;
+  shipping_line1: string;
+  shipping_line2: string;
+  shipping_city: string;
+  shipping_state: string;
+  shipping_pincode: string;
+  shipping_country: string;
+  is_mock: boolean;
+  created_at: string;
+  items: Array<{
+    id: string;
+    product_name: string;
+    product_slug: string;
+    options: Record<string, string>;
+    quantity: number;
+    unit_price_minor: number;
+    line_total_minor: number;
+  }>;
+};
+
+export const getGuestOrderDetailFn = createServerFn({ method: "POST" })
+  .validator((raw: unknown) => GuestOrderDetailSchema.parse(raw))
+  .handler(async ({ data }): Promise<GuestOrderRow | null> => {
+    // Uses anon client since get_guest_order_detail is GRANT to anon
+    const url     = process.env["VITE_SUPABASE_URL"];
+    const anonKey = process.env["VITE_SUPABASE_ANON_KEY"];
+    if (!url || !anonKey) throw new Error("Supabase not configured.");
+
+    const anonClient = createClient(url, anonKey, { auth: { persistSession: false } });
+    const { data: result, error } = await anonClient.rpc("get_guest_order_detail", {
+      p_order_number: data.order_number,
+      p_guest_token:  data.guest_token,
+    });
+
+    if (error) throw new Error(error.message);
+    return result as GuestOrderRow | null;
+  });
+
+// ── 10. getAdminOrdersFn ──────────────────────────────────────────────────────
+//
+// Admin-only: returns all orders for the dashboard.
+// Verifies the calling user's email is in GSTORE_ADMIN_EMAILS.
+
+const AdminOrdersSchema = z.object({
+  access_token: z.string().min(10),
+  page:  z.number().int().min(1).optional().default(1),
+  limit: z.number().int().min(1).max(100).optional().default(50),
+  status_filter: z.string().optional(),
+});
+
+export type AdminOrderRow = {
+  id: string;
+  order_number: string;
+  user_id: string | null;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string;
+  shipping_city: string;
+  shipping_state: string;
+  total_minor: number;
+  currency: string;
+  order_status: string;
+  payment_status: string;
+  shipping_method: string;
+  tracking_number: string | null;
+  is_mock: boolean;
+  item_count: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export const getAdminOrdersFn = createServerFn({ method: "POST" })
+  .validator((raw: unknown) => AdminOrdersSchema.parse(raw))
+  .handler(async ({ data }): Promise<{ orders: AdminOrderRow[]; total: number }> => {
+    const url     = process.env["VITE_SUPABASE_URL"];
+    const anonKey = process.env["VITE_SUPABASE_ANON_KEY"];
+    if (!url || !anonKey) throw new Error("Supabase not configured.");
+
+    // Verify caller is an admin
+    const userClient = createClient(url, anonKey, {
+      auth: { persistSession: false },
+      global: { headers: { Authorization: `Bearer ${data.access_token}` } },
+    });
+    const { data: { user }, error: userError } = await userClient.auth.getUser();
+    if (userError || !user) throw new Error("Not authenticated.");
+
+    const adminEmails = getAdminEmails();
+    if (!adminEmails.includes(user.email?.toLowerCase() ?? "")) {
+      throw new Error("Admin access required.");
+    }
+
+    // Use service role to query admin view
+    const svc = makeServiceRoleClient();
+    const offset = (data.page - 1) * (data.limit ?? 50);
+
+    let query = svc
+      .from("gstore_orders_admin_view")
+      .select("*", { count: "exact" })
+      .order("created_at", { ascending: false })
+      .range(offset, offset + (data.limit ?? 50) - 1);
+
+    if (data.status_filter && data.status_filter !== "all") {
+      query = query.eq("order_status", data.status_filter);
+    }
+
+    const { data: orders, count, error } = await query;
+    if (error) throw new Error(error.message);
+
+    return { orders: (orders ?? []) as AdminOrderRow[], total: count ?? 0 };
+  });
+
+// ── 11. adminUpdateOrderFn ────────────────────────────────────────────────────
+
+const AdminUpdateOrderSchema = z.object({
+  access_token:    z.string().min(10),
+  order_id:        z.string().uuid(),
+  order_status:    z.string().optional(),
+  tracking_number: z.string().optional(),
+});
+
+export const adminUpdateOrderFn = createServerFn({ method: "POST" })
+  .validator((raw: unknown) => AdminUpdateOrderSchema.parse(raw))
+  .handler(async ({ data }) => {
+    const url     = process.env["VITE_SUPABASE_URL"];
+    const anonKey = process.env["VITE_SUPABASE_ANON_KEY"];
+    if (!url || !anonKey) throw new Error("Supabase not configured.");
+
+    // Verify caller is admin
+    const userClient = createClient(url, anonKey, {
+      auth: { persistSession: false },
+      global: { headers: { Authorization: `Bearer ${data.access_token}` } },
+    });
+    const { data: { user }, error: userError } = await userClient.auth.getUser();
+    if (userError || !user) throw new Error("Not authenticated.");
+
+    const adminEmails = getAdminEmails();
+    if (!adminEmails.includes(user.email?.toLowerCase() ?? "")) {
+      throw new Error("Admin access required.");
+    }
+
+    const svc = makeServiceRoleClient();
+    const { error } = await svc.rpc("admin_update_gstore_order", {
+      p_order_id:        data.order_id,
+      p_order_status:    data.order_status ?? null,
+      p_tracking_number: data.tracking_number ?? null,
+    });
+
+    if (error) throw new Error(error.message ?? "Failed to update order.");
+    return { success: true };
   });

@@ -21,7 +21,12 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase/client";
 import { selectUser, useAuthStore } from "@/stores/authStore";
 
-import { getGstoreOrderDetailFn, type GstoreOrderDetail } from "../lib/gstoreServerFns";
+import {
+  getGstoreOrderDetailFn,
+  getGuestOrderDetailFn,
+  type GstoreOrderDetail,
+  type GuestOrderRow,
+} from "../lib/gstoreServerFns";
 import { formatInrPaise } from "../lib/gstoreProductPrices";
 import { StorefrontNav } from "../storefront/StorefrontNav";
 import "../storefront/storefront.css";
@@ -54,24 +59,39 @@ export function GstoreOrderConfirmation() {
   const search = useSearch({ strict: false }) as Record<string, string>;
   const orderId     = search["order_id"] ?? "";
   const orderNumber = search["order_number"] ?? "";
+  const guestToken  = search["guest_token"] ?? "";
+  const isGuest     = !!guestToken && !user;
 
   const [accessToken, setAccessToken] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setAccessToken(data.session?.access_token ?? null);
-    });
-  }, []);
+    if (!isGuest) {
+      supabase.auth.getSession().then(({ data }) => {
+        setAccessToken(data.session?.access_token ?? null);
+      });
+    }
+  }, [isGuest]);
 
-  const { data: order, isLoading } = useQuery({
+  // Authenticated order fetch
+  const { data: authOrder, isLoading: authLoading } = useQuery({
     queryKey: ["gstoreOrder", orderId],
-    queryFn: () =>
-      getGstoreOrderDetailFn({
-        data: { access_token: accessToken!, order_id: orderId },
-      }),
-    enabled: Boolean(orderId && accessToken),
+    queryFn: () => getGstoreOrderDetailFn({ data: { access_token: accessToken!, order_id: orderId } }),
+    enabled: Boolean(orderId && accessToken && !isGuest),
     staleTime: 60_000,
   });
+
+  // Guest order fetch
+  const { data: guestOrder, isLoading: guestLoading } = useQuery({
+    queryKey: ["gstoreGuestOrder", orderNumber, guestToken],
+    queryFn: () => getGuestOrderDetailFn({ data: { order_number: orderNumber, guest_token: guestToken } }),
+    enabled: Boolean(isGuest && orderNumber && guestToken),
+    staleTime: 60_000,
+  });
+
+  const order = isGuest
+    ? (guestOrder as GuestOrderRow | null | undefined)
+    : (authOrder as GstoreOrderDetail | null | undefined);
+  const isLoading = isGuest ? guestLoading : authLoading;
 
   if (!orderId) {
     return (
@@ -111,24 +131,43 @@ export function GstoreOrderConfirmation() {
             </div>
           </div>
 
+          {/* Guest note */}
+          {isGuest && (
+            <div className="mb-6 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-[13px] text-blue-800">
+              <strong>Tip:</strong> Save your order number <strong>{orderNumber}</strong> and
+              the confirmation email to track your order later at{" "}
+              <Link to="/geostore/order-lookup" className="underline font-medium">geostore order lookup</Link>.
+            </div>
+          )}
+
           {/* Order details card */}
           {isLoading ? (
             <div className="flex items-center justify-center rounded-2xl border border-[#e8e8e8] p-10">
               <div className="h-5 w-5 animate-spin rounded-full border-2 border-black border-t-transparent" />
             </div>
           ) : order ? (
-            <OrderDetailCard order={order} />
+            <OrderDetailCard order={order as GstoreOrderDetail} />
           ) : null}
 
           {/* Actions */}
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link
-              to="/geostore/orders"
-              className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-black bg-black px-6 py-3.5 text-[13px] font-semibold text-white hover:bg-[#222]"
-            >
-              <Package className="h-4 w-4" />
-              View my orders
-            </Link>
+            {!isGuest ? (
+              <Link
+                to="/geostore/orders"
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-black bg-black px-6 py-3.5 text-[13px] font-semibold text-white hover:bg-[#222]"
+              >
+                <Package className="h-4 w-4" />
+                View my orders
+              </Link>
+            ) : (
+              <Link
+                to="/geostore/order-lookup"
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-black bg-black px-6 py-3.5 text-[13px] font-semibold text-white hover:bg-[#222]"
+              >
+                <Package className="h-4 w-4" />
+                Track my order
+              </Link>
+            )}
             <Link
               to="/geostore"
               className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-[#e0e0e0] bg-white px-6 py-3.5 text-[13px] font-semibold text-black hover:bg-[#f0f0f0]"

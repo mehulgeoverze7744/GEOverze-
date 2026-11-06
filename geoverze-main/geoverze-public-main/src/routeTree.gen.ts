@@ -65,11 +65,13 @@ import { Route as GeolibraryIndexRouteImport } from './routes/geolibrary.index'
 import { Route as GeolibraryBookmarksRouteImport } from './routes/geolibrary.bookmarks'
 import { Route as GeolibraryBrowseRouteImport } from './routes/geolibrary.browse'
 import { Route as GeostoreIndexRouteImport } from './routes/geostore.index'
+import { Route as GeostoreAdminRouteImport } from './routes/geostore.admin'
 import { Route as GeostoreBrowseRouteImport } from './routes/geostore.browse'
 import { Route as GeostoreCartRouteImport } from './routes/geostore.cart'
 import { Route as GeostoreCheckoutRouteImport } from './routes/geostore.checkout'
 import { Route as GeostoreOffersRouteImport } from './routes/geostore.offers'
 import { Route as GeostoreOrderConfirmationRouteImport } from './routes/geostore.order-confirmation'
+import { Route as GeostoreOrderLookupRouteImport } from './routes/geostore.order-lookup'
 import { Route as GeostoreOrdersRouteImport } from './routes/geostore.orders'
 import { Route as GeostoreRewardsRouteImport } from './routes/geostore.rewards'
 import { Route as GeostoreTryOnRouteImport } from './routes/geostore.try-on'
@@ -432,6 +434,11 @@ const GeostoreIndexRoute = GeostoreIndexRouteImport.update({
   path: '/',
   getParentRoute: () => GeostoreRoute,
 } as any)
+const GeostoreAdminRoute = GeostoreAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => GeostoreRoute,
+} as any)
 const GeostoreBrowseRoute = GeostoreBrowseRouteImport.update({
   id: '/browse',
   path: '/browse',
@@ -458,6 +465,11 @@ const GeostoreOrderConfirmationRoute =
     path: '/order-confirmation',
     getParentRoute: () => GeostoreRoute,
   } as any)
+const GeostoreOrderLookupRoute = GeostoreOrderLookupRouteImport.update({
+  id: '/order-lookup',
+  path: '/order-lookup',
+  getParentRoute: () => GeostoreRoute,
+} as any)
 const GeostoreOrdersRoute = GeostoreOrdersRouteImport.update({
   id: '/orders',
   path: '/orders',
@@ -920,11 +932,13 @@ export interface FileRoutesByFullPath {
   '/community/topics': typeof CommunityTopicsRoute
   '/geolibrary/bookmarks': typeof GeolibraryBookmarksRoute
   '/geolibrary/browse': typeof GeolibraryBrowseRoute
+  '/geostore/admin': typeof GeostoreAdminRoute
   '/geostore/browse': typeof GeostoreBrowseRoute
   '/geostore/cart': typeof GeostoreCartRoute
   '/geostore/checkout': typeof GeostoreCheckoutRoute
   '/geostore/offers': typeof GeostoreOffersRoute
   '/geostore/order-confirmation': typeof GeostoreOrderConfirmationRoute
+  '/geostore/order-lookup': typeof GeostoreOrderLookupRoute
   '/geostore/orders': typeof GeostoreOrdersRoute
   '/geostore/rewards': typeof GeostoreRewardsRoute
   '/geostore/try-on': typeof GeostoreTryOnRoute
@@ -1056,11 +1070,13 @@ export interface FileRoutesByTo {
   '/community/topics': typeof CommunityTopicsRoute
   '/geolibrary/bookmarks': typeof GeolibraryBookmarksRoute
   '/geolibrary/browse': typeof GeolibraryBrowseRoute
+  '/geostore/admin': typeof GeostoreAdminRoute
   '/geostore/browse': typeof GeostoreBrowseRoute
   '/geostore/cart': typeof GeostoreCartRoute
   '/geostore/checkout': typeof GeostoreCheckoutRoute
   '/geostore/offers': typeof GeostoreOffersRoute
   '/geostore/order-confirmation': typeof GeostoreOrderConfirmationRoute
+  '/geostore/order-lookup': typeof GeostoreOrderLookupRoute
   '/geostore/orders': typeof GeostoreOrdersRoute
   '/geostore/rewards': typeof GeostoreRewardsRoute
   '/geostore/try-on': typeof GeostoreTryOnRoute
@@ -1196,11 +1212,13 @@ export interface FileRoutesById {
   '/community/topics': typeof CommunityTopicsRoute
   '/geolibrary/bookmarks': typeof GeolibraryBookmarksRoute
   '/geolibrary/browse': typeof GeolibraryBrowseRoute
+  '/geostore/admin': typeof GeostoreAdminRoute
   '/geostore/browse': typeof GeostoreBrowseRoute
   '/geostore/cart': typeof GeostoreCartRoute
   '/geostore/checkout': typeof GeostoreCheckoutRoute
   '/geostore/offers': typeof GeostoreOffersRoute
   '/geostore/order-confirmation': typeof GeostoreOrderConfirmationRoute
+  '/geostore/order-lookup': typeof GeostoreOrderLookupRoute
   '/geostore/orders': typeof GeostoreOrdersRoute
   '/geostore/rewards': typeof GeostoreRewardsRoute
   '/geostore/try-on': typeof GeostoreTryOnRoute
@@ -1341,11 +1359,13 @@ export interface FileRouteTypes {
     | '/community/topics'
     | '/geolibrary/bookmarks'
     | '/geolibrary/browse'
+    | '/geostore/admin'
     | '/geostore/browse'
     | '/geostore/cart'
     | '/geostore/checkout'
     | '/geostore/offers'
     | '/geostore/order-confirmation'
+    | '/geostore/order-lookup'
     | '/geostore/orders'
     | '/geostore/rewards'
     | '/geostore/try-on'
@@ -1477,11 +1497,13 @@ export interface FileRouteTypes {
     | '/community/topics'
     | '/geolibrary/bookmarks'
     | '/geolibrary/browse'
+    | '/geostore/admin'
     | '/geostore/browse'
     | '/geostore/cart'
     | '/geostore/checkout'
     | '/geostore/offers'
     | '/geostore/order-confirmation'
+    | '/geostore/order-lookup'
     | '/geostore/orders'
     | '/geostore/rewards'
     | '/geostore/try-on'
@@ -1616,11 +1638,13 @@ export interface FileRouteTypes {
     | '/community/topics'
     | '/geolibrary/bookmarks'
     | '/geolibrary/browse'
+    | '/geostore/admin'
     | '/geostore/browse'
     | '/geostore/cart'
     | '/geostore/checkout'
     | '/geostore/offers'
     | '/geostore/order-confirmation'
+    | '/geostore/order-lookup'
     | '/geostore/orders'
     | '/geostore/rewards'
     | '/geostore/try-on'
@@ -2136,6 +2160,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GeostoreIndexRouteImport
       parentRoute: typeof GeostoreRoute
     }
+    '/geostore/admin': {
+      id: '/geostore/admin'
+      path: '/admin'
+      fullPath: '/geostore/admin'
+      preLoaderRoute: typeof GeostoreAdminRouteImport
+      parentRoute: typeof GeostoreRoute
+    }
     '/geostore/browse': {
       id: '/geostore/browse'
       path: '/browse'
@@ -2169,6 +2200,13 @@ declare module '@tanstack/react-router' {
       path: '/order-confirmation'
       fullPath: '/geostore/order-confirmation'
       preLoaderRoute: typeof GeostoreOrderConfirmationRouteImport
+      parentRoute: typeof GeostoreRoute
+    }
+    '/geostore/order-lookup': {
+      id: '/geostore/order-lookup'
+      path: '/order-lookup'
+      fullPath: '/geostore/order-lookup'
+      preLoaderRoute: typeof GeostoreOrderLookupRouteImport
       parentRoute: typeof GeostoreRoute
     }
     '/geostore/orders': {
@@ -2846,11 +2884,13 @@ const GeolibraryRouteWithChildren = GeolibraryRoute._addFileChildren(
 )
 
 interface GeostoreRouteChildren {
+  GeostoreAdminRoute: typeof GeostoreAdminRoute
   GeostoreBrowseRoute: typeof GeostoreBrowseRoute
   GeostoreCartRoute: typeof GeostoreCartRoute
   GeostoreCheckoutRoute: typeof GeostoreCheckoutRoute
   GeostoreOffersRoute: typeof GeostoreOffersRoute
   GeostoreOrderConfirmationRoute: typeof GeostoreOrderConfirmationRoute
+  GeostoreOrderLookupRoute: typeof GeostoreOrderLookupRoute
   GeostoreOrdersRoute: typeof GeostoreOrdersRoute
   GeostoreRewardsRoute: typeof GeostoreRewardsRoute
   GeostoreTryOnRoute: typeof GeostoreTryOnRoute
@@ -2862,11 +2902,13 @@ interface GeostoreRouteChildren {
 }
 
 const GeostoreRouteChildren: GeostoreRouteChildren = {
+  GeostoreAdminRoute: GeostoreAdminRoute,
   GeostoreBrowseRoute: GeostoreBrowseRoute,
   GeostoreCartRoute: GeostoreCartRoute,
   GeostoreCheckoutRoute: GeostoreCheckoutRoute,
   GeostoreOffersRoute: GeostoreOffersRoute,
   GeostoreOrderConfirmationRoute: GeostoreOrderConfirmationRoute,
+  GeostoreOrderLookupRoute: GeostoreOrderLookupRoute,
   GeostoreOrdersRoute: GeostoreOrdersRoute,
   GeostoreRewardsRoute: GeostoreRewardsRoute,
   GeostoreTryOnRoute: GeostoreTryOnRoute,
