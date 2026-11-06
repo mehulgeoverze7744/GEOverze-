@@ -52,12 +52,24 @@ export type PaymentConfig = {
 };
 
 export const getPaymentConfig = createServerFn({ method: "GET" }).handler(
-  async (): Promise<PaymentConfig> => ({
-    // MOCK_PAYMENTS_ENABLED is preferred (never bundled into the client JS).
-    // VITE_MOCK_PAYMENTS is accepted as a convenience alias.
-    mockEnabled:
+  async (): Promise<PaymentConfig> => {
+    // Explicit env var — always wins (set in Vercel for preview/production testing).
+    const explicitMock =
       process.env["MOCK_PAYMENTS_ENABLED"] === "true" ||
-      process.env["VITE_MOCK_PAYMENTS"] === "true",
-    razorpayEnabled: Boolean(process.env["VITE_RAZORPAY_KEY_ID"]),
-  }),
+      process.env["VITE_MOCK_PAYMENTS"] === "true";
+
+    // Auto-enable mock on local dev servers when Razorpay isn't configured.
+    // NODE_ENV=development is set by Vite/TanStack Start during `npm run dev`.
+    // This never fires on Vercel Production/Preview where NODE_ENV=production.
+    const razorpayConfigured = Boolean(
+      process.env["VITE_RAZORPAY_KEY_ID"] || process.env["RAZORPAY_KEY_ID"],
+    );
+    const autoMockDev =
+      process.env["NODE_ENV"] === "development" && !razorpayConfigured;
+
+    return {
+      mockEnabled: explicitMock || autoMockDev,
+      razorpayEnabled: razorpayConfigured,
+    };
+  },
 );

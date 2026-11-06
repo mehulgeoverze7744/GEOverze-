@@ -58,10 +58,21 @@ function getRazorpaySecret(): string {
 }
 
 function isMockEnabled(): boolean {
-  return (
+  // Explicit opt-in (Vercel env var or .env.local for preview/production testing)
+  if (
     process.env["MOCK_PAYMENTS_ENABLED"] === "true" ||
     process.env["VITE_MOCK_PAYMENTS"] === "true"
-  );
+  ) return true;
+
+  // Auto-enable on local dev when Razorpay is not configured.
+  // NODE_ENV=development is set by Vite/TanStack Start during `npm run dev`.
+  // This never fires on Vercel (NODE_ENV=production there).
+  const razorpayConfigured =
+    Boolean(process.env["RAZORPAY_KEY_ID"]) ||
+    Boolean(process.env["VITE_RAZORPAY_KEY_ID"]);
+  if (process.env["NODE_ENV"] === "development" && !razorpayConfigured) return true;
+
+  return false;
 }
 
 function makeServiceRoleClient(): SupabaseClient {

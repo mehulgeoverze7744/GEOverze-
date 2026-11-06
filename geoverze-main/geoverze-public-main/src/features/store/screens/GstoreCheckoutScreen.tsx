@@ -69,6 +69,7 @@ import {
   getProductPrice,
 } from "../lib/gstoreProductPrices";
 import { productImageForSlug } from "../data/productImages";
+import { MockPaymentGateway } from "../components/MockPaymentGateway";
 
 // ── India-specific validation helpers ────────────────────────────────────────
 
@@ -961,40 +962,14 @@ export function GstoreCheckoutScreen() {
               </div>
             )}
 
-            {/* ── Mock gateway outcome picker ── */}
+            {/* ── Mock gateway — full payment experience ── */}
             {status === "paying" && mockEnabled && pendingOrder && (
-              <div className="mb-4 bg-amber-50 border border-amber-200 rounded-xl p-5 space-y-4">
-                <div className="flex items-center gap-2 text-amber-700 font-semibold text-sm">
-                  <FlaskConical className="w-4 h-4" />
-                  Test Gateway — Choose an outcome
-                </div>
-                <p className="text-sm text-[#374151]">
-                  Order <strong className="text-[#111827]">{pendingOrder.orderNumber}</strong>
-                  {" · "}{formatInrPaise(totalMinor)}
-                </p>
-                <div className="flex gap-2.5 flex-wrap">
-                  <button
-                    type="button"
-                    onClick={() => handleMockOutcome("success")}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm"
-                  >
-                    ✓ Payment Successful
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleMockOutcome("failed")}
-                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm"
-                  >
-                    ✗ Payment Failed
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleMockOutcome("cancel")}
-                    className="bg-white border border-[#E5E7EB] hover:bg-[#F3F4F6] text-[#374151] px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors"
-                  >
-                    ← Cancel
-                  </button>
-                </div>
+              <div className="mb-4">
+                <MockPaymentGateway
+                  totalMinor={totalMinor}
+                  orderNumber={pendingOrder.orderNumber}
+                  onOutcome={(outcome) => void handleMockOutcome(outcome)}
+                />
               </div>
             )}
 
@@ -1002,9 +977,17 @@ export function GstoreCheckoutScreen() {
             {(status === "idle" || status === "failed" || status === "cancelled") && (
               <div className="mb-5">
                 {mockEnabled ? (
-                  <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
-                    <FlaskConical className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                    <p className="text-sm text-amber-700 font-medium">Test mode — no real money charged</p>
+                  <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      <FlaskConical className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                      <p className="text-sm text-amber-700 font-semibold">Test Mode — No real charges</p>
+                    </div>
+                    <p className="text-xs text-amber-600">
+                      UPI · Card · Net Banking · Wallets (all simulated)
+                    </p>
+                    <p className="text-xs text-amber-500">
+                      Click "Pay" to open the test payment gateway with pre-filled test values.
+                    </p>
                   </div>
                 ) : rzpConfigured ? (
                   <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-4 py-3 space-y-1">
@@ -1013,9 +996,11 @@ export function GstoreCheckoutScreen() {
                     <p className="text-xs text-[#9CA3AF] mt-1">Secured by Razorpay · 256-bit SSL encryption</p>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
-                    <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
-                    <p className="text-sm text-red-600">Payment gateway not configured. Contact support.</p>
+                  <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-4 py-3 space-y-1">
+                    <p className="text-sm text-[#374151] font-medium">Payment Temporarily Unavailable</p>
+                    <p className="text-xs text-[#9CA3AF]">
+                      The payment gateway is being configured. Please check back soon or contact support.
+                    </p>
                   </div>
                 )}
               </div>
@@ -1196,7 +1181,9 @@ export function GstoreCheckoutScreen() {
             <div className="space-y-2.5">
               {[
                 { icon: Lock, text: "256-bit SSL secured checkout" },
-                { icon: CheckCircle2, text: "Verified by Razorpay payment gateway" },
+                mockEnabled
+                  ? { icon: FlaskConical, text: "TEST MODE — simulated payment, no real charges" }
+                  : { icon: CheckCircle2, text: "Verified by Razorpay payment gateway" },
                 { icon: Truck, text: "Ships from India — delivery in 5–7 days" },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="flex items-center gap-2.5">
