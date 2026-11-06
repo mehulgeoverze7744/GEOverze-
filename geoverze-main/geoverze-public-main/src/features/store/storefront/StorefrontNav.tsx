@@ -27,18 +27,14 @@ const ICON_BUTTON =
   "relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-opacity duration-200 hover:opacity-60 motion-reduce:transition-none";
 
 /**
- * Cart icon button — distinctive cream/golden style that matches the floating
- * action row on non-storefront Gstore pages (GeostoreCartButton).
- *
- * Uses `border-2` + warm-cream background + subtle golden border so the cart
- * is visually identifiable at a glance as the centrepiece of the icon triplet,
- * consistent with the design reference (Wishlist → Cart → Menu/Search).
- *
- * Does NOT use `hover:opacity-60` so the border stays crisp; instead lowers
- * the background opacity slightly on hover.
+ * Cart icon button — cream background that makes the cart immediately
+ * identifiable at a glance as the centrepiece of the Wishlist→Cart→Menu
+ * icon triplet.  The border is kept deliberately subtle (border-black/15)
+ * so only the warm cream fill reads as the visual differentiator, with no
+ * visible ring.  Mirrors the border treatment in geostoreCartLinkClass().
  */
 const CART_ICON_BUTTON =
-  "relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-black/20 bg-[oklch(0.96_0.04_75)]/90 backdrop-blur-sm transition-all duration-200 hover:border-black/35 hover:bg-[oklch(0.95_0.05_72)]/95 motion-reduce:transition-none";
+  "relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-black/15 bg-[oklch(0.96_0.04_75)]/90 backdrop-blur-sm transition-all duration-200 hover:border-black/25 hover:bg-[oklch(0.95_0.05_72)]/95 motion-reduce:transition-none";
 
 const BADGE =
   "absolute right-0.5 top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-black px-1 text-[10px] font-semibold leading-none text-white";
