@@ -41,6 +41,13 @@ export type MyBillingSnapshot = {
   isMockSubscription: boolean;
   /** UUID of the active mock subscription, or null if not a mock subscription. */
   mockSubscriptionId: string | null;
+  /** True when cancel_at_period_end is set — renewal cancelled but access still active. */
+  cancelAtPeriodEnd: boolean;
+  /**
+   * Human-readable label for the period end / access expiry.
+   * Same value as renewsLabel but kept separately for semantic clarity.
+   */
+  accessUntilLabel: string;
 };
 
 type PlanTierRpc = {
@@ -96,8 +103,15 @@ function mapPaymentStatus(status: string): BillingPaymentStatus {
   return "pending";
 }
 
-function membershipStatusLabel(subscription: SubscriptionRpc | null, isPaidTier: boolean): string {
-  if (asBoolean(subscription?.cancel_at_period_end)) return "cancels at period end";
+function membershipStatusLabel(
+  subscription: SubscriptionRpc | null,
+  isPaidTier: boolean,
+): string {
+  if (asBoolean(subscription?.cancel_at_period_end)) {
+    const periodEnd = asString(subscription?.current_period_end);
+    if (periodEnd) return `Cancels on ${formatDateLabel(periodEnd)}`;
+    return "Cancels at period end";
+  }
   return asString(subscription?.status) ?? (isPaidTier ? "inactive" : "active");
 }
 
@@ -175,6 +189,9 @@ export async function fetchMyBilling(): Promise<MyBillingSnapshot> {
 
   const payments = paymentsResult.data ?? [];
 
+  const cancelAtPeriodEnd = asBoolean(subscription?.cancel_at_period_end);
+  const periodEndIso = asString(subscription?.current_period_end);
+
   return {
     userId: user.id,
     tier,
@@ -183,7 +200,9 @@ export async function fetchMyBilling(): Promise<MyBillingSnapshot> {
     statusLabel: membershipStatusLabel(subscription, isPaidTier),
     billingInterval,
     memberSinceLabel: formatDateLabel(asString(subscription?.started_at) ?? user.created_at),
-    renewsLabel: formatDateLabel(asString(subscription?.current_period_end)),
+    renewsLabel: formatDateLabel(periodEndIso),
+    accessUntilLabel: formatDateLabel(periodEndIso),
+    cancelAtPeriodEnd,
     // monthly_price_cents / annual_price_cents store whole INR rupees (not paise)
     priceAmount: isPaidTier ? formatInrRupees(priceCents) : "Free",
     priceCadence: isPaidTier

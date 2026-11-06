@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Coins, Download, FlaskConical } from "lucide-react";
+import { AlertTriangle, Coins, Download, FlaskConical, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
@@ -7,6 +7,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { PageShell } from "@/components/layout/PageShell";
 import { Breadcrumb } from "@/components/shared/Breadcrumb";
 import { SectionContainer } from "@/components/shared/SectionContainer";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabase/client";
 
@@ -35,46 +42,71 @@ export function SubscriptionScreen() {
   const { data, loading, error, refetch } = useMyBilling();
   const queryClient = useQueryClient();
   const [cancelLoading, setCancelLoading] = useState(false);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const razorpayLive = isRazorpayConfigured();
   const catalogPlan = data ? (plans.find((p) => p.id === data.tier) ?? null) : null;
 
-  async function handleCancelMembership() {
-    if (!razorpayLive) {
+  /** Open the confirmation modal; show toast instead if gateway not ready. */
+  function openCancelModal() {
+    if (!razorpayLive && !data?.isMockSubscription) {
       toast(UNAVAILABLE_BILLING);
       return;
     }
-    if (!window.confirm(
-      "Cancel membership at end of period?\n\nYou'll keep access until your current billing period ends. This cannot be undone from the app.",
-    )) {
-      return;
-    }
+    setCancelModalOpen(true);
+  }
+
+  /** Runs after the user confirms cancellation inside the modal. */
+  async function handleConfirmCancel() {
     setCancelLoading(true);
     try {
-      const { data: result, error: rpcError } = await supabase.rpc(
-        "request_cancel_subscription" as never,
-      ) as { data: { ok: boolean; reason?: string } | null; error: unknown };
-      if (rpcError || !result?.ok) {
-        const reason = result?.reason ?? "unknown";
-        if (reason === "no_active_subscription") {
-          toast.error("No active subscription found to cancel.");
-        } else {
-          toast.error("Could not request cancellation. Please contact support.");
-        }
+      if (data?.isMockSubscription && data.mockSubscriptionId) {
+        // ── Mock subscription path ──────────────────────────────────────────
+        await cancelMockSubscription({ subscription_id: data.mockSubscriptionId });
+        toast.success("Mock subscription cancelled. Your plan has been reset.");
+        void refetch();
+        void queryClient.invalidateQueries({ queryKey: ["billing"] });
       } else {
-        toast.success("Membership cancellation scheduled", {
-          description:
-            "Your plan stays active until the end of your billing period.",
-        });
-        refetch();
+        // ── Live subscription path (Razorpay) ───────────────────────────────
+        const { data: result, error: rpcError } = await supabase.rpc(
+          "request_cancel_subscription" as never,
+        ) as { data: { ok: boolean; reason?: string } | null; error: unknown };
+
+        if (rpcError || !result?.ok) {
+          const reason = result?.reason ?? "unknown";
+          if (reason === "no_active_subscription") {
+            toast.error("No active subscription found to cancel.");
+          } else if (reason === "already_cancelled") {
+            toast("Your subscription is already scheduled for cancellation.");
+          } else {
+            toast.error("Could not request cancellation. Please contact support.");
+          }
+        } else {
+          toast.success("Cancellation scheduled", {
+            description: "Your plan stays active until the end of your billing period.",
+          });
+          refetch();
+        }
       }
+      setCancelModalOpen(false);
     } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
       setCancelLoading(false);
     }
   }
+
   const planName = catalogPlan?.name ?? data?.planName ?? "";
   const planSummary = catalogPlan?.summary ?? data?.planSummary ?? "";
+
+  /** True when we should show the cancel option */
+  const showCancelOption =
+    !loading &&
+    !!data &&
+    data.isPaidMembership &&
+    !data.cancelAtPeriodEnd;
+
+  /** True when cancellation is already scheduled */
+  const isCancellationScheduled = !loading && !!data && data.cancelAtPeriodEnd;
 
   return (
     <PageShell>
@@ -106,7 +138,7 @@ export function SubscriptionScreen() {
 
               {!error && !loading && data ? (
                 <>
-                  {/* TEST MODE badge — only visible for mock subscriptions */}
+                  {/* TEST MODE badge */}
                   {data.isMockSubscription ? (
                     <div
                       style={{
@@ -133,33 +165,57 @@ export function SubscriptionScreen() {
 
                   <div className="bm-card-head">
                     <p className="bm-label">Current plan</p>
-                    <span className="bm-status">{data.statusLabel}</span>
+                    <span
+                      className={cn(
+                        "bm-status",
+                        data.cancelAtPeriodEnd && "bm-status--cancelling",
+                      )}
+                    >
+                      {data.cancelAtPeriodEnd ? data.statusLabel : (data.statusLabel || "active")}
+                    </span>
                   </div>
+
                   <h2 className="bm-plan-name">{planName}</h2>
                   <p className="bm-plan-copy">{planSummary}</p>
                   <p className="bm-price">
                     {data.priceAmount}
                     <span>{data.priceCadence}</span>
                   </p>
+
                   <dl className="bm-meta">
                     <div>
                       <dt>Billing cycle</dt>
-                      <dd>{data.billingInterval}</dd>
+                      <dd style={{ textTransform: "capitalize" }}>{data.billingInterval}</dd>
                     </div>
                     <div>
                       <dt>Member since</dt>
                       <dd>{data.memberSinceLabel}</dd>
                     </div>
                     <div>
-                      <dt>Renews</dt>
-                      <dd>{data.renewsLabel}</dd>
+                      <dt>{data.cancelAtPeriodEnd ? "Access until" : "Renews"}</dt>
+                      <dd>{data.cancelAtPeriodEnd ? data.accessUntilLabel : data.renewsLabel}</dd>
                     </div>
                   </dl>
+
+                  {/* Cancellation scheduled info banner */}
+                  {isCancellationScheduled ? (
+                    <div className="bm-cancellation-banner" role="status">
+                      <AlertTriangle className="bm-cancellation-banner__icon" aria-hidden="true" />
+                      <div>
+                        <p className="bm-cancellation-banner__title">Cancellation scheduled</p>
+                        <p className="bm-cancellation-banner__desc">
+                          You'll keep full access to your membership benefits until{" "}
+                          <strong>{data.accessUntilLabel}</strong>. No further renewals will occur.
+                        </p>
+                      </div>
+                    </div>
+                  ) : null}
+
                   <div className="bm-actions">
                     <Link to="/pricing" className="bm-btn bm-btn--primary">
                       Change Plan
                     </Link>
-                    {data.canSwitchToAnnual ? (
+                    {data.canSwitchToAnnual && !data.cancelAtPeriodEnd ? (
                       <Link
                         to="/pricing/checkout"
                         search={{ plan: data.tier, cycle: "annual" }}
@@ -172,52 +228,27 @@ export function SubscriptionScreen() {
                       </Link>
                     ) : null}
                   </div>
-                  {data.isPaidMembership && !data.isMockSubscription && !data.statusLabel.includes("cancel") ? (
-                    <button
-                      type="button"
-                      className="bm-cancel"
-                      disabled={cancelLoading}
-                      title={!razorpayLive ? UNAVAILABLE_BILLING : undefined}
-                      onClick={() => void handleCancelMembership()}
-                      aria-busy={cancelLoading}
-                    >
-                      {cancelLoading ? "Cancelling…" : "Cancel membership"}
-                    </button>
-                  ) : null}
 
-                  {/* Cancel mock subscription (test mode only) */}
-                  {data.isMockSubscription && data.mockSubscriptionId && !data.statusLabel.includes("cancel") ? (
-                    <button
-                      type="button"
-                      className="bm-cancel"
-                      disabled={cancelLoading}
-                      style={{ borderColor: "oklch(0.75 0.1 60)", color: "oklch(0.45 0.12 60)" }}
-                      onClick={() => {
-                        if (!data.mockSubscriptionId) return;
-                        void (async () => {
-                          setCancelLoading(true);
-                          try {
-                            await cancelMockSubscription({ subscription_id: data.mockSubscriptionId! });
-                            toast.success("Mock subscription cancelled. Your plan has been reset.");
-                            void refetch();
-                            void queryClient.invalidateQueries({ queryKey: ["billing"] });
-                          } catch (err) {
-                            toast.error(err instanceof Error ? err.message : "Failed to cancel mock subscription.");
-                          } finally {
-                            setCancelLoading(false);
-                          }
-                        })();
-                      }}
-                      aria-busy={cancelLoading}
-                    >
-                      {cancelLoading ? "Cancelling…" : "Cancel mock subscription (TEST MODE)"}
-                    </button>
-                  ) : null}
-
-                  {data.statusLabel.includes("cancel") ? (
-                    <p className="bm-note" style={{ color: "oklch(0.5 0.08 24)", marginTop: "0.5rem" }}>
-                      Cancellation scheduled — active until period end.
-                    </p>
+                  {/* ── Cancel subscription section ─────────────────────── */}
+                  {showCancelOption ? (
+                    <div className="bm-cancel-section">
+                      <div className="bm-cancel-section__info">
+                        <p className="bm-cancel-section__title">Cancel subscription</p>
+                        <p className="bm-cancel-section__desc">
+                          Cancel your membership renewal. You will retain access until the end of
+                          your current billing period{data.renewsLabel !== "—" ? ` (${data.renewsLabel})` : ""}.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        className="bm-cancel-btn"
+                        disabled={cancelLoading}
+                        onClick={openCancelModal}
+                        aria-busy={cancelLoading}
+                      >
+                        Cancel Subscription
+                      </button>
+                    </div>
                   ) : null}
                 </>
               ) : null}
@@ -357,6 +388,73 @@ export function SubscriptionScreen() {
           </div>
         </section>
       </SectionContainer>
+
+      {/* ── Cancellation confirmation modal ──────────────────────────────── */}
+      <Dialog open={cancelModalOpen} onOpenChange={(open) => { if (!cancelLoading) setCancelModalOpen(open); }}>
+        <DialogContent className="bm-modal">
+          <DialogHeader>
+            <div className="bm-modal__icon-wrap" aria-hidden="true">
+              <AlertTriangle className="bm-modal__icon" />
+            </div>
+            <DialogTitle className="bm-modal__title">
+              Cancel your subscription?
+            </DialogTitle>
+            <DialogDescription className="bm-modal__desc">
+              Are you sure you want to cancel your subscription? You will continue to have access
+              to your membership benefits until the end of your current billing period
+              {data?.accessUntilLabel && data.accessUntilLabel !== "—"
+                ? ` (${data.accessUntilLabel})`
+                : ""}
+              . No further charges will be made.
+            </DialogDescription>
+          </DialogHeader>
+
+          {data?.isMockSubscription ? (
+            <div className="bm-modal__mock-note">
+              <FlaskConical size={13} aria-hidden="true" />
+              TEST MODE — This will immediately deactivate the mock subscription.
+            </div>
+          ) : null}
+
+          <div className="bm-modal__actions">
+            <button
+              type="button"
+              className="bm-btn bm-btn--primary bm-modal__keep-btn"
+              disabled={cancelLoading}
+              onClick={() => setCancelModalOpen(false)}
+            >
+              Keep Subscription
+            </button>
+            <button
+              type="button"
+              className="bm-modal__confirm-btn"
+              disabled={cancelLoading}
+              aria-busy={cancelLoading}
+              onClick={() => void handleConfirmCancel()}
+            >
+              {cancelLoading ? (
+                <>
+                  <span className="bm-modal__spinner" aria-hidden="true" />
+                  Cancelling…
+                </>
+              ) : (
+                "Confirm Cancellation"
+              )}
+            </button>
+          </div>
+
+          {/* Close button */}
+          <button
+            type="button"
+            className="bm-modal__close"
+            aria-label="Close"
+            disabled={cancelLoading}
+            onClick={() => setCancelModalOpen(false)}
+          >
+            <X size={16} aria-hidden="true" />
+          </button>
+        </DialogContent>
+      </Dialog>
     </PageShell>
   );
 }

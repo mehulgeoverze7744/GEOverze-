@@ -327,7 +327,9 @@ function BillingPanel() {
   const planSubtitle = loading
     ? "Loading membership details…"
     : isPaid && data
-      ? `${cap(data.statusLabel)} · ${cap(data.billingInterval)} · ${data.priceAmount} ${data.priceCadence}`
+      ? data.cancelAtPeriodEnd
+        ? `${data.statusLabel} · Access until ${data.accessUntilLabel}`
+        : `${cap(data.statusLabel)} · ${cap(data.billingInterval)} · ${data.priceAmount} ${data.priceCadence}`
       : "No billing on the free tier";
 
   /* ── Credits ───────────────────────────────────────────────── */
@@ -391,7 +393,12 @@ function BillingPanel() {
           title="Manage membership"
           subtitle="View plan details, billing history and options."
           control={
-            <GeoButton asChild variant="primary" size="sm">
+            <GeoButton
+              asChild
+              variant="primary"
+              size="sm"
+              className="!bg-[#111827] !text-white !border-[#111827] hover:!bg-[#1f2937] hover:!border-[#1f2937] hover:!shadow-none"
+            >
               <Link to="/billing">Manage</Link>
             </GeoButton>
           }

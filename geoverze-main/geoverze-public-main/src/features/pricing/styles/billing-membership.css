@@ -746,6 +746,273 @@ div.bm > * {
   color: #94a3b8;
 }
 
+/* ── Cancelling status badge variant ────────────────────────────────────── */
+.bm-status--cancelling {
+  border-color: #fed7aa;
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.bm-status--cancelling::before {
+  background: #f97316;
+}
+
+/* ── Cancellation scheduled info banner ──────────────────────────────────── */
+.bm-cancellation-banner {
+  display: flex;
+  gap: 0.65rem;
+  margin-top: 1rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.75rem;
+  border: 1px solid #fed7aa;
+  background: #fff7ed;
+}
+
+.bm-cancellation-banner__icon {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.1rem;
+  color: #f97316;
+}
+
+.bm-cancellation-banner__title {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #c2410c;
+}
+
+.bm-cancellation-banner__desc {
+  margin: 0.18rem 0 0;
+  font-size: 0.775rem;
+  line-height: 1.5;
+  color: #9a3412;
+}
+
+.bm-cancellation-banner__desc strong {
+  font-weight: 600;
+  color: #7c2d12;
+}
+
+/* ── Cancel subscription section row ─────────────────────────────────────── */
+.bm-cancel-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-top: 1.1rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.bm-cancel-section__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.bm-cancel-section__title {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.bm-cancel-section__desc {
+  margin: 0.22rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: #94a3b8;
+}
+
+.bm-cancel-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid #fca5a5;
+  background: transparent;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #dc2626;
+  letter-spacing: -0.01em;
+  transition:
+    background 180ms var(--bm-ease),
+    border-color 180ms var(--bm-ease),
+    color 180ms var(--bm-ease);
+}
+
+.bm-cancel-btn:hover {
+  background: #fff1f2;
+  border-color: #ef4444;
+  color: #b91c1c;
+}
+
+.bm-cancel-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.bm-cancel-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #fca5a5;
+}
+
+/* ── Cancellation confirmation modal ─────────────────────────────────────── */
+.bm-modal {
+  position: relative;
+  max-width: 26rem !important;
+  padding: 1.6rem 1.65rem 1.4rem;
+  border-radius: 1.15rem !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  box-shadow:
+    0 4px 24px rgb(0 0 0 / 0.08),
+    0 1px 4px rgb(0 0 0 / 0.04) !important;
+  gap: 0 !important;
+}
+
+.bm-modal__icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: 0 auto 0.75rem;
+  border-radius: 999px;
+  border: 1px solid #fed7aa;
+  background: #fff7ed;
+}
+
+.bm-modal__icon {
+  width: 1.1rem;
+  height: 1.1rem;
+  color: #f97316;
+}
+
+.bm-modal__title {
+  margin: 0 0 0.5rem;
+  text-align: center;
+  font-size: 1.05rem !important;
+  font-weight: 600 !important;
+  color: #111827;
+  letter-spacing: -0.015em;
+}
+
+.bm-modal__desc {
+  text-align: center;
+  font-size: 0.84rem !important;
+  line-height: 1.55;
+  color: #64748b !important;
+}
+
+.bm-modal__mock-note {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 0.5rem;
+  background: oklch(0.97 0.05 85);
+  border: 1.5px solid oklch(0.82 0.12 85);
+  color: oklch(0.45 0.12 60);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.bm-modal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.bm-modal__keep-btn {
+  width: 100%;
+  min-height: 2.4rem !important;
+  font-size: 0.82rem !important;
+}
+
+.bm-modal__confirm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  min-height: 2.4rem;
+  padding: 0.4rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid #fca5a5;
+  background: transparent;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #dc2626;
+  letter-spacing: -0.01em;
+  transition:
+    background 180ms var(--bm-ease),
+    border-color 180ms var(--bm-ease),
+    color 180ms var(--bm-ease);
+}
+
+.bm-modal__confirm-btn:hover:not(:disabled) {
+  background: #fff1f2;
+  border-color: #ef4444;
+  color: #b91c1c;
+}
+
+.bm-modal__confirm-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.bm-modal__confirm-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #fca5a5;
+}
+
+.bm-modal__spinner {
+  display: inline-block;
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 2px solid #fca5a5;
+  border-top-color: #dc2626;
+  border-radius: 999px;
+  animation: bm-spin 0.7s linear infinite;
+}
+
+@keyframes bm-spin {
+  to { transform: rotate(360deg); }
+}
+
+.bm-modal__close {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 999px;
+  border: 0;
+  background: transparent;
+  color: #94a3b8;
+  transition: color 160ms var(--bm-ease), background 160ms var(--bm-ease);
+}
+
+.bm-modal__close:hover {
+  color: #374151;
+  background: #f1f5f9;
+}
+
+.bm-modal__close:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 960px) {
   .bm-top {
