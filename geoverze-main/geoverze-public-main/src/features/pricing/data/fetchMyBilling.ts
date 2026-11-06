@@ -131,12 +131,16 @@ export async function fetchMyBilling(): Promise<MyBillingSnapshot> {
       .order("attempted_at", { ascending: false })
       .limit(50),
     supabase.from("user_progression").select("credits").maybeSingle(),
-    // Fixed: status = 'completed' (not 'granted' — only 'pending'/'completed'/'skipped'/'failed' are valid)
+    // Most recent completed credit grant — used to show "This period granted: N credits".
+    // Secondary sort by created_at ensures we get the latest grant when multiple exist
+    // in the same period (e.g. user upgraded from Basic → Pro in the same month).
+    // status = 'completed' (allowed: pending / completed / skipped / failed).
     supabase
       .from("membership_credit_grants")
-      .select("credit_amount, status, grant_period_start")
+      .select("credit_amount, status, grant_period_start, created_at")
       .eq("status", "completed")
       .order("grant_period_start", { ascending: false })
+      .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
     // Active subscription details (to detect mock subscriptions)

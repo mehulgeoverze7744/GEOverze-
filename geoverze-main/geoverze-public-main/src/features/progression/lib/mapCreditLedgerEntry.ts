@@ -68,7 +68,10 @@ function categoryFor(row: CreditLedgerRow): CreditLedgerCategory {
 
 function membershipDisplayName(metadata: unknown): string | null {
   if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) return null;
-  const displayName = (metadata as Record<string, unknown>)["display_name"];
+  const m = metadata as Record<string, unknown>;
+  // Try display_name first (populated by confirm_mock_subscription and Razorpay webhook).
+  // Fall back to plan_name (used by older DB rows before the metadata key was standardised).
+  const displayName = m["display_name"] ?? m["plan_name"];
   return typeof displayName === "string" && displayName.trim() !== "" ? displayName : null;
 }
 
