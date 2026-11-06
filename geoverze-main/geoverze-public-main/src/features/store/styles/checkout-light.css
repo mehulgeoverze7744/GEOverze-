@@ -1,0 +1,98 @@
+/*
+ * Gstore Checkout — light theme override.
+ *
+ * Everything here is scoped to .gvrze-checkout so it ONLY applies to the
+ * /geostore/checkout page and does NOT touch the homepage, pricing checkout,
+ * subscription flow, or any other page on the site.
+ *
+ * The GVRZE site uses a dark theme globally (--background ≈ #0D0E10).
+ * The checkout needs a premium light canvas.  Rather than fighting the global
+ * theme inside every Tailwind class, we override the CSS custom properties
+ * at the .gvrze-checkout scope, then let Tailwind's light-mode utilities
+ * work correctly inside it.
+ */
+
+/* ─── Scoped light-canvas variables ─────────────────────────────────────────
+ *
+ * These override the global dark-theme tokens ONLY inside the checkout wrapper.
+ * All child elements that use `var(--background)`, `var(--foreground)`, etc.
+ * will pick up the light values without any global side-effects.
+ */
+.gvrze-checkout {
+  --background:        #F3F4F6;
+  --foreground:        #111827;
+  --card:              #FFFFFF;
+  --card-foreground:   #111827;
+  --border:            #E5E7EB;
+  --input:             #E5E7EB;
+  --muted:             #F9FAFB;
+  --muted-foreground:  #6B7280;
+  --ring:              rgba(17, 24, 39, 0.1);
+
+  /* Ensure the page background is light even on the checkout wrapper itself */
+  background-color: #F3F4F6;
+  color: #111827;
+
+  /*
+   * Isolate from the dark theme's backdrop / star fields.
+   * z-index stacking context is not needed here — just the colour reset.
+   */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Inputs / selects ───────────────────────────────────────────────────────
+ *
+ * The global site theme may set input colours via [data-theme] or :root.
+ * Override them scoped to the checkout so inputs look correct.
+ */
+.gvrze-checkout input:not([type="radio"]):not([type="checkbox"]),
+.gvrze-checkout select,
+.gvrze-checkout textarea {
+  background-color: #FFFFFF;
+  color:            #111827;
+  border-color:     #E5E7EB;
+}
+
+.gvrze-checkout input:not([type="radio"]):not([type="checkbox"])::placeholder,
+.gvrze-checkout textarea::placeholder {
+  color: #9CA3AF;
+}
+
+.gvrze-checkout input:not([type="radio"]):not([type="checkbox"]):focus,
+.gvrze-checkout select:focus,
+.gvrze-checkout textarea:focus {
+  border-color: #374151;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+}
+
+/* Read-only "Country" field */
+.gvrze-checkout input[readonly] {
+  background-color: #F9FAFB;
+  color:            #9CA3AF;
+  cursor:           not-allowed;
+}
+
+/* ─── Focus ring (overrides site-wide bronze ring) ───────────────────────── */
+.gvrze-checkout :focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px #FFFFFF,
+    0 0 0 4px rgba(17, 24, 39, 0.3);
+}
+
+/* Radio buttons */
+.gvrze-checkout input[type="radio"] {
+  accent-color: #111827;
+}
+
+/* ─── Scrollbar (subtle on light bg) ────────────────────────────────────────*/
+.gvrze-checkout {
+  scrollbar-width: thin;
+  scrollbar-color: #D1D5DB #F3F4F6;
+}
+
+.gvrze-checkout::-webkit-scrollbar { width: 6px; }
+.gvrze-checkout::-webkit-scrollbar-track  { background: #F3F4F6; }
+.gvrze-checkout::-webkit-scrollbar-thumb  { background: #D1D5DB; border-radius: 3px; }

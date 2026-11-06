@@ -3,17 +3,16 @@
  *
  * Supports both authenticated and guest checkout.
  *
- * Layout:
- *   LEFT  — Contact info + Shipping address form
- *   RIGHT — Order summary (product images, prices, totals)
- *   BOTTOM — Payment section (Razorpay / Mock)
+ * Layout (light-theme redesign):
+ *   LEFT  — Contact info · Shipping address · Delivery method · Payment
+ *   RIGHT — Order summary (sticky on desktop)
  *
  * Payment paths:
  *   1. MOCK MODE  (MOCK_PAYMENTS_ENABLED=true) — simulates success/fail/cancel
  *   2. RAZORPAY   (RAZORPAY_KEY_ID configured) — real one-time payment
  *   3. UNAVAILABLE — neither configured
  *
- * Security:
+ * Security (unchanged from original):
  *   - Prices are NEVER trusted from the client.
  *   - Server functions validate all prices against the authoritative catalog.
  *   - verifyGstorePaymentFn / verifyGstoreGuestPaymentFn checks HMAC-SHA256
@@ -38,6 +37,9 @@ import { useRef, useState } from "react";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { toast } from "sonner";
 
+import "@/features/store/styles/checkout-light.css";
+
+import { cn } from "@/lib/utils";
 import { useAuthStore, selectUser } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
 import { usePaymentConfig } from "@/features/pricing/hooks/usePaymentConfig";
@@ -64,6 +66,7 @@ import {
   FREE_SHIPPING_THRESHOLD_MINOR,
   getProductPrice,
 } from "../lib/gstoreProductPrices";
+import { productImageForSlug } from "../data/productImages";
 
 // ── India-specific validation helpers ────────────────────────────────────────
 
@@ -102,8 +105,8 @@ type FormState = {
 };
 
 const SHIPPING_OPTIONS: Array<{ value: ShippingMethod; label: string; note: string }> = [
-  { value: "standard", label: "Standard Delivery",        note: "Free on orders ≥ ₹3,999 · 5–7 business days" },
-  { value: "tracked",  label: "Tracked Delivery — ₹690",  note: "3–5 business days with tracking" },
+  { value: "standard", label: "Standard Delivery",         note: "Free on orders ≥ ₹3,999 · 5–7 business days" },
+  { value: "tracked",  label: "Tracked Delivery — ₹690",   note: "3–5 business days with tracking" },
   { value: "express",  label: "Express Delivery — ₹1,499", note: "1–2 business days" },
 ];
 
@@ -117,22 +120,57 @@ const INDIAN_STATES = [
   "Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry",
 ];
 
+// ── Light-theme design tokens ─────────────────────────────────────────────────
+
+const CO = {
+  /** Page background */
+  pageBg:     "bg-[#F3F4F6]",
+  /** Card surface */
+  cardBg:     "bg-white",
+  /** Card border */
+  cardBorder: "border border-[#E5E7EB]",
+  /** Section heading */
+  heading:    "text-[#111827] font-semibold",
+  /** Body text */
+  body:       "text-[#374151]",
+  /** Label */
+  label:      "text-[#4B5563] text-sm font-medium",
+  /** Secondary / muted */
+  muted:      "text-[#6B7280] text-sm",
+  /** Divider */
+  divider:    "border-[#E5E7EB]",
+};
+
 // ── Empty cart state ──────────────────────────────────────────────────────────
 
 function EmptyCartState() {
   return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-6">
-      <div className="text-center space-y-6 max-w-md">
-        <ShoppingBag className="w-16 h-16 text-zinc-600 mx-auto" />
-        <h2 className="text-2xl font-bold text-white">Your cart is empty</h2>
-        <p className="text-zinc-400">Add some products to get started.</p>
+    <div className={cn("min-h-[60vh] flex items-center justify-center p-6", CO.pageBg)}>
+      <div className="text-center space-y-5 max-w-sm">
+        <div className="mx-auto w-16 h-16 rounded-full bg-[#F3F4F6] flex items-center justify-center">
+          <ShoppingBag className="w-7 h-7 text-[#9CA3AF]" />
+        </div>
+        <div>
+          <h2 className="text-xl font-bold text-[#111827]">Your cart is empty</h2>
+          <p className="text-[#6B7280] mt-1">Add some products to get started.</p>
+        </div>
         <Link
           to="/geostore"
-          className="inline-block bg-white text-black px-6 py-3 rounded-xl font-semibold hover:bg-zinc-200 transition-colors"
+          className="inline-flex items-center gap-2 bg-[#111827] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#1F2937] transition-colors"
         >
           Browse Gstore
         </Link>
       </div>
+    </div>
+  );
+}
+
+// ── Section card wrapper ──────────────────────────────────────────────────────
+
+function Card({ children, className }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={cn("bg-white border border-[#E5E7EB] rounded-2xl shadow-sm", className)}>
+      {children}
     </div>
   );
 }
@@ -156,8 +194,8 @@ export function GstoreCheckoutScreen() {
   const clearCart = useCartStore(s => s.clear);
 
   const { data: paymentConfig } = usePaymentConfig();
-  const mockEnabled = paymentConfig?.mockEnabled ?? false;
-  const rzpConfigured = !!(paymentConfig?.razorpayKeyId);
+  const mockEnabled    = paymentConfig?.mockEnabled ?? false;
+  const rzpConfigured  = !!(paymentConfig?.razorpayKeyId);
 
   // Guest mode toggle
   const [guestMode, setGuestMode] = useState(!user);
@@ -211,11 +249,11 @@ export function GstoreCheckoutScreen() {
   const taxMinor      = computeTaxMinor(subtotalMinor, shippingMinor);
   const totalMinor    = subtotalMinor + shippingMinor + taxMinor;
 
-  // State
-  const [status, setStatus]         = useState<"idle" | "creating" | "paying" | "verifying" | "done" | "failed" | "cancelled">("idle");
-  const [errorMsg, setErrorMsg]     = useState<string | null>(null);
-  const inflight = useRef(false);
-  const idempotencyKey = useRef(crypto.randomUUID());
+  // Status state
+  const [status, setStatus]     = useState<"idle" | "creating" | "paying" | "verifying" | "done" | "failed" | "cancelled">("idle");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const inflight        = useRef(false);
+  const idempotencyKey  = useRef(crypto.randomUUID());
 
   if (checkoutItems.length === 0) return <EmptyCartState />;
 
@@ -269,7 +307,6 @@ export function GstoreCheckoutScreen() {
     if (!isBuyNow) clearCart();
     const search: Record<string, string> = { order_id: orderId, order_number: orderNumber };
     if (guestToken) {
-      // Store securely in localStorage for guest order lookup
       localStorage.setItem(`gstore_guest_${orderNumber}`, guestToken);
       search.guest_token = guestToken;
     }
@@ -302,7 +339,7 @@ export function GstoreCheckoutScreen() {
           email:   form.customerEmail,
           contact: form.customerPhone,
         },
-        theme: { color: "#ffffff" },
+        theme: { color: "#111827" },
 
         handler: async (response: GstoreRazorpaySuccessResponse) => {
           setStatus("verifying");
@@ -343,7 +380,6 @@ export function GstoreCheckoutScreen() {
 
         modal: {
           ondismiss: async () => {
-            // User closed modal — cancel the order
             try {
               if (guestToken) {
                 await confirmMockGstoreGuestPaymentFn({
@@ -420,9 +456,7 @@ export function GstoreCheckoutScreen() {
       }
 
       if (mockEnabledResult) {
-        // Mock mode: simulate gateway modal
         setStatus("paying");
-        // The UI will show mock buttons
         return;
       }
 
@@ -440,7 +474,7 @@ export function GstoreCheckoutScreen() {
     }
   }
 
-  // We need to track order state for the mock payment UI
+  // Track order state for mock payment UI
   const [pendingOrder, setPendingOrder] = useState<{
     orderId: string;
     paymentId: string;
@@ -552,186 +586,307 @@ export function GstoreCheckoutScreen() {
     }
   }
 
-  // ── Field helpers ───────────────────────────────────────────────────────────
+  // ── Field helpers (light-theme) ─────────────────────────────────────────────
+
+  const inputBase =
+    "w-full bg-white rounded-xl px-4 py-3 text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 transition-colors text-sm";
+
+  function inputClass(key: keyof FormState) {
+    return cn(
+      inputBase,
+      fieldErrors[key]
+        ? "border border-red-400 focus:ring-red-100 focus:border-red-400"
+        : "border border-[#E5E7EB] focus:ring-[#111827]/8 focus:border-[#374151]",
+    );
+  }
 
   function field(key: keyof FormState) {
     return {
       value:    form[key],
       onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
         setForm(f => ({ ...f, [key]: e.target.value })),
-      className: `w-full bg-zinc-800 border ${fieldErrors[key] ? "border-red-500" : "border-zinc-700"} rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors`,
+      className: inputClass(key),
     };
   }
 
   const isLoading = status === "creating" || status === "verifying";
+  const freeShippingGap = FREE_SHIPPING_THRESHOLD_MINOR - subtotalMinor;
+  const freeShippingPct = Math.min(100, (subtotalMinor / FREE_SHIPPING_THRESHOLD_MINOR) * 100);
 
   // ── Render ──────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
-      {/* Header */}
-      <div className="border-b border-zinc-800 px-6 py-4 flex items-center gap-3">
-        <Lock className="w-5 h-5 text-zinc-400" />
-        <span className="font-semibold text-lg">Secure Checkout</span>
-        {mockEnabled && (
-          <span className="ml-auto flex items-center gap-1.5 bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs font-medium px-3 py-1 rounded-full">
-            <FlaskConical className="w-3.5 h-3.5" />
-            TEST MODE — No real payments
-          </span>
-        )}
+    /*
+     * gvrze-checkout wrapper:
+     *   - Forces light background on the checkout content area, overriding
+     *     the dark site theme for this route only.
+     *   - Does NOT affect the global site nav, footer, or any other route.
+     */
+    <div className="gvrze-checkout min-h-screen bg-[#F3F4F6]">
+
+      {/* ── Page header (replaces the old dark header bar) ─────────────────── */}
+      <div className="bg-white border-b border-[#E5E7EB]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-3">
+          {/* Back link */}
+          <Link
+            to={isBuyNow ? "/geostore" : "/geostore/cart"}
+            className="flex items-center gap-1.5 text-[#6B7280] hover:text-[#111827] transition-colors text-sm mr-2"
+          >
+            <ChevronRight className="w-4 h-4 rotate-180 flex-shrink-0" />
+            <span className="hidden sm:inline">{isBuyNow ? "Back to store" : "Back to cart"}</span>
+          </Link>
+
+          {/* Secure checkout label */}
+          <div className="flex items-center gap-2 flex-1 justify-center sm:justify-start">
+            <div className="w-7 h-7 rounded-full bg-[#111827] flex items-center justify-center flex-shrink-0">
+              <Lock className="w-3.5 h-3.5 text-white" />
+            </div>
+            <span className="font-semibold text-[#111827] text-base">Secure Checkout</span>
+          </div>
+
+          {/* TEST MODE badge */}
+          {mockEnabled && (
+            <span className="hidden sm:flex items-center gap-1.5 bg-amber-50 text-amber-700 border border-amber-200 text-xs font-medium px-3 py-1.5 rounded-full flex-shrink-0">
+              <FlaskConical className="w-3.5 h-3.5" />
+              TEST MODE
+            </span>
+          )}
+        </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
+      {/* Mobile TEST MODE banner */}
+      {mockEnabled && (
+        <div className="sm:hidden bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center gap-2">
+          <FlaskConical className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
+          <span className="text-xs text-amber-700 font-medium">Test mode — no real payments</span>
+        </div>
+      )}
 
-        {/* ── LEFT: Form ── */}
-        <div className="space-y-8">
+      {/* ── Main two-column layout ─────────────────────────────────────────── */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-10 grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 lg:gap-8 items-start">
 
-          {/* Auth toggle (only shown if not fully in mock/guest mode) */}
+        {/* ══ LEFT COLUMN: Forms ══════════════════════════════════════════════ */}
+        <div className="space-y-5 min-w-0">
+
+          {/* ── Guest / Auth toggle ── */}
           {!user && (
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-4">
-              <p className="text-sm text-zinc-400">Already have an account? Sign in to track orders easily.</p>
-              <div className="flex gap-3">
+            <Card className="p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <User className="w-4 h-4 text-[#6B7280]" />
+                <span className="text-[#374151] text-sm">
+                  Already have an account?{" "}
+                  <span className="text-[#6B7280]">Sign in to track your orders easily.</span>
+                </span>
+              </div>
+              <div className="flex gap-2.5">
                 <button
                   type="button"
                   onClick={() => setGuestMode(true)}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium border transition-colors ${guestMode ? "bg-white text-black border-white" : "border-zinc-700 text-zinc-400 hover:border-zinc-500"}`}
+                  className={cn(
+                    "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium border transition-all",
+                    guestMode
+                      ? "bg-[#111827] text-white border-[#111827] shadow-sm"
+                      : "border-[#E5E7EB] text-[#374151] hover:border-[#9CA3AF] bg-white",
+                  )}
                 >
-                  <User className="w-4 h-4" /> Continue as Guest
+                  <User className="w-4 h-4" />
+                  Continue as Guest
                 </button>
                 <Link
                   to="/auth"
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-400 hover:border-zinc-500 transition-colors text-center"
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium border border-[#E5E7EB] text-[#374151] hover:border-[#9CA3AF] bg-white transition-all text-center"
                 >
-                  <UserCheck className="w-4 h-4" /> Sign In
+                  <UserCheck className="w-4 h-4" />
+                  Sign In
                 </Link>
               </div>
-            </div>
+            </Card>
           )}
 
-          {/* Contact Information */}
-          <section className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-5">
-            <h2 className="font-semibold text-lg">Contact Information</h2>
-
-            <div>
-              <label className="text-sm text-zinc-400 mb-1.5 block">Full Name *</label>
-              <input placeholder="Aryan Sharma" {...field("customerName")} />
-              {fieldErrors.customerName && <p className="text-red-400 text-xs mt-1">{fieldErrors.customerName}</p>}
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm text-zinc-400 mb-1.5 block">Email Address *</label>
-                <input type="email" placeholder="aryan@example.com" {...field("customerEmail")} />
-                {fieldErrors.customerEmail && <p className="text-red-400 text-xs mt-1">{fieldErrors.customerEmail}</p>}
-              </div>
-              <div>
-                <label className="text-sm text-zinc-400 mb-1.5 block">Mobile Number *</label>
-                <div className="flex">
-                  <span className="bg-zinc-700 border border-zinc-700 border-r-0 rounded-l-xl px-3 flex items-center text-zinc-400 text-sm">+91</span>
-                  <input
-                    type="tel"
-                    placeholder="9876543210"
-                    {...field("customerPhone")}
-                    className={`flex-1 bg-zinc-800 border ${fieldErrors.customerPhone ? "border-red-500" : "border-zinc-700"} rounded-r-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors`}
-                  />
-                </div>
-                {fieldErrors.customerPhone && <p className="text-red-400 text-xs mt-1">{fieldErrors.customerPhone}</p>}
-              </div>
-            </div>
-          </section>
-
-          {/* Shipping Address */}
-          <section className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-5">
-            <h2 className="font-semibold text-lg">Shipping Address</h2>
-            <p className="text-xs text-zinc-500">India only — we currently ship within India.</p>
-
-            <div>
-              <label className="text-sm text-zinc-400 mb-1.5 block">Recipient Name *</label>
-              <input placeholder="Name on delivery label" {...field("shippingName")} />
-              {fieldErrors.shippingName && <p className="text-red-400 text-xs mt-1">{fieldErrors.shippingName}</p>}
-            </div>
-
-            <div>
-              <label className="text-sm text-zinc-400 mb-1.5 block">Address Line 1 *</label>
-              <input placeholder="Flat / House No., Building, Street" {...field("shippingLine1")} />
-              {fieldErrors.shippingLine1 && <p className="text-red-400 text-xs mt-1">{fieldErrors.shippingLine1}</p>}
-            </div>
-
-            <div>
-              <label className="text-sm text-zinc-400 mb-1.5 block">Address Line 2 (optional)</label>
-              <input placeholder="Area, Landmark" {...field("shippingLine2")} />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="text-sm text-zinc-400 mb-1.5 block">City *</label>
-                <input placeholder="Mumbai" {...field("shippingCity")} />
-                {fieldErrors.shippingCity && <p className="text-red-400 text-xs mt-1">{fieldErrors.shippingCity}</p>}
-              </div>
-              <div>
-                <label className="text-sm text-zinc-400 mb-1.5 block">State *</label>
-                <select {...field("shippingState")}>
-                  {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-                {fieldErrors.shippingState && <p className="text-red-400 text-xs mt-1">{fieldErrors.shippingState}</p>}
-              </div>
-              <div>
-                <label className="text-sm text-zinc-400 mb-1.5 block">PIN Code *</label>
-                <input placeholder="400001" maxLength={6} {...field("shippingPincode")} />
-                {fieldErrors.shippingPincode && <p className="text-red-400 text-xs mt-1">{fieldErrors.shippingPincode}</p>}
-              </div>
-            </div>
-
-            <div>
-              <label className="text-sm text-zinc-400 mb-1.5 block">Country</label>
-              <input value="India" readOnly className="w-full bg-zinc-800/50 border border-zinc-700 rounded-xl px-4 py-3 text-zinc-400 cursor-not-allowed" />
-            </div>
-
-            <div>
-              <label className="text-sm text-zinc-400 mb-1.5 block">Delivery Notes (optional)</label>
-              <textarea
-                placeholder="Leave at door, ring the bell, etc."
-                rows={2}
-                {...field("deliveryNotes")}
-                className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors resize-none"
-              />
-            </div>
-          </section>
-
-          {/* Shipping Method */}
-          <section className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-4">
-            <h2 className="font-semibold text-lg flex items-center gap-2">
-              <Truck className="w-5 h-5" /> Shipping Method
+          {/* ── Contact Information ── */}
+          <Card className="p-6">
+            <h2 className="text-[#111827] font-semibold text-base mb-5 flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-[#111827] text-white text-xs flex items-center justify-center font-bold flex-shrink-0">1</span>
+              Contact Information
             </h2>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-[#4B5563] text-sm font-medium mb-1.5">Full Name *</label>
+                <input placeholder="Aryan Sharma" {...field("customerName")} />
+                {fieldErrors.customerName && (
+                  <p className="text-red-600 text-xs mt-1">{fieldErrors.customerName}</p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[#4B5563] text-sm font-medium mb-1.5">Email Address *</label>
+                  <input type="email" placeholder="aryan@example.com" {...field("customerEmail")} />
+                  {fieldErrors.customerEmail && (
+                    <p className="text-red-600 text-xs mt-1">{fieldErrors.customerEmail}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-[#4B5563] text-sm font-medium mb-1.5">Mobile Number *</label>
+                  <div className="flex">
+                    <span className="bg-[#F3F4F6] border border-r-0 border-[#E5E7EB] rounded-l-xl px-3 flex items-center text-[#6B7280] text-sm flex-shrink-0 font-medium">
+                      +91
+                    </span>
+                    <input
+                      type="tel"
+                      placeholder="9876543210"
+                      {...field("customerPhone")}
+                      className={cn(
+                        inputBase,
+                        "rounded-l-none border-l-0",
+                        fieldErrors.customerPhone
+                          ? "border border-red-400 focus:ring-red-100 focus:border-red-400"
+                          : "border border-[#E5E7EB] focus:ring-[#111827]/8 focus:border-[#374151]",
+                      )}
+                    />
+                  </div>
+                  {fieldErrors.customerPhone && (
+                    <p className="text-red-600 text-xs mt-1">{fieldErrors.customerPhone}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* ── Shipping Address ── */}
+          <Card className="p-6">
+            <h2 className="text-[#111827] font-semibold text-base mb-1 flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-[#111827] text-white text-xs flex items-center justify-center font-bold flex-shrink-0">2</span>
+              Shipping Address
+            </h2>
+            <p className="text-[#6B7280] text-xs mb-5 ml-8">🇮🇳 India only — we currently ship within India</p>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-[#4B5563] text-sm font-medium mb-1.5">Recipient Name *</label>
+                <input placeholder="Name on delivery label" {...field("shippingName")} />
+                {fieldErrors.shippingName && (
+                  <p className="text-red-600 text-xs mt-1">{fieldErrors.shippingName}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-[#4B5563] text-sm font-medium mb-1.5">Address Line 1 *</label>
+                <input placeholder="Flat / House No., Building, Street" {...field("shippingLine1")} />
+                {fieldErrors.shippingLine1 && (
+                  <p className="text-red-600 text-xs mt-1">{fieldErrors.shippingLine1}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-[#4B5563] text-sm font-medium mb-1.5">
+                  Address Line 2{" "}
+                  <span className="text-[#9CA3AF] font-normal">(optional)</span>
+                </label>
+                <input placeholder="Area, Landmark" {...field("shippingLine2")} />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-[#4B5563] text-sm font-medium mb-1.5">City *</label>
+                  <input placeholder="Mumbai" {...field("shippingCity")} />
+                  {fieldErrors.shippingCity && (
+                    <p className="text-red-600 text-xs mt-1">{fieldErrors.shippingCity}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-[#4B5563] text-sm font-medium mb-1.5">State *</label>
+                  <select {...field("shippingState")}>
+                    {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                  {fieldErrors.shippingState && (
+                    <p className="text-red-600 text-xs mt-1">{fieldErrors.shippingState}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-[#4B5563] text-sm font-medium mb-1.5">PIN Code *</label>
+                  <input placeholder="400001" maxLength={6} {...field("shippingPincode")} />
+                  {fieldErrors.shippingPincode && (
+                    <p className="text-red-600 text-xs mt-1">{fieldErrors.shippingPincode}</p>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[#4B5563] text-sm font-medium mb-1.5">Country</label>
+                <input
+                  value="India"
+                  readOnly
+                  className="w-full bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-4 py-3 text-[#9CA3AF] cursor-not-allowed text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[#4B5563] text-sm font-medium mb-1.5">
+                  Delivery Notes{" "}
+                  <span className="text-[#9CA3AF] font-normal">(optional)</span>
+                </label>
+                <textarea
+                  placeholder="Leave at door, ring the bell, etc."
+                  rows={2}
+                  {...field("deliveryNotes")}
+                  className={cn(
+                    inputBase,
+                    "resize-none",
+                    "border border-[#E5E7EB] focus:ring-[#111827]/8 focus:border-[#374151]",
+                  )}
+                />
+              </div>
+            </div>
+          </Card>
+
+          {/* ── Shipping Method ── */}
+          <Card className="p-6">
+            <h2 className="text-[#111827] font-semibold text-base mb-5 flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-[#111827] text-white text-xs flex items-center justify-center font-bold flex-shrink-0">3</span>
+              <Truck className="w-4 h-4 text-[#6B7280]" />
+              Delivery Method
+            </h2>
+
             <div className="space-y-3">
               {SHIPPING_OPTIONS.map(opt => {
                 const previewShipping = computeShippingMinor(opt.value, subtotalMinor, hasPhysical);
                 const isFree = previewShipping === 0;
+                const isSelected = shippingMethod === opt.value;
+
                 return (
                   <label
                     key={opt.value}
-                    className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${
-                      shippingMethod === opt.value
-                        ? "border-white bg-white/5"
-                        : "border-zinc-700 hover:border-zinc-600"
-                    }`}
+                    className={cn(
+                      "flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all",
+                      isSelected
+                        ? "border-[#111827] bg-[#F9FAFB] shadow-sm"
+                        : "border-[#E5E7EB] hover:border-[#9CA3AF] bg-white",
+                    )}
                   >
                     <input
                       type="radio"
                       name="shipping"
                       value={opt.value}
-                      checked={shippingMethod === opt.value}
+                      checked={isSelected}
                       onChange={() => setShippingMethod(opt.value)}
-                      className="mt-0.5 accent-white"
+                      className="mt-0.5 accent-[#111827] flex-shrink-0"
                     />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-sm">{opt.label}</span>
-                        {isFree && <span className="text-emerald-400 text-xs font-semibold">FREE</span>}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className={cn("font-medium text-sm", isSelected ? "text-[#111827]" : "text-[#374151]")}>
+                          {opt.label}
+                        </span>
+                        {isFree && (
+                          <span className="text-emerald-600 text-xs font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                            FREE
+                          </span>
+                        )}
                       </div>
-                      <p className="text-xs text-zinc-500 mt-0.5">{opt.note}</p>
+                      <p className="text-xs text-[#6B7280] mt-0.5">{opt.note}</p>
                       {opt.value === "standard" && subtotalMinor < FREE_SHIPPING_THRESHOLD_MINOR && (
-                        <p className="text-xs text-amber-400 mt-1">
+                        <p className="text-xs text-amber-600 mt-1 font-medium">
                           Add {formatInrPaise(FREE_SHIPPING_THRESHOLD_MINOR - subtotalMinor)} more for free shipping
                         </p>
                       )}
@@ -740,77 +895,88 @@ export function GstoreCheckoutScreen() {
                 );
               })}
             </div>
-          </section>
+          </Card>
 
-          {/* Payment section */}
-          <section className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-5">
-            <h2 className="font-semibold text-lg flex items-center gap-2">
-              <Lock className="w-5 h-5" /> Payment
+          {/* ── Payment ── */}
+          <Card className="p-6">
+            <h2 className="text-[#111827] font-semibold text-base mb-5 flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-[#111827] text-white text-xs flex items-center justify-center font-bold flex-shrink-0">4</span>
+              <Lock className="w-4 h-4 text-[#6B7280]" />
+              Payment
             </h2>
 
-            {/* Error / result states */}
+            {/* ── Error state ── */}
             {status === "failed" && (
-              <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-sm text-red-300">
-                <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+              <div className="mb-4 flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl p-4">
+                <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="font-medium">Payment failed</p>
-                  {errorMsg && <p className="text-xs mt-1 text-red-400">{errorMsg}</p>}
+                  <p className="font-medium text-red-700 text-sm">Payment failed</p>
+                  {errorMsg && <p className="text-xs mt-1 text-red-600">{errorMsg}</p>}
                   <button
                     type="button"
-                    onClick={() => { setStatus("idle"); setErrorMsg(null); inflight.current = false; idempotencyKey.current = crypto.randomUUID(); }}
-                    className="mt-2 text-xs underline text-red-300 hover:text-white"
+                    onClick={() => {
+                      setStatus("idle");
+                      setErrorMsg(null);
+                      inflight.current = false;
+                      idempotencyKey.current = crypto.randomUUID();
+                    }}
+                    className="mt-2 text-xs underline text-red-600 hover:text-red-800 font-medium"
                   >
-                    Try again
+                    Try again →
                   </button>
                 </div>
               </div>
             )}
 
+            {/* ── Cancelled state ── */}
             {status === "cancelled" && (
-              <div className="flex items-center gap-3 bg-zinc-800 rounded-xl p-4 text-sm text-zinc-300">
-                <X className="w-5 h-5" />
-                <div>
-                  Payment cancelled.
-                  <button
-                    type="button"
-                    onClick={() => { setStatus("idle"); inflight.current = false; idempotencyKey.current = crypto.randomUUID(); }}
-                    className="ml-2 text-xs underline hover:text-white"
-                  >
-                    Try again
-                  </button>
-                </div>
+              <div className="mb-4 flex items-center gap-3 bg-[#F3F4F6] border border-[#E5E7EB] rounded-xl p-4">
+                <X className="w-4 h-4 text-[#6B7280] flex-shrink-0" />
+                <span className="text-sm text-[#374151]">Payment cancelled.</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStatus("idle");
+                    inflight.current = false;
+                    idempotencyKey.current = crypto.randomUUID();
+                  }}
+                  className="ml-auto text-xs underline text-[#374151] hover:text-[#111827] font-medium"
+                >
+                  Try again
+                </button>
               </div>
             )}
 
-            {/* Mock payment modal simulation */}
+            {/* ── Mock gateway outcome picker ── */}
             {status === "paying" && mockEnabled && pendingOrder && (
-              <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-5 space-y-4">
-                <div className="flex items-center gap-2 text-amber-400 font-medium">
-                  <FlaskConical className="w-5 h-5" />
+              <div className="mb-4 bg-amber-50 border border-amber-200 rounded-xl p-5 space-y-4">
+                <div className="flex items-center gap-2 text-amber-700 font-semibold text-sm">
+                  <FlaskConical className="w-4 h-4" />
                   Test Gateway — Choose an outcome
                 </div>
-                <p className="text-sm text-zinc-400">
-                  Order <strong className="text-white">{pendingOrder.orderNumber}</strong> · {formatInrPaise(totalMinor)}
+                <p className="text-sm text-[#374151]">
+                  Order <strong className="text-[#111827]">{pendingOrder.orderNumber}</strong>
+                  {" · "}{formatInrPaise(totalMinor)}
                 </p>
-                <div className="flex gap-3 flex-wrap">
+                <div className="flex gap-2.5 flex-wrap">
                   <button
                     type="button"
                     onClick={() => handleMockOutcome("success")}
-                    className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm"
                   >
                     ✓ Payment Successful
                   </button>
                   <button
                     type="button"
                     onClick={() => handleMockOutcome("failed")}
-                    className="bg-red-600 hover:bg-red-500 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm"
                   >
                     ✗ Payment Failed
                   </button>
                   <button
                     type="button"
                     onClick={() => handleMockOutcome("cancel")}
-                    className="bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                    className="bg-white border border-[#E5E7EB] hover:bg-[#F3F4F6] text-[#374151] px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors"
                   >
                     ← Cancel
                   </button>
@@ -818,141 +984,210 @@ export function GstoreCheckoutScreen() {
               </div>
             )}
 
-            {/* Payment methods info */}
+            {/* ── Payment method info ── */}
             {(status === "idle" || status === "failed" || status === "cancelled") && (
-              <div>
+              <div className="mb-5">
                 {mockEnabled ? (
-                  <p className="text-sm text-amber-400 flex items-center gap-1.5">
-                    <FlaskConical className="w-4 h-4" /> Test mode — no real money charged
-                  </p>
+                  <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+                    <FlaskConical className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                    <p className="text-sm text-amber-700 font-medium">Test mode — no real money charged</p>
+                  </div>
                 ) : rzpConfigured ? (
-                  <div className="space-y-2">
-                    <p className="text-sm text-zinc-400">Accepts: UPI · Credit / Debit Cards · Net Banking · Wallets</p>
-                    <p className="text-xs text-zinc-600">Secured by Razorpay · 256-bit SSL encryption</p>
+                  <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-4 py-3 space-y-1">
+                    <p className="text-sm text-[#374151] font-medium">Accepted payment methods</p>
+                    <p className="text-sm text-[#6B7280]">UPI · Credit / Debit Cards · Net Banking · Wallets</p>
+                    <p className="text-xs text-[#9CA3AF] mt-1">Secured by Razorpay · 256-bit SSL encryption</p>
                   </div>
                 ) : (
-                  <p className="text-sm text-red-400">Payment gateway not configured. Contact support.</p>
+                  <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                    <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                    <p className="text-sm text-red-600">Payment gateway not configured. Contact support.</p>
+                  </div>
                 )}
               </div>
             )}
 
-            {/* Pay button */}
-            {(status === "idle" || status === "failed" || status === "cancelled") && (mockEnabled || rzpConfigured) && (
-              <button
-                type="button"
-                onClick={handleCheckoutWithMockCapture}
-                disabled={isLoading}
-                className="w-full flex items-center justify-center gap-2 bg-white text-black py-4 rounded-xl font-bold text-base hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isLoading ? (
-                  <span className="animate-spin w-5 h-5 border-2 border-black/30 border-t-black rounded-full" />
-                ) : (
-                  <>
-                    <Lock className="w-4 h-4" />
-                    Pay {formatInrPaise(totalMinor)}
-                  </>
-                )}
-              </button>
-            )}
+            {/* ── Pay button ── */}
+            {(status === "idle" || status === "failed" || status === "cancelled") &&
+              (mockEnabled || rzpConfigured) && (
+                <button
+                  type="button"
+                  onClick={handleCheckoutWithMockCapture}
+                  disabled={isLoading}
+                  className="w-full flex items-center justify-center gap-2.5 bg-[#111827] text-white py-4 rounded-xl font-bold text-base hover:bg-[#1F2937] active:bg-[#111827] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+                >
+                  {isLoading ? (
+                    <span className="animate-spin w-5 h-5 border-2 border-white/30 border-t-white rounded-full" />
+                  ) : (
+                    <>
+                      <Lock className="w-4 h-4" />
+                      Pay {formatInrPaise(totalMinor)}
+                    </>
+                  )}
+                </button>
+              )}
 
-            {/* Status overlays */}
+            {/* ── Status overlays ── */}
             {status === "creating" && (
-              <div className="text-center py-4 text-zinc-400 text-sm">
-                <div className="animate-spin w-6 h-6 border-2 border-zinc-600 border-t-white rounded-full mx-auto mb-2" />
-                Creating your order…
+              <div className="text-center py-5">
+                <div className="animate-spin w-7 h-7 border-2 border-[#E5E7EB] border-t-[#111827] rounded-full mx-auto mb-3" />
+                <p className="text-sm text-[#6B7280]">Creating your order…</p>
               </div>
             )}
 
             {status === "verifying" && (
-              <div className="text-center py-4 text-zinc-400 text-sm">
-                <div className="animate-spin w-6 h-6 border-2 border-zinc-600 border-t-white rounded-full mx-auto mb-2" />
-                Verifying payment…
+              <div className="text-center py-5">
+                <div className="animate-spin w-7 h-7 border-2 border-[#E5E7EB] border-t-[#111827] rounded-full mx-auto mb-3" />
+                <p className="text-sm text-[#6B7280]">Verifying payment…</p>
               </div>
             )}
 
-            <p className="text-xs text-zinc-600 text-center">
-              By placing this order, you agree to our Terms of Service and Privacy Policy.
+            <p className="text-xs text-[#9CA3AF] text-center mt-4">
+              By placing this order, you agree to our{" "}
+              <Link to="/legal/terms" className="underline hover:text-[#6B7280] transition-colors">Terms of Service</Link>
+              {" "}and{" "}
+              <Link to="/legal/privacy" className="underline hover:text-[#6B7280] transition-colors">Privacy Policy</Link>.
             </p>
-          </section>
+          </Card>
         </div>
 
-        {/* ── RIGHT: Order Summary ── */}
-        <aside className="space-y-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 sticky top-6 space-y-5">
-            <h2 className="font-semibold text-lg flex items-center gap-2">
-              <Package className="w-5 h-5" /> Order Summary
-              <span className="ml-auto text-sm text-zinc-500">{checkoutItems.length} item{checkoutItems.length !== 1 ? "s" : ""}</span>
-            </h2>
+        {/* ══ RIGHT COLUMN: Order Summary ════════════════════════════════════ */}
+        <aside className="lg:sticky lg:top-6 space-y-4">
+          <Card className="p-5">
 
-            {/* Line items */}
-            <div className="space-y-3">
+            {/* Summary heading */}
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-[#111827] font-semibold text-base flex items-center gap-2">
+                <Package className="w-4 h-4 text-[#6B7280]" />
+                Order Summary
+              </h2>
+              <span className="text-xs text-[#6B7280] bg-[#F3F4F6] px-2.5 py-1 rounded-full border border-[#E5E7EB]">
+                {checkoutItems.length} {checkoutItems.length === 1 ? "item" : "items"}
+              </span>
+            </div>
+
+            {/* ── Line items ── */}
+            <div className="space-y-4 mb-5">
               {checkoutItems.map((item, i) => {
-                const p = getProductPrice(item.slug);
+                const p   = getProductPrice(item.slug);
+                const img = productImageForSlug(item.slug);
                 const lineTotal = p ? p.priceMinor * item.quantity : 0;
+
                 return (
-                  <div key={i} className="flex items-start justify-between gap-3">
+                  <div key={i} className="flex items-start gap-3">
+                    {/* Product thumbnail */}
+                    {img ? (
+                      <div className="w-14 h-14 rounded-lg overflow-hidden bg-[#F3F4F6] flex-shrink-0 border border-[#E5E7EB]">
+                        <img
+                          src={img.src}
+                          alt={img.alt}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-14 h-14 rounded-lg bg-[#F3F4F6] flex-shrink-0 border border-[#E5E7EB] flex items-center justify-center">
+                        <Package className="w-5 h-5 text-[#9CA3AF]" />
+                      </div>
+                    )}
+
+                    {/* Product info */}
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">{p?.name ?? item.slug}</p>
+                      <p className="font-medium text-sm text-[#111827] leading-snug truncate">
+                        {p?.name ?? item.slug}
+                      </p>
                       {Object.entries(item.options).length > 0 && (
-                        <p className="text-xs text-zinc-500">
+                        <p className="text-xs text-[#6B7280] mt-0.5">
                           {Object.entries(item.options).map(([k, v]) => `${k}: ${v}`).join(" · ")}
                         </p>
                       )}
-                      <p className="text-xs text-zinc-500">Qty {item.quantity}</p>
+                      <p className="text-xs text-[#9CA3AF] mt-0.5">Qty {item.quantity}</p>
                     </div>
-                    <span className="text-sm font-semibold flex-shrink-0">{formatInrPaise(lineTotal)}</span>
+
+                    {/* Line price */}
+                    <span className="text-sm font-semibold text-[#111827] flex-shrink-0">
+                      {formatInrPaise(lineTotal)}
+                    </span>
                   </div>
                 );
               })}
             </div>
 
-            <hr className="border-zinc-800" />
+            <hr className="border-[#E5E7EB] mb-4" />
 
-            {/* Totals */}
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between text-zinc-400">
-                <span>Subtotal</span>
-                <span>{formatInrPaise(subtotalMinor)}</span>
+            {/* ── Totals ── */}
+            <div className="space-y-2.5 text-sm mb-5">
+              <div className="flex justify-between">
+                <span className="text-[#6B7280]">Subtotal</span>
+                <span className="text-[#374151] font-medium">{formatInrPaise(subtotalMinor)}</span>
               </div>
-              <div className="flex justify-between text-zinc-400">
-                <span>Shipping ({SHIPPING_OPTIONS.find(o => o.value === shippingMethod)?.label})</span>
-                <span>{shippingMinor === 0 ? <span className="text-emerald-400">FREE</span> : formatInrPaise(shippingMinor)}</span>
+              <div className="flex justify-between">
+                <span className="text-[#6B7280]">
+                  Shipping ({SHIPPING_OPTIONS.find(o => o.value === shippingMethod)?.label ?? shippingMethod})
+                </span>
+                <span className={shippingMinor === 0 ? "text-emerald-600 font-semibold" : "text-[#374151] font-medium"}>
+                  {shippingMinor === 0 ? "FREE" : formatInrPaise(shippingMinor)}
+                </span>
               </div>
-              <div className="flex justify-between text-zinc-400">
-                <span>GST (18%)</span>
-                <span>{formatInrPaise(taxMinor)}</span>
+              <div className="flex justify-between">
+                <span className="text-[#6B7280]">GST (18%)</span>
+                <span className="text-[#374151] font-medium">{formatInrPaise(taxMinor)}</span>
               </div>
-              <hr className="border-zinc-800" />
-              <div className="flex justify-between font-bold text-base">
-                <span>Total</span>
-                <span>{formatInrPaise(totalMinor)}</span>
+
+              <hr className="border-[#E5E7EB]" />
+
+              <div className="flex justify-between items-baseline pt-0.5">
+                <span className="font-bold text-base text-[#111827]">Total</span>
+                <span className="font-bold text-lg text-[#111827]">{formatInrPaise(totalMinor)}</span>
               </div>
             </div>
 
-            {/* Free shipping progress */}
+            {/* ── Free shipping progress bar ── */}
             {subtotalMinor < FREE_SHIPPING_THRESHOLD_MINOR && shippingMethod === "standard" && (
-              <div className="bg-zinc-800 rounded-xl p-3 text-xs text-zinc-400">
-                <div className="flex justify-between mb-1.5">
-                  <span>Free shipping progress</span>
-                  <span>{formatInrPaise(subtotalMinor)} / {formatInrPaise(FREE_SHIPPING_THRESHOLD_MINOR)}</span>
+              <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-3.5 mb-4">
+                <div className="flex justify-between mb-2">
+                  <span className="text-xs text-[#374151] font-medium">Free shipping progress</span>
+                  <span className="text-xs text-[#6B7280]">
+                    {formatInrPaise(subtotalMinor)} / {formatInrPaise(FREE_SHIPPING_THRESHOLD_MINOR)}
+                  </span>
                 </div>
-                <div className="h-1.5 bg-zinc-700 rounded-full overflow-hidden">
+                <div className="h-2 bg-[#E5E7EB] rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-emerald-500 rounded-full transition-all"
-                    style={{ width: `${Math.min(100, (subtotalMinor / FREE_SHIPPING_THRESHOLD_MINOR) * 100)}%` }}
+                    className="h-full bg-emerald-500 rounded-full transition-all duration-300"
+                    style={{ width: `${freeShippingPct}%` }}
                   />
                 </div>
+                <p className="text-xs text-[#6B7280] mt-1.5">
+                  Add <span className="font-medium text-amber-600">{formatInrPaise(freeShippingGap)}</span> more for free standard shipping
+                </p>
               </div>
             )}
 
+            {/* ── Back link ── */}
             <Link
               to={isBuyNow ? "/geostore" : "/geostore/cart"}
-              className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+              className="flex items-center gap-1 text-xs text-[#9CA3AF] hover:text-[#6B7280] transition-colors"
             >
               <ChevronRight className="w-3.5 h-3.5 rotate-180" />
               {isBuyNow ? "Back to store" : "Edit cart"}
             </Link>
-          </div>
+          </Card>
+
+          {/* ── Trust signals ── */}
+          <Card className="p-4">
+            <div className="space-y-2.5">
+              {[
+                { icon: Lock, text: "256-bit SSL secured checkout" },
+                { icon: CheckCircle2, text: "Verified by Razorpay payment gateway" },
+                { icon: Truck, text: "Ships from India — delivery in 5–7 days" },
+              ].map(({ icon: Icon, text }) => (
+                <div key={text} className="flex items-center gap-2.5">
+                  <Icon className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                  <span className="text-xs text-[#6B7280]">{text}</span>
+                </div>
+              ))}
+            </div>
+          </Card>
         </aside>
       </div>
     </div>
