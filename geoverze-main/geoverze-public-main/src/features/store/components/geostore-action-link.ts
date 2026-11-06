@@ -18,21 +18,9 @@ export function geostoreActionLinkClass(active: boolean) {
 }
 
 /**
- * Cream-warm circular button — used for Cart only.
- *
- * The distinctive light background makes the cart immediately identifiable at a
- * glance, matching the cream treatment in StorefrontNav's CART_ICON_BUTTON.
- * The border is intentionally very subtle (black/15–20) so only the cream fill
- * reads as the visual differentiator — no visible golden ring.
- * Icon inherits `currentColor`; use a dark text colour so it reads on cream.
+ * Cart button — same dark-charcoal style as Wishlist and Search.
+ * The cream background has been removed so the cart sits flush on the navbar.
  */
 export function geostoreCartLinkClass(active: boolean) {
-  return cn(
-    BASE,
-    active
-      ? // On the cart/checkout page: slightly warmer cream fill to signal current location
-        "border-black/20 bg-[oklch(0.94_0.04_75)] text-charcoal shadow-[0_4px_16px_-4px_oklch(0_0_0/0.12)]"
-      : // Default: warm cream background, nearly invisible border
-        "border-black/15 bg-[oklch(0.96_0.04_75)]/90 text-charcoal/85 hover:border-black/25 hover:bg-[oklch(0.95_0.05_72)]/95 hover:text-charcoal",
-  );
+  return geostoreActionLinkClass(active);
 }
