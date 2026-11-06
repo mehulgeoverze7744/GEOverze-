@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { OrdersScreen } from "@/features/store/components/StoreFlowScreens";
+import { GstoreOrdersScreen } from "@/features/store/screens/GstoreOrdersScreen";
 
 export const Route = createFileRoute("/geostore/orders")({
   head: () => ({
@@ -13,5 +13,5 @@ export const Route = createFileRoute("/geostore/orders")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: OrdersScreen,
+  component: GstoreOrdersScreen,
 });

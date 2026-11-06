@@ -14,7 +14,7 @@
 import "./storefront.css";
 
 import { useState, type ReactNode } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Bookmark, BookmarkCheck, Plus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -52,7 +52,7 @@ export type SFRelatedProduct = {
 };
 
 export type StorefrontProductPageProps = {
-  /** Slug used for wishlist state key. */
+  /** Slug used for wishlist state key AND for the server-side price lookup. */
   slug: string;
   name: string;
   categoryLabel: string;
@@ -225,6 +225,7 @@ export function StorefrontProductPage({
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("description");
 
+  const navigate = useNavigate();
   const wishlistItems = useStoreStore((s) => s.wishlist);
   const wishlistToggleFn = useStoreStore((s) => s.toggleWishlist);
   const isSaved = wishlistItems.includes(slug);
@@ -268,9 +269,18 @@ export function StorefrontProductPage({
       toast.error("Please select a size first.");
       return;
     }
-    toast.message("Available soon", {
-      description: "Merchandise checkout is not live yet. Stay tuned!",
-    });
+    // Navigate to checkout in Buy Now mode.
+    // The server validates the price by slug — the client only passes identifiers.
+    const searchParams: Record<string, string> = {
+      buyNow: "1",
+      slug,
+      qty:    "1",
+      Size:   selectedSize,
+    };
+    const color = colors?.find((c) => c.id === selectedColorId);
+    if (color) searchParams["Colour"] = color.label;
+
+    navigate({ to: "/geostore/checkout", search: searchParams as unknown as Record<string, string> });
   }
 
   const washcareList = washcare ?? [
