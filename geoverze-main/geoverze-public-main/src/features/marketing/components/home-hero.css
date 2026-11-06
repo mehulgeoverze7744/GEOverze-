@@ -173,6 +173,29 @@
   display: none;
 }
 
+/* Left hero copy: vertically centered as a group, still left-aligned. */
+#home-hero .home-hero-intro {
+  top: var(--nav-height);
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  justify-content: safe center;
+  align-items: flex-start;
+  pointer-events: none !important;
+}
+
+#home-hero .home-hero-intro-ctas {
+  pointer-events: auto;
+}
+
+/* Tablet/phone: keep the copy group in the space above the bottom rewards card. */
+@media (max-width: 1023px) {
+  #home-hero .home-hero-intro {
+    padding-bottom: clamp(7.5rem, 36vh, 20rem);
+  }
+}
+
 /* The cue's flex display would otherwise beat the mobile utility. */
 @media (max-width: 767px) {
   .home-hero-scroll-cue {
@@ -182,6 +205,7 @@
   /* Restore the intro copy on phones without changing the desktop pin. */
   #home-hero .home-hero-intro {
     overflow-wrap: anywhere;
+    padding-bottom: clamp(6.5rem, 34vh, 16rem);
   }
 
   #home-hero .home-hero-intro-ctas {

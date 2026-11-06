@@ -255,7 +255,7 @@ export function HomeHero() {
       {/* Scroll-synced copy — visible on mobile; desktop placement unchanged. */}
       <div
         ref={panel1}
-        className="home-hero-intro pointer-events-none absolute left-5 right-5 top-[calc(var(--nav-height)+0.85rem)] z-10 min-w-0 will-change-transform md:inset-x-auto md:left-12 md:right-auto md:bottom-auto md:max-w-[34rem] md:top-[calc(var(--nav-height)+1.75rem)]"
+        className="home-hero-intro pointer-events-none absolute left-5 right-5 z-10 min-w-0 will-change-transform md:inset-x-auto md:left-12 md:right-auto md:max-w-[34rem]"
       >
         <p className="eyebrow">Know Earth</p>
         <h1 className="mt-4 max-w-full break-words font-semibold leading-[1.06] tracking-tight text-foreground text-[clamp(1.9rem,8.2vw,2.45rem)] md:mt-6 md:text-[clamp(2.15rem,5.2vw,4.25rem)] md:leading-[1.03]">
