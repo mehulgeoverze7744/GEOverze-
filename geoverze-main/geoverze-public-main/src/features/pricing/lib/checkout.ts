@@ -4,22 +4,29 @@
  * Every plan CTA calls `startCheckout()`. This is the only place that decides
  * whether to navigate to the checkout page or show a "not available yet" notice.
  *
- * When Razorpay is fully configured and live, this function simply navigates
- * to /pricing/checkout with the selected plan + cycle in the URL.
- * The checkout page handles the rest (Razorpay modal, subscription creation, etc).
+ * NOTE: In React components, prefer using the `useNavigate` hook directly
+ * (as PlanCard does) so navigation integrates with the TanStack Router context.
+ * `startCheckout` is kept as a utility for non-component call sites that
+ * don't have router context (e.g. event handlers outside the React tree).
  */
 
-import { getRouterContext } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 import type { BillingCycle, PricingPlan } from "../data/plans";
 import { isRazorpayConfigured } from "./razorpay-client";
 
 /**
- * Navigate to the checkout page for a paid plan.
- *
- * Call from any component with access to the TanStack Router context.
- * Falls back to a toast when the router is not available (e.g. during SSR).
+ * Returns the checkout URL for a given plan + cycle.
+ * Use this to build <a href> or for `navigate({ to: ... })` calls.
+ */
+export function checkoutHref(plan: PricingPlan, cycle: BillingCycle): string {
+  if (plan.id === "explorer") return "/pricing";
+  return `/pricing/checkout?plan=${plan.id}&cycle=${cycle}`;
+}
+
+/**
+ * Navigate to the checkout page. Works outside a React component.
+ * Inside components, prefer `useNavigate({ to: "/pricing/checkout", search: ... })`.
  */
 export function startCheckout(plan: PricingPlan, cycle: BillingCycle) {
   if (plan.id === "explorer") {
@@ -29,43 +36,8 @@ export function startCheckout(plan: PricingPlan, cycle: BillingCycle) {
     return;
   }
 
-  // Build the checkout URL and navigate programmatically.
-  // We use window.location as a fallback if the router context is unavailable
-  // (e.g. if startCheckout is called outside a React tree).
-  try {
-    // Try to get the router from context — will throw if not inside a Router.
-    const router = (getRouterContext as () => { navigate?: unknown })?.();
-    if (
-      router &&
-      typeof (router as { navigate?: unknown }).navigate === "function"
-    ) {
-      void (
-        router as {
-          navigate: (opts: { to: string; search: Record<string, string> }) => void;
-        }
-      ).navigate({
-        to: "/pricing/checkout",
-        search: { plan: plan.id, cycle },
-      });
-      return;
-    }
-  } catch {
-    // Fall through to window.location
-  }
-
-  // Fallback: direct navigation (works outside React tree)
-  const params = new URLSearchParams({ plan: plan.id, cycle });
-  window.location.href = `/pricing/checkout?${params.toString()}`;
-}
-
-/**
- * Navigate to the checkout page from a component that has access to the
- * TanStack Router `navigate` function (preferred over `startCheckout` when
- * called inside a React component).
- */
-export function checkoutHref(plan: PricingPlan, cycle: BillingCycle): string {
-  if (plan.id === "explorer") return "/pricing";
-  return `/pricing/checkout?plan=${plan.id}&cycle=${cycle}`;
+  // Direct navigation — works both inside and outside the React tree
+  window.location.href = checkoutHref(plan, cycle);
 }
 
 /** Shared "not wired yet" notice for billing management actions. */
