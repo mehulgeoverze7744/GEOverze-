@@ -85,8 +85,8 @@ export const ecosystem: HomeFeature[] = [
     title: "Let's Play",
     description: "Play interactive geography quizzes, challenges and tournaments.",
     imageSrc: "/assets/home/ecosystem/visual-play.jpg",
-    imageAlt: "Glowing world map with geography challenge markers",
-    imagePosition: "center 42%",
+    imageAlt: "Tablet on a light wooden desk showing a simple world map",
+    imagePosition: "center 40%",
     to: "/play",
   },
   {
@@ -117,8 +117,8 @@ export const ecosystem: HomeFeature[] = [
     title: "Pricing / Membership",
     description: "Unlock premium features and expand your exploration.",
     imageSrc: "/assets/home/ecosystem/visual-membership.jpg",
-    imageAlt: "Matte black membership card with gold globe and compass details",
-    imagePosition: "center 48%",
+    imageAlt: "GVRZE wordmark on a dark charcoal velvet studio background",
+    imagePosition: "center 38%",
     to: "/pricing",
   },
 ];
