@@ -9,6 +9,8 @@ const PEEK = 44;
 const SCALE_STEP = 0.04;
 const SWIPE_THRESHOLD = 40;
 const AXIS_LOCK = 10;
+const MIN_STACK_CARD_HEIGHT = 80;
+const MAX_STACK_CARD_HEIGHT = 1600;
 
 function signedOffset(index: number, active: number, count: number) {
   let delta = index - active;
@@ -53,16 +55,29 @@ export function PlanCardStack({
         0,
         ...cardRefs.current.map((node) => {
           const card = node?.querySelector<HTMLElement>(".pricing-plan-card");
-          if (!card) return 0;
-          const previousHeight = card.style.height;
-          card.style.height = "auto";
+          if (!node || !card) return 0;
+
+          const previousItemHeight = node.style.height;
+          const previousCardHeight = card.style.height;
+          const previousCardMinHeight = card.style.minHeight;
+
+          node.style.height = "auto";
+          card.style.setProperty("height", "auto", "important");
+          card.style.minHeight = "0";
+
           const natural = Math.max(card.scrollHeight, card.getBoundingClientRect().height);
-          card.style.height = previousHeight;
+
+          node.style.height = previousItemHeight;
+          if (previousCardHeight) card.style.height = previousCardHeight;
+          else card.style.removeProperty("height");
+          card.style.minHeight = previousCardMinHeight;
+
           return natural;
         }),
       ),
     );
-    if (next > 0) setCardHeight(next);
+    if (next < MIN_STACK_CARD_HEIGHT || next > MAX_STACK_CARD_HEIGHT) return;
+    setCardHeight((current) => (current === next ? current : next));
   }, []);
 
   useLayoutEffect(() => {
@@ -177,9 +192,9 @@ export function PlanCardStack({
               dragX !== 0 && "pricing-card-stack__item--dragging",
             )}
             style={{
+              height: cardHeight > 0 ? cardHeight : undefined,
               transform: `translate3d(-50%, 0, 0) translate3d(${x}px, 0, 0) scale(${scale})`,
               zIndex: count - Math.abs(offset),
-              height: cardHeight > 0 ? cardHeight : undefined,
             }}
             aria-current={isFront ? "true" : undefined}
             aria-hidden={isFront ? undefined : true}

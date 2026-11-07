@@ -205,24 +205,25 @@
 
 /* Mobile homepage hero — stacked layout (phone ≤ 767px)
    ─────────────────────────────────────────────────────────────────────────
-   On phones the hero becomes a flex column:
+   On phones the pinned hero is one viewport:
      [ navbar gap ]
      [ hero intro text   ]   ← in-flow, starts at top
      [ rewards card      ]   ← in-flow, below text
-     [ after-globe CTAs  ]   ← in-flow under the card
+   Scroll ~2–3 gestures through the globe pin, then the after-globe CTAs.
    The “Scroll the experience” control is not shown on phones.
    Absolutely-positioned children (globe, bloom, panel3)
    stay absolute and don't participate in the flex flow.
    ──────────────────────────────────────────────────────────────────────── */
 @media (max-width: 767px) {
-  /* 1. Section: auto height (at least full viewport), flex-column.
-        overflow: hidden keeps the globe and exit-animation drift clipped. */
+  /* 1. One viewport, pinned. overflow clips globe/exit drift. */
   #home-hero {
-    height: auto;
+    height: 100dvh;
     min-height: 100dvh;
+    max-height: 100dvh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    overflow-x: clip;
     padding-top: var(--nav-height); /* clear fixed navbar for flex items */
   }
 
@@ -236,8 +237,8 @@
     bottom: auto;
     width: 100%;
     padding-inline: 1.25rem; /* replaces Tailwind left-5 right-5 */
-    padding-top: 0.4rem;
-    padding-bottom: 0.35rem;
+    padding-top: 1.15rem;
+    padding-bottom: 1.5rem;
     justify-content: flex-start;
     overflow-wrap: anywhere;
     min-height: 0;
@@ -257,7 +258,7 @@
   }
 
   #home-hero > .rewards-card-motion {
-    margin-bottom: 0;
+    margin-bottom: 1.15rem;
   }
 
   /* Phones: hide the control only. Do not collapse unrelated hero layout. */
@@ -272,22 +273,20 @@
     display: none;
   }
 
-  /* Three-button group sits in-flow under the rewards card, still inside
-     #home-hero. This removes the pin-spacer (empty 170vh) that previously
-     sat between the globe and LET'S PLAY. */
-  #home-hero .home-hero-after-globe {
+  /* CTAs follow the pinned globe sequence — sibling of #home-hero. */
+  .home-hero-after-globe {
     position: relative;
     z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.45rem;
+    gap: 0.75rem;
     width: 100%;
     max-width: 100%;
     margin-top: 0;
     margin-bottom: 0;
-    padding: 0.05rem 1.15rem 0;
-    flex-shrink: 0;
+    padding: 1.75rem 1.15rem 2.5rem;
+    overflow-x: clip;
   }
 
   .home-hero-after-globe .home-hero-cta {

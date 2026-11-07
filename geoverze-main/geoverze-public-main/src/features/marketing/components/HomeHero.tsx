@@ -376,10 +376,6 @@ export function HomeHero() {
         </button>
       )}
 
-      {/* Phone-only CTA column. Must live inside #home-hero so the GSAP pin-spacer
-          (end +=170%) is not an empty gap between the globe and the buttons. */}
-      {afterGlobeCtas}
-
       <div
         ref={panel3}
         className="home-hero-expedition pointer-events-none absolute inset-x-6 bottom-20 opacity-0 will-change-transform md:inset-x-auto md:left-12 md:top-1/2 md:bottom-auto md:max-w-[28rem] md:-translate-y-1/2"
@@ -431,6 +427,9 @@ export function HomeHero() {
       </Modal>
 
     </section>
+      {/* Phone CTAs sit after the pinned hero so the globe hand-off plays
+          for ~2–3 scrolls before LET'S PLAY / GSTORE / WATCH DEMO. */}
+      {afterGlobeCtas}
     </>
   );
 }

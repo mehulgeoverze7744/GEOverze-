@@ -114,7 +114,7 @@ export const PlanCard = memo(function PlanCard({
        * GST text to visually overlap the button.  Wrapping both in a div
        * keeps row 9 intact and renders the GST note below the button.
        */}
-      <div className="flex flex-col">
+      <div className="pricing-plan-card__cta flex flex-col">
 
         {locked ? (
           /* Advance — not yet available */
