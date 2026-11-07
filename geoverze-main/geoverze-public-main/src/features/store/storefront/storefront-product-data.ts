@@ -10,6 +10,7 @@ const BASE = "/assets/gvrze-storefront/best-sellers";
 const CB_BASE = `${BASE}/cherry-blossom`;
 const MB_BASE = `${BASE}/midnight-black`;
 const SG_BASE = `${BASE}/starlight-grey`;
+const NA_BASE = `${BASE}/new-age`;
 
 /**
  * A single colour variant for a storefront tee.
@@ -308,20 +309,74 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     categoryLabel: "T-SHIRT",
     priceLabel: "Rs. 2,999",
     tone: "#6c0036",
+    // Default card image = Rose Wine Burgundy front shot (na-1.jpg).
+    // Gallery is driven by the `colors` array below.
     image: {
-      src: `${BASE}/new-age-tshirt.webp`,
-      alt: "GVRZE New Age T-Shirt, back view",
+      src: `${NA_BASE}/na-1.jpg`,
+      alt: "GVRZE New Age T-Shirt in Rose Wine Burgundy — front product view",
     },
+
+    // ── Colour variants ──────────────────────────────────────────────────────
+    // Currently one colourway; additional colours can be appended here when
+    // their images are ready — the UI swatch selector appears automatically
+    // once two or more colours are present.
+    colors: [
+      {
+        id: "rose-wine-burgundy",
+        label: "Rose Wine Burgundy",
+        hex: "#6c0036",
+        image: {
+          src: `${NA_BASE}/na-1.jpg`,
+          alt: "New Age T-Shirt in Rose Wine Burgundy — front design",
+        },
+        // Gallery order:
+        // na-1 front product (PRIMARY)   na-2 back product
+        // na-3 additional back design    na-4 collar & chest close-up
+        // na-5 model front               na-6 model angled
+        gallery: [
+          {
+            src: `${NA_BASE}/na-1.jpg`,
+            alt: "Rose Wine Burgundy — front T-shirt product image",
+          },
+          {
+            src: `${NA_BASE}/na-2.jpg`,
+            alt: "Rose Wine Burgundy — back T-shirt product image",
+          },
+          {
+            src: `${NA_BASE}/na-3.jpg`,
+            alt: "Rose Wine Burgundy — additional back graphic design",
+          },
+          {
+            src: `${NA_BASE}/na-4.jpg`,
+            alt: "Rose Wine Burgundy — collar, chest star and graphic close-up",
+          },
+          {
+            src: `${NA_BASE}/na-5.jpg`,
+            alt: "Rose Wine Burgundy — model wearing the tee, front view",
+          },
+          {
+            src: `${NA_BASE}/na-6.jpg`,
+            alt: "Rose Wine Burgundy — model wearing the tee, angled view",
+          },
+        ],
+      },
+      // Add further colourways here when ready, e.g.:
+      // { id: "...", label: "...", hex: "...", image: {...}, gallery: [...] },
+    ],
+
     description:
-      "The GVRZE New Age Graphic T-Shirt is a deep-toned statement built for those who move differently. 100% premium cotton with rich, saturated screen-print graphics that command attention.",
+      "Introducing the New Age T-shirt in Rose Wine Burgundy — a statement piece inspired by cosmic exploration, celestial navigation and contemporary streetwear. Designed around a deep burgundy colourway, the T-shirt features intricate multicolour celestial artwork across the sleeve and shoulder, a minimal star emblem on the front, and a clean GVRZE chest wordmark. The back features an expressive celestial composition with a half-globe illustration, orbital detailing, star elements and vertical GVRZE typography. Combining understated front branding with an elaborate back graphic, New Age brings together modern streetwear aesthetics and the GVRZE universe.",
     highlights: [
-      "100% Cotton Comfort — breathable, pre-shrunk fabric built for all-day wear.",
-      "260 GSM Heavyweight Quality — substantial feel with structure that holds its shape.",
+      "Deep Rose Wine Burgundy colourway — rich, saturated and distinctive.",
+      "Intricate celestial sleeve and shoulder artwork in multicolour print.",
+      "Minimal star emblem and GVRZE chest wordmark on the front.",
+      "Expressive back graphic: half-globe, orbital detailing and vertical GVRZE type.",
+      "Premium oversized streetwear silhouette for a relaxed, modern fit.",
       "Premium Screen Printing — sharp, fade-resistant graphics that last wash after wash.",
-      "Contrast-Forward Design — striking on its own, pairs with black or burgundy bottoms.",
+      "Comfortable everyday streetwear — pairs easily with dark denim, black cargo pants, or slim trousers.",
     ],
     stylingTip:
-      "Match the New Age Tee with black straight-leg trousers or dark denim and minimal white sneakers for a contrast-forward streetwear fit.",
+      "Style the Rose Wine Burgundy New Age Tee with black straight-leg trousers or dark denim for a tonal contrast-forward fit. Pair with minimal white or black sneakers. The rich burgundy colourway works equally well with earth-toned cargo pants for a streetwear-meets-explorer aesthetic.",
     washcare: WASHCARE_STANDARD,
     relatedIds: ["midnight-black-tshirt", "cherry-blossom-tshirt", "golden-arc-tshirt"],
   },
