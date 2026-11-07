@@ -256,9 +256,10 @@
     display: none;
   }
 
+  /* Expedition overlay (Begin the journey + duplicate CTAs) is desktop-only.
+     On phones the after-globe row already has LET'S PLAY / GSTORE / WATCH DEMO. */
   #home-hero .home-hero-expedition {
-    max-width: 28rem;
-    padding-inline: 0.15rem;
+    display: none;
   }
 
   /* 4. After-globe CTA row: no negative overlap — the hero section now

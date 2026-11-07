@@ -185,9 +185,18 @@ export function HomeHero() {
   const globeRef = useRef<HTMLDivElement>(null);
   const [webgl, setWebgl] = useState(true);
   const [demoOpen, setDemoOpen] = useState(false);
+  const [isPhone, setIsPhone] = useState(false);
 
   useEffect(() => {
     setWebgl(hasWebGLSupport());
+  }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const sync = () => setIsPhone(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
   }, []);
 
   const progress = useScrollProgress(sectionRef, (p) => {
@@ -371,29 +380,33 @@ export function HomeHero() {
         <h2 className="mt-4 font-light leading-[1.05] tracking-tight text-foreground text-[clamp(1.7rem,3.4vw,2.7rem)]">
           Your expedition starts here
         </h2>
-        <div className="mt-7 flex w-full max-w-sm flex-col gap-3 sm:max-w-none sm:flex-row sm:flex-wrap">
-          <GeoButton
-            asChild
-            variant="solid"
-            size="lg"
-            className="home-hero-cta w-full px-8 font-bold uppercase tracking-[0.2em] sm:w-auto sm:min-w-36 sm:px-10"
-          >
-            <Link
-              to="/play"
-              className="flex flex-col items-center leading-none font-cta text-[1.37rem]"
+        {/* Desktop/tablet only — phones already have LET'S PLAY / GSTORE / WATCH DEMO
+            in afterGlobeCtas. Rendering these again overlays the globe as duplicates. */}
+        {!isPhone ? (
+          <div className="mt-7 flex w-full max-w-sm flex-col gap-3 sm:max-w-none sm:flex-row sm:flex-wrap">
+            <GeoButton
+              asChild
+              variant="solid"
+              size="lg"
+              className="home-hero-cta w-full px-8 font-bold uppercase tracking-[0.2em] sm:w-auto sm:min-w-36 sm:px-10"
             >
-              <span>LET'S PLAY</span>
-            </Link>
-          </GeoButton>
-          <GeoButton
-            variant="solid"
-            size="lg"
-            onClick={() => setDemoOpen(true)}
-            className="home-hero-cta w-full px-8 font-bold uppercase tracking-[0.2em] sm:w-auto sm:min-w-36 sm:px-10"
-          >
-            <span className="font-cta text-[0.7rem]">Watch Demo</span>
-          </GeoButton>
-        </div>
+              <Link
+                to="/play"
+                className="flex flex-col items-center leading-none font-cta text-[1.37rem]"
+              >
+                <span>LET'S PLAY</span>
+              </Link>
+            </GeoButton>
+            <GeoButton
+              variant="solid"
+              size="lg"
+              onClick={() => setDemoOpen(true)}
+              className="home-hero-cta w-full px-8 font-bold uppercase tracking-[0.2em] sm:w-auto sm:min-w-36 sm:px-10"
+            >
+              <span className="font-cta text-[0.7rem]">Watch Demo</span>
+            </GeoButton>
+          </div>
+        ) : null}
       </div>
 
       <Modal
