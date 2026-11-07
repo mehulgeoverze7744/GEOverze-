@@ -146,10 +146,32 @@ function parseSubscription(value: unknown): SubscriptionRpc | null {
 
 /** Authenticated membership, credits and payment history. RLS-scoped. */
 export async function fetchMyBilling(): Promise<MyBillingSnapshot> {
-  const { data: userData, error: userError } = await supabase.auth.getUser();
-  if (userError) throw new Error(userError.message);
-  const user = userData.user;
-  if (!user) throw new Error("Authentication required");
+  //
+  // WHY getSession() instead of getUser():
+  //
+  // getUser() always fires a GET /auth/v1/user network request to validate the
+  // JWT server-side.  On mobile this round-trip frequently fails when:
+  //   • The JWT has just expired and the auto-refresh timer hasn't fired yet.
+  //   • The browser backgrounded the app and the refresh was deferred.
+  //   • The network is slow or briefly unavailable (common on Android).
+  //
+  // getSession() reads the stored session from localStorage.  If the token is
+  // expired it automatically awaits the refresh before returning.  It is the
+  // correct choice here because:
+  //   1. useMyBilling already guards with enabled: authReady && signedIn, so
+  //      this function only runs when the authStore confirms a signed-in user.
+  //   2. The subsequent Supabase RPC and table queries enforce RLS with the JWT
+  //      from the session header, so server-side validation happens implicitly.
+  //   3. It is far more resilient on mobile and low-latency networks.
+  //
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError) {
+    throw new Error("UNAUTHENTICATED:" + (sessionError.message ?? "Session error"));
+  }
+  const user = sessionData?.session?.user ?? null;
+  if (!user) {
+    throw new Error("UNAUTHENTICATED:No active session. Please sign in to view your billing details.");
+  }
 
   const [planResult, paymentsResult, progressionResult, grantResult, activeSubResult] = await Promise.all([
     supabase.rpc("get_my_plan_tier"),

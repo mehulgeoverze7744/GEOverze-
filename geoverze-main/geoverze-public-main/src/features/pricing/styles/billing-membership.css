@@ -1164,6 +1164,56 @@ div.bm > * {
   border-width: 1.5px;
 }
 
+/* ── Sign-in prompt (shown when authReady && !signedIn) ───────────────────── */
+.bm-signin-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2.5rem 1.5rem 2rem;
+  gap: 0;
+}
+
+.bm-signin-prompt__icon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1rem;
+  border-radius: 999px;
+  border: 1px solid #dce5ed;
+  background: #f0f6fb;
+  color: #1e3a5f;
+}
+
+.bm-signin-prompt__icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.bm-signin-prompt__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: #111827;
+}
+
+.bm-signin-prompt__desc {
+  margin: 0 0 1.25rem;
+  max-width: 24rem;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: #64748b;
+}
+
+/* ── Error action group ───────────────────────────────────────────────────── */
+.bm-load-error__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 960px) {
   .bm-top {
@@ -1203,8 +1253,49 @@ div.bm > * {
     padding-right: 0.9rem;
   }
 
+  /* Invoice amount: prevent long amounts / IDs from overflowing */
+  .bm-invoice-side {
+    max-width: 9rem;
+    min-width: 0;
+  }
+
+  .bm-invoice-amount {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.25rem 0.4rem;
+  }
+
+  .bm-invoice-id {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+
   .bm-title {
     font-size: 1.45rem;
+  }
+
+  /* Cancel subscription row: stack vertically on narrow screens */
+  .bm-cancel-section {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  /* Status badge: allow wrapping so it doesn't squash the plan name */
+  .bm-card-head {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  /* Plan name: smaller on tiny screens */
+  .bm-plan-name {
+    font-size: 1.35rem;
+  }
+
+  /* Modal: tighter padding on mobile */
+  .bm-portal-modal {
+    padding: 1.25rem 1.15rem 1.1rem;
   }
 }
 

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { AlertTriangle, CheckCircle2, Coins, Download, FlaskConical, RefreshCw, X } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Coins, Download, FlaskConical, LogIn, RefreshCw, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { toast } from "sonner";
@@ -36,7 +36,7 @@ const UNAVAILABLE_BILLING =
 /** Live membership, credits and payment history for the signed-in user. */
 export function SubscriptionScreen() {
   const { plans } = usePricingCatalog();
-  const { data, loading, error, refetch } = useMyBilling();
+  const { data, loading, error, isAuthError, authReady, signedIn, refetch } = useMyBilling();
   const queryClient = useQueryClient();
   const [cancelLoading, setCancelLoading] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
@@ -254,14 +254,61 @@ export function SubscriptionScreen() {
           </p>
         </header>
 
-        {error ? (
-          <article className="bm-card bm-load-error" role="alert">
-            <p className="bm-error-copy">Unable to load your membership details.</p>
-            <button type="button" className="bm-btn bm-btn--primary" onClick={refetch}>
-              Try again
-            </button>
+        {/* ── Auth loading — session check not yet settled ──────────────── */}
+        {!authReady && (
+          <div className="bm-top">
+            <article className="bm-card bm-card--plan">
+              <div className="bm-skeleton" aria-hidden aria-label="Loading membership details" />
+            </article>
+            <article className="bm-card bm-credits">
+              <div className="bm-skeleton bm-skeleton--credit" aria-hidden />
+            </article>
+          </div>
+        )}
+
+        {/* ── Not signed in ─────────────────────────────────────────────── */}
+        {authReady && !signedIn && !error && (
+          <article className="bm-card bm-signin-prompt" role="status">
+            <span className="bm-signin-prompt__icon" aria-hidden="true">
+              <LogIn strokeWidth={1.5} />
+            </span>
+            <h2 className="bm-signin-prompt__title">Sign in to view your membership</h2>
+            <p className="bm-signin-prompt__desc">
+              Your billing details, credits, and subscription status are only available when
+              you're signed in to your GVRZE account.
+            </p>
+            <Link to="/auth/login" className="bm-btn bm-btn--primary">
+              Sign in
+            </Link>
           </article>
-        ) : (
+        )}
+
+        {/* ── Auth error or data error ───────────────────────────────────── */}
+        {authReady && error && (
+          <article className="bm-card bm-load-error" role="alert">
+            {isAuthError ? (
+              <>
+                <p className="bm-error-copy">Your session has expired. Please sign in again to view your billing details.</p>
+                <Link to="/auth/login" className="bm-btn bm-btn--primary">
+                  Sign in
+                </Link>
+              </>
+            ) : (
+              <>
+                <p className="bm-error-copy">
+                  Unable to load your membership details. This may be a temporary issue.
+                </p>
+                <div className="bm-load-error__actions">
+                  <button type="button" className="bm-btn bm-btn--primary" onClick={refetch}>
+                    Try again
+                  </button>
+                </div>
+              </>
+            )}
+          </article>
+        )}
+
+        {authReady && !error && (
           <div className="bm-top">
             <article className="bm-card bm-card--plan">
               {loading ? <div className="bm-skeleton" aria-hidden /> : null}
@@ -456,6 +503,8 @@ export function SubscriptionScreen() {
           </div>
         )}
 
+        {/* Show billing history only once auth is settled and user is signed in */}
+        {authReady && signedIn && (
         <section className="bm-section" aria-labelledby="billing-history-heading">
           <div className="bm-section-head">
             <div>
@@ -502,6 +551,7 @@ export function SubscriptionScreen() {
             </ul>
           ) : null}
         </section>
+        )}
 
         <section className="bm-section" aria-labelledby="payment-methods-heading">
           <div className="bm-section-head">
