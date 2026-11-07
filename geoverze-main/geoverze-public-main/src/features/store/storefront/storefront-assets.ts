@@ -33,7 +33,7 @@ export const SF_ASSETS = {
     height: 1024,
   },
   bestSellerNewAge: {
-    src: `${BASE}/best-sellers/new-age/na-2.jpg`,
+    src: `${BASE}/best-sellers/new-age/na-1.jpg`,
     width: 819,
     height: 1024,
   },

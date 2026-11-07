@@ -75,7 +75,7 @@ const BEST_SELLERS: readonly BestSeller[] = [
     price: "Rs. 2,999",
     tone: "#6c0036",
     image: SF_ASSETS.bestSellerNewAge,
-    alt: "New Age T-Shirt in Rose Wine Burgundy — back view showing full celestial graphic",
+    alt: "New Age T-Shirt in Rose Wine Burgundy — front view showing celestial sleeve artwork and GVRZE wordmark",
     slug: "new-age-tshirt",
     // Portrait model/product shot — full-bleed cover mode (image fills card edge-to-edge).
     cover: true,
