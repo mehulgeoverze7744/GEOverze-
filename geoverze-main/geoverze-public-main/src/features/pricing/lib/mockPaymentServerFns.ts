@@ -134,6 +134,12 @@ export const confirmMockPaymentFn = createServerFn({ method: "POST" })
 // Sets cancel_at_period_end = true on the specified mock subscription.
 // Does NOT immediately cancel — access stays active until current_period_end.
 // This is the billing-screen cancellation path (cancel at next renewal).
+//
+// NOTE: assertMockEnabled() is intentionally NOT called here.
+// This function manages an EXISTING mock subscription (just flips a flag in the
+// DB) — it does not create new payments and does not need the payment env gate.
+// Security is provided by the user JWT + DB ownership check in the SECURITY
+// DEFINER RPC (provider_name = 'mock' AND user_id = auth.uid() checks).
 
 const ScheduleCancelSchema = z.object({
   access_token:    z.string().min(10),
@@ -150,7 +156,8 @@ export type ScheduleCancelMockResult = {
 export const scheduleCancelMockSubscriptionFn = createServerFn({ method: "POST" })
   .validator((raw: unknown) => ScheduleCancelSchema.parse(raw))
   .handler(async ({ data }): Promise<ScheduleCancelMockResult> => {
-    assertMockEnabled();
+    // No assertMockEnabled() — managing existing subscriptions works regardless
+    // of whether new mock payments are currently enabled on this environment.
     const sb = makeAuthenticatedClient(data.access_token);
 
     const { data: result, error } = await sb.rpc(
@@ -159,7 +166,9 @@ export const scheduleCancelMockSubscriptionFn = createServerFn({ method: "POST" 
     );
 
     if (error) {
-      throw new Error((error as { message?: string }).message ?? "schedule_cancel_mock_subscription RPC failed.");
+      const msg = (error as { message?: string }).message ?? "schedule_cancel_mock_subscription RPC failed.";
+      console.error("[scheduleCancelMockSubscription] RPC error:", msg);
+      throw new Error(msg);
     }
     return (result as ScheduleCancelMockResult) ?? { ok: false };
   });
@@ -169,6 +178,9 @@ export const scheduleCancelMockSubscriptionFn = createServerFn({ method: "POST" 
 //
 // Clears cancel_at_period_end so the mock subscription renews automatically.
 // Idempotent: safe to call when subscription is not scheduled for cancellation.
+//
+// NOTE: assertMockEnabled() is intentionally NOT called here — same rationale
+// as schedule_cancel_mock_subscription above.
 
 const ReactivateMockSchema = z.object({
   access_token:    z.string().min(10),
@@ -181,7 +193,8 @@ export type ReactivateMockResult = { ok: boolean; reason?: string };
 export const reactivateMockSubscriptionFn = createServerFn({ method: "POST" })
   .validator((raw: unknown) => ReactivateMockSchema.parse(raw))
   .handler(async ({ data }): Promise<ReactivateMockResult> => {
-    assertMockEnabled();
+    // No assertMockEnabled() — managing existing subscriptions does not require
+    // the payment env gate.
     const sb = makeAuthenticatedClient(data.access_token);
 
     const { data: result, error } = await sb.rpc(
@@ -190,7 +203,9 @@ export const reactivateMockSubscriptionFn = createServerFn({ method: "POST" })
     );
 
     if (error) {
-      throw new Error((error as { message?: string }).message ?? "reactivate_mock_subscription RPC failed.");
+      const msg = (error as { message?: string }).message ?? "reactivate_mock_subscription RPC failed.";
+      console.error("[reactivateMockSubscription] RPC error:", msg);
+      throw new Error(msg);
     }
     return (result as ReactivateMockResult) ?? { ok: false };
   });

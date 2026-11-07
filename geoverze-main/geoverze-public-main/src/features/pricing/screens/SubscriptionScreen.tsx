@@ -110,7 +110,13 @@ export function SubscriptionScreen() {
         });
 
         if (!result.ok && result.reason !== "already_cancelled") {
-          toast.error("Could not schedule cancellation. Please try again.");
+          const reason = result.reason ?? "unknown";
+          console.error("[handleConfirmCancel] mock cancel failed, reason:", reason);
+          if (reason === "no_active_subscription") {
+            toast.error("No active subscription found to cancel.");
+          } else {
+            toast.error(`Could not schedule cancellation (${reason}). Please try again.`);
+          }
           return;
         }
 
@@ -125,7 +131,14 @@ export function SubscriptionScreen() {
           "request_cancel_subscription" as never,
         ) as { data: CancelRpcResult; error: unknown };
 
-        if (rpcError || !result?.ok) {
+        if (rpcError) {
+          const msg = (rpcError as { message?: string }).message ?? "RPC error";
+          console.error("[handleConfirmCancel] live cancel RPC error:", msg);
+          toast.error(`Could not request cancellation: ${msg}`);
+          return;
+        }
+
+        if (!result?.ok) {
           const reason = result?.reason ?? "unknown";
           if (reason === "already_cancelled") {
             // Already scheduled — treat as success; show confirmation view.
@@ -143,8 +156,20 @@ export function SubscriptionScreen() {
         void refetch();
         void queryClient.invalidateQueries({ queryKey: ["billing"] });
       }
-    } catch {
-      toast.error("Something went wrong. Please try again.");
+    } catch (err) {
+      const raw = err instanceof Error ? err.message : String(err);
+      console.error("[handleConfirmCancel] unexpected error:", raw);
+      // Provide a helpful user-facing message based on what failed
+      if (raw.includes("not enabled") || raw.includes("MOCK_PAYMENTS")) {
+        // assertMockEnabled fired — but this shouldn't happen for cancel/reactivate
+        toast.error("Subscription management is temporarily unavailable. Please try again shortly.");
+      } else if (raw.includes("not found") || raw.includes("P0005")) {
+        toast.error("Subscription not found. Please refresh and try again.");
+      } else if (raw.includes("Authentication") || raw.includes("UNAUTHENTICATED")) {
+        toast.error("Your session has expired. Please sign in again.");
+      } else {
+        toast.error(`Cancellation failed: ${raw.slice(0, 120)}`);
+      }
     } finally {
       setCancelLoading(false);
     }
@@ -587,17 +612,17 @@ export function SubscriptionScreen() {
                   </div>
 
                   <h2 id="bm-cancel-modal-title" className="bm-modal__title">
-                    Subscription Cancelled Successfully
+                    Subscription Cancellation Scheduled
                   </h2>
                   <p className="bm-modal__desc">
-                    Your subscription will remain active until{" "}
+                    Your{planName ? ` ${planName}` : ""} membership will remain active until{" "}
                     <strong className="bm-modal__accent">
                       {data?.accessUntilLabel && data.accessUntilLabel !== "—"
                         ? data.accessUntilLabel
                         : "the end of your billing period"}
                     </strong>
-                    . You will not be charged for the next billing cycle, and your
-                    membership will not renew automatically.
+                    . Your subscription will not renew, and you will not be charged for the next
+                    billing cycle.
                   </p>
 
                   {/* Summary */}
