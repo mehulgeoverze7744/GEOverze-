@@ -8,6 +8,30 @@
 
 const BASE = "/assets/gvrze-storefront/best-sellers";
 const CB_BASE = `${BASE}/cherry-blossom`;
+const MB_BASE = `${BASE}/midnight-black`;
+
+/**
+ * A single colour variant for a storefront tee.
+ * Maps to `SFColorOption` in `StorefrontProductPage.tsx`.
+ */
+export type StorefrontTeeColorVariant = {
+  /** Machine id — stored in cart options as the Colour value. */
+  id: string;
+  /** Human-readable label shown on the product page and in the cart. */
+  label: string;
+  /** CSS hex colour for the swatch circle. */
+  hex: string;
+  /**
+   * Primary swatch / card image for this colour.
+   * Used as the swatch preview and as a fallback if `gallery` is empty.
+   */
+  image: { src: string; alt: string };
+  /**
+   * Full ordered gallery for this colour's product detail view.
+   * The first item is loaded as the main image; thumbnails select the rest.
+   */
+  gallery: { src: string; alt: string }[];
+};
 
 export type StorefrontTeeProduct = {
   /** Route slug — also the DOM key. */
@@ -19,16 +43,23 @@ export type StorefrontTeeProduct = {
   tone: string;
   /**
    * Primary card image — used in product cards, best-seller tiles, and as the
-   * first gallery slide when no `gallery` array is provided.
+   * first gallery slide when no `gallery` array or `colors` are provided.
+   * When `colors` is present this is used as the default card thumbnail but
+   * the product page gallery is driven by the active colour's `gallery`.
    */
   image: { src: string; alt: string };
   /**
-   * Full ordered gallery for the product detail page.
-   * When present, this list is used for the left-column image gallery instead
-   * of the single `image` field.  The first item is shown as the main image on
-   * load; thumbnail navigation selects the rest.
+   * Full ordered gallery for the product detail page (single-colour products).
+   * Ignored when `colors` is present — each colour carries its own `gallery`.
    */
   gallery?: { src: string; alt: string }[];
+  /**
+   * Colour variants for multi-colour products.
+   * When present, the product page renders colour swatches and switches the
+   * entire gallery when the customer selects a different colour.
+   * The first colour in the array is selected by default.
+   */
+  colors?: StorefrontTeeColorVariant[];
   description: string;
   highlights: string[];
   stylingTip: string;
@@ -77,51 +108,113 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     categoryLabel: "T-SHIRT",
     priceLabel: "Rs. 2,999",
     tone: "#e29ecc",
-    // cb-2.jpg is the primary card / hero image (front T-shirt design)
+    // Default card image = Cherry Blossom Pink primary (cb-2.jpg).
+    // The product detail page gallery is driven by `colors` below.
     image: {
       src: `${CB_BASE}/cb-2.jpg`,
-      alt: "GVRZE Cherry Blossom Oversized Graphic T-Shirt — front design",
+      alt: "GVRZE Cherry Blossom Oversized Graphic T-Shirt — Cherry Blossom Pink front design",
     },
-    // All 7 gallery images in spec order:
-    // 1 — neckline & branding close-up  2 — front design (card image)
-    // 3 — full back design              4 — front chest GVRZE logo detail
-    // 5 — back graphic detail           6 — front sleeve & graphic detail
-    // 7 — model wearing the tee (front)
-    gallery: [
+
+    // ── Colour variants ──────────────────────────────────────────────────────
+    // Two colours share the same product page, name, description, price, and
+    // size options.  Selecting a colour switches the entire gallery.
+    colors: [
+      // ── 1. Cherry Blossom Pink (default) ──────────────────────────────────
       {
-        src: `${CB_BASE}/cb-1.jpg`,
-        alt: "Cherry Blossom T-Shirt — neckline and GVRZE branding close-up",
+        id: "cherry-blossom-pink",
+        label: "Cherry Blossom Pink",
+        hex: "#e29ecc",
+        image: {
+          src: `${CB_BASE}/cb-2.jpg`,
+          alt: "Cherry Blossom T-Shirt in Cherry Blossom Pink — front design",
+        },
+        // Gallery order:
+        // cb-1 neckline/branding  cb-2 front (PRIMARY)  cb-3 full back
+        // cb-4 chest logo detail  cb-5 back graphic      cb-6 sleeve detail
+        // cb-7 model wearing (front)
+        gallery: [
+          {
+            src: `${CB_BASE}/cb-1.jpg`,
+            alt: "Cherry Blossom Pink — neckline and GVRZE branding close-up",
+          },
+          {
+            src: `${CB_BASE}/cb-2.jpg`,
+            alt: "Cherry Blossom Pink — front design overview",
+          },
+          {
+            src: `${CB_BASE}/cb-3.jpg`,
+            alt: "Cherry Blossom Pink — full back graphic design",
+          },
+          {
+            src: `${CB_BASE}/cb-4.jpg`,
+            alt: "Cherry Blossom Pink — front chest GVRZE logo detail",
+          },
+          {
+            src: `${CB_BASE}/cb-5.jpg`,
+            alt: "Cherry Blossom Pink — back graphic detail close-up",
+          },
+          {
+            src: `${CB_BASE}/cb-6.jpg`,
+            alt: "Cherry Blossom Pink — front sleeve and graphic detail",
+          },
+          {
+            src: `${CB_BASE}/cb-7.jpg`,
+            alt: "Cherry Blossom Pink — model wearing the tee, front view",
+          },
+        ],
       },
+
+      // ── 2. Midnight Black ─────────────────────────────────────────────────
       {
-        src: `${CB_BASE}/cb-2.jpg`,
-        alt: "Cherry Blossom T-Shirt — front design overview",
-      },
-      {
-        src: `${CB_BASE}/cb-3.jpg`,
-        alt: "Cherry Blossom T-Shirt — full back graphic design",
-      },
-      {
-        src: `${CB_BASE}/cb-4.jpg`,
-        alt: "Cherry Blossom T-Shirt — front chest GVRZE logo detail",
-      },
-      {
-        src: `${CB_BASE}/cb-5.jpg`,
-        alt: "Cherry Blossom T-Shirt — back graphic detail close-up",
-      },
-      {
-        src: `${CB_BASE}/cb-6.jpg`,
-        alt: "Cherry Blossom T-Shirt — front sleeve and graphic detail",
-      },
-      {
-        src: `${CB_BASE}/cb-7.jpg`,
-        alt: "Cherry Blossom T-Shirt — model wearing the tee, front view",
+        id: "midnight-black",
+        label: "Midnight Black",
+        hex: "#1a1a1a",
+        image: {
+          src: `${MB_BASE}/mb-1.jpg`,
+          alt: "Cherry Blossom T-Shirt in Midnight Black — front design",
+        },
+        // Gallery order:
+        // mb-1 front product (PRIMARY)  mb-2 back product
+        // mb-3 chest branding detail    mb-4 sleeve/graphic detail
+        // mb-5 neck label & collar      mb-6 model front  mb-7 model back
+        gallery: [
+          {
+            src: `${MB_BASE}/mb-1.jpg`,
+            alt: "Midnight Black — front T-shirt product image",
+          },
+          {
+            src: `${MB_BASE}/mb-2.jpg`,
+            alt: "Midnight Black — back T-shirt product image",
+          },
+          {
+            src: `${MB_BASE}/mb-3.png`,
+            alt: "Midnight Black — front GVRZE chest branding detail",
+          },
+          {
+            src: `${MB_BASE}/mb-4.jpg`,
+            alt: "Midnight Black — sleeve and graphic detail",
+          },
+          {
+            src: `${MB_BASE}/mb-5.png`,
+            alt: "Midnight Black — neck label and collar detail",
+          },
+          {
+            src: `${MB_BASE}/mb-6.jpg`,
+            alt: "Midnight Black — model wearing the tee, front view",
+          },
+          {
+            src: `${MB_BASE}/mb-7.jpg`,
+            alt: "Midnight Black — model wearing the tee, back view",
+          },
+        ],
       },
     ],
+
     description:
-      "Inspired by the beauty of cherry blossoms and the spirit of exploration, the Cherry Blossom T-shirt combines expressive artwork with GVRZE's distinctive geographic identity. Designed around a rich cherry-pink color palette, the tee features an abstract map-inspired graphic flowing across the front and back, complemented by compass elements, coordinates, and signature GVRZE branding. The front features a minimal GVRZE chest logo and a bold artistic geographic composition. The back showcases an oversized graphic with exploration-inspired typography and navigation elements.",
+      "Inspired by the beauty of cherry blossoms and the spirit of exploration, the Cherry Blossom T-shirt combines expressive artwork with GVRZE's distinctive geographic identity. Designed around a rich cherry-pink color palette, the tee features an abstract map-inspired graphic flowing across the front and back, complemented by compass elements, coordinates, and signature GVRZE branding. The front features a minimal GVRZE chest logo and a bold artistic geographic composition. The back showcases an oversized graphic with exploration-inspired typography and navigation elements. Now available in Cherry Blossom Pink and Midnight Black.",
     highlights: [
       "Premium oversized streetwear silhouette.",
-      "Cherry-pink colorway — distinctive and bold.",
+      "Available in Cherry Blossom Pink and Midnight Black colourways.",
       "Distinctive front and back graphic artwork with GVRZE signature branding.",
       "Geographic coordinates and compass-inspired detailing across the design.",
       "100% Cotton Comfort — breathable, pre-shrunk fabric built for all-day wear.",
@@ -130,7 +223,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
       "Comfortable everyday streetwear — pairs easily with denim, cargo pants, or joggers.",
     ],
     stylingTip:
-      "Style the Cherry Blossom Tee with white or cream trousers and minimalist sneakers for a clean contrast look. Layer an open overshirt for transitional weather, or pair with black cargo pants for a bold streetwear fit.",
+      "Cherry Blossom Pink: style with white or cream trousers and minimalist sneakers for a clean contrast look. Midnight Black: pair with black cargo pants or dark denim for a bold monochrome streetwear fit. Layer an open overshirt over either colourway for transitional weather.",
     washcare: [
       "Machine wash inside out with similar colors, cold water (30°C / 86°F).",
       "Do not bleach.",

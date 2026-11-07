@@ -37,8 +37,15 @@ export type SFColorOption = {
   id: string;
   label: string;
   hex: string;
-  /** URL of the product photo for this colour. */
+  /** URL of the product photo for this colour (swatch preview and single-image fallback). */
   image: string;
+  /**
+   * Full ordered gallery for this colour.
+   * When provided, selecting this colour replaces the entire thumbnail strip
+   * with this gallery and resets the main image to the first slide.
+   * When absent, only `image` is shown for this colour.
+   */
+  gallery?: SFGalleryImage[];
 };
 
 export type SFRelatedProduct = {
@@ -232,20 +239,25 @@ export function StorefrontProductPage({
   const { addProduct } = useStoreActions();
   const product = resolveStoreProduct(slug);
 
-  // When a colour swatch is selected, update the displayed image to match.
+  // When a colour swatch is selected, switch to that colour's gallery and
+  // reset the thumbnail strip to the first slide.
   function handleColorSelect(colorId: string) {
     setSelectedColorId(colorId);
-    if (colors) {
-      const idx = colors.findIndex((c) => c.id === colorId);
-      if (idx >= 0) setSelectedImageIdx(idx);
-    }
+    setSelectedImageIdx(0);
   }
 
-  // Build the full image list: if colours provided, each colour's image is a "slide".
-  const galleryImages: SFGalleryImage[] =
-    colors && colors.length > 0
-      ? colors.map((c) => ({ src: c.image, alt: `${name} — ${c.label}` }))
-      : images;
+  // Resolve the gallery images for the currently active colour (or the base images prop).
+  //
+  // Priority:
+  //   1. Active colour has a full gallery  → use it
+  //   2. Active colour has only a single image → wrap in a one-element array
+  //   3. No colours defined               → use the `images` prop directly
+  const activeColor = colors?.find((c) => c.id === selectedColorId);
+  const galleryImages: SFGalleryImage[] = (() => {
+    if (!colors || colors.length === 0) return images;
+    if (activeColor?.gallery && activeColor.gallery.length > 0) return activeColor.gallery;
+    return [{ src: activeColor?.image ?? "", alt: `${name} — ${activeColor?.label ?? ""}` }];
+  })();
 
   const mainImage = galleryImages[selectedImageIdx] ?? galleryImages[0] ?? { src: "", alt: name };
 
@@ -563,15 +575,33 @@ import {
 /** Renders a storefront signature tee product detail page. */
 export function StorefrontTeeProductPage({ tee }: { tee: StorefrontTeeProduct }) {
   const related = relatedStorefrontTees(tee.id);
-  // Use the full gallery when provided; fall back to the single card image.
-  const galleryImages: SFGalleryImage[] = tee.gallery ?? [tee.image];
+
+  // Map tee colour variants to the SFColorOption shape understood by StorefrontProductPage.
+  // Each colour carries its own full gallery so switching colour replaces the
+  // entire thumbnail strip with that colour's images.
+  const sfColors: SFColorOption[] | undefined = tee.colors?.map((c) => ({
+    id: c.id,
+    label: c.label,
+    hex: c.hex,
+    image: c.image.src,
+    gallery: c.gallery,
+  }));
+
+  // Base gallery: used only when no colour variants are defined.
+  const baseImages: SFGalleryImage[] = tee.gallery ?? [tee.image];
+
+  // `exactOptionalPropertyTypes` is on — only pass `colors` when defined so we
+  // never assign `undefined` to an optional-but-not-undefined-typed prop.
+  const colorsProp = sfColors ? { colors: sfColors } : {};
+
   return (
     <StorefrontProductPage
       slug={tee.id}
       name={tee.name}
       categoryLabel={tee.categoryLabel}
       priceLabel={tee.priceLabel}
-      images={galleryImages}
+      images={baseImages}
+      {...colorsProp}
       description={tee.description}
       highlights={tee.highlights}
       stylingTip={tee.stylingTip}
