@@ -379,10 +379,10 @@ export function StorefrontProductPage({
           className={`${SF_SHELL} sfpp-product-grid grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-10`}
         >
           {/* ── Left: Gallery ──────────────────────────────────────────────── */}
-          <div className="sfpp-left-col flex flex-col gap-4 sm:flex-row" ref={leftColRef}>
+          <div className="sfpp-left-col flex min-w-0 w-full flex-col gap-4 sm:flex-row" ref={leftColRef}>
             {/* Vertical thumbnail strip (desktop: col, mobile: row at bottom) */}
             {galleryImages.length > 1 && (
-              <div className="order-2 flex gap-2 sm:order-1 sm:flex-col sm:gap-2.5">
+              <div className="sfpp-thumbs order-2 flex gap-2 sm:order-1 sm:flex-col sm:gap-2.5">
                 {galleryImages.map((img, i) => (
                   <button
                     key={i}
@@ -407,12 +407,12 @@ export function StorefrontProductPage({
             )}
 
             {/* Main image */}
-            <div className="order-1 min-w-0 flex-1 sm:order-2">
-              <div className="relative overflow-hidden rounded-2xl bg-[#f6f6f6]">
+            <div className="sfpp-main-image order-1 min-w-0 w-full max-w-full flex-1 sm:order-2">
+              <div className="relative w-full max-w-full overflow-hidden rounded-2xl bg-[#f6f6f6]">
                 <img
                   src={mainImage.src}
                   alt={mainImage.alt}
-                  className="aspect-[4/5] w-full object-cover object-center"
+                  className="aspect-[4/5] h-auto w-full max-w-full object-cover object-center"
                 />
               </div>
             </div>
@@ -582,7 +582,7 @@ export function StorefrontProductPage({
         {related.length > 0 && (
           <section
             aria-labelledby="sfpp-related"
-            className={`${SF_SHELL} mt-[clamp(48px,6vw,88px)]`}
+            className={`${SF_SHELL} sfpp-related mt-[clamp(48px,6vw,88px)]`}
           >
             <div className="flex items-center justify-between gap-4">
               <h2

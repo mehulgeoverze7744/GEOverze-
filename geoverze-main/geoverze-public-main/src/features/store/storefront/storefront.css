@@ -169,7 +169,100 @@ body:has(#gvrze-storefront) footer .mt-16.border-t {
 }
 
 #gvrze-storefront.gvrze-storefront-product {
+  width: 100%;
+  max-width: 100%;
   overflow-x: clip;
+}
+
+/* ─── Product detail page — mobile overflow / centering ─────────────────────
+ *
+ * ROOT CAUSE
+ * ──────────
+ * `#gvrze-storefront img { max-width: none }` is required so homepage
+ * editorial photos can overflow their cards. On product pages that rule
+ * lets each gallery photo contribute its full intrinsic width (often
+ * 800px+) as the CSS min-content size. CSS Grid items default to
+ * `min-width: auto`, so the single mobile column expands past the
+ * viewport. Combined with a row of `shrink-0` thumbnails, the page
+ * appears shifted sideways and the main image is clipped.
+ *
+ * FIX
+ * ───
+ * Override max-width on product-page images, force grid tracks to
+ * `minmax(0, 1fr)`, and let the thumbnail strip scroll internally
+ * instead of widening the page. Desktop (≥1024px) two-column layout
+ * is unchanged — its tracks already use minmax(0, …).
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+#gvrze-storefront.gvrze-storefront-product > main {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+#gvrze-storefront.gvrze-storefront-product .sfpp-product-grid {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+#gvrze-storefront.gvrze-storefront-product .sfpp-left-col,
+#gvrze-storefront.gvrze-storefront-product .sfpp-right-col,
+#gvrze-storefront.gvrze-storefront-product .sfpp-main-image,
+#gvrze-storefront.gvrze-storefront-product .sfpp-thumbs {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Product photos must respect their container. The storefront-wide
+   `img { max-width: none }` is scoped away here so intrinsic image
+   widths cannot inflate the layout. */
+#gvrze-storefront.gvrze-storefront-product .sfpp-product-grid img,
+#gvrze-storefront.gvrze-storefront-product .sfpp-related img {
+  max-width: 100%;
+}
+
+@media (max-width: 1023px) {
+  /* Single column: minmax(0, 1fr) lets the track shrink below the
+     image's intrinsic width. Default `auto` tracks will not. */
+  #gvrze-storefront.gvrze-storefront-product .sfpp-product-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #gvrze-storefront.gvrze-storefront-product .sfpp-left-col,
+  #gvrze-storefront.gvrze-storefront-product .sfpp-right-col,
+  #gvrze-storefront.gvrze-storefront-product .sfpp-main-image {
+    width: 100%;
+  }
+
+  /* Full-width image, no horizontal crop. Height follows the photo's
+     own aspect ratio so nothing is clipped sideways. */
+  #gvrze-storefront.gvrze-storefront-product .sfpp-main-image img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: auto;
+    object-fit: contain;
+    object-position: center;
+  }
+}
+
+@media (max-width: 639px) {
+  /* Thumbnail strip sits below the main image. Scroll the strip itself
+     instead of letting shrink-0 thumbs widen the page. */
+  #gvrze-storefront.gvrze-storefront-product .sfpp-thumbs {
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding-bottom: 2px; /* keep the 2px selected border fully visible */
+  }
 }
 
 /* ─── Cart page inside the storefront shell ─────────────────────────────────
