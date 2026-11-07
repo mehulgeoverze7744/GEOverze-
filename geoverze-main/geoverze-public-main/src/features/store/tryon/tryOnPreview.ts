@@ -140,7 +140,7 @@ export function resolveTryOnPair(garment: TryOnGarment, colorId: string): TryOnP
   const color = tryOnColorById(garment, colorId);
   const colorLabel = color?.label ?? "";
   const layout = color ? garmentLayoutFor(garment, color) : "single";
-  const shirtHex = SIGNATURE_DYE[garment.slug] ?? color?.hex ?? "#111111";
+  const shirtHex = color?.hex ?? SIGNATURE_DYE[garment.slug] ?? "#111111";
 
   const onModel = getOnModelMockup(garment.slug, colorId);
   if (onModel) {
@@ -202,8 +202,14 @@ export function resolveTryOnPair(garment: TryOnGarment, colorId: string): TryOnP
   }
 
   const photoView = SIGNATURE_PHOTO_VIEW[garment.slug];
+  const frontHasPrint = photoView === "front";
+  const backHasPrint = photoView === "back";
   return {
-    front: make("front", photoView === "front", "front-graphic"),
-    back: make("back", photoView === "back", "back-graphic"),
+    front: frontHasPrint
+      ? make("front", true, "front-graphic")
+      : { ...make("front", true, "chest-logo"), artMode: "none", hasArtwork: false, unavailableLabel: null },
+    back: backHasPrint
+      ? make("back", true, "back-graphic")
+      : { ...make("back", true, "chest-logo"), artMode: "none", hasArtwork: false, unavailableLabel: null },
   };
 }

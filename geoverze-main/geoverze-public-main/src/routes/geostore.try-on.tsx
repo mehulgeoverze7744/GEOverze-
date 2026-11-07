@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useSearch } from "@tanstack/react-router";
 
 import { TryOnStudio } from "@/features/store/tryon/TryOnStudio";
 import { SF_FONTS_HREF } from "@/features/store/storefront/storefront-assets";
@@ -31,5 +31,15 @@ export const Route = createFileRoute("/geostore/try-on")({
 });
 
 function TryOnStudioPage() {
-  return <TryOnStudio mode="page" />;
+  const search = useSearch({ strict: false }) as {
+    slug?: string;
+    color?: string;
+    size?: string;
+  };
+  const extras = {
+    ...(typeof search['slug'] === "string" ? { initialSlug: search['slug'] } : {}),
+    ...(typeof search['color'] === "string" ? { initialColor: search['color'] } : {}),
+    ...(typeof search['size'] === "string" ? { initialSize: search['size'] } : {}),
+  };
+  return <TryOnStudio mode="page" {...extras} />;
 }

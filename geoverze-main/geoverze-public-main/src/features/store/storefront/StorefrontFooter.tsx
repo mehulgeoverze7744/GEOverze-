@@ -26,7 +26,7 @@ const COMPANY_LINKS: { label: string; to: NavLink }[] = [
 /** Minimal footer: brand message, Shop / Support / Company, legal. */
 export function StorefrontFooter() {
   return (
-    <footer className="bg-white">
+    <footer className="gvrze-storefront-footer bg-white">
       <div className={`${SF_SHELL} pt-[clamp(40px,4.9vw,71px)]`}>
         <div className="flex flex-col gap-10 lg:flex-row lg:justify-between">
           <div>

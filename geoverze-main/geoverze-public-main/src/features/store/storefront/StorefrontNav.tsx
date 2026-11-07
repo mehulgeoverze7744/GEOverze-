@@ -82,6 +82,11 @@ type StorefrontNavProps = {
    * Defaults to the homepage (`overlay`) so category and product pages stay clean.
    */
   showTryOn?: boolean;
+  /**
+   * `gmake` — product / Try-On chrome from the Figma studio frames
+   * (New In, Collections, GMake Studio). Homepage keeps `default`.
+   */
+  linkSet?: "default" | "gmake";
 };
 
 /**
@@ -89,7 +94,7 @@ type StorefrontNavProps = {
  * once the page scrolls. Cart, wishlist, search and account all stay wired to
  * the existing store state; the menu carries the rest of the store and site.
  */
-export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavProps) {
+export function StorefrontNav({ variant = "overlay", showTryOn, linkSet = "default" }: StorefrontNavProps) {
   const solid = variant === "solid";
   const tryOnLink = showTryOn ?? !solid;
   const [scrolled, setScrolled] = useState(false);
@@ -145,23 +150,39 @@ export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavP
           aria-label="Gstore"
           className="hidden min-w-0 items-center gap-[clamp(16px,2.2vw,28px)] md:flex"
         >
-          <Link to="/geostore/browse" className={navLink}>
-            Shop
-          </Link>
-          {solid ? (
-            <Link to="/geostore" hash="collections" className={navLink}>
-              Collections
-            </Link>
+          {linkSet === "gmake" ? (
+            <>
+              <Link to="/geostore/browse" className={navLink}>
+                New In
+              </Link>
+              <Link to="/geostore" hash="collections" className={navLink}>
+                Collections
+              </Link>
+              <Link to="/geostore/try-on" className={navLink}>
+                GMake Studio
+              </Link>
+            </>
           ) : (
-            <a href="#collections" className={navLink}>
-              Collections
-            </a>
+            <>
+              <Link to="/geostore/browse" className={navLink}>
+                Shop
+              </Link>
+              {solid ? (
+                <Link to="/geostore" hash="collections" className={navLink}>
+                  Collections
+                </Link>
+              ) : (
+                <a href="#collections" className={navLink}>
+                  Collections
+                </a>
+              )}
+              {tryOnLink ? (
+                <Link to="/geostore/try-on" className={navLink} aria-label="Open Try-On Studio">
+                  Try-On Studio
+                </Link>
+              ) : null}
+            </>
           )}
-          {tryOnLink ? (
-            <Link to="/geostore/try-on" className={navLink} aria-label="Open Try-On Studio">
-              Try-On Studio
-            </Link>
-          ) : null}
         </nav>
 
         <Link

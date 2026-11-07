@@ -1,0 +1,321 @@
+/*
+ * GMake Studio product page + shared rainbow CTA.
+ * Scoped to #gvrze-gmake-product so store homepage styles stay untouched.
+ */
+
+body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer),
+body:has(#gvrze-tryon-studio) footer.mt-auto {
+  display: none !important;
+}
+
+.gmake-rainbow {
+  display: flex;
+  width: 100%;
+  padding: 3px;
+  border: 0;
+  border-radius: 26px;
+  background: conic-gradient(
+    from 90deg,
+    #fb5c49 0%,
+    #fb4c53 15%,
+    #fc6d41 19%,
+    #fd8e2e 22%,
+    #feae1c 26%,
+    #ffcf09 30%,
+    #cdc432 33%,
+    #9aba37 37%,
+    #68af4d 41%,
+    #35a464 45%,
+    #389d88 49%,
+    #3c95ad 52%,
+    #4286f5 60%,
+    #409e85 71%,
+    #3fa65f 75%,
+    #6baf4b 78%,
+    #c2c224 85%,
+    #eecb10 88%,
+    #f5942d 94%,
+    #fb5c49 100%
+  );
+  cursor: pointer;
+  color: #ffffff;
+}
+
+.gmake-rainbow:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.gmake-rainbow__inner {
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 23px;
+  background: #000000;
+  font-family: Montserrat, ui-sans-serif, system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+}
+
+.gmake-rainbow:hover:not(:disabled) .gmake-rainbow__inner {
+  background: #111111;
+}
+
+#gvrze-gmake-product {
+  --gmake-ink: #111111;
+  --gmake-muted: #353535;
+  --gmake-line: #e0e0e0;
+  font-family: Montserrat, ui-sans-serif, system-ui, sans-serif;
+  background: #ffffff;
+  color: var(--gmake-ink);
+}
+
+.gmake-hero {
+  display: grid;
+  gap: 2.5rem;
+  padding: 1.25rem 0 3.5rem;
+}
+
+@media (min-width: 1024px) {
+  .gmake-hero {
+    grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
+    align-items: center;
+    gap: 1.5rem 2rem;
+    min-height: calc(100svh - 96px);
+    padding-top: 0.5rem;
+    padding-bottom: 2rem;
+  }
+}
+
+.gmake-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+  max-width: 420px;
+}
+
+.gmake-copy__kicker {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 400;
+  color: #000000;
+}
+
+.gmake-copy__title {
+  margin: 0;
+  font-size: clamp(26px, 2.4vw, 32px);
+  font-weight: 600;
+  line-height: 1.2;
+  color: #000000;
+}
+
+.gmake-copy__price {
+  margin: 0.35rem 0 0;
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--gmake-muted);
+}
+
+.gmake-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.gmake-cat {
+  display: inline-flex;
+  height: 29px;
+  min-width: 111px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 12px;
+  border: 1px solid var(--gmake-line);
+  border-radius: 8px;
+  background: #ffffff;
+  font-size: 12px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.gmake-cat[aria-pressed="true"] {
+  background: #000000;
+  border-color: #000000;
+  color: #ffffff;
+}
+
+.gmake-cat img {
+  width: 16px;
+  height: 16px;
+}
+
+.gmake-cat[aria-pressed="true"] img {
+  filter: invert(1);
+}
+
+.gmake-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.gmake-cta {
+  display: inline-flex;
+  height: 44px;
+  min-width: 180px;
+  flex: 1 1 160px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 26px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.gmake-cta--solid {
+  border: 1px solid #bdbdbd;
+  background: #000000;
+  color: #ffffff;
+}
+
+.gmake-cta--solid:hover {
+  background: #222222;
+}
+
+.gmake-cta--ghost {
+  border: 1px solid #bdbdbd;
+  background: #ffffff;
+  color: #000000;
+}
+
+.gmake-cta--ghost:hover {
+  background: #f6f6f6;
+}
+
+.gmake-cta--ghost[aria-pressed="true"] {
+  background: #111111;
+  color: #ffffff;
+}
+
+.gmake-preview {
+  position: relative;
+  display: flex;
+  min-height: 520px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.gmake-gender {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 220px;
+  height: 33px;
+  margin: 0 auto 0.75rem;
+  overflow: hidden;
+  border: 1px solid #bcbcbc;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.gmake-gender button {
+  border: 0;
+  background: transparent;
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.gmake-gender button[aria-pressed="true"] {
+  background: #000000;
+  color: #ffffff;
+}
+
+.gmake-gender button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.gmake-models {
+  display: flex;
+  width: 100%;
+  max-width: 760px;
+  justify-content: center;
+}
+
+.gmake-models .tryon-stage__canvas {
+  --tryon-model-h: min(68vh, 720px);
+}
+
+.gmake-models .tryon-model__base {
+  display: block;
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+.gmake-arrows {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.gmake-arrows button {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(217 217 217 / 0.35);
+}
+
+.gmake-arrows button:disabled {
+  opacity: 0.35;
+}
+
+.gmake-arrows img {
+  width: 24px;
+  height: 24px;
+}
+
+.gmake-arrows button[data-dir="prev"] img {
+  transform: scaleX(-1);
+}
+
+@media (max-width: 1023px) {
+  .gmake-copy {
+    max-width: none;
+    order: 2;
+  }
+
+  .gmake-preview {
+    order: 1;
+    min-height: 0;
+  }
+
+  .gmake-models .tryon-stage__canvas {
+    --tryon-model-h: min(52vh, 480px);
+  }
+}
+
+@media (max-width: 640px) {
+  .gmake-models .tryon-stage__canvas {
+    --tryon-model-h: min(42vh, 360px);
+  }
+
+  .gmake-copy__kicker {
+    font-size: 16px;
+  }
+
+  .gmake-copy__price {
+    font-size: 20px;
+  }
+}

@@ -149,7 +149,32 @@ function merchToProduct(merch: GeostoreMerchProduct, category: TryOnCategoryId):
   };
 }
 
-function signatureToProduct(tee: StorefrontTeeProduct, color: TryOnColor): Product {
+function pickGallerySrc(
+  gallery: { src: string; alt: string }[],
+  kind: "front" | "back",
+): string | undefined {
+  const ranked = gallery.filter((item) => {
+    const alt = item.alt.toLowerCase();
+    return alt.includes(kind) && !alt.includes("model");
+  });
+  return ranked[0]?.src ?? (kind === "front" ? gallery[0]?.src : gallery[1]?.src);
+}
+
+function colorsFromSignature(tee: StorefrontTeeProduct): TryOnColor[] {
+  if (tee.colors?.length) {
+    return tee.colors.map((color) => {
+      const image = pickGallerySrc(color.gallery, "front") ?? color.image.src;
+      const backImage = pickGallerySrc(color.gallery, "back");
+      return backImage
+        ? { id: color.id, label: color.label, hex: color.hex, image, backImage }
+        : { id: color.id, label: color.label, hex: color.hex, image };
+    });
+  }
+  const fallback = SIGNATURE_SWATCH[tee.id];
+  return fallback ? [fallback] : [];
+}
+
+function signatureToProduct(tee: StorefrontTeeProduct, colors: readonly TryOnColor[]): Product {
   const existing = productBySlug(tee.id);
   if (existing) return existing;
 
@@ -174,8 +199,8 @@ function signatureToProduct(tee: StorefrontTeeProduct, color: TryOnColor): Produ
     featured: true,
     bestSeller: true,
     options: [
-      { label: "Size", values: DEFAULT_SIZES },
-      { label: "Colour", values: [color.label] },
+      { label: "Size", values: [...DEFAULT_SIZES] },
+      { label: "Colour", values: colors.map((color) => color.label) },
     ],
     features: tee.highlights,
     specs: [],
@@ -229,9 +254,11 @@ function displayNameForMerch(slug: string, merch: GeostoreMerchProduct): string 
 }
 
 function fromSignature(tee: StorefrontTeeProduct): TryOnGarment | null {
-  const color = SIGNATURE_SWATCH[tee.id];
-  if (!color?.image) return null;
-  const product = signatureToProduct(tee, color);
+  const colors = colorsFromSignature(tee);
+  if (!colors.length) return null;
+  const product = signatureToProduct(tee, colors);
+  const preferred =
+    colors.find((color) => color.id.includes("black") || color.id === "black") ?? colors[0];
   return {
     id: tee.id,
     slug: tee.id,
@@ -241,10 +268,10 @@ function fromSignature(tee: StorefrontTeeProduct): TryOnGarment | null {
     credits: product.credits,
     priceLabel: tee.priceLabel,
     sizes: DEFAULT_SIZES,
-    colors: [color],
+    colors,
     stock: "in-stock",
     comingSoon: false,
-    defaultColorId: color.id,
+    defaultColorId: preferred?.id ?? colors[0]!.id,
     product,
   };
 }

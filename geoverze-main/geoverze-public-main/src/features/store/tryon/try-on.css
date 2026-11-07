@@ -1,17 +1,23 @@
 /*
- * GVRZE Try-On Studio — Phase 1
- * Editorial white studio. Scoped to #gvrze-tryon-studio.
+ * GVRZE Try-On Studio — GMake customization layout.
+ * Scoped primarily to #gvrze-tryon-studio. Model compositing classes are
+ * also used on the GMake product page.
  */
 
-body:has(#gvrze-tryon-studio) footer {
+body:has(#gvrze-tryon-studio) footer:not(.gvrze-storefront-footer),
+body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer) {
   display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 #gvrze-tryon-studio {
   --tryon-ink: #111111;
   --tryon-muted: #6b6b6b;
   --tryon-line: rgb(0 0 0 / 0.1);
-  --tryon-stage: #f4f4f4;
   --tryon-font: Montserrat, ui-sans-serif, system-ui, sans-serif;
 
   min-height: 100svh;
@@ -28,19 +34,11 @@ body:has(#gvrze-tryon-studio) footer {
   overflow: auto;
 }
 
-.tryon-shell {
-  position: relative;
-  display: flex;
-  min-height: calc(100svh - 72px);
-  flex-direction: column;
-  background: #ffffff;
-}
-
 .tryon-close {
   position: absolute;
   top: 0.75rem;
   right: 1rem;
-  z-index: 2;
+  z-index: 4;
   display: inline-flex;
   width: 40px;
   height: 40px;
@@ -52,203 +50,388 @@ body:has(#gvrze-tryon-studio) footer {
   color: var(--tryon-ink);
 }
 
-.tryon-layout {
+.gmake-studio {
   display: grid;
-  flex: 1;
-  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
-  gap: clamp(1.5rem, 4vw, 4rem);
-  padding: 0.5rem clamp(16px, 3.75vw, 54px) 1.5rem;
-}
-
-.tryon-info {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 1.35rem;
-  padding: 1.5rem 0 2rem;
-}
-
-.tryon-info__kicker {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 400;
-  letter-spacing: 0.01em;
-  color: var(--tryon-ink);
-}
-
-.tryon-info__name {
-  margin: 0.15rem 0 0;
-  max-width: 14ch;
-  font-size: clamp(32px, 3.4vw, 48px);
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-}
-
-.tryon-info__price {
-  margin: 0.45rem 0 0;
-  font-size: clamp(18px, 1.6vw, 22px);
-  font-weight: 400;
-  color: var(--tryon-ink);
-}
-
-.tryon-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.tryon-pill {
-  display: inline-flex;
-  min-height: 34px;
-  align-items: center;
-  border: 1px solid var(--tryon-ink);
-  border-radius: 999px;
-  background: #ffffff;
-  padding: 0 14px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--tryon-ink);
-  transition:
-    background 0.2s ease,
-    color 0.2s ease;
-}
-
-.tryon-pill:hover {
-  background: #f4f4f4;
-}
-
-.tryon-pill[aria-pressed="true"] {
-  background: var(--tryon-ink);
-  color: #ffffff;
-}
-
-.tryon-look-select {
-  display: flex;
-  max-width: 240px;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.tryon-look-select select {
-  width: 100%;
-  border: 0;
-  border-bottom: 1px solid rgb(0 0 0 / 0.15);
-  background: transparent;
-  padding: 0.2rem 0 0.35rem;
-  font-family: inherit;
-  font-size: 13px;
-  color: var(--tryon-ink);
-}
-
-.tryon-swatches,
-.tryon-sizes {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.tryon-field-label {
-  margin: 0 0 0.45rem;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--tryon-muted);
-}
-
-.tryon-swatch {
-  width: 22px;
-  height: 22px;
-  border: 1px solid rgb(0 0 0 / 0.18);
-  border-radius: 999px;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.tryon-swatch[aria-pressed="true"] {
-  box-shadow:
-    0 0 0 2px #fff,
-    0 0 0 3.5px #111;
-}
-
-.tryon-size {
-  min-width: 2.25rem;
-  min-height: 2.25rem;
-  border: 1px solid #d4d4d4;
-  border-radius: 8px;
-  background: #fff;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.tryon-size[aria-pressed="true"] {
-  border-color: #111;
-  background: #111;
-  color: #fff;
-}
-
-.tryon-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-  max-width: 240px;
-}
-
-.tryon-btn {
-  display: inline-flex;
-  min-height: 48px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  padding: 0 1.5rem;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  transition:
-    background 0.2s ease,
-    color 0.2s ease,
-    opacity 0.2s ease;
-}
-
-.tryon-btn--ghost {
-  border: 1px solid var(--tryon-ink);
-  background: #ffffff;
-  color: var(--tryon-ink);
-}
-
-.tryon-btn--ghost:hover {
+  gap: 1.5rem;
+  padding: 1.5rem clamp(16px, 3.75vw, 54px) 2.5rem;
   background: #f6f6f6;
+  border-bottom-left-radius: 26px;
+  border-bottom-right-radius: 26px;
 }
 
-.tryon-btn--solid {
-  border: 1px solid var(--tryon-ink);
-  background: var(--tryon-ink);
+@media (min-width: 1024px) {
+  .gmake-studio {
+    grid-template-columns: minmax(320px, 577px) minmax(0, 1fr);
+    align-items: start;
+    gap: 2rem;
+    min-height: 1098px;
+    padding-top: 3rem;
+    padding-bottom: 3.5rem;
+  }
+}
+
+.gmake-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+  padding: 1.5rem 1.35rem 1.6rem;
+  border-radius: 11px;
+  background: #ffffff;
+}
+
+.gmake-section__title {
+  margin: 0 0 0.85rem;
+  font-size: 24px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.gmake-section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+.gmake-section__hint {
+  display: flex;
+  max-width: 185px;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 0;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #cacaca;
+}
+
+.gmake-library {
+  position: relative;
+}
+
+.gmake-library::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 36px;
+  height: 120px;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgb(255 255 255 / 0), #ffffff);
+}
+
+.gmake-library__scroller {
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.gmake-library__scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.gmake-library__card {
+  display: flex;
+  width: 120px;
+  flex: 0 0 120px;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  scroll-snap-align: start;
+  text-align: center;
+}
+
+.gmake-library__thumb {
+  display: flex;
+  width: 120px;
+  height: 120px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px solid #aeaeae;
+  border-radius: 6px;
+  background: #ffffff;
+  padding: 12px;
+}
+
+.gmake-library__card.is-active .gmake-library__thumb,
+.gmake-library__card[aria-pressed="true"] .gmake-library__thumb {
+  border-color: #111111;
+}
+
+.gmake-library__thumb img {
+  max-width: 100%;
+  max-height: 36px;
+  object-fit: contain;
+}
+
+.gmake-library__name {
+  font-size: 14px;
+  line-height: 1.2;
+  color: #353535;
+}
+
+.gmake-library__next {
+  position: absolute;
+  top: 52px;
+  right: 4px;
+  z-index: 1;
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+}
+
+.gmake-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.gmake-swatch {
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.08);
+}
+
+.gmake-swatch.is-active {
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.12);
+}
+
+.gmake-upload {
+  display: flex;
+  width: 100%;
+  min-height: 103px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 26px;
+  background: #f6f6f6;
+  font-size: 16px;
+  font-weight: 500;
+  color: #cacaca;
+}
+
+.gmake-upload__preview {
+  max-height: 56px;
+  max-width: 56px;
+  object-fit: contain;
+}
+
+.gmake-sizes {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.gmake-size {
+  height: 35px;
+  border: 1px solid #bdbdbd;
+  border-radius: 26px;
+  background: #ffffff;
+  font-size: 16px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.gmake-size[aria-pressed="true"] {
+  border-color: #000000;
+  background: #000000;
   color: #ffffff;
 }
 
-.tryon-btn--solid:hover {
-  background: #2a2a2a;
+.gmake-footer-block {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: auto;
 }
 
-.tryon-btn:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
+.gmake-instructions {
+  display: flex;
+  width: 100%;
+  height: 50px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px 0 34px;
+  border: 0;
+  border-radius: 14px;
+  background: #f6f6f6;
+  font-size: 16px;
+  font-weight: 500;
+  color: #a7a7a7;
+  text-align: left;
 }
 
-.tryon-stage {
+.gmake-instructions__field {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid #e0e0e0;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 14px;
+  color: #111111;
+}
+
+.gmake-total {
+  margin: 0;
+  font-size: 16px;
+  color: #cacaca;
+}
+
+.gmake-total strong {
+  font-size: 20px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.gmake-stage {
   position: relative;
   display: flex;
-  min-height: min(72vh, 760px);
+  min-height: 560px;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  background: #ffffff;
+  justify-content: flex-start;
+  padding-top: 0.25rem;
 }
 
+.gmake-tee {
+  position: relative;
+  display: block;
+  width: min(100%, 520px);
+  margin: 1.5rem auto 0;
+  overflow: hidden;
+}
+
+.gmake-tee.is-diptych {
+  width: min(100%, 420px);
+}
+
+.gmake-tee__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.gmake-tee__img.is-diptych-front,
+.gmake-tee__img.is-diptych-back {
+  width: 200%;
+  max-width: none;
+  height: auto;
+}
+
+.gmake-tee__img.is-diptych-back {
+  margin-left: -100%;
+}
+
+.gmake-tee__art {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.gmake-tee__art.is-chest-logo {
+  top: 28%;
+  left: 58%;
+  width: 12%;
+  height: 8%;
+}
+
+.gmake-tee__art.is-front-graphic,
+.gmake-tee__art.is-back-graphic {
+  top: 28%;
+  left: 32%;
+  width: 36%;
+  height: 32%;
+}
+
+.gmake-tee__art img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.gmake-tee__plus {
+  position: absolute;
+  top: 32%;
+  left: 58%;
+  width: 42px;
+  height: 42px;
+}
+
+.gmake-tee__empty {
+  color: var(--tryon-muted);
+  font-size: 14px;
+}
+
+.gmake-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgb(0 0 0 / 0.35);
+}
+
+.gmake-modal__card {
+  display: flex;
+  width: min(100%, 420px);
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 2.5rem 2rem;
+  border-radius: 16px;
+  background: #ffffff;
+  text-align: center;
+}
+
+.gmake-modal__card h2 {
+  margin: 0.5rem 0 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.gmake-modal__card p {
+  margin: 0;
+  max-width: 32ch;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #353535;
+}
+
+.tryon-empty {
+  display: flex;
+  min-height: 280px;
+  align-items: center;
+  justify-content: center;
+  color: var(--tryon-muted);
+  font-size: 14px;
+}
+
+/* Product-page dual model compositing (shared with GMake product). */
 .tryon-stage__canvas {
   --tryon-model-h: min(68vh, 720px);
   display: flex;
@@ -280,7 +463,7 @@ body:has(#gvrze-tryon-studio) footer {
   line-height: 0;
 }
 
-#gvrze-tryon-studio .tryon-model__base {
+.tryon-model__base {
   display: block;
   height: 100%;
   width: auto;
@@ -288,7 +471,6 @@ body:has(#gvrze-tryon-studio) footer {
   object-position: center bottom;
 }
 
-/* Crop only the empty studio pad on the back plate so the figures sit closer. */
 .tryon-model[data-view="back"] {
   margin-left: calc(var(--tryon-model-h) * -64 / 1024);
 }
@@ -303,7 +485,6 @@ body:has(#gvrze-tryon-studio) footer {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  mask-mode: alpha;
   mask-mode: alpha;
   mask-repeat: no-repeat;
   mask-position: center;
@@ -394,92 +575,45 @@ body:has(#gvrze-tryon-studio) footer {
   object-position: center 42%;
 }
 
-.tryon-arrows {
-  display: flex;
-  justify-content: center;
-  gap: 0.85rem;
-  padding: 0.25rem 0 1.25rem;
-}
-
-.tryon-arrow {
-  display: inline-flex;
-  width: 46px;
-  height: 46px;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgb(0 0 0 / 0.08);
-  border-radius: 999px;
-  background: #ffffff;
-  box-shadow: 0 6px 20px rgb(0 0 0 / 0.06);
-  color: var(--tryon-ink);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.tryon-arrow:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgb(0 0 0 / 0.08);
-}
-
-.tryon-arrow:disabled {
-  opacity: 0.35;
-}
-
-.tryon-empty {
-  display: flex;
-  min-height: 280px;
-  align-items: center;
-  justify-content: center;
-  color: var(--tryon-muted);
-  font-size: 14px;
-}
-
-@media (max-width: 960px) {
-  .tryon-layout {
+@media (max-width: 1023px) {
+  .gmake-studio {
     grid-template-columns: 1fr;
-    padding-top: 0.75rem;
+    min-height: 0;
+    padding-top: 1rem;
   }
 
-  .tryon-info {
-    justify-content: flex-start;
-    padding: 0.5rem 0 0;
-  }
-
-  .tryon-info__name {
-    max-width: none;
-  }
-
-  .tryon-actions,
-  .tryon-look-select {
-    max-width: none;
-  }
-
-  .tryon-stage {
-    min-height: 520px;
+  .gmake-stage {
     order: -1;
+    min-height: 420px;
   }
 
-  .tryon-stage__canvas {
-    --tryon-model-h: min(56vh, 580px);
+  .gmake-tee,
+  .gmake-tee__img {
+    max-height: min(52vh, 420px);
+    height: min(52vh, 420px);
+  }
+
+  .gmake-section__title {
+    font-size: 20px;
   }
 }
 
 @media (max-width: 640px) {
-  .tryon-stage__canvas {
-    --tryon-model-h: min(48vh, 440px);
-    gap: 0.2rem;
+  .gmake-sizes {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .tryon-shell {
-    padding-bottom: 1rem;
+  .gmake-panel {
+    padding: 1.15rem 1rem 1.25rem;
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .tryon-btn,
-  .tryon-arrow,
-  .tryon-pill {
-    transition: none;
+  .gmake-library__card,
+  .gmake-library__thumb {
+    width: 104px;
+    flex-basis: 104px;
+  }
+
+  .gmake-library__thumb {
+    height: 104px;
   }
 }

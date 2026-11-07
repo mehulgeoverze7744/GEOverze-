@@ -684,55 +684,10 @@ export function StorefrontProductPage({
 
 // ─── Convenience wrapper for storefront signature tees ────────────────────────
 
-import {
-  STOREFRONT_TEES,
-  relatedStorefrontTees,
-  type StorefrontTeeProduct,
-} from "./storefront-product-data";
+import { GMakeStudioProductPage } from "../gmake/GMakeStudioProductPage";
+import { type StorefrontTeeProduct } from "./storefront-product-data";
 
-/** Renders a storefront signature tee product detail page. */
+/** Renders a storefront signature tee as the GMake Studio product page. */
 export function StorefrontTeeProductPage({ tee }: { tee: StorefrontTeeProduct }) {
-  const related = relatedStorefrontTees(tee.id);
-
-  // Map tee colour variants to the SFColorOption shape understood by StorefrontProductPage.
-  // Each colour carries its own full gallery so switching colour replaces the
-  // entire thumbnail strip with that colour's images.
-  const sfColors: SFColorOption[] | undefined = tee.colors?.map((c) => ({
-    id: c.id,
-    label: c.label,
-    hex: c.hex,
-    image: c.image.src,
-    gallery: c.gallery,
-  }));
-
-  // Base gallery: used only when no colour variants are defined.
-  const baseImages: SFGalleryImage[] = tee.gallery ?? [tee.image];
-
-  // `exactOptionalPropertyTypes` is on — only pass `colors` when defined so we
-  // never assign `undefined` to an optional-but-not-undefined-typed prop.
-  const colorsProp = sfColors ? { colors: sfColors } : {};
-
-  return (
-    <StorefrontProductPage
-      slug={tee.id}
-      name={tee.name}
-      categoryLabel={tee.categoryLabel}
-      priceLabel={tee.priceLabel}
-      images={baseImages}
-      {...colorsProp}
-      description={tee.description}
-      highlights={tee.highlights}
-      stylingTip={tee.stylingTip}
-      washcare={tee.washcare}
-      related={related.map((r) => ({
-        slug: r.id,
-        name: r.name,
-        priceLabel: r.priceLabel,
-        image: r.image.src,
-        imageAlt: r.image.alt,
-        tone: r.tone,
-      }))}
-      categorySlug="tshirts"
-    />
-  );
+  return <GMakeStudioProductPage tee={tee} />;
 }

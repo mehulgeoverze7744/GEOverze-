@@ -195,6 +195,9 @@ export function GstoreCheckoutScreen() {
     qty?: string;
     Size?: string;
     Colour?: string;
+    Design?: string;
+    CustomDesign?: string;
+    Instructions?: string;
   };
 
   const cartLines = useCartStore(s => s.lines);
@@ -234,6 +237,9 @@ export function GstoreCheckoutScreen() {
         options:  {
           ...(search.Size   ? { Size:   search.Size   } : {}),
           ...(search.Colour ? { Colour: search.Colour } : {}),
+          ...(search.Design ? { Design: search.Design } : {}),
+          ...(search.CustomDesign ? { "Custom Design": search.CustomDesign } : {}),
+          ...(search.Instructions ? { Instructions: search.Instructions } : {}),
         },
       }]
     : cartLines.map(l => ({
