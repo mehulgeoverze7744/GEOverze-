@@ -12,6 +12,7 @@ const MB_BASE = `${BASE}/midnight-black`;
 const SG_BASE = `${BASE}/starlight-grey`;
 const NA_BASE  = `${BASE}/new-age`;
 const NM_BASE  = `${BASE}/new-age-mulberry`;
+const NB_BASE  = `${BASE}/new-age-midnight-black`;
 
 /**
  * A single colour variant for a storefront tee.
@@ -401,12 +402,49 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
           },
         ],
       },
+
+      // ── 3. Midnight Black ─────────────────────────────────────────────────
+      {
+        id: "new-age-midnight-black",
+        label: "Midnight Black",
+        hex: "#1a1a1a",
+        image: {
+          src: `${NB_BASE}/nb-1.jpg`,
+          alt: "New Age T-Shirt in Midnight Black — front design",
+        },
+        // Gallery order:
+        // nb-1 front product (PRIMARY)  nb-2 back product full
+        // nb-3 back / sleeve detail     nb-4 collar & label close-up
+        // nb-5 lifestyle / dual model
+        gallery: [
+          {
+            src: `${NB_BASE}/nb-1.jpg`,
+            alt: "Midnight Black — front T-shirt product image",
+          },
+          {
+            src: `${NB_BASE}/nb-2.png`,
+            alt: "Midnight Black — back T-shirt product image",
+          },
+          {
+            src: `${NB_BASE}/nb-3.png`,
+            alt: "Midnight Black — back and sleeve graphic design detail",
+          },
+          {
+            src: `${NB_BASE}/nb-4.png`,
+            alt: "Midnight Black — collar and GVRZE label close-up",
+          },
+          {
+            src: `${NB_BASE}/nb-5.jpg`,
+            alt: "Midnight Black — lifestyle editorial, front and back views",
+          },
+        ],
+      },
     ],
 
     description:
-      "The New Age T-shirt is a statement piece inspired by cosmic exploration, celestial navigation and contemporary streetwear. It features intricate multicolour celestial artwork across the sleeve and shoulder, a minimal star emblem on the front, and a clean GVRZE chest wordmark. The back showcases an expressive celestial composition with a half-globe illustration, orbital detailing, star elements and vertical GVRZE typography. Combining understated front branding with an elaborate back graphic, New Age brings together modern streetwear aesthetics and the GVRZE universe. Available in Rose Wine Burgundy and Mulberry.",
+      "The New Age T-shirt is a statement piece inspired by cosmic exploration, celestial navigation and contemporary streetwear. It features intricate multicolour celestial artwork across the sleeve and shoulder, a minimal star emblem on the front, and a clean GVRZE chest wordmark. The back showcases an expressive celestial composition with a half-globe illustration, orbital detailing, star elements and vertical GVRZE typography. Combining understated front branding with an elaborate back graphic, New Age brings together modern streetwear aesthetics and the GVRZE universe. Available in Rose Wine Burgundy, Mulberry, and Midnight Black.",
     highlights: [
-      "Available in Rose Wine Burgundy and Mulberry — rich, saturated deep-tone colourways.",
+      "Available in Rose Wine Burgundy, Mulberry, and Midnight Black — three deep-tone colourways.",
       "Intricate celestial sleeve and shoulder artwork in multicolour print.",
       "Minimal star emblem and GVRZE chest wordmark on the front.",
       "Expressive back graphic: half-globe, orbital detailing and vertical GVRZE type.",
@@ -415,7 +453,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
       "Comfortable everyday streetwear — pairs easily with dark denim, black cargo pants, or slim trousers.",
     ],
     stylingTip:
-      "Rose Wine Burgundy: style with black straight-leg trousers or dark denim for a tonal contrast-forward fit — pair with minimal white or black sneakers. Mulberry: works with charcoal cargo pants, olive trousers or dark denim; the deep purple-plum tone pairs naturally with neutral and earth-toned bottoms for a distinctive streetwear-meets-explorer look.",
+      "Rose Wine Burgundy: style with black straight-leg trousers or dark denim for a tonal contrast-forward fit. Mulberry: works with charcoal cargo pants, olive trousers or dark denim. Midnight Black: a true all-rounder — pairs with any bottom; white sneakers add contrast, all-black keeps it monochrome. All three colourways work equally well layered under an open overshirt.",
     washcare: WASHCARE_STANDARD,
     relatedIds: ["midnight-black-tshirt", "cherry-blossom-tshirt", "golden-arc-tshirt"],
   },
