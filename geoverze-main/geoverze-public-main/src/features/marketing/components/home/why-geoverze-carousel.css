@@ -149,6 +149,13 @@
   text-shadow: 0 1px 8px rgb(0 0 0 / 0.28);
 }
 
+@media (max-width: 767px) {
+  /* Headline only on phones — description stays in the DOM for desktop. */
+  .why-carousel-card__copy p {
+    display: none;
+  }
+}
+
 .why-carousel-card__go {
   display: inline-flex;
   height: 1.7rem;
@@ -212,6 +219,7 @@
   }
 
   .why-carousel-card__copy p {
+    display: block;
     font-size: 0.82rem;
   }
 }
