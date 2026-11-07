@@ -141,13 +141,17 @@ function applyRewardsGlobeScroll(
   globe: HTMLElement | null,
 ) {
   const compact = window.matchMedia("(max-width: 1023px)").matches;
+  // On phones (≤767px) the card is in-flow at full scale (position:relative).
+  // restScale=1.0 so it renders at 100% — the CSS flex layout handles sizing.
+  // On tablets (768–1023px) keep the original 0.7 scale for the absolute card.
+  const isMobilePhone = window.matchMedia("(max-width: 767px)").matches;
   const exitStart = compact ? 0.01 : 0.02;
   const exitSpan = compact ? 0.16 : 0.2;
   const exit = clamp01((p - exitStart) / exitSpan);
   const t = exit * exit * (3 - 2 * exit);
 
   if (rewards) {
-    const restScale = compact ? 0.7 : 1;
+    const restScale = isMobilePhone ? 1.0 : compact ? 0.7 : 1.0;
     const x = t * (compact ? 20 : 84);
     const y = t * (compact ? -64 : -148);
     const scale = restScale * (1 - t * (compact ? 0.1 : 0.14));

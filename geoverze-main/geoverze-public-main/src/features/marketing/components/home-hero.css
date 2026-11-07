@@ -203,15 +203,57 @@
   }
 }
 
-/* The cue's flex display would otherwise beat the mobile utility. */
+/* Mobile homepage hero — stacked layout (phone ≤ 767px)
+   ─────────────────────────────────────────────────────────────────────────
+   On phones the hero becomes a flex column:
+     [ navbar gap ]
+     [ hero intro text   ]   ← in-flow, starts at top
+     [ rewards card      ]   ← in-flow, below text, pushed to bottom
+   Absolutely-positioned children (globe, bloom, panel3, in-hero cue)
+   stay absolute and don't participate in the flex flow.
+   ──────────────────────────────────────────────────────────────────────── */
 @media (max-width: 767px) {
+  /* 1. Section: auto height (at least full viewport), flex-column.
+        overflow: hidden keeps the globe and exit-animation drift clipped. */
+  #home-hero {
+    height: auto;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-top: var(--nav-height); /* clear fixed navbar for flex items */
+  }
+
+  /* 2. Hero intro text: in normal document flow, aligned to top.
+        Removes the absolute centering that caused overlap on small phones. */
+  #home-hero .home-hero-intro {
+    position: relative;      /* override Tailwind absolute utility */
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    padding-inline: 1.25rem; /* replaces Tailwind left-5 right-5 */
+    padding-top: 1.35rem;
+    padding-bottom: 1.75rem; /* gap between text and card */
+    justify-content: flex-start;
+    overflow-wrap: anywhere;
+    min-height: 0;
+    flex-shrink: 0;
+  }
+
+  #home-hero .home-hero-intro-ctas {
+    display: none;
+  }
+
+  /* 3. In-hero scroll cue: hidden on mobile. With the stacked layout the
+        card is always visible; the after-globe section has its own cue. */
   .home-hero-scroll-cue {
     display: none;
   }
 
   #home-hero .home-hero-scroll-cue {
-    display: flex;
-    bottom: clamp(10.75rem, 42vh, 19rem);
+    display: none;
   }
 
   #home-hero .home-hero-expedition {
@@ -219,16 +261,8 @@
     padding-inline: 0.15rem;
   }
 
-  /* Restore the intro copy on phones without changing the desktop pin. */
-  #home-hero .home-hero-intro {
-    overflow-wrap: anywhere;
-    padding-bottom: clamp(6.5rem, 34vh, 16rem);
-  }
-
-  #home-hero .home-hero-intro-ctas {
-    display: none;
-  }
-
+  /* 4. After-globe CTA row: no negative overlap — the hero section now
+        grows to natural height so no pull-up margin is needed. */
   .home-hero-after-globe {
     position: relative;
     z-index: 2;
@@ -238,9 +272,8 @@
     gap: 0.75rem;
     width: 100%;
     max-width: 100%;
-    /* Lift the whole group into the lower globe area (~100–130px). */
-    margin-top: clamp(-8.125rem, -32vw, -6.25rem);
-    padding: 1.35rem 1.15rem 2.75rem;
+    margin-top: 0;              /* was clamp(-8.125rem, -32vw, -6.25rem) */
+    padding: 1.75rem 1.15rem 2.75rem;
   }
 
   .home-hero-after-globe .home-hero-scroll-cue {

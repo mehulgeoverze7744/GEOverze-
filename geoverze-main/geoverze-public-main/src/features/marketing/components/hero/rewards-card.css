@@ -402,12 +402,21 @@
 }
 
 @media (max-width: 767px) {
+  /* Rewards card: pull out of absolute positioning so it flows below the
+     hero intro text in the flex-column section. margin-top: auto pushes it
+     to the bottom of the section's available space (min-height: 100dvh). */
   #home-hero .rewards-card-motion {
-    left: 0.85rem;
-    right: 0.85rem;
-    bottom: 0.5rem;
+    position: relative;        /* override CSS absolute from 1023px block */
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: calc(100% - 2rem);  /* full mobile width with 16px margins */
     max-width: none;
-    transform-origin: 50% 100%;
+    margin-top: auto;          /* push down to section bottom via flex */
+    margin-bottom: 1.5rem;
+    margin-inline: auto;       /* centered horizontally */
+    transform-origin: center bottom;
   }
 
   .rewards-card__shell {
