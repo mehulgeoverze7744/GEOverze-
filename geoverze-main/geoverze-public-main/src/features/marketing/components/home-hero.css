@@ -210,7 +210,7 @@
      [ hero intro text   ]   ← in-flow, starts at top
      [ rewards card      ]   ← in-flow, below text
      [ after-globe CTAs  ]   ← in-flow under the card
-   The desktop “Scroll the experience” cue is hidden; it must not reserve space.
+   The “Scroll the experience” control is not shown on phones.
    Absolutely-positioned children (globe, bloom, panel3)
    stay absolute and don't participate in the flex flow.
    ──────────────────────────────────────────────────────────────────────── */
@@ -260,16 +260,10 @@
     margin-bottom: 0;
   }
 
-  /* Desktop keeps the absolute bottom cue. Phones must not show or reserve it. */
+  /* Phones: hide the control only. Do not collapse unrelated hero layout. */
   #home-hero .home-hero-scroll-cue {
     display: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    height: 0 !important;
-    width: 0 !important;
-    overflow: hidden !important;
     pointer-events: none !important;
-    visibility: hidden;
   }
 
   /* Expedition overlay (Begin the journey + duplicate CTAs) is desktop-only.
@@ -290,9 +284,9 @@
     gap: 0.45rem;
     width: 100%;
     max-width: 100%;
-    margin-top: 0.35rem;
+    margin-top: 0;
     margin-bottom: 0;
-    padding: 0.05rem 1.15rem 0.2rem;
+    padding: 0.05rem 1.15rem 0;
     flex-shrink: 0;
   }
 

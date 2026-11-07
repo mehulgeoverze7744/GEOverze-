@@ -220,18 +220,11 @@ export function HomeHero() {
     set(panel3.current, c, (1 - c) * 26);
 
     if (cueRef.current) {
-      if (window.matchMedia("(max-width: 767px)").matches) {
-        cueRef.current.style.opacity = "0";
-        cueRef.current.style.pointerEvents = "none";
-        cueRef.current.tabIndex = -1;
-        cueRef.current.setAttribute("aria-hidden", "true");
-      } else {
-        const opacity = clamp01(1 - p / 0.08);
-        cueRef.current.style.opacity = String(opacity);
-        cueRef.current.style.pointerEvents = opacity > 0.2 ? "auto" : "none";
-        cueRef.current.tabIndex = opacity > 0.2 ? 0 : -1;
-        cueRef.current.setAttribute("aria-hidden", opacity < 0.15 ? "true" : "false");
-      }
+      const opacity = clamp01(1 - p / 0.08);
+      cueRef.current.style.opacity = String(opacity);
+      cueRef.current.style.pointerEvents = opacity > 0.2 ? "auto" : "none";
+      cueRef.current.tabIndex = opacity > 0.2 ? 0 : -1;
+      cueRef.current.setAttribute("aria-hidden", opacity < 0.15 ? "true" : "false");
     }
 
     applyRewardsGlobeScroll(p, rewardsRef.current, globeRef.current);
@@ -370,22 +363,18 @@ export function HomeHero() {
         </div>
       ) : null}
 
-      <button
-        type="button"
-        ref={cueRef}
-        className={
-          isPhone
-            ? "home-hero-scroll-cue"
-            : "home-hero-scroll-cue absolute bottom-8 left-1/2 z-20 -translate-x-1/2"
-        }
-        aria-label="Scroll the experience"
-        aria-hidden={isPhone || undefined}
-        tabIndex={isPhone ? -1 : 0}
-        onClick={handleScrollTheExperience}
-        onKeyDown={handleScrollCueKeyDown}
-      >
-        {scrollCueContent}
-      </button>
+      {isPhone ? null : (
+        <button
+          type="button"
+          ref={cueRef}
+          className="home-hero-scroll-cue absolute bottom-8 left-1/2 z-20 -translate-x-1/2"
+          aria-label="Scroll the experience"
+          onClick={handleScrollTheExperience}
+          onKeyDown={handleScrollCueKeyDown}
+        >
+          {scrollCueContent}
+        </button>
+      )}
 
       {/* Phone-only CTA column. Must live inside #home-hero so the GSAP pin-spacer
           (end +=170%) is not an empty gap between the globe and the buttons. */}
