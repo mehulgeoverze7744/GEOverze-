@@ -2,64 +2,12 @@
 
 .why-carousel {
   position: relative;
-  margin-top: 0.35rem;
+  margin-top: 0;
   width: 100vw;
   max-width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
   overflow: hidden;
-}
-
-.why-carousel__controls {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 80rem;
-  margin: 0 auto 1rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-}
-
-.why-carousel__btn {
-  display: inline-flex;
-  height: 2.4rem;
-  width: 2.4rem;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9999px;
-  border: 1px solid #e5e7eb;
-  background: #ffffff;
-  color: #111111;
-  cursor: pointer;
-  box-shadow: 0 6px 16px rgb(15 23 42 / 0.06);
-  transition:
-    border-color 180ms ease,
-    box-shadow 180ms ease,
-    transform 180ms ease,
-    opacity 180ms ease;
-}
-
-.why-carousel__btn svg {
-  width: 1.05rem;
-  height: 1.05rem;
-}
-
-.why-carousel__btn:hover:not(:disabled) {
-  border-color: #d1d5db;
-  box-shadow: 0 10px 22px rgb(15 23 42 / 0.1);
-  transform: translateY(-1px);
-}
-
-.why-carousel__btn:focus-visible {
-  outline: 2px solid #3f3f3f;
-  outline-offset: 3px;
-}
-
-.why-carousel__btn:disabled {
-  cursor: default;
-  opacity: 0.35;
 }
 
 .why-carousel-scroller {
@@ -251,12 +199,6 @@
 }
 
 @media (min-width: 768px) {
-  .why-carousel__controls {
-    margin-bottom: 1.15rem;
-    padding-left: 2.5rem;
-    padding-right: 2.5rem;
-  }
-
   .why-carousel-card {
     aspect-ratio: 1.75 / 1;
   }
@@ -283,8 +225,7 @@
 @media (prefers-reduced-motion: reduce) {
   .why-carousel-card,
   .why-carousel-card__img,
-  .why-carousel-card__go,
-  .why-carousel__btn {
+  .why-carousel-card__go {
     transition: none;
   }
 

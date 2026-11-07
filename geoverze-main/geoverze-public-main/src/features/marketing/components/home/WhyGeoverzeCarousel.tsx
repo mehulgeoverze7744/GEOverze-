@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import {
   memo,
   useCallback,
@@ -22,7 +22,6 @@ import "./why-geoverze-carousel.css";
 const SETS = 3;
 const LOOP_SECONDS = 36;
 const INTERACT_RESUME_MS = 1600;
-const ARROW_MS = 480;
 const FALLBACK_IMAGE = "/assets/home/ecosystem/fallback.jpg";
 
 function usePrefersReducedMotion() {
@@ -143,17 +142,6 @@ function setWidth(track: HTMLElement) {
   return items[count]!.offsetLeft - items[0]!.offsetLeft;
 }
 
-function cardStep(track: HTMLElement) {
-  const card = track.querySelector<HTMLElement>(".why-carousel-card");
-  const styles = getComputedStyle(track);
-  const gap = Number.parseFloat(styles.columnGap || styles.gap) || 16;
-  return card ? card.getBoundingClientRect().width + gap : 320;
-}
-
-function easeOutCubic(t: number) {
-  return 1 - (1 - t) ** 3;
-}
-
 /** Horizontal landscape carousel with seamless right-to-left autoplay. */
 export const WhyGeoverzeCarousel = memo(function WhyGeoverzeCarousel() {
   const reducedMotion = usePrefersReducedMotion();
@@ -173,10 +161,7 @@ export const WhyGeoverzeCarousel = memo(function WhyGeoverzeCarousel() {
     startX: 0,
     startOffset: 0,
   });
-  const arrowAnim = useRef<{ from: number; to: number; start: number } | null>(null);
   const [dragging, setDragging] = useState(false);
-  const [canPrev, setCanPrev] = useState(false);
-  const [canNext, setCanNext] = useState(true);
 
   const trackItems = useMemo(
     () => (reducedMotion ? whyCarouselCards : Array.from({ length: SETS }, () => whyCarouselCards).flat()),
@@ -203,8 +188,7 @@ export const WhyGeoverzeCarousel = memo(function WhyGeoverzeCarousel() {
       hoveringRef.current ||
       focusingRef.current ||
       interactingRef.current ||
-      dragRef.current.active ||
-      Boolean(arrowAnim.current);
+      dragRef.current.active;
   }, [reducedMotion]);
 
   const pauseForInteraction = useCallback(() => {
@@ -217,17 +201,6 @@ export const WhyGeoverzeCarousel = memo(function WhyGeoverzeCarousel() {
     }, INTERACT_RESUME_MS);
   }, [refreshPaused]);
 
-  const updateReducedButtons = useCallback(() => {
-    const el = viewportRef.current;
-    if (!el || !reducedMotion) {
-      setCanPrev(true);
-      setCanNext(true);
-      return;
-    }
-    setCanPrev(el.scrollLeft > 8);
-    setCanNext(el.scrollLeft + el.clientWidth < el.scrollWidth - 8);
-  }, [reducedMotion]);
-
   useEffect(() => {
     const viewport = viewportRef.current;
     const track = trackRef.current;
@@ -235,10 +208,7 @@ export const WhyGeoverzeCarousel = memo(function WhyGeoverzeCarousel() {
 
     const measure = () => {
       layoutCards(viewport);
-      if (reducedMotion) {
-        updateReducedButtons();
-        return;
-      }
+      if (reducedMotion) return;
       const span = setWidth(track);
       if (span <= 0) return;
       loopRef.current = span;
@@ -254,13 +224,11 @@ export const WhyGeoverzeCarousel = memo(function WhyGeoverzeCarousel() {
     const observer = new ResizeObserver(measure);
     observer.observe(viewport);
     observer.observe(track);
-    viewport.addEventListener("scroll", updateReducedButtons, { passive: true });
 
     return () => {
       observer.disconnect();
-      viewport.removeEventListener("scroll", updateReducedButtons);
     };
-  }, [applyTransform, reducedMotion, updateReducedButtons, wrapOffset]);
+  }, [applyTransform, reducedMotion, wrapOffset]);
 
   useEffect(() => {
     const track = trackRef.current;
@@ -274,17 +242,7 @@ export const WhyGeoverzeCarousel = memo(function WhyGeoverzeCarousel() {
       const dt = Math.min(48, now - last);
       last = now;
 
-      const anim = arrowAnim.current;
-      if (anim) {
-        const t = Math.min(1, (now - anim.start) / ARROW_MS);
-        offsetRef.current = anim.from + (anim.to - anim.from) * easeOutCubic(t);
-        if (t >= 1) {
-          offsetRef.current = anim.to;
-          arrowAnim.current = null;
-          wrapOffset();
-          refreshPaused();
-        }
-      } else if (!pausedRef.current && loopRef.current > 0) {
+      if (!pausedRef.current && loopRef.current > 0) {
         offsetRef.current += (loopRef.current / LOOP_SECONDS / 1000) * dt;
         wrapOffset();
       } else {
@@ -300,45 +258,12 @@ export const WhyGeoverzeCarousel = memo(function WhyGeoverzeCarousel() {
     return () => {
       cancelAnimationFrame(frame);
       window.clearTimeout(resumeTimer.current);
-      arrowAnim.current = null;
     };
   }, [applyTransform, reducedMotion, refreshPaused, wrapOffset]);
-
-  const scrollByCard = (dir: -1 | 1) => {
-    const viewport = viewportRef.current;
-    const track = trackRef.current;
-    if (!viewport || !track) return;
-    pauseForInteraction();
-
-    if (reducedMotion) {
-      viewport.scrollBy({ left: dir * cardStep(track), behavior: "smooth" });
-      return;
-    }
-
-    const step = cardStep(track);
-    const span = loopRef.current;
-    let from = offsetRef.current;
-    let to = from + dir * step;
-    if (span > 0) {
-      if (to >= span * (SETS - 1)) {
-        from -= span;
-        to -= span;
-        offsetRef.current = from;
-      } else if (to < span) {
-        from += span;
-        to += span;
-        offsetRef.current = from;
-      }
-    }
-    arrowAnim.current = { from, to, start: performance.now() };
-    refreshPaused();
-  };
 
   const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (reducedMotion) return;
     if (event.pointerType === "mouse" && event.button !== 0) return;
-    const target = event.target;
-    if (target instanceof HTMLElement && target.closest(".why-carousel__btn")) return;
 
     pauseForInteraction();
     dragRef.current = {
@@ -393,27 +318,6 @@ export const WhyGeoverzeCarousel = memo(function WhyGeoverzeCarousel() {
 
   return (
     <div className={cn("why-carousel", reducedMotion && "is-reduced")}>
-      <div className="why-carousel__controls">
-        <button
-          type="button"
-          className="why-carousel__btn"
-          aria-label="Previous pages"
-          disabled={reducedMotion && !canPrev}
-          onClick={() => scrollByCard(-1)}
-        >
-          <ChevronLeft strokeWidth={2} aria-hidden />
-        </button>
-        <button
-          type="button"
-          className="why-carousel__btn"
-          aria-label="Next pages"
-          disabled={reducedMotion && !canNext}
-          onClick={() => scrollByCard(1)}
-        >
-          <ChevronRight strokeWidth={2} aria-hidden />
-        </button>
-      </div>
-
       <div
         ref={viewportRef}
         className={cn("why-carousel-scroller", dragging && "is-dragging", !reducedMotion && "is-autoplay")}
