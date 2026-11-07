@@ -7,6 +7,7 @@
  */
 
 const BASE = "/assets/gvrze-storefront/best-sellers";
+const CB_BASE = `${BASE}/cherry-blossom`;
 
 export type StorefrontTeeProduct = {
   /** Route slug — also the DOM key. */
@@ -16,7 +17,18 @@ export type StorefrontTeeProduct = {
   priceLabel: string;
   /** Card background colour (matches the best-sellers tile tone). */
   tone: string;
+  /**
+   * Primary card image — used in product cards, best-seller tiles, and as the
+   * first gallery slide when no `gallery` array is provided.
+   */
   image: { src: string; alt: string };
+  /**
+   * Full ordered gallery for the product detail page.
+   * When present, this list is used for the left-column image gallery instead
+   * of the single `image` field.  The first item is shown as the main image on
+   * load; thumbnail navigation selects the rest.
+   */
+  gallery?: { src: string; alt: string }[];
   description: string;
   highlights: string[];
   stylingTip: string;
@@ -61,25 +73,71 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
   },
   {
     id: "cherry-blossom-tshirt",
-    name: "Cherry Blossom T-Shirt",
+    name: "Cherry Blossom Oversized Graphic T-Shirt",
     categoryLabel: "T-SHIRT",
     priceLabel: "Rs. 2,999",
     tone: "#e29ecc",
+    // cb-2.jpg is the primary card / hero image (front T-shirt design)
     image: {
-      src: `${BASE}/cherry-blossom-tshirt.webp`,
-      alt: "GVRZE Cherry Blossom T-Shirt, back view",
+      src: `${CB_BASE}/cb-2.jpg`,
+      alt: "GVRZE Cherry Blossom Oversized Graphic T-Shirt — front design",
     },
+    // All 7 gallery images in spec order:
+    // 1 — neckline & branding close-up  2 — front design (card image)
+    // 3 — full back design              4 — front chest GVRZE logo detail
+    // 5 — back graphic detail           6 — front sleeve & graphic detail
+    // 7 — model wearing the tee (front)
+    gallery: [
+      {
+        src: `${CB_BASE}/cb-1.jpg`,
+        alt: "Cherry Blossom T-Shirt — neckline and GVRZE branding close-up",
+      },
+      {
+        src: `${CB_BASE}/cb-2.jpg`,
+        alt: "Cherry Blossom T-Shirt — front design overview",
+      },
+      {
+        src: `${CB_BASE}/cb-3.jpg`,
+        alt: "Cherry Blossom T-Shirt — full back graphic design",
+      },
+      {
+        src: `${CB_BASE}/cb-4.jpg`,
+        alt: "Cherry Blossom T-Shirt — front chest GVRZE logo detail",
+      },
+      {
+        src: `${CB_BASE}/cb-5.jpg`,
+        alt: "Cherry Blossom T-Shirt — back graphic detail close-up",
+      },
+      {
+        src: `${CB_BASE}/cb-6.jpg`,
+        alt: "Cherry Blossom T-Shirt — front sleeve and graphic detail",
+      },
+      {
+        src: `${CB_BASE}/cb-7.jpg`,
+        alt: "Cherry Blossom T-Shirt — model wearing the tee, front view",
+      },
+    ],
     description:
-      "The GVRZE Cherry Blossom Graphic T-Shirt blends botanical grace with explorer spirit. Crafted from 100% premium cotton — soft against the skin, vivid in presence, and made to be worn with intention.",
+      "Inspired by the beauty of cherry blossoms and the spirit of exploration, the Cherry Blossom T-shirt combines expressive artwork with GVRZE's distinctive geographic identity. Designed around a rich cherry-pink color palette, the tee features an abstract map-inspired graphic flowing across the front and back, complemented by compass elements, coordinates, and signature GVRZE branding. The front features a minimal GVRZE chest logo and a bold artistic geographic composition. The back showcases an oversized graphic with exploration-inspired typography and navigation elements.",
     highlights: [
+      "Premium oversized streetwear silhouette.",
+      "Cherry-pink colorway — distinctive and bold.",
+      "Distinctive front and back graphic artwork with GVRZE signature branding.",
+      "Geographic coordinates and compass-inspired detailing across the design.",
       "100% Cotton Comfort — breathable, pre-shrunk fabric built for all-day wear.",
       "260 GSM Heavyweight Quality — substantial feel with structure that holds its shape.",
       "Premium Screen Printing — sharp, fade-resistant graphics that last wash after wash.",
-      "Seasonal Versatility — works with neutral bottoms, denim, or linen separates.",
+      "Comfortable everyday streetwear — pairs easily with denim, cargo pants, or joggers.",
     ],
     stylingTip:
-      "Style the Cherry Blossom Tee with white or cream trousers and minimalist sneakers. Try layering an open overshirt for transitional weather.",
-    washcare: WASHCARE_STANDARD,
+      "Style the Cherry Blossom Tee with white or cream trousers and minimalist sneakers for a clean contrast look. Layer an open overshirt for transitional weather, or pair with black cargo pants for a bold streetwear fit.",
+    washcare: [
+      "Machine wash inside out with similar colors, cold water (30°C / 86°F).",
+      "Do not bleach.",
+      "Do not iron directly over the printed graphics.",
+      "Dry inside out or hang dry for best results.",
+      "Do not dry clean.",
+    ],
     relatedIds: ["midnight-black-tshirt", "golden-arc-tshirt", "new-age-tshirt"],
   },
   {

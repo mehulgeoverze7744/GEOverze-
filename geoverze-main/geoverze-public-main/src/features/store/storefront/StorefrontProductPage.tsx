@@ -563,13 +563,15 @@ import {
 /** Renders a storefront signature tee product detail page. */
 export function StorefrontTeeProductPage({ tee }: { tee: StorefrontTeeProduct }) {
   const related = relatedStorefrontTees(tee.id);
+  // Use the full gallery when provided; fall back to the single card image.
+  const galleryImages: SFGalleryImage[] = tee.gallery ?? [tee.image];
   return (
     <StorefrontProductPage
       slug={tee.id}
       name={tee.name}
       categoryLabel={tee.categoryLabel}
       priceLabel={tee.priceLabel}
-      images={[tee.image]}
+      images={galleryImages}
       description={tee.description}
       highlights={tee.highlights}
       stylingTip={tee.stylingTip}
