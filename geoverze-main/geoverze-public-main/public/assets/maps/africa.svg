@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Map of Africa">
+  <rect width="100" height="100" fill="#e8eef5"/>
+  <path fill="#c5d4e4" d="M8 8h84v84H8z"/>
+  <path fill="#f7fafc" stroke="#7f93a8" stroke-width="0.7" d="M38 10c6-1 14 1 22 6 6 4 12 6 16 12 3 5 4 12 2 18-1 5 1 10 4 14 2 4 1 10-2 14-4 5-6 12-10 18-3 5-8 8-14 9-7 1-14-1-18-5-5-5-6-12-8-18-2-6-6-10-10-14-4-4-6-10-5-16 1-7 4-12 9-16 5-4 8-10 8-16 0-2 2-5 6-6z"/>
+</svg>

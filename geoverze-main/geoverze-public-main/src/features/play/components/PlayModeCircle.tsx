@@ -35,21 +35,23 @@ export function PlayModeCircle({
   if (!copy) return null;
 
   return (
-    <article className="play-mode-circle" data-mode={mode.id}>
+    <button
+      type="button"
+      className="play-mode-circle"
+      data-mode={mode.id}
+      aria-label={`${mode.title}: ${copy.cta}`}
+      onClick={() => onSelect(mode)}
+    >
       <span className="play-mode-circle__badge">{copy.badge}</span>
       <span className="play-mode-circle__icon" aria-hidden="true">
         <Icon strokeWidth={1.6} />
       </span>
-      <h3 className="play-mode-circle__title">{mode.title}</h3>
-      <p className="play-mode-circle__desc">{copy.description}</p>
-      <button
-        type="button"
-        className="play-mode-circle__cta"
-        onClick={() => onSelect(mode)}
-      >
+      <span className="play-mode-circle__title">{mode.title}</span>
+      <span className="play-mode-circle__desc">{copy.description}</span>
+      <span className="play-mode-circle__cta" aria-hidden="true">
         {copy.cta}
-      </button>
-    </article>
+      </span>
+    </button>
   );
 }
 

@@ -23,12 +23,15 @@ export function QuizCard({
   bookmarked,
   onToggleBookmark,
   onPlay,
+  browseOnly = false,
   className,
 }: {
   quiz: Quiz;
   bookmarked: boolean;
   onToggleBookmark: (id: string) => void;
-  onPlay: (quiz: Quiz) => void;
+  onPlay?: (quiz: Quiz) => void;
+  /** Browse a section without launching this specific quiz. */
+  browseOnly?: boolean;
   className?: string;
 }) {
   const Icon = ICONS.get(quiz.categoryId);
@@ -93,6 +96,12 @@ export function QuizCard({
           <DifficultyBadge level={quiz.difficulty} />
         </div>
 
+        {browseOnly && quiz.description ? (
+          <p className="mt-2 line-clamp-2 text-[0.82rem] leading-relaxed text-foreground/55">
+            {quiz.description}
+          </p>
+        ) : null}
+
         <div className="mt-4 grid grid-cols-2 gap-y-2 text-[0.7rem] text-foreground/50">
           <span className="inline-flex items-center gap-1.5">
             <Users className="h-3.5 w-3.5 text-bronze/90" strokeWidth={1.8} />
@@ -111,10 +120,17 @@ export function QuizCard({
           </span>
         </div>
 
-        <GeoButton variant="solid" size="md" className="mt-5 w-full" onClick={() => onPlay(quiz)}>
-          <Play className="h-4 w-4" strokeWidth={2.4} />
-          {typeof quiz.progress === "number" ? "Continue" : "Play"}
-        </GeoButton>
+        {browseOnly ? null : (
+          <GeoButton
+            variant="solid"
+            size="md"
+            className="mt-5 w-full"
+            onClick={() => onPlay?.(quiz)}
+          >
+            <Play className="h-4 w-4" strokeWidth={2.4} />
+            {typeof quiz.progress === "number" ? "Continue" : "Play"}
+          </GeoButton>
+        )}
       </div>
     </GameCard>
   );

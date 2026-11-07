@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Map of South America">
+  <rect width="100" height="100" fill="#e8eef5"/>
+  <path fill="#c5d4e4" d="M10 6h80v88H10z"/>
+  <path fill="#f7fafc" stroke="#7f93a8" stroke-width="0.7" d="M42 12c10 2 18 8 22 16 4 8 6 16 4 24-1 6-6 10-8 16-2 6 0 12 2 18 1 4-2 8-8 10-7 2-12-2-16-8-4-6-6-14-8-22-2-8-6-14-6-22 0-8 6-14 12-20 3-3 5-8 6-12z"/>
+</svg>

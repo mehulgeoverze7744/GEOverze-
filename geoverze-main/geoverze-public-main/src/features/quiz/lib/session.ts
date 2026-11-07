@@ -21,7 +21,7 @@ function normalise(text: string) {
     .replace(/\s+/g, " ");
 }
 
-/** Grade a value against a question. Placeholder types always grade as skipped. */
+/** Grade a value against a question. */
 export function isCorrect(question: QuizQuestion, value: AnswerValue): boolean {
   if (!value || value.length === 0) return false;
   switch (question.type) {
@@ -38,6 +38,16 @@ export function isCorrect(question: QuizQuestion, value: AnswerValue): boolean {
     }
     case "typed":
       return question.accepted.some((a) => normalise(a) === normalise(value[0] ?? ""));
+    case "order":
+      return (
+        value.length === question.items.length &&
+        value.every((item, index) => item === question.items[index])
+      );
+    case "dragdrop":
+      return (
+        value.length === question.items.length &&
+        value.every((item, index) => item === question.items[index] && item.length > 0)
+      );
     default:
       return false;
   }
@@ -58,6 +68,10 @@ export function labelsFor(question: QuizQuestion, value: AnswerValue): string[] 
       return value.map((v) => (v === "true" ? "True" : "False"));
     case "typed":
       return value;
+    case "order":
+      return value;
+    case "dragdrop":
+      return question.targets.map((target, index) => `${value[index] ?? "—"} → ${target}`);
     default:
       return value;
   }
@@ -77,8 +91,12 @@ export function correctLabels(question: QuizQuestion): string[] {
       return [question.answer ? "True" : "False"];
     case "typed":
       return [question.accepted[0] ?? ""];
+    case "order":
+      return question.items;
+    case "dragdrop":
+      return question.targets.map((target, index) => `${question.items[index] ?? "—"} → ${target}`);
     default:
-      return ["Not yet gradable"];
+      return [];
   }
 }
 

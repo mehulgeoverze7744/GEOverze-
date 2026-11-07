@@ -2,8 +2,6 @@ import { ArrowLeft, ArrowRight, Check, Flag, SkipForward } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { GeoButton } from "@/components/shared";
-import { SessionHero } from "@/features/play/components/SessionHero";
-import { thumbnailForQuizSession } from "@/features/play/data/sessionArtwork";
 import { cn } from "@/lib/utils";
 import { useQuizStore, type QuizMode } from "@/stores/quizStore";
 import type { QuizSet } from "../data/types";
@@ -80,7 +78,15 @@ export function QuizPlay({
   }, [question.id, recorded]);
 
   const playable = isPlayable(question);
-  const canCheck = !locked && playable && value !== null && value.length > 0 && value[0] !== "";
+  const canCheck =
+    !locked &&
+    playable &&
+    value !== null &&
+    (question.type === "order"
+      ? value.length === question.items.length
+      : question.type === "dragdrop"
+        ? value.length === question.items.length && value.every((entry) => entry.length > 0)
+        : value.length > 0 && value[0] !== "");
   const isLast = index >= total - 1;
 
   const commit = useCallback(
@@ -130,7 +136,9 @@ export function QuizPlay({
           ? question.options.map((o) => o.id)
           : question.type === "boolean"
             ? ["true", "false"]
-            : [];
+            : question.type === "map"
+              ? question.regions.map((region) => region.id)
+              : [];
       const picked = options[slot];
       if (!picked) return;
       event.preventDefault();
@@ -168,15 +176,8 @@ export function QuizPlay({
         />
       }
     >
-      <div className={cn("pt-6", sidebar && "grid gap-6 lg:grid-cols-[1fr_18rem]")}>
+      <div className={cn("pt-5 sm:pt-8", sidebar && "grid gap-6 lg:grid-cols-[1fr_18rem]")}>
         <div>
-          <div className="mb-5 overflow-hidden rounded-2xl border border-bronze/15">
-            <SessionHero
-              art={set.art}
-              thumbnail={thumbnailForQuizSession(set.id)}
-              className="h-28 sm:h-36"
-            />
-          </div>
           <QuestionRenderer
             key={question.id}
             question={question}
@@ -192,20 +193,18 @@ export function QuizPlay({
               aria-live="polite"
               className={cn(
                 "mt-4 rounded-2xl border p-4",
-                feedback.tone === "correct" &&
-                  "border-[oklch(0.72_0.13_150/0.5)] bg-[oklch(0.72_0.13_150/0.1)]",
-                feedback.tone === "wrong" &&
-                  "border-[oklch(0.66_0.18_20/0.5)] bg-[oklch(0.66_0.18_20/0.1)]",
+                feedback.tone === "correct" && "border-emerald-200 bg-emerald-50",
+                feedback.tone === "wrong" && "border-rose-200 bg-rose-50",
                 feedback.tone === "skipped" && "border-[#E2E8F0] bg-[#F8FAFC]",
               )}
             >
-              <p className="text-[0.85rem] font-semibold text-foreground">{feedback.title}</p>
-              <p className="mt-1 text-[0.8rem] text-foreground/60">
+              <p className="text-[0.9rem] font-semibold text-[#111827]">{feedback.title}</p>
+              <p className="mt-1 text-[0.82rem] text-[#475569]">
                 Answer:{" "}
-                <span className="text-bronze-glow">{correctLabels(question).join(", ")}</span>
+                <span className="font-medium text-[#1e4d86]">{correctLabels(question).join(", ")}</span>
               </p>
               {question.explanation ? (
-                <p className="mt-2 text-[0.8rem] leading-relaxed text-foreground/55">
+                <p className="mt-2 text-[0.82rem] leading-relaxed text-[#64748B]">
                   {question.explanation}
                 </p>
               ) : null}

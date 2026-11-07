@@ -3,39 +3,42 @@ import { lazy, Suspense } from "react";
 import { SkeletonBlock } from "@/components/shared";
 import { QUESTION_TYPE_LABEL, type QuizQuestion } from "../data/types";
 import { MultipleChoiceQuestion } from "./questions/MultipleChoiceQuestion";
-import { PlaceholderQuestion } from "./questions/PlaceholderQuestion";
 import { SingleChoiceQuestion } from "./questions/SingleChoiceQuestion";
 import { TrueFalseQuestion } from "./questions/TrueFalseQuestion";
 import { TypeAnswerQuestion } from "./questions/TypeAnswerQuestion";
 import { QuestionMediaView } from "./QuestionMediaView";
 import type { QuestionViewProps } from "./questionView";
 
-/** Heavier renderers load only when a question needs them. */
 const ImageSelectQuestion = lazy(() =>
   import("./questions/ImageSelectQuestion").then((m) => ({ default: m.ImageSelectQuestion })),
 );
 const MapSelectQuestion = lazy(() =>
   import("./questions/MapSelectQuestion").then((m) => ({ default: m.MapSelectQuestion })),
 );
+const OrderQuestion = lazy(() =>
+  import("./questions/OrderQuestion").then((m) => ({ default: m.OrderQuestion })),
+);
+const DragDropQuestion = lazy(() =>
+  import("./questions/DragDropQuestion").then((m) => ({ default: m.DragDropQuestion })),
+);
 
 /**
  * The single switch in the engine.
  *
  * Screens hand a question here and never care what subject or format it is.
- * A new quiz type = one new variant in `data/types.ts` plus one case below.
  */
 export function QuestionRenderer({ question, value, locked, onSelect }: QuestionViewProps) {
   return (
-    <div className="game-surface rounded-2xl p-5 sm:p-7">
-      <p className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-bronze/90">
+    <div className="rounded-[1.75rem] border border-[#E2E8F0] bg-white p-5 shadow-[0_18px_40px_-28px_rgb(15_23_42_/_0.45)] sm:p-8">
+      <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-[#2b74c4]">
         {QUESTION_TYPE_LABEL[question.type]}
       </p>
-      <h1 className="mt-3 text-[1.35rem] font-semibold leading-snug tracking-tight text-foreground sm:text-[1.6rem]">
+      <h1 className="mt-3 text-[1.4rem] font-semibold leading-snug tracking-tight text-[#111827] sm:text-[1.75rem]">
         {question.prompt}
       </h1>
 
       {question.media ? (
-        <div className="mt-5">
+        <div className="mt-6">
           <QuestionMediaView media={question.media} />
         </div>
       ) : null}
@@ -84,8 +87,10 @@ export function QuestionRenderer({ question, value, locked, onSelect }: Question
               locked={locked}
               onSelect={onSelect}
             />
+          ) : question.type === "order" ? (
+            <OrderQuestion question={question} value={value} locked={locked} onSelect={onSelect} />
           ) : (
-            <PlaceholderQuestion question={question} />
+            <DragDropQuestion question={question} value={value} locked={locked} onSelect={onSelect} />
           )}
         </Suspense>
       </div>

@@ -53,15 +53,15 @@ export function useScrollProgress(
       gsap.registerPlugin(ScrollTrigger);
 
       ctx = gsap.context(() => {
+        // Phones: do not pin. The pin-spacer (~170vh of empty page) was sitting
+        // between the globe and the in-hero CTAs. Desktop keeps the cinematic pin.
+        const isPhone = window.matchMedia("(max-width: 767px)").matches;
         ScrollTrigger.create({
           trigger: section,
           start: "top top",
-          // One extra viewport used to be four (+=400%), which forced a long
-          // empty scroll before the globe's main pose. ~1.7vh is enough for
-          // the same hand-off in about 3–4 ordinary wheel gestures.
-          end: "+=170%",
-          pin: true,
-          pinSpacing: true,
+          end: isPhone ? "bottom top" : "+=170%",
+          pin: !isPhone,
+          pinSpacing: !isPhone,
           scrub: 0.45,
           invalidateOnRefresh: true,
           onUpdate: (self) => {

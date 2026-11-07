@@ -11,8 +11,8 @@
 export type QuestionMedia =
   | { kind: "image"; art: string; caption?: string }
   | { kind: "illustration"; art: string; caption?: string }
-  /** Emoji flag keeps the engine image-free until real assets land. */
-  | { kind: "flag"; glyph: string; caption?: string }
+  /** Flag glyph, ISO code, or country name — rendered as a real flag image. */
+  | { kind: "flag"; glyph: string; caption?: string; art?: string }
   | { kind: "map"; art: string; caption?: string }
   | { kind: "audio"; caption?: string }
   | { kind: "video"; caption?: string };
@@ -38,7 +38,7 @@ export type MapRegion = {
 type Base = {
   id: string;
   prompt: string;
-  /** Shown in review. Placeholder copy until the content pipeline lands. */
+  /** Shown after the answer is checked. */
   explanation?: string;
   media?: QuestionMedia;
 };
@@ -50,8 +50,9 @@ export type QuizQuestion =
   | (Base & { type: "image"; options: Choice[]; answerId: string })
   | (Base & { type: "map"; regions: MapRegion[]; answerId: string; boardArt: string })
   | (Base & { type: "typed"; accepted: string[]; placeholder?: string })
-  /** Reserved types — renderers show a labelled placeholder for now. */
+  /** `items` is the correct chronological / ranked order. */
   | (Base & { type: "order"; items: string[] })
+  /** `items[i]` matches `targets[i]`. */
   | (Base & { type: "dragdrop"; items: string[]; targets: string[] });
 
 export type QuestionType = QuizQuestion["type"];
@@ -67,8 +68,8 @@ export const QUESTION_TYPE_LABEL: Record<QuestionType, string> = {
   dragdrop: "Drag and drop",
 };
 
-/** Types that are declared but not yet playable. */
-export const PLACEHOLDER_TYPES: readonly QuestionType[] = ["order", "dragdrop"];
+/** No question types are skipped as unfinished. */
+export const PLACEHOLDER_TYPES: readonly QuestionType[] = [];
 
 export type QuizSet = {
   id: string;
@@ -80,7 +81,6 @@ export type QuizSet = {
   difficulty: "Easy" | "Medium" | "Hard" | "Expert";
   minutes: number;
   language: string;
-  /** Placeholder progression values until the backend owns them. */
   rewards: { xp: number; credits: number };
   highScore: number;
   bestStreak: number;

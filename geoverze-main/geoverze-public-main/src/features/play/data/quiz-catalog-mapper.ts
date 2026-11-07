@@ -32,6 +32,7 @@ export function mapPublishedQuizRow(row: PublishedQuizRow): Quiz {
     creator: row.creator,
     art: row.art,
     difficulty: toDifficulty(row.difficulty),
+    ...(row.description ? { description: row.description } : {}),
     questions: row.quiz_questions?.length ?? 0,
     minutes: row.minutes,
     players: 0,

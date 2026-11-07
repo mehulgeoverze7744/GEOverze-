@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Map of Europe">
+  <rect width="100" height="100" fill="#e8eef5"/>
+  <path fill="#c5d4e4" d="M6 8h88v84H6z"/>
+  <path fill="#f7fafc" stroke="#7f93a8" stroke-width="0.7" d="M28 14c8-4 18-4 28 0 8 3 16 6 22 14 4 6 8 14 6 22-2 7-8 10-12 16-3 5-2 12 2 16 0 0-6 4-14 5-9 1-18-1-24-6-6-5-8-12-14-16-5-4-10-8-12-14-2-7 0-14 4-20 4-5 8-12 14-17z"/>
+</svg>

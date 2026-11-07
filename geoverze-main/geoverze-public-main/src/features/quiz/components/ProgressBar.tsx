@@ -12,7 +12,7 @@ export function ProgressBar({
   className?: string;
   label?: string;
 }) {
-  const pct = total === 0 ? 0 : Math.min(100, Math.max(0, (value / total) * 100));
+  const pct = total === 0 ? 0 : Math.min(100, Math.max(0, ((value + 1) / total) * 100));
 
   return (
     <div
@@ -20,8 +20,8 @@ export function ProgressBar({
       aria-label={label}
       aria-valuemin={0}
       aria-valuemax={total}
-      aria-valuenow={value}
-      aria-valuetext={`${value} of ${total}`}
+      aria-valuenow={Math.min(total, value + 1)}
+      aria-valuetext={`${Math.min(total, value + 1)} of ${total}`}
       className={cn("h-2 w-full overflow-hidden rounded-full bg-[#E2E8F0]", className)}
     >
       <span

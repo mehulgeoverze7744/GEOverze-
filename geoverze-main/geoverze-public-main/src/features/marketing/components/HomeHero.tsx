@@ -220,11 +220,20 @@ export function HomeHero() {
     set(panel3.current, c, (1 - c) * 26);
 
     if (cueRef.current) {
-      const opacity = clamp01(1 - p / 0.08);
-      cueRef.current.style.opacity = String(opacity);
-      cueRef.current.style.pointerEvents = opacity > 0.2 ? "auto" : "none";
-      cueRef.current.tabIndex = opacity > 0.2 ? 0 : -1;
-      cueRef.current.setAttribute("aria-hidden", opacity < 0.15 ? "true" : "false");
+      // Phones keep the in-flow cue visible under the rewards card.
+      // Desktop still fades the absolute bottom cue as the pin starts.
+      if (window.matchMedia("(max-width: 767px)").matches) {
+        cueRef.current.style.opacity = "1";
+        cueRef.current.style.pointerEvents = "auto";
+        cueRef.current.tabIndex = 0;
+        cueRef.current.setAttribute("aria-hidden", "false");
+      } else {
+        const opacity = clamp01(1 - p / 0.08);
+        cueRef.current.style.opacity = String(opacity);
+        cueRef.current.style.pointerEvents = opacity > 0.2 ? "auto" : "none";
+        cueRef.current.tabIndex = opacity > 0.2 ? 0 : -1;
+        cueRef.current.setAttribute("aria-hidden", opacity < 0.15 ? "true" : "false");
+      }
     }
 
     applyRewardsGlobeScroll(p, rewardsRef.current, globeRef.current);
@@ -290,15 +299,6 @@ export function HomeHero() {
       >
         <span className="font-cta">WATCH DEMO</span>
       </GeoButton>
-      <button
-        type="button"
-        className="home-hero-scroll-cue home-hero-scroll-cue--follow"
-        aria-label="Scroll the experience"
-        onClick={handleScrollTheExperience}
-        onKeyDown={handleScrollCueKeyDown}
-      >
-        {scrollCueContent}
-      </button>
     </div>
   );
 
@@ -372,6 +372,25 @@ export function HomeHero() {
         </div>
       ) : null}
 
+      <button
+        type="button"
+        ref={cueRef}
+        className={
+          isPhone
+            ? "home-hero-scroll-cue"
+            : "home-hero-scroll-cue absolute bottom-8 left-1/2 z-20 -translate-x-1/2"
+        }
+        aria-label="Scroll the experience"
+        onClick={handleScrollTheExperience}
+        onKeyDown={handleScrollCueKeyDown}
+      >
+        {scrollCueContent}
+      </button>
+
+      {/* Phone-only CTA column. Must live inside #home-hero so the GSAP pin-spacer
+          (end +=170%) is not an empty gap between the globe and the buttons. */}
+      {afterGlobeCtas}
+
       <div
         ref={panel3}
         className="home-hero-expedition pointer-events-none absolute inset-x-6 bottom-20 opacity-0 will-change-transform md:inset-x-auto md:left-12 md:top-1/2 md:bottom-auto md:max-w-[28rem] md:-translate-y-1/2"
@@ -422,18 +441,7 @@ export function HomeHero() {
         </div>
       </Modal>
 
-      <button
-        type="button"
-        ref={cueRef}
-        className="home-hero-scroll-cue absolute bottom-8 left-1/2 z-20 -translate-x-1/2"
-        aria-label="Scroll the experience"
-        onClick={handleScrollTheExperience}
-        onKeyDown={handleScrollCueKeyDown}
-      >
-        {scrollCueContent}
-      </button>
     </section>
-    {afterGlobeCtas}
     </>
   );
 }

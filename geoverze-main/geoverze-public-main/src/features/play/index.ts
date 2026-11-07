@@ -10,6 +10,7 @@ export { fetchPublishedQuizzes } from "./data/fetchPublishedQuizzes";
 export { usePublishedQuizzes } from "./hooks/usePublishedQuizzes";
 export { ModesPage } from "./screens/ModesPage";
 export { SearchPage } from "./screens/SearchPage";
+export { CategoryListingPage } from "./screens/CategoryListingPage";
 export { CollectionsPage } from "./screens/CollectionsPage";
 export { CollectionDetailPage } from "./screens/CollectionDetailPage";
 export { COLLECTIONS, collectionBySlug } from "./data/collections";

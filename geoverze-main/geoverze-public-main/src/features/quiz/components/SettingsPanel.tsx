@@ -64,12 +64,18 @@ export function SettingsPanel() {
               {row.label}
             </p>
             <div
-              className="mt-2 flex min-w-0 gap-1 overflow-x-auto rounded-full bg-[#F8FAFC] p-1 ring-1 ring-[#E2E8F0] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              className={cn(
+                "mt-2 flex min-w-0 rounded-full bg-[#F8FAFC] ring-1 ring-[#E2E8F0]",
+                row.key === "difficulty"
+                  ? "gap-px overflow-hidden p-0.5"
+                  : "gap-1 overflow-x-auto p-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+              )}
               role="group"
               aria-label={row.label}
             >
               {row.options.map((option) => {
                 const active = settings[row.key] === option;
+                const isDifficulty = row.key === "difficulty";
                 return (
                   <button
                     key={option}
@@ -77,7 +83,10 @@ export function SettingsPanel() {
                     aria-pressed={active}
                     onClick={() => update({ [row.key]: option } as Partial<QuizSettings>)}
                     className={cn(
-                      "min-h-10 min-w-0 flex-1 whitespace-nowrap rounded-full px-3 text-[0.75rem] font-medium transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2b74c4]/40",
+                      "flex min-h-10 flex-1 items-center justify-center whitespace-nowrap rounded-full text-center font-medium transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2b74c4]/40",
+                      isDifficulty
+                        ? "min-w-0 basis-0 px-px text-[clamp(0.55rem,2.9vw,0.68rem)] leading-none tracking-[-0.03em] sm:px-1"
+                        : "min-w-0 px-3 text-[0.75rem]",
                       active
                         ? "bg-[#2b74c4] text-white shadow-sm"
                         : "text-[#64748B] hover:text-[#111827]",

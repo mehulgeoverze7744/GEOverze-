@@ -29,6 +29,7 @@ import {
 import { StorefrontTeeProductPage } from "../storefront/StorefrontProductPage";
 import { StorefrontCategoryPage } from "../storefront/StorefrontCategoryPage";
 import { type EditorialItem } from "../storefront/EditorialCard";
+import "../storefront/accessories-coming-soon.css";
 import { ProductCard } from "./ProductCard";
 import { ProductGallery } from "./ProductGallery";
 import { ProductRail } from "./ProductRail";
@@ -385,20 +386,18 @@ function AccessoriesCategoryShelf() {
   const publication = productBySlug(ACCESSORIES_PUBLICATION_SLUG);
   const allProducts = [...globes, ...(publication ? [publication] : [])];
   const items = allProducts.map(productToEditorial);
-  const { addProduct } = useStoreActions();
-
-  function handleAdd(item: EditorialItem) {
-    const product = productBySlug(item.slug);
-    if (product && !isPurchaseLocked(product)) addProduct(product, defaultOptions(product));
-  }
 
   return (
-    <StorefrontCategoryPage
-      title={category?.label ?? "Accessories"}
-      description={category?.blurb ?? "Totes, pins and desk pieces."}
-      items={items}
-      onAdd={handleAdd}
-    />
+    <div id="gvrze-accessories-coming-soon">
+      <StorefrontCategoryPage
+        title={category?.label ?? "Accessories"}
+        description={category?.blurb ?? "Totes, pins and desk pieces."}
+        items={items}
+        onAdd={() => {
+          /* Accessories remain lookbook-only until the collection launches. */
+        }}
+      />
+    </div>
   );
 }
 

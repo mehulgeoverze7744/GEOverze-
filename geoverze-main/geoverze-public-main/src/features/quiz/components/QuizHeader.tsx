@@ -38,7 +38,7 @@ export function QuizHeader({
         className,
       )}
     >
-      <div className="mx-auto w-full max-w-6xl overflow-x-clip px-4 py-3 sm:px-6 md:px-10">
+      <div className="mx-auto w-full max-w-6xl overflow-x-clip py-3 pl-[3.5rem] pr-4 sm:px-6 md:px-10">
         {/* Narrow viewports: two-row layout so progress, timer, and exit never compete. */}
         <div className="flex flex-col gap-2 md:hidden">
           <div className="flex min-w-0 items-center justify-between gap-3">

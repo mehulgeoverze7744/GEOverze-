@@ -208,8 +208,9 @@
    On phones the hero becomes a flex column:
      [ navbar gap ]
      [ hero intro text   ]   ← in-flow, starts at top
-     [ rewards card      ]   ← in-flow, below text, pushed to bottom
-   Absolutely-positioned children (globe, bloom, panel3, in-hero cue)
+     [ rewards card      ]   ← in-flow, below text
+     [ scroll cue        ]   ← in-flow, centered under the card
+   Absolutely-positioned children (globe, bloom, panel3)
    stay absolute and don't participate in the flex flow.
    ──────────────────────────────────────────────────────────────────────── */
 @media (max-width: 767px) {
@@ -234,26 +235,50 @@
     bottom: auto;
     width: 100%;
     padding-inline: 1.25rem; /* replaces Tailwind left-5 right-5 */
-    padding-top: 1.35rem;
-    padding-bottom: 1.75rem; /* gap between text and card */
+    padding-top: 0.4rem;
+    padding-bottom: 0.35rem;
     justify-content: flex-start;
     overflow-wrap: anywhere;
     min-height: 0;
     flex-shrink: 0;
   }
 
+  #home-hero .home-hero-intro h1 {
+    margin-top: 0.55rem;
+  }
+
+  #home-hero .home-hero-intro p:not(.eyebrow) {
+    margin-top: 0.6rem;
+  }
+
   #home-hero .home-hero-intro-ctas {
     display: none;
   }
 
-  /* 3. In-hero scroll cue: hidden on mobile. With the stacked layout the
-        card is always visible; the after-globe section has its own cue. */
-  .home-hero-scroll-cue {
-    display: none;
+  /* Tight gap from the in-flow rewards card to the scroll cue. */
+  #home-hero > .rewards-card-motion {
+    margin-bottom: 0.1rem;
   }
 
+  /* 3. Scroll cue sits in-flow, centered, immediately under the rewards card.
+        Desktop still uses the absolute bottom-8 placement (unchanged).
+        !important beats Tailwind left-1/2 / -translate-x-1/2 utilities. */
   #home-hero .home-hero-scroll-cue {
-    display: none;
+    display: flex;
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    top: auto !important;
+    transform: none !important;
+    inset: auto !important;
+    z-index: 2;
+    flex-shrink: 0;
+    align-self: center;
+    width: max-content;
+    max-width: calc(100% - 2rem);
+    margin: 0.1rem auto 0.2rem;
+    padding: 0.2rem 0.55rem 0.25rem;
   }
 
   /* Expedition overlay (Begin the journey + duplicate CTAs) is desktop-only.
@@ -262,29 +287,22 @@
     display: none;
   }
 
-  /* 4. After-globe CTA row: no negative overlap — the hero section now
-        grows to natural height so no pull-up margin is needed. */
-  .home-hero-after-globe {
+  /* 4. Three-button group sits in-flow under the scroll cue, still inside
+        #home-hero. This removes the pin-spacer (empty 170vh) that previously
+        sat between the globe and LET'S PLAY. */
+  #home-hero .home-hero-after-globe {
     position: relative;
     z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.45rem;
     width: 100%;
     max-width: 100%;
-    margin-top: 0;              /* was clamp(-8.125rem, -32vw, -6.25rem) */
-    padding: 1.75rem 1.15rem 2.75rem;
-  }
-
-  .home-hero-after-globe .home-hero-scroll-cue {
-    display: flex;
-    position: static;
-    left: auto;
-    bottom: auto;
-    transform: none;
-    z-index: auto;
-    margin-top: 0.15rem;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0.05rem 1.15rem 0;
+    flex-shrink: 0;
   }
 
   .home-hero-after-globe .home-hero-cta {
@@ -293,15 +311,15 @@
 
   .home-hero-after-globe__primary {
     max-width: 22.5rem;
-    min-height: 3.15rem;
+    min-height: 2.55rem;
   }
 
   .home-hero-after-globe__secondary {
     width: auto;
     max-width: 14.5rem;
     min-width: 11.5rem;
-    min-height: 2.45rem;
-    padding: 0.55rem 1.35rem;
+    min-height: 2.05rem;
+    padding: 0.45rem 1.35rem;
     font-size: 0.78rem;
   }
 

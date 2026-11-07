@@ -1,111 +1,54 @@
-import { Image as ImageIcon, Map as MapIcon, Music, Video } from "lucide-react";
+import { Music, Video } from "lucide-react";
 
-import { cn } from "@/lib/utils";
-import { coverArt, patternLayer, patternSize } from "@/features/play/lib/coverArt";
+import { FlagTile, QuizImage } from "./QuizImage";
 import type { QuestionMedia } from "../data/types";
-
-function ProceduralPlate({
-  art,
-  className,
-  children,
-}: {
-  art: string;
-  className?: string;
-  children?: React.ReactNode;
-}) {
-  const cover = coverArt(art);
-  return (
-    <div
-      className={cn("relative w-full overflow-hidden rounded-2xl", className)}
-      style={{ backgroundImage: `linear-gradient(150deg, ${cover.from}, ${cover.to})` }}
-    >
-      <span
-        aria-hidden
-        className="absolute inset-0"
-        style={{
-          backgroundImage: patternLayer(cover.pattern),
-          backgroundSize: patternSize(cover.pattern),
-        }}
-      />
-      {children}
-    </div>
-  );
-}
 
 /**
  * Renders the media attached to a question card.
  *
- * Images, illustrations and maps use procedural art so the engine ships with
- * zero image bytes; audio and video are labelled placeholders for the media
- * pipeline. Flags use emoji glyphs.
+ * Flags, photographs, illustrations and maps use real images. Audio and video
+ * clues keep a labelled surface until a media file is attached.
  */
 export function QuestionMediaView({ media }: { media: QuestionMedia }) {
   if (media.kind === "flag") {
-    const units = Array.from(media.glyph).length;
-    const rebusLike = units > 4 || /[A-Za-z0-9+]/.test(media.glyph);
-    const glyphSize =
-      units <= 4
-        ? "text-[4.5rem] sm:text-[5.5rem]"
-        : units <= 10
-          ? "text-[2.35rem] sm:text-[3rem]"
-          : "text-[1.65rem] sm:text-[2rem]";
     return (
-      <figure className="flex flex-col items-center gap-3">
-        <div
-          className={cn(
-            "game-surface-raised flex w-full items-center justify-center rounded-2xl px-4 py-8",
-            rebusLike ? "max-w-xl" : "max-w-sm",
-          )}
-        >
-          <span
-            className={cn("text-center leading-none [overflow-wrap:anywhere]", glyphSize)}
-            role="img"
-            aria-label={media.caption ?? (rebusLike ? "Rebus clue" : "Flag")}
-          >
-            {media.glyph}
-          </span>
-        </div>
-        {media.caption ? (
-          <figcaption className="text-[0.75rem] text-foreground/50">{media.caption}</figcaption>
-        ) : null}
-      </figure>
+      <QuizImage
+        src={"art" in media ? media.art : undefined}
+        alt={media.caption ?? "National flag"}
+        caption={media.caption}
+        flagHint={{ glyph: media.glyph, art: "art" in media ? media.art : undefined }}
+        className="mx-auto max-w-lg"
+        imgClassName="max-h-[18rem] object-contain p-4 sm:max-h-[22rem]"
+      />
     );
   }
 
   if (media.kind === "audio" || media.kind === "video") {
     const Icon = media.kind === "audio" ? Music : Video;
     return (
-      <div className="game-surface-raised flex items-center gap-3 rounded-2xl px-4 py-5">
-        <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-bronze/30 bg-bronze/10 text-bronze-glow">
+      <div className="flex items-center gap-3 rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] px-4 py-5">
+        <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-[#E2E8F0] bg-white text-[#2b74c4]">
           <Icon className="h-5 w-5" strokeWidth={1.7} aria-hidden />
         </span>
         <div>
-          <p className="text-[0.85rem] font-semibold text-foreground/85">
+          <p className="text-[0.85rem] font-semibold text-[#111827]">
             {media.kind === "audio" ? "Audio clue" : "Video clue"}
           </p>
-          <p className="text-[0.75rem] text-foreground/50">
-            {media.caption ?? "Media playback arrives with the content pipeline."}
-          </p>
+          <p className="text-[0.75rem] text-[#64748B]">{media.caption ?? "No media file attached."}</p>
         </div>
       </div>
     );
   }
 
-  const Icon = media.kind === "map" ? MapIcon : ImageIcon;
-
   return (
-    <figure className="flex flex-col gap-3">
-      <ProceduralPlate art={media.art} className="aspect-[16/9]">
-        <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[oklch(0.1_0.004_60/0.92)] to-transparent" />
-        <span className="absolute bottom-3 left-3 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-bronze/40 bg-[oklch(0.12_0.006_60/0.85)] text-bronze-glow">
-          <Icon className="h-5 w-5" strokeWidth={1.6} aria-hidden />
-        </span>
-      </ProceduralPlate>
-      <figcaption className="text-[0.75rem] text-foreground/50">
-        {media.caption ?? "Reference imagery placeholder."}
-      </figcaption>
-    </figure>
+    <QuizImage
+      src={media.art}
+      alt={media.caption ?? (media.kind === "map" ? "Map" : "Question image")}
+      caption={media.caption}
+      className="mx-auto max-w-3xl"
+      imgClassName={media.kind === "map" ? "max-h-[24rem] object-contain bg-[#e8eef5]" : "max-h-[22rem] object-cover"}
+    />
   );
 }
 
-export { ProceduralPlate };
+export { FlagTile };

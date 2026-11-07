@@ -20,6 +20,7 @@ export type Quiz = {
   popularity: number;
   /** Days since publish — drives the "Newest" sort. */
   ageDays: number;
+  description?: string;
   /** 0-100, only present for in-progress runs. */
   progress?: number;
 };

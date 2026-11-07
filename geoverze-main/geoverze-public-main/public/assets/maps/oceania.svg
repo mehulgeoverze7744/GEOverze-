@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Map of Australia and Oceania">
+  <rect width="100" height="100" fill="#e8eef5"/>
+  <path fill="#c5d4e4" d="M4 8h92v84H4z"/>
+  <path fill="#f7fafc" stroke="#7f93a8" stroke-width="0.7" d="M22 28c14-10 34-12 50-4 8 4 14 12 16 22 2 8-2 16-10 22-7 5-16 6-24 6-10 0-18 4-22 10-2 0-8-4-10-12-3-10-4-22 0-32 2-6 4-10 0-12z"/>
+  <ellipse cx="66" cy="90" rx="6" ry="3.2" fill="#f7fafc" stroke="#7f93a8" stroke-width="0.6"/>
+</svg>

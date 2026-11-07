@@ -1235,6 +1235,10 @@ export type Database = {
       }
     }
     Functions: {
+      assign_random_quiz: {
+        Args: { p_category_id: string; p_difficulty: string }
+        Returns: Json
+      }
       compute_credit_expires_at: {
         Args: { _earned_at: string; _plan_tier: string }
         Returns: string

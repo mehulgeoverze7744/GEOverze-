@@ -487,6 +487,8 @@ body:has(#lets-play-page) footer .mt-16.border-t {
   --pmc-muted: #6b7280;
   --pmc-line: #e5e7eb;
   --pmc-ice: #dceaf7;
+  appearance: none;
+  -webkit-appearance: none;
   box-sizing: border-box;
   display: flex;
   width: min(100%, 20.5rem);
@@ -495,6 +497,7 @@ body:has(#lets-play-page) footer .mt-16.border-t {
   align-items: center;
   justify-content: center;
   gap: 0.42rem;
+  margin: 0;
   padding: 13% 14% 12%;
   overflow: hidden;
   border: 1px solid var(--pmc-line);
@@ -504,7 +507,11 @@ body:has(#lets-play-page) footer .mt-16.border-t {
   box-shadow: 0 14px 32px -22px rgb(17 17 17 / 0.22);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
+  color: inherit;
+  font: inherit;
   text-align: center;
+  cursor: pointer;
+  touch-action: manipulation;
 }
 
 #lets-play-page .play-mode-circle::before,
@@ -551,6 +558,7 @@ body:has(#lets-play-page) footer .mt-16.border-t {
 }
 
 #lets-play-page .play-mode-circle__title {
+  display: block;
   margin: 0.1rem 0 0;
   max-width: 90%;
   color: var(--pmc-ink);
@@ -562,6 +570,7 @@ body:has(#lets-play-page) footer .mt-16.border-t {
 }
 
 #lets-play-page .play-mode-circle__desc {
+  display: block;
   margin: 0;
   max-width: 86%;
   color: var(--pmc-muted);
@@ -592,6 +601,7 @@ body:has(#lets-play-page) footer .mt-16.border-t {
   line-height: 1.25;
   text-align: center;
   text-transform: uppercase;
+  pointer-events: none;
   transition:
     background-color 160ms ease,
     color 160ms ease,
@@ -603,17 +613,17 @@ body:has(#lets-play-page) footer .mt-16.border-t {
   max-width: 78%;
 }
 
-#lets-play-page .play-mode-circle__cta:hover,
-#lets-play-page .play-mode-circle__cta:focus-visible {
+#lets-play-page .play-mode-circle:hover .play-mode-circle__cta,
+#lets-play-page .play-mode-circle:focus-visible .play-mode-circle__cta {
   background: #e5e7eb;
   border-color: #e5e7eb;
   color: #111111;
   box-shadow: none;
 }
 
-#lets-play-page .play-mode-circle__cta:focus-visible {
+#lets-play-page .play-mode-circle:focus-visible {
   outline: 2px solid rgb(17 17 17 / 0.28);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
 @media (max-width: 719px) {
@@ -1193,4 +1203,59 @@ body:has(#lets-play-page) footer .mt-16.border-t {
 #lets-play-page select option {
   background-color: #ffffff;
   color: #111827;
+}
+
+/*
+ * Persistent gameplay back control. Fixed so canvases, sticky headers and
+ * match overlays cannot cover it. Sits below the site nav, above game chrome.
+ */
+#lets-play-page .game-back-button {
+  position: fixed;
+  top: calc(var(--nav-height) + env(safe-area-inset-top, 0px) + 0.45rem);
+  left: calc(0.7rem + env(safe-area-inset-left, 0px));
+  z-index: 80;
+  display: inline-flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  background: #ffffff;
+  background-image: none;
+  color: #111827;
+  box-shadow: 0 8px 20px -14px rgb(17 24 39 / 0.55);
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+#lets-play-page .game-back-button svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+#lets-play-page .game-back-button:hover,
+#lets-play-page .game-back-button:focus-visible {
+  border-color: #2b74c4;
+  color: #2b74c4;
+  background: #ffffff;
+}
+
+#lets-play-page .game-back-button:focus-visible {
+  outline: 2px solid rgb(43 116 196 / 0.4);
+  outline-offset: 2px;
+}
+
+@media (max-width: 430px) {
+  #lets-play-page .game-back-button {
+    top: calc(var(--nav-height) + env(safe-area-inset-top, 0px) + 0.35rem);
+    left: calc(0.55rem + env(safe-area-inset-left, 0px));
+  }
 }

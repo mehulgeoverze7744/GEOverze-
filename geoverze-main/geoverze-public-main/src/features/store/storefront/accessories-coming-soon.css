@@ -1,0 +1,63 @@
+/*
+ * Accessories category lookbook (/geostore/category/accessories) only.
+ * Does not match T-shirts, hoodies, browse, or product cards elsewhere.
+ */
+
+#gvrze-accessories-coming-soon .gvrze-editorial-card > .relative.min-h-0 > img {
+  filter: blur(12px);
+  transform: scale(1.14);
+  transform-origin: center;
+  transition: none;
+}
+
+#gvrze-accessories-coming-soon .gvrze-editorial-card:hover > .relative.min-h-0 > img,
+#gvrze-accessories-coming-soon .gvrze-editorial-card.group:hover > .relative.min-h-0 > img {
+  transform: scale(1.14);
+}
+
+#gvrze-accessories-coming-soon .gvrze-editorial-card > .relative.min-h-0::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgb(12 14 18 / 0.34);
+  pointer-events: none;
+}
+
+#gvrze-accessories-coming-soon .gvrze-editorial-card > .relative.min-h-0::after {
+  content: "COMING SOON";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  padding: 0.75rem 1rem;
+  color: #ffffff;
+  font-family: var(--sf-font-ui), Inter, system-ui, sans-serif;
+  font-size: clamp(0.75rem, 1.6vw, 1.05rem);
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;
+  text-align: center;
+  line-height: 1.2;
+  text-shadow: 0 1px 10px rgb(0 0 0 / 0.28);
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (min-width: 1024px) {
+  #gvrze-accessories-coming-soon .gvrze-editorial-card:first-child > .relative.min-h-0::after {
+    font-size: 1.2rem;
+    letter-spacing: 0.4em;
+    text-indent: 0.4em;
+  }
+}
+
+#gvrze-accessories-coming-soon .gvrze-editorial-card button[aria-label^="Add"] {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+#gvrze-accessories-coming-soon .gvrze-editorial-card button[aria-label^="Add"]:hover {
+  background-color: #ffffff;
+}

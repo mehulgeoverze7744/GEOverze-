@@ -20,6 +20,7 @@ export function AnswerCard({
   media,
   layout = "row",
   className,
+  ariaLabel,
 }: {
   label: string;
   state?: AnswerState;
@@ -29,6 +30,7 @@ export function AnswerCard({
   media?: ReactNode;
   layout?: "row" | "tile";
   className?: string;
+  ariaLabel?: string;
 }) {
   const statusLabel =
     state === "correct" ? "Correct answer" : state === "incorrect" ? "Incorrect answer" : undefined;
@@ -38,6 +40,7 @@ export function AnswerCard({
       type="button"
       onClick={onClick}
       disabled={disabled}
+      aria-label={ariaLabel}
       aria-pressed={state === "selected" || state === "correct" || state === "incorrect"}
       className={cn(
         "group relative flex w-full items-center gap-4 rounded-2xl border p-4 text-left transition-[transform,background-color,border-color] motion-snap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2b74c4]/40",
@@ -64,7 +67,9 @@ export function AnswerCard({
         </span>
       ) : null}
 
-      <span className="flex-1 text-[0.95rem] font-medium leading-snug">{label}</span>
+      {label ? (
+        <span className="flex-1 text-[0.95rem] font-medium leading-snug">{label}</span>
+      ) : null}
 
       {state === "correct" ? (
         <Check className="h-5 w-5 shrink-0" strokeWidth={2.2} aria-hidden />
