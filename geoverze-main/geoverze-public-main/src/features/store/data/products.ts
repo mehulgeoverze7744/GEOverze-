@@ -200,6 +200,56 @@ export const PRODUCTS: readonly Product[] = [
     options: [APPAREL_SIZES],
     tags: ["apparel", "continents"],
   }),
+  // ── Storefront signature tees (product detail uses StorefrontTeeProductPage) ──
+  // These entries register the tees in the category shelf so they appear at
+  // /geostore/category/tshirts. The product detail page is rendered by the
+  // dedicated storefront tee architecture (clean-white design, colour swatches,
+  // gallery strip). Price is in minor units for catalogue sorting; the actual
+  // display price ("Rs. 2,999") comes from storefront-product-data.ts.
+  make({
+    slug: "cherry-blossom-tshirt",
+    name: "Cherry Blossom Oversized Graphic T-Shirt",
+    tagline: "Geographic exploration meets contemporary streetwear.",
+    description:
+      "Inspired by the beauty of cherry blossoms and the spirit of exploration. Features an abstract map-inspired graphic, compass elements, coordinates, and signature GVRZE branding.",
+    category: "tshirts",
+    price: 299_900,
+    rating: 4.9,
+    reviews: 64,
+    popularity: 90,
+    bestSeller: true,
+    options: [APPAREL_SIZES],
+    tags: ["apparel", "graphic", "oversized", "bestseller"],
+  }),
+  make({
+    slug: "new-age-tshirt",
+    name: "New Age T-Shirt",
+    tagline: "Cosmic exploration and celestial navigation.",
+    description:
+      "A statement piece inspired by celestial navigation and contemporary streetwear. Intricate multicolour celestial artwork across the sleeve, with a minimal star emblem and clean GVRZE chest wordmark.",
+    category: "tshirts",
+    price: 299_900,
+    rating: 4.8,
+    reviews: 48,
+    popularity: 85,
+    options: [APPAREL_SIZES],
+    tags: ["apparel", "graphic", "celestial"],
+  }),
+  make({
+    slug: "golden-arc-tshirt",
+    name: "Golden Arc T-Shirt",
+    tagline: "Celestial geometry and planetary exploration.",
+    description:
+      "A statement piece inspired by celestial geometry and cosmic exploration. Planetary graphic composition with orbital lines and the signature GVRZE wordmark.",
+    category: "tshirts",
+    price: 299_900,
+    rating: 4.8,
+    reviews: 36,
+    popularity: 82,
+    options: [APPAREL_SIZES],
+    tags: ["apparel", "graphic", "celestial"],
+  }),
+
   make({
     slug: everyPointHoodieMerch?.id ?? "hoodie-every-point-has-a-story",
     name: everyPointHoodieMerch?.title ?? "EVERY POINT HAS A STORY",

@@ -95,11 +95,16 @@ function merchToEditorial(
 /** Converts a `Product` record to the `EditorialItem` shape. */
 function productToEditorial(p: Product): EditorialItem {
   const img = productImageForSlug(p.slug);
+  // Storefront signature tees carry their own display priceLabel (e.g. "Rs. 2,999").
+  // Use it directly so the category card shows the correct currency instead of USD.
+  const tee = storefrontTeeById(p.slug);
   return {
     id: p.id,
     slug: p.slug,
     name: p.name,
-    priceLabel: p.price !== null ? money(p.price) : `${p.credits ?? 0} credits`,
+    priceLabel:
+      tee?.priceLabel ??
+      (p.price !== null ? money(p.price) : `${p.credits ?? 0} credits`),
     image: img?.src ?? "",
     alt: img?.alt ?? p.name,
   };
