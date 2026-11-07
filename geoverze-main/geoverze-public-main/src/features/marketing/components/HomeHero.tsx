@@ -245,21 +245,21 @@ export function HomeHero() {
     </>
   );
 
+  /**
+   * Mobile-only CTA row that sits below the hero section.
+   *
+   * On desktop (≥768px) this entire div is hidden via CSS (.home-hero-after-globe { display:none }).
+   *
+   * LET'S PLAY and Watch Demo have been removed here — they appear in the
+   * page sections below (WhyGeoverze / Ecosystem) so showing them again
+   * immediately after the hero would duplicate the calls-to-action.
+   *
+   * The scroll-cue button that previously lived here has moved inside the
+   * hero section itself (see home-hero.css: #home-hero .home-hero-scroll-cue
+   * is made a flex item so it appears directly below the rewards card).
+   */
   const afterGlobeCtas = (
     <div className="home-hero-after-globe">
-      <GeoButton
-        asChild
-        variant="solid"
-        size="lg"
-        className="home-hero-cta home-hero-after-globe__primary w-full px-8 font-bold uppercase tracking-[0.2em]"
-      >
-        <Link
-          to="/play"
-          className="flex flex-col items-center leading-none font-cta text-[1.37rem]"
-        >
-          <span>LET'S PLAY</span>
-        </Link>
-      </GeoButton>
       <GeoButton
         asChild
         variant="solid"
@@ -273,23 +273,6 @@ export function HomeHero() {
           <span>GSTORE</span>
         </Link>
       </GeoButton>
-      <GeoButton
-        variant="solid"
-        size="lg"
-        onClick={() => setDemoOpen(true)}
-        className="home-hero-cta home-hero-after-globe__secondary font-bold uppercase tracking-[0.2em]"
-      >
-        <span className="font-cta">WATCH DEMO</span>
-      </GeoButton>
-      <button
-        type="button"
-        className="home-hero-scroll-cue home-hero-scroll-cue--follow"
-        aria-label="Scroll the experience"
-        onClick={handleScrollTheExperience}
-        onKeyDown={handleScrollCueKeyDown}
-      >
-        {scrollCueContent}
-      </button>
     </div>
   );
 

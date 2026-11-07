@@ -205,16 +205,26 @@
 
 /* Mobile homepage hero — stacked layout (phone ≤ 767px)
    ─────────────────────────────────────────────────────────────────────────
-   On phones the hero becomes a flex column:
-     [ navbar gap ]
-     [ hero intro text   ]   ← in-flow, starts at top
-     [ rewards card      ]   ← in-flow, below text, pushed to bottom
-   Absolutely-positioned children (globe, bloom, panel3, in-hero cue)
-   stay absolute and don't participate in the flex flow.
+   Flex-column section so content stacks without overlap:
+
+     [ navbar gap (padding-top) ]
+     [ hero intro text          ]   in-flow flex item, top
+     [ ← margin-top: auto gap → ]
+     [ rewards card             ]   in-flow flex item, compact
+     [ scroll cue               ]   in-flow flex item, immediately below card
+     ─────────────────────────── section bottom = 100dvh ───────────────────
+     [ GSTORE button            ]   afterGlobeCtas (only CTA kept)
+
+   Absolutely-positioned children (globe, bloom gradient, panel3 expedition)
+   remain absolute and do not participate in the flex flow.
+
+   LET'S PLAY and Watch Demo were removed from afterGlobeCtas (they were
+   rendered again in the deeper page sections → duplicates).  The scroll cue
+   has been moved inside the hero section so it sits directly below the card.
    ──────────────────────────────────────────────────────────────────────── */
 @media (max-width: 767px) {
   /* 1. Section: auto height (at least full viewport), flex-column.
-        overflow: hidden keeps the globe and exit-animation drift clipped. */
+        overflow: hidden keeps the globe and horizontal exit-animation clipped. */
   #home-hero {
     height: auto;
     min-height: 100dvh;
@@ -224,8 +234,7 @@
     padding-top: var(--nav-height); /* clear fixed navbar for flex items */
   }
 
-  /* 2. Hero intro text: in normal document flow, aligned to top.
-        Removes the absolute centering that caused overlap on small phones. */
+  /* 2. Hero intro text: in normal document flow, aligned to top. */
   #home-hero .home-hero-intro {
     position: relative;      /* override Tailwind absolute utility */
     top: auto;
@@ -235,7 +244,7 @@
     width: 100%;
     padding-inline: 1.25rem; /* replaces Tailwind left-5 right-5 */
     padding-top: 1.35rem;
-    padding-bottom: 1.75rem; /* gap between text and card */
+    padding-bottom: 1.5rem;  /* gap between text block and card */
     justify-content: flex-start;
     overflow-wrap: anywhere;
     min-height: 0;
@@ -246,14 +255,26 @@
     display: none;
   }
 
-  /* 3. In-hero scroll cue: hidden on mobile. With the stacked layout the
-        card is always visible; the after-globe section has its own cue. */
+  /* 3. In-hero scroll cue: becomes an in-flow flex item immediately below
+        the rewards card (see rewards-card.css for the card's position).
+        CSS ID-selector (#home-hero) beats Tailwind class specificity, so
+        Tailwind's `absolute`, `bottom-8`, `left-1/2`, `-translate-x-1/2`,
+        and `z-20` utilities are all safely overridden here. */
   .home-hero-scroll-cue {
-    display: none;
+    display: none; /* hide desktop standalone cue by default */
   }
 
   #home-hero .home-hero-scroll-cue {
-    display: none;
+    display: flex;
+    position: relative;    /* override Tailwind `absolute` */
+    left: auto;            /* override Tailwind `left-1/2` */
+    bottom: auto;          /* override Tailwind `bottom-8` */
+    transform: none;       /* override Tailwind `-translate-x-1/2` */
+    z-index: auto;         /* override Tailwind `z-20` */
+    align-self: center;    /* center horizontally in the flex column */
+    margin-top: 0.75rem;   /* breathing room above cue, below card */
+    margin-bottom: 0.85rem;
+    flex-shrink: 0;
   }
 
   #home-hero .home-hero-expedition {
@@ -261,8 +282,9 @@
     padding-inline: 0.15rem;
   }
 
-  /* 4. After-globe CTA row: no negative overlap — the hero section now
-        grows to natural height so no pull-up margin is needed. */
+  /* 4. After-globe section: LET'S PLAY and Watch Demo removed from JSX;
+        only the GSTORE button remains. Tight padding so it sits cleanly
+        below the scroll cue without excessive whitespace. */
   .home-hero-after-globe {
     position: relative;
     z-index: 2;
@@ -273,17 +295,7 @@
     width: 100%;
     max-width: 100%;
     margin-top: 0;              /* was clamp(-8.125rem, -32vw, -6.25rem) */
-    padding: 1.75rem 1.15rem 2.75rem;
-  }
-
-  .home-hero-after-globe .home-hero-scroll-cue {
-    display: flex;
-    position: static;
-    left: auto;
-    bottom: auto;
-    transform: none;
-    z-index: auto;
-    margin-top: 0.15rem;
+    padding: 1.25rem 1.15rem 2rem;
   }
 
   .home-hero-after-globe .home-hero-cta {
@@ -292,20 +304,7 @@
 
   .home-hero-after-globe__primary {
     max-width: 22.5rem;
-    min-height: 3.15rem;
-  }
-
-  .home-hero-after-globe__secondary {
-    width: auto;
-    max-width: 14.5rem;
-    min-width: 11.5rem;
-    min-height: 2.45rem;
-    padding: 0.55rem 1.35rem;
-    font-size: 0.78rem;
-  }
-
-  .home-hero-after-globe__secondary span {
-    font-size: 0.78rem;
+    min-height: 3rem;
   }
 }
 
