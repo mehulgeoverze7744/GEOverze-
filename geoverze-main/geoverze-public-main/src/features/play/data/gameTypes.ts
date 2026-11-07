@@ -26,8 +26,10 @@ export const GAME_TYPES: readonly GameType[] = [
     emoji: "🎨",
     art: "draw-guess",
     tags: ["Party", "Live"],
+    // Vintage world map covered in colourful push-pins — authentic explorer's desk, real photography
     imageSrc: "/assets/play/draw-and-guess.jpg",
-    imageAlt: "Sketchbook world map with flags and landmarks for Draw & Guess",
+    imageAlt: "Vintage world map covered in colourful push-pins on an explorer's desk",
+    objectPosition: "center center",
     to: "/play/draw-guess",
   },
   {
@@ -37,9 +39,10 @@ export const GAME_TYPES: readonly GameType[] = [
     emoji: "🕵️‍♂️",
     art: "geography-imposter",
     tags: ["Social", "Deduction"],
+    // Real globe on a wooden desk, warm bokeh lighting — genuine photographic still life
     imageSrc: "/assets/play/geography-imposter-thumbnail.jpg",
-    imageAlt: "Vintage globe, ivory mask, compass, and maps for GEOsus",
-    objectPosition: "center 46%",
+    imageAlt: "Antique globe on a wooden desk with warm ambient lighting",
+    objectPosition: "center 42%",
     to: "/play/imposter",
   },
   {
@@ -49,8 +52,10 @@ export const GAME_TYPES: readonly GameType[] = [
     emoji: "🤩",
     art: "emoji-fun",
     tags: ["Fast", "Visual"],
+    // Colourful Lego bricks — bright primary colours conveying playful visual fun, real photography
     imageSrc: "/assets/play/emoji-and-fun-quizzes.jpg",
-    imageAlt: "Globe surrounded by emoji and geography stickers for Emoji & Fun Quizzes",
+    imageAlt: "Colourful assortment of bright building blocks representing playful visual quizzes",
+    objectPosition: "center center",
     to: "/play/search",
     search: { q: undefined, category: "emoji-fun" },
   },
@@ -62,9 +67,10 @@ export const GAME_TYPES: readonly GameType[] = [
     emoji: "🌍",
     art: "educational-quizzes",
     tags: ["Classic", "Catalog"],
+    // Open atlas with handwritten notes and a full bookshelf behind — real educational photography
     imageSrc: "/assets/play/educational-quizzes.jpg",
-    imageAlt: "Desk globe, atlas, and compass for Educational Quizzes",
-    objectPosition: "center 42%",
+    imageAlt: "Open atlas and handwritten notebook on a desk with a bookshelf in the background",
+    objectPosition: "center 55%",
     to: "/play/catalogue",
   },
 ];
