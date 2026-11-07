@@ -28,9 +28,9 @@ export const SF_ASSETS = {
     height: 1338,
   },
   bestSellerGoldenArc: {
-    src: `${BASE}/best-sellers/golden-arc-tshirt.webp`,
-    width: 1136,
-    height: 1384,
+    src: `${BASE}/best-sellers/golden-arc/ga-5.jpg`,
+    width: 819,
+    height: 1024,
   },
   bestSellerNewAge: {
     src: `${BASE}/best-sellers/new-age/na-2.jpg`,

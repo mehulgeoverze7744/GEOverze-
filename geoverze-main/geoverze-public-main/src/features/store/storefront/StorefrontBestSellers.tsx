@@ -56,20 +56,12 @@ const BEST_SELLERS: readonly BestSeller[] = [
   {
     name: "Golden Arc T-Shirt",
     price: "Rs. 2,999",
-    tone: "#8c624a",
+    tone: "#8cc8e8",
     image: SF_ASSETS.bestSellerGoldenArc,
-    alt: "Golden Arc T-Shirt, front view",
+    alt: "Golden Arc T-Shirt in Skyblue — model back view showing celestial planetary graphic",
     slug: "golden-arc-tshirt",
-    // Figma: frame y 18, 324 x 388, clipped. Photo 342 x 417, rotated -3.55deg.
-    frame: { left: "0%", top: "4.423%", width: "100%", height: "95.332%" },
-    imageStyle: {
-      left: "-3.086%",
-      top: "-1.804%",
-      width: "105.556%",
-      height: "107.474%",
-      transform: "rotate(-3.55deg)",
-    },
-    clip: true,
+    // Model portrait shot — simple cover fill, no rotation needed.
+    frame: { left: "0%", top: "0%", width: "100%", height: "100%" },
   },
   {
     name: "New Age T-Shirt",
