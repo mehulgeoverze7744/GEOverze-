@@ -7,7 +7,11 @@
  */
 import { merchProductById } from "@/features/marketing/data/geostoreMerch";
 
-import { STOREFRONT_TEES, type StorefrontTeeProduct } from "../storefront/storefront-product-data";
+import {
+  STOREFRONT_TEE_CREDIT_PRICE,
+  STOREFRONT_TEES,
+  type StorefrontTeeProduct,
+} from "../storefront/storefront-product-data";
 
 import { isPurchaseLockedProduct, isRetiredProductSlug } from "./catalogAvailability";
 import { categoryById, type StoreCategoryId, type StoreGroupId } from "./taxonomy";
@@ -167,6 +171,7 @@ function storefrontTeeDraft(tee: StorefrontTeeProduct): Draft {
     description: tee.description,
     category: "tshirts",
     price: 299_900,
+    credits: STOREFRONT_TEE_CREDIT_PRICE,
     rating: rank?.rating ?? 4.8,
     reviews: rank?.reviews ?? 48,
     popularity: rank?.popularity ?? 80,
@@ -1011,7 +1016,7 @@ export const PRODUCTS: readonly Product[] = [
       "A paired midnight set in studio light — claimed with credits, finished in the same charcoal-and-bronze language as the rest of Gstore.",
     category: "prizes",
     price: null,
-    credits: 7_000,
+    credits: 15_000,
     rating: 4.9,
     reviews: 12,
     popularity: 91,

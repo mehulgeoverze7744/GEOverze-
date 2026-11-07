@@ -55,7 +55,9 @@ export function mergeServerCatalogue(
 
     return {
       ...presentation,
-      credits: row.credit_price,
+      // iPhone Duo credit price is defined in the static catalogue (15,000).
+      // Other rewards keep the server-authoritative credit_price.
+      credits: row.slug === "iphone-duo" ? presentation.credits : row.credit_price,
       price: null,
       mode: "credits",
       stock: stockFromServer(row.active, presentation.stock),

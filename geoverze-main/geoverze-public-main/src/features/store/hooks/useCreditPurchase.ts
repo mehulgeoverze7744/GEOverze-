@@ -7,6 +7,7 @@ import { refreshProgression } from "@/lib/supabase/auth-sync";
 import { selectUser, useAuthStore } from "@/stores/authStore";
 import { useProgressionStore } from "@/stores/progressionStore";
 
+import { productBySlug } from "../data/products";
 import {
   CreditPurchaseError,
   placeCreditOrder,
@@ -49,6 +50,17 @@ export function useCreditPurchase(): UseCreditPurchaseResult {
       }
 
       if (purchasingSlug) return null;
+
+      if (target.slug === "iphone-duo") {
+        const required = productBySlug("iphone-duo")?.credits ?? 15_000;
+        const balance = useProgressionStore.getState().player.credits;
+        if (balance < required) {
+          toast.error("Not enough credits", {
+            description: "You do not have enough credits for this reward.",
+          });
+          return null;
+        }
+      }
 
       setPurchasingSlug(target.slug);
 

@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import type { CSSProperties } from "react";
 
 import { SF_ASSETS } from "./storefront-assets";
+import { STOREFRONT_TEE_PRICE_LABEL } from "./storefront-product-data";
 import { ExploreMoreLink, SF_SHELL, SF_UI_FONT } from "./storefront-ui";
 
 type BestSeller = {
@@ -40,7 +41,7 @@ type BestSeller = {
 const BEST_SELLERS: readonly BestSeller[] = [
   {
     name: "Midnight Black T-Shirt",
-    price: "Rs. 2,999",
+    price: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#000000",
     image: SF_ASSETS.bestSellerMidnightBlack,
     alt: "Midnight Black T-Shirt, back view",
@@ -52,7 +53,7 @@ const BEST_SELLERS: readonly BestSeller[] = [
   },
   {
     name: "Cherry Blossom T-Shirt",
-    price: "Rs. 2,999",
+    price: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#e8729a",
     image: SF_ASSETS.bestSellerCherryBlossom,
     alt: "Cherry Blossom T-Shirt in Cherry Blossom Pink — model back view showing full GVRZE graphic",
@@ -62,7 +63,7 @@ const BEST_SELLERS: readonly BestSeller[] = [
   },
   {
     name: "Golden Arc T-Shirt",
-    price: "Rs. 2,999",
+    price: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#8cc8e8",
     image: SF_ASSETS.bestSellerGoldenArc,
     alt: "Golden Arc T-Shirt in Skyblue — back view showing celestial globe graphic and GVRZE wordmark",
@@ -72,7 +73,7 @@ const BEST_SELLERS: readonly BestSeller[] = [
   },
   {
     name: "New Age T-Shirt",
-    price: "Rs. 2,999",
+    price: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#6c0036",
     image: SF_ASSETS.bestSellerNewAge,
     alt: "New Age T-Shirt in Rose Wine Burgundy — front view showing celestial sleeve artwork and GVRZE wordmark",

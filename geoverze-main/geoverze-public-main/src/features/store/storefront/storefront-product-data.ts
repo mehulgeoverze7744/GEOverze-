@@ -39,6 +39,12 @@ export type StorefrontTeeColorVariant = {
   gallery: { src: string; alt: string }[];
 };
 
+/** Credit redemption price shown beside the rupee price on every live T-shirt. */
+export const STOREFRONT_TEE_CREDIT_PRICE = 499;
+
+/** Existing rupee label plus the credit option — same string used on every tee surface. */
+export const STOREFRONT_TEE_PRICE_LABEL = "Rs. 2,999 or 499 credits";
+
 export type StorefrontTeeProduct = {
   /** Route slug — also the DOM key. */
   id: string;
@@ -94,7 +100,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     id: "midnight-black-tshirt",
     name: "Midnight Black T-Shirt",
     categoryLabel: "T-SHIRT",
-    priceLabel: "Rs. 2,999",
+    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#000000",
     image: {
       src: `${BASE}/midnight-black-tshirt.webp`,
@@ -112,7 +118,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     id: "cherry-blossom-tshirt",
     name: "Cherry Blossom Oversized Graphic T-Shirt",
     categoryLabel: "T-SHIRT",
-    priceLabel: "Rs. 2,999",
+    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#e29ecc",
     // Default card image = Cherry Blossom Pink primary (cb-2.jpg).
     // The product detail page gallery is driven by `colors` below.
@@ -288,7 +294,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     id: "golden-arc-tshirt",
     name: "Golden Arc T-Shirt",
     categoryLabel: "T-SHIRT",
-    priceLabel: "Rs. 2,999",
+    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#8cc8e8",
     // Default card image = Skyblue front shot (ga-1.jpg).
     // Gallery is driven by the `colors` array below.
@@ -399,7 +405,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     id: "new-age-tshirt",
     name: "New Age T-Shirt",
     categoryLabel: "T-SHIRT",
-    priceLabel: "Rs. 2,999",
+    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#6c0036",
     // Default card image = Rose Wine Burgundy front shot (na-1.jpg).
     // Gallery is driven by the `colors` array below.

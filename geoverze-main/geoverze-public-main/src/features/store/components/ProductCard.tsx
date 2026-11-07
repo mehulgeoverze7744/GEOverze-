@@ -9,6 +9,7 @@ import { useCartStore } from "@/stores/cartStore";
 
 import { ComingSoonImageOverlay } from "../storefront/ComingSoonImageOverlay";
 import { ComingSoonLockChip } from "./ComingSoonLockChip";
+import { OwnedBadge } from "./OwnedBadge";
 import { PriceTag } from "./PriceTag";
 import { RatingStars } from "./RatingStars";
 import { StockPill } from "./StockPill";
@@ -265,18 +266,7 @@ export function ProductCard({
             Limited
           </span>
         ) : null}
-        {owned ? (
-          <span
-            className={cn(
-              "rounded-full border px-2.5 py-0.5 text-[0.58rem] uppercase tracking-[0.18em]",
-              light
-                ? "border-[#E5E7EB] bg-[#FFFFFF] text-[#111111]"
-                : "border-bronze/50 bg-bronze/15 text-bronze-glow backdrop-blur",
-            )}
-          >
-            Owned
-          </span>
-        ) : null}
+        {owned ? <OwnedBadge /> : null}
       </div>
 
       <div

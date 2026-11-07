@@ -71,7 +71,7 @@ function storefrontTeeAsProduct(tee: StorefrontTeeProduct): Product {
     group: "merch",
     price: 37_00,
     compareAt: null,
-    credits: 300,
+    credits: 499,
     mode: "hybrid",
     rating: 4.8,
     reviews: 0,

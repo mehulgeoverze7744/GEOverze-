@@ -4,6 +4,7 @@ import { SectionContainer } from "@/components/shared/SectionContainer";
 
 import type { BillingCycle, PricingPlan } from "../data/plans";
 import { PlanCard } from "./PlanCard";
+import { PlanCardStack } from "./PlanCardStack";
 
 /** Four-tier membership grid driven by the server catalog. */
 export function PlanGrid({
@@ -34,21 +35,31 @@ export function PlanGrid({
         ) : null}
 
         {!error && loading ? (
-          <div className="pricing-tiers-grid">
-            {Array.from({ length: 4 }, (_, i) => (
-              <GlassCard key={i} className="h-[28rem] animate-pulse p-8" aria-hidden />
-            ))}
-          </div>
+          <>
+            <div className="pricing-tiers-grid hidden sm:grid">
+              {Array.from({ length: 4 }, (_, i) => (
+                <GlassCard key={i} className="h-[28rem] animate-pulse p-8" aria-hidden />
+              ))}
+            </div>
+            <div className="pricing-card-stack-skeleton sm:hidden" aria-hidden>
+              <GlassCard className="h-[22rem] animate-pulse p-6" />
+            </div>
+          </>
         ) : null}
 
         {!error && !loading && plans.length > 0 ? (
-          <div className="pricing-tiers-grid">
-            {plans.map((plan, i) => (
-              <AnimatedSection key={plan.id} delay={i * 90} className="h-full min-w-0">
-                <PlanCard plan={plan} cycle={cycle} />
-              </AnimatedSection>
-            ))}
-          </div>
+          <>
+            <div className="pricing-tiers-grid hidden sm:grid">
+              {plans.map((plan, i) => (
+                <AnimatedSection key={plan.id} delay={i * 90} className="h-full min-w-0">
+                  <PlanCard plan={plan} cycle={cycle} />
+                </AnimatedSection>
+              ))}
+            </div>
+            <div className="sm:hidden">
+              <PlanCardStack cycle={cycle} plans={plans} />
+            </div>
+          </>
         ) : null}
       </SectionContainer>
     </section>

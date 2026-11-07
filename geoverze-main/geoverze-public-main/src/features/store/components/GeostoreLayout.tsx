@@ -16,21 +16,28 @@ function isFashionStorefront(pathname: string) {
   );
 }
 
+function isRewardsPage(pathname: string) {
+  return pathname === "/geostore/rewards" || pathname.startsWith("/geostore/rewards/");
+}
+
 /** Shared Gstore shell — wishlist, cart, and search in one icon row. */
 export function GeostoreLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const fashion = isFashionStorefront(pathname);
+  const rewards = isRewardsPage(pathname);
 
   return (
     <>
-      <div
-        className="fixed z-40 flex flex-nowrap items-center justify-end gap-2 top-[calc(var(--nav-height)+0.35rem)] right-4 sm:right-6 md:right-10"
-        aria-label="Gstore actions"
-      >
-        <GeostoreWishlistButton />
-        <GeostoreCartButton />
-        <GeostoreSearchButton />
-      </div>
+      {rewards ? null : (
+        <div
+          className="fixed z-40 flex flex-nowrap items-center justify-end gap-2 top-[calc(var(--nav-height)+0.35rem)] right-4 sm:right-6 md:right-10"
+          aria-label="Gstore actions"
+        >
+          <GeostoreWishlistButton />
+          <GeostoreCartButton />
+          <GeostoreSearchButton />
+        </div>
+      )}
       {fashion ? (
         <Outlet />
       ) : (

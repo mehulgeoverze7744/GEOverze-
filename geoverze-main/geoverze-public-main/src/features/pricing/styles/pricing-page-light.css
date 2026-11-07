@@ -358,6 +358,32 @@ body:has(#gvrze-pricing-page) footer a:hover {
   background-color: #f4f6f8 !important;
 }
 
+@media (max-width: 639px) {
+  #gvrze-pricing-page .pricing-card-stack .pricing-plan-card {
+    background: #ffffff !important;
+    border-color: #e5e7eb !important;
+    box-shadow:
+      0 12px 28px -18px rgb(17 24 39 / 0.38),
+      0 1px 0 rgb(255 255 255 / 0.9) inset !important;
+  }
+
+  #gvrze-pricing-page .pricing-card-stack .pricing-plan-card:hover {
+    transform: none;
+    border-color: #e5e7eb !important;
+  }
+
+  #gvrze-pricing-page .pricing-card-stack__item--front .pricing-plan-card {
+    box-shadow:
+      0 18px 36px -18px rgb(17 24 39 / 0.42),
+      0 1px 0 rgb(255 255 255 / 0.95) inset !important;
+  }
+
+  #gvrze-pricing-page .pricing-card-stack .pricing-plan-card--featured {
+    background: var(--pr-pro) !important;
+    border-color: var(--pr-pro) !important;
+  }
+}
+
 #gvrze-pricing-page .pricing-hero {
   overflow: visible;
 }
