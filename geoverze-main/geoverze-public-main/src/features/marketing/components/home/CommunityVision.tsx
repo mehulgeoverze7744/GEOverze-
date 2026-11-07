@@ -14,15 +14,13 @@ export const CommunityVision = memo(function CommunityVision() {
   const bgRef = useRef<HTMLImageElement>(null);
   const eyebrowRef = useRef<HTMLParagraphElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const copyRef = useRef<HTMLParagraphElement>(null);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
     const bg = bgRef.current;
     const eyebrow = eyebrowRef.current;
     const heading = headingRef.current;
-    const copy = copyRef.current;
-    if (!section || !bg || !eyebrow || !heading || !copy) return;
+    if (!section || !bg || !eyebrow || !heading) return;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) return;
@@ -45,7 +43,7 @@ export const CommunityVision = memo(function CommunityVision() {
 
       ctx = gsap.context(() => {
         gsap.set(bg, { scale, yPercent: travel * -0.5 });
-        gsap.set([eyebrow, heading, copy], { opacity: 0, y: 22 });
+        gsap.set([eyebrow, heading], { opacity: 0, y: 22 });
 
         ScrollTrigger.create({
           trigger: section,
@@ -62,16 +60,12 @@ export const CommunityVision = memo(function CommunityVision() {
 
             const eyebrowShift = 18 * (1 - clamp01(reveal / 0.85));
             const headingShift = 22 * (1 - clamp01((reveal - 0.08) / 0.85));
-            const copyShift = 20 * (1 - clamp01((reveal - 0.18) / 0.85));
 
             eyebrow.style.opacity = String(clamp01(reveal / 0.75));
             eyebrow.style.transform = `translate3d(0, ${eyebrowShift.toFixed(2)}px, 0)`;
 
             heading.style.opacity = String(clamp01((reveal - 0.1) / 0.8));
             heading.style.transform = `translate3d(0, ${headingShift.toFixed(2)}px, 0)`;
-
-            copy.style.opacity = String(clamp01((reveal - 0.22) / 0.78));
-            copy.style.transform = `translate3d(0, ${copyShift.toFixed(2)}px, 0)`;
           },
         });
       }, section);
@@ -113,14 +107,6 @@ export const CommunityVision = memo(function CommunityVision() {
         >
           Building the world&rsquo;s most engaging geography learning community.
         </h2>
-        <p
-          ref={copyRef}
-          className="community-vision__copy mx-auto mt-7 max-w-2xl text-sm leading-relaxed md:text-base"
-        >
-          GVRZE exists for the curious — for anyone who has traced a coastline on a map and
-          wanted to know more. Our mission is to connect exploration, education and community so
-          that learning about Earth feels like travelling it.
-        </p>
       </div>
     </section>
   );
