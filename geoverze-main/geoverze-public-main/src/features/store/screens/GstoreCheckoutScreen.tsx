@@ -37,16 +37,16 @@ import { useRef, useState } from "react";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { toast } from "sonner";
 
-import { GeostoreCartButton } from "../components/GeostoreCartButton";
 import { GeostoreSearchButton } from "../components/GeostoreSearchButton";
-import { GeostoreWishlistButton } from "../components/GeostoreWishlistButton";
+import { SF_ASSETS } from "../storefront/storefront-assets";
 
 import "@/features/store/styles/checkout-light.css";
 
 import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabase/client";
 import { useAuthStore, selectUser } from "@/stores/authStore";
-import { useCartStore } from "@/stores/cartStore";
+import { useCartStore, selectCartCount } from "@/stores/cartStore";
+import { useStoreStore, selectWishlistCount } from "@/stores/storeStore";
 import { usePaymentConfig } from "@/features/pricing/hooks/usePaymentConfig";
 
 import {
@@ -198,6 +198,9 @@ export function GstoreCheckoutScreen() {
 
   const cartLines = useCartStore(s => s.lines);
   const clearCart = useCartStore(s => s.clear);
+  // Badge counts for the mobile checkout header icons (match StorefrontNav).
+  const cartCount     = useCartStore(selectCartCount);
+  const wishlistCount = useStoreStore(selectWishlistCount);
 
   const { mockEnabled, razorpayEnabled: rzpConfigured } = usePaymentConfig();
 
@@ -723,14 +726,85 @@ export function GstoreCheckoutScreen() {
 
           {/* ── Gstore action icons — mobile only ─────────────────────────────
               On desktop the floating action bar (GeostoreLayout) stays in place.
-              On mobile (< 640px) that bar is hidden via checkout-light.css and
-              these inline icons replace it, keeping the same components,
-              styling, badges, and functionality as the desktop floating bar.
+              On mobile (< 640px) that bar is hidden via checkout-light.css.
+              These inline icons EXACTLY replicate the StorefrontNav icon buttons:
+                • Same SF_ASSETS SVGs (icon-wishlist, icon-cart, icon-search)
+                • Same ICON_BUTTON class (h-11 w-11 rounded-full opacity hover)
+                • Same BADGE class (bg-black absolute counter)
+                • Same routing (wishlist, cart) and GeostoreSearchButton modal
+              Per the design spec: NO circular charcoal background, NO heart /
+              shopping-bag lucide icons — only the original Figma SVG assets.
           ─────────────────────────────────────────────────────────────────── */}
           <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:hidden">
-            <GeostoreWishlistButton />
-            <GeostoreCartButton />
-            <GeostoreSearchButton />
+
+            {/* Wishlist — outline bookmark icon (icon-wishlist.svg) */}
+            <Link
+              to="/geostore/wishlist"
+              aria-label={wishlistCount > 0 ? `Wishlist, ${wishlistCount} items` : "Wishlist"}
+              title="Wishlist"
+              className="relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-opacity duration-200 hover:opacity-60 motion-reduce:transition-none"
+            >
+              <img
+                src={SF_ASSETS.iconWishlist.src}
+                width={SF_ASSETS.iconWishlist.width}
+                height={SF_ASSETS.iconWishlist.height}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+              />
+              {wishlistCount > 0 ? (
+                <span className="absolute right-0.5 top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-black px-1 text-[10px] font-semibold leading-none text-white">
+                  {wishlistCount > 99 ? "99+" : wishlistCount}
+                </span>
+              ) : null}
+            </Link>
+
+            {/* Cart — outline cart icon (icon-cart.svg) */}
+            <Link
+              to="/geostore/cart"
+              aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : "Cart"}
+              title="Cart"
+              className="relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-opacity duration-200 hover:opacity-60 motion-reduce:transition-none"
+            >
+              <img
+                src={SF_ASSETS.iconCart.src}
+                width={SF_ASSETS.iconCart.width}
+                height={SF_ASSETS.iconCart.height}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+              />
+              {cartCount > 0 ? (
+                <span className="absolute right-0.5 top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-black px-1 text-[10px] font-semibold leading-none text-white">
+                  {cartCount > 99 ? "99+" : cartCount}
+                </span>
+              ) : null}
+            </Link>
+
+            {/* Search — outline magnifying-glass icon (icon-search.svg).
+                Uses GeostoreSearchButton's renderTrigger to open the full
+                search modal while supplying our own SF_ASSETS icon trigger. */}
+            <GeostoreSearchButton
+              renderTrigger={({ onOpen }) => (
+                <button
+                  type="button"
+                  onClick={onOpen}
+                  aria-label="Search Gstore"
+                  title="Search"
+                  className="relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-opacity duration-200 hover:opacity-60 motion-reduce:transition-none"
+                >
+                  <img
+                    src={SF_ASSETS.iconSearch.src}
+                    width={SF_ASSETS.iconSearch.width}
+                    height={SF_ASSETS.iconSearch.height}
+                    alt=""
+                    aria-hidden="true"
+                    draggable={false}
+                  />
+                </button>
+              )}
+            />
+
           </div>
 
         </div>
