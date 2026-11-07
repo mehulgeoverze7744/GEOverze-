@@ -50,8 +50,25 @@ export function initialMerchColorIndex(
   return index >= 0 ? index : 0;
 }
 
-/** Merch IDs hidden from visible shelves (V2 catalog curation). */
-const HIDDEN_MERCH_IDS = new Set(["tshirt-my-country-is-better", "tshirt-common-sense"]);
+/**
+ * Merch IDs hidden from visible shelves.
+ *
+ * "tshirt-my-country-is-better" and "tshirt-common-sense" were always unlisted
+ * (V2 curation). The five slogan tees below are DISCONTINUED — hidden from the
+ * category shelf and product detail pages while their data is preserved here for
+ * historical order reference. Do not remove them from geostoreMerchProducts.
+ */
+const HIDDEN_MERCH_IDS = new Set([
+  // Always hidden
+  "tshirt-my-country-is-better",
+  "tshirt-common-sense",
+  // Discontinued slogan tees — superseded by Cherry Blossom, New Age & Golden Arc
+  "tshirt-born-to-roam",
+  "tshirt-know-the-capital",
+  "tshirt-recalculating",
+  "tshirt-too-close-perfect",
+  "tshirt-gps-trust-issues",
+]);
 
 /** Static frontend catalogue — replaceable with server Gstore data later. */
 export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [

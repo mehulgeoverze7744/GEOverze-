@@ -13,6 +13,7 @@ import {
 import { useStoreStore } from "@/stores/storeStore";
 import { cn } from "@/lib/utils";
 import {
+  isMerchProductListed,
   isMerchStoreCategory,
   merchProductById,
   merchProductsForStoreCategory,
@@ -442,7 +443,12 @@ function CatalogCategoryShelf({ slug }: { slug: string }) {
 export function CategoryScreen() {
   const { slug } = useParams({ from: "/geostore/category/$slug" });
 
-  if (isMerchStoreCategory(slug)) {
+  // "tshirts" previously routed to MerchCategoryShelf (old slogan tees).
+  // Those designs are discontinued — the category now shows the three new
+  // storefront signature tees (Cherry Blossom, New Age, Golden Arc) which
+  // live in the PRODUCTS array and are served by CatalogCategoryShelf.
+  // "hoodies" continues to use MerchCategoryShelf as before.
+  if (slug !== "tshirts" && isMerchStoreCategory(slug)) {
     return <MerchCategoryShelf slug={slug} />;
   }
 
@@ -493,7 +499,11 @@ export function ProductScreen() {
     return <StorefrontTeeProductPage tee={storefrontTee} />;
   }
 
-  if (merch) {
+  // Discontinued merch products (e.g. old slogan tees) are hidden from
+  // listings via HIDDEN_MERCH_IDS but their data is kept for order history.
+  // If someone navigates directly to a discontinued product slug, treat it
+  // as unavailable so no active product page is served.
+  if (merch && isMerchProductListed(merch)) {
     return (
       <ProductPageFrame>
         <MerchProductScreen product={merch} />

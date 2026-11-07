@@ -15,7 +15,6 @@ import {
 } from "./taxonomy";
 
 /** Shared with merch shelves — do not duplicate listing fields. */
-const knowTheCapitalMerch = merchProductById("tshirt-know-the-capital");
 const everyPointHoodieMerch = merchProductById("hoodie-every-point-has-a-story");
 
 export type StockState = "in-stock" | "low" | "preorder" | "sold-out";
@@ -145,61 +144,6 @@ export function isPurchaseLocked(product: Pick<Product, "comingSoon" | "category
 }
 
 export const PRODUCTS: readonly Product[] = [
-  // ---------------------------------------------------------------- merch
-  make({
-    slug: knowTheCapitalMerch?.id ?? "tshirt-know-the-capital",
-    name: knowTheCapitalMerch?.title ?? "I KNOW THE CAPITAL. YOU KNOW THE VIBES.",
-    tagline: knowTheCapitalMerch?.tagline ?? "Capital cities, confident energy.",
-    description: knowTheCapitalMerch?.tagline ?? "Capital cities, confident energy.",
-    category: "tshirts",
-    price: knowTheCapitalMerch?.price ?? 3_700,
-    credits: knowTheCapitalMerch?.credits ?? 300,
-    rating: 4.8,
-    reviews: 214,
-    popularity: 98,
-    bestSeller: true,
-    featured: true,
-    options: [APPAREL_SIZES, APPAREL_COLOURS],
-    features: [
-      "240 gsm combed organic cotton",
-      "Capital-city artwork across the back",
-      "Pre-shrunk, garment dyed",
-    ],
-    specs: [
-      { label: "Material", value: "100% organic cotton" },
-      { label: "Weight", value: "240 gsm" },
-      { label: "Fit", value: "Relaxed" },
-      { label: "Care", value: "Cold wash, inside out" },
-    ],
-    tags: ["apparel", "slogan", "bestseller"],
-  }),
-  make({
-    slug: "meridian-tee",
-    name: "Meridian Tee",
-    tagline: "Longitude lines wrapping the torso.",
-    category: "tshirts",
-    price: 3_400,
-    credits: 340,
-    rating: 4.6,
-    reviews: 96,
-    popularity: 74,
-    options: [APPAREL_SIZES, APPAREL_COLOURS],
-    tags: ["apparel", "cartography"],
-  }),
-  make({
-    slug: "continents-tee",
-    name: "Seven Continents Tee",
-    tagline: "All seven landmasses, one seam-to-seam print.",
-    category: "tshirts",
-    price: 3_400,
-    credits: 340,
-    rating: 4.5,
-    reviews: 61,
-    popularity: 63,
-    stock: "low",
-    options: [APPAREL_SIZES],
-    tags: ["apparel", "continents"],
-  }),
   // ── Storefront signature tees (product detail uses StorefrontTeeProductPage) ──
   // These entries register the tees in the category shelf so they appear at
   // /geostore/category/tshirts. The product detail page is rendered by the
