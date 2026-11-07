@@ -13,6 +13,7 @@ const SG_BASE = `${BASE}/starlight-grey`;
 const NA_BASE  = `${BASE}/new-age`;
 const NM_BASE  = `${BASE}/new-age-mulberry`;
 const NB_BASE  = `${BASE}/new-age-midnight-black`;
+const GA_BASE  = `${BASE}/golden-arc`;
 
 /**
  * A single colour variant for a storefront tee.
@@ -287,21 +288,75 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     name: "Golden Arc T-Shirt",
     categoryLabel: "T-SHIRT",
     priceLabel: "Rs. 2,999",
-    tone: "#8c624a",
+    tone: "#8cc8e8",
+    // Default card image = Skyblue front shot (ga-1.jpg).
+    // Gallery is driven by the `colors` array below.
     image: {
-      src: `${BASE}/golden-arc-tshirt.webp`,
-      alt: "GVRZE Golden Arc T-Shirt, front view",
+      src: `${GA_BASE}/ga-1.jpg`,
+      alt: "GVRZE Golden Arc T-Shirt in Skyblue — front product view",
     },
+
+    // ── Colour variants ──────────────────────────────────────────────────────
+    // Currently one colourway; additional colours can be appended here when
+    // their images are ready — the UI swatch selector appears automatically
+    // once two or more colours are present.
+    colors: [
+      {
+        id: "skyblue",
+        label: "Skyblue",
+        hex: "#a8d4f0",
+        image: {
+          src: `${GA_BASE}/ga-1.jpg`,
+          alt: "Golden Arc T-Shirt in Skyblue — front design",
+        },
+        // Gallery order:
+        // ga-1 front product (PRIMARY)   ga-2 back product
+        // ga-3 front + back presentation ga-4 collar / fabric close-up
+        // ga-5 model back                ga-6 model front
+        gallery: [
+          {
+            src: `${GA_BASE}/ga-1.jpg`,
+            alt: "Skyblue — front T-shirt product image",
+          },
+          {
+            src: `${GA_BASE}/ga-2.jpg`,
+            alt: "Skyblue — back T-shirt product image",
+          },
+          {
+            src: `${GA_BASE}/ga-3.jpg`,
+            alt: "Skyblue — front and back product presentation",
+          },
+          {
+            src: `${GA_BASE}/ga-4.jpg`,
+            alt: "Skyblue — collar, fabric and GVRZE label close-up",
+          },
+          {
+            src: `${GA_BASE}/ga-5.jpg`,
+            alt: "Skyblue — model wearing the tee, back view",
+          },
+          {
+            src: `${GA_BASE}/ga-6.jpg`,
+            alt: "Skyblue — model wearing the tee, front view",
+          },
+        ],
+      },
+      // Add further colourways here when ready, e.g.:
+      // { id: "...", label: "...", hex: "...", image: {...}, gallery: [...] },
+    ],
+
     description:
-      "The GVRZE Golden Arc Graphic T-Shirt channels earthy warmth and bold cartographic lines. 100% premium cotton with a heavyweight feel and rich screen-print graphics that define any outfit.",
+      "A statement piece inspired by celestial geometry and cosmic exploration. The Golden Arc T-Shirt in Skyblue combines a relaxed oversized silhouette with a distinctive planetary graphic composition. Its soft sky-blue base creates a clean contrast against deep blue celestial artwork, orbital lines, and the signature GVRZE wordmark. Designed for everyday wear with a premium streetwear aesthetic, this tee brings together minimal branding and expressive cosmic detailing.",
     highlights: [
-      "100% Cotton Comfort — breathable, pre-shrunk fabric built for all-day wear.",
-      "260 GSM Heavyweight Quality — substantial feel with structure that holds its shape.",
+      "Skyblue colourway — soft and distinctive against the deep blue artwork.",
+      "Signature GVRZE wordmark on the front chest.",
+      "Large celestial planetary artwork on the back — globe, orbital lines, star elements.",
+      "Abstract topographic artwork on the front for a layered graphic composition.",
+      "Oversized relaxed silhouette — premium streetwear fit.",
+      "Premium-looking ribbed crew neckline with GVRZE label.",
       "Premium Screen Printing — sharp, fade-resistant graphics that last wash after wash.",
-      "Earth-Tone Palette — pairs naturally with olive, tan, and warm-toned bottoms.",
     ],
     stylingTip:
-      "Wear the Golden Arc Tee with olive cargo trousers and leather boots for a heritage-meets-modern explorer vibe. Works equally well tucked into high-waist denim.",
+      "Style the Golden Arc Skyblue Tee with white or off-white trousers for a tonal look, or contrast with dark denim and black sneakers. The sky-blue colourway pairs naturally with navy, ecru, and light grey for a clean, understated summer aesthetic.",
     washcare: WASHCARE_STANDARD,
     relatedIds: ["midnight-black-tshirt", "cherry-blossom-tshirt", "new-age-tshirt"],
   },
