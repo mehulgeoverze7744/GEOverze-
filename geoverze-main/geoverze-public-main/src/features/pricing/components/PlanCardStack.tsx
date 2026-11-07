@@ -5,13 +5,17 @@ import { cn } from "@/lib/utils";
 import type { BillingCycle, PricingPlan } from "../data/plans";
 import { PlanCard } from "./PlanCard";
 
-const PEEK = 64;
-const OVERLAP = 8;
+const PEEK = 44;
 const SCALE_STEP = 0.04;
-const SWIPE_THRESHOLD = 42;
+const SWIPE_THRESHOLD = 40;
+const AXIS_LOCK = 10;
 
-function visualOrder(index: number, active: number, count: number) {
-  return (index - active + count) % count;
+function signedOffset(index: number, active: number, count: number) {
+  let delta = index - active;
+  const half = count / 2;
+  if (delta > half) delta -= count;
+  if (delta < -half) delta += count;
+  return delta;
 }
 
 /** Mobile-only overlapping plan deck. Hidden from sm and up via CSS. */
@@ -26,10 +30,17 @@ export function PlanCardStack({
   const featuredIndex = plans.findIndex((plan) => plan.featured);
   const [active, setActive] = useState(featuredIndex >= 0 ? featuredIndex : 0);
   const [cardHeight, setCardHeight] = useState(0);
-  const [dragY, setDragY] = useState(0);
+  const [dragX, setDragX] = useState(0);
   const stackRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const pointer = useRef<{ id: number; y: number; dragging: boolean } | null>(null);
+  const pointer = useRef<{
+    id: number;
+    x: number;
+    y: number;
+    dragging: boolean;
+    axis: "pending" | "x" | "y";
+  } | null>(null);
+  const skipClick = useRef(false);
   const labelId = useId();
 
   useEffect(() => {
@@ -37,64 +48,93 @@ export function PlanCardStack({
   }, [featuredIndex]);
 
   const measure = useCallback(() => {
-    const node = cardRefs.current[active] ?? cardRefs.current[0];
-    if (!node) return;
-    const next = Math.round(node.getBoundingClientRect().height);
+    const next = Math.round(
+      Math.max(
+        0,
+        ...cardRefs.current.map((node) => {
+          const card = node?.querySelector<HTMLElement>(".pricing-plan-card");
+          if (!card) return 0;
+          const previousHeight = card.style.height;
+          card.style.height = "auto";
+          const natural = Math.max(card.scrollHeight, card.getBoundingClientRect().height);
+          card.style.height = previousHeight;
+          return natural;
+        }),
+      ),
+    );
     if (next > 0) setCardHeight(next);
-  }, [active]);
+  }, []);
 
   useLayoutEffect(() => {
     measure();
-    const node = cardRefs.current[active];
-    if (!node || typeof ResizeObserver === "undefined") return;
+    if (typeof ResizeObserver === "undefined") return;
     const observer = new ResizeObserver(measure);
-    observer.observe(node);
+    for (const node of cardRefs.current) {
+      if (node) observer.observe(node);
+    }
     return () => observer.disconnect();
-  }, [active, measure, cycle, plans]);
+  }, [measure, cycle, plans]);
 
   const goTo = useCallback(
     (index: number) => {
       if (count === 0) return;
       setActive(((index % count) + count) % count);
-      setDragY(0);
+      setDragX(0);
     },
     [count],
   );
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (event.pointerType === "mouse" && event.button !== 0) return;
-    pointer.current = { id: event.pointerId, y: event.clientY, dragging: false };
+    pointer.current = {
+      id: event.pointerId,
+      x: event.clientX,
+      y: event.clientY,
+      dragging: false,
+      axis: "pending",
+    };
   };
 
   const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     const session = pointer.current;
     if (!session || session.id !== event.pointerId) return;
+    if (session.axis === "y") return;
+
+    const dx = event.clientX - session.x;
     const dy = event.clientY - session.y;
-    if (!session.dragging && Math.abs(dy) > 10) {
+
+    if (session.axis === "pending") {
+      if (Math.abs(dx) < AXIS_LOCK && Math.abs(dy) < AXIS_LOCK) return;
+      if (Math.abs(dy) > Math.abs(dx)) {
+        session.axis = "y";
+        return;
+      }
+      session.axis = "x";
       session.dragging = true;
       stackRef.current?.setPointerCapture(event.pointerId);
     }
+
     if (session.dragging) {
       event.preventDefault();
-      setDragY(dy);
+      setDragX(dx);
     }
   };
 
   const endPointer = (event: React.PointerEvent<HTMLDivElement>) => {
     const session = pointer.current;
     if (!session || session.id !== event.pointerId) return;
-    const dy = event.clientY - session.y;
+    const dx = event.clientX - session.x;
     const wasDragging = session.dragging;
     pointer.current = null;
-    setDragY(0);
+    setDragX(0);
     if (!wasDragging) return;
+    skipClick.current = true;
     event.preventDefault();
-    if (dy <= -SWIPE_THRESHOLD) goTo(active + 1);
-    else if (dy >= SWIPE_THRESHOLD) goTo(active - 1);
+    if (dx <= -SWIPE_THRESHOLD) goTo(active + 1);
+    else if (dx >= SWIPE_THRESHOLD) goTo(active - 1);
   };
 
-  const stackHeight =
-    cardHeight > 0 ? cardHeight + PEEK * Math.max(0, count - 1) - OVERLAP : undefined;
+  const stackHeight = cardHeight > 0 ? cardHeight + 20 : undefined;
 
   return (
     <div
@@ -108,21 +148,21 @@ export function PlanCardStack({
       onPointerUp={endPointer}
       onPointerCancel={endPointer}
       onClickCapture={(event) => {
-        if (pointer.current?.dragging) {
+        if (pointer.current?.dragging || skipClick.current) {
           event.preventDefault();
           event.stopPropagation();
+          skipClick.current = false;
         }
       }}
     >
       <p id={labelId} className="sr-only">
-        Membership plans. Swipe vertically or tap a card to bring it forward.
+        Membership plans. Swipe left or right, or tap a card to bring it forward.
       </p>
       {plans.map((plan, index) => {
-        const order = visualOrder(index, active, count);
-        const isFront = order === 0;
-        const baseY = isFront || cardHeight === 0 ? 0 : cardHeight - OVERLAP + (order - 1) * PEEK;
-        const y = baseY + (isFront ? dragY * 0.16 : 0);
-        const scale = 1 - Math.min(order, 3) * SCALE_STEP;
+        const offset = signedOffset(index, active, count);
+        const isFront = offset === 0;
+        const x = offset * PEEK + dragX * 0.72;
+        const scale = 1 - Math.min(Math.abs(offset), 3) * SCALE_STEP;
 
         return (
           <div
@@ -134,11 +174,12 @@ export function PlanCardStack({
             className={cn(
               "pricing-card-stack__item",
               isFront && "pricing-card-stack__item--front",
+              dragX !== 0 && "pricing-card-stack__item--dragging",
             )}
             style={{
-              transform: `translate3d(-50%, ${y}px, 0) scale(${scale})`,
-              zIndex: count - order,
-              height: isFront || cardHeight === 0 ? undefined : PEEK + OVERLAP,
+              transform: `translate3d(-50%, 0, 0) translate3d(${x}px, 0, 0) scale(${scale})`,
+              zIndex: count - Math.abs(offset),
+              height: cardHeight > 0 ? cardHeight : undefined,
             }}
             aria-current={isFront ? "true" : undefined}
             aria-hidden={isFront ? undefined : true}

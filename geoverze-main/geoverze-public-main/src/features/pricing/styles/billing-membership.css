@@ -1,23 +1,43 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    GVRZE Billing & Membership — Light Premium Theme
-   bg: #EAF4FA  card: #FFFFFF  border: #E2E8F0  navy: #1E3A5F  bronze: #B88A62
+   plate: .gvrze-account-bg (original)  card: #FFFFFF  border: #E2E8F0  navy: #1E3A5F  bronze: #B88A62
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── Page background ─────────────────────────────────────────────────────── */
-body:has(div.bm) {
-  background: #eaf4fa !important;
-}
-
+/*
+ * The Billing plate is the existing account layer (.gvrze-account-bg →
+ * /assets/gvrze-profile-bg). Do not hide it, replace it, or copy it onto
+ * html/body. Only strip the solid light-blue slabs that sat on top of it.
+ */
 body:has(div.bm) #geoverze-universe-background {
   display: none !important;
 }
 
-/* Keep the app header readable on the light background */
-body:has(div.bm) header,
-body:has(div.bm) nav {
-  background: rgba(234, 244, 250, 0.92);
-  backdrop-filter: blur(16px) saturate(120%);
-  border-bottom-color: #dce5ed;
+/* Keep the original fixed plate painting across the viewport, including the
+   footer (a sibling of #gvrze-account). isolation:isolate clips it to main. */
+body:has(div.bm) #gvrze-account {
+  isolation: auto;
+  background: transparent;
+}
+
+body:has(div.bm) .gvrze-account-bg {
+  display: block;
+  visibility: visible;
+  opacity: 1;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+body:has(div.bm) footer,
+body:has(div.bm) footer nav {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  position: relative;
+  z-index: 1;
 }
 
 /* ── Page shell ──────────────────────────────────────────────────────────── */
@@ -29,6 +49,7 @@ div.bm {
   max-width: 68rem;
   padding-top: calc(var(--nav-height) + 1.75rem);
   padding-bottom: var(--space-section-md);
+  background: transparent;
 }
 
 /* Remove the dark vignette overlay */
