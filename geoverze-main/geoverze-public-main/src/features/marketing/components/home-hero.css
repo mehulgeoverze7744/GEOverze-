@@ -205,27 +205,16 @@
 
 /* Mobile homepage hero — stacked layout (phone ≤ 767px)
    ─────────────────────────────────────────────────────────────────────────
-   Flex-column section so content stacks without overlap:
-
-     [ navbar gap (padding-top) ]
-     [ hero intro text          ]   in-flow flex item, top
-     [ ← margin-top: auto gap → ]
-     [ rewards card             ]   in-flow flex item, compact
-     [ scroll cue               ]   in-flow flex item, viewport-centered
-     ─────────────────────────── section bottom = 100dvh ───────────────────
-     [ LET'S PLAY | GSTORE | WATCH DEMO ]   afterGlobeCtas (flex-row, gap:0)
-
-   Absolutely-positioned children (globe, bloom gradient, panel3 expedition)
-   remain absolute and do not participate in the flex flow.
-
-   The afterGlobeCtas row contains exactly three buttons in this order:
-     1. LET'S PLAY (primary, flex:1)
-     2. GSTORE     (primary, flex:1)
-     3. WATCH DEMO (secondary, narrower)
-   They touch with no gap; a 1px shared border creates a clean join.
+   On phones the hero becomes a flex column:
+     [ navbar gap ]
+     [ hero intro text   ]   ← in-flow, starts at top
+     [ rewards card      ]   ← in-flow, below text, pushed to bottom
+   Absolutely-positioned children (globe, bloom, panel3, in-hero cue)
+   stay absolute and don't participate in the flex flow.
    ──────────────────────────────────────────────────────────────────────── */
 @media (max-width: 767px) {
-  /* ── 1. Section: auto height (≥100dvh), flex-column ────────────────── */
+  /* 1. Section: auto height (at least full viewport), flex-column.
+        overflow: hidden keeps the globe and exit-animation drift clipped. */
   #home-hero {
     height: auto;
     min-height: 100dvh;
@@ -235,7 +224,8 @@
     padding-top: var(--nav-height); /* clear fixed navbar for flex items */
   }
 
-  /* ── 2. Hero intro text: in normal document flow, aligned to top ───── */
+  /* 2. Hero intro text: in normal document flow, aligned to top.
+        Removes the absolute centering that caused overlap on small phones. */
   #home-hero .home-hero-intro {
     position: relative;      /* override Tailwind absolute utility */
     top: auto;
@@ -245,7 +235,7 @@
     width: 100%;
     padding-inline: 1.25rem; /* replaces Tailwind left-5 right-5 */
     padding-top: 1.35rem;
-    padding-bottom: 1.5rem;  /* gap between text block and card */
+    padding-bottom: 1.75rem; /* gap between text and card */
     justify-content: flex-start;
     overflow-wrap: anywhere;
     min-height: 0;
@@ -256,32 +246,14 @@
     display: none;
   }
 
-  /* ── 3. In-hero scroll cue: in-flow flex item, viewport-centered ────
-     ID-selector (#home-hero) [1,1,0] beats Tailwind utilities [0,1,0].
-     Tailwind classes `absolute bottom-8 left-1/2 z-20 -translate-x-1/2`
-     are all overridden below.  Double-centered via align-self + margin. */
+  /* 3. In-hero scroll cue: hidden on mobile. With the stacked layout the
+        card is always visible; the after-globe section has its own cue. */
   .home-hero-scroll-cue {
-    display: none; /* hide desktop standalone cue */
+    display: none;
   }
 
   #home-hero .home-hero-scroll-cue {
-    display: flex;
-    position: relative;      /* override Tailwind `absolute` */
-    left: auto;              /* override Tailwind `left-1/2` */
-    bottom: auto;            /* override Tailwind `bottom-8` */
-    /* Reset transform completely — Tailwind `-translate-x-1/2` sets
-       --tw-translate-x: -50%; transform: translateX(var(--tw-translate-x))…
-       Setting transform: none cancels the entire property. */
-    transform: none;
-    --tw-translate-x: 0;     /* belt-and-suspenders: clear Tailwind var */
-    z-index: auto;           /* override Tailwind `z-20` */
-    /* Viewport-center the button in the flex-column container */
-    align-self: center;      /* cross-axis (horizontal) centering in flex-col */
-    margin-inline: auto;     /* redundant but robust: auto margins also center */
-    width: fit-content;
-    margin-top: 0.75rem;     /* breathing room above cue, below card */
-    margin-bottom: 0.85rem;
-    flex-shrink: 0;
+    display: none;
   }
 
   #home-hero .home-hero-expedition {
@@ -289,71 +261,51 @@
     padding-inline: 0.15rem;
   }
 
-  /* ── 4. After-globe: horizontal 3-button row, no gap ───────────────
-     Buttons touch flush — no visible gap, divider line from shared border.
-     The three buttons are: LET'S PLAY (flex:1) | GSTORE (flex:1) | WATCH DEMO (smaller).
-     Sizing is calibrated for 320px–430px widths without wrapping.         */
+  /* 4. After-globe CTA row: no negative overlap — the hero section now
+        grows to natural height so no pull-up margin is needed. */
   .home-hero-after-globe {
     position: relative;
     z-index: 2;
     display: flex;
-    flex-direction: row;     /* horizontal button row */
-    align-items: stretch;    /* equal height across all three */
-    gap: 0;                  /* NO space between buttons */
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
     width: 100%;
     max-width: 100%;
-    margin-top: 0;
-    padding: 0.9rem 1rem 2.25rem; /* small inline padding keeps buttons off screen edge */
+    margin-top: 0;              /* was clamp(-8.125rem, -32vw, -6.25rem) */
+    padding: 1.75rem 1.15rem 2.75rem;
   }
 
-  /* Connected button group — unified border treatment.
-     Remove right border on first two so there's no double-border at joins.
-     Rounded corners only on the outer ends. */
+  .home-hero-after-globe .home-hero-scroll-cue {
+    display: flex;
+    position: static;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    z-index: auto;
+    margin-top: 0.15rem;
+  }
+
   .home-hero-after-globe .home-hero-cta {
-    border-radius: 0 !important;
-    overflow: hidden; /* clip content to any radius we set */
-  }
-  .home-hero-after-globe .home-hero-cta:first-child {
-    border-top-left-radius: 0.45rem !important;
-    border-bottom-left-radius: 0.45rem !important;
-  }
-  .home-hero-after-globe .home-hero-cta:last-child {
-    border-top-right-radius: 0.45rem !important;
-    border-bottom-right-radius: 0.45rem !important;
-  }
-  /* Single shared border line at each join (no doubling) */
-  .home-hero-after-globe .home-hero-cta:not(:last-child) {
-    border-right: none !important;
+    width: 100%;
   }
 
-  /* Primary buttons: LET'S PLAY + GSTORE.
-     flex:1 gives them equal width; on 320px with 1rem×2 padding and
-     Watch Demo at ~25vw, each primary is about 104px — wide enough
-     to show "LET'S PLAY" at the clamped font-size without wrapping. */
   .home-hero-after-globe__primary {
-    flex: 1 1 0%;
-    min-width: 0;
-    min-height: 2.65rem;
-    max-width: none;         /* remove any old max-width */
-    /* Override GeoButton lg padding with compact inline padding */
-    padding-inline: 0.25rem !important;
-    /* Scale font-size to width: readable on 375px, tight on 320px */
-    font-size: clamp(0.56rem, 2.4vw, 0.74rem) !important;
-    letter-spacing: 0.08em !important;
-    white-space: nowrap;
+    max-width: 22.5rem;
+    min-height: 3.15rem;
   }
 
-  /* Secondary button: WATCH DEMO.
-     Narrower than primaries to signal visual hierarchy; still readable.
-     Fixed width via clamp so it stays proportional at all phone sizes. */
   .home-hero-after-globe__secondary {
-    flex: 0 0 auto;
-    width: clamp(5rem, 26vw, 6.5rem);
-    min-height: 2.65rem;
-    padding-inline: 0.25rem !important;
-    font-size: clamp(0.48rem, 2.1vw, 0.62rem) !important;
-    letter-spacing: 0.06em !important;
-    white-space: nowrap;
+    width: auto;
+    max-width: 14.5rem;
+    min-width: 11.5rem;
+    min-height: 2.45rem;
+    padding: 0.55rem 1.35rem;
+    font-size: 0.78rem;
+  }
+
+  .home-hero-after-globe__secondary span {
+    font-size: 0.78rem;
   }
 }
 

@@ -404,9 +404,7 @@
 @media (max-width: 767px) {
   /* Rewards card: pull out of absolute positioning so it flows below the
      hero intro text in the flex-column section. margin-top: auto pushes it
-     down (gap between text and card is determined by remaining space in the
-     100dvh section). margin-bottom: 0 so the in-hero scroll cue sits flush
-     below, with only the cue's own margin-top providing the visual gap. */
+     to the bottom of the section's available space (min-height: 100dvh). */
   #home-hero .rewards-card-motion {
     position: relative;        /* override CSS absolute from 1023px block */
     top: auto;
@@ -416,87 +414,48 @@
     width: calc(100% - 2rem);  /* full mobile width with 16px margins */
     max-width: none;
     margin-top: auto;          /* push down to section bottom via flex */
-    margin-bottom: 0;          /* scroll cue sits immediately below */
+    margin-bottom: 1.5rem;
     margin-inline: auto;       /* centered horizontally */
     transform-origin: center bottom;
   }
 
-  /* ── Compact card sizing for 800–900px viewport heights ───────────────
-     All reductions are proportional — the card stays premium and readable
-     but no longer extends below the initial mobile viewport fold.         */
-
   .rewards-card__shell {
-    gap: 0.6rem;              /* was 0.9rem — saves ~24px across 4 gaps */
-    padding: 0.9rem 0.9rem 0.85rem; /* was 1.1rem 1rem 1rem */
-    border-radius: 1.25rem;
+    gap: 0.9rem;
+    padding: 1.1rem 1rem 1rem;
+    border-radius: 1.35rem;
   }
 
-  #gvrze-home #home-hero .rewards-card__kicker {
-    font-size: 0.65rem;
+  .rewards-card__title {
+    font-size: 1.2rem;
   }
 
-  #gvrze-home #home-hero .rewards-card__title {
-    font-size: 1.05rem;       /* was 1.2rem */
-  }
-
-  /* Product image tiles */
   .rewards-card__tile-media {
-    min-height: 3rem;         /* was 3.8rem — saves 12.8px per tile */
-    aspect-ratio: 1.42;
+    min-height: 3.8rem;
   }
 
   #gvrze-home #home-hero .rewards-card__tile-label {
-    font-size: 0.48rem;
-    padding: 0.2rem 0.2rem 0.32rem;
-  }
-
-  /* Countdown timer boxes */
-  .rewards-card__timer {
-    gap: 0.4rem;
+    font-size: 0.5rem;
+    padding: 0.22rem 0.22rem 0.35rem;
   }
 
   .rewards-card__unit {
-    min-height: 3rem;         /* was 3.7rem — saves 11.2px per box */
-    padding: 0.4rem 0.3rem;
+    min-height: 3.7rem;
   }
 
   .rewards-card__unit-value {
-    font-size: 1rem;          /* was 1.15rem */
+    font-size: 1.15rem;
   }
 
-  .rewards-card__unit-label {
-    font-size: 0.5rem;
+  .rewards-card__balance-value {
+    font-size: 2.05rem;
   }
 
-  /* Credits section */
-  #gvrze-home #home-hero .rewards-card__balance-value {
-    font-size: 1.75rem;       /* was 2.05rem */
-  }
-
-  #gvrze-home #home-hero .rewards-card__stat-label {
-    font-size: 0.58rem;
-  }
-
-  #gvrze-home #home-hero .rewards-card__credits-hint {
-    font-size: 0.72rem;
-    line-height: 1.4;
-  }
-
-  /* Section headings within the card */
-  #gvrze-home #home-hero .rewards-card__drop-live {
-    font-size: 0.72rem;
-    padding: 0.65rem 0.6rem;
-  }
-
-  /* Action buttons */
   .rewards-card__actions {
-    grid-template-columns: 1fr 1fr; /* side-by-side on phones → saves ~52px vs 1-col */
+    grid-template-columns: 1fr;
   }
 
   .rewards-card__btn {
-    min-height: 2.6rem;       /* was 3rem */
-    font-size: 0.62rem;
-    padding: 0.5rem 0.6rem;
+    min-height: 3rem;
   }
 }
 

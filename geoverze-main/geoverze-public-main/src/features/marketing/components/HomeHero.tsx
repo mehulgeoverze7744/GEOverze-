@@ -245,60 +245,51 @@ export function HomeHero() {
     </>
   );
 
-  /**
-   * Mobile-only CTA row that sits below the hero section.
-   *
-   * On desktop (≥768px) this entire div is hidden via CSS (.home-hero-after-globe { display:none }).
-   * On mobile it renders as a horizontal row of three buttons with no gap,
-   * in this order: LET'S PLAY | GSTORE | WATCH DEMO.
-   *
-   * The scroll-cue button lives inside the hero section (see home-hero.css:
-   * #home-hero .home-hero-scroll-cue is a flex item below the rewards card).
-   *
-   * setDemoOpen is available via closure from the parent HomeHero scope —
-   * the Modal remains inside <section> as a portal so it renders correctly.
-   */
   const afterGlobeCtas = (
     <div className="home-hero-after-globe">
-      {/* 1 ── LET'S PLAY (primary) */}
       <GeoButton
         asChild
         variant="solid"
         size="lg"
-        className="home-hero-cta home-hero-after-globe__primary font-bold uppercase"
+        className="home-hero-cta home-hero-after-globe__primary w-full px-8 font-bold uppercase tracking-[0.2em]"
       >
         <Link
           to="/play"
-          className="flex items-center justify-center font-cta whitespace-nowrap"
+          className="flex flex-col items-center leading-none font-cta text-[1.37rem]"
         >
-          LET'S PLAY
+          <span>LET'S PLAY</span>
         </Link>
       </GeoButton>
-
-      {/* 2 ── GSTORE (primary) */}
       <GeoButton
         asChild
         variant="solid"
         size="lg"
-        className="home-hero-cta home-hero-after-globe__primary font-bold uppercase"
+        className="home-hero-cta home-hero-after-globe__primary w-full px-8 font-bold uppercase tracking-[0.2em]"
       >
         <Link
           to="/geostore"
-          className="flex items-center justify-center font-cta whitespace-nowrap"
+          className="flex flex-col items-center leading-none font-cta text-[1.37rem]"
         >
-          GSTORE
+          <span>GSTORE</span>
         </Link>
       </GeoButton>
-
-      {/* 3 ── WATCH DEMO (secondary — smaller) */}
       <GeoButton
         variant="solid"
         size="lg"
         onClick={() => setDemoOpen(true)}
-        className="home-hero-cta home-hero-cta-secondary home-hero-after-globe__secondary font-bold uppercase"
+        className="home-hero-cta home-hero-after-globe__secondary font-bold uppercase tracking-[0.2em]"
       >
-        <span className="font-cta whitespace-nowrap">WATCH DEMO</span>
+        <span className="font-cta">WATCH DEMO</span>
       </GeoButton>
+      <button
+        type="button"
+        className="home-hero-scroll-cue home-hero-scroll-cue--follow"
+        aria-label="Scroll the experience"
+        onClick={handleScrollTheExperience}
+        onKeyDown={handleScrollCueKeyDown}
+      >
+        {scrollCueContent}
+      </button>
     </div>
   );
 
