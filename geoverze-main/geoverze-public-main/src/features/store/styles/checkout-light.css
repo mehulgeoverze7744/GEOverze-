@@ -96,3 +96,20 @@
 .gvrze-checkout::-webkit-scrollbar { width: 6px; }
 .gvrze-checkout::-webkit-scrollbar-track  { background: #F3F4F6; }
 .gvrze-checkout::-webkit-scrollbar-thumb  { background: #D1D5DB; border-radius: 3px; }
+
+/* ─── Hide floating Gstore action icons on mobile checkout ───────────────────
+ *
+ * GeostoreLayout renders a `position: fixed` row of Wishlist / Cart / Search
+ * icons on every /geostore/* route.  On desktop the icons sit comfortably at
+ * the top-right, away from the checkout sub-header.  On mobile (< 640px) they
+ * overlap the "Secure Checkout" title.
+ *
+ * We hide them on mobile only — the same icons are added directly inside the
+ * checkout sub-header (see GstoreCheckoutScreen.tsx, sm:hidden icon row).
+ * On desktop the floating bar continues to render unchanged.
+ * ─────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 639px) {
+  body:has(.gvrze-checkout) [aria-label="Gstore actions"] {
+    display: none !important;
+  }
+}

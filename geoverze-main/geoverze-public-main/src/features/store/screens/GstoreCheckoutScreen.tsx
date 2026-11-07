@@ -37,6 +37,10 @@ import { useRef, useState } from "react";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { toast } from "sonner";
 
+import { GeostoreCartButton } from "../components/GeostoreCartButton";
+import { GeostoreSearchButton } from "../components/GeostoreSearchButton";
+import { GeostoreWishlistButton } from "../components/GeostoreWishlistButton";
+
 import "@/features/store/styles/checkout-light.css";
 
 import { cn } from "@/lib/utils";
@@ -680,31 +684,55 @@ export function GstoreCheckoutScreen() {
       {/* ── Checkout sub-header (Back to Store / Secure Checkout) ─────────── */}
       {/* Normal document flow — sits flush below the fixed navbar, no overlap. */}
       <div className="bg-white border-b border-[#E5E7EB]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-3">
+        {/*
+          Mobile layout (< sm = < 640px):
+            [←] [🔒 Secure Checkout]  [ml-auto]  [♥ 🛒 🔍]
+          Desktop layout (≥ sm = ≥ 640px):
+            [← Back to cart] [🔒 Secure Checkout]  [ml-auto]  [TEST MODE]
+          The floating Gstore action icons (from GeostoreLayout) are hidden on
+          mobile via checkout-light.css and shown on desktop as usual.
+        */}
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center gap-2 sm:gap-3">
+
           {/* Back link */}
           <Link
             to={isBuyNow ? "/geostore" : "/geostore/cart"}
-            className="flex items-center gap-1.5 text-[#6B7280] hover:text-[#111827] transition-colors text-sm mr-2"
+            className="flex shrink-0 items-center gap-1.5 text-[#6B7280] hover:text-[#111827] transition-colors text-sm"
           >
-            <ChevronRight className="w-4 h-4 rotate-180 flex-shrink-0" />
+            <ChevronRight className="w-4 h-4 rotate-180 shrink-0" />
             <span className="hidden sm:inline">{isBuyNow ? "Back to store" : "Back to cart"}</span>
           </Link>
 
-          {/* Secure checkout label */}
-          <div className="flex items-center gap-2 flex-1 justify-center sm:justify-start">
-            <div className="w-7 h-7 rounded-full bg-[#111827] flex items-center justify-center flex-shrink-0">
-              <Lock className="w-3.5 h-3.5 text-white" />
+          {/* Secure checkout label — shrinks gracefully so icons never overlap */}
+          <div className="flex min-w-0 items-center gap-1.5">
+            <div className="w-6 h-6 sm:w-7 sm:h-7 shrink-0 rounded-full bg-[#111827] flex items-center justify-center">
+              <Lock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
             </div>
-            <span className="font-semibold text-[#111827] text-base">Secure Checkout</span>
+            <span className="font-semibold text-[#111827] text-sm sm:text-base truncate">
+              Secure Checkout
+            </span>
           </div>
 
-          {/* TEST MODE badge */}
+          {/* TEST MODE badge — desktop only */}
           {mockEnabled && (
-            <span className="hidden sm:flex items-center gap-1.5 bg-amber-50 text-amber-700 border border-amber-200 text-xs font-medium px-3 py-1.5 rounded-full flex-shrink-0">
+            <span className="hidden sm:flex shrink-0 ml-2 items-center gap-1.5 bg-amber-50 text-amber-700 border border-amber-200 text-xs font-medium px-3 py-1.5 rounded-full">
               <FlaskConical className="w-3.5 h-3.5" />
               TEST MODE
             </span>
           )}
+
+          {/* ── Gstore action icons — mobile only ─────────────────────────────
+              On desktop the floating action bar (GeostoreLayout) stays in place.
+              On mobile (< 640px) that bar is hidden via checkout-light.css and
+              these inline icons replace it, keeping the same components,
+              styling, badges, and functionality as the desktop floating bar.
+          ─────────────────────────────────────────────────────────────────── */}
+          <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:hidden">
+            <GeostoreWishlistButton />
+            <GeostoreCartButton />
+            <GeostoreSearchButton />
+          </div>
+
         </div>
       </div>
 
