@@ -397,7 +397,7 @@ function BillingPanel() {
               asChild
               variant="primary"
               size="sm"
-              className="!bg-[#111827] !text-white !border-[#111827] hover:!bg-[#1f2937] hover:!border-[#1f2937] hover:!shadow-none"
+              className="settings-membership-manage !bg-[#111827] !text-white !border-[#111827] hover:!bg-[#1f2937] hover:!border-[#1f2937] hover:!shadow-none"
             >
               <Link to="/billing">Manage</Link>
             </GeoButton>

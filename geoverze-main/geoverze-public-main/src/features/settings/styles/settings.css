@@ -323,6 +323,20 @@
   -webkit-text-fill-color: var(--ss-ink);
 }
 
+/*
+ * Membership "MANAGE" — the row's -webkit-text-fill-color inherits onto the
+ * black button and paints the label ink-on-ink. Force pure white in every
+ * interactive state without changing size, radius, tracking, or hover motion.
+ */
+#gvrze-account .settings-page .settings-membership-manage,
+#gvrze-account .settings-page .settings-membership-manage:hover,
+#gvrze-account .settings-page .settings-membership-manage:focus,
+#gvrze-account .settings-page .settings-membership-manage:focus-visible,
+#gvrze-account .settings-page .settings-membership-manage:active {
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
 #gvrze-account .settings-page .settings-group {
   background: var(--ss-bg);
   border-color: var(--ss-line);
