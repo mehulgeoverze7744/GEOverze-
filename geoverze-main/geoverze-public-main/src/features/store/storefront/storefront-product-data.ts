@@ -14,6 +14,7 @@ const NA_BASE  = `${BASE}/new-age`;
 const NM_BASE  = `${BASE}/new-age-mulberry`;
 const NB_BASE  = `${BASE}/new-age-midnight-black`;
 const GA_BASE  = `${BASE}/golden-arc`;
+const GAB_BASE = `${BASE}/golden-arc-midnight-black`;
 
 /**
  * A single colour variant for a storefront tee.
@@ -340,14 +341,48 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
           },
         ],
       },
-      // Add further colourways here when ready, e.g.:
-      // { id: "...", label: "...", hex: "...", image: {...}, gallery: [...] },
+      // ── 2. Midnight Black ─────────────────────────────────────────────────
+      {
+        id: "golden-arc-midnight-black",
+        label: "Midnight Black",
+        hex: "#1a1a1a",
+        image: {
+          src: `${GAB_BASE}/gab-1.png`,
+          alt: "Golden Arc T-Shirt in Midnight Black — front design",
+        },
+        // Gallery order:
+        // gab-1 front product (PRIMARY)  gab-2 back product
+        // gab-3 front + back presentation gab-4 collar / neck close-up
+        // gab-5 model wearing (front)
+        gallery: [
+          {
+            src: `${GAB_BASE}/gab-1.png`,
+            alt: "Midnight Black — front T-shirt product image",
+          },
+          {
+            src: `${GAB_BASE}/gab-2.png`,
+            alt: "Midnight Black — back T-shirt product image",
+          },
+          {
+            src: `${GAB_BASE}/gab-3.png`,
+            alt: "Midnight Black — front and back product presentation",
+          },
+          {
+            src: `${GAB_BASE}/gab-4.png`,
+            alt: "Midnight Black — collar and GVRZE label close-up",
+          },
+          {
+            src: `${GAB_BASE}/gab-5.jpg`,
+            alt: "Midnight Black — model wearing the tee, front view",
+          },
+        ],
+      },
     ],
 
     description:
-      "A statement piece inspired by celestial geometry and cosmic exploration. The Golden Arc T-Shirt in Skyblue combines a relaxed oversized silhouette with a distinctive planetary graphic composition. Its soft sky-blue base creates a clean contrast against deep blue celestial artwork, orbital lines, and the signature GVRZE wordmark. Designed for everyday wear with a premium streetwear aesthetic, this tee brings together minimal branding and expressive cosmic detailing.",
+      "A statement piece inspired by celestial geometry and cosmic exploration. The Golden Arc T-Shirt combines a relaxed oversized silhouette with a distinctive planetary graphic composition — intricate celestial artwork, orbital lines, and the signature GVRZE wordmark. Available in Skyblue and Midnight Black, each colourway brings a different energy to the same bold graphic composition. Designed for everyday wear with a premium streetwear aesthetic.",
     highlights: [
-      "Skyblue colourway — soft and distinctive against the deep blue artwork.",
+      "Available in Skyblue and Midnight Black — two distinctive colourways, one bold graphic.",
       "Signature GVRZE wordmark on the front chest.",
       "Large celestial planetary artwork on the back — globe, orbital lines, star elements.",
       "Abstract topographic artwork on the front for a layered graphic composition.",
@@ -356,7 +391,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
       "Premium Screen Printing — sharp, fade-resistant graphics that last wash after wash.",
     ],
     stylingTip:
-      "Style the Golden Arc Skyblue Tee with white or off-white trousers for a tonal look, or contrast with dark denim and black sneakers. The sky-blue colourway pairs naturally with navy, ecru, and light grey for a clean, understated summer aesthetic.",
+      "Skyblue: style with white or off-white trousers for a tonal look, or contrast with dark denim. Midnight Black: a true all-rounder — pairs with any bottom; the vibrant multicolour artwork pops cleanly against the pure black fabric. Both colourways work equally well layered under an open overshirt.",
     washcare: WASHCARE_STANDARD,
     relatedIds: ["midnight-black-tshirt", "cherry-blossom-tshirt", "new-age-tshirt"],
   },
