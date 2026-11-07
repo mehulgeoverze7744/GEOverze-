@@ -17,6 +17,7 @@ import {
   type FieldErrors,
   type ForgotPasswordValues,
 } from "@/features/auth/lib/schemas";
+import { mapAuthError } from "@/features/auth/lib/oauth";
 import { useMockRequest } from "@/features/auth/lib/useMockRequest";
 import { supabase } from "@/lib/supabase/client";
 
@@ -44,7 +45,7 @@ export function ForgotPasswordPage() {
         // Supabase returns an error for real failures (rate limits, invalid
         // config) but does not reveal whether the email exists — the success
         // copy below already accounts for that ("if this belongs to...").
-        if (resetError) return { ok: false, error: resetError.message };
+        if (resetError) return { ok: false, error: mapAuthError(resetError.message) };
         return { ok: true };
       },
     });

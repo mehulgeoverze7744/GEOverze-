@@ -51,7 +51,7 @@ export const disclaimerSections: LegalSection[] = [
     blocks: [
       {
         kind: "p",
-        text: "Accounts and stored application data use Supabase. Other sites or tools linked from GVRZE have their own terms and privacy practices. A link is not an endorsement of that third party's information. Google and Apple sign-in buttons are visible but are not connected.",
+        text: "Accounts and stored application data use Supabase. Other sites or tools linked from GVRZE have their own terms and privacy practices. A link is not an endorsement of that third party's information. Google sign-in, when enabled, is handled by Google and Supabase. Apple sign-in is not connected.",
       },
     ],
   },

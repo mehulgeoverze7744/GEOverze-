@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ShieldCheck } from "lucide-react";
 
@@ -17,6 +17,7 @@ import {
   type FieldErrors,
   type ResetPasswordValues,
 } from "@/features/auth/lib/schemas";
+import { mapAuthError } from "@/features/auth/lib/oauth";
 import { useMockRequest } from "@/features/auth/lib/useMockRequest";
 import { supabase } from "@/lib/supabase/client";
 
@@ -24,7 +25,21 @@ import { supabase } from "@/lib/supabase/client";
 export function ResetPasswordPage() {
   const [values, setValues] = useState<ResetPasswordValues>({ password: "", confirmPassword: "" });
   const [errors, setErrors] = useState<FieldErrors<ResetPasswordValues>>({});
+  const [linkError, setLinkError] = useState<string | null>(null);
   const { state, error, run, reset } = useMockRequest();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const code = new URLSearchParams(window.location.search).get("code");
+    if (!code) return;
+    void supabase.auth.exchangeCodeForSession(code).then(({ error: exchangeError }) => {
+      if (exchangeError) {
+        setLinkError(mapAuthError(exchangeError.message));
+        return;
+      }
+      window.history.replaceState({}, document.title, "/auth/reset-password");
+    });
+  }, []);
 
   const update = <K extends keyof ResetPasswordValues>(key: K, value: string) => {
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -47,7 +62,7 @@ export function ResetPasswordPage() {
         const { error: updateError } = await supabase.auth.updateUser({
           password: parsed.data.password,
         });
-        if (updateError) return { ok: false, error: updateError.message };
+        if (updateError) return { ok: false, error: mapAuthError(updateError.message) };
         return { ok: true };
       },
     });
@@ -74,6 +89,7 @@ export function ResetPasswordPage() {
           </SuccessBurst>
         ) : (
           <form className="space-y-5" onSubmit={onSubmit} noValidate>
+            {linkError ? <ValidationMessage>{linkError}</ValidationMessage> : null}
             {error ? <ValidationMessage>{error}</ValidationMessage> : null}
             <PasswordField
               id="password"

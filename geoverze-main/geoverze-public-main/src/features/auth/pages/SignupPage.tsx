@@ -19,6 +19,7 @@ import {
   type FieldErrors,
   type SignupValues,
 } from "@/features/auth/lib/schemas";
+import { isDuplicateSignupUser, mapAuthError, oauthCallbackUrl } from "@/features/auth/lib/oauth";
 import { useMockRequest } from "@/features/auth/lib/useMockRequest";
 import { supabase } from "@/lib/supabase/client";
 
@@ -40,8 +41,8 @@ export function SignupPage() {
   const navigate = useNavigate();
   const [values, setValues] = useState<SignupValues>({
     ...EMPTY,
-    acceptTerms: false as unknown as true,
-    acceptPrivacy: false as unknown as true,
+    acceptTerms: false,
+    acceptPrivacy: false,
   });
   const [errors, setErrors] = useState<FieldErrors<SignupValues>>({});
   const { state, error, run, reset } = useMockRequest();
@@ -62,7 +63,7 @@ export function SignupPage() {
     setErrors({});
     const ok = await run({
       action: async () => {
-        const { error: signUpError } = await supabase.auth.signUp({
+        const { data, error: signUpError } = await supabase.auth.signUp({
           email: parsed.data.email,
           password: parsed.data.password,
           options: {
@@ -72,19 +73,27 @@ export function SignupPage() {
               first_name: parsed.data.firstName,
               last_name: parsed.data.lastName,
               country_code: parsed.data.country.toUpperCase(),
+              newsletter: parsed.data.newsletter,
             },
-            ...(typeof window !== "undefined"
-              ? {
-                  emailRedirectTo: `${window.location.origin}/auth/verify-email?email=${encodeURIComponent(parsed.data.email)}`,
-                }
-              : {}),
+            ...(typeof window !== "undefined" ? { emailRedirectTo: oauthCallbackUrl() } : {}),
           },
         });
-        if (signUpError) return { ok: false, error: signUpError.message };
+        if (signUpError) return { ok: false, error: mapAuthError(signUpError.message) };
+        if (isDuplicateSignupUser(data.user)) {
+          return {
+            ok: false,
+            error: "An account with this email already exists. Sign in or continue with Google.",
+          };
+        }
         return { ok: true };
       },
     });
     if (ok) {
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (sessionData.session) {
+        navigate({ to: "/auth/age-verification" });
+        return;
+      }
       navigate({ to: "/auth/verify-email", search: { email: parsed.data.email } });
     }
   };
@@ -189,7 +198,7 @@ export function SignupPage() {
             <AuthCheckbox
               id="acceptTerms"
               checked={values.acceptTerms}
-              onChange={(e) => update("acceptTerms", e.target.checked as unknown as true)}
+              onChange={(e) => update("acceptTerms", e.target.checked)}
               {...(errors.acceptTerms ? { error: errors.acceptTerms } : {})}
               label={
                 <>
@@ -204,7 +213,7 @@ export function SignupPage() {
             <AuthCheckbox
               id="acceptPrivacy"
               checked={values.acceptPrivacy}
-              onChange={(e) => update("acceptPrivacy", e.target.checked as unknown as true)}
+              onChange={(e) => update("acceptPrivacy", e.target.checked)}
               {...(errors.acceptPrivacy ? { error: errors.acceptPrivacy } : {})}
               label={
                 <>

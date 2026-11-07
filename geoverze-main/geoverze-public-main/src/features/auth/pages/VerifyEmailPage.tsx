@@ -12,6 +12,7 @@ import {
   SuccessMessage,
   ValidationMessage,
 } from "@/features/auth/components";
+import { AUTH_CALLBACK_PATH, mapAuthError } from "@/features/auth/lib/oauth";
 import { useMockRequest } from "@/features/auth/lib/useMockRequest";
 import { supabase } from "@/lib/supabase/client";
 import { selectIsSignedIn, useAuthStore } from "@/stores/authStore";
@@ -35,6 +36,16 @@ export function VerifyEmailPage({ email }: { email?: string }) {
   const signedIn = useAuthStore(selectIsSignedIn);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const hash = window.location.hash.startsWith("#") ? window.location.hash.slice(1) : window.location.hash;
+    const hashParams = new URLSearchParams(hash);
+    if (params.get("code") || params.get("error") || hashParams.get("access_token") || hashParams.get("code")) {
+      window.location.replace(`${AUTH_CALLBACK_PATH}${window.location.search}${window.location.hash}`);
+    }
+  }, []);
+
+  useEffect(() => {
     if (cooldown <= 0) return;
     const timer = setTimeout(() => setCooldown((value) => value - 1), 1000);
     return () => clearTimeout(timer);
@@ -45,7 +56,7 @@ export function VerifyEmailPage({ email }: { email?: string }) {
     const ok = await resend.run({
       action: async () => {
         const { error } = await supabase.auth.resend({ type: "signup", email });
-        if (error) return { ok: false, error: error.message };
+        if (error) return { ok: false, error: mapAuthError(error.message) };
         return { ok: true };
       },
     });

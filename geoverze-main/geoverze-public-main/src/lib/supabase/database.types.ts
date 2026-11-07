@@ -443,6 +443,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          age_bracket: string
           avatar_id: string | null
           avatar_url: string | null
           bio: string | null
@@ -456,6 +457,7 @@ export type Database = {
           username: string | null
         }
         Insert: {
+          age_bracket?: string
           avatar_id?: string | null
           avatar_url?: string | null
           bio?: string | null
@@ -469,6 +471,7 @@ export type Database = {
           username?: string | null
         }
         Update: {
+          age_bracket?: string
           avatar_id?: string | null
           avatar_url?: string | null
           bio?: string | null

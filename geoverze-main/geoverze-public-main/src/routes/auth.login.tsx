@@ -3,6 +3,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { LoginPage } from "@/features/auth/pages/LoginPage";
 
 export const Route = createFileRoute("/auth/login")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    redirect: typeof search.redirect === "string" ? search.redirect : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Sign In — GVRZE" },
@@ -18,5 +21,10 @@ export const Route = createFileRoute("/auth/login")({
     ],
     links: [{ rel: "canonical", href: "https://geoverze.com/auth/login" }],
   }),
-  component: LoginPage,
+  component: LoginRoute,
 });
+
+function LoginRoute() {
+  const { redirect } = Route.useSearch();
+  return <LoginPage {...(redirect ? { redirect } : {})} />;
+}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 
 import { PageShell } from "@/components/layout/PageShell";
@@ -18,16 +18,25 @@ import {
   type FieldErrors,
   type LoginValues,
 } from "@/features/auth/lib/schemas";
+import { DEFAULT_SIGNED_IN_PATH, mapAuthError, safeInternalPath } from "@/features/auth/lib/oauth";
 import { useMockRequest } from "@/features/auth/lib/useMockRequest";
 import { PasswordField } from "@/features/auth/components/PasswordField";
 import { supabase } from "@/lib/supabase/client";
+import { selectIsSignedIn, useAuthStore } from "@/stores/authStore";
 
 /** Sign-in screen. Authenticates against Supabase; a successful submit starts a real session. */
-export function LoginPage() {
+export function LoginPage({ redirect }: { redirect?: string }) {
   const navigate = useNavigate();
+  const signedIn = useAuthStore(selectIsSignedIn);
+  const destination = safeInternalPath(redirect) ?? DEFAULT_SIGNED_IN_PATH;
   const [values, setValues] = useState<LoginValues>({ email: "", password: "", remember: true });
   const [errors, setErrors] = useState<FieldErrors<LoginValues>>({});
   const { state, error, run, reset } = useMockRequest();
+
+  useEffect(() => {
+    if (!signedIn || state === "pending" || state === "success") return;
+    void navigate({ to: destination as never, replace: true });
+  }, [destination, navigate, signedIn, state]);
 
   const update = <K extends keyof LoginValues>(key: K, value: LoginValues[K]) => {
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -49,12 +58,12 @@ export function LoginPage() {
           email: parsed.data.email,
           password: parsed.data.password,
         });
-        if (signInError) return { ok: false, error: signInError.message };
+        if (signInError) return { ok: false, error: mapAuthError(signInError.message) };
         return { ok: true };
       },
     });
     if (ok) {
-      setTimeout(() => navigate({ to: "/profile" }), 1200);
+      setTimeout(() => void navigate({ to: destination as never }), 1200);
     }
   };
 
@@ -136,7 +145,7 @@ export function LoginPage() {
           <AuthDivider />
 
           <div className="space-y-3">
-            <SocialButton provider="google" />
+            <SocialButton provider="google" next={destination} />
             <SocialButton provider="apple" />
           </div>
         </form>

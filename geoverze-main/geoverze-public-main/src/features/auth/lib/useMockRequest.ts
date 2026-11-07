@@ -38,17 +38,29 @@ export function useMockRequest({ delay = 1100 }: { delay?: number } = {}) {
       setState("pending");
 
       if (options?.action) {
-        return options.action().then((outcome) => {
-          if (!mounted.current) return outcome.ok;
-          if (!outcome.ok) {
-            setError(outcome.error);
+        return options
+          .action()
+          .then((outcome) => {
+            if (!mounted.current) return outcome.ok;
+            if (!outcome.ok) {
+              setError(outcome.error);
+              setState("error");
+              return false;
+            }
+            setState("success");
+            options.onSuccess?.();
+            return true;
+          })
+          .catch((err: unknown) => {
+            if (!mounted.current) return false;
+            const message =
+              err instanceof Error && err.message
+                ? err.message
+                : "Something went wrong. Please try again.";
+            setError(message);
             setState("error");
             return false;
-          }
-          setState("success");
-          options.onSuccess?.();
-          return true;
-        });
+          });
       }
 
       return new Promise<boolean>((resolve) => {

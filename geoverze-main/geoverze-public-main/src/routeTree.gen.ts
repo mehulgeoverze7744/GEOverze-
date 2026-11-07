@@ -45,6 +45,7 @@ import { Route as AppQuizHistoryRouteImport } from './routes/_app.quiz-history'
 import { Route as AppQuizHistoryAndRewardsRouteImport } from './routes/_app.quiz-history-and-rewards'
 import { Route as AppSettingsRouteImport } from './routes/_app.settings'
 import { Route as AuthAgeVerificationRouteImport } from './routes/auth.age-verification'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
 import { Route as AuthLoginRouteImport } from './routes/auth.login'
 import { Route as AuthOnboardingRouteImport } from './routes/auth.onboarding'
@@ -333,6 +334,11 @@ const AppSettingsRoute = AppSettingsRouteImport.update({
 const AuthAgeVerificationRoute = AuthAgeVerificationRouteImport.update({
   id: '/auth/age-verification',
   path: '/auth/age-verification',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
@@ -921,6 +927,7 @@ export interface FileRoutesByFullPath {
   '/quiz-history-and-rewards': typeof AppQuizHistoryAndRewardsRoute
   '/settings': typeof AppSettingsRoute
   '/auth/age-verification': typeof AuthAgeVerificationRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/onboarding': typeof AuthOnboardingRoute
@@ -1060,6 +1067,7 @@ export interface FileRoutesByTo {
   '/quiz-history-and-rewards': typeof AppQuizHistoryAndRewardsRoute
   '/settings': typeof AppSettingsRoute
   '/auth/age-verification': typeof AuthAgeVerificationRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/onboarding': typeof AuthOnboardingRoute
@@ -1203,6 +1211,7 @@ export interface FileRoutesById {
   '/_app/quiz-history-and-rewards': typeof AppQuizHistoryAndRewardsRoute
   '/_app/settings': typeof AppSettingsRoute
   '/auth/age-verification': typeof AuthAgeVerificationRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/onboarding': typeof AuthOnboardingRoute
@@ -1351,6 +1360,7 @@ export interface FileRouteTypes {
     | '/quiz-history-and-rewards'
     | '/settings'
     | '/auth/age-verification'
+    | '/auth/callback'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/onboarding'
@@ -1490,6 +1500,7 @@ export interface FileRouteTypes {
     | '/quiz-history-and-rewards'
     | '/settings'
     | '/auth/age-verification'
+    | '/auth/callback'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/onboarding'
@@ -1632,6 +1643,7 @@ export interface FileRouteTypes {
     | '/_app/quiz-history-and-rewards'
     | '/_app/settings'
     | '/auth/age-verification'
+    | '/auth/callback'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/onboarding'
@@ -1770,6 +1782,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   TermsOfServiceRoute: typeof TermsOfServiceRoute
   AuthAgeVerificationRoute: typeof AuthAgeVerificationRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthOnboardingRoute: typeof AuthOnboardingRoute
@@ -2030,6 +2043,13 @@ declare module '@tanstack/react-router' {
       path: '/auth/age-verification'
       fullPath: '/auth/age-verification'
       preLoaderRoute: typeof AuthAgeVerificationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/forgot-password': {
@@ -3184,6 +3204,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   TermsOfServiceRoute: TermsOfServiceRoute,
   AuthAgeVerificationRoute: AuthAgeVerificationRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthOnboardingRoute: AuthOnboardingRoute,

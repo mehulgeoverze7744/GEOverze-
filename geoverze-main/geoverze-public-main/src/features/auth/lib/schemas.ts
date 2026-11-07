@@ -47,8 +47,12 @@ export const signupSchema = z
     password: strongPassword,
     confirmPassword: z.string().min(1, { message: "Confirm your password" }),
     country: z.string().min(1, { message: "Select your country" }),
-    acceptTerms: z.literal(true, { message: "You must accept the Terms of Service" }),
-    acceptPrivacy: z.literal(true, { message: "You must accept the Privacy Policy" }),
+    acceptTerms: z
+      .boolean()
+      .refine((value) => value === true, { message: "You must accept the Terms of Service" }),
+    acceptPrivacy: z
+      .boolean()
+      .refine((value) => value === true, { message: "You must accept the Privacy Policy" }),
     newsletter: z.boolean(),
   })
   .refine((values) => values.password === values.confirmPassword, {

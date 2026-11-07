@@ -1,11 +1,9 @@
+import { useState } from "react";
 import { toast } from "sonner";
 
+import { startGoogleOAuth } from "@/features/auth/lib/oauth";
 import { cn } from "@/lib/utils";
 
-/**
- * OAuth provider buttons. Visual only — OAuth is wired up in the backend
- * phase, so a press explains the state instead of pretending to work.
- */
 const PROVIDERS = {
   google: {
     label: "Continue with Google",
@@ -34,26 +32,47 @@ const PROVIDERS = {
 export function SocialButton({
   provider,
   className,
+  next,
 }: {
   provider: keyof typeof PROVIDERS;
   className?: string;
+  /** Safe in-app path to return to after a successful Google sign-in. */
+  next?: string;
 }) {
   const { label, icon } = PROVIDERS[provider];
+  const [pending, setPending] = useState(false);
+
+  const onClick = async () => {
+    if (provider === "apple") {
+      toast("Continue with Apple isn't available yet", {
+        description: "Use email and password, or Continue with Google.",
+      });
+      return;
+    }
+
+    setPending(true);
+    try {
+      await startGoogleOAuth(next);
+    } catch (error) {
+      setPending(false);
+      const message = error instanceof Error ? error.message : "Google sign-in failed. Please try again.";
+      toast.error(message, { duration: 8000 });
+    }
+  };
+
   return (
     <button
       type="button"
-      onClick={() =>
-        toast(`${label} isn't connected yet`, {
-          description: "Social sign-in activates when the auth backend goes live.",
-        })
-      }
+      onClick={() => void onClick()}
+      disabled={pending}
+      aria-busy={pending}
       className={cn(
-        "flex w-full items-center justify-center gap-3 rounded-full border border-bronze/20 bg-charcoal/40 px-5 py-3 text-xs tracking-[var(--tracking-button)] text-foreground/70 transition-all motion-base hover:border-bronze/45 hover:text-foreground active:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50 motion-reduce:transition-none",
+        "flex w-full items-center justify-center gap-3 rounded-full border border-bronze/20 bg-charcoal/40 px-5 py-3 text-xs tracking-[var(--tracking-button)] text-foreground/70 transition-all motion-base hover:border-bronze/45 hover:text-foreground active:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50 motion-reduce:transition-none disabled:cursor-wait disabled:opacity-70",
         className,
       )}
     >
       {icon}
-      <span>{label}</span>
+      <span>{pending ? "Connecting to Google…" : label}</span>
     </button>
   );
 }

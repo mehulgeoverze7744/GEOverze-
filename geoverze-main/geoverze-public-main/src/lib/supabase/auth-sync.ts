@@ -151,6 +151,7 @@ async function hydratePreferences(user: User) {
   }
   if (data.skill_level) {
     onboarding.setSkillLevel(data.skill_level as SkillLevelId);
+    useOnboardingStore.setState({ completed: true });
   }
   if (data.locale) prefs.setLocale(data.locale);
   if (data.motion_pref) prefs.setMotion(data.motion_pref as MotionPreference);
@@ -188,7 +189,7 @@ async function hydrateProfileAndRole(user: User, event: string) {
         supabase
           .from("profiles")
           .select(
-            "username, display_name, bio, country_code, avatar_id, avatar_url, created_at",
+            "username, display_name, bio, country_code, avatar_id, avatar_url, created_at, age_bracket",
           )
           .eq("id", user.id)
           .maybeSingle(),
@@ -241,6 +242,13 @@ async function hydrateProfileAndRole(user: User, event: string) {
       useProfileStore.getState().update(canonical);
       const email = useAuthStore.getState().user?.email || user.email || "";
       useAuthStore.getState().setSession(sessionIdentityFromProfile({ id: user.id, email }, canonical));
+      const ageBracket = (profile as { age_bracket?: string | null } | null)?.age_bracket;
+      if (ageBracket === "adult" || ageBracket === "minor") {
+        useOnboardingStore.getState().setAgeAnswer(ageBracket);
+      }
+      if (profile?.avatar_id) {
+        useOnboardingStore.setState({ completed: true });
+      }
     }
 
     // Hydrate the rest of the signed-in mirrors after the profile attempt.

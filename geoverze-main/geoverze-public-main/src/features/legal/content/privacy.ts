@@ -26,7 +26,7 @@ export const privacySections: LegalSection[] = [
     blocks: [
       {
         kind: "p",
-        text: "What is collected depends on what you use. The current account flow can collect a first name, last name, username, email address, password, and country when you register. Authentication is handled by Supabase. Email and password sign-in is implemented. Google and Apple buttons are shown but are not connected. Password reset and email verification routes exist.",
+        text: "What is collected depends on what you use. The current account flow can collect a first name, last name, username, email address, password, and country when you register. Authentication is handled by Supabase. Email and password sign-in is implemented. Google sign-in is offered through Google OAuth when that provider is enabled on the authentication service; it can receive the name, email address, and profile photo Google shares for the account. Apple sign-in is not connected. Password reset and email verification routes exist.",
       },
       {
         kind: "p",
