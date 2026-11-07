@@ -229,35 +229,50 @@ body:has(#gvrze-storefront) footer .mt-16.border-t {
 
 /* ─── Product detail page — equal-height two-column layout ──────────────────
  *
- * How the equal-height constraint works (desktop ≥ 1024px):
+ * WHY THE PURE-CSS GRID TRICK DOESN'T WORK HERE
+ * ───────────────────────────────────────────────
+ * The CSS Grid spec "maximize tracks" step considers the max-content
+ * contribution of ALL grid items — including those with overflow-y: auto —
+ * when sizing auto rows. So the right col's content still inflates the row
+ * height, making overflow-y: auto have nothing to scroll.
  *
- *   CSS Grid rows expand to the tallest item (align-items: stretch).
- *   An item with `overflow-y: auto` does NOT contribute its content height
- *   to the row's intrinsic size calculation — only `overflow: visible`
- *   items do. So:
+ * HOW THIS LAYOUT ACTUALLY WORKS
+ * ───────────────────────────────
+ *   1. align-items: start → the grid row height is driven ONLY by the left
+ *      col's natural height (image with aspect-ratio: 4/5).
  *
- *     .sfpp-left-col  → overflow: visible (default)
- *                        height driven by the image's aspect-ratio: 4/5
- *                        → becomes the row height
+ *   2. The right col's maxHeight is set synchronously via ResizeObserver in
+ *      StorefrontProductPage.tsx (useLayoutEffect, fires before paint):
+ *        rightCol.style.maxHeight = `${leftCol.offsetHeight}px`
+ *      This caps the right col at exactly the left col's rendered height so
+ *      both columns appear equal while the right col scrolls internally.
  *
- *     .sfpp-right-col → overflow-y: auto
- *                        doesn't inflate the row
- *                        stretches (align-self: stretch) to fill the row
- *                        scrolls internally when content exceeds image height
+ *   3. overflow-y: auto activates when the right col's content exceeds its
+ *      capped maxHeight, revealing a subtle scrollbar.
  *
- *   min-height: 0 ensures the grid cell can shrink below the content's
- *   natural height (required for overflow-y to activate correctly).
- *
- * On mobile (< 1024px): no rules applied — columns stack naturally,
- * right panel scrolls with the page as expected.
+ * ON MOBILE (< 1024px)
+ * ─────────────────────
+ * No rules applied from this block. The JS clears the inline maxHeight.
+ * Columns stack naturally; right panel content grows with the page.
  * ─────────────────────────────────────────────────────────────────────────── */
 
 @media (min-width: 1024px) {
-  /* Right info panel: independently scrollable, height locked to left gallery */
+  /* 1. Grid: left col drives row height; right col doesn't inflate the row. */
+  #gvrze-storefront.gvrze-storefront-product .sfpp-product-grid {
+    align-items: start;
+  }
+
+  /* 2. Left col: standard flow, let image aspect-ratio define height. */
+  #gvrze-storefront.gvrze-storefront-product .sfpp-left-col {
+    min-height: 0; /* allow the grid cell to shrink if needed */
+  }
+
+  /* 3. Right info panel: scrollable, height bounded by maxHeight from JS.
+        min-height: 0 ensures the grid cell can shrink below content height. */
   #gvrze-storefront.gvrze-storefront-product .sfpp-right-col {
     overflow-y: auto;
     min-height: 0;
-    /* Subtle scrollbar — consistent with Gstore's clean, minimal aesthetic */
+    /* Subtle scrollbar — consistent with Gstore's premium, minimal aesthetic */
     scrollbar-width: thin;
     scrollbar-color: #c8c8c8 transparent;
   }

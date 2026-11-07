@@ -13,7 +13,7 @@
 
 import "./storefront.css";
 
-import { useState, type ReactNode } from "react";
+import { useState, useRef, useLayoutEffect, type ReactNode } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Bookmark, BookmarkCheck, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -232,6 +232,47 @@ export function StorefrontProductPage({
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("description");
 
+  // ── Equal-height two-column layout ──────────────────────────────────────
+  // CSS Grid `auto` rows are inflated by both columns' max-content sizes
+  // even when overflow-y: auto is set, so pure-CSS tricks don't reliably
+  // constrain the right col. We use a ResizeObserver to sync the right col's
+  // maxHeight to the left col's exact rendered height on desktop (≥1024px).
+  // useLayoutEffect fires synchronously before paint → no flash.
+  const leftColRef = useRef<HTMLDivElement>(null);
+  const rightColRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const leftCol = leftColRef.current;
+    const rightCol = rightColRef.current;
+    if (!leftCol || !rightCol) return;
+
+    const mq = window.matchMedia("(min-width: 1024px)");
+
+    function syncHeight() {
+      if (!leftColRef.current || !rightColRef.current) return;
+      if (mq.matches) {
+        // Lock right col to exactly the left col's rendered height so they
+        // appear equal while the right col scrolls its overflowing content.
+        rightColRef.current.style.maxHeight = `${leftColRef.current.offsetHeight}px`;
+      } else {
+        // Mobile: natural height — right col grows with content, page scrolls.
+        rightColRef.current.style.maxHeight = "";
+      }
+    }
+
+    // Re-sync whenever the left col resizes (viewport resize, gallery change).
+    const ro = new ResizeObserver(syncHeight);
+    ro.observe(leftCol);
+    mq.addEventListener("change", syncHeight);
+    syncHeight(); // initial sync
+
+    return () => {
+      ro.disconnect();
+      mq.removeEventListener("change", syncHeight);
+    };
+  }, []);
+  // ────────────────────────────────────────────────────────────────────────
+
   const navigate = useNavigate();
   const wishlistItems = useStoreStore((s) => s.wishlist);
   const wishlistToggleFn = useStoreStore((s) => s.toggleWishlist);
@@ -338,7 +379,7 @@ export function StorefrontProductPage({
           className={`${SF_SHELL} sfpp-product-grid grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-10`}
         >
           {/* ── Left: Gallery ──────────────────────────────────────────────── */}
-          <div className="sfpp-left-col flex flex-col gap-4 sm:flex-row">
+          <div className="sfpp-left-col flex flex-col gap-4 sm:flex-row" ref={leftColRef}>
             {/* Vertical thumbnail strip (desktop: col, mobile: row at bottom) */}
             {galleryImages.length > 1 && (
               <div className="order-2 flex gap-2 sm:order-1 sm:flex-col sm:gap-2.5">
@@ -378,7 +419,7 @@ export function StorefrontProductPage({
           </div>
 
           {/* ── Right: Info + tabs ─────────────────────────────────────────── */}
-          <div className="sfpp-right-col rounded-2xl bg-[#f6f6f6] p-5 sm:p-7 lg:p-8">
+          <div className="sfpp-right-col rounded-2xl bg-[#f6f6f6] p-5 sm:p-7 lg:p-8" ref={rightColRef}>
             {/* Header: name + wishlist bookmark */}
             <div className="flex items-start justify-between gap-4">
               <div>
