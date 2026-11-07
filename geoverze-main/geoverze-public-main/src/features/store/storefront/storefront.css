@@ -227,3 +227,56 @@ body:has(#gvrze-storefront) footer .mt-16.border-t {
   isolation: isolate;
 }
 
+/* ─── Product detail page — equal-height two-column layout ──────────────────
+ *
+ * How the equal-height constraint works (desktop ≥ 1024px):
+ *
+ *   CSS Grid rows expand to the tallest item (align-items: stretch).
+ *   An item with `overflow-y: auto` does NOT contribute its content height
+ *   to the row's intrinsic size calculation — only `overflow: visible`
+ *   items do. So:
+ *
+ *     .sfpp-left-col  → overflow: visible (default)
+ *                        height driven by the image's aspect-ratio: 4/5
+ *                        → becomes the row height
+ *
+ *     .sfpp-right-col → overflow-y: auto
+ *                        doesn't inflate the row
+ *                        stretches (align-self: stretch) to fill the row
+ *                        scrolls internally when content exceeds image height
+ *
+ *   min-height: 0 ensures the grid cell can shrink below the content's
+ *   natural height (required for overflow-y to activate correctly).
+ *
+ * On mobile (< 1024px): no rules applied — columns stack naturally,
+ * right panel scrolls with the page as expected.
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+@media (min-width: 1024px) {
+  /* Right info panel: independently scrollable, height locked to left gallery */
+  #gvrze-storefront.gvrze-storefront-product .sfpp-right-col {
+    overflow-y: auto;
+    min-height: 0;
+    /* Subtle scrollbar — consistent with Gstore's clean, minimal aesthetic */
+    scrollbar-width: thin;
+    scrollbar-color: #c8c8c8 transparent;
+  }
+
+  #gvrze-storefront.gvrze-storefront-product .sfpp-right-col::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  #gvrze-storefront.gvrze-storefront-product .sfpp-right-col::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  #gvrze-storefront.gvrze-storefront-product .sfpp-right-col::-webkit-scrollbar-thumb {
+    background: #d0d0d0;
+    border-radius: 2px;
+  }
+
+  #gvrze-storefront.gvrze-storefront-product .sfpp-right-col::-webkit-scrollbar-thumb:hover {
+    background: #b8b8b8;
+  }
+}
+

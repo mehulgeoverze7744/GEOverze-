@@ -335,10 +335,10 @@ export function StorefrontProductPage({
 
         {/* ── Main product layout ────────────────────────────────────────────── */}
         <div
-          className={`${SF_SHELL} grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-10`}
+          className={`${SF_SHELL} sfpp-product-grid grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-10`}
         >
           {/* ── Left: Gallery ──────────────────────────────────────────────── */}
-          <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="sfpp-left-col flex flex-col gap-4 sm:flex-row">
             {/* Vertical thumbnail strip (desktop: col, mobile: row at bottom) */}
             {galleryImages.length > 1 && (
               <div className="order-2 flex gap-2 sm:order-1 sm:flex-col sm:gap-2.5">
@@ -378,7 +378,7 @@ export function StorefrontProductPage({
           </div>
 
           {/* ── Right: Info + tabs ─────────────────────────────────────────── */}
-          <div className="rounded-2xl bg-[#f6f6f6] p-5 sm:p-7 lg:p-8">
+          <div className="sfpp-right-col rounded-2xl bg-[#f6f6f6] p-5 sm:p-7 lg:p-8">
             {/* Header: name + wishlist bookmark */}
             <div className="flex items-start justify-between gap-4">
               <div>
