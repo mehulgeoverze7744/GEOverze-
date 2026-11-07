@@ -23,9 +23,9 @@ export const SF_ASSETS = {
     height: 1536,
   },
   bestSellerCherryBlossom: {
-    src: `${BASE}/best-sellers/cherry-blossom-tshirt.webp`,
-    width: 1176,
-    height: 1338,
+    src: `${BASE}/best-sellers/cherry-blossom/cb-7.jpg`,
+    width: 819,
+    height: 1024,
   },
   bestSellerGoldenArc: {
     src: `${BASE}/best-sellers/golden-arc/ga-5.jpg`,

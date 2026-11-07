@@ -46,12 +46,12 @@ const BEST_SELLERS: readonly BestSeller[] = [
   {
     name: "Cherry Blossom T-Shirt",
     price: "Rs. 2,999",
-    tone: "#e29ecc",
+    tone: "#e8729a",
     image: SF_ASSETS.bestSellerCherryBlossom,
-    alt: "Cherry Blossom T-Shirt, back view",
+    alt: "Cherry Blossom T-Shirt in Cherry Blossom Pink — model back view showing full GVRZE graphic",
     slug: "cherry-blossom-tshirt",
-    // Figma: x 10, y 30, 304 x 346, cover.
-    frame: { left: "3.086%", top: "7.371%", width: "93.827%", height: "85.012%" },
+    // Model portrait shot — simple full cover fill.
+    frame: { left: "0%", top: "0%", width: "100%", height: "100%" },
   },
   {
     name: "Golden Arc T-Shirt",
