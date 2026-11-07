@@ -36,6 +36,10 @@ import {
   cancelMockSubscriptionFn,
   scheduleCancelMockSubscriptionFn,
   reactivateMockSubscriptionFn,
+  beginMockUpgradeFn,
+  confirmMockUpgradeFn,
+  type BeginMockUpgradeResult,
+  type ConfirmMockUpgradeResult,
 } from "./mockPaymentServerFns";
 
 /**
@@ -60,6 +64,17 @@ export type MockSession = {
   gst_amount_minor: number;
   /** Total payable in paise (base + GST). */
   charge_amount_minor: number;
+  /**
+   * Upgrade-specific fields — present only for upgrade sessions.
+   * When is_upgrade=true, MockPaymentGateway calls confirmMockUpgrade
+   * instead of confirmMockSubscription.
+   */
+  is_upgrade?: boolean;
+  upgrade_payment_id?: string;
+  current_plan_tier?: string;
+  target_plan_tier?: string;
+  credit_rupees?: number;
+  upgrade_rupees?: number;
 };
 
 /** Outcome of confirmMockSubscription. */
@@ -267,6 +282,92 @@ export async function reactivateMockSubscription(params: {
     );
   }
 }
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* Upgrade flow                                                                  */
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * Creates a pending upgrade payment for an existing active mock subscription.
+ *
+ * The DB RPC calculates the proration (time-based credit) server-side.
+ * Returns a MockSession with is_upgrade=true and upgrade_payment_id populated.
+ *
+ * @throws MockPaymentError on network, auth, or RPC failure.
+ */
+export async function beginMockUpgrade(params: {
+  target_plan_tier: "basic" | "pro" | "advance";
+  billing_interval: "monthly" | "annual";
+  idempotency_key: string;
+}): Promise<MockSession> {
+  const access_token = await getAccessToken();
+
+  try {
+    const result: BeginMockUpgradeResult = await beginMockUpgradeFn({
+      data: {
+        access_token,
+        target_plan_tier: params.target_plan_tier,
+        billing_interval:  params.billing_interval,
+        idempotency_key:   params.idempotency_key,
+      },
+    });
+
+    return {
+      subscription_id:    result.subscription_id,
+      mock_session_id:    "mock_upgrade_" + result.upgrade_payment_id,
+      base_amount_minor:  result.base_amount_minor,
+      gst_amount_minor:   result.gst_amount_minor,
+      charge_amount_minor: result.charge_amount_minor,
+      is_upgrade:          true,
+      upgrade_payment_id:  result.upgrade_payment_id,
+      current_plan_tier:   result.current_plan_tier,
+      target_plan_tier:    result.target_plan_tier,
+      credit_rupees:       result.credit_rupees,
+      upgrade_rupees:      result.upgrade_rupees,
+    };
+  } catch (err) {
+    throw new MockPaymentError(
+      err instanceof Error ? err.message : "Failed to begin mock upgrade payment.",
+      "RPC_ERROR",
+    );
+  }
+}
+
+/**
+ * Resolves a pending mock upgrade payment to a final outcome.
+ *
+ * - 'success'  → upgrades subscription plan_tier, issues invoice, grants credits
+ * - 'failed'   → marks payment failed; subscription plan_tier unchanged
+ * - 'cancel'   → marks payment cancelled; subscription plan_tier unchanged
+ *
+ * Idempotent: safe to call twice with 'success' on an already-upgraded payment.
+ *
+ * @throws MockPaymentError on network, auth, or RPC failure.
+ */
+export async function confirmMockUpgrade(params: {
+  upgrade_payment_id: string;
+  outcome: "success" | "failed" | "cancel";
+}): Promise<ConfirmMockUpgradeResult> {
+  const access_token = await getAccessToken();
+
+  try {
+    const result = await confirmMockUpgradeFn({
+      data: {
+        access_token,
+        upgrade_payment_id: params.upgrade_payment_id,
+        outcome:             params.outcome,
+      },
+    });
+
+    return result ?? { success: false };
+  } catch (err) {
+    throw new MockPaymentError(
+      err instanceof Error ? err.message : "Failed to confirm mock upgrade.",
+      "RPC_ERROR",
+    );
+  }
+}
+
 
 /** Generates a stable idempotency key from user ID + plan + cycle + timestamp. */
 export function generateIdempotencyKey(

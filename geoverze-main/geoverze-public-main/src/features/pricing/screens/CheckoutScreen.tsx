@@ -55,6 +55,7 @@ import { useAuthStore, selectUser } from "@/stores/authStore";
 import type { BillingCycle, TierId } from "../data/plans";
 import { TIER_ORDER } from "../data/plans";
 import { usePricingCatalog } from "../hooks/usePricingCatalog";
+import { useMyBilling } from "../hooks/useMyBilling";
 import {
   createCheckoutSession,
   CheckoutSessionError,
@@ -67,12 +68,19 @@ import {
 } from "../lib/razorpay-client";
 import {
   beginMockSubscription,
+  beginMockUpgrade,
   generateIdempotencyKey,
   MockPaymentError,
   type MockSession,
 } from "../lib/mock-payment";
 import { formatInrRupees } from "../lib/formatInr";
 import { GST_CONFIG, calcGst } from "../lib/gstConfig";
+import {
+  calcClientProration,
+  isUpgradeTo,
+  generateUpgradeIdempotencyKey,
+  type ProrationResult,
+} from "../lib/proration";
 import { MockPaymentGateway } from "../components/MockPaymentGateway";
 import { usePaymentConfig } from "../hooks/usePaymentConfig";
 import "../styles/checkout.css";
@@ -172,6 +180,51 @@ export function CheckoutScreen() {
   const plan = plans.find((p) => p.id === initialPlan) ?? null;
   const price = plan?.prices[cycle];
 
+  /* Current subscription state — used for upgrade detection */
+  const { data: billingData } = useMyBilling();
+
+  /**
+   * Is this checkout an upgrade?
+   *
+   * Conditions:
+   *   1. User has an active paid subscription (not explorer).
+   *   2. The target plan tier is strictly higher than the current tier.
+   *   3. The billing interval matches the user's current interval
+   *      (cross-interval upgrades are handled via the full flow, not proration).
+   */
+  const isUpgrade = !!(
+    billingData?.isPaidMembership &&
+    billingData.tier !== "explorer" &&
+    plan &&
+    isUpgradeTo(billingData.tier as TierId, plan.id as TierId) &&
+    billingData.billingInterval === cycle
+  );
+
+  /**
+   * Client-side proration calculation for display.
+   * Server always recalculates and validates — this is display-only.
+   */
+  const proration: ProrationResult | null = (() => {
+    if (!isUpgrade || !billingData) return null;
+    if (!billingData.periodStartIso || !billingData.periodEndIso) return null;
+    if (billingData.currentPlanPriceRupees <= 0) return null;
+
+    const targetPriceRupees = (() => {
+      if (!plan) return 0;
+      const p = plan.prices[cycle];
+      if (p.amount === "Free") return 0;
+      return parseFloat(p.amount.replace(/[^\d.]/g, ""));
+    })();
+    if (targetPriceRupees <= 0) return null;
+
+    return calcClientProration({
+      currentPriceRupees: billingData.currentPlanPriceRupees,
+      targetPriceRupees,
+      periodStartIso: billingData.periodStartIso,
+      periodEndIso:   billingData.periodEndIso,
+    });
+  })();
+
   /* Duplicate-payment guard */
   const inflight = useRef(false);
 
@@ -185,8 +238,15 @@ export function CheckoutScreen() {
   }
 
   const approxRupees = getApproxRupees();
-  const gst = calcGst(approxRupees);
-  const displayTotal = gst.totalRupees > 0 ? gst.totalRupees : approxRupees;
+  /**
+   * For upgrade mode: use the server-calculated upgrade rupees (from proration).
+   * For new subscriptions: use the catalog price as normal.
+   */
+  const effectiveRupees = isUpgrade && proration
+    ? proration.upgradeRupees
+    : approxRupees;
+  const gst = calcGst(effectiveRupees);
+  const displayTotal = gst.totalRupees > 0 ? gst.totalRupees : effectiveRupees;
 
   /* Annual savings label */
   const annualSavingLabel = (() => {
@@ -267,6 +327,24 @@ export function CheckoutScreen() {
     setPaymentError(null);
 
     try {
+      /* ── Upgrade path ──────────────────────────────────────────────────── */
+      if (isUpgrade) {
+        const idempotencyKey = generateUpgradeIdempotencyKey(
+          user.id,
+          billingData?.tier ?? "basic",
+          plan.id,
+          cycle,
+        );
+        const session = await beginMockUpgrade({
+          target_plan_tier: plan.id as "basic" | "pro" | "advance",
+          billing_interval:  cycle,
+          idempotency_key:   idempotencyKey,
+        });
+        setMockSession(session);
+        return;
+      }
+
+      /* ── New subscription path ─────────────────────────────────────────── */
       const idempotencyKey = generateIdempotencyKey(user.id, plan.id, cycle);
       const session = await beginMockSubscription({
         plan_tier:            plan.id,
@@ -482,14 +560,56 @@ export function CheckoutScreen() {
                 <p className="checkout-summary__positioning">{plan.positioning}</p>
 
                 <div className="checkout-summary__price-block">
-                  {price?.compareAt ? (
+                  {price?.compareAt && !isUpgrade ? (
                     <span className="checkout-summary__compare-at">{price.compareAt}</span>
                   ) : null}
                   <span className="checkout-summary__price-amount">{price?.amount}</span>
                   <span className="checkout-summary__price-cadence">{price?.cadence}</span>
                 </div>
 
-                {approxRupees > 0 ? (
+                {/* ── Upgrade proration breakdown ─────────────────────────── */}
+                {isUpgrade && proration ? (
+                  <div className="checkout-gst-table" aria-label="Upgrade pricing breakdown">
+                    {/* Target plan full price (reference) */}
+                    <div className="checkout-gst-row">
+                      <span>{plan?.name} {cycle === "annual" ? "Annual" : "Monthly"}</span>
+                      <span>{formatInrRupees(proration.gst.totalRupees + proration.creditRupees)}</span>
+                    </div>
+                    {/* Credit from unused current subscription */}
+                    <div className="checkout-gst-row" style={{ color: "oklch(0.52 0.14 150)" }}>
+                      <span>
+                        {billingData?.planName ?? "Current plan"} credit
+                        {proration.remainingDays > 0
+                          ? ` (${proration.remainingDays}d remaining)`
+                          : ""}
+                      </span>
+                      <span>−{formatInrRupees(proration.creditRupees)}</span>
+                    </div>
+                    <hr style={{ border: "none", borderTop: "1px solid oklch(0.9 0.01 0)", margin: "0.25rem 0" }} />
+                    {/* Upgrade subtotal */}
+                    <div className="checkout-gst-row">
+                      <span>Upgrade amount</span>
+                      <span>{formatInrRupees(proration.upgradeRupees)}</span>
+                    </div>
+                    {/* GST breakdown on upgrade amount */}
+                    <div className="checkout-gst-row" style={{ opacity: 0.7 }}>
+                      <span>of which {GST_CONFIG.taxLabel}</span>
+                      <span>{formatInrRupees(proration.gst.gstRupees)}</span>
+                    </div>
+                    <div className="checkout-gst-row checkout-gst-row--total">
+                      <span>Upgrade payment today</span>
+                      <strong>{formatInrRupees(proration.upgradeRupees)}</strong>
+                    </div>
+                    {/* Renewal note */}
+                    <div className="checkout-gst-row" style={{ marginTop: "0.5rem", opacity: 0.6, fontSize: "0.78rem" }}>
+                      <span>Then {price?.amount} {price?.cadence} from {billingData?.renewsLabel ?? "next renewal"}</span>
+                      <span />
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* ── Standard GST breakdown (new subscription) ───────────── */}
+                {!isUpgrade && approxRupees > 0 ? (
                   <div className="checkout-gst-table" aria-label="Tax breakdown">
                     <div className="checkout-gst-row">
                       <span>Subscription ({cycle === "annual" ? "annual" : "monthly"})</span>
@@ -506,19 +626,30 @@ export function CheckoutScreen() {
                   </div>
                 ) : null}
 
-                {price?.compareAt ? (
+                {/* ── Upgrade badge ────────────────────────────────────────── */}
+                {isUpgrade ? (
+                  <div className="checkout-summary__promo-badge" aria-live="polite">
+                    <span>⬆</span>
+                    <span>
+                      Upgrading from {billingData?.planName ?? "current plan"} —
+                      prorated credit applied
+                    </span>
+                  </div>
+                ) : null}
+
+                {price?.compareAt && !isUpgrade ? (
                   <div className="checkout-summary__promo-badge" aria-live="polite">
                     <span>🎁</span>
                     <span>Introductory price applied</span>
                   </div>
                 ) : null}
-                {annualSavingLabel ? (
+                {annualSavingLabel && !isUpgrade ? (
                   <div className="checkout-summary__promo-badge" aria-live="polite">
                     <span>✨</span>
                     <span>{annualSavingLabel}</span>
                   </div>
                 ) : null}
-                {price?.note ? (
+                {price?.note && !isUpgrade ? (
                   <p className="checkout-summary__note">{price.note}</p>
                 ) : null}
 
@@ -534,14 +665,17 @@ export function CheckoutScreen() {
                 </ul>
 
                 <p className="checkout-renew-note">
-                  🔄 Renews automatically {cycle === "annual" ? "annually" : "every month"}.
-                  Cancel anytime from your billing dashboard.
+                  {isUpgrade && proration
+                    ? `⬆ Upgrade payment today: ${formatInrRupees(proration.upgradeRupees)} (prorated). Then renews at ${price?.amount} ${price?.cadence} from ${billingData?.renewsLabel ?? "next billing date"}.`
+                    : `🔄 Renews automatically ${cycle === "annual" ? "annually" : "every month"}. Cancel anytime from your billing dashboard.`}
                 </p>
               </article>
 
               {/* ── RIGHT: Payment Form ─────────────────────────────────── */}
               <section className="checkout-form-card" aria-label="Payment details">
-                <h2 className="checkout-form-card__title">Complete your membership</h2>
+                <h2 className="checkout-form-card__title">
+                  {isUpgrade ? `Upgrade to ${plan?.name ?? initialPlan}` : "Complete your membership"}
+                </h2>
 
                 {/* Billing cycle toggle */}
                 <div>
@@ -678,8 +812,9 @@ export function CheckoutScreen() {
                     <Link to="/terms" target="_blank" rel="noopener noreferrer">Terms of Service</Link>{" "}
                     and{" "}
                     <Link to="/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</Link>
-                    , and I authorise GVRZE to charge {price?.amount} {price?.cadence} (incl.{" "}
-                    {GST_CONFIG.ratePercent}% GST). My subscription renews automatically until I cancel.
+                    {isUpgrade && proration
+                      ? `, and I authorise GVRZE to charge ${formatInrRupees(proration.upgradeRupees)} today as a prorated upgrade payment (incl. ${GST_CONFIG.ratePercent}% GST), then ${price?.amount} ${price?.cadence} from ${billingData?.renewsLabel ?? "next renewal"}.`
+                      : `, and I authorise GVRZE to charge ${price?.amount} ${price?.cadence} (incl. ${GST_CONFIG.ratePercent}% GST). My subscription renews automatically until I cancel.`}
                   </label>
                 </div>
 
@@ -731,10 +866,20 @@ export function CheckoutScreen() {
                     disabled={loading || !agreed}
                     onClick={() => void handleMockPay()}
                     aria-busy={loading}
-                    aria-label={loading ? "Starting mock payment…" : "Pay & Activate (Mock Mode)"}
+                    aria-label={
+                      loading
+                        ? "Starting mock payment…"
+                        : isUpgrade
+                          ? `Pay upgrade amount ${formatInrRupees(displayTotal)} (Mock Mode)`
+                          : "Pay & Activate (Mock Mode)"
+                    }
                   >
                     <FlaskConical size={14} strokeWidth={2} aria-hidden />
-                    {loading ? "Starting mock payment…" : `Pay ${formatInrRupees(displayTotal)} · Mock Mode`}
+                    {loading
+                      ? "Starting mock payment…"
+                      : isUpgrade
+                        ? `Pay ${formatInrRupees(displayTotal)} · Upgrade · Mock`
+                        : `Pay ${formatInrRupees(displayTotal)} · Mock Mode`}
                   </button>
                 ) : null}
 
@@ -746,10 +891,20 @@ export function CheckoutScreen() {
                     disabled={loading || !agreed}
                     onClick={() => void handleRazorpayPay()}
                     aria-busy={loading}
-                    aria-label={loading ? "Opening payment window…" : `Pay ${formatInrRupees(displayTotal)} and activate ${plan.name}`}
+                    aria-label={
+                      loading
+                        ? "Opening payment window…"
+                        : isUpgrade
+                          ? `Pay ${formatInrRupees(displayTotal)} to upgrade to ${plan.name}`
+                          : `Pay ${formatInrRupees(displayTotal)} and activate ${plan.name}`
+                    }
                   >
                     <Lock size={14} strokeWidth={2} aria-hidden />
-                    {loading ? "Opening payment window…" : `Pay ${formatInrRupees(displayTotal)} · ${plan.name}`}
+                    {loading
+                      ? "Opening payment window…"
+                      : isUpgrade
+                        ? `Pay ${formatInrRupees(displayTotal)} · Upgrade to ${plan.name}`
+                        : `Pay ${formatInrRupees(displayTotal)} · ${plan.name}`}
                   </button>
                 ) : null}
 

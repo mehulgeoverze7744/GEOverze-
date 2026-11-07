@@ -211,6 +211,96 @@ export const reactivateMockSubscriptionFn = createServerFn({ method: "POST" })
   });
 
 
+// ── begin_mock_upgrade ────────────────────────────────────────────────────────
+//
+// Server function that calls the begin_mock_upgrade DB RPC.
+// Calculates time-based proration server-side and creates a pending upgrade
+// billing_payment linked to the caller's existing active subscription.
+// Does NOT create a new subscription row.
+//
+// Security: same layers as begin_mock_subscription (env gate + auth + DB).
+
+const BeginUpgradeSchema = z.object({
+  access_token:         z.string().min(10),
+  target_plan_tier:     z.enum(["basic", "pro", "advance"]),
+  billing_interval:     z.enum(["monthly", "annual"]),
+  idempotency_key:      z.string().min(1).max(256),
+});
+
+export type BeginMockUpgradeInput = z.infer<typeof BeginUpgradeSchema>;
+
+export type BeginMockUpgradeResult = {
+  subscription_id:      string;
+  upgrade_payment_id:   string;
+  current_plan_tier:    string;
+  target_plan_tier:     string;
+  billing_interval:     string;
+  current_price_rupees: number;
+  target_price_rupees:  number;
+  credit_rupees:        number;
+  upgrade_rupees:       number;
+  base_amount_minor:    number;
+  gst_amount_minor:     number;
+  charge_amount_minor:  number;
+};
+
+export const beginMockUpgradeFn = createServerFn({ method: "POST" })
+  .validator((raw: unknown) => BeginUpgradeSchema.parse(raw))
+  .handler(async ({ data }): Promise<BeginMockUpgradeResult> => {
+    assertMockEnabled();
+    const sb = makeAuthenticatedClient(data.access_token);
+
+    const { data: result, error } = await sb.rpc("begin_mock_upgrade", {
+      p_target_plan_tier: data.target_plan_tier,
+      p_billing_interval: data.billing_interval,
+      p_idempotency_key:  data.idempotency_key,
+    });
+
+    if (error) throw new Error(error.message ?? "begin_mock_upgrade RPC failed.");
+    const r = result as BeginMockUpgradeResult | null;
+    if (!r?.upgrade_payment_id) throw new Error("Invalid response from begin_mock_upgrade.");
+    return r;
+  });
+
+
+// ── confirm_mock_upgrade ──────────────────────────────────────────────────────
+//
+// Resolves a pending upgrade payment to success/failed/cancel.
+// On success: upgrades subscription plan_tier, issues invoice, grants credits.
+// On failure/cancel: payment marked accordingly; subscription unchanged.
+
+const ConfirmUpgradeSchema = z.object({
+  access_token:       z.string().min(10),
+  upgrade_payment_id: z.string().uuid(),
+  outcome:            z.enum(["success", "failed", "cancel"]),
+});
+
+export type ConfirmMockUpgradeInput = z.infer<typeof ConfirmUpgradeSchema>;
+
+export type ConfirmMockUpgradeResult = {
+  success:        boolean;
+  invoice_number?: string;
+  outcome?:        string;
+  already_active?: boolean;
+};
+
+export const confirmMockUpgradeFn = createServerFn({ method: "POST" })
+  .validator((raw: unknown) => ConfirmUpgradeSchema.parse(raw))
+  .handler(async ({ data }): Promise<ConfirmMockUpgradeResult> => {
+    // No assertMockEnabled() — confirming/failing an in-flight upgrade does not
+    // need the payment env gate (same reasoning as schedule_cancel).
+    const sb = makeAuthenticatedClient(data.access_token);
+
+    const { data: result, error } = await sb.rpc("confirm_mock_upgrade", {
+      p_upgrade_payment_id: data.upgrade_payment_id,
+      p_outcome:            data.outcome,
+    });
+
+    if (error) throw new Error(error.message ?? "confirm_mock_upgrade RPC failed.");
+    return (result as ConfirmMockUpgradeResult) ?? { success: false };
+  });
+
+
 // ── cancel_mock_subscription ───────────────────────────────────────────────────
 
 const CancelSchema = z.object({

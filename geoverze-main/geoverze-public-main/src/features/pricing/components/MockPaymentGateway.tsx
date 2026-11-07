@@ -32,6 +32,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import {
   confirmMockSubscription,
+  confirmMockUpgrade,
   MockPaymentError,
   type MockSession,
 } from "../lib/mock-payment";
@@ -78,10 +79,16 @@ export function MockPaymentGateway({
     setError(null);
 
     try {
-      const result = await confirmMockSubscription({
-        subscription_id: session.subscription_id,
-        outcome,
-      });
+      /* ── Upgrade path ──────────────────────────────────────────────────── */
+      const result = session.is_upgrade && session.upgrade_payment_id
+        ? await confirmMockUpgrade({
+            upgrade_payment_id: session.upgrade_payment_id,
+            outcome,
+          })
+        : await confirmMockSubscription({
+            subscription_id: session.subscription_id,
+            outcome,
+          });
 
       if (outcome === "success" && result.success) {
         setInvoiceNumber(result.invoice_number ?? null);
@@ -169,7 +176,10 @@ export function MockPaymentGateway({
             </div>
             <h2 className="mock-gateway-result-heading">Payment simulated ✓</h2>
             <p className="mock-gateway-result-body">
-              Your <strong>{planName}</strong> membership has been activated in test mode.
+              {session.is_upgrade
+                ? <>Your membership has been upgraded to <strong>{planName}</strong> in test mode.</>
+                : <>Your <strong>{planName}</strong> membership has been activated in test mode.</>
+              }{" "}
               Redirecting to confirmation…
             </p>
             {invoiceNumber ? (

@@ -55,6 +55,19 @@ export type MyBillingSnapshot = {
    */
   periodEndIso: string | null;
   /**
+   * ISO-8601 string for the current billing period start date.
+   * Used by CheckoutScreen to calculate time-based proration for upgrades.
+   * Null for free-tier / explorer users.
+   */
+  periodStartIso: string | null;
+  /**
+   * Current plan's catalog price in whole INR rupees (GST-inclusive).
+   * Monthly price is used unless the subscription is annual and annual_price_cents is set.
+   * Zero for free (Explorer) tier.
+   * Used by CheckoutScreen to calculate the upgrade credit for display.
+   */
+  currentPlanPriceRupees: number;
+  /**
    * True when the backend supports reversing a scheduled cancellation.
    * When false, the "Reactivate Subscription" button is hidden to avoid
    * showing a misleading option.
@@ -79,6 +92,7 @@ type SubscriptionRpc = {
   status?: unknown;
   billing_interval?: unknown;
   started_at?: unknown;
+  current_period_start?: unknown;
   current_period_end?: unknown;
   cancel_at_period_end?: unknown;
 };
@@ -229,6 +243,9 @@ export async function fetchMyBilling(): Promise<MyBillingSnapshot> {
 
   const cancelAtPeriodEnd = asBoolean(subscription?.cancel_at_period_end);
   const periodEndIso = asString(subscription?.current_period_end);
+  const periodStartIso = asString(subscription?.current_period_start);
+  const currentPlanPriceRupees =
+    billingInterval === "annual" && annualPrice != null ? annualPrice : monthlyPrice;
 
   return {
     userId: user.id,
@@ -242,6 +259,8 @@ export async function fetchMyBilling(): Promise<MyBillingSnapshot> {
     accessUntilLabel: formatDateLabel(periodEndIso),
     periodEndIso,
     cancelAtPeriodEnd,
+    periodStartIso,
+    currentPlanPriceRupees,
     // Both mock subscriptions and live subscriptions support reactivation via
     // our RPCs (reactivate_mock_subscription / request_reactivate_subscription).
     // Only hide the button if the sub is not in an active-ish state.
