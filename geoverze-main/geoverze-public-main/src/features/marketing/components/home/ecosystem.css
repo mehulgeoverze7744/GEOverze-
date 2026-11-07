@@ -2,7 +2,7 @@
 
 .ecosystem-section {
   overflow-x: clip;
-  padding-top: 0.35rem;
+  padding-top: 1.25rem;
   padding-bottom: calc(var(--space-section-sm) * 0.65);
 }
 
@@ -21,7 +21,7 @@
 
 @media (min-width: 768px) {
   .ecosystem-section {
-    padding-top: 0.5rem;
+    padding-top: 1.75rem;
     padding-bottom: calc(var(--space-section) * 0.55);
   }
 }
