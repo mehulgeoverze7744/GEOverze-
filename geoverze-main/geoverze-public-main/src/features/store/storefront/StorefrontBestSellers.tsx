@@ -16,10 +16,17 @@ type BestSeller = {
   /** Route slug for the individual product detail page. */
   slug: string;
   /**
-   * Placement of the photo inside the 324 x 407 Figma tile, as percentages of the
-   * tile, so the crop scales with the card.
+   * When true the image is placed directly at inset-0 inside the card link
+   * with object-fit:cover — the simplest, most reliable full-bleed mode.
+   * Use this for portrait model shots whose aspect ratio closely matches the
+   * 324×407 card tile. Mutually exclusive with frame/imageStyle/clip.
    */
-  frame: CSSProperties;
+  cover?: boolean;
+  /**
+   * Placement of the photo inside the 324 x 407 Figma tile, as percentages of the
+   * tile, so the crop scales with the card. Only used when cover is not set.
+   */
+  frame?: CSSProperties;
   /** Optional extra style for the photo inside its frame. */
   imageStyle?: CSSProperties;
   /** Clip the photo to its frame (Figma "clip content"). */
@@ -38,7 +45,7 @@ const BEST_SELLERS: readonly BestSeller[] = [
     image: SF_ASSETS.bestSellerMidnightBlack,
     alt: "Midnight Black T-Shirt, back view",
     slug: "midnight-black-tshirt",
-    // Figma: x 12, y 24, 293 x 383; photo 114.75% tall, anchored to the top.
+    // Figma-precise: x 12, y 24, 293×383; photo 114.75% tall, anchored top.
     frame: { left: "3.704%", top: "5.897%", width: "90.432%", height: "94.103%" },
     imageStyle: { height: "114.75%", top: "-0.07%" },
     clip: true,
@@ -50,8 +57,8 @@ const BEST_SELLERS: readonly BestSeller[] = [
     image: SF_ASSETS.bestSellerCherryBlossom,
     alt: "Cherry Blossom T-Shirt in Cherry Blossom Pink — model back view showing full GVRZE graphic",
     slug: "cherry-blossom-tshirt",
-    // Model portrait shot — simple full cover fill.
-    frame: { left: "0%", top: "0%", width: "100%", height: "100%" },
+    // Portrait model shot — full-bleed cover mode (image fills card edge-to-edge).
+    cover: true,
   },
   {
     name: "Golden Arc T-Shirt",
@@ -60,8 +67,8 @@ const BEST_SELLERS: readonly BestSeller[] = [
     image: SF_ASSETS.bestSellerGoldenArc,
     alt: "Golden Arc T-Shirt in Skyblue — model back view showing celestial planetary graphic",
     slug: "golden-arc-tshirt",
-    // Model portrait shot — simple cover fill, no rotation needed.
-    frame: { left: "0%", top: "0%", width: "100%", height: "100%" },
+    // Portrait model shot — full-bleed cover mode (image fills card edge-to-edge).
+    cover: true,
   },
   {
     name: "New Age T-Shirt",
@@ -70,17 +77,61 @@ const BEST_SELLERS: readonly BestSeller[] = [
     image: SF_ASSETS.bestSellerNewAge,
     alt: "New Age T-Shirt in Rose Wine Burgundy — back view showing full celestial graphic",
     slug: "new-age-tshirt",
-    // Figma: x 5, y 26, 312 x 381, anchored to the bottom.
-    frame: { left: "1.543%", top: "6.388%", width: "96.296%", height: "93.612%" },
+    // Portrait model/product shot — full-bleed cover mode (image fills card edge-to-edge).
+    cover: true,
   },
 ];
 
 function BestSellerCard({ item }: { item: BestSeller }) {
-  const free = item.imageStyle !== undefined;
   const productLink = {
     to: "/geostore/product/$slug",
     params: { slug: item.slug },
   } as const;
+
+  // ── Full-bleed cover path ──────────────────────────────────────────────────
+  // For portrait model/product shots whose aspect ratio closely matches the
+  // 324×407 card tile. The image is placed directly at inset-0 so it reaches
+  // every edge of the card with no background showing through.
+  const coverImage = item.cover ? (
+    <img
+      src={item.image.src}
+      width={item.image.width}
+      height={item.image.height}
+      alt={item.alt}
+      loading="lazy"
+      decoding="async"
+      className="absolute inset-0 block h-full w-full object-cover object-center"
+    />
+  ) : null;
+
+  // ── Figma-precise frame path ───────────────────────────────────────────────
+  // For images that need pixel-accurate placement, rotation or overflow clipping
+  // as specified in the Figma source (e.g. Midnight Black tilted flat-lay).
+  const framedImage = !item.cover ? (
+    <span
+      className={item.clip ? "absolute block overflow-hidden" : "absolute block"}
+      style={item.frame}
+    >
+      <img
+        src={item.image.src}
+        width={item.image.width}
+        height={item.image.height}
+        alt={item.alt}
+        loading="lazy"
+        decoding="async"
+        className={
+          item.imageStyle
+            ? "absolute block max-w-none object-cover"
+            : "absolute inset-0 block h-full w-full max-w-none object-cover object-bottom"
+        }
+        style={
+          item.imageStyle
+            ? { left: 0, width: "100%", height: "100%", ...item.imageStyle }
+            : undefined
+        }
+      />
+    </span>
+  ) : null;
 
   return (
     <li className="min-w-0">
@@ -95,27 +146,8 @@ function BestSellerCard({ item }: { item: BestSeller }) {
           aria-hidden="true"
           className="absolute inset-0 block"
         >
-          <span
-            className={item.clip ? "absolute block overflow-hidden" : "absolute block"}
-            style={item.frame}
-          >
-            <img
-              src={item.image.src}
-              width={item.image.width}
-              height={item.image.height}
-              alt={item.alt}
-              loading="lazy"
-              decoding="async"
-              className={
-                free
-                  ? "absolute block max-w-none object-cover"
-                  : "absolute inset-0 block h-full w-full max-w-none object-cover object-bottom"
-              }
-              style={
-                free ? { left: 0, width: "100%", height: "100%", ...item.imageStyle } : undefined
-              }
-            />
-          </span>
+          {coverImage}
+          {framedImage}
         </Link>
       </div>
 
