@@ -1,3 +1,5 @@
+import { resolveMapBoard } from "./mapBoards";
+
 const wikiCache = new Map<string, string | null>();
 const wikiInflight = new Map<string, Promise<string | null>>();
 
@@ -80,6 +82,8 @@ async function fetchWikiImage(title: string): Promise<string | null> {
 /** Resolve stored `art` to a browser URL, or null when a procedural fallback should be used. */
 export async function resolveMediaSrc(art: string | undefined | null): Promise<string | null> {
   if (!art) return null;
+  const mapped = resolveMapBoard({ boardArt: art, mediaArt: art });
+  if (mapped && mapped.family) return mapped.src;
   if (isDirectMediaUrl(art)) return art;
   const wikiTitle = wikiTitleFromArt(art);
   if (wikiTitle) return fetchWikiImage(wikiTitle);

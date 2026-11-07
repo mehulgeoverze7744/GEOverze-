@@ -10,7 +10,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 import { createBrandStateStorage, GVRZE_PERSIST_NAMES } from "@/lib/persist-key-migration";
 
-import { isComingSoonCategory } from "@/features/store/data/taxonomy";
+import { isCartLinePurchaseLocked } from "@/features/store/data/catalogAvailability";
 
 export type CartLine = {
   /** Line key: product id plus the chosen option signature. */
@@ -47,7 +47,7 @@ export const useCartStore = create<CartState>()(
       saved: [],
       add: (line) =>
         set((state) => {
-          if (isComingSoonCategory(line.category)) return state;
+          if (isCartLinePurchaseLocked(line)) return state;
           const existing = state.lines.find((l) => l.id === line.id);
           if (!existing) return { lines: [...state.lines, line] };
           return {
@@ -76,7 +76,7 @@ export const useCartStore = create<CartState>()(
       moveToCart: (id) =>
         set((state) => {
           const line = state.saved.find((l) => l.id === id);
-          if (!line || isComingSoonCategory(line.category)) return state;
+          if (!line || isCartLinePurchaseLocked(line)) return state;
           const existing = state.lines.find((l) => l.id === id);
           return {
             saved: state.saved.filter((l) => l.id !== id),
@@ -92,8 +92,18 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: GVRZE_PERSIST_NAMES.cart,
-      version: 2,
+      version: 3,
       storage: createJSONStorage(() => createBrandStateStorage()),
+      migrate: (persisted) => {
+        const state = persisted as CartState;
+        const lines = Array.isArray(state.lines) ? state.lines : [];
+        const saved = Array.isArray(state.saved) ? state.saved : [];
+        return {
+          ...state,
+          lines: lines.filter((line) => !isCartLinePurchaseLocked(line)),
+          saved: saved.filter((line) => !isCartLinePurchaseLocked(line)),
+        };
+      },
     },
   ),
 );

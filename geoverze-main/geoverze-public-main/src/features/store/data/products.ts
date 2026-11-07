@@ -7,12 +7,17 @@
  */
 import { merchProductById } from "@/features/marketing/data/geostoreMerch";
 
-import {
-  categoryById,
-  isComingSoonCategory,
-  type StoreCategoryId,
-  type StoreGroupId,
-} from "./taxonomy";
+import { STOREFRONT_TEES, type StorefrontTeeProduct } from "../storefront/storefront-product-data";
+
+import { isPurchaseLockedProduct, isRetiredProductSlug } from "./catalogAvailability";
+import { categoryById, type StoreCategoryId, type StoreGroupId } from "./taxonomy";
+
+export {
+  ACCESSORIES_LOOKBOOK_SLUGS,
+  ACCESSORIES_STICKER_SLUGS,
+  isAccessoriesLookbook,
+  isAccessoryLookbookCategory,
+} from "./catalogAvailability";
 
 /** Shared with merch shelves — do not duplicate listing fields. */
 const everyPointHoodieMerch = merchProductById("hoodie-every-point-has-a-story");
@@ -132,94 +137,52 @@ export const LISTING_HIDDEN_PRODUCT_SLUGS = new Set([
   "explore-the-unknown",
 ]);
 
-/** Sticker packs merchandised on the Accessories shelf. */
-export const ACCESSORIES_STICKER_SLUGS = [
-  "vintage-expedition-sticker-collection",
-  "the-explorers-trail",
-  "beyond-the-horizon",
-  "the-atlas-archive",
-  "the-cartographers-collection",
-  "flag-sticker-pack",
-  "continent-sticker-set",
-] as const;
-
-/** Globes and desk pieces that stay lookbook-only on Accessories. */
-export const ACCESSORIES_LOOKBOOK_SLUGS = new Set([
-  "crystal-earth-globe",
-  "vintage-world-globe",
-  "blue-ocean-globe",
-  "field-notebook",
-  "desk-globe-mini",
-]);
-
-export function isAccessoriesLookbook(slug: string): boolean {
-  return ACCESSORIES_LOOKBOOK_SLUGS.has(slug);
-}
-
 export function isProductListed(product: Pick<Product, "slug">): boolean {
-  return !LISTING_HIDDEN_PRODUCT_SLUGS.has(product.slug);
+  return !LISTING_HIDDEN_PRODUCT_SLUGS.has(product.slug) && !isRetiredProductSlug(product.slug);
 }
 
 export function isPurchaseLocked(
   product: Pick<Product, "comingSoon" | "category" | "slug">,
 ): boolean {
-  return (
-    product.comingSoon ||
-    isComingSoonCategory(product.category) ||
-    isAccessoriesLookbook(product.slug)
-  );
+  return isPurchaseLockedProduct(product);
+}
+
+const STOREFRONT_TEE_RANK: Record<
+  string,
+  { popularity: number; reviews: number; rating: number; bestSeller?: boolean }
+> = {
+  "midnight-black-tshirt": { popularity: 96, reviews: 72, rating: 4.9, bestSeller: true },
+  "cherry-blossom-tshirt": { popularity: 90, reviews: 64, rating: 4.9, bestSeller: true },
+  "new-age-tshirt": { popularity: 85, reviews: 48, rating: 4.8 },
+  "golden-arc-tshirt": { popularity: 82, reviews: 36, rating: 4.8 },
+};
+
+function storefrontTeeDraft(tee: StorefrontTeeProduct): Draft {
+  const rank = STOREFRONT_TEE_RANK[tee.id];
+  const colourValues = tee.colors?.map((color) => color.label) ?? [];
+  return {
+    slug: tee.id,
+    name: tee.name,
+    tagline: tee.description.slice(0, 140),
+    description: tee.description,
+    category: "tshirts",
+    price: 299_900,
+    rating: rank?.rating ?? 4.8,
+    reviews: rank?.reviews ?? 48,
+    popularity: rank?.popularity ?? 80,
+    bestSeller: rank?.bestSeller ?? true,
+    featured: true,
+    options: colourValues.length
+      ? [APPAREL_SIZES, { label: "Colour", values: colourValues }]
+      : [APPAREL_SIZES],
+    tags: ["apparel", "graphic", "signature", "t-shirt"],
+  };
 }
 
 export const PRODUCTS: readonly Product[] = [
-  // ── Storefront signature tees (product detail uses StorefrontTeeProductPage) ──
-  // These entries register the tees in the category shelf so they appear at
-  // /geostore/category/tshirts. The product detail page is rendered by the
-  // dedicated storefront tee architecture (clean-white design, colour swatches,
-  // gallery strip). Price is in minor units for catalogue sorting; the actual
-  // display price ("Rs. 2,999") comes from storefront-product-data.ts.
-  make({
-    slug: "cherry-blossom-tshirt",
-    name: "Cherry Blossom Oversized Graphic T-Shirt",
-    tagline: "Geographic exploration meets contemporary streetwear.",
-    description:
-      "Inspired by the beauty of cherry blossoms and the spirit of exploration. Features an abstract map-inspired graphic, compass elements, coordinates, and signature GVRZE branding.",
-    category: "tshirts",
-    price: 299_900,
-    rating: 4.9,
-    reviews: 64,
-    popularity: 90,
-    bestSeller: true,
-    options: [APPAREL_SIZES],
-    tags: ["apparel", "graphic", "oversized", "bestseller"],
-  }),
-  make({
-    slug: "new-age-tshirt",
-    name: "New Age T-Shirt",
-    tagline: "Cosmic exploration and celestial navigation.",
-    description:
-      "A statement piece inspired by celestial navigation and contemporary streetwear. Intricate multicolour celestial artwork across the sleeve, with a minimal star emblem and clean GVRZE chest wordmark.",
-    category: "tshirts",
-    price: 299_900,
-    rating: 4.8,
-    reviews: 48,
-    popularity: 85,
-    options: [APPAREL_SIZES],
-    tags: ["apparel", "graphic", "celestial"],
-  }),
-  make({
-    slug: "golden-arc-tshirt",
-    name: "Golden Arc T-Shirt",
-    tagline: "Celestial geometry and planetary exploration.",
-    description:
-      "A statement piece inspired by celestial geometry and cosmic exploration. Planetary graphic composition with orbital lines and the signature GVRZE wordmark.",
-    category: "tshirts",
-    price: 299_900,
-    rating: 4.8,
-    reviews: 36,
-    popularity: 82,
-    options: [APPAREL_SIZES],
-    tags: ["apparel", "graphic", "celestial"],
-  }),
+  // Storefront signature tees — sourced from STOREFRONT_TEES so browse,
+  // search, and category shelves stay in sync with product detail pages.
+  ...STOREFRONT_TEES.map((tee) => make(storefrontTeeDraft(tee))),
 
   make({
     slug: everyPointHoodieMerch?.id ?? "hoodie-every-point-has-a-story",
@@ -1103,16 +1066,18 @@ export function productsInGroup(group: StoreGroupId): readonly Product[] {
 }
 
 /** Same-category neighbours, falling back to the same group. */
-export function relatedProducts(product: Product, limit = 4): readonly Product[] {
-  const sameCategory = PRODUCTS.filter(
-    (p) => p.slug !== product.slug && p.category === product.category && isProductListed(p),
-  );
+export function relatedProducts(
+  product: Product,
+  limit = 4,
+  options?: { includeLookbook?: boolean },
+): readonly Product[] {
+  const eligible = (p: Product) =>
+    p.slug !== product.slug &&
+    isProductListed(p) &&
+    (options?.includeLookbook || !isPurchaseLocked(p));
+  const sameCategory = PRODUCTS.filter((p) => eligible(p) && p.category === product.category);
   const sameGroup = PRODUCTS.filter(
-    (p) =>
-      p.slug !== product.slug &&
-      p.group === product.group &&
-      p.category !== product.category &&
-      isProductListed(p),
+    (p) => eligible(p) && p.group === product.group && p.category !== product.category,
   );
   return [...sameCategory, ...sameGroup].slice(0, limit);
 }

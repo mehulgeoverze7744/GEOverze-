@@ -33,7 +33,7 @@ export function StudioSidebar() {
         )}
       >
         <Link to="/" className="flex items-center gap-3" aria-label="GVRZE home">
-          <BrandMark className="h-8 w-8" />
+          <BrandMark className={collapsed ? "h-3.5 max-w-[3.4rem]" : "h-5 max-w-[8.5rem]"} />
           {!collapsed ? (
             <span className="flex flex-col leading-none">
               <span className="text-[0.82rem] font-semibold tracking-tight text-foreground">

@@ -1,5 +1,5 @@
 /**
- * Handle to the shared starfield layer element, set by UniverseBackground.
+ * Handle to the shared page-backdrop layer, set by UniverseBackground.
  *
  * Scroll-driven scenes animate it imperatively — no React state, no re-renders.
  */

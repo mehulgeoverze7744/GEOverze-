@@ -5,6 +5,7 @@ import type { LucideIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { GeoButton } from "@/components/shared/GeoButton";
+import { GvrzeWordmark } from "@/components/shared/GvrzeWordmark";
 import { SectionContainer } from "@/components/shared/SectionContainer";
 import { footerNav, site, socialLinks } from "@/config/site";
 import { isLeaderboardAvailable, isLeaderboardPath } from "@/features/leaderboard";
@@ -32,13 +33,7 @@ export const Footer = memo(function Footer() {
               aria-label={`${site.name} home`}
               className="inline-flex items-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
             >
-              <img
-                src="/assets/home/gvrze-wordmark.png"
-                alt=""
-                width={581}
-                height={85}
-                className="gvrze-home-wordmark gvrze-footer-wordmark"
-              />
+              <GvrzeWordmark decorative className="gvrze-footer-wordmark" />
             </Link>
             <p className="mt-6 flex flex-wrap items-center gap-3 text-[0.62rem] uppercase tracking-[0.3em] text-bronze/90">
               <span>{site.slogan}</span>

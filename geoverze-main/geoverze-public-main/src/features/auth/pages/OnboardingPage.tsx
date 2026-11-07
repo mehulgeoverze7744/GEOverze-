@@ -13,6 +13,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, Check } from "lucide-react";
 import { toast } from "sonner";
 
+import { GvrzeWordmark } from "@/components/shared/GvrzeWordmark";
 import { AvatarMark } from "@/features/auth/components/AvatarMark";
 import {
   AVATARS,
@@ -29,7 +30,6 @@ import { useOnboardingStore } from "@/stores/onboardingStore";
 /* Design tokens                                                                */
 /* ─────────────────────────────────────────────────────────────────────────── */
 
-const LOGO = "/assets/gvrze-storefront/gvrze-logo.png";
 const TOTAL_STEPS = 5; // Welcome · Interests · Skill · Avatar · Finish
 
 /* ─────────────────────────────────────────────────────────────────────────── */
@@ -291,16 +291,7 @@ function AnimatedCheck({ size = 72 }: { size?: number }) {
 function WelcomeStep({ name }: { name: string | undefined }) {
   return (
     <div className="ob-step flex flex-col items-center gap-6 text-center">
-      {/* Wordmark */}
-      <img
-        src={LOGO}
-        alt="GVRZE"
-        width={581}
-        height={85}
-        draggable={false}
-        className="select-none"
-        style={{ width: 112, height: "auto" }}
-      />
+      <GvrzeWordmark className="h-auto w-[112px] select-none" />
 
       {/* Globe */}
       <EarthGlobe size={170} />

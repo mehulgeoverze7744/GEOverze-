@@ -22,17 +22,16 @@ import {
 import { ComingSoonLockChip } from "./ComingSoonLockChip";
 import { GeostoreProductPageBackground } from "./GeostoreProductPageBackground";
 import { MerchProductScreen } from "./MerchProductScreen";
-import {
-  storefrontTeeById,
-  type StorefrontTeeProduct,
-} from "../storefront/storefront-product-data";
+import { storefrontTeeById } from "../storefront/storefront-product-data";
+import { ComingSoonProductPage } from "../storefront/ComingSoonProductPage";
 import {
   StorefrontProductPage,
   StorefrontTeeProductPage,
+  type SFGalleryImage,
+  type SFRelatedProduct,
 } from "../storefront/StorefrontProductPage";
 import { StorefrontCategoryPage } from "../storefront/StorefrontCategoryPage";
 import { type EditorialItem } from "../storefront/EditorialCard";
-import "../storefront/accessories-coming-soon.css";
 import { ProductCard } from "./ProductCard";
 import { ProductGallery } from "./ProductGallery";
 import { ProductRail } from "./ProductRail";
@@ -44,13 +43,15 @@ import { PriceTag } from "./PriceTag";
 import { VariantPicker } from "./VariantPicker";
 import {
   BROWSE_CATEGORY_IDS,
-  BROWSE_GROUP_IDS,
   BROWSE_PRODUCTS,
   browseMerchForSlug,
 } from "../data/browseCatalogue";
 import {
+  isAccessoryLookbookCategory,
+  isRetiredProductSlug,
+} from "../data/catalogAvailability";
+import {
   ACCESSORIES_STICKER_SLUGS,
-  isAccessoriesLookbook,
   isPurchaseLocked,
   productBySlug,
   productsInCategory,
@@ -58,11 +59,8 @@ import {
   type Product,
 } from "../data/products";
 import {
-  AVAILABILITY,
-  CREDIT_FILTERS,
   PRICE_BANDS,
   STORE_CATEGORIES,
-  STORE_GROUPS,
   STORE_SORTS,
   categoryById,
   isComingSoonCategory,
@@ -74,6 +72,8 @@ import { money } from "../lib/format";
 import { formatInrPaise, getProductPrice } from "../lib/gstoreProductPrices";
 import { resolveStoreProduct } from "../lib/resolveStoreProduct";
 import { useStoreActions } from "../lib/useStoreActions";
+import { globeGalleryExtras } from "../data/globeGalleries";
+import { mugGalleryForSlug } from "../data/mugGalleries";
 import { productImageForSlug } from "../data/productImages";
 import { useStoreCredits, useStoreCreditsState } from "../lib/useStoreCredits";
 import { useCreditPurchase } from "../hooks/useCreditPurchase";
@@ -90,13 +90,17 @@ const ALL = { id: "all", label: "All" } as const;
 function merchToEditorial(
   m: ReturnType<typeof merchProductsForStoreCategory>[number],
 ): EditorialItem {
+  const product = resolveStoreProduct(m.id);
+  const comingSoon = product ? isPurchaseLocked(product) : true;
   return {
     id: m.id,
     slug: m.id,
     name: m.title,
-    priceLabel: money(m.price),
+    priceLabel: comingSoon ? "Coming soon" : money(m.price),
     image: m.image,
     alt: m.alt,
+    comingSoon,
+    previewDisabled: comingSoon,
   };
 }
 
@@ -107,19 +111,21 @@ function productToEditorial(p: Product): EditorialItem {
   // Use it directly so the category card shows the correct currency instead of USD.
   const tee = storefrontTeeById(p.slug);
   const checkoutPrice = getProductPrice(p.slug);
-  const comingSoon = p.comingSoon || isAccessoriesLookbook(p.slug);
+  const comingSoon = isPurchaseLocked(p);
+  const livePrice =
+    tee?.priceLabel ??
+    (checkoutPrice
+      ? formatInrPaise(checkoutPrice.priceMinor)
+      : p.price !== null
+        ? money(p.price)
+        : p.credits !== null
+          ? `${p.credits} credits`
+          : "Coming soon");
   return {
     id: p.id,
     slug: p.slug,
     name: p.name,
-    priceLabel: comingSoon
-      ? "Coming soon"
-      : (tee?.priceLabel ??
-        (checkoutPrice
-          ? formatInrPaise(checkoutPrice.priceMinor)
-          : p.price !== null
-            ? money(p.price)
-            : `${p.credits ?? 0} credits`)),
+    priceLabel: livePrice,
     image: img?.src ?? "",
     alt: img?.alt ?? p.name,
     comingSoon,
@@ -202,13 +208,9 @@ function useCardFactory(
 /** Faceted catalogue browse — editorial storefront layout. */
 export function StoreBrowse() {
   const { addProduct } = useStoreActions();
-  const balance = useStoreCredits();
 
-  const [group, setGroup] = useState("all");
   const [category, setCategory] = useState("all");
   const [price, setPrice] = useState("all");
-  const [creditFilter, setCreditFilter] = useState("all");
-  const [availability, setAvailability] = useState("all");
   const [sort, setSort] = useState<StoreSortId>("popular");
   const [query, setQuery] = useState("");
 
@@ -216,30 +218,33 @@ export function StoreBrowse() {
     () =>
       sortProducts(
         filterProducts(BROWSE_PRODUCTS, {
-          group,
+          group: "all",
           category,
           price,
-          credits: creditFilter,
-          availability,
+          credits: "all",
+          availability: "all",
           query,
-          balance,
+          balance: null,
         }),
         sort,
       ),
-    [group, category, price, creditFilter, availability, query, balance, sort],
+    [category, price, query, sort],
   );
 
   /** Convert browse results to EditorialItem (prefer merch image if available). */
   const editorialItems: EditorialItem[] = results.map((product) => {
     const merch = browseMerchForSlug(product.slug);
     if (merch) {
+      const comingSoon = isPurchaseLocked(product);
       return {
         id: merch.id,
         slug: merch.id,
         name: merch.title,
-        priceLabel: money(merch.price),
+        priceLabel: comingSoon ? "Coming soon" : money(merch.price),
         image: merch.image,
         alt: merch.alt,
+        comingSoon,
+        previewDisabled: comingSoon && product.category === "hoodies",
       };
     }
     return productToEditorial(product);
@@ -253,19 +258,16 @@ export function StoreBrowse() {
   }
 
   function clearFilters() {
-    setGroup("all");
     setCategory("all");
     setPrice("all");
-    setCreditFilter("all");
-    setAvailability("all");
     setQuery("");
   }
 
   /* Key resets StorefrontCategoryPage pagination whenever filters change. */
-  const filterKey = [group, category, price, creditFilter, availability, query, sort].join("|");
+  const filterKey = [category, price, query, sort].join("|");
 
   const controls = (
-    <div className="mb-8 rounded-2xl border border-black/8 bg-white/90 p-5 shadow-sm backdrop-blur-sm">
+    <div className="mb-8 rounded-2xl border border-black/8 bg-white/90 p-4 shadow-sm backdrop-blur-sm sm:p-5">
       <label className="block">
         <span
           className="block text-[11px] font-semibold uppercase tracking-[0.22em] text-black/40"
@@ -280,29 +282,15 @@ export function StoreBrowse() {
           className="mt-2 w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm text-black placeholder:text-black/35 focus:border-black/30 focus:outline-none focus:ring-2 focus:ring-black/8"
         />
       </label>
-      <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <LightChipRow
-          label="Group"
-          options={[
-            ALL,
-            ...STORE_GROUPS.filter((g) => BROWSE_GROUP_IDS.has(g.id)).map((g) => ({
-              id: g.id,
-              label: g.label,
-            })),
-          ]}
-          value={group}
-          onChange={(id) => {
-            setGroup(id);
-            setCategory("all");
-          }}
-        />
+      <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-5">
         <LightChipRow
           label="Category"
           options={[
             ALL,
-            ...STORE_CATEGORIES.filter(
-              (c) => BROWSE_CATEGORY_IDS.has(c.id) && (group === "all" || c.group === group),
-            ).map((c) => ({ id: c.id, label: c.label })),
+            ...STORE_CATEGORIES.filter((c) => BROWSE_CATEGORY_IDS.has(c.id)).map((c) => ({
+              id: c.id,
+              label: c.label,
+            })),
           ]}
           value={category}
           onChange={setCategory}
@@ -312,18 +300,6 @@ export function StoreBrowse() {
           options={[ALL, ...PRICE_BANDS.map((b) => ({ id: b.id, label: b.label }))]}
           value={price}
           onChange={setPrice}
-        />
-        <LightChipRow
-          label="Credits"
-          options={[ALL, ...CREDIT_FILTERS.map((c) => ({ id: c.id, label: c.label }))]}
-          value={creditFilter}
-          onChange={setCreditFilter}
-        />
-        <LightChipRow
-          label="Availability"
-          options={[ALL, ...AVAILABILITY.map((a) => ({ id: a.id, label: a.label }))]}
-          value={availability}
-          onChange={setAvailability}
         />
         <LightChipRow
           label="Sort"
@@ -370,11 +346,25 @@ function MerchCategoryShelf({ slug }: { slug: "tshirts" | "hoodies" }) {
   const merch = merchProductsForStoreCategory(slug);
   const items = merch.map(merchToEditorial);
   const { addProduct } = useStoreActions();
+  const locked = isComingSoonCategory(slug) || items.every((item) => item.comingSoon);
 
   function handleAdd(item: EditorialItem) {
     const product = resolveStoreProduct(item.slug);
     if (product && !isPurchaseLocked(product)) addProduct(product, defaultOptions(product));
   }
+
+  const notice = locked ? (
+    <div className="mb-8 flex items-start gap-3 rounded-2xl border border-black/12 bg-black/5 px-5 py-4">
+      <Lock className="mt-0.5 h-4 w-4 shrink-0 text-black/50" strokeWidth={1.6} />
+      <div>
+        <ComingSoonLockChip />
+        <p className="mt-2 text-sm leading-relaxed text-black/55">
+          This collection is on the way. You can browse the lookbook — purchasing opens when we
+          launch.
+        </p>
+      </div>
+    </div>
+  ) : undefined;
 
   return (
     <StorefrontCategoryPage
@@ -382,17 +372,10 @@ function MerchCategoryShelf({ slug }: { slug: "tshirts" | "hoodies" }) {
       description={category?.blurb ?? "Premium GVRZE apparel."}
       items={items}
       onAdd={handleAdd}
+      notice={notice}
     />
   );
 }
-
-const ACCESSORIES_GLOBE_SLUGS = [
-  "crystal-earth-globe",
-  "vintage-world-globe",
-  "blue-ocean-globe",
-] as const;
-
-const ACCESSORIES_PUBLICATION_SLUG = "field-notebook";
 
 const STICKER_CARE = [
   "Apply to a clean, dry, dust-free surface.",
@@ -401,6 +384,72 @@ const STICKER_CARE = [
   "Indoor and outdoor vinyl; avoid prolonged abrasive scrubbing.",
 ];
 
+function accessoryCareCopy(category: Product["category"]): string[] {
+  if (category === "mugs") {
+    return [
+      "Dishwasher and microwave safe unless the product specs say otherwise.",
+      "Avoid abrasive scouring pads on printed artwork.",
+      "Hand wash enamel rims when possible.",
+    ];
+  }
+  if (category === "caps") {
+    return [
+      "Spot clean with a damp cloth.",
+      "Do not machine wash or tumble dry.",
+      "Reshape and air dry away from direct heat.",
+    ];
+  }
+  if (category === "posters") {
+    return [
+      "Store flat or in the supplied tube.",
+      "Keep away from prolonged direct sunlight.",
+      "Frame behind UV-protective glass when possible.",
+    ];
+  }
+  return [
+    "Dust with a soft, dry cloth.",
+    "Keep away from prolonged direct sunlight.",
+    "Handle meridians, bases and printed surfaces with care.",
+  ];
+}
+
+function storefrontImagesForProduct(product: Product): SFGalleryImage[] {
+  const mugGallery = mugGalleryForSlug(product.slug);
+  if (mugGallery && mugGallery.length > 0) {
+    return mugGallery.map((view) => ({ src: view.src, alt: view.alt }));
+  }
+  const primary = productImageForSlug(product.slug);
+  const extras = globeGalleryExtras(product.slug);
+  const images: SFGalleryImage[] = [];
+  if (primary) images.push({ src: primary.src, alt: primary.alt });
+  for (const extra of extras) images.push({ src: extra.src, alt: extra.alt });
+  return images.length > 0 ? images : [{ src: "", alt: product.name }];
+}
+
+function accessoryPriceLabel(product: Product): string {
+  const checkoutPrice = getProductPrice(product.slug);
+  if (checkoutPrice) return formatInrPaise(checkoutPrice.priceMinor);
+  if (product.price !== null) return money(product.price);
+  return "Coming soon";
+}
+
+function relatedAsStorefrontCards(product: Product): SFRelatedProduct[] {
+  return relatedProducts(product, 4, { includeLookbook: true }).flatMap((item) => {
+    const relatedImg = productImageForSlug(item.slug);
+    if (!relatedImg) return [];
+    return [
+      {
+        slug: item.slug,
+        name: item.name,
+        priceLabel: accessoryPriceLabel(item),
+        image: relatedImg.src,
+        imageAlt: relatedImg.alt,
+        comingSoon: isPurchaseLocked(item),
+      },
+    ];
+  });
+}
+
 /** Accessories editorial category page. */
 function AccessoriesCategoryShelf() {
   const category = categoryById("accessories");
@@ -408,9 +457,21 @@ function AccessoriesCategoryShelf() {
   const stickers = ACCESSORIES_STICKER_SLUGS.map(productBySlug).filter((p): p is Product =>
     Boolean(p),
   );
-  const globes = ACCESSORIES_GLOBE_SLUGS.map(productBySlug).filter((p): p is Product => Boolean(p));
-  const publication = productBySlug(ACCESSORIES_PUBLICATION_SLUG);
-  const allProducts = [...stickers, ...globes, ...(publication ? [publication] : [])];
+  const lookbook = [
+    ...productsInCategory("accessories"),
+    ...productsInCategory("mugs"),
+    ...productsInCategory("caps"),
+    ...productsInCategory("posters"),
+  ];
+  const seen = new Set(stickers.map((item) => item.slug));
+  const allProducts = [
+    ...stickers,
+    ...lookbook.filter((item) => {
+      if (seen.has(item.slug)) return false;
+      seen.add(item.slug);
+      return true;
+    }),
+  ];
   const items = allProducts.map(productToEditorial);
 
   function handleAdd(item: EditorialItem) {
@@ -419,14 +480,35 @@ function AccessoriesCategoryShelf() {
   }
 
   return (
-    <div id="gvrze-accessories-coming-soon">
-      <StorefrontCategoryPage
-        title={category?.label ?? "Accessories"}
-        description="Die-cut GVRZE sticker collections are available now. Globes and desk pieces remain a lookbook until those drops launch."
-        items={items}
-        onAdd={handleAdd}
-      />
-    </div>
+    <StorefrontCategoryPage
+      title={category?.label ?? "Accessories"}
+      description="Die-cut GVRZE sticker collections are available now. Globes, mugs, caps and desk pieces remain a lookbook until those drops launch."
+      items={items}
+      onAdd={handleAdd}
+    />
+  );
+}
+
+function StorefrontAccessoryProductPage({ product }: { product: Product }) {
+  const images = storefrontImagesForProduct(product);
+  const category = categoryById(product.category);
+
+  return (
+    <StorefrontProductPage
+      slug={product.slug}
+      name={product.name}
+      categoryLabel={category?.label ?? "Accessories"}
+      categorySlug={product.category === "accessories" ? "accessories" : product.category}
+      priceLabel={accessoryPriceLabel(product)}
+      images={images}
+      hideSizes
+      comingSoon
+      description={product.description}
+      {...(product.features.length > 0 ? { highlights: [...product.features] } : {})}
+      washcare={accessoryCareCopy(product.category)}
+      careTabLabel="Care"
+      related={relatedAsStorefrontCards(product)}
+    />
   );
 }
 
@@ -517,11 +599,8 @@ function CatalogCategoryShelf({ slug }: { slug: string }) {
 export function CategoryScreen() {
   const { slug } = useParams({ from: "/geostore/category/$slug" });
 
-  // "tshirts" previously routed to MerchCategoryShelf (old slogan tees).
-  // Those designs are discontinued — the category now shows the three new
-  // storefront signature tees (Cherry Blossom, New Age, Golden Arc) which
-  // live in the PRODUCTS array and are served by CatalogCategoryShelf.
-  // "hoodies" continues to use MerchCategoryShelf as before.
+  // Signature tees live in PRODUCTS (sourced from STOREFRONT_TEES) and use
+  // CatalogCategoryShelf. Hoodies remain a merch lookbook shelf.
   if (slug !== "tshirts" && isMerchStoreCategory(slug)) {
     return <MerchCategoryShelf slug={slug} />;
   }
@@ -568,6 +647,32 @@ export function ProductScreen() {
   // Storefront signature tees (Midnight Black, Cherry Blossom, Golden Arc, New Age)
   // get the clean-white storefront design. This check is placed after all hooks
   // so the Rules of Hooks are satisfied on every render path.
+  if (isRetiredProductSlug(slug)) {
+    return (
+      <ProductPageFrame>
+        <PageShell>
+          <PageHeader
+            eyebrow="Gstore"
+            title="We couldn't find that item"
+            description="This product has been retired from the collection."
+            breadcrumb={[{ label: "Gstore", to: "/geostore" }, { label: "Not found" }]}
+          />
+          <SectionContainer>
+            <EmptyState
+              icon={ShoppingBag}
+              title="Item unavailable"
+              action={
+                <GeoButton asChild variant="solid">
+                  <Link to="/geostore/browse">Browse the catalogue</Link>
+                </GeoButton>
+              }
+            />
+          </SectionContainer>
+        </PageShell>
+      </ProductPageFrame>
+    );
+  }
+
   const storefrontTee = storefrontTeeById(slug);
   if (storefrontTee) {
     return <StorefrontTeeProductPage tee={storefrontTee} />;
@@ -575,6 +680,25 @@ export function ProductScreen() {
 
   if (product?.category === "stickers" && !isPurchaseLocked(product)) {
     return <StorefrontStickerProductPage product={product} />;
+  }
+
+  const resolvedLookbook = product ?? resolveStoreProduct(slug);
+  if (resolvedLookbook && isPurchaseLocked(resolvedLookbook)) {
+    if (resolvedLookbook.category === "hoodies") {
+      const img = productImageForSlug(resolvedLookbook.slug);
+      return (
+        <ComingSoonProductPage
+          name={resolvedLookbook.name}
+          image={img?.src ?? merch?.image ?? ""}
+          imageAlt={img?.alt ?? merch?.alt ?? resolvedLookbook.name}
+          categoryLabel={categoryById(resolvedLookbook.category)?.label ?? "Gstore"}
+          categorySlug={resolvedLookbook.category}
+        />
+      );
+    }
+    if (isAccessoryLookbookCategory(resolvedLookbook.category)) {
+      return <StorefrontAccessoryProductPage product={resolvedLookbook} />;
+    }
   }
 
   // Discontinued merch products (e.g. old slogan tees) are hidden from

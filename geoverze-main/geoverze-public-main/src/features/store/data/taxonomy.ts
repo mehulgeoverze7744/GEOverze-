@@ -120,6 +120,7 @@ export const STORE_CATEGORIES: readonly StoreCategory[] = [
     group: "merch",
     blurb: "Enamel and ceramic, map glazed.",
     icon: Coffee,
+    comingSoon: true,
   },
   {
     id: "stickers",
@@ -134,6 +135,7 @@ export const STORE_CATEGORIES: readonly StoreCategory[] = [
     group: "merch",
     blurb: "Archival prints of the world.",
     icon: Map,
+    comingSoon: true,
   },
   {
     id: "accessories",

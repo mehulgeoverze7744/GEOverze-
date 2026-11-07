@@ -23,6 +23,7 @@ import { useStoreStore } from "@/stores/storeStore";
 
 import { resolveStoreProduct } from "../lib/resolveStoreProduct";
 import { useStoreActions } from "../lib/useStoreActions";
+import { ComingSoonImageOverlay } from "./ComingSoonImageOverlay";
 import { StorefrontNav } from "./StorefrontNav";
 import { SF_SHELL, SF_UI_FONT } from "./storefront-ui";
 
@@ -56,6 +57,7 @@ export type SFRelatedProduct = {
   imageAlt: string;
   /** Card background colour (for coloured-background product cards). */
   tone?: string;
+  comingSoon?: boolean;
 };
 
 export type StorefrontProductPageProps = {
@@ -81,6 +83,10 @@ export type StorefrontProductPageProps = {
   related?: SFRelatedProduct[];
   /** Category slug used in the breadcrumb. Defaults to "tshirts". */
   categorySlug?: string;
+  /** Lookbook preview — blurred gallery, disabled purchase, wishlist still works. */
+  comingSoon?: boolean;
+  /** Third-tab label. Defaults to Washcare so T-shirt pages stay unchanged. */
+  careTabLabel?: string;
 };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -182,17 +188,23 @@ function RelatedCard({ product }: { product: SFRelatedProduct }) {
           <img
             src={product.image}
             alt={product.imageAlt}
-            className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+            className={cn(
+              "absolute inset-0 h-full w-full object-cover object-center",
+              product.comingSoon
+                ? "scale-[1.14] blur-[12px]"
+                : "transition-transform duration-300 group-hover:scale-105",
+            )}
             loading="lazy"
             decoding="async"
           />
-          {/* "+" quick-add button */}
-          <span
-            aria-hidden="true"
-            className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm"
-          >
-            <Plus className="h-4 w-4 text-black" strokeWidth={2} />
-          </span>
+          {product.comingSoon ? <ComingSoonImageOverlay /> : (
+            <span
+              aria-hidden="true"
+              className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm"
+            >
+              <Plus className="h-4 w-4 text-black" strokeWidth={2} />
+            </span>
+          )}
         </div>
         <div className="mt-3 px-0.5">
           <p className="text-[13px] font-normal leading-snug text-black sm:text-[15px]">
@@ -230,6 +242,8 @@ export function StorefrontProductPage({
   washcare,
   related = [],
   categorySlug = "tshirts",
+  comingSoon = false,
+  careTabLabel = "Washcare",
 }: StorefrontProductPageProps) {
   const [selectedImageIdx, setSelectedImageIdx] = useState(0);
   const [selectedColorId, setSelectedColorId] = useState<string | null>(
@@ -310,6 +324,7 @@ export function StorefrontProductPage({
   const mainImage = galleryImages[selectedImageIdx] ?? galleryImages[0] ?? { src: "", alt: name };
 
   function handleAddToCart() {
+    if (comingSoon) return;
     if (!hideSizes && !selectedSize) {
       toast.error("Please select a size before adding to cart.");
       return;
@@ -326,6 +341,7 @@ export function StorefrontProductPage({
   }
 
   function handleBuyNow() {
+    if (comingSoon) return;
     if (!hideSizes && !selectedSize) {
       toast.error("Please select a size first.");
       return;
@@ -407,7 +423,10 @@ export function StorefrontProductPage({
                     <img
                       src={img.src}
                       alt={img.alt}
-                      className="h-full w-full object-cover object-center"
+                      className={cn(
+                        "h-full w-full object-cover object-center",
+                        comingSoon && "scale-[1.14] blur-[8px]",
+                      )}
                     />
                   </button>
                 ))}
@@ -420,8 +439,12 @@ export function StorefrontProductPage({
                 <img
                   src={mainImage.src}
                   alt={mainImage.alt}
-                  className="aspect-[4/5] h-auto w-full max-w-full object-cover object-center"
+                  className={cn(
+                    "aspect-[4/5] h-auto w-full max-w-full object-cover object-center",
+                    comingSoon && "scale-[1.14] blur-[12px]",
+                  )}
                 />
+                {comingSoon ? <ComingSoonImageOverlay /> : null}
               </div>
             </div>
           </div>
@@ -454,9 +477,14 @@ export function StorefrontProductPage({
 
             {/* Price */}
             <p className="mt-3 text-[20px] font-bold text-black sm:text-[22px]">{priceLabel}</p>
+            {comingSoon ? (
+              <p className={`mt-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-black/40 ${SF_UI_FONT}`}>
+                Coming soon
+              </p>
+            ) : null}
 
             {/* Colour swatches (if multiple colours available) */}
-            {colors && colors.length > 1 && (
+            {colors && colors.length > 1 && !comingSoon && (
               <div className="mt-5">
                 <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.15em] text-[#555]">
                   Colour:{" "}
@@ -478,7 +506,7 @@ export function StorefrontProductPage({
             )}
 
             {/* Size selector */}
-            {hideSizes ? null : (
+            {hideSizes || comingSoon ? null : (
               <div className="mt-5">
                 <div className="flex items-center justify-between">
                   <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-[#555]">
@@ -504,7 +532,7 @@ export function StorefrontProductPage({
               </div>
             )}
 
-            {showQuantity ? (
+            {showQuantity && !comingSoon ? (
               <div className="mt-5">
                 <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-[#555]">
                   Quantity
@@ -533,20 +561,32 @@ export function StorefrontProductPage({
 
             {/* CTAs */}
             <div className="mt-6 flex flex-col gap-3">
-              <button
-                type="button"
-                onClick={handleAddToCart}
-                className="w-full rounded-lg border border-black bg-white px-6 py-3.5 text-[13px] font-semibold tracking-wide text-black transition-colors duration-150 hover:bg-[#f0f0f0] active:bg-[#e8e8e8]"
-              >
-                ADD TO CART
-              </button>
-              <button
-                type="button"
-                onClick={handleBuyNow}
-                className="w-full rounded-lg bg-black px-6 py-3.5 text-[13px] font-semibold tracking-wide text-white transition-colors duration-150 hover:bg-[#222] active:bg-[#333]"
-              >
-                BUY NOW
-              </button>
+              {comingSoon ? (
+                <button
+                  type="button"
+                  disabled
+                  className="w-full cursor-not-allowed rounded-lg bg-black/80 px-6 py-3.5 text-[13px] font-semibold tracking-wide text-white opacity-70"
+                >
+                  COMING SOON
+                </button>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={handleAddToCart}
+                    className="w-full rounded-lg border border-black bg-white px-6 py-3.5 text-[13px] font-semibold tracking-wide text-black transition-colors duration-150 hover:bg-[#f0f0f0] active:bg-[#e8e8e8]"
+                  >
+                    ADD TO CART
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleBuyNow}
+                    className="w-full rounded-lg bg-black px-6 py-3.5 text-[13px] font-semibold tracking-wide text-white transition-colors duration-150 hover:bg-[#222] active:bg-[#333]"
+                  >
+                    BUY NOW
+                  </button>
+                </>
+              )}
             </div>
 
             {/* ── Tabs: Description / Shipping / Washcare ──────────────────── */}
@@ -557,7 +597,7 @@ export function StorefrontProductPage({
                   [
                     { id: "description", label: "Product Description" },
                     { id: "shipping", label: "Shipping" },
-                    { id: "washcare", label: "Washcare" },
+                    { id: "washcare", label: careTabLabel },
                   ] as { id: Tab; label: string }[]
                 ).map(({ id, label }) => (
                   <TabButton

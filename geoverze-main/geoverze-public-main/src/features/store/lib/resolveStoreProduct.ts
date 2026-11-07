@@ -10,7 +10,7 @@ import {
   type GeostoreMerchProduct,
 } from "../../marketing/data/geostoreMerch";
 
-import { productById, productBySlug, type Product } from "../data/products";
+import { isPurchaseLocked, productById, productBySlug, type Product } from "../data/products";
 import type { StoreCategoryId } from "../data/taxonomy";
 import {
   storefrontTeeById,
@@ -49,7 +49,11 @@ function merchAsProduct(merch: GeostoreMerchProduct): Product {
     features: [],
     specs: [],
     tags: ["apparel", merch.categoryLabel.toLowerCase()],
-    comingSoon: false,
+    comingSoon: isPurchaseLocked({
+      slug: merch.id,
+      category: merchCategory(merch),
+      comingSoon: false,
+    }),
   };
 }
 

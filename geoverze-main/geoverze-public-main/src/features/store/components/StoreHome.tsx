@@ -13,7 +13,7 @@ import { StoreHero } from "./StoreHero";
 import { StoreHomeBackground } from "./StoreHomeBackground";
 import { ProStorePerkPill } from "./ProStorePerkPill";
 import { QuickViewModal } from "./QuickViewModal";
-import { PRODUCTS, productBySlug, type Product } from "../data/products";
+import { isProductListed, PRODUCTS, productBySlug, type Product } from "../data/products";
 import { STORE_CATEGORIES, STORE_GROUPS } from "../data/taxonomy";
 import { isProductOwned, useEntitlements } from "../hooks/useEntitlements";
 import { useStoreCatalogue } from "../hooks/useStoreCatalogue";
@@ -36,7 +36,7 @@ export function StoreHome() {
 
   const recent = recentlyViewed
     .map(productBySlug)
-    .filter((p): p is Product => Boolean(p))
+    .filter((p): p is Product => Boolean(p) && isProductListed(p))
     .slice(0, 4);
 
   const card = (product: Product, equalizeHeight = false) => {

@@ -21,6 +21,33 @@
   --gvrze-blue: #2b74c4;
 }
 
+/*
+ * First-paint canvas. Page plates (home lunar, play geo, library map, Gstore
+ * stone) override body after their route root is in the DOM. Never wait on
+ * React state or :has() for this default.
+ */
+html,
+body {
+  background-color: var(--gvrze-bg-soft);
+  color-scheme: light;
+}
+
+#geoverze-universe-background {
+  background-color: var(--gvrze-bg-soft);
+}
+
+header .gvrze-home-wordmark {
+  display: block;
+  height: 1.15rem;
+  width: auto;
+}
+
+@media (min-width: 768px) {
+  header .gvrze-home-wordmark {
+    height: 1.5rem;
+  }
+}
+
 body:has(#gvrze-light),
 body:has(#gvrze-auth),
 body:has(#gvrze-studio),

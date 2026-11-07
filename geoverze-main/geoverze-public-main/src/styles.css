@@ -54,8 +54,8 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(0.06 0.004 60);
-  --foreground: oklch(0.93 0.02 70);
+  --background: #f5f6f8;
+  --foreground: #111827;
   --bronze: oklch(0.68 0.09 62);
   --bronze-glow: oklch(0.82 0.08 78);
   --charcoal: oklch(0.16 0.006 60);
@@ -454,10 +454,14 @@
     scroll-behavior: smooth;
     scroll-padding-top: calc(var(--nav-height) + 0.75rem);
     overflow-x: clip;
+    background-color: #f5f6f8;
+    color-scheme: light;
   }
 
   body {
     overflow-x: clip;
+    background-color: var(--color-background, #f5f6f8);
+    color-scheme: light;
   }
 }
 

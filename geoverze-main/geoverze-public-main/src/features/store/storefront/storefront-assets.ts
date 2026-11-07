@@ -6,7 +6,7 @@
 const BASE = "/assets/gvrze-storefront";
 
 export const SF_ASSETS = {
-  logo: { src: `${BASE}/gvrze-logo.png`, width: 581, height: 85 },
+  logo: { src: "/assets/home/gvrze-wordmark.png", width: 581, height: 85 },
   hero: { src: `${BASE}/hero.webp`, width: 1672, height: 941 },
   heroFade: { src: `${BASE}/hero-fade.png`, width: 1024, height: 99 },
   heroUnderline: { src: `${BASE}/hero-underline.svg`, width: 83, height: 1 },

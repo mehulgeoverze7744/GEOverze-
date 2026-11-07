@@ -1,5 +1,3 @@
-import { Music2, Sparkles, Volume2 } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 import { DEFAULT_SETTINGS, useQuizStore, type QuizSettings } from "@/stores/quizStore";
 
@@ -15,16 +13,6 @@ const CHOICES: {
   },
   { key: "questionCount", label: "Questions", options: ["All", "5", "10", "20"] },
   { key: "timeLimit", label: "Time limit", options: ["Off", "15s", "30s", "60s"] },
-];
-
-const TOGGLES: {
-  key: keyof Pick<QuizSettings, "sound" | "music" | "animations">;
-  label: string;
-  icon: typeof Volume2;
-}[] = [
-  { key: "sound", label: "Sound effects", icon: Volume2 },
-  { key: "music", label: "Music", icon: Music2 },
-  { key: "animations", label: "Animations", icon: Sparkles },
 ];
 
 /**
@@ -99,46 +87,6 @@ export function SettingsPanel() {
             </div>
           </div>
         ))}
-
-        <div className="space-y-2">
-          {TOGGLES.map(({ key, label, icon: Icon }) => {
-            const active = settings[key];
-            return (
-              <button
-                key={key}
-                type="button"
-                role="switch"
-                aria-checked={active}
-                onClick={() => update({ [key]: !active } as Partial<QuizSettings>)}
-                className="lp-card-soft flex min-h-12 w-full min-w-0 items-center justify-between gap-4 rounded-[1.15rem] px-4 text-left transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2b74c4]/40"
-              >
-                <span className="flex min-w-0 items-center gap-2.5 text-[0.85rem] font-medium text-[#111827]">
-                  <Icon className="h-4 w-4 shrink-0 text-[#2b74c4]" strokeWidth={1.8} aria-hidden />
-                  <span className="truncate">{label}</span>
-                </span>
-                <span className="flex shrink-0 items-center gap-2">
-                  <span className="text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-[#64748B]">
-                    {active ? "On" : "Off"}
-                  </span>
-                  <span
-                    aria-hidden
-                    className={cn(
-                      "relative h-7 w-12 rounded-full transition-colors duration-200",
-                      active ? "bg-[#2b74c4]" : "bg-[#E2E8F0]",
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "absolute top-0.5 left-0.5 h-6 w-6 rounded-full bg-white shadow-sm transition-transform duration-200 ease-out",
-                        active && "translate-x-5",
-                      )}
-                    />
-                  </span>
-                </span>
-              </button>
-            );
-          })}
-        </div>
       </div>
     </section>
   );

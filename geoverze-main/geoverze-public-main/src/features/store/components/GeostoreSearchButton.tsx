@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Clock3, Coins, Search, ShoppingBag } from "lucide-react";
+import { Clock3, Coins, Lock, Search, ShoppingBag } from "lucide-react";
 import { useEffect, useId, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 
 import { Modal, SearchBar } from "@/components/shared";
@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { selectRecentSearches, useStoreStore } from "@/stores/storeStore";
 
 import { geostoreActionLinkClass } from "./geostore-action-link";
-import { PRODUCTS } from "../data/products";
+import { isPurchaseLocked, PRODUCTS } from "../data/products";
 import { productImageForSlug } from "../data/productImages";
 import { categoryIcon, categoryLabel } from "../data/taxonomy";
 import { searchStoreProducts } from "../lib/filter";
@@ -134,38 +134,39 @@ export function GeostoreSearchButton({
                 {results.map((product) => {
                   const image = productImageForSlug(product.slug);
                   const Icon = categoryIcon(product.category);
-                  return (
-                    <li key={product.id}>
-                      <Link
-                        to="/geostore/product/$slug"
-                        params={{ slug: product.slug }}
-                        onClick={close}
-                        className="gvrze-gstore-search__result flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-colors motion-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2B74C4]/40"
-                      >
-                        <div className="gvrze-gstore-search__thumb h-12 w-12 shrink-0 overflow-hidden rounded-lg">
-                          {image ? (
-                            <img
-                              src={image.src}
-                              alt=""
-                              className="h-full w-full object-cover"
-                              loading="lazy"
-                            />
-                          ) : (
-                            <CoverArt
-                              art={product.slug}
-                              icon={Icon}
-                              ratio="square"
-                              className="h-full w-full rounded-none"
-                            />
-                          )}
-                        </div>
-                        <span className="min-w-0 flex-1">
-                          <span className="gvrze-gstore-search__result-name block truncate text-sm">
-                            {product.name}
-                          </span>
-                          <span className="gvrze-gstore-search__result-meta mt-0.5 block truncate text-[0.66rem] uppercase tracking-[0.14em]">
-                            {categoryLabel(product.category)}
-                          </span>
+                  const locked = isPurchaseLocked(product);
+                  const rowClass =
+                    "gvrze-gstore-search__result flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-colors motion-fast";
+                  const content = (
+                    <>
+                      <div className="gvrze-gstore-search__thumb relative h-12 w-12 shrink-0 overflow-hidden rounded-lg">
+                        {image ? (
+                          <img
+                            src={image.src}
+                            alt=""
+                            className={cn(
+                              "h-full w-full object-cover",
+                              locked && "scale-[1.14] blur-[8px]",
+                            )}
+                            loading="lazy"
+                          />
+                        ) : (
+                          <CoverArt
+                            art={product.slug}
+                            icon={Icon}
+                            ratio="square"
+                            className="h-full w-full rounded-none"
+                          />
+                        )}
+                      </div>
+                      <span className="min-w-0 flex-1">
+                        <span className="gvrze-gstore-search__result-name block truncate text-sm">
+                          {product.name}
+                        </span>
+                        <span className="gvrze-gstore-search__result-meta mt-0.5 block truncate text-[0.66rem] uppercase tracking-[0.14em]">
+                          {locked ? "Coming soon" : categoryLabel(product.category)}
+                        </span>
+                        {locked ? null : (
                           <span className="gvrze-gstore-search__result-meta mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs">
                             {product.price !== null ? <span>{money(product.price)}</span> : null}
                             {product.credits !== null ? (
@@ -175,13 +176,42 @@ export function GeostoreSearchButton({
                               </span>
                             ) : null}
                           </span>
-                        </span>
+                        )}
+                      </span>
+                      {locked ? (
+                        <Lock
+                          className="gvrze-gstore-search__result-icon h-3.5 w-3.5 shrink-0"
+                          strokeWidth={1.6}
+                          aria-hidden
+                        />
+                      ) : (
                         <ShoppingBag
                           className="gvrze-gstore-search__result-icon h-3.5 w-3.5 shrink-0"
                           strokeWidth={1.6}
                           aria-hidden
                         />
-                      </Link>
+                      )}
+                    </>
+                  );
+                  return (
+                    <li key={product.id}>
+                      {locked && product.category === "hoodies" ? (
+                        <div className={cn(rowClass, "cursor-default")} aria-disabled="true">
+                          {content}
+                        </div>
+                      ) : (
+                        <Link
+                          to="/geostore/product/$slug"
+                          params={{ slug: product.slug }}
+                          onClick={close}
+                          className={cn(
+                            rowClass,
+                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2B74C4]/40",
+                          )}
+                        >
+                          {content}
+                        </Link>
+                      )}
                     </li>
                   );
                 })}

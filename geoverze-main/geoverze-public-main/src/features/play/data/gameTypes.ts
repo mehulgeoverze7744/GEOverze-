@@ -52,9 +52,9 @@ export const GAME_TYPES: readonly GameType[] = [
     emoji: "🤩",
     art: "emoji-fun",
     tags: ["Fast", "Visual"],
-    // Colourful Lego bricks — bright primary colours conveying playful visual fun, real photography
+    // Large glossy 3D emojis — playful visual quizzes, studio still life
     imageSrc: "/assets/play/emoji-and-fun-quizzes.jpg",
-    imageAlt: "Colourful assortment of bright building blocks representing playful visual quizzes",
+    imageAlt: "Large colourful 3D emojis including laughing, star-struck, sunglasses, party, thinking, heart-eyes, mind-blown, target and Earth",
     objectPosition: "center center",
     to: "/play/search",
     search: { q: undefined, category: "emoji-fun" },

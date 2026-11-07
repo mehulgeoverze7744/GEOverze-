@@ -26,6 +26,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { createHmac } from "crypto";
 import { z } from "zod";
 
+import { isSlugAvailableForSale } from "../data/catalogAvailability";
 import {
   getProductPrice,
   computeShippingMinor,
@@ -220,7 +221,7 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
     const validatedItems: ValidatedItem[] = [];
     for (const item of items) {
       const product = getProductPrice(item.slug);
-      if (!product) {
+      if (!product || !isSlugAvailableForSale(item.slug, product.category)) {
         throw new Error(`Product not found or not available: ${item.slug}`);
       }
       validatedItems.push({
@@ -770,7 +771,9 @@ export const createGstoreGuestOrderFn = createServerFn({ method: "POST" })
 
     for (const item of data.items) {
       const product = getProductPrice(item.slug);
-      if (!product) throw new Error(`Unknown product: ${item.slug}`);
+      if (!product || !isSlugAvailableForSale(item.slug, product.category)) {
+        throw new Error(`Unknown product: ${item.slug}`);
+      }
       const lineTotal = product.priceMinor * item.quantity;
       subtotalMinor += lineTotal;
       itemRows.push({

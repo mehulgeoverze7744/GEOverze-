@@ -1,3 +1,4 @@
+import { GvrzeWordmark } from "@/components/shared/GvrzeWordmark";
 import { cn } from "@/lib/utils";
 
 /**
@@ -14,8 +15,9 @@ import { cn } from "@/lib/utils";
 export function LoadingScreen({ className }: { className?: string }) {
   return (
     <div
+      id="gvrze-light"
       className={cn(
-        "gvrze-ldr-root flex min-h-screen w-full items-center justify-center bg-white",
+        "gvrze-ldr-root flex min-h-screen w-full items-center justify-center bg-[#f5f6f8]",
         className,
       )}
     >
@@ -26,7 +28,7 @@ export function LoadingScreen({ className }: { className?: string }) {
           to   { opacity: 1; }
         }
         .gvrze-ldr-root {
-          animation: gvrze-ldr-fadein 0.55s ease both;
+          animation: none;
         }
         /* Respect user reduced-motion preference */
         @media (prefers-reduced-motion: reduce) {
@@ -123,18 +125,9 @@ export function LoadingScreen({ className }: { className?: string }) {
         {/*
          * ── GVRZE wordmark ──────────────────────────────────────────────────
          * Stacks IN FRONT of the SVG by virtue of later DOM order.
-         * Uses the same PNG asset as the Gstore storefront nav so it is
-         * always identical to the rest of the site — not a recreation.
+         * Uses the same PNG as the main navbar — never a recreation.
          */}
-        <img
-          src="/assets/gvrze-storefront/gvrze-logo.png"
-          alt="GVRZE"
-          width={581}
-          height={85}
-          draggable={false}
-          className="relative block select-none"
-          style={{ width: 174, height: "auto" }}
-        />
+        <GvrzeWordmark className="relative block h-auto w-[174px] select-none" />
       </div>
     </div>
   );

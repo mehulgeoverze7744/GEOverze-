@@ -11,6 +11,7 @@ export { SectionHeading } from "./SectionHeading";
 export { SettingsTile } from "./SettingsTile";
 export { TimelineItem } from "./TimelineItem";
 export { BrandMark } from "./BrandMark";
+export { GvrzeWordmark, GVRZE_WORDMARK_SRC } from "./GvrzeWordmark";
 export { Breadcrumb } from "./Breadcrumb";
 export { ComingSoon } from "./ComingSoon";
 export { DataState } from "./DataState";

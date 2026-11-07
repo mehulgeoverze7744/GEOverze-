@@ -1,43 +1,16 @@
 /*
  * Site footer wordmark — same asset and proportions as the navbar.
- * Navbar rules stay scoped to header[data-surface] and are not changed.
+ * The PNG is black. The platform canvas is light, so never invert it.
  */
 footer .gvrze-footer-wordmark {
   display: block;
   height: 1.15rem;
   width: auto;
+  filter: none;
 }
 
 @media (min-width: 768px) {
   footer .gvrze-footer-wordmark {
     height: 1.5rem;
   }
-}
-
-/*
- * The PNG is black. Invert it only while the shared footer sits on the
- * dark universe canvas so the mark stays visible. Light page footers
- * keep the original black wordmark.
- */
-footer .gvrze-footer-wordmark {
-  filter: invert(1);
-}
-
-body:has(#gvrze-home) footer .gvrze-footer-wordmark,
-body:has(#gvrze-community-page) footer .gvrze-footer-wordmark,
-body:has(#gvrze-pricing-page) footer .gvrze-footer-wordmark,
-body:has(#lets-play-page) footer .gvrze-footer-wordmark,
-body:has(#gvrze-storefront) footer .gvrze-footer-wordmark,
-body:has(#gvrze-light) footer .gvrze-footer-wordmark,
-body:has(#gvrze-auth) footer .gvrze-footer-wordmark,
-body:has(#gvrze-studio) footer .gvrze-footer-wordmark,
-body:has(#gvrze-store-flow) footer .gvrze-footer-wordmark,
-body:has(#gvrze-library-page) footer .gvrze-footer-wordmark,
-body:has(header[data-surface="account"]) footer .gvrze-footer-wordmark,
-body:has(header[data-surface="info"]) footer .gvrze-footer-wordmark,
-body:has(header[data-surface="library"]) footer .gvrze-footer-wordmark,
-body:has(header[data-surface="auth"]) footer .gvrze-footer-wordmark,
-body:has(header[data-surface="studio"]) footer .gvrze-footer-wordmark,
-body:has(header[data-surface="light"]) footer .gvrze-footer-wordmark {
-  filter: none;
 }

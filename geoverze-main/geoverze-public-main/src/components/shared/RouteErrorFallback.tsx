@@ -16,7 +16,7 @@ export function RouteErrorFallback({ error, reset }: ErrorComponentProps) {
   }, [error]);
 
   return (
-    <SectionContainer className="py-[var(--space-section-sm)]">
+    <SectionContainer id="gvrze-light" className="py-[var(--space-section-sm)]">
       <GlassCard strong className="p-10 text-center md:p-14">
         <p className="eyebrow">Signal lost</p>
         <h1 className="mt-6 text-xl font-light tracking-tight text-foreground">

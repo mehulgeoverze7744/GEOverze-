@@ -25,8 +25,8 @@ import { CartLineRow } from "./CartLineRow";
 import { OrderCard } from "./OrderCard";
 import { ProductCard } from "./ProductCard";
 import { StorefrontRewardsCatalog } from "./StorefrontRewardsCatalog";
+import { isCartLinePurchaseLocked, isRetiredProductSlug } from "../data/catalogAvailability";
 import { type Product } from "../data/products";
-import { isComingSoonCategory } from "../data/taxonomy";
 import { SEED_ORDERS } from "../data/orders";
 import { isProductOwned, useEntitlements } from "../hooks/useEntitlements";
 import { useStoreCatalogue } from "../hooks/useStoreCatalogue";
@@ -247,7 +247,7 @@ export function CheckoutScreen() {
               <GeoButton
                 variant="solid"
                 onClick={() => {
-                  if (lines.some((line) => isComingSoonCategory(line.category))) {
+                  if (lines.some((line) => isCartLinePurchaseLocked(line))) {
                     toast.message("Coming soon", {
                       description: "Locked collections cannot be checked out yet.",
                     });
@@ -348,7 +348,9 @@ export function WishlistScreen() {
   const hydrated = useStorePersistHydrated();
   const items = wishlist
     .map((id) => catalogueProductBySlug(catalogueProducts, id) ?? resolveStoreProduct(id))
-    .filter((product): product is Product => Boolean(product));
+    .filter(
+      (product): product is Product => Boolean(product) && !isRetiredProductSlug(product.slug),
+    );
 
   /*
    * #gvrze-storefront activates the storefront.css rules that:

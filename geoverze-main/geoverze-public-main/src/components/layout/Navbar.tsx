@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 
-import { BrandMark } from "@/components/shared/BrandMark";
+import { GvrzeWordmark } from "@/components/shared/GvrzeWordmark";
 import { GeoButton } from "@/components/shared/GeoButton";
 import { GeoDrawer } from "@/components/shared/GeoDrawer";
 import { GeoDropdown, GeoDropdownItem } from "@/components/shared/GeoDropdown";
@@ -51,18 +51,6 @@ export function Navbar() {
   const isLibrary = pathname.startsWith("/geolibrary");
   const isAuth = pathname.startsWith("/auth");
   const isStudio = pathname.startsWith("/studio");
-  const isLightCatchall =
-    pathname === "/support" ||
-    pathname.startsWith("/support/") ||
-    pathname === "/leaderboard" ||
-    pathname.startsWith("/leaderboard/") ||
-    pathname === "/404" ||
-    pathname.startsWith("/geostore/cart") ||
-    pathname.startsWith("/geostore/checkout") ||
-    pathname.startsWith("/geostore/wishlist") ||
-    pathname.startsWith("/geostore/orders") ||
-    pathname.startsWith("/geostore/rewards") ||
-    pathname.startsWith("/geostore/product");
   const isInfo =
     pathname === "/about" ||
     pathname === "/contact" ||
@@ -143,9 +131,7 @@ export function Navbar() {
                         ? "auth"
                         : isStudio
                           ? "studio"
-                          : isLightCatchall
-                            ? "light"
-                            : undefined
+                          : "light"
       }
       className="group fixed inset-x-0 top-0 z-50 h-[var(--nav-height)] border-b border-transparent transition-all motion-base data-[scrolled=true]:glass-panel data-[scrolled=true]:rounded-none data-[scrolled=true]:shadow-[var(--shadow-float)]"
     >
@@ -156,26 +142,7 @@ export function Navbar() {
           aria-label={`${site.name} home`}
           className="inline-flex h-full shrink-0 items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
         >
-          {isHome ||
-          isPlayHub ||
-          isCommunity ||
-          isPricing ||
-          isLibrary ||
-          isInfo ||
-          isAccount ||
-          isAuth ||
-          isStudio ||
-          isLightCatchall ? (
-            <img
-              src="/assets/home/gvrze-wordmark.png"
-              alt=""
-              width={581}
-              height={85}
-              className="gvrze-home-wordmark object-contain object-left"
-            />
-          ) : (
-            <BrandMark size="md" withWordmark />
-          )}
+          <GvrzeWordmark decorative fetchPriority="high" />
         </Link>
 
         <nav aria-label="Main" className="hidden h-full items-center gap-6 xl:gap-9 lg:flex">

@@ -1,5 +1,5 @@
 import { ImageOff } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { resolveFlagUrl } from "../lib/flagImage";
@@ -23,6 +23,21 @@ function FallbackPlate({
         <ImageOff className="h-4 w-4" strokeWidth={1.8} aria-hidden />
         {label}
       </span>
+    </div>
+  );
+}
+
+function LoadingPlate({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn(
+        "flex aspect-[16/10] w-full flex-col items-center justify-center gap-2 rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] text-[#64748B]",
+        className,
+      )}
+      aria-busy="true"
+    >
+      <span className="h-8 w-8 animate-spin rounded-full border-2 border-[#2b74c4]/30 border-t-[#2b74c4]" />
+      <p className="text-[0.75rem] font-medium">Loading image…</p>
     </div>
   );
 }
@@ -55,44 +70,77 @@ export function QuizImage({
   const initial = flagUrl ?? (src && /^(https?:\/\/|\/)/i.test(src) ? src : null);
   const [resolved, setResolved] = useState<string | null>(initial);
   const [failed, setFailed] = useState(false);
+  const [pending, setPending] = useState(!initial && Boolean(src));
+  const [painted, setPainted] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     let cancelled = false;
     setFailed(false);
+    setPainted(false);
     if (flagUrl) {
       setResolved(flagUrl);
+      setPending(false);
       return;
     }
     if (!src) {
       setResolved(null);
+      setPending(false);
       return;
     }
     if (/^(https?:\/\/|\/)/i.test(src)) {
       setResolved(src);
+      setPending(false);
       return;
     }
+    setPending(true);
+    setResolved(null);
     void resolveMediaSrc(src).then((url) => {
-      if (!cancelled) setResolved(url);
+      if (cancelled) return;
+      setResolved(url);
+      setPending(false);
+      if (!url) setFailed(true);
     });
     return () => {
       cancelled = true;
     };
   }, [flagUrl, src]);
 
-  if (!resolved || failed) {
+  useEffect(() => {
+    const img = imgRef.current;
+    if (img?.complete && img.naturalWidth > 0) setPainted(true);
+  }, [resolved]);
+
+  if (failed || (!resolved && !pending)) {
     return <FallbackPlate className={className} />;
+  }
+
+  if (!resolved) {
+    return <LoadingPlate className={className} />;
   }
 
   return (
     <figure className={cn("flex w-full flex-col gap-2", className)}>
-      <div className="overflow-hidden rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC]">
+      <div className="relative overflow-hidden rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC]">
+        {!painted ? (
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-[#F8FAFC]" aria-busy="true">
+            <span className="h-8 w-8 animate-spin rounded-full border-2 border-[#2b74c4]/30 border-t-[#2b74c4]" />
+            <p className="text-[0.75rem] font-medium text-[#64748B]">Loading image…</p>
+          </div>
+        ) : null}
         <img
+          ref={imgRef}
           src={resolved}
           alt={alt}
           loading="lazy"
           decoding="async"
+          onLoad={() => setPainted(true)}
           onError={() => setFailed(true)}
-          className={cn("mx-auto max-h-[22rem] w-full object-contain", imgClassName)}
+          className={cn(
+            "mx-auto max-h-[22rem] w-full object-contain",
+            !painted && "opacity-0",
+            imgClassName,
+          )}
         />
       </div>
       {caption ? (

@@ -3,6 +3,8 @@ import { Plus } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
+import { ComingSoonImageOverlay } from "./ComingSoonImageOverlay";
+
 /**
  * Unified shape for an item displayed in the editorial category grid.
  * Both `GeostoreMerchProduct` and `Product` types are adapted to this before rendering.
@@ -19,6 +21,8 @@ export type EditorialItem = {
   alt: string;
   /** Lookbook-only tiles keep Coming Soon treatment. */
   comingSoon?: boolean;
+  /** Hoodie lookbook tiles stay unlinked; accessory lookbook tiles stay previewable. */
+  previewDisabled?: boolean;
   /** Letterbox the photo instead of cropping — used for sticker sheets. */
   imageContain?: boolean;
 };
@@ -58,23 +62,27 @@ export function EditorialCard({ item, isHero, onAdd, className }: EditorialCardP
             loading="lazy"
             decoding="async"
             className={cn(
-              "absolute inset-0 h-full w-full transition-transform duration-500 ease-out",
-              item.imageContain
-                ? "object-contain object-center"
-                : "object-cover group-hover:scale-[1.04]",
+              "absolute inset-0 h-full w-full",
+              item.imageContain ? "object-contain object-center" : "object-cover",
+              item.comingSoon
+                ? "scale-[1.14] blur-[12px]"
+                : "transition-transform duration-500 ease-out group-hover:scale-[1.04]",
             )}
           />
         ) : (
           <div className="absolute inset-0 bg-[#d8d8d8]" />
         )}
+        {item.comingSoon ? <ComingSoonImageOverlay /> : null}
       </div>
 
-      <Link
-        to="/geostore/product/$slug"
-        params={{ slug: item.slug }}
-        className="absolute inset-0 z-[2] rounded-[11px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]/40 focus-visible:ring-offset-1"
-        aria-label={`${item.name} — ${item.priceLabel}`}
-      />
+      {item.comingSoon && item.previewDisabled ? null : (
+        <Link
+          to="/geostore/product/$slug"
+          params={{ slug: item.slug }}
+          className="absolute inset-0 z-[2] rounded-[11px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]/40 focus-visible:ring-offset-1"
+          aria-label={`${item.name} — ${item.priceLabel}`}
+        />
+      )}
 
       <div className="relative z-[3] flex shrink-0 items-center justify-between gap-3 bg-[#ffffff] px-4 py-3">
         <div className="min-w-0 flex-1">

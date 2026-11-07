@@ -33,18 +33,12 @@ export type QuizSettings = {
   difficulty: "Adaptive" | "Easy" | "Medium" | "Hard" | "Expert";
   questionCount: "All" | "5" | "10" | "20";
   timeLimit: "Off" | "15s" | "30s" | "60s";
-  sound: boolean;
-  music: boolean;
-  animations: boolean;
 };
 
 export const DEFAULT_SETTINGS: QuizSettings = {
   difficulty: "Adaptive",
   questionCount: "All",
   timeLimit: "30s",
-  sound: true,
-  music: false,
-  animations: true,
 };
 
 type QuizState = {

@@ -72,11 +72,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: site.name },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "color-scheme", content: "light" },
+      { name: "theme-color", content: "#f5f6f8" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
+      },
+      {
+        rel: "preload",
+        href: "/assets/home/gvrze-wordmark.png",
+        as: "image",
+        type: "image/png",
       },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
       {
@@ -105,10 +113,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent as any,
 });
 
+const THEME_BOOTSTRAP = `html,body{background-color:#f5f6f8;color-scheme:light}#geoverze-universe-background{background-color:#f5f6f8}`;
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" style={{ backgroundColor: "#f5f6f8", colorScheme: "light" }}>
       <head>
+        <style dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP }} />
         <HeadContent />
       </head>
       <body>

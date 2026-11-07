@@ -72,6 +72,7 @@ import {
   FREE_SHIPPING_THRESHOLD_MINOR,
   getProductPrice,
 } from "../lib/gstoreProductPrices";
+import { isSlugAvailableForSale } from "../data/catalogAvailability";
 import { productImageForSlug } from "../data/productImages";
 import { MockPaymentGateway } from "../components/MockPaymentGateway";
 
@@ -226,7 +227,7 @@ export function GstoreCheckoutScreen() {
 
   // Build cart items from URL params (Buy Now) or cart store
   const isBuyNow = search.buyNow === "1" && !!search.slug;
-  const checkoutItems: GstoreCartItem[] = isBuyNow
+  const checkoutItems: GstoreCartItem[] = (isBuyNow
     ? [{
         slug:     search.slug!,
         quantity: parseInt(search.qty ?? "1", 10),
@@ -239,7 +240,11 @@ export function GstoreCheckoutScreen() {
         slug:     l.slug,
         quantity: l.quantity,
         options:  l.options,
-      }));
+      }))
+  ).filter((item) => {
+    const priced = getProductPrice(item.slug);
+    return Boolean(priced && isSlugAvailableForSale(item.slug, priced.category));
+  });
 
   // Price computation (client-side preview only — server recomputes for real)
   const hasPhysical = checkoutItems.some(item => {

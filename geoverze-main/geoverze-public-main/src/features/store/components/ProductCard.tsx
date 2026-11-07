@@ -7,6 +7,7 @@ import { CoverArt } from "@/features/play/components/CoverArt";
 import { cn } from "@/lib/utils";
 import { useCartStore } from "@/stores/cartStore";
 
+import { ComingSoonImageOverlay } from "../storefront/ComingSoonImageOverlay";
 import { ComingSoonLockChip } from "./ComingSoonLockChip";
 import { PriceTag } from "./PriceTag";
 import { RatingStars } from "./RatingStars";
@@ -65,6 +66,7 @@ export function ProductCard({
   const lookbook = hoodieLookbookCropForProduct(product.slug);
   const soldOut = product.stock === "sold-out";
   const purchaseLocked = isPurchaseLocked(product);
+  const previewDisabled = purchaseLocked && product.category === "hoodies";
   const cartLineId = useMemo(() => cartLineIdForProduct(product), [product]);
   const inCart = useCartStore((state) => state.lines.some((line) => line.id === cartLineId));
   const { removeProduct } = useStoreActions();
@@ -105,64 +107,92 @@ export function ProductCard({
         variant === "list" && "sm:flex-row",
       )}
     >
-      <Link
-        to="/geostore/product/$slug"
-        params={{ slug: product.slug }}
-        className={cn(
-          "relative block focus-visible:outline-none focus-visible:ring-2",
-          light ? "focus-visible:ring-[#111111]/25" : "focus-visible:ring-bronze/50",
-        )}
-        aria-label={product.name}
-      >
-        {useLookbook && lookbook && productImage ? (
-          <div
-            className={cn(
-              "relative overflow-hidden",
-              variant === "list" ? "aspect-square sm:w-44" : "aspect-[16/10]",
+      {(() => {
+        const media = (
+          <>
+            {useLookbook && lookbook && productImage ? (
+              <div
+                className={cn(
+                  "relative overflow-hidden",
+                  variant === "list" ? "aspect-square sm:w-44" : "aspect-[16/10]",
+                  purchaseLocked && "[&_img]:scale-[1.14] [&_img]:blur-[12px]",
+                )}
+              >
+                <img
+                  src={productImage.src}
+                  alt={productImage.alt}
+                  loading="lazy"
+                  decoding="async"
+                  className={cn(
+                    "block w-full object-cover object-top",
+                    !purchaseLocked && "transition-transform motion-slow group-hover:scale-[1.03]",
+                  )}
+                  style={{ height: hoodieLookbookThumbHeight(lookbook) }}
+                />
+                {purchaseLocked ? <ComingSoonImageOverlay /> : null}
+              </div>
+            ) : (
+              <div
+                className={cn(
+                  "relative overflow-hidden",
+                  !purchaseLocked &&
+                    seamlessBlend &&
+                    "transition-transform motion-slow group-hover:scale-[1.03]",
+                  purchaseLocked && "[&_img]:scale-[1.14] [&_img]:blur-[12px]",
+                )}
+              >
+                <CoverArt
+                  art={product.slug}
+                  {...(productImage
+                    ? {
+                        imageSrc: productImage.src,
+                        imageAlt: productImage.alt,
+                        ...(product.comingSoon ||
+                        purchaseLocked ||
+                        productImage.fillFrame ||
+                        seamlessBlend
+                          ? { fit: "cover" as const }
+                          : {}),
+                        ...(productImage.objectPosition
+                          ? { objectPosition: productImage.objectPosition }
+                          : {}),
+                        ...(seamlessBlend || light ? { overlay: "none" as const } : {}),
+                      }
+                    : { icon: Icon })}
+                  ratio={variant === "list" ? "square" : "video"}
+                  className={cn(
+                    !purchaseLocked &&
+                      !seamlessBlend &&
+                      "transition-transform motion-slow group-hover:scale-[1.03]",
+                    variant === "list" && "sm:w-44",
+                    light ? "!bg-[#F5F6F8]" : seamlessBlend && "bg-transparent",
+                    !light && isGlobeProductSlug(product.slug) && "!bg-[#0b0a09]",
+                  )}
+                />
+                {purchaseLocked ? <ComingSoonImageOverlay /> : null}
+              </div>
             )}
-          >
-            <img
-              src={productImage.src}
-              alt={productImage.alt}
-              loading="lazy"
-              decoding="async"
-              className="block w-full object-cover object-top transition-transform motion-slow group-hover:scale-[1.03]"
-              style={{ height: hoodieLookbookThumbHeight(lookbook) }}
-            />
-          </div>
-        ) : (
-          <div
+          </>
+        );
+
+        if (previewDisabled) {
+          return <div className="relative block">{media}</div>;
+        }
+
+        return (
+          <Link
+            to="/geostore/product/$slug"
+            params={{ slug: product.slug }}
             className={cn(
-              "relative overflow-hidden",
-              seamlessBlend && "transition-transform motion-slow group-hover:scale-[1.03]",
+              "relative block focus-visible:outline-none focus-visible:ring-2",
+              light ? "focus-visible:ring-[#111111]/25" : "focus-visible:ring-bronze/50",
             )}
+            aria-label={product.name}
           >
-            <CoverArt
-              art={product.slug}
-              {...(productImage
-                ? {
-                    imageSrc: productImage.src,
-                    imageAlt: productImage.alt,
-                    ...(product.comingSoon || productImage.fillFrame || seamlessBlend
-                      ? { fit: "cover" as const }
-                      : {}),
-                    ...(productImage.objectPosition
-                      ? { objectPosition: productImage.objectPosition }
-                      : {}),
-                    ...(seamlessBlend || light ? { overlay: "none" as const } : {}),
-                  }
-                : { icon: Icon })}
-              ratio={variant === "list" ? "square" : "video"}
-              className={cn(
-                !seamlessBlend && "transition-transform motion-slow group-hover:scale-[1.03]",
-                variant === "list" && "sm:w-44",
-                light ? "!bg-[#F5F6F8]" : seamlessBlend && "bg-transparent",
-                !light && isGlobeProductSlug(product.slug) && "!bg-[#0b0a09]",
-              )}
-            />
-          </div>
-        )}
-      </Link>
+            {media}
+          </Link>
+        );
+      })()}
 
       <div className="absolute right-3 top-3 flex gap-2">
         <button
@@ -184,7 +214,7 @@ export function ProductCard({
         >
           <Heart className={cn("h-4 w-4", saved && "fill-current")} strokeWidth={1.6} />
         </button>
-        {onQuickView ? (
+        {onQuickView && !purchaseLocked ? (
           <button
             type="button"
             onClick={(event) => {

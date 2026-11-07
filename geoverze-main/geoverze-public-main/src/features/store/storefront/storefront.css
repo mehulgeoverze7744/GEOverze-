@@ -141,6 +141,22 @@ body:has(#gvrze-storefront) footer .mt-16.border-t {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Orders listing + order details: keep the light canvas even before cards hydrate. */
+#gvrze-storefront.gvrze-gstore-orders {
+  --background: #f5f5f5;
+  --foreground: #111827;
+  --charcoal: #ffffff;
+  --card: #ffffff;
+  --muted-foreground: #6b7280;
+  --bronze: #4b5563;
+  --gvrze-ink: #111827;
+  --gvrze-muted: #6b7280;
+  --gvrze-line: #e8e8e8;
+  --gvrze-card: #ffffff;
+  background: #f5f5f5;
+  color: #111827;
+}
+
 /* The app-wide focus ring is bronze on dark. On the light canvas use ink. */
 #gvrze-storefront :focus-visible {
   outline: none;
@@ -271,8 +287,8 @@ body:has(#gvrze-storefront) footer .mt-16.border-t {
  * light canvas and sf-ink text colour so dark-theme classes still work.
  * ─────────────────────────────────────────────────────────────────────────── */
 #gvrze-storefront #gvrze-cart-content {
-  background: var(--background, oklch(0.06 0.004 60));
-  color: var(--foreground, oklch(0.95 0.005 60));
+  background: var(--background, #f5f6f8);
+  color: var(--foreground, #111827);
 }
 
 /* Re-allow the white & glass-panel styling used by some cart sub-components */

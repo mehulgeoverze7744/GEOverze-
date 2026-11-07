@@ -17,7 +17,13 @@ import {
 import { APPAREL_MERCH_SPECS } from "../data/apparelMerchSpecs";
 import { HOODIE_MERCH_SPECS, hoodieColorsWithImages } from "../data/hoodieMerchSpecs";
 import { productImageForSlug } from "../data/productImages";
-import { PRODUCTS, productBySlug, type Product, type StockState } from "../data/products";
+import {
+  isPurchaseLocked,
+  PRODUCTS,
+  productBySlug,
+  type Product,
+  type StockState,
+} from "../data/products";
 import { STOREFRONT_TEES, type StorefrontTeeProduct } from "../storefront/storefront-product-data";
 import { money } from "../lib/format";
 
@@ -250,6 +256,7 @@ function fromMerch(merch: GeostoreMerchProduct): TryOnGarment | null {
 
   const category = merchCategoryToTryOn(merch.category);
   const product = merchToProduct(merch, category);
+  if (isPurchaseLocked(product)) return null;
   const defaultColor = colors.find((color) => color.id === merch.defaultColor) ?? colors[0];
 
   return {
@@ -276,7 +283,7 @@ function fromMerch(merch: GeostoreMerchProduct): TryOnGarment | null {
 }
 
 function fromCatalogueProduct(product: Product): TryOnGarment | null {
-  if (product.comingSoon) return null;
+  if (isPurchaseLocked(product)) return null;
   if (product.category !== "tshirts" && product.category !== "hoodies") return null;
 
   const merch = merchProductById(product.slug);

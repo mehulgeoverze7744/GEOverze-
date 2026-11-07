@@ -2,6 +2,7 @@ import { Music, Video } from "lucide-react";
 
 import { FlagTile, QuizImage } from "./QuizImage";
 import type { QuestionMedia } from "../data/types";
+import { resolveMapBoard } from "../lib/mapBoards";
 
 /**
  * Renders the media attached to a question card.
@@ -40,13 +41,20 @@ export function QuestionMediaView({ media }: { media: QuestionMedia }) {
     );
   }
 
+  const mapBoard =
+    media.kind === "map"
+      ? resolveMapBoard({ mediaArt: media.art, boardArt: media.art, caption: media.caption })
+      : null;
+
   return (
     <QuizImage
-      src={media.art}
-      alt={media.caption ?? (media.kind === "map" ? "Map" : "Question image")}
+      src={mapBoard?.src ?? media.art}
+      alt={media.caption ?? mapBoard?.label ?? (media.kind === "map" ? "Map" : "Question image")}
       caption={media.caption}
       className="mx-auto max-w-3xl"
-      imgClassName={media.kind === "map" ? "max-h-[24rem] object-contain bg-[#e8eef5]" : "max-h-[22rem] object-cover"}
+      imgClassName={
+        media.kind === "map" ? "max-h-[24rem] object-contain bg-[#d7e6f4]" : "max-h-[22rem] object-cover"
+      }
     />
   );
 }

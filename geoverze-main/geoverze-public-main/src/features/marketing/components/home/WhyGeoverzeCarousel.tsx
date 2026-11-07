@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowUpRight } from "lucide-react";
 import {
   memo,
   useCallback,
@@ -89,9 +88,6 @@ function CarouselCard({
           <h3>{page.title}</h3>
           <p>{page.description}</p>
         </div>
-        <span className="why-carousel-card__go" aria-hidden>
-          <ArrowUpRight strokeWidth={1.75} />
-        </span>
       </div>
     </Link>
   );

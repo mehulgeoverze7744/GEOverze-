@@ -11,7 +11,8 @@ function isFashionStorefront(pathname: string) {
     pathname.startsWith("/geostore/browse") ||
     pathname.startsWith("/geostore/category") ||
     pathname.startsWith("/geostore/product") ||
-    pathname.startsWith("/geostore/try-on")
+    pathname.startsWith("/geostore/try-on") ||
+    pathname.startsWith("/geostore/order")
   );
 }
 

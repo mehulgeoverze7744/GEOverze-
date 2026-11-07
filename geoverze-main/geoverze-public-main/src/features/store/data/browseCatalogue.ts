@@ -8,7 +8,7 @@ import {
   type GeostoreMerchProduct,
 } from "@/features/marketing/data/geostoreMerch";
 
-import { productBySlug, productsInCategory, type Product } from "./products";
+import { isPurchaseLocked, productBySlug, productsInCategory, type Product } from "./products";
 import { STORE_CATEGORIES, type StoreCategoryId, type StoreGroupId } from "./taxonomy";
 
 /** Categories without a storefront shelf. */
@@ -45,17 +45,28 @@ function merchFacets(merch: GeostoreMerchProduct, category: StoreCategoryId): Pr
     features: [],
     specs: [],
     tags: ["apparel", merch.categoryLabel.toLowerCase()],
-    comingSoon: false,
+    comingSoon: isPurchaseLocked({
+      slug: merch.id,
+      category,
+      comingSoon: false,
+    }),
   };
 }
 
 export const BROWSE_ENTRIES: readonly BrowseEntry[] = STORE_CATEGORIES.filter(
   (category) => category.group === "merch" && !BROWSE_HIDDEN_CATEGORIES.has(category.id),
 ).flatMap((category): BrowseEntry[] => {
+  // Signature tees live in PRODUCTS / STOREFRONT_TEES — not the discontinued merch slogans.
+  if (category.id === "tshirts") {
+    return productsInCategory("tshirts").map((product) => ({ product }));
+  }
   if (isMerchStoreCategory(category.id)) {
     return merchProductsForStoreCategory(category.id).map((merch) => {
       const product = productBySlug(merch.id);
-      return product ? { product } : { product: merchFacets(merch, category.id), merch };
+      const facets = merchFacets(merch, category.id);
+      return product
+        ? { product: { ...product, comingSoon: product.comingSoon || facets.comingSoon }, merch }
+        : { product: facets, merch };
     });
   }
   return productsInCategory(category.id).map((product) => ({ product }));

@@ -118,10 +118,6 @@
   inset-inline: 0;
   bottom: 0;
   z-index: 1;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 0.7rem;
   padding: 1rem 0.95rem 0.95rem;
   background: transparent;
 }
@@ -156,30 +152,6 @@
   }
 }
 
-.why-carousel-card__go {
-  display: inline-flex;
-  height: 1.7rem;
-  width: 1.7rem;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.08rem;
-  border-radius: 9999px;
-  border: 1px solid rgb(255 255 255 / 0.42);
-  background: rgb(255 255 255 / 0.14);
-  color: #ffffff;
-  backdrop-filter: blur(10px);
-  transition:
-    transform 220ms ease,
-    background-color 220ms ease,
-    border-color 220ms ease;
-}
-
-.why-carousel-card__go svg {
-  width: 0.9rem;
-  height: 0.9rem;
-}
-
 .why-carousel-card:hover,
 .why-carousel-card:focus-visible {
   box-shadow: 0 18px 36px rgb(15 23 42 / 0.16);
@@ -196,13 +168,6 @@
 .why-carousel-card:hover .why-carousel-card__img,
 .why-carousel-card:focus-visible .why-carousel-card__img {
   transform: scale(1.06);
-}
-
-.why-carousel-card:hover .why-carousel-card__go,
-.why-carousel-card:focus-visible .why-carousel-card__go {
-  transform: translate(1px, -1px);
-  background: rgb(255 255 255 / 0.22);
-  border-color: rgb(255 255 255 / 0.58);
 }
 
 @media (min-width: 768px) {
@@ -232,8 +197,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .why-carousel-card,
-  .why-carousel-card__img,
-  .why-carousel-card__go {
+  .why-carousel-card__img {
     transition: none;
   }
 
