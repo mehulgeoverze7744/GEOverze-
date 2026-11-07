@@ -33,9 +33,9 @@ export const SF_ASSETS = {
     height: 1384,
   },
   bestSellerNewAge: {
-    src: `${BASE}/best-sellers/new-age-tshirt.webp`,
-    width: 1121,
-    height: 1403,
+    src: `${BASE}/best-sellers/new-age/na-2.jpg`,
+    width: 819,
+    height: 1024,
   },
   footerDivider: { src: `${BASE}/footer-divider.svg`, width: 1334, height: 2 },
   iconSearch: { src: `${BASE}/icon-search.svg`, width: 17, height: 17 },

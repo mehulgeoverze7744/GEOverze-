@@ -76,7 +76,7 @@ const BEST_SELLERS: readonly BestSeller[] = [
     price: "Rs. 2,999",
     tone: "#6c0036",
     image: SF_ASSETS.bestSellerNewAge,
-    alt: "New Age T-Shirt, back view",
+    alt: "New Age T-Shirt in Rose Wine Burgundy — back view showing full celestial graphic",
     slug: "new-age-tshirt",
     // Figma: x 5, y 26, 312 x 381, anchored to the bottom.
     frame: { left: "1.543%", top: "6.388%", width: "96.296%", height: "93.612%" },
