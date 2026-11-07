@@ -23,6 +23,7 @@ import { useStoreStore } from "@/stores/storeStore";
 
 import { resolveStoreProduct } from "../lib/resolveStoreProduct";
 import { useStoreActions } from "../lib/useStoreActions";
+import { getTryOnGarmentBySlug } from "../tryon/tryOnProducts";
 import { ComingSoonImageOverlay } from "./ComingSoonImageOverlay";
 import { StorefrontNav } from "./StorefrontNav";
 import { SF_SHELL, SF_UI_FONT } from "./storefront-ui";
@@ -300,6 +301,7 @@ export function StorefrontProductPage({
   const isSaved = wishlistItems.includes(slug);
   const { addProduct } = useStoreActions();
   const product = resolveStoreProduct(slug);
+  const canOpenTryOn = Boolean(getTryOnGarmentBySlug(slug));
 
   // When a colour swatch is selected, switch to that colour's gallery and
   // reset the thumbnail strip to the first slide.
@@ -334,7 +336,7 @@ export function StorefrontProductPage({
       return;
     }
     const options: Record<string, string> = {};
-    if (selectedSize) options.Size = selectedSize;
+    if (selectedSize) options["Size"] = selectedSize;
     const color = colors?.find((entry) => entry.id === selectedColorId);
     if (color) options['Colour'] = color.label;
     addProduct(product, options, showQuantity ? quantity : 1);
@@ -353,11 +355,19 @@ export function StorefrontProductPage({
       slug,
       qty: String(showQuantity ? quantity : 1),
     };
-    if (selectedSize) searchParams.Size = selectedSize;
+    if (selectedSize) searchParams["Size"] = selectedSize;
     const color = colors?.find((c) => c.id === selectedColorId);
     if (color) searchParams["Colour"] = color.label;
 
     navigate({ to: "/geostore/checkout", search: searchParams as unknown as Record<string, string> });
+  }
+
+  function handleCustomization() {
+    if (!canOpenTryOn) return;
+    const search: Record<string, string> = { slug };
+    if (selectedColorId) search["color"] = selectedColorId;
+    if (selectedSize) search["size"] = selectedSize;
+    void navigate({ to: "/geostore/try-on", search: search as never });
   }
 
   const washcareList = washcare ?? [
@@ -585,6 +595,15 @@ export function StorefrontProductPage({
                   >
                     BUY NOW
                   </button>
+                  {canOpenTryOn ? (
+                    <button
+                      type="button"
+                      onClick={handleCustomization}
+                      className="w-full rounded-lg border border-black/25 bg-transparent px-6 py-3.5 text-[13px] font-semibold tracking-wide text-black transition-colors duration-150 hover:border-black hover:bg-[#f0f0f0] active:bg-[#e8e8e8]"
+                    >
+                      CUSTOMIZATION
+                    </button>
+                  ) : null}
                 </>
               )}
             </div>
@@ -684,10 +703,54 @@ export function StorefrontProductPage({
 
 // ─── Convenience wrapper for storefront signature tees ────────────────────────
 
-import { GMakeStudioProductPage } from "../gmake/GMakeStudioProductPage";
-import { type StorefrontTeeProduct } from "./storefront-product-data";
+import {
+  relatedStorefrontTees,
+  type StorefrontTeeProduct,
+} from "./storefront-product-data";
 
-/** Renders a storefront signature tee as the GMake Studio product page. */
+/** Renders a storefront signature tee on the standard product detail page. */
 export function StorefrontTeeProductPage({ tee }: { tee: StorefrontTeeProduct }) {
-  return <GMakeStudioProductPage tee={tee} />;
+  const related = relatedStorefrontTees(tee.id);
+
+  // Map tee colour variants to the SFColorOption shape understood by StorefrontProductPage.
+  // Each colour carries its own full gallery so switching colour replaces the
+  // entire thumbnail strip with that colour's images.
+  const sfColors: SFColorOption[] | undefined = tee.colors?.map((c) => ({
+    id: c.id,
+    label: c.label,
+    hex: c.hex,
+    image: c.image.src,
+    gallery: c.gallery,
+  }));
+
+  // Base gallery: used only when no colour variants are defined.
+  const baseImages: SFGalleryImage[] = tee.gallery ?? [tee.image];
+
+  // `exactOptionalPropertyTypes` is on — only pass `colors` when defined so we
+  // never assign `undefined` to an optional-but-not-undefined-typed prop.
+  const colorsProp = sfColors ? { colors: sfColors } : {};
+
+  return (
+    <StorefrontProductPage
+      slug={tee.id}
+      name={tee.name}
+      categoryLabel={tee.categoryLabel}
+      priceLabel={tee.priceLabel}
+      images={baseImages}
+      {...colorsProp}
+      description={tee.description}
+      highlights={tee.highlights}
+      stylingTip={tee.stylingTip}
+      washcare={tee.washcare}
+      related={related.map((r) => ({
+        slug: r.id,
+        name: r.name,
+        priceLabel: r.priceLabel,
+        image: r.image.src,
+        imageAlt: r.image.alt,
+        tone: r.tone,
+      }))}
+      categorySlug="tshirts"
+    />
+  );
 }

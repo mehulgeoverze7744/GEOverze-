@@ -1,6 +1,8 @@
 /**
  * GMake Studio product page — Figma Desktop 1 (node 50:74).
- * Copy on the left, dual model preview on the right, Customization opens Try-On.
+ * Kept as a studio-layout reference. Live product detail routes use
+ * StorefrontProductPage so each tee shows its own gallery; Try-On Studio
+ * remains on `/geostore/try-on`.
  */
 import "../storefront/storefront.css";
 import "../tryon/try-on.css";
