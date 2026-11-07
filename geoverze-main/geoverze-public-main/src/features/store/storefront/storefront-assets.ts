@@ -28,7 +28,7 @@ export const SF_ASSETS = {
     height: 1024,
   },
   bestSellerGoldenArc: {
-    src: `${BASE}/best-sellers/golden-arc/ga-5.jpg`,
+    src: `${BASE}/best-sellers/golden-arc/ga-2.jpg`,
     width: 819,
     height: 1024,
   },

@@ -65,7 +65,7 @@ const BEST_SELLERS: readonly BestSeller[] = [
     price: "Rs. 2,999",
     tone: "#8cc8e8",
     image: SF_ASSETS.bestSellerGoldenArc,
-    alt: "Golden Arc T-Shirt in Skyblue — model back view showing celestial planetary graphic",
+    alt: "Golden Arc T-Shirt in Skyblue — back view showing celestial globe graphic and GVRZE wordmark",
     slug: "golden-arc-tshirt",
     // Portrait model shot — full-bleed cover mode (image fills card edge-to-edge).
     cover: true,
