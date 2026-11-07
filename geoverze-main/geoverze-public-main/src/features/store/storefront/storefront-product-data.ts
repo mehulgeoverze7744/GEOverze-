@@ -9,6 +9,7 @@
 const BASE = "/assets/gvrze-storefront/best-sellers";
 const CB_BASE = `${BASE}/cherry-blossom`;
 const MB_BASE = `${BASE}/midnight-black`;
+const SG_BASE = `${BASE}/starlight-grey`;
 
 /**
  * A single colour variant for a storefront tee.
@@ -208,13 +209,58 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
           },
         ],
       },
+
+      // ── 3. Starlight Grey ─────────────────────────────────────────────────
+      {
+        id: "starlight-grey",
+        label: "Starlight Grey",
+        hex: "#6b6b6b",
+        image: {
+          src: `${SG_BASE}/sg-1.jpg`,
+          alt: "Cherry Blossom T-Shirt in Starlight Grey — front design",
+        },
+        // Gallery order:
+        // sg-1 front product (PRIMARY)  sg-2 back product
+        // sg-3 chest branding detail    sg-4 collar & label close-up
+        // sg-5 sleeve / back graphic    sg-6 model back  sg-7 model front
+        gallery: [
+          {
+            src: `${SG_BASE}/sg-1.jpg`,
+            alt: "Starlight Grey — front T-shirt product image",
+          },
+          {
+            src: `${SG_BASE}/sg-2.jpg`,
+            alt: "Starlight Grey — back T-shirt product image",
+          },
+          {
+            src: `${SG_BASE}/sg-3.jpg`,
+            alt: "Starlight Grey — front GVRZE chest branding detail",
+          },
+          {
+            src: `${SG_BASE}/sg-4.jpg`,
+            alt: "Starlight Grey — collar and GVRZE label close-up",
+          },
+          {
+            src: `${SG_BASE}/sg-5.jpg`,
+            alt: "Starlight Grey — sleeve and back graphic detail",
+          },
+          {
+            src: `${SG_BASE}/sg-6.jpg`,
+            alt: "Starlight Grey — model wearing the tee, back view",
+          },
+          {
+            src: `${SG_BASE}/sg-7.jpg`,
+            alt: "Starlight Grey — model wearing the tee, front view",
+          },
+        ],
+      },
     ],
 
     description:
-      "Inspired by the beauty of cherry blossoms and the spirit of exploration, the Cherry Blossom T-shirt combines expressive artwork with GVRZE's distinctive geographic identity. Designed around a rich cherry-pink color palette, the tee features an abstract map-inspired graphic flowing across the front and back, complemented by compass elements, coordinates, and signature GVRZE branding. The front features a minimal GVRZE chest logo and a bold artistic geographic composition. The back showcases an oversized graphic with exploration-inspired typography and navigation elements. Now available in Cherry Blossom Pink and Midnight Black.",
+      "Inspired by the beauty of cherry blossoms and the spirit of exploration, the Cherry Blossom T-shirt combines expressive artwork with GVRZE's distinctive geographic identity. The tee features an abstract map-inspired graphic flowing across the front and back, complemented by compass elements, coordinates, and signature GVRZE branding. The front carries a minimal GVRZE chest logo and bold artistic geographic composition; the back showcases an oversized graphic with exploration-inspired typography and navigation elements. Available in three colourways — Cherry Blossom Pink, Midnight Black, and Starlight Grey.",
     highlights: [
       "Premium oversized streetwear silhouette.",
-      "Available in Cherry Blossom Pink and Midnight Black colourways.",
+      "Available in Cherry Blossom Pink, Midnight Black, and Starlight Grey colourways.",
       "Distinctive front and back graphic artwork with GVRZE signature branding.",
       "Geographic coordinates and compass-inspired detailing across the design.",
       "100% Cotton Comfort — breathable, pre-shrunk fabric built for all-day wear.",
@@ -223,7 +269,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
       "Comfortable everyday streetwear — pairs easily with denim, cargo pants, or joggers.",
     ],
     stylingTip:
-      "Cherry Blossom Pink: style with white or cream trousers and minimalist sneakers for a clean contrast look. Midnight Black: pair with black cargo pants or dark denim for a bold monochrome streetwear fit. Layer an open overshirt over either colourway for transitional weather.",
+      "Cherry Blossom Pink: style with white or cream trousers and minimalist sneakers for a clean contrast look. Midnight Black: pair with black cargo pants or dark denim for a bold monochrome fit. Starlight Grey: wear with beige chinos or olive trousers for an effortless tonal look. Layer an open overshirt over any colourway for transitional weather.",
     washcare: [
       "Machine wash inside out with similar colors, cold water (30°C / 86°F).",
       "Do not bleach.",
