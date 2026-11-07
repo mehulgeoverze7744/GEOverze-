@@ -10,7 +10,8 @@ const BASE = "/assets/gvrze-storefront/best-sellers";
 const CB_BASE = `${BASE}/cherry-blossom`;
 const MB_BASE = `${BASE}/midnight-black`;
 const SG_BASE = `${BASE}/starlight-grey`;
-const NA_BASE = `${BASE}/new-age`;
+const NA_BASE  = `${BASE}/new-age`;
+const NM_BASE  = `${BASE}/new-age-mulberry`;
 
 /**
  * A single colour variant for a storefront tee.
@@ -360,14 +361,52 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
           },
         ],
       },
-      // Add further colourways here when ready, e.g.:
-      // { id: "...", label: "...", hex: "...", image: {...}, gallery: [...] },
+      // ── 2. Mulberry ───────────────────────────────────────────────────────
+      {
+        id: "mulberry",
+        label: "Mulberry",
+        hex: "#4a0e4e",
+        image: {
+          src: `${NM_BASE}/nm-1.jpg`,
+          alt: "New Age T-Shirt in Mulberry — front design",
+        },
+        // Gallery order:
+        // nm-1 front product (PRIMARY)  nm-2 back product
+        // nm-3 back/sleeve design       nm-4 collar & neck detail
+        // nm-5 model front              nm-6 lifestyle / editorial
+        gallery: [
+          {
+            src: `${NM_BASE}/nm-1.jpg`,
+            alt: "Mulberry — front T-shirt product image",
+          },
+          {
+            src: `${NM_BASE}/nm-2.jpg`,
+            alt: "Mulberry — back T-shirt product image",
+          },
+          {
+            src: `${NM_BASE}/nm-3.png`,
+            alt: "Mulberry — back and sleeve graphic design detail",
+          },
+          {
+            src: `${NM_BASE}/nm-4.jpg`,
+            alt: "Mulberry — collar and GVRZE label close-up",
+          },
+          {
+            src: `${NM_BASE}/nm-5.jpg`,
+            alt: "Mulberry — model wearing the tee, front view",
+          },
+          {
+            src: `${NM_BASE}/nm-6.jpg`,
+            alt: "Mulberry — lifestyle editorial, front and back views",
+          },
+        ],
+      },
     ],
 
     description:
-      "Introducing the New Age T-shirt in Rose Wine Burgundy — a statement piece inspired by cosmic exploration, celestial navigation and contemporary streetwear. Designed around a deep burgundy colourway, the T-shirt features intricate multicolour celestial artwork across the sleeve and shoulder, a minimal star emblem on the front, and a clean GVRZE chest wordmark. The back features an expressive celestial composition with a half-globe illustration, orbital detailing, star elements and vertical GVRZE typography. Combining understated front branding with an elaborate back graphic, New Age brings together modern streetwear aesthetics and the GVRZE universe.",
+      "The New Age T-shirt is a statement piece inspired by cosmic exploration, celestial navigation and contemporary streetwear. It features intricate multicolour celestial artwork across the sleeve and shoulder, a minimal star emblem on the front, and a clean GVRZE chest wordmark. The back showcases an expressive celestial composition with a half-globe illustration, orbital detailing, star elements and vertical GVRZE typography. Combining understated front branding with an elaborate back graphic, New Age brings together modern streetwear aesthetics and the GVRZE universe. Available in Rose Wine Burgundy and Mulberry.",
     highlights: [
-      "Deep Rose Wine Burgundy colourway — rich, saturated and distinctive.",
+      "Available in Rose Wine Burgundy and Mulberry — rich, saturated deep-tone colourways.",
       "Intricate celestial sleeve and shoulder artwork in multicolour print.",
       "Minimal star emblem and GVRZE chest wordmark on the front.",
       "Expressive back graphic: half-globe, orbital detailing and vertical GVRZE type.",
@@ -376,7 +415,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
       "Comfortable everyday streetwear — pairs easily with dark denim, black cargo pants, or slim trousers.",
     ],
     stylingTip:
-      "Style the Rose Wine Burgundy New Age Tee with black straight-leg trousers or dark denim for a tonal contrast-forward fit. Pair with minimal white or black sneakers. The rich burgundy colourway works equally well with earth-toned cargo pants for a streetwear-meets-explorer aesthetic.",
+      "Rose Wine Burgundy: style with black straight-leg trousers or dark denim for a tonal contrast-forward fit — pair with minimal white or black sneakers. Mulberry: works with charcoal cargo pants, olive trousers or dark denim; the deep purple-plum tone pairs naturally with neutral and earth-toned bottoms for a distinctive streetwear-meets-explorer look.",
     washcare: WASHCARE_STANDARD,
     relatedIds: ["midnight-black-tshirt", "cherry-blossom-tshirt", "golden-arc-tshirt"],
   },
