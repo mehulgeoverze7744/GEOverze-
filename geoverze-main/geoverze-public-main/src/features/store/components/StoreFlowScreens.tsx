@@ -350,46 +350,59 @@ export function WishlistScreen() {
     .map((id) => catalogueProductBySlug(catalogueProducts, id) ?? resolveStoreProduct(id))
     .filter((product): product is Product => Boolean(product));
 
+  /*
+   * #gvrze-storefront activates the storefront.css rules that:
+   *  - hide the global site navbar (the dark charcoal one with circular icons)
+   *  - hide the floating Gstore action bar ([aria-label="Gstore actions"])
+   *  - inject StorefrontNav which carries the correct Wishlist, Cart,
+   *    Search and Account icon buttons matching all other Gstore pages.
+   */
   return (
-    <PageShell>
-      <PageHeader
-        eyebrow="Gstore"
-        title="Wishlist"
-        description="Products you've saved for later."
-        breadcrumb={crumbs("Wishlist")}
-      />
-      <SectionContainer size="wide">
-        {!hydrated ? (
-          <EmptyState icon={Heart} title="Loading wishlist…" />
-        ) : items.length === 0 ? (
-          <EmptyState
-            icon={Heart}
-            title="Wishlist is empty"
-            description="Tap the heart on any product to save it here. Wishlist and cart work independently."
-            action={
-              <GeoButton asChild variant="solid">
-                <Link to="/geostore">Explore Gstore</Link>
-              </GeoButton>
-            }
-          />
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {items.map((product) => (
-              <ProductCard
-                key={product.slug}
-                product={product}
-                saved
-                owned={isProductOwned(entitlements, product.slug)}
-                affordable={
-                  balance !== null && product.credits !== null && product.credits <= balance
-                }
-                onToggleWishlist={wishlistToggle}
-                onAdd={(p) => addProduct(p)}
-              />
-            ))}
-          </div>
-        )}
-      </SectionContainer>
-    </PageShell>
+    <div id="gvrze-storefront">
+      {/* ── Storefront nav — same icon buttons as homepage / category pages ── */}
+      <StorefrontNav variant="solid" />
+
+      {/* ── Wishlist content — dark background preserves existing dark-theme UI ── */}
+      <div className="bg-background text-foreground min-h-[calc(100dvh-64px)] pb-[var(--space-section-sm)]">
+        <PageHeader
+          eyebrow="Gstore"
+          title="Wishlist"
+          description="Products you've saved for later."
+          breadcrumb={crumbs("Wishlist")}
+        />
+        <SectionContainer size="wide">
+          {!hydrated ? (
+            <EmptyState icon={Heart} title="Loading wishlist…" />
+          ) : items.length === 0 ? (
+            <EmptyState
+              icon={Heart}
+              title="Wishlist is empty"
+              description="Tap the heart on any product to save it here. Wishlist and cart work independently."
+              action={
+                <GeoButton asChild variant="solid">
+                  <Link to="/geostore">Explore Gstore</Link>
+                </GeoButton>
+              }
+            />
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {items.map((product) => (
+                <ProductCard
+                  key={product.slug}
+                  product={product}
+                  saved
+                  owned={isProductOwned(entitlements, product.slug)}
+                  affordable={
+                    balance !== null && product.credits !== null && product.credits <= balance
+                  }
+                  onToggleWishlist={wishlistToggle}
+                  onAdd={(p) => addProduct(p)}
+                />
+              ))}
+            </div>
+          )}
+        </SectionContainer>
+      </div>
+    </div>
   );
 }
