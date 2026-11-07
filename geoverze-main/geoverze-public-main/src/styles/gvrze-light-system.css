@@ -32,6 +32,15 @@ body {
   color-scheme: light;
 }
 
+/*
+ * Keep page plates (Play geo, Library map, Pricing, Community, home sky)
+ * above the opaque body fill. Those layers use z-index: -10, which paints
+ * behind body unless body forms a stacking context.
+ */
+body {
+  isolation: isolate;
+}
+
 #geoverze-universe-background {
   background-color: var(--gvrze-bg-soft);
 }

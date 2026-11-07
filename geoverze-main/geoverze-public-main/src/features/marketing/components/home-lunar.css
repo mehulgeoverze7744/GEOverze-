@@ -7,6 +7,11 @@ body:has(#gvrze-home) #geoverze-universe-background {
   display: none !important;
 }
 
+#gvrze-home {
+  position: relative;
+  isolation: isolate;
+}
+
 .gvrze-home-sky {
   position: fixed;
   inset: 0;

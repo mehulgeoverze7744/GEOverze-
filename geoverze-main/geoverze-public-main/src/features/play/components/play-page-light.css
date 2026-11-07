@@ -15,6 +15,7 @@ body:has(#lets-play-page) #geoverze-universe-background > div:not(:first-child) 
 }
 
 body:has(#lets-play-page) #geoverze-universe-background > div:first-child {
+  background-image: url("/assets/gvrze-geography-light-bg.jpg") !important;
   background-size: cover !important;
   background-repeat: no-repeat !important;
   background-position: center center !important;

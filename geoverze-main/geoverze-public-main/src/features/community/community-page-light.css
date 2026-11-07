@@ -18,6 +18,7 @@ body:has(#gvrze-community-page) #geoverze-universe-background > div:not(:first-c
 
 body:has(#gvrze-community-page) #geoverze-universe-background > div:first-child {
   opacity: 1;
+  background-image: url("/assets/gvrze-geography-light-bg.jpg") !important;
   background-size: cover !important;
   background-repeat: no-repeat !important;
   background-position: center center !important;

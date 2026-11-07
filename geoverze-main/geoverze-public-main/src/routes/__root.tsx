@@ -113,7 +113,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent as any,
 });
 
-const THEME_BOOTSTRAP = `html,body{background-color:#f5f6f8;color-scheme:light}#geoverze-universe-background{background-color:#f5f6f8}`;
+const THEME_BOOTSTRAP = `html,body{background-color:#f5f6f8;color-scheme:light}body{isolation:isolate}#geoverze-universe-background{background-color:#f5f6f8}`;
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
