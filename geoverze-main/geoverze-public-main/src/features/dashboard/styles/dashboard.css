@@ -653,6 +653,21 @@
 .dashboard-order-actions {
   order: 2;
 }
+
+/* Phones only: consecutive dashboard cards inherit the 4.5rem layout gap
+   AND an extra matching margin-top (~9rem of empty sky). Offset that extra
+   margin against the shared gap so these pairs sit 1.25rem apart. Other
+   sections keep their existing spacing. */
+@media (max-width: 767px) {
+  .dashboard-layout {
+    --dashboard-mobile-card-gap: 1.25rem;
+  }
+
+  .dashboard-layout .dashboard-order-actions,
+  .dashboard-layout .dashboard-order-progress {
+    margin-top: calc(var(--dashboard-mobile-card-gap) - var(--space-section-sm));
+  }
+}
 .dashboard-order-command {
   order: 3;
 }

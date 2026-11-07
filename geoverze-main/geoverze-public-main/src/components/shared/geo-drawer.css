@@ -1,21 +1,27 @@
-/* Site-wide mobile navigation drawer — white / light-grey theme. */
+/* Site-wide mobile navigation drawer — frosted glass, light theme. */
 
 .geo-drawer {
   --geo-drawer-bg: #ffffff;
-  --geo-drawer-header: #f4f6f8;
-  --geo-drawer-soft: #eef2f5;
+  --geo-drawer-panel: rgb(248 251 254 / 0.82);
+  --geo-drawer-header: rgb(244 246 248 / 0.58);
+  --geo-drawer-soft: rgb(238 242 245 / 0.55);
   --geo-drawer-ink: #172335;
   --geo-drawer-muted: #687586;
-  --geo-drawer-line: #dfe4ea;
+  --geo-drawer-line: rgb(223 228 234 / 0.55);
   --geo-drawer-blue: #2b74c4;
-  --geo-drawer-blue-soft: rgb(43 116 196 / 0.1);
-  background-color: var(--geo-drawer-bg) !important;
+  --geo-drawer-blue-soft: rgb(43 116 196 / 0.14);
+  --tw-backdrop-blur: blur(16px);
+  --tw-backdrop-saturate: saturate(1.12);
+  isolation: isolate;
+  background-color: var(--geo-drawer-panel) !important;
   background-image: none !important;
   color: var(--geo-drawer-ink);
-  border-color: var(--geo-drawer-line) !important;
-  box-shadow: -16px 0 40px rgb(23 35 53 / 0.08);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  border-color: rgb(255 255 255 / 0.45) !important;
+  box-shadow:
+    inset 1px 0 0 rgb(255 255 255 / 0.28),
+    -16px 0 40px rgb(23 35 53 / 0.1);
+  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-saturate) !important;
+  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-saturate) !important;
 }
 
 .geo-drawer-header {
@@ -45,13 +51,14 @@
 .geo-drawer > button {
   top: 1.2rem;
   right: 1.15rem;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 2.25rem;
   height: 2.25rem;
   border-radius: 999px;
-  background: var(--geo-drawer-soft);
+  background: rgb(238 242 245 / 0.92);
   color: var(--geo-drawer-ink);
   opacity: 1;
   box-shadow: none;
@@ -78,7 +85,7 @@
 
 .geo-drawer-scroll {
   -webkit-overflow-scrolling: touch;
-  background: var(--geo-drawer-bg);
+  background: transparent;
   padding: 0.35rem 0 1.5rem;
   scrollbar-width: thin;
   scrollbar-color: #c9d1d9 transparent;
@@ -221,4 +228,12 @@
   background-color: #243044 !important;
   border-color: #243044 !important;
   color: #ffffff !important;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .geo-drawer {
+    --geo-drawer-panel: rgb(248 251 254 / 0.96);
+    --geo-drawer-header: rgb(244 246 248 / 0.94);
+    --geo-drawer-soft: rgb(238 242 245 / 0.92);
+  }
 }

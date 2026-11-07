@@ -338,10 +338,10 @@ export function StorefrontNav({ variant = "overlay", showTryOn }: StorefrontNavP
                   <Link
                     to="/play/credit-history"
                     onClick={closeMenu}
-                    className={cn(DRAWER_LINK, "mt-2 flex items-center justify-between")}
+                    className={cn(DRAWER_LINK, "sf-glass-drawer__credits mt-2")}
                   >
-                    <span>Credits</span>
-                    <span className="font-semibold">{balance}</span>
+                    <span className="sf-glass-drawer__credits-label">Credits</span>
+                    <span className="sf-glass-drawer__credits-value font-semibold">{balance}</span>
                   </Link>
                 ) : null}
                 <nav aria-label="Account" className="flex flex-col">

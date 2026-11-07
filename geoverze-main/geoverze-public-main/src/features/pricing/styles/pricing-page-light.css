@@ -396,6 +396,33 @@ body:has(#gvrze-pricing-page) footer a:hover {
   }
 }
 
+/* Benefits + testimonials titles — keep the translucent white plate, but
+   extend it past the section gutter so the band uses more of the page width.
+   Matching inline padding holds the heading/subtitle in place. */
+body:has(#gvrze-pricing-page) #gvrze-pricing-page header.pricing-benefits-header,
+body:has(#gvrze-pricing-page) #gvrze-pricing-page header.upgrade-roster-header {
+  box-sizing: border-box;
+  margin-inline: -1.25rem;
+  padding-inline: 1.25rem;
+  background: rgb(255 255 255 / 0.72);
+}
+
+@media (min-width: 768px) {
+  body:has(#gvrze-pricing-page) #gvrze-pricing-page header.pricing-benefits-header,
+  body:has(#gvrze-pricing-page) #gvrze-pricing-page header.upgrade-roster-header {
+    margin-inline: -4rem;
+    padding-inline: 4rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  body:has(#gvrze-pricing-page) #gvrze-pricing-page header.pricing-benefits-header,
+  body:has(#gvrze-pricing-page) #gvrze-pricing-page header.upgrade-roster-header {
+    margin-inline: -6.5rem;
+    padding-inline: 6.5rem;
+  }
+}
+
 /* Lower sections — readable on the same icy plate. */
 #gvrze-pricing-page .pricing-benefits-strip,
 #gvrze-pricing-page .pricing-benefits-strip-cell .pricing-benefit {

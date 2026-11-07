@@ -130,6 +130,7 @@ export const RewardCardCredits = memo(function RewardCardCredits() {
         <span className="rewards-card__stat-label">Your Credits</span>
       </div>
       <div className={`rewards-card__balance${isLoading ? " rewards-card__balance--loading" : ""}`}>
+        <span className="rewards-card__balance-unit">{isLoading ? "\u00a0" : unitLabel}</span>
         {isLoading ? (
           <span
             className="rewards-card__balance-value rewards-card__balance-value--loading"
@@ -138,7 +139,6 @@ export const RewardCardCredits = memo(function RewardCardCredits() {
         ) : (
           <span className="rewards-card__balance-value">{credits.toLocaleString()}</span>
         )}
-        <span className="rewards-card__balance-unit">{isLoading ? "\u00a0" : unitLabel}</span>
       </div>
       <span className="rewards-card__credits-hint">
         {signedIn

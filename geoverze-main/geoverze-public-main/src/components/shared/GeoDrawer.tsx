@@ -37,7 +37,7 @@ export function GeoDrawer({
       <SheetContent
         side={side}
         className={cn(
-          "geo-drawer flex max-h-[100dvh] flex-col overflow-hidden rounded-none border-l p-0",
+          "geo-drawer flex max-h-[100dvh] flex-col overflow-hidden rounded-none border-l p-0 backdrop-blur-[16px] backdrop-saturate-[1.12]",
           className,
         )}
       >

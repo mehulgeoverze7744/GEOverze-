@@ -22,9 +22,11 @@ export function CreditBalanceSummary() {
         <p className="mt-5 text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-foreground/50">
           Credits you can spend now
         </p>
-        <p className="mt-2 text-[clamp(2rem,4vw,2.75rem)] font-semibold tracking-tight text-foreground">
-          <AnimatedCounter value={balance} className="text-bronze-glow" />{" "}
-          <span className="text-lg text-foreground/60">{balance === 1 ? "Credit" : "Credits"}</span>
+        <p className="mt-2 flex w-full items-center justify-between gap-4 text-[clamp(2rem,4vw,2.75rem)] font-semibold tracking-tight text-foreground">
+          <span className="shrink-0 text-left">
+            {balance === 1 ? "Credit" : "Credits"}
+          </span>
+          <AnimatedCounter value={balance} className="ml-auto min-w-0 text-right text-bronze-glow" />
         </p>
         <p className="mt-3 text-[0.83rem] leading-relaxed text-foreground/55">
           Your wallet balance is reconciled on the server after every earn and Gstore purchase.
