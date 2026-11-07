@@ -33,14 +33,20 @@ export function CategoryCard({
               }
             : {})}
         />
-        <div className="absolute right-3 top-3 flex flex-wrap justify-end gap-1.5">
-          {category.isNew ? <MetaChip tone="bronze">New</MetaChip> : null}
-          {category.trending ? (
-            <MetaChip tone="bronze">
-              <TrendingUp className="h-3 w-3" strokeWidth={2.2} /> Hot
-            </MetaChip>
-          ) : null}
-        </div>
+        {category.isNew || category.trending ? (
+          <div className="absolute right-3 top-3 z-10 flex flex-wrap justify-end gap-1.5">
+            {category.isNew ? (
+              <MetaChip tone="bronze" className="border-[#2b74c4]/40 bg-white/92 shadow-sm">
+                New
+              </MetaChip>
+            ) : null}
+            {category.trending ? (
+              <MetaChip tone="bronze" className="border-[#2b74c4]/40 bg-white/92 shadow-sm">
+                <TrendingUp className="h-3 w-3" strokeWidth={2.2} /> Hot
+              </MetaChip>
+            ) : null}
+          </div>
+        ) : null}
       </div>
 
       <div className="flex flex-1 flex-col p-5">

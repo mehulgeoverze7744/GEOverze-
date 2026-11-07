@@ -35,21 +35,35 @@ body:has(#lets-play-page) #geoverze-universe-background > div:first-child {
 
 /* Site chrome only — do not bleach in-quiz / in-game headers. */
 body:has(#lets-play-page) header:has(nav[aria-label="Main"]) {
-  background: transparent;
-  border-color: transparent;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  background-color: rgb(244 246 248 / 0.94);
+  border-bottom: 1px solid rgb(23 32 51 / 0.08);
+  backdrop-filter: blur(16px) saturate(1.05);
+  -webkit-backdrop-filter: blur(16px) saturate(1.05);
+  box-shadow: none;
 }
 
 body:has(#lets-play-page) header:has(nav[aria-label="Main"])[data-scrolled="true"] {
-  background-color: rgb(244 246 248 / 0.92);
+  background-color: rgb(244 246 248 / 0.96);
   border-bottom: 1px solid rgb(23 32 51 / 0.08);
   backdrop-filter: blur(16px) saturate(1.05);
+  -webkit-backdrop-filter: blur(16px) saturate(1.05);
   box-shadow: none;
+}
+
+body:has(#lets-play-page) header:has(nav[aria-label="Main"]) > div {
+  width: 100%;
+  align-items: center;
 }
 
 body:has(#lets-play-page) header .gvrze-home-wordmark {
   display: block;
   height: 1.15rem;
   width: auto;
+  object-fit: contain;
+  object-position: left center;
 }
 
 @media (min-width: 768px) {
@@ -58,10 +72,22 @@ body:has(#lets-play-page) header .gvrze-home-wordmark {
   }
 }
 
+/* Keep Tailwind `hidden lg:flex` — do not force the desktop link row on tablet/mobile. */
+@media (min-width: 1024px) {
+  body:has(#lets-play-page) header nav[aria-label="Main"] {
+    display: flex;
+    height: 100%;
+    align-items: center;
+  }
+}
+
 body:has(#lets-play-page) header nav[aria-label="Main"] a {
+  display: inline-flex;
+  align-items: center;
   color: #172033;
   font-weight: 800;
   letter-spacing: 0.18em;
+  line-height: 1;
 }
 
 body:has(#lets-play-page) header nav[aria-label="Main"] a:hover,
@@ -1096,6 +1122,10 @@ body:has(#lets-play-page) footer .mt-16.border-t {
   #lets-play-page .featured-carousel-arrow--next {
     right: 0.55rem;
   }
+
+  #lets-play-page .featured-carousel-copy {
+    padding: 0 3rem 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1257,5 +1287,50 @@ body:has(#lets-play-page) footer .mt-16.border-t {
   #lets-play-page .game-back-button {
     top: calc(var(--nav-height) + env(safe-area-inset-top, 0px) + 0.35rem);
     left: calc(0.55rem + env(safe-area-inset-left, 0px));
+  }
+}
+
+/*
+ * Solo / Room Ready lobby — phones only.
+ * Grid items were sizing to avatar intrinsic width, so player cards
+ * overflowed the viewport and the page looked shifted to one side.
+ */
+@media (max-width: 767px) {
+  #lets-play-page .play-lobby-room {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+    box-sizing: border-box;
+  }
+
+  #lets-play-page .play-lobby-room *,
+  #lets-play-page .play-lobby-room *::before,
+  #lets-play-page .play-lobby-room *::after {
+    box-sizing: border-box;
+  }
+
+  #lets-play-page .play-lobby-room .play-lobby-header,
+  #lets-play-page .play-lobby-room .play-lobby-header__copy,
+  #lets-play-page .play-lobby-room .play-lobby-layout,
+  #lets-play-page .play-lobby-room .play-lobby-roster,
+  #lets-play-page .play-lobby-room .game-surface {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  #lets-play-page .play-lobby-room .play-lobby-header__ring {
+    width: auto;
+    max-width: 100%;
+  }
+
+  #lets-play-page .play-lobby-room .play-lobby-roster > * {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  #lets-play-page .play-lobby-room img {
+    max-width: 100%;
   }
 }

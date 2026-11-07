@@ -17,6 +17,30 @@ const FILTERS = [
   { id: "skipped", label: "Skipped" },
 ] as const;
 
+/**
+ * Dedicated review chrome below the fixed site navbar.
+ * Sticky at `--nav-height` so it cannot slide under the main links when scrolling.
+ */
+function ReviewBackBar({ quizId }: { quizId: string }) {
+  return (
+    <div className="sticky top-[var(--nav-height)] z-30 w-full border-b border-[rgb(23_32_51/0.08)] bg-[rgb(244_246_248/0.96)] backdrop-blur-md">
+      <div className="mx-auto flex min-h-12 w-full max-w-4xl min-w-0 items-center px-4 py-3 sm:px-6 md:px-10">
+        <GeoButton
+          variant="ghost"
+          size="sm"
+          asChild
+          className="relative z-10 inline-flex h-11 items-center justify-start gap-2 px-0 leading-none"
+        >
+          <Link to="/play/quiz/result" search={{ quiz: quizId, attempt: undefined }}>
+            <ArrowLeft className="h-3.5 w-3.5 shrink-0" strokeWidth={2} aria-hidden />
+            Back to result
+          </Link>
+        </GeoButton>
+      </div>
+    </div>
+  );
+}
+
 /** Route screen for /play/quiz/review — question-by-question breakdown. */
 export function QuizReviewScreen() {
   const { quiz } = useSearch({ from: "/play/quiz/review" });
@@ -59,9 +83,11 @@ export function QuizReviewScreen() {
     [answers, filter, set],
   );
 
+  const backBar = quiz ? <ReviewBackBar quizId={quiz} /> : undefined;
+
   if (loading) {
     return (
-      <QuizLayout width="default" className="pt-10">
+      <QuizLayout width="default" header={backBar}>
         <div className="flex items-center justify-center py-16">
           <div
             className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent text-bronze"
@@ -74,7 +100,7 @@ export function QuizReviewScreen() {
 
   if (error || !set) {
     return (
-      <QuizLayout width="default" className="pt-10">
+      <QuizLayout width="default" header={backBar}>
         <div className="game-surface rounded-2xl p-6 text-center">
           <p className="text-[0.9rem] text-foreground/60">
             {error ?? "Could not load quiz. Please try again."}
@@ -88,15 +114,8 @@ export function QuizReviewScreen() {
   }
 
   return (
-    <QuizLayout width="default" className="pt-10">
-      <GeoButton variant="ghost" size="sm" asChild>
-        <Link to="/play/quiz/result" search={{ quiz: set.id, attempt: undefined }}>
-          <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
-          Back to result
-        </Link>
-      </GeoButton>
-
-      <h1 className="mt-5 text-2xl font-semibold tracking-tight text-foreground">
+    <QuizLayout width="default" header={<ReviewBackBar quizId={set.id} />} className="pt-2">
+      <h1 className="text-2xl font-semibold tracking-tight text-foreground">
         Review — {set.title}
       </h1>
       <p className="mt-2 text-[0.88rem] text-foreground/55">

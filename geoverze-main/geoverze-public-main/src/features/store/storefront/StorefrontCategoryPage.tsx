@@ -109,7 +109,7 @@ function EditorialGrid({
           key={item.id}
           item={item}
           isHero={i === 0 && items.length >= 3}
-          onAdd={() => onAdd(item)}
+          onAdd={item.comingSoon ? undefined : () => onAdd(item)}
         />
       ))}
     </div>

@@ -206,10 +206,10 @@
   box-shadow: 0 12px 28px rgb(15 23 42 / 0.08);
 }
 
-.geostore-showcase .sf-category-card [class*="backdrop-blur"] {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  background: transparent !important;
+.geostore-showcase .sf-category-card--accessories-soon img {
+  filter: blur(12px);
+  transform: scale(1.14);
+  transform-origin: center;
 }
 
 .geostore-home-card {

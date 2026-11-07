@@ -17,6 +17,10 @@ export type EditorialItem = {
   /** Resolved image `src` (imported asset URL or public path). Empty string → no image. */
   image: string;
   alt: string;
+  /** Lookbook-only tiles keep Coming Soon treatment. */
+  comingSoon?: boolean;
+  /** Letterbox the photo instead of cropping — used for sticker sheets. */
+  imageContain?: boolean;
 };
 
 interface EditorialCardProps {
@@ -44,6 +48,7 @@ export function EditorialCard({ item, isHero, onAdd, className }: EditorialCardP
         isHero ? "lg:col-span-2 lg:row-span-2" : "",
         className,
       )}
+      data-coming-soon={item.comingSoon ? "true" : undefined}
     >
       <div className="relative min-h-0 flex-1 overflow-hidden bg-[#d8d8d8]">
         {item.image ? (
@@ -52,7 +57,12 @@ export function EditorialCard({ item, isHero, onAdd, className }: EditorialCardP
             alt={item.alt}
             loading="lazy"
             decoding="async"
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+            className={cn(
+              "absolute inset-0 h-full w-full transition-transform duration-500 ease-out",
+              item.imageContain
+                ? "object-contain object-center"
+                : "object-cover group-hover:scale-[1.04]",
+            )}
           />
         ) : (
           <div className="absolute inset-0 bg-[#d8d8d8]" />
@@ -72,7 +82,7 @@ export function EditorialCard({ item, isHero, onAdd, className }: EditorialCardP
           <p className="mt-0.5 text-xs text-[#555555]">{item.priceLabel}</p>
         </div>
 
-        {onAdd ? (
+        {onAdd && !item.comingSoon ? (
           <button
             type="button"
             onClick={(e) => {

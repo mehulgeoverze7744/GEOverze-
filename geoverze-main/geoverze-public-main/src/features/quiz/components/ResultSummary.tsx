@@ -90,14 +90,16 @@ export function ResultSummary({
   };
 
   return (
-    <QuizLayout width="default" className="pt-10">
-      <section className="game-surface relative overflow-hidden rounded-2xl">
-        <SessionHero
-          art={set.art}
-          thumbnail={thumbnailForQuizSession(set.id)}
-          className="h-36 sm:h-44"
-        />
-        {pct >= 75 ? <Confetti /> : null}
+    <QuizLayout width="default" className="mx-auto w-full max-w-3xl pt-8">
+      <section className="game-surface relative w-full min-w-0 overflow-x-clip rounded-2xl">
+        <div className="relative overflow-hidden rounded-t-2xl">
+          <SessionHero
+            art={set.art}
+            thumbnail={thumbnailForQuizSession(set.id)}
+            className="h-36 sm:h-44"
+          />
+          {pct >= 75 ? <Confetti /> : null}
+        </div>
         <div className="relative flex flex-col items-center p-6 text-center sm:p-8">
           <MetaChip tone="bronze">{set.title}</MetaChip>
           <div className="mt-5">
@@ -118,7 +120,7 @@ export function ResultSummary({
           </p>
         </div>
 
-        <div className="relative px-6 pb-6 sm:px-8 sm:pb-8">
+        <div className="relative min-w-0 px-4 pb-6 sm:px-8 sm:pb-8">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Stat label="Correct" value={String(summary.correct)} tone="good" />
             <Stat label="Wrong" value={String(summary.wrong)} tone="bad" />
@@ -143,26 +145,36 @@ export function ResultSummary({
             </p>
           )}
 
-          <div className="relative mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <GeoButton variant="solid" size="lg" onClick={onPlayAgain}>
-              <RotateCcw className="h-4 w-4" strokeWidth={2} aria-hidden />
+          <div className="relative mt-7 grid w-full min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
+            <GeoButton
+              variant="solid"
+              size="lg"
+              className="w-full min-w-0 max-w-full px-4 sm:px-8"
+              onClick={onPlayAgain}
+            >
+              <RotateCcw className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
               Play again
             </GeoButton>
             {reviewSearch ? (
-              <GeoButton variant="dark" size="lg" asChild>
+              <GeoButton variant="dark" size="lg" className="w-full min-w-0 max-w-full px-4 sm:px-8" asChild>
                 <Link to="/play/quiz/review" search={reviewSearch}>
-                  <ListChecks className="h-4 w-4" strokeWidth={1.9} aria-hidden />
+                  <ListChecks className="h-4 w-4 shrink-0" strokeWidth={1.9} aria-hidden />
                   Review answers
                 </Link>
               </GeoButton>
             ) : null}
-            <GeoButton variant="ghost" size="lg" onClick={share}>
-              <Share2 className="h-4 w-4" strokeWidth={1.9} aria-hidden />
+            <GeoButton
+              variant="ghost"
+              size="lg"
+              className="w-full min-w-0 max-w-full px-4 sm:px-8"
+              onClick={share}
+            >
+              <Share2 className="h-4 w-4 shrink-0" strokeWidth={1.9} aria-hidden />
               {shared ? "Copied" : "Share result"}
             </GeoButton>
-            <GeoButton variant="ghost" size="lg" asChild>
+            <GeoButton variant="ghost" size="lg" className="w-full min-w-0 max-w-full px-4 sm:px-8" asChild>
               <Link to="/play">
-                <Home className="h-4 w-4" strokeWidth={1.9} aria-hidden />
+                <Home className="h-4 w-4 shrink-0" strokeWidth={1.9} aria-hidden />
                 Back to hub
               </Link>
             </GeoButton>

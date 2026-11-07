@@ -139,7 +139,7 @@ export const STORE_CATEGORIES: readonly StoreCategory[] = [
     id: "accessories",
     label: "Accessories",
     group: "merch",
-    blurb: "Totes, pins and desk pieces.",
+    blurb: "Sticker collections, globes and desk pieces.",
     icon: Package,
   },
   {

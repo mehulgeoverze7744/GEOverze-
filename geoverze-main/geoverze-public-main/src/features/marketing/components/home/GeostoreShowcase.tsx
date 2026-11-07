@@ -18,7 +18,10 @@ export const GeostoreShowcase = memo(function GeostoreShowcase() {
       </SectionContainer>
 
       <SectionContainer size="wide" className="geostore-showcase__products">
-        <StorefrontCategoryCards className="geostore-showcase__categories" />
+        <StorefrontCategoryCards
+          className="geostore-showcase__categories"
+          accessoriesComingSoon
+        />
       </SectionContainer>
 
       <div className="geostore-showcase__cta-wrap">

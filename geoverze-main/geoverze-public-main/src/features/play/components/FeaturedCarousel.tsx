@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { GeoButton } from "@/components/shared";
 import { cn } from "@/lib/utils";
 import type { FeaturedHeroSlide } from "../data/featuredHero";
-import { DifficultyBadge, MetaChip } from "./Badges";
+import { DifficultyBadge } from "./Badges";
 import { CoverArt } from "./CoverArt";
 
 /** Catalog quiz slides that keep title and badges only in the Let's Play hero. */
@@ -148,10 +148,7 @@ export function FeaturedCarousel({
       ) : null}
 
       <div className="featured-carousel-copy">
-        <div className="flex flex-wrap items-center gap-2">
-          <MetaChip tone="bronze">{filter === "popular" ? "Popular" : "Featured"}</MetaChip>
-          {active.difficulty ? <DifficultyBadge level={active.difficulty} /> : null}
-        </div>
+        {active.difficulty ? <DifficultyBadge level={active.difficulty} /> : null}
         <h2 className="featured-carousel-title mt-3 text-2xl font-semibold tracking-tight md:text-3xl">
           {active.title}
         </h2>

@@ -220,13 +220,11 @@ export function HomeHero() {
     set(panel3.current, c, (1 - c) * 26);
 
     if (cueRef.current) {
-      // Phones keep the in-flow cue visible under the rewards card.
-      // Desktop still fades the absolute bottom cue as the pin starts.
       if (window.matchMedia("(max-width: 767px)").matches) {
-        cueRef.current.style.opacity = "1";
-        cueRef.current.style.pointerEvents = "auto";
-        cueRef.current.tabIndex = 0;
-        cueRef.current.setAttribute("aria-hidden", "false");
+        cueRef.current.style.opacity = "0";
+        cueRef.current.style.pointerEvents = "none";
+        cueRef.current.tabIndex = -1;
+        cueRef.current.setAttribute("aria-hidden", "true");
       } else {
         const opacity = clamp01(1 - p / 0.08);
         cueRef.current.style.opacity = String(opacity);
@@ -381,6 +379,8 @@ export function HomeHero() {
             : "home-hero-scroll-cue absolute bottom-8 left-1/2 z-20 -translate-x-1/2"
         }
         aria-label="Scroll the experience"
+        aria-hidden={isPhone || undefined}
+        tabIndex={isPhone ? -1 : 0}
         onClick={handleScrollTheExperience}
         onKeyDown={handleScrollCueKeyDown}
       >

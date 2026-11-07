@@ -26,7 +26,10 @@ import {
   storefrontTeeById,
   type StorefrontTeeProduct,
 } from "../storefront/storefront-product-data";
-import { StorefrontTeeProductPage } from "../storefront/StorefrontProductPage";
+import {
+  StorefrontProductPage,
+  StorefrontTeeProductPage,
+} from "../storefront/StorefrontProductPage";
 import { StorefrontCategoryPage } from "../storefront/StorefrontCategoryPage";
 import { type EditorialItem } from "../storefront/EditorialCard";
 import "../storefront/accessories-coming-soon.css";
@@ -46,6 +49,8 @@ import {
   browseMerchForSlug,
 } from "../data/browseCatalogue";
 import {
+  ACCESSORIES_STICKER_SLUGS,
+  isAccessoriesLookbook,
   isPurchaseLocked,
   productBySlug,
   productsInCategory,
@@ -66,6 +71,7 @@ import {
 import { filterProducts, sortProducts } from "../lib/filter";
 import { defaultOptions } from "../lib/cart";
 import { money } from "../lib/format";
+import { formatInrPaise, getProductPrice } from "../lib/gstoreProductPrices";
 import { resolveStoreProduct } from "../lib/resolveStoreProduct";
 import { useStoreActions } from "../lib/useStoreActions";
 import { productImageForSlug } from "../data/productImages";
@@ -100,15 +106,24 @@ function productToEditorial(p: Product): EditorialItem {
   // Storefront signature tees carry their own display priceLabel (e.g. "Rs. 2,999").
   // Use it directly so the category card shows the correct currency instead of USD.
   const tee = storefrontTeeById(p.slug);
+  const checkoutPrice = getProductPrice(p.slug);
+  const comingSoon = p.comingSoon || isAccessoriesLookbook(p.slug);
   return {
     id: p.id,
     slug: p.slug,
     name: p.name,
-    priceLabel:
-      tee?.priceLabel ??
-      (p.price !== null ? money(p.price) : `${p.credits ?? 0} credits`),
+    priceLabel: comingSoon
+      ? "Coming soon"
+      : (tee?.priceLabel ??
+        (checkoutPrice
+          ? formatInrPaise(checkoutPrice.priceMinor)
+          : p.price !== null
+            ? money(p.price)
+            : `${p.credits ?? 0} credits`)),
     image: img?.src ?? "",
     alt: img?.alt ?? p.name,
+    comingSoon,
+    imageContain: p.category === "stickers",
   };
 }
 
@@ -379,25 +394,85 @@ const ACCESSORIES_GLOBE_SLUGS = [
 
 const ACCESSORIES_PUBLICATION_SLUG = "field-notebook";
 
+const STICKER_CARE = [
+  "Apply to a clean, dry, dust-free surface.",
+  "Press from the centre outward to clear air bubbles.",
+  "Wipe with a damp cloth only — do not dishwasher or soak.",
+  "Indoor and outdoor vinyl; avoid prolonged abrasive scrubbing.",
+];
+
 /** Accessories editorial category page. */
 function AccessoriesCategoryShelf() {
   const category = categoryById("accessories");
+  const { addProduct } = useStoreActions();
+  const stickers = ACCESSORIES_STICKER_SLUGS.map(productBySlug).filter((p): p is Product =>
+    Boolean(p),
+  );
   const globes = ACCESSORIES_GLOBE_SLUGS.map(productBySlug).filter((p): p is Product => Boolean(p));
   const publication = productBySlug(ACCESSORIES_PUBLICATION_SLUG);
-  const allProducts = [...globes, ...(publication ? [publication] : [])];
+  const allProducts = [...stickers, ...globes, ...(publication ? [publication] : [])];
   const items = allProducts.map(productToEditorial);
+
+  function handleAdd(item: EditorialItem) {
+    const product = productBySlug(item.slug);
+    if (product && !isPurchaseLocked(product)) addProduct(product, defaultOptions(product));
+  }
 
   return (
     <div id="gvrze-accessories-coming-soon">
       <StorefrontCategoryPage
         title={category?.label ?? "Accessories"}
-        description={category?.blurb ?? "Totes, pins and desk pieces."}
+        description="Die-cut GVRZE sticker collections are available now. Globes and desk pieces remain a lookbook until those drops launch."
         items={items}
-        onAdd={() => {
-          /* Accessories remain lookbook-only until the collection launches. */
-        }}
+        onAdd={handleAdd}
       />
     </div>
+  );
+}
+
+function StorefrontStickerProductPage({ product }: { product: Product }) {
+  const img = productImageForSlug(product.slug);
+  const checkoutPrice = getProductPrice(product.slug);
+  const related = relatedProducts(product, 4).flatMap((item) => {
+    const relatedImg = productImageForSlug(item.slug);
+    const relatedPrice = getProductPrice(item.slug);
+    if (!relatedImg) return [];
+    return [
+      {
+        slug: item.slug,
+        name: item.name,
+        priceLabel: relatedPrice ? formatInrPaise(relatedPrice.priceMinor) : money(item.price),
+        image: relatedImg.src,
+        imageAlt: relatedImg.alt,
+      },
+    ];
+  });
+
+  return (
+    <StorefrontProductPage
+      slug={product.slug}
+      name={product.name}
+      categoryLabel="Stickers"
+      categorySlug="accessories"
+      priceLabel={
+        checkoutPrice ? formatInrPaise(checkoutPrice.priceMinor) : money(product.price)
+      }
+      images={[{ src: img?.src ?? "", alt: img?.alt ?? product.name }]}
+      hideSizes
+      showQuantity
+      description={product.description}
+      highlights={
+        product.features.length > 0
+          ? [...product.features]
+          : [
+              "Die-cut weatherproof vinyl",
+              "GVRZE geography and exploration artwork",
+              "Laptop, bottle and notebook safe",
+            ]
+      }
+      washcare={STICKER_CARE}
+      related={related}
+    />
   );
 }
 
@@ -496,6 +571,10 @@ export function ProductScreen() {
   const storefrontTee = storefrontTeeById(slug);
   if (storefrontTee) {
     return <StorefrontTeeProductPage tee={storefrontTee} />;
+  }
+
+  if (product?.category === "stickers" && !isPurchaseLocked(product)) {
+    return <StorefrontStickerProductPage product={product} />;
   }
 
   // Discontinued merch products (e.g. old slogan tees) are hidden from

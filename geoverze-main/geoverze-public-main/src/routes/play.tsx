@@ -11,7 +11,9 @@ function PlayLayout() {
   return (
     <div id="lets-play-page">
       <PlayPageBackground preset="geo" />
-      {isPlayHubPath(pathname) ? null : <GameBackButton />}
+      {isPlayHubPath(pathname) || pathname.startsWith("/play/quiz/review") ? null : (
+        <GameBackButton />
+      )}
       <Outlet />
     </div>
   );

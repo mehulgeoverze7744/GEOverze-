@@ -1,11 +1,11 @@
 import { useNavigate } from "@tanstack/react-router";
 
 import { PageShell } from "@/components/layout/PageShell";
-import { AnimatedSection, SectionContainer, SectionHeading } from "@/components/shared";
-import { FUTURE_MODES, GAME_MODES, type GameMode } from "../data/gameModes";
+import { AnimatedSection, SectionContainer } from "@/components/shared";
+import { GAME_MODES, type GameMode } from "../data/gameModes";
 import { ModeCard } from "../components/ModeCard";
 
-/** /play/modes — the full game-mode gallery, including locked future modes. */
+/** /play/modes — the full game-mode gallery. */
 export function ModesPage() {
   const navigate = useNavigate();
 
@@ -42,19 +42,6 @@ export function ModesPage() {
         <AnimatedSection className="mt-10">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {GAME_MODES.map((mode) => (
-              <ModeCard key={mode.id} mode={mode} onSelect={select} />
-            ))}
-          </div>
-        </AnimatedSection>
-
-        <AnimatedSection className="mt-16">
-          <SectionHeading
-            eyebrow="On the roadmap"
-            title="Modes in development"
-            description="Designed, not shipped. These stay locked until the competitive service is live — no placeholder standings behind them."
-          />
-          <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {FUTURE_MODES.map((mode) => (
               <ModeCard key={mode.id} mode={mode} onSelect={select} />
             ))}
           </div>

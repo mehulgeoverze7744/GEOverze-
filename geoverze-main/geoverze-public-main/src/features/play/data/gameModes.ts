@@ -96,37 +96,3 @@ export const GAME_MODES: readonly GameMode[] = [
     imageAlt: "Tournament geography trophy and globe",
   },
 ];
-
-/**
- * Modes that are designed but not built yet. Rendered as clearly locked
- * placeholders on /play/modes — never with fake data behind them.
- */
-export const FUTURE_MODES: readonly GameMode[] = [
-  {
-    id: "tournament-ladder",
-    title: "Tournament Ladder",
-    description: "A persistent seeded ladder with promotion, relegation and season resets.",
-    icon: Trophy,
-    art: "tournament",
-    cta: "Locked",
-    comingSoon: true,
-  },
-  {
-    id: "team-battle",
-    title: "Team Battle",
-    description: "Four-versus-four rooms where a team score is the sum of its fastest answers.",
-    icon: Users,
-    art: "multiplayer",
-    cta: "Locked",
-    comingSoon: true,
-  },
-  {
-    id: "esports-arena",
-    title: "Esports Arena",
-    description: "Broadcast-ready rooms with spectators, casters and a permanent match record.",
-    icon: Swords,
-    art: "pvp",
-    cta: "Locked",
-    comingSoon: true,
-  },
-];

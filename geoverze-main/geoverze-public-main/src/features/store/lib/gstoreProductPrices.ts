@@ -148,6 +148,34 @@ export const GSTORE_PRODUCT_PRICES: Record<string, GstoreProductPrice> = {
     physical: true,
     category: "accessories",
   },
+  "the-explorers-trail": {
+    slug: "the-explorers-trail",
+    name: "THE EXPLORER'S TRAIL",
+    priceMinor: 69_900,    // ₹699
+    physical: true,
+    category: "accessories",
+  },
+  "beyond-the-horizon": {
+    slug: "beyond-the-horizon",
+    name: "BEYOND THE HORIZON",
+    priceMinor: 69_900,    // ₹699
+    physical: true,
+    category: "accessories",
+  },
+  "the-atlas-archive": {
+    slug: "the-atlas-archive",
+    name: "THE ATLAS ARCHIVE",
+    priceMinor: 69_900,    // ₹699
+    physical: true,
+    category: "accessories",
+  },
+  "the-cartographers-collection": {
+    slug: "the-cartographers-collection",
+    name: "THE CARTOGRAPHER'S COLLECTION",
+    priceMinor: 79_900,    // ₹799
+    physical: true,
+    category: "accessories",
+  },
   "old-world-mug": {
     slug: "old-world-mug",
     name: "Old World Mug",

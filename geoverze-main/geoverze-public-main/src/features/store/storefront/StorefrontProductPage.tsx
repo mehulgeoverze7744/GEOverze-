@@ -70,6 +70,10 @@ export type StorefrontProductPageProps = {
   colors?: SFColorOption[];
   /** Available size labels. Defaults to S / M / L / XL. */
   sizes?: string[];
+  /** Hide the apparel size row (stickers, desk objects). */
+  hideSizes?: boolean;
+  /** Show a quantity stepper above the cart actions. */
+  showQuantity?: boolean;
   description?: string;
   highlights?: string[];
   stylingTip?: string;
@@ -218,6 +222,8 @@ export function StorefrontProductPage({
   images,
   colors,
   sizes = DEFAULT_SIZES,
+  hideSizes = false,
+  showQuantity = false,
   description,
   highlights,
   stylingTip,
@@ -230,6 +236,7 @@ export function StorefrontProductPage({
     colors?.[0]?.id ?? null,
   );
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<Tab>("description");
 
   // ── Equal-height two-column layout ──────────────────────────────────────
@@ -303,7 +310,7 @@ export function StorefrontProductPage({
   const mainImage = galleryImages[selectedImageIdx] ?? galleryImages[0] ?? { src: "", alt: name };
 
   function handleAddToCart() {
-    if (!selectedSize) {
+    if (!hideSizes && !selectedSize) {
       toast.error("Please select a size before adding to cart.");
       return;
     }
@@ -311,14 +318,15 @@ export function StorefrontProductPage({
       toast.error("This product isn’t available to add yet.");
       return;
     }
-    const options: Record<string, string> = { Size: selectedSize };
+    const options: Record<string, string> = {};
+    if (selectedSize) options.Size = selectedSize;
     const color = colors?.find((entry) => entry.id === selectedColorId);
     if (color) options['Colour'] = color.label;
-    addProduct(product, options, 1);
+    addProduct(product, options, showQuantity ? quantity : 1);
   }
 
   function handleBuyNow() {
-    if (!selectedSize) {
+    if (!hideSizes && !selectedSize) {
       toast.error("Please select a size first.");
       return;
     }
@@ -327,9 +335,9 @@ export function StorefrontProductPage({
     const searchParams: Record<string, string> = {
       buyNow: "1",
       slug,
-      qty:    "1",
-      Size:   selectedSize,
+      qty: String(showQuantity ? quantity : 1),
     };
+    if (selectedSize) searchParams.Size = selectedSize;
     const color = colors?.find((c) => c.id === selectedColorId);
     if (color) searchParams["Colour"] = color.label;
 
@@ -470,29 +478,58 @@ export function StorefrontProductPage({
             )}
 
             {/* Size selector */}
-            <div className="mt-5">
-              <div className="flex items-center justify-between">
+            {hideSizes ? null : (
+              <div className="mt-5">
+                <div className="flex items-center justify-between">
+                  <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-[#555]">
+                    Size
+                  </p>
+                  <button
+                    type="button"
+                    className="text-[11px] text-[#555] underline transition-opacity hover:opacity-60"
+                  >
+                    Size Guide
+                  </button>
+                </div>
+                <div className="mt-2.5 flex flex-wrap gap-2">
+                  {sizes.map((s) => (
+                    <SizeButton
+                      key={s}
+                      label={s}
+                      selected={selectedSize === s}
+                      onClick={() => setSelectedSize(s)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {showQuantity ? (
+              <div className="mt-5">
                 <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-[#555]">
-                  Size
+                  Quantity
                 </p>
-                <button
-                  type="button"
-                  className="text-[11px] text-[#555] underline transition-opacity hover:opacity-60"
-                >
-                  Size Guide
-                </button>
+                <div className="mt-2.5 inline-flex items-center gap-3 rounded-lg border border-[#d8dee6] bg-white px-3 py-2">
+                  <button
+                    type="button"
+                    aria-label="Decrease quantity"
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    className="h-7 w-7 text-[16px] leading-none text-[#555] transition-colors hover:text-black"
+                  >
+                    −
+                  </button>
+                  <span className="w-6 text-center text-sm font-medium text-black">{quantity}</span>
+                  <button
+                    type="button"
+                    aria-label="Increase quantity"
+                    onClick={() => setQuantity((q) => Math.min(10, q + 1))}
+                    className="h-7 w-7 text-[16px] leading-none text-[#555] transition-colors hover:text-black"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
-              <div className="mt-2.5 flex flex-wrap gap-2">
-                {sizes.map((s) => (
-                  <SizeButton
-                    key={s}
-                    label={s}
-                    selected={selectedSize === s}
-                    onClick={() => setSelectedSize(s)}
-                  />
-                ))}
-              </div>
-            </div>
+            ) : null}
 
             {/* CTAs */}
             <div className="mt-6 flex flex-col gap-3">

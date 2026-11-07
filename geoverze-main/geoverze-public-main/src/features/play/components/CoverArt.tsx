@@ -46,8 +46,6 @@ export function CoverArt({
   const cover = coverArt(art);
   const pattern = patternLayer(cover.pattern);
   const size = patternSize(cover.pattern);
-  const coverImage = Boolean(imageSrc && fit === "cover");
-  const showIconOnCover = Boolean(coverImage && Icon);
 
   return (
     <div
@@ -69,40 +67,33 @@ export function CoverArt({
       }
     >
       {imageSrc ? (
-        <>
-          <picture className="absolute inset-0 block h-full w-full">
-            {responsive ? (
-              <source type="image/webp" srcSet={responsive.webpSrcSet} sizes={responsive.sizes} />
-            ) : null}
-            <img
-              src={imageSrc}
-              srcSet={responsive?.jpegSrcSet}
-              sizes={responsive?.sizes}
-              alt={imageAlt ?? ""}
-              width={responsive?.width ?? 1536}
-              height={responsive?.height ?? 1024}
-              loading={loading}
-              fetchPriority={fetchPriority}
-              decoding="async"
-              onError={(event) => {
-                event.currentTarget.style.opacity = "0";
-              }}
-              className={cn(
-                "h-full w-full transition-transform duration-700 ease-out motion-reduce:transition-none",
-                !objectPosition && "object-center",
-                fit === "cover"
-                  ? "object-cover group-hover/card:scale-[1.04] motion-reduce:group-hover/card:scale-100"
-                  : "object-contain group-hover/card:scale-[1.03]",
-              )}
-              style={objectPosition ? { objectPosition } : undefined}
-            />
-          </picture>
-          {showIconOnCover && Icon != null ? (
-            <span className="absolute bottom-3 left-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-bronze/40 bg-[oklch(0.12_0.006_60/0.85)] text-bronze-glow">
-              <Icon className="h-5 w-5" strokeWidth={1.6} />
-            </span>
+        <picture className="absolute inset-0 block h-full w-full">
+          {responsive ? (
+            <source type="image/webp" srcSet={responsive.webpSrcSet} sizes={responsive.sizes} />
           ) : null}
-        </>
+          <img
+            src={imageSrc}
+            srcSet={responsive?.jpegSrcSet}
+            sizes={responsive?.sizes}
+            alt={imageAlt ?? ""}
+            width={responsive?.width ?? 1536}
+            height={responsive?.height ?? 1024}
+            loading={loading}
+            fetchPriority={fetchPriority}
+            decoding="async"
+            onError={(event) => {
+              event.currentTarget.style.opacity = "0";
+            }}
+            className={cn(
+              "h-full w-full transition-transform duration-700 ease-out motion-reduce:transition-none",
+              !objectPosition && "object-center",
+              fit === "cover"
+                ? "object-cover group-hover/card:scale-[1.04] motion-reduce:group-hover/card:scale-100"
+                : "object-contain group-hover/card:scale-[1.03]",
+            )}
+            style={objectPosition ? { objectPosition } : undefined}
+          />
+        </picture>
       ) : (
         <>
           <span

@@ -149,12 +149,12 @@ export function Navbar() {
       }
       className="group fixed inset-x-0 top-0 z-50 h-[var(--nav-height)] border-b border-transparent transition-all motion-base data-[scrolled=true]:glass-panel data-[scrolled=true]:rounded-none data-[scrolled=true]:shadow-[var(--shadow-float)]"
     >
-      <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-6 px-6 md:px-10">
+      <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-4 md:gap-6 px-6 md:px-10">
         <Link
           to="/"
           onClick={handleLogoClick}
           aria-label={`${site.name} home`}
-          className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+          className="inline-flex h-full shrink-0 items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
         >
           {isHome ||
           isPlayHub ||
@@ -171,27 +171,27 @@ export function Navbar() {
               alt=""
               width={581}
               height={85}
-              className="gvrze-home-wordmark"
+              className="gvrze-home-wordmark object-contain object-left"
             />
           ) : (
             <BrandMark size="md" withWordmark />
           )}
         </Link>
 
-        <nav aria-label="Main" className="hidden items-center gap-9 lg:flex">
+        <nav aria-label="Main" className="hidden h-full items-center gap-6 xl:gap-9 lg:flex">
           {mainNav.map((item) => (
             <Link
               key={item.to}
               to={item.to}
               activeOptions={{ exact: item.to === "/" }}
-              className="text-[0.7rem] uppercase tracking-[0.26em] text-foreground/50 transition-colors motion-fast hover:text-bronze focus-visible:outline-none focus-visible:text-bronze data-[status=active]:text-bronze"
+              className="inline-flex h-full items-center text-[0.7rem] uppercase leading-none tracking-[0.26em] text-foreground/50 transition-colors motion-fast hover:text-bronze focus-visible:outline-none focus-visible:text-bronze data-[status=active]:text-bronze"
             >
               {item.label}
             </Link>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-2.5 lg:flex">
+        <div className="hidden h-full shrink-0 items-center gap-2.5 lg:flex">
           {pathname.startsWith("/geostore") ? null : <GlobalSearch />}
           <NotificationBell />
           <GeoDropdown

@@ -132,9 +132,9 @@ export function LobbyScreen() {
     <PageShell>
       <SectionContainer
         size="wide"
-        className="pt-[calc(var(--nav-height)+var(--space-section-sm))] pb-[var(--space-section-sm)]"
+        className="play-lobby-room pt-[calc(var(--nav-height)+var(--space-section-sm))] pb-[var(--space-section-sm)]"
       >
-        <AnimatedSection>
+        <AnimatedSection className="min-w-0">
           <Link
             to="/play/modes"
             className="inline-flex items-center gap-2 text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-bronze hover:text-bronze-glow"
@@ -142,8 +142,8 @@ export function LobbyScreen() {
             <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2.2} aria-hidden />
             Change mode
           </Link>
-          <div className="mt-5 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-5 sm:flex sm:flex-wrap sm:justify-between">
-            <div className="min-w-0">
+          <div className="play-lobby-header mt-5 flex flex-col items-stretch gap-5 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+            <div className="play-lobby-header__copy min-w-0">
               <MetaChip tone="bronze">{modeMeta?.title ?? "Solo"} lobby</MetaChip>
               <h1 className="mt-4 text-[clamp(1.8rem,4vw,2.7rem)] font-semibold leading-[1.08] tracking-tight text-foreground">
                 Room ready
@@ -152,7 +152,7 @@ export function LobbyScreen() {
                 Confirm the set, mark yourself ready and the round starts on the countdown.
               </p>
             </div>
-            <div className="shrink-0">
+            <div className="play-lobby-header__ring mx-auto shrink-0 sm:mx-0">
               <ProgressRing
                 value={((COUNTDOWN - countdown) / COUNTDOWN) * 100}
                 size={104}
@@ -166,12 +166,12 @@ export function LobbyScreen() {
           </div>
         </AnimatedSection>
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-[1.3fr_1fr]">
-          <AnimatedSection>
+        <div className="play-lobby-layout mt-10 grid min-w-0 gap-6 lg:grid-cols-[1.3fr_1fr]">
+          <AnimatedSection className="min-w-0">
             <h2 className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-foreground/50">
               Players
             </h2>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="play-lobby-roster mt-4 grid min-w-0 gap-4 sm:grid-cols-2">
               {seats.map((player) => (
                 <PlayerSlot
                   key={player.id}
@@ -212,7 +212,7 @@ export function LobbyScreen() {
             </section>
           </AnimatedSection>
 
-          <AnimatedSection>
+          <AnimatedSection className="min-w-0">
             <div className="game-surface overflow-hidden rounded-2xl">
               <SessionHero
                 art={set.art}

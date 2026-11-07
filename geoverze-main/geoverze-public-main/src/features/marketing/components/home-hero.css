@@ -209,7 +209,8 @@
      [ navbar gap ]
      [ hero intro text   ]   ← in-flow, starts at top
      [ rewards card      ]   ← in-flow, below text
-     [ scroll cue        ]   ← in-flow, centered under the card
+     [ after-globe CTAs  ]   ← in-flow under the card
+   The desktop “Scroll the experience” cue is hidden; it must not reserve space.
    Absolutely-positioned children (globe, bloom, panel3)
    stay absolute and don't participate in the flex flow.
    ──────────────────────────────────────────────────────────────────────── */
@@ -255,30 +256,20 @@
     display: none;
   }
 
-  /* Tight gap from the in-flow rewards card to the scroll cue. */
   #home-hero > .rewards-card-motion {
-    margin-bottom: 0.1rem;
+    margin-bottom: 0;
   }
 
-  /* 3. Scroll cue sits in-flow, centered, immediately under the rewards card.
-        Desktop still uses the absolute bottom-8 placement (unchanged).
-        !important beats Tailwind left-1/2 / -translate-x-1/2 utilities. */
+  /* Desktop keeps the absolute bottom cue. Phones must not show or reserve it. */
   #home-hero .home-hero-scroll-cue {
-    display: flex;
-    position: relative !important;
-    left: auto !important;
-    right: auto !important;
-    bottom: auto !important;
-    top: auto !important;
-    transform: none !important;
-    inset: auto !important;
-    z-index: 2;
-    flex-shrink: 0;
-    align-self: center;
-    width: max-content;
-    max-width: calc(100% - 2rem);
-    margin: 0.1rem auto 0.2rem;
-    padding: 0.2rem 0.55rem 0.25rem;
+    display: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+    visibility: hidden;
   }
 
   /* Expedition overlay (Begin the journey + duplicate CTAs) is desktop-only.
@@ -287,9 +278,9 @@
     display: none;
   }
 
-  /* 4. Three-button group sits in-flow under the scroll cue, still inside
-        #home-hero. This removes the pin-spacer (empty 170vh) that previously
-        sat between the globe and LET'S PLAY. */
+  /* Three-button group sits in-flow under the rewards card, still inside
+     #home-hero. This removes the pin-spacer (empty 170vh) that previously
+     sat between the globe and LET'S PLAY. */
   #home-hero .home-hero-after-globe {
     position: relative;
     z-index: 2;
@@ -299,9 +290,9 @@
     gap: 0.45rem;
     width: 100%;
     max-width: 100%;
-    margin-top: 0;
+    margin-top: 0.35rem;
     margin-bottom: 0;
-    padding: 0.05rem 1.15rem 0;
+    padding: 0.05rem 1.15rem 0.2rem;
     flex-shrink: 0;
   }
 

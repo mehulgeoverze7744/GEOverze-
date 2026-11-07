@@ -20,7 +20,14 @@ export function QuizLayout({
   header?: ReactNode;
 }) {
   return (
-    <div className="min-h-dvh min-w-0 pb-24">
+    <div
+      className={cn(
+        "min-h-dvh min-w-0 pb-24",
+        // Site navbar is `position: fixed` and out of flow. Always clear it so
+        // quiz results, review, lobby and play screens start below the bar.
+        "pt-[var(--nav-height)]",
+      )}
+    >
       {header}
       <div
         className={cn(

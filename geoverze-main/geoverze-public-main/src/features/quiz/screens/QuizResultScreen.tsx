@@ -252,7 +252,7 @@ export function QuizResultScreen() {
 
   if (setLoading) {
     return (
-      <QuizLayout width="narrow" className="pt-16">
+      <QuizLayout width="narrow" className="pt-8">
         <div className="flex items-center justify-center py-16">
           <div
             className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent text-bronze"
@@ -266,7 +266,7 @@ export function QuizResultScreen() {
   if (!summary) {
     const quizTitle = set?.title ?? quiz ?? "this quiz";
     return (
-      <QuizLayout width="narrow" className="pt-16">
+      <QuizLayout width="narrow" className="pt-8">
         <div className="game-surface rounded-2xl p-7 text-center">
           <h1 className="text-xl font-semibold tracking-tight text-foreground">No result yet</h1>
           <p className="mt-2 text-[0.88rem] text-foreground/55">
@@ -290,7 +290,7 @@ export function QuizResultScreen() {
 
   if (!set) {
     return (
-      <QuizLayout width="narrow" className="pt-16">
+      <QuizLayout width="narrow" className="pt-8">
         <div className="game-surface rounded-2xl p-7 text-center">
           <p className="text-[0.9rem] text-foreground/60">Could not load quiz details.</p>
           <GeoButton variant="dark" size="md" asChild className="mt-4">

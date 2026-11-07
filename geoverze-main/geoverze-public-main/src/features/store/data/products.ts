@@ -130,17 +130,44 @@ export const LISTING_HIDDEN_PRODUCT_SLUGS = new Set([
   "expedition-enamel-mug",
   "desk-globe-mini",
   "explore-the-unknown",
+]);
+
+/** Sticker packs merchandised on the Accessories shelf. */
+export const ACCESSORIES_STICKER_SLUGS = [
+  "vintage-expedition-sticker-collection",
+  "the-explorers-trail",
+  "beyond-the-horizon",
+  "the-atlas-archive",
+  "the-cartographers-collection",
   "flag-sticker-pack",
   "continent-sticker-set",
-  "vintage-expedition-sticker-collection",
+] as const;
+
+/** Globes and desk pieces that stay lookbook-only on Accessories. */
+export const ACCESSORIES_LOOKBOOK_SLUGS = new Set([
+  "crystal-earth-globe",
+  "vintage-world-globe",
+  "blue-ocean-globe",
+  "field-notebook",
+  "desk-globe-mini",
 ]);
+
+export function isAccessoriesLookbook(slug: string): boolean {
+  return ACCESSORIES_LOOKBOOK_SLUGS.has(slug);
+}
 
 export function isProductListed(product: Pick<Product, "slug">): boolean {
   return !LISTING_HIDDEN_PRODUCT_SLUGS.has(product.slug);
 }
 
-export function isPurchaseLocked(product: Pick<Product, "comingSoon" | "category">): boolean {
-  return product.comingSoon || isComingSoonCategory(product.category);
+export function isPurchaseLocked(
+  product: Pick<Product, "comingSoon" | "category" | "slug">,
+): boolean {
+  return (
+    product.comingSoon ||
+    isComingSoonCategory(product.category) ||
+    isAccessoriesLookbook(product.slug)
+  );
 }
 
 export const PRODUCTS: readonly Product[] = [
@@ -396,101 +423,158 @@ export const PRODUCTS: readonly Product[] = [
     slug: "flag-sticker-pack",
     name: "Flag Sticker Pack",
     tagline: "Fifty die-cut flags, weatherproof vinyl.",
+    description:
+      "A studio sheet of fifty die-cut national flags on weatherproof vinyl. Built for laptops, bottles and field notebooks — UV-stable ink, kiss-cut edges and a residue-light adhesive.",
     category: "stickers",
-    price: 1_200,
+    price: 120_000,
     credits: 120,
     rating: 4.8,
     reviews: 302,
     popularity: 90,
-    features: ["50 die-cut vinyl stickers", "UV and water resistant", "Laptop-safe adhesive"],
+    features: [
+      "50 die-cut vinyl stickers",
+      "UV and water resistant",
+      "Laptop-safe adhesive",
+      "Printed with the GVRZE flag archive",
+    ],
+    specs: [
+      { label: "Finish", value: "Gloss vinyl" },
+      { label: "Count", value: "50 stickers" },
+    ],
     tags: ["flags", "gift"],
   }),
   make({
     slug: "continent-sticker-set",
     name: "Continent Sticker Set",
     tagline: "Seven landmasses, matte finish.",
+    description:
+      "Seven matte continent silhouettes — Africa, Antarctica, Asia, Europe, North America, Oceania and South America — cut as individual vinyl pieces for maps, journals and desk kits.",
     category: "stickers",
-    price: 900,
+    price: 99_900,
     credits: 90,
     rating: 4.4,
     reviews: 88,
     popularity: 85,
-    tags: ["continents"],
+    features: [
+      "Seven continent silhouettes",
+      "Matte vinyl, scratch resistant",
+      "Precision-cut landmass edges",
+    ],
+    specs: [
+      { label: "Finish", value: "Matte vinyl" },
+      { label: "Count", value: "7 stickers" },
+    ],
+    tags: ["continents", "maps"],
   }),
   make({
     slug: "vintage-expedition-sticker-collection",
     name: "Vintage Expedition Sticker Collection",
-    tagline: "Vintage explorer badges, maps and navigation emblems.",
+    tagline: "Explorer badges, maps and navigation emblems.",
+    description:
+      "A vintage expedition sheet of GVRZE wordmarks, compass roses, coordinate badges and aged map fragments. Die-cut vinyl with a slight parchment grain for journals, cases and field kits.",
     category: "stickers",
-    price: 1_800,
+    price: 149_900,
     credits: 180,
     rating: 4.6,
     reviews: 48,
-    popularity: 80,
+    popularity: 92,
     stock: "in-stock",
     bestSeller: true,
-    tags: ["exploration", "gift", "bestseller"],
+    features: [
+      "GVRZE wordmark and expedition badges",
+      "Compass, coordinates and map fragments",
+      "Weatherproof die-cut vinyl",
+    ],
+    specs: [
+      { label: "Finish", value: "Satin vinyl" },
+      { label: "Sheet", value: "Mixed emblem pack" },
+    ],
+    tags: ["exploration", "gift", "bestseller", "coordinates"],
   }),
   make({
     slug: "the-explorers-trail",
     name: "THE EXPLORER'S TRAIL",
-    tagline:
-      "A rugged collection of GVRZE exploration stickers inspired by mountains, coordinates, terrain and the spirit of discovery.",
+    tagline: "Mountains, coordinates, terrain and the spirit of discovery.",
     description:
-      "A rugged collection of GVRZE exploration stickers inspired by mountains, coordinates, terrain and the spirit of discovery.",
+      "A rugged GVRZE trail sheet: topographic fragments, latitude-longitude marks, mountain glyphs and trail stamps. Cut for packs, bottles and field notebooks.",
     category: "stickers",
-    price: 700,
+    price: 69_900,
     credits: 120,
     popularity: 88,
-    features: [],
-    specs: [],
-    tags: ["exploration"],
+    features: [
+      "Coordinate and terrain graphics",
+      "Mountain and trail emblems",
+      "Outdoor-grade vinyl",
+    ],
+    specs: [
+      { label: "Finish", value: "Matte vinyl" },
+      { label: "Theme", value: "Trail / coordinates" },
+    ],
+    tags: ["exploration", "coordinates"],
   }),
   make({
     slug: "beyond-the-horizon",
     name: "BEYOND THE HORIZON",
-    tagline:
-      "An adventurous sticker collection featuring globes, routes, mountains and navigation-inspired designs for curious explorers.",
+    tagline: "Globes, routes, mountains and navigation-inspired marks.",
     description:
-      "An adventurous sticker collection featuring globes, routes, mountains and navigation-inspired designs for curious explorers.",
+      "An adventure sheet of globes, great-circle routes, horizon lines and navigation ticks. Built for explorers who keep the next meridian in sight.",
     category: "stickers",
-    price: 700,
+    price: 69_900,
     credits: 120,
     popularity: 86,
-    features: [],
-    specs: [],
-    tags: ["exploration"],
+    features: [
+      "Globe and route graphics",
+      "Navigation ticks and horizon marks",
+      "UV-stable outdoor vinyl",
+    ],
+    specs: [
+      { label: "Finish", value: "Gloss vinyl" },
+      { label: "Theme", value: "Navigation / space" },
+    ],
+    tags: ["exploration", "globe", "space"],
   }),
   make({
     slug: "the-atlas-archive",
     name: "THE ATLAS ARCHIVE",
-    tagline:
-      "A vintage-inspired collection of maps, globes, expedition graphics and classic geographic exploration.",
+    tagline: "Vintage maps, globes and classic geographic plates.",
     description:
-      "A vintage-inspired collection of maps, globes, expedition graphics and classic geographic exploration.",
+      "Archive plates from the GVRZE atlas: antique projections, globe medallions and expedition cartouches on weatherproof vinyl. A desk-and-journal set for map people.",
     category: "stickers",
-    price: 700,
+    price: 69_900,
     credits: 120,
     popularity: 84,
-    features: [],
-    specs: [],
-    tags: ["exploration"],
+    features: [
+      "Vintage map and globe plates",
+      "Expedition cartouches",
+      "Die-cut archival vinyl",
+    ],
+    specs: [
+      { label: "Finish", value: "Parchment-grain vinyl" },
+      { label: "Theme", value: "Maps / archive" },
+    ],
+    tags: ["exploration", "maps"],
   }),
   make({
     slug: "the-cartographers-collection",
     name: "THE CARTOGRAPHER'S COLLECTION",
-    tagline:
-      "A refined collection of cartography-inspired stickers featuring maps, compasses, coordinates and expedition imagery.",
+    tagline: "Maps, compasses, coordinates and expedition imagery.",
     description:
-      "A refined collection of cartography-inspired stickers featuring maps, compasses, coordinates and expedition imagery.",
+      "A refined cartographer’s sheet: compass roses, graticules, contour ticks and the GVRZE wordmark. Precision-cut vinyl for laptops, cameras and sketchbooks.",
     category: "stickers",
-    price: 700,
+    price: 79_900,
     credits: 120,
-    popularity: 82,
+    popularity: 91,
     bestSeller: true,
-    features: [],
-    specs: [],
-    tags: ["cartography"],
+    features: [
+      "Compass roses and coordinate grids",
+      "GVRZE wordmark lockups",
+      "Laptop-safe die-cut vinyl",
+    ],
+    specs: [
+      { label: "Finish", value: "Satin vinyl" },
+      { label: "Theme", value: "Cartography / compass" },
+    ],
+    tags: ["cartography", "compass", "coordinates"],
   }),
   make({
     slug: "bronze-world-map-poster",

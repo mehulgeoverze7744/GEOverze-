@@ -18,7 +18,7 @@ export function QuizLobbyScreen() {
       <PageShell>
         <QuizLayout
           width="wide"
-          className="flex min-h-[70vh] items-center justify-center pt-[calc(var(--nav-height)+2rem)]"
+          className="flex min-h-[70vh] items-center justify-center pt-8"
         >
           <div
             className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent text-bronze"
@@ -34,7 +34,7 @@ export function QuizLobbyScreen() {
       <PageShell>
         <QuizLayout
           width="wide"
-          className="flex min-h-[70vh] flex-col items-center justify-center gap-4 pt-[calc(var(--nav-height)+2rem)] text-center"
+          className="flex min-h-[70vh] flex-col items-center justify-center gap-4 pt-8 text-center"
         >
           <p className="text-[0.9rem] text-foreground/60">
             {error ?? "Could not load quiz. Please try again."}
@@ -52,7 +52,7 @@ export function QuizLobbyScreen() {
 
   return (
     <PageShell>
-      <QuizLayout width="wide" className="pt-[calc(var(--nav-height)+2rem)] pb-8">
+      <QuizLayout width="wide" className="pt-8 pb-8">
         <QuizLobby
           set={set}
           onStart={() => {

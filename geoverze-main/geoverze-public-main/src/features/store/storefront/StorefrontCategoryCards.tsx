@@ -42,7 +42,17 @@ function CategoryCard({
 }
 
 /** The three GStore shop-by-category tiles. */
-export function StorefrontCategoryCards({ className }: { className?: string }) {
+export function StorefrontCategoryCards({
+  className,
+  accessoriesComingSoon = false,
+}: {
+  className?: string;
+  /**
+   * Homepage Wear Your Co-ordinates only: blur the Accessories tile, stamp
+   * COMING SOON, and keep the category browse route (no product purchase).
+   */
+  accessoriesComingSoon?: boolean;
+}) {
   return (
     <div className={cn("grid grid-cols-1 gap-[10px] sm:grid-cols-2 lg:grid-cols-3", className)}>
       <CategoryCard id="tshirts" name="Tees">
@@ -103,8 +113,11 @@ export function StorefrontCategoryCards({ className }: { className?: string }) {
 
       <CategoryCard
         id="accessories"
-        name="Accessories"
-        className="sm:col-span-2 sm:aspect-[876/347] lg:col-span-1 lg:aspect-[438/347]"
+        name={accessoriesComingSoon ? "Accessories, coming soon" : "Accessories"}
+        className={cn(
+          "sm:col-span-2 sm:aspect-[876/347] lg:col-span-1 lg:aspect-[438/347]",
+          accessoriesComingSoon && "sf-category-card--accessories-soon",
+        )}
       >
         {(soon) => (
           <>
@@ -116,16 +129,24 @@ export function StorefrontCategoryCards({ className }: { className?: string }) {
               aria-hidden="true"
               loading="lazy"
               decoding="async"
-              className="absolute inset-0 h-full w-full object-cover"
+              className={cn(
+                "absolute inset-0 h-full w-full object-cover",
+                accessoriesComingSoon &&
+                  "scale-[1.14] blur-[12px] transition-none",
+              )}
             />
             <span
               aria-hidden="true"
-              className="absolute inset-0 bg-[rgba(196,196,196,0.11)] backdrop-blur-[21px]"
+              className={
+                accessoriesComingSoon
+                  ? "absolute inset-0 bg-[rgb(12_14_18/0.34)]"
+                  : "absolute inset-0 bg-[rgba(196,196,196,0.11)] backdrop-blur-[21px]"
+              }
             />
-            <span className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
+            <span className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-4 text-center">
               <span className={LABEL}>ACCESSORIES</span>
-              {soon ? (
-                <span className="text-[clamp(0.9rem,1.4vw,1.25rem)] font-bold text-white">
+              {soon || accessoriesComingSoon ? (
+                <span className="text-[clamp(0.78rem,1.4vw,1.05rem)] font-bold uppercase tracking-[0.28em] text-white">
                   COMING SOON
                 </span>
               ) : null}
