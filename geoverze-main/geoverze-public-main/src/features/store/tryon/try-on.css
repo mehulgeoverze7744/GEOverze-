@@ -21,6 +21,8 @@ body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer) {
   --tryon-font: Montserrat, ui-sans-serif, system-ui, sans-serif;
 
   min-height: 100svh;
+  max-width: 100%;
+  overflow-x: clip;
   background: #ffffff;
   color: var(--tryon-ink);
   font-family: var(--tryon-font);
@@ -52,6 +54,8 @@ body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer) {
 
 .gmake-studio {
   display: grid;
+  min-width: 0;
+  max-width: 100%;
   gap: 1.5rem;
   padding: 1.5rem clamp(16px, 3.75vw, 54px) 2.5rem;
   background: #f6f6f6;
@@ -72,11 +76,14 @@ body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer) {
 
 .gmake-panel {
   display: flex;
+  min-width: 0;
+  max-width: 100%;
   flex-direction: column;
   gap: 1.35rem;
   padding: 1.5rem 1.35rem 1.6rem;
   border-radius: 11px;
   background: #ffffff;
+  box-sizing: border-box;
 }
 
 .gmake-section__title {
@@ -108,6 +115,8 @@ body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer) {
 
 .gmake-library {
   position: relative;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .gmake-library::after {
@@ -123,11 +132,15 @@ body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer) {
 
 .gmake-library__scroller {
   display: flex;
+  min-width: 0;
+  max-width: 100%;
   gap: 18px;
   overflow-x: auto;
+  overscroll-behavior-x: contain;
   padding-bottom: 4px;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .gmake-library__scroller::-webkit-scrollbar {
@@ -306,6 +319,8 @@ body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer) {
 .gmake-stage {
   position: relative;
   display: flex;
+  min-width: 0;
+  max-width: 100%;
   min-height: 560px;
   flex-direction: column;
   align-items: center;
@@ -575,45 +590,226 @@ body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer) {
   object-position: center 42%;
 }
 
-@media (max-width: 1023px) {
-  .gmake-studio {
-    grid-template-columns: 1fr;
+/* Tablet and phone: preview first, then the full-width customization panel.
+   Desktop two-column layout starts at 769px and is unchanged above 1024px. */
+@media (max-width: 768px) {
+  #gvrze-tryon-studio .gmake-studio {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: none;
+    gap: 14px;
     min-height: 0;
-    padding-top: 1rem;
+    padding: 12px 16px 28px;
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
   }
 
-  .gmake-stage {
+  #gvrze-tryon-studio .gmake-stage {
     order: -1;
-    min-height: 420px;
+    width: 100%;
+    min-height: 0;
+    padding: 4px 0 0;
   }
 
-  .gmake-tee,
-  .gmake-tee__img {
-    max-height: min(52vh, 420px);
-    height: min(52vh, 420px);
+  #gvrze-tryon-studio .gmake-gender {
+    width: min(220px, 100%);
+    margin: 0 auto 10px;
   }
 
-  .gmake-section__title {
+  #gvrze-tryon-studio .gmake-tee,
+  #gvrze-tryon-studio .gmake-tee.is-diptych {
+    width: min(100%, 440px);
+    max-width: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  #gvrze-tryon-studio .gmake-tee__img:not(.is-diptych-front):not(.is-diptych-back) {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    object-fit: contain;
+  }
+
+  #gvrze-tryon-studio .gmake-tee__img.is-diptych-front,
+  #gvrze-tryon-studio .gmake-tee__img.is-diptych-back {
+    width: 200%;
+    max-width: none;
+    height: auto;
+    max-height: none;
+  }
+
+  #gvrze-tryon-studio .gmake-panel {
+    width: 100%;
+    padding: 16px;
+    gap: 1.15rem;
+  }
+
+  #gvrze-tryon-studio .gmake-section__title {
     font-size: 20px;
+    line-height: 1.25;
+  }
+
+  #gvrze-tryon-studio .gmake-section__head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  #gvrze-tryon-studio .gmake-section__hint {
+    max-width: none;
+  }
+
+  #gvrze-tryon-studio .gmake-library__scroller {
+    gap: 12px;
+    touch-action: pan-x;
+  }
+
+  #gvrze-tryon-studio .gmake-library__next {
+    display: none;
+  }
+
+  #gvrze-tryon-studio .gmake-library__card,
+  #gvrze-tryon-studio .gmake-library__thumb {
+    width: 108px;
+    flex-basis: 108px;
+  }
+
+  #gvrze-tryon-studio .gmake-library__thumb {
+    height: 108px;
+  }
+
+  #gvrze-tryon-studio .gmake-library__name {
+    font-size: 13px;
+  }
+
+  #gvrze-tryon-studio .gmake-swatches {
+    flex-wrap: nowrap;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 2px;
+    scrollbar-width: none;
+  }
+
+  #gvrze-tryon-studio .gmake-swatches::-webkit-scrollbar {
+    display: none;
+  }
+
+  #gvrze-tryon-studio .gmake-swatch {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+  }
+
+  #gvrze-tryon-studio .gmake-upload {
+    min-height: 88px;
+    padding: 12px 16px;
+  }
+
+  #gvrze-tryon-studio .gmake-sizes {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  #gvrze-tryon-studio .gmake-size {
+    height: 44px;
+    min-width: 0;
+    padding: 0 4px;
+  }
+
+  #gvrze-tryon-studio .gmake-instructions {
+    height: auto;
+    min-height: 50px;
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  #gvrze-tryon-studio .gmake-total,
+  #gvrze-tryon-studio .gmake-total strong {
+    overflow-wrap: anywhere;
+  }
+
+  #gvrze-tryon-studio .gmake-rainbow,
+  #gvrze-tryon-studio .gmake-rainbow__inner {
+    width: 100%;
+  }
+
+  #gvrze-tryon-studio .gmake-rainbow__inner {
+    min-height: 48px;
   }
 }
 
-@media (max-width: 640px) {
-  .gmake-sizes {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+@media (max-width: 375px) {
+  #gvrze-tryon-studio .gmake-studio {
+    gap: 12px;
+    padding: 10px 12px 24px;
   }
 
-  .gmake-panel {
-    padding: 1.15rem 1rem 1.25rem;
+  #gvrze-tryon-studio .gmake-panel {
+    padding: 14px;
   }
 
-  .gmake-library__card,
-  .gmake-library__thumb {
-    width: 104px;
-    flex-basis: 104px;
+  #gvrze-tryon-studio .gmake-section__title {
+    font-size: 18px;
   }
 
-  .gmake-library__thumb {
-    height: 104px;
+  #gvrze-tryon-studio .gmake-library__card,
+  #gvrze-tryon-studio .gmake-library__thumb {
+    width: 96px;
+    flex-basis: 96px;
+  }
+
+  #gvrze-tryon-studio .gmake-library__thumb {
+    height: 96px;
+    padding: 8px;
+  }
+
+  #gvrze-tryon-studio .gmake-library__name {
+    font-size: 12px;
+  }
+
+  #gvrze-tryon-studio .gmake-size,
+  #gvrze-tryon-studio .gmake-upload,
+  #gvrze-tryon-studio .gmake-instructions {
+    font-size: 14px;
+  }
+
+  #gvrze-tryon-studio .gmake-tee__plus {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  #gvrze-tryon-studio .gmake-studio {
+    padding: 16px 20px 32px;
+  }
+
+  #gvrze-tryon-studio .gmake-tee,
+  #gvrze-tryon-studio .gmake-tee.is-diptych {
+    width: min(100%, 480px);
+  }
+
+  #gvrze-tryon-studio .gmake-library__card,
+  #gvrze-tryon-studio .gmake-library__thumb {
+    width: 116px;
+    flex-basis: 116px;
+  }
+
+  #gvrze-tryon-studio .gmake-library__thumb {
+    height: 116px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
+  #gvrze-tryon-studio .gmake-studio {
+    grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
+    align-items: start;
+    gap: 1.25rem;
+    min-height: 0;
+  }
+
+  #gvrze-tryon-studio .gmake-stage {
+    order: 0;
+    min-height: 480px;
   }
 }
