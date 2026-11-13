@@ -13,7 +13,7 @@
 
 import "./storefront.css";
 
-import { useState, useRef, useLayoutEffect, type ReactNode } from "react";
+import { useState, useRef, useEffect, useLayoutEffect, type ReactNode } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Bookmark, BookmarkCheck, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -93,6 +93,10 @@ export type StorefrontProductPageProps = {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const DEFAULT_SIZES = ["S", "M", "L", "XL"];
+
+/** Ignore tiny taps; require a mostly-horizontal gesture so page scroll still works. */
+const GALLERY_SWIPE_PX = 48;
+const GALLERY_SWIPE_RATIO = 1.25;
 
 const DEFAULT_SHIPPING = `Orders are dispatched within 1–2 business days of payment confirmation. Delivery takes 5–7 business days across India. International shipping is available in select regions (10–15 business days).
 
@@ -253,6 +257,14 @@ export function StorefrontProductPage({
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<Tab>("description");
+  const thumbsRef = useRef<HTMLDivElement>(null);
+  const gallerySurfaceRef = useRef<HTMLDivElement>(null);
+  const gallerySwipeStart = useRef<{ x: number; y: number } | null>(null);
+  const gallerySwipeLock = useRef(0);
+  const galleryIndexRef = useRef(0);
+  const galleryCountRef = useRef(0);
+  const setGalleryIndexRef = useRef(setSelectedImageIdx);
+  setGalleryIndexRef.current = setSelectedImageIdx;
 
   // ── Equal-height two-column layout ──────────────────────────────────────
   // CSS Grid `auto` rows are inflated by both columns' max-content sizes
@@ -324,6 +336,83 @@ export function StorefrontProductPage({
   })();
 
   const mainImage = galleryImages[selectedImageIdx] ?? galleryImages[0] ?? { src: "", alt: name };
+  const galleryCount = galleryImages.length;
+  galleryIndexRef.current = selectedImageIdx;
+  galleryCountRef.current = galleryCount;
+
+  useEffect(() => {
+    const activeThumb = thumbsRef.current?.querySelector<HTMLElement>(
+      `[data-sfpp-thumb="${selectedImageIdx}"]`,
+    );
+    activeThumb?.scrollIntoView({ inline: "nearest", block: "nearest", behavior: "smooth" });
+  }, [selectedImageIdx]);
+
+  function goToGalleryImage(index: number) {
+    const count = galleryCountRef.current;
+    if (count < 1) return;
+    const next = ((index % count) + count) % count;
+    setGalleryIndexRef.current(next);
+  }
+
+  useLayoutEffect(() => {
+    const node = gallerySurfaceRef.current;
+    if (!node) return;
+
+    const onTouchStart = (event: TouchEvent) => {
+      const touch = event.changedTouches[0];
+      if (touch) beginGallerySwipe(touch.clientX, touch.clientY);
+    };
+    const onTouchEnd = (event: TouchEvent) => {
+      const touch = event.changedTouches[0];
+      if (touch) finishGallerySwipe(touch.clientX, touch.clientY);
+    };
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.pointerType !== "touch") return;
+      beginGallerySwipe(event.clientX, event.clientY);
+    };
+    const onPointerUp = (event: PointerEvent) => {
+      if (event.pointerType !== "touch") return;
+      finishGallerySwipe(event.clientX, event.clientY);
+    };
+    const onCancel = () => {
+      gallerySwipeStart.current = null;
+    };
+
+    node.addEventListener("touchstart", onTouchStart, { passive: true });
+    node.addEventListener("touchend", onTouchEnd, { passive: true });
+    node.addEventListener("touchcancel", onCancel, { passive: true });
+    node.addEventListener("pointerdown", onPointerDown, { passive: true });
+    node.addEventListener("pointerup", onPointerUp, { passive: true });
+    node.addEventListener("pointercancel", onCancel, { passive: true });
+    return () => {
+      node.removeEventListener("touchstart", onTouchStart);
+      node.removeEventListener("touchend", onTouchEnd);
+      node.removeEventListener("touchcancel", onCancel);
+      node.removeEventListener("pointerdown", onPointerDown);
+      node.removeEventListener("pointerup", onPointerUp);
+      node.removeEventListener("pointercancel", onCancel);
+    };
+  }, []);
+
+  function beginGallerySwipe(x: number, y: number) {
+    if (galleryCountRef.current < 2) return;
+    gallerySwipeStart.current = { x, y };
+  }
+
+  function finishGallerySwipe(x: number, y: number) {
+    const origin = gallerySwipeStart.current;
+    gallerySwipeStart.current = null;
+    const count = galleryCountRef.current;
+    if (!origin || count < 2) return;
+    const dx = x - origin.x;
+    const dy = y - origin.y;
+    if (Math.abs(dx) < GALLERY_SWIPE_PX) return;
+    if (Math.abs(dx) < Math.abs(dy) * GALLERY_SWIPE_RATIO) return;
+    const now = Date.now();
+    if (now - gallerySwipeLock.current < 280) return;
+    gallerySwipeLock.current = now;
+    goToGalleryImage(galleryIndexRef.current + (dx < 0 ? 1 : -1));
+  }
 
   function handleAddToCart() {
     if (comingSoon) return;
@@ -416,12 +505,17 @@ export function StorefrontProductPage({
           <div className="sfpp-left-col flex min-w-0 w-full flex-col gap-4 sm:flex-row" ref={leftColRef}>
             {/* Vertical thumbnail strip (desktop: col, mobile: row at bottom) */}
             {galleryImages.length > 1 && (
-              <div className="sfpp-thumbs order-2 flex gap-2 sm:order-1 sm:flex-col sm:gap-2.5">
+              <div
+                ref={thumbsRef}
+                className="sfpp-thumbs order-2 flex gap-2 sm:order-1 sm:flex-col sm:gap-2.5"
+              >
                 {galleryImages.map((img, i) => (
                   <button
                     key={i}
                     type="button"
-                    onClick={() => setSelectedImageIdx(i)}
+                    data-sfpp-thumb={i}
+                    {...(i === selectedImageIdx ? { "aria-current": "true" as const } : {})}
+                    onClick={() => goToGalleryImage(i)}
                     aria-label={img.alt}
                     className={cn(
                       "h-16 w-14 shrink-0 overflow-hidden rounded-lg border-2 transition-all duration-150 sm:h-[72px] sm:w-[60px]",
@@ -445,10 +539,38 @@ export function StorefrontProductPage({
 
             {/* Main image */}
             <div className="sfpp-main-image order-1 min-w-0 w-full max-w-full flex-1 sm:order-2">
-              <div className="relative w-full max-w-full overflow-hidden rounded-2xl bg-[#f6f6f6]">
+              <div
+                ref={gallerySurfaceRef}
+                data-sfpp-gallery-swipe=""
+                className="relative w-full max-w-full overflow-hidden rounded-2xl bg-[#f6f6f6] touch-pan-y"
+                onTouchStart={(event) => {
+                  const touch = event.changedTouches[0];
+                  if (touch) beginGallerySwipe(touch.clientX, touch.clientY);
+                }}
+                onTouchEnd={(event) => {
+                  const touch = event.changedTouches[0];
+                  if (touch) finishGallerySwipe(touch.clientX, touch.clientY);
+                }}
+                onTouchCancel={() => {
+                  gallerySwipeStart.current = null;
+                }}
+                onPointerDown={(event) => {
+                  if (event.pointerType !== "touch") return;
+                  beginGallerySwipe(event.clientX, event.clientY);
+                }}
+                onPointerUp={(event) => {
+                  if (event.pointerType !== "touch") return;
+                  finishGallerySwipe(event.clientX, event.clientY);
+                }}
+                onPointerCancel={() => {
+                  gallerySwipeStart.current = null;
+                }}
+              >
                 <img
+                  key={mainImage.src}
                   src={mainImage.src}
                   alt={mainImage.alt}
+                  draggable={false}
                   className={cn(
                     "aspect-[4/5] h-auto w-full max-w-full object-cover object-center",
                     comingSoon && "scale-[1.14] blur-[12px]",

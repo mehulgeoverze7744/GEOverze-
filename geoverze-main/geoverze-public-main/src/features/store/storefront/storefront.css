@@ -263,6 +263,16 @@ body:has(#gvrze-storefront) footer .mt-16.border-t {
     aspect-ratio: auto;
     object-fit: contain;
     object-position: center;
+    animation: sfpp-gallery-fade 180ms ease-out;
+  }
+}
+
+@keyframes sfpp-gallery-fade {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 1;
   }
 }
 
