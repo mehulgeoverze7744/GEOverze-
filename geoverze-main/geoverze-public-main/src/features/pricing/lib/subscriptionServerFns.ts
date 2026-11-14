@@ -12,16 +12,6 @@ import { z } from "zod";
 
 import { GST_CONFIG, calcGst } from "./gstConfig";
 import { assertRateLimit } from "@/lib/payments/paymentRateLimit";
-import {
-  cancelRazorpaySubscription,
-  createRazorpayPlan,
-  createRazorpaySubscription,
-  envPlanId,
-  getRazorpayKeyId,
-  getRazorpayMode,
-  isRazorpayServerConfigured,
-  verifyCapturedSubscriptionPayment,
-} from "@/lib/payments/razorpayServer";
 
 function makeUserClient(accessToken: string): SupabaseClient {
   const url = process.env["VITE_SUPABASE_URL"];
@@ -73,48 +63,6 @@ async function catalogChargePaise(tier: string, interval: string): Promise<{
   };
 }
 
-async function resolveRazorpayPlanId(
-  tier: string,
-  interval: string,
-  chargeMinor: number,
-): Promise<string> {
-  const fromEnv = envPlanId(tier, interval);
-  if (fromEnv.startsWith("plan_")) return fromEnv;
-
-  const svc = makeServiceClient();
-  const { data: instances } = await svc
-    .from("billing_provider_plan_instances")
-    .select("provider_plan_id, billing_provider_prices(plan_tier, billing_interval, provider)")
-    .eq("provider", "razorpay");
-
-  const match = (instances ?? []).find((row) => {
-    const price = row.billing_provider_prices as
-      | { plan_tier?: string; billing_interval?: string; provider?: string }
-      | { plan_tier?: string; billing_interval?: string; provider?: string }[]
-      | null;
-    const rec = Array.isArray(price) ? price[0] : price;
-    return rec?.plan_tier === tier && rec?.billing_interval === interval;
-  });
-  const existingId = match?.provider_plan_id ?? "";
-  if (existingId.startsWith("plan_")) return existingId;
-
-  const plan = await createRazorpayPlan({
-    period: interval === "annual" ? "yearly" : "monthly",
-    interval: 1,
-    name: `GVRZE ${tier} ${interval}`,
-    amountMinor: chargeMinor,
-  });
-
-  await svc.rpc("upsert_razorpay_plan_id", {
-    p_plan_tier: tier,
-    p_billing_interval: interval,
-    p_provider_plan_id: plan.id,
-    p_charge_amount_minor: chargeMinor,
-  });
-
-  return plan.id;
-}
-
 const CreateSubSchema = z.object({
   access_token: z.string().min(10),
   plan_tier: PlanTier,
@@ -152,15 +100,16 @@ export const createRazorpaySubscriptionFn = createServerFn({ method: "POST" })
   .validator((raw: unknown) => CreateSubSchema.parse(raw))
   .handler(async ({ data }): Promise<CreateRazorpaySubscriptionResult> => {
     assertRateLimit(`sub-create:${data.access_token.slice(-24)}`, 8, 60_000);
-    if (!isRazorpayServerConfigured()) {
+    const rzp = await import("./subscriptionRazorpay.server");
+    if (!rzp.isRazorpayServerConfigured()) {
       throw new Error("Razorpay is not configured on the server.");
     }
 
     const amounts = await catalogChargePaise(data.plan_tier, data.billing_interval);
-    const planId = await resolveRazorpayPlanId(data.plan_tier, data.billing_interval, amounts.chargeMinor);
+    const planId = await rzp.resolveRazorpayPlanId(data.plan_tier, data.billing_interval, amounts.chargeMinor);
     const totalCount = data.billing_interval === "annual" ? 10 : 120;
 
-    const rzpSub = await createRazorpaySubscription({
+    const rzpSub = await rzp.createRazorpaySubscription({
       planId,
       totalCount,
       notes: {
@@ -192,7 +141,7 @@ export const createRazorpaySubscriptionFn = createServerFn({ method: "POST" })
     return {
       subscription_id: result.subscription_id,
       razorpay_subscription_id: rzpSub.id,
-      razorpay_key_id: getRazorpayKeyId(),
+      razorpay_key_id: rzp.getRazorpayKeyId(),
       base_amount_minor: amounts.baseMinor,
       gst_amount_minor: amounts.gstMinor,
       charge_amount_minor: amounts.chargeMinor,
@@ -201,7 +150,7 @@ export const createRazorpaySubscriptionFn = createServerFn({ method: "POST" })
       gst_label: GST_CONFIG.taxLabel,
       price_label: `₹${rupees.toLocaleString("en-IN")} / ${cadence}`,
       promotion_applied: false,
-      test_mode: getRazorpayMode() === "test",
+      test_mode: rzp.getRazorpayMode() === "test",
     };
   });
 
@@ -217,7 +166,8 @@ export const verifyRazorpaySubscriptionFn = createServerFn({ method: "POST" })
   .validator((raw: unknown) => VerifySubSchema.parse(raw))
   .handler(async ({ data }) => {
     assertRateLimit(`sub-verify:${data.access_token.slice(-24)}`, 20, 60_000);
-    await verifyCapturedSubscriptionPayment({
+    const rzp = await import("./subscriptionRazorpay.server");
+    await rzp.verifyCapturedSubscriptionPayment({
       rzpSubscriptionId: data.rzp_subscription_id,
       rzpPaymentId: data.rzp_payment_id,
       rzpSignature: data.rzp_signature,
@@ -251,7 +201,8 @@ export const cancelRazorpaySubscriptionFn = createServerFn({ method: "POST" })
       throw new Error("This subscription is not billed through Razorpay.");
     }
     if (sub.provider_subscription_id) {
-      await cancelRazorpaySubscription(sub.provider_subscription_id, true);
+      const rzp = await import("./subscriptionRazorpay.server");
+      await rzp.cancelRazorpaySubscription(sub.provider_subscription_id, true);
     }
     const { error: cancelError } = await sb.rpc("request_cancel_subscription");
     if (cancelError) {

@@ -448,7 +448,7 @@ export function StorefrontProductPage({
     const color = colors?.find((c) => c.id === selectedColorId);
     if (color) searchParams["Colour"] = color.label;
 
-    navigate({ to: "/geostore/checkout", search: searchParams as unknown as Record<string, string> });
+    void navigate({ to: "/geostore/checkout", search: searchParams });
   }
 
   function handleCustomization() {

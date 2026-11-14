@@ -65,6 +65,7 @@ export function GstoreRetryPaymentButton({
               }
             })();
           },
+          onFailed: (description) => reject(new Error(description)),
           modal: {
             ondismiss: () => resolve(),
           },

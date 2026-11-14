@@ -27,6 +27,7 @@ export type GstoreRazorpayOptions = {
   notes?: Record<string, string>;
   theme?: { color?: string };
   handler: (response: GstoreRazorpaySuccessResponse) => void;
+  onFailed?: (description: string) => void;
   modal?: {
     ondismiss?: () => void;
     confirm_close?: boolean;
@@ -82,7 +83,7 @@ export function loadGstoreRazorpayScript(): Promise<void> {
 
 /** Returns the Razorpay Key ID from env (build-time). */
 export function getGstoreRazorpayKeyId(): string {
-  return (import.meta.env["VITE_RAZORPAY_KEY_ID"] as string | undefined) ?? "";
+  return import.meta.env.VITE_RAZORPAY_KEY_ID ?? import.meta.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? "";
 }
 
 /** Opens the Razorpay checkout modal for a one-time Gstore order. */
@@ -90,8 +91,8 @@ export function openGstoreRazorpayCheckout(options: GstoreRazorpayOptions): void
   const RazorpayClass = (window as unknown as { Razorpay: new (o: unknown) => { open(): void; on(e: string, h: unknown): void } }).Razorpay;
   if (!RazorpayClass) throw new Error("Razorpay script not loaded.");
   const rzp = new RazorpayClass(options as unknown);
-  if (options.modal?.ondismiss) {
-    rzp.on("payment.failed", () => { /* handled by handler */ });
-  }
+  rzp.on("payment.failed", (response: { error?: { description?: string } }) => {
+    options.onFailed?.(response.error?.description ?? "Payment failed.");
+  });
   rzp.open();
 }

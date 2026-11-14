@@ -30,14 +30,15 @@ export function usePaymentConfig() {
    * Build-time fallback: used while the server call is in-flight or on
    * transient network errors. Keeps the UI responsive on first render.
    */
-  const buildTimeMock     = import.meta.env["VITE_MOCK_PAYMENTS"] === "true";
-  const buildTimeRazorpay = Boolean(import.meta.env["VITE_RAZORPAY_KEY_ID"]);
+  const buildTimeRazorpay = Boolean(import.meta.env.VITE_RAZORPAY_KEY_ID);
+  const buildTimeMock =
+    import.meta.env.VITE_MOCK_PAYMENTS === "true" && !buildTimeRazorpay;
 
   const mockEnabled     = query.isSuccess ? query.data.mockEnabled     : buildTimeMock;
   const razorpayEnabled = query.isSuccess ? query.data.razorpayEnabled : buildTimeRazorpay;
   const testMode        = query.isSuccess ? query.data.testMode        : (
-    Boolean(import.meta.env["VITE_RAZORPAY_KEY_ID"]) &&
-    String(import.meta.env["VITE_RAZORPAY_KEY_ID"]).startsWith("rzp_test_")
+    Boolean(import.meta.env.VITE_RAZORPAY_KEY_ID) &&
+    String(import.meta.env.VITE_RAZORPAY_KEY_ID).startsWith("rzp_test_")
   );
 
   return {
@@ -52,6 +53,6 @@ export function usePaymentConfig() {
      * Both mock and Razorpay buttons are hidden during this window to
      * prevent a flash of "Payment unavailable" on first load.
      */
-    configLoading: query.isPending,
+    configLoading: query.isPending && !buildTimeRazorpay && !buildTimeMock,
   };
 }

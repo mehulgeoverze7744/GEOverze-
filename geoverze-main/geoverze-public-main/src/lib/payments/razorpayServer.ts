@@ -3,16 +3,42 @@
  * Never import this module from client components — it reads Key Secret.
  */
 
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
+import "@tanstack/react-start/server-only";
 import {
   assertCapturedPayment,
   verifyRazorpayOrderSignature,
   verifyRazorpaySubscriptionSignature,
 } from "./razorpayCrypto";
+import { readRazorpayKeyId, readRazorpayMode } from "./razorpayEnv";
 
 const RAZORPAY_API = "https://api.razorpay.com/v1";
 
+function stripEnvValue(value: string | undefined): string {
+  return (value ?? "").trim().replace(/^["']|["']$/g, "");
+}
+
+/** Prefers `.env.local` so a stale process env cannot pair the wrong Key Secret. */
+function readDotEnvLocal(name: string): string {
+  try {
+    const raw = readFileSync(resolve(process.cwd(), ".env.local"), "utf8");
+    for (const line of raw.split(/\r?\n/)) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#")) continue;
+      const eq = trimmed.indexOf("=");
+      if (eq < 0) continue;
+      if (trimmed.slice(0, eq) === name) return stripEnvValue(trimmed.slice(eq + 1));
+    }
+  } catch {
+    // Production/Vercel has no .env.local — fall through to process.env.
+  }
+  return "";
+}
+
 function usableSecret(value: string | undefined): string {
-  const trimmed = (value ?? "").trim();
+  const trimmed = stripEnvValue(value);
   if (!trimmed) return "";
   const lowered = trimmed.toLowerCase();
   if (
@@ -28,26 +54,22 @@ function usableSecret(value: string | undefined): string {
 
 export function getRazorpayKeyId(): string {
   return (
-    process.env["RAZORPAY_KEY_ID"] ??
-    process.env["VITE_RAZORPAY_KEY_ID"] ??
-    process.env["NEXT_PUBLIC_RAZORPAY_KEY_ID"] ??
-    ""
-  ).trim();
+    readDotEnvLocal("RAZORPAY_KEY_ID") ||
+    readDotEnvLocal("VITE_RAZORPAY_KEY_ID") ||
+    readRazorpayKeyId()
+  );
 }
 
 export function getRazorpayKeySecret(): string {
-  return usableSecret(process.env["RAZORPAY_KEY_SECRET"]);
+  return usableSecret(readDotEnvLocal("RAZORPAY_KEY_SECRET") || process.env["RAZORPAY_KEY_SECRET"]);
 }
 
 export function getRazorpayWebhookSecret(): string {
-  return usableSecret(process.env["RAZORPAY_WEBHOOK_SECRET"]);
+  return usableSecret(readDotEnvLocal("RAZORPAY_WEBHOOK_SECRET") || process.env["RAZORPAY_WEBHOOK_SECRET"]);
 }
 
 export function getRazorpayMode(): "test" | "live" {
-  const explicit = (process.env["RAZORPAY_MODE"] ?? "").toLowerCase();
-  if (explicit === "live") return "live";
-  if (explicit === "test") return "test";
-  return getRazorpayKeyId().startsWith("rzp_live_") ? "live" : "test";
+  return readRazorpayMode();
 }
 
 export function isRazorpayServerConfigured(): boolean {
@@ -81,6 +103,11 @@ async function razorpayRequest<T>(method: "GET" | "POST" | "PATCH", path: string
   });
   if (!res.ok) {
     const err = await res.text();
+    if (res.status === 401) {
+      throw new Error(
+        "Razorpay rejected the API keys (401). Confirm RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET are a matching TEST pair from dashboard.razorpay.com → Settings → API Keys.",
+      );
+    }
     throw new Error(`Razorpay API error (${res.status}): ${err}`);
   }
   return res.json() as Promise<T>;

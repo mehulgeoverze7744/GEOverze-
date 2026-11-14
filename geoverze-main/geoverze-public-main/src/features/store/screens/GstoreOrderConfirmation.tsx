@@ -242,6 +242,12 @@ function OrderDetailCard({ order }: { order: GstoreOrderDetail }) {
         <div>
           <p className="text-[11px] uppercase tracking-[0.12em] text-[#777]">Order number</p>
           <p className="mt-0.5 text-[18px] font-bold text-black">{order.order_number}</p>
+          <p className="mt-1 text-[12px] text-[#555]">
+            Payment:{" "}
+            <span className="font-semibold text-black">
+              {order.payment_status === "paid" ? "Paid" : order.payment_status}
+            </span>
+          </p>
         </div>
         <StatusBadge status={order.order_status} />
       </div>

@@ -26,7 +26,9 @@ import {
   ChevronRight,
   FlaskConical,
   Lock,
+  Minus,
   Package,
+  Plus,
   ShoppingBag,
   Truck,
   User,
@@ -51,7 +53,7 @@ import { usePaymentConfig } from "@/features/pricing/hooks/usePaymentConfig";
 
 import {
   loadGstoreRazorpayScript,
-  type GstoreRazorpaySuccessResponse,
+  openGstoreRazorpayCheckout,
 } from "../lib/gstoreRazorpayClient";
 
 import {
@@ -189,24 +191,16 @@ export function GstoreCheckoutScreen() {
   const user    = useAuthStore(selectUser);
   const navigate = useNavigate();
 
-  const search = useSearch({ from: "/geostore/checkout" }) as {
-    buyNow?: string;
-    slug?: string;
-    qty?: string;
-    Size?: string;
-    Colour?: string;
-    Design?: string;
-    CustomDesign?: string;
-    Instructions?: string;
-  };
+  const search = useSearch({ from: "/geostore/checkout" });
 
   const cartLines = useCartStore(s => s.lines);
   const clearCart = useCartStore(s => s.clear);
+  const setCartQuantity = useCartStore(s => s.setQuantity);
   // Badge counts for the mobile checkout header icons (match StorefrontNav).
   const cartCount     = useCartStore(selectCartCount);
   const wishlistCount = useStoreStore(selectWishlistCount);
 
-  const { mockEnabled, razorpayEnabled: rzpConfigured, testMode } = usePaymentConfig();
+  const { mockEnabled, razorpayEnabled: rzpConfigured, testMode, configLoading } = usePaymentConfig();
 
   // Guest mode toggle
   const [guestMode, setGuestMode] = useState(!user);
@@ -227,13 +221,17 @@ export function GstoreCheckoutScreen() {
 
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [shippingMethod, setShippingMethod] = useState<ShippingMethod>("standard");
+  const [buyNowQty, setBuyNowQty] = useState(() => {
+    const parsed = parseInt(search.qty ?? "1", 10);
+    return Number.isFinite(parsed) ? Math.min(10, Math.max(1, parsed)) : 1;
+  });
 
   // Build cart items from URL params (Buy Now) or cart store
   const isBuyNow = search.buyNow === "1" && !!search.slug;
   const checkoutItems: GstoreCartItem[] = (isBuyNow
     ? [{
         slug:     search.slug!,
-        quantity: parseInt(search.qty ?? "1", 10),
+        quantity: buyNowQty,
         options:  {
           ...(search.Size   ? { Size:   search.Size   } : {}),
           ...(search.Colour ? { Colour: search.Colour } : {}),
@@ -281,6 +279,18 @@ export function GstoreCheckoutScreen() {
   } | null>(null);
   const inflight        = useRef(false);
   const idempotencyKey  = useRef(crypto.randomUUID());
+
+  function changeItemQuantity(item: GstoreCartItem, nextQty: number) {
+    const qty = Math.min(10, Math.max(1, nextQty));
+    if (isBuyNow) {
+      setBuyNowQty(qty);
+      return;
+    }
+    const line = cartLines.find(
+      (l) => l.slug === item.slug && JSON.stringify(l.options) === JSON.stringify(item.options),
+    );
+    if (line) setCartQuantity(line.id, qty);
+  }
 
   if (checkoutItems.length === 0) return <EmptyCartState />;
 
@@ -354,7 +364,13 @@ export function GstoreCheckoutScreen() {
     setStatus("paying");
 
     return new Promise<void>((resolve) => {
-      const rzp = new (window as unknown as { Razorpay: new (opts: unknown) => { open(): void } }).Razorpay({
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        resolve();
+      };
+      openGstoreRazorpayCheckout({
         key:        rzpKeyId,
         order_id:   rzpOrderId,
         name:       "GVRZE Gstore",
@@ -365,55 +381,61 @@ export function GstoreCheckoutScreen() {
           contact: form.customerPhone,
         },
         theme: { color: "#111827" },
-
-        handler: async (response: GstoreRazorpaySuccessResponse) => {
-          setStatus("verifying");
-          try {
-            if (guestToken) {
-              await verifyGstoreGuestPaymentFn({
-                data: {
-                  order_id:       orderId,
-                  payment_id:     paymentId,
-                  guest_token:    guestToken,
-                  rzp_order_id:   response.razorpay_order_id,
-                  rzp_payment_id: response.razorpay_payment_id,
-                  rzp_signature:  response.razorpay_signature,
-                },
-              });
-            } else {
-              const { data: { session: authSession } } = await supabase.auth.getSession();
-              await verifyGstorePaymentFn({
-                data: {
-                  order_id:       orderId,
-                  payment_id:     paymentId,
-                  access_token:   authSession?.access_token ?? "",
-                  rzp_order_id:   response.razorpay_order_id,
-                  rzp_payment_id: response.razorpay_payment_id,
-                  rzp_signature:  response.razorpay_signature,
-                },
-              });
-            }
-            setStatus("done");
-            navToConfirmation(orderId, orderNumber, guestToken);
-          } catch (err) {
-            const msg = err instanceof Error ? err.message : "Payment verification failed";
-            setStatus("failed");
-            setErrorMsg(msg);
-            toast.error(msg);
-          }
-          resolve();
+        onFailed: (description) => {
+          setStatus("failed");
+          setErrorMsg(description);
+          inflight.current = false;
+          toast.error(description);
+          finish();
         },
-
+        handler: (response) => {
+          void (async () => {
+            setStatus("verifying");
+            try {
+              if (guestToken) {
+                await verifyGstoreGuestPaymentFn({
+                  data: {
+                    order_id:       orderId,
+                    payment_id:     paymentId,
+                    guest_token:    guestToken,
+                    rzp_order_id:   response.razorpay_order_id,
+                    rzp_payment_id: response.razorpay_payment_id,
+                    rzp_signature:  response.razorpay_signature,
+                  },
+                });
+              } else {
+                const { data: { session: authSession } } = await supabase.auth.getSession();
+                await verifyGstorePaymentFn({
+                  data: {
+                    order_id:       orderId,
+                    payment_id:     paymentId,
+                    access_token:   authSession?.access_token ?? "",
+                    rzp_order_id:   response.razorpay_order_id,
+                    rzp_payment_id: response.razorpay_payment_id,
+                    rzp_signature:  response.razorpay_signature,
+                  },
+                });
+              }
+              setStatus("done");
+              navToConfirmation(orderId, orderNumber, guestToken);
+            } catch (err) {
+              const msg = err instanceof Error ? err.message : "Payment verification failed";
+              setStatus("failed");
+              setErrorMsg(msg);
+              inflight.current = false;
+              toast.error(msg);
+            }
+            finish();
+          })();
+        },
         modal: {
           ondismiss: () => {
-            // Leave the pending order unpaid so the shopper can retry.
             setStatus("cancelled");
             inflight.current = false;
-            resolve();
+            finish();
           },
         },
       });
-      rzp.open();
     });
   }
 
@@ -713,7 +735,7 @@ export function GstoreCheckoutScreen() {
           </div>
 
           {/* TEST MODE badge — desktop only */}
-          {mockEnabled && (
+          {(mockEnabled || testMode) && (
             <span className="hidden sm:flex shrink-0 ml-2 items-center gap-1.5 bg-amber-50 text-amber-700 border border-amber-200 text-xs font-medium px-3 py-1.5 rounded-full">
               <FlaskConical className="w-3.5 h-3.5" />
               TEST MODE
@@ -807,10 +829,12 @@ export function GstoreCheckoutScreen() {
       </div>
 
       {/* Mobile TEST MODE banner */}
-      {mockEnabled && (
+      {(mockEnabled || testMode) && (
         <div className="sm:hidden bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center gap-2">
           <FlaskConical className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
-          <span className="text-xs text-amber-700 font-medium">Test mode — no real payments</span>
+          <span className="text-xs text-amber-700 font-medium">
+            {mockEnabled ? "Test mode — simulated payment, no real charges" : "Razorpay TEST MODE — no live charges"}
+          </span>
         </div>
       )}
 
@@ -1189,10 +1213,11 @@ export function GstoreCheckoutScreen() {
 
             {/* ── Pay button ── */}
             {(status === "idle" || status === "failed" || status === "cancelled") &&
+              !configLoading &&
               (mockEnabled || rzpConfigured) && (
                 <button
                   type="button"
-                  onClick={handleCheckoutWithMockCapture}
+                  onClick={() => void handleCheckoutWithMockCapture()}
                   disabled={isLoading}
                   className="w-full flex items-center justify-center gap-2.5 bg-[#111827] text-white py-4 rounded-xl font-bold text-base hover:bg-[#1F2937] active:bg-[#111827] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
                 >
@@ -1201,13 +1226,21 @@ export function GstoreCheckoutScreen() {
                   ) : (
                     <>
                       <Lock className="w-4 h-4" />
-                      Pay {formatInrPaise(totalMinor)}
+                      Pay {formatInrPaise(totalMinor)} with Razorpay
                     </>
                   )}
                 </button>
               )}
 
             {/* ── Status overlays ── */}
+            {status === "paying" && !mockEnabled && (
+              <div className="text-center py-5">
+                <div className="animate-spin w-7 h-7 border-2 border-[#E5E7EB] border-t-[#111827] rounded-full mx-auto mb-3" />
+                <p className="text-sm text-[#6B7280]">Complete payment in the Razorpay window…</p>
+                <p className="mt-1 text-xs text-[#9CA3AF]">TEST MODE — use Razorpay test cards or UPI.</p>
+              </div>
+            )}
+
             {status === "creating" && (
               <div className="text-center py-5">
                 <div className="animate-spin w-7 h-7 border-2 border-[#E5E7EB] border-t-[#111827] rounded-full mx-auto mb-3" />
@@ -1281,7 +1314,29 @@ export function GstoreCheckoutScreen() {
                           {Object.entries(item.options).map(([k, v]) => `${k}: ${v}`).join(" · ")}
                         </p>
                       )}
-                      <p className="text-xs text-[#9CA3AF] mt-0.5">Qty {item.quantity}</p>
+                      <div className="mt-1.5 inline-flex items-center gap-1 rounded-lg border border-[#E5E7EB] bg-white">
+                        <button
+                          type="button"
+                          aria-label="Decrease quantity"
+                          disabled={item.quantity <= 1 || isLoading}
+                          onClick={() => changeItemQuantity(item, item.quantity - 1)}
+                          className="flex h-7 w-7 items-center justify-center text-[#374151] disabled:opacity-40"
+                        >
+                          <Minus className="h-3 w-3" />
+                        </button>
+                        <span className="min-w-[1.25rem] text-center text-xs font-semibold text-[#111827]">
+                          {item.quantity}
+                        </span>
+                        <button
+                          type="button"
+                          aria-label="Increase quantity"
+                          disabled={item.quantity >= 10 || isLoading}
+                          onClick={() => changeItemQuantity(item, item.quantity + 1)}
+                          className="flex h-7 w-7 items-center justify-center text-[#374151] disabled:opacity-40"
+                        >
+                          <Plus className="h-3 w-3" />
+                        </button>
+                      </div>
                     </div>
 
                     {/* Line price */}
@@ -1356,6 +1411,18 @@ export function GstoreCheckoutScreen() {
               {isBuyNow ? "Back to store" : "Edit cart"}
             </Link>
           </Card>
+
+      {(status === "creating" || status === "verifying") && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-white/80 px-6 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-2xl border border-[#E5E7EB] bg-white p-6 text-center shadow-xl">
+            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-[#E5E7EB] border-t-[#111827]" />
+            <p className="text-sm font-semibold text-[#111827]">
+              {status === "creating" ? "Creating your order…" : "Verifying payment…"}
+            </p>
+            <p className="mt-1.5 text-xs text-[#6B7280]">Please wait. Do not refresh this page.</p>
+          </div>
+        </div>
+      )}
 
           {/* ── Trust signals ── */}
           <Card className="p-4">

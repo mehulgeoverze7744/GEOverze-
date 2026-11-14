@@ -39,6 +39,8 @@
 
 import { createServerFn } from "@tanstack/react-start";
 
+import { isMockPaymentsExplicit, readRazorpayKeyId, readRazorpayMode } from "@/lib/payments/razorpayEnv";
+
 export type PaymentConfig = {
   /**
    * True when MOCK_PAYMENTS_ENABLED=true OR VITE_MOCK_PAYMENTS=true in
@@ -56,30 +58,19 @@ export type PaymentConfig = {
 export const getPaymentConfig = createServerFn({ method: "GET" }).handler(
   async (): Promise<PaymentConfig> => {
     // Explicit env var — always wins (set in Vercel for preview/production testing).
-    const explicitMock =
-      process.env["MOCK_PAYMENTS_ENABLED"] === "true" ||
-      process.env["VITE_MOCK_PAYMENTS"] === "true";
-
-    // Auto-enable mock on local dev servers when Razorpay isn't configured.
-    // NODE_ENV=development is set by Vite/TanStack Start during `npm run dev`.
-    // This never fires on Vercel Production/Preview where NODE_ENV=production.
-    const keyId =
-      process.env["RAZORPAY_KEY_ID"] ||
-      process.env["VITE_RAZORPAY_KEY_ID"] ||
-      process.env["NEXT_PUBLIC_RAZORPAY_KEY_ID"] ||
-      "";
+    const keyId = readRazorpayKeyId();
     const razorpayConfigured = keyId.length > 0;
+    // Auto-mock only when the tester explicitly opted in, or local dev has
+    // no Razorpay Key ID at all. Presence of rzp_test_/rzp_live_ keys wins.
     const autoMockDev =
       process.env["NODE_ENV"] === "development" && !razorpayConfigured;
-    const mode = (process.env["RAZORPAY_MODE"] ?? "").toLowerCase();
-    const testMode =
-      razorpayConfigured &&
-      (mode === "test" || (mode !== "live" && !keyId.startsWith("rzp_live_")));
+    const mockEnabled = isMockPaymentsExplicit() || autoMockDev;
+    const testMode = razorpayConfigured && readRazorpayMode() === "test";
 
     return {
-      mockEnabled: explicitMock || autoMockDev,
-      razorpayEnabled: razorpayConfigured,
-      testMode,
+      mockEnabled,
+      razorpayEnabled: razorpayConfigured && !mockEnabled,
+      testMode: testMode && !mockEnabled,
     };
   },
 );

@@ -27,13 +27,7 @@ import { z } from "zod";
 
 import { isSlugAvailableForSale } from "../data/catalogAvailability";
 import { assertRateLimit } from "@/lib/payments/paymentRateLimit";
-import {
-  createRazorpayOrder,
-  getRazorpayKeyId as getServerRazorpayKeyId,
-  getRazorpayKeySecret,
-  isRazorpayServerConfigured,
-  verifyCapturedOrderPayment,
-} from "@/lib/payments/razorpayServer";
+import { isMockPaymentsExplicit, readRazorpayKeyId } from "@/lib/payments/razorpayEnv";
 import {
   getProductPrice,
   computeShippingMinor,
@@ -53,29 +47,9 @@ function makeSupabaseClient(accessToken: string): SupabaseClient {
   });
 }
 
-function getRazorpayKeyId(): string {
-  return getServerRazorpayKeyId();
-}
-
-function getRazorpaySecret(): string {
-  return getRazorpayKeySecret();
-}
-
 function isMockEnabled(): boolean {
-  // Explicit opt-in (Vercel env var or .env.local for preview/production testing)
-  if (
-    process.env["MOCK_PAYMENTS_ENABLED"] === "true" ||
-    process.env["VITE_MOCK_PAYMENTS"] === "true"
-  ) return true;
-
-  // Auto-enable on local dev when Razorpay is not configured.
-  // NODE_ENV=development is set by Vite/TanStack Start during `npm run dev`.
-  // This never fires on Vercel (NODE_ENV=production there).
-  const razorpayConfigured =
-    Boolean(process.env["RAZORPAY_KEY_ID"]) ||
-    Boolean(process.env["VITE_RAZORPAY_KEY_ID"]);
-  if (process.env["NODE_ENV"] === "development" && !razorpayConfigured) return true;
-
+  if (isMockPaymentsExplicit()) return true;
+  if (process.env["NODE_ENV"] === "development" && !readRazorpayKeyId()) return true;
   return false;
 }
 
@@ -127,32 +101,6 @@ function makeServiceRoleClient(): SupabaseClient {
 function getAdminEmails(): string[] {
   const raw = process.env["GSTORE_ADMIN_EMAILS"] ?? "";
   return raw.split(",").map(e => e.trim().toLowerCase()).filter(Boolean);
-}
-
-async function placeRazorpayOrder(input: {
-  orderId: string;
-  paymentId: string;
-  orderNumber: string;
-  totalMinor: number;
-  customerEmail: string;
-  notes?: Record<string, string>;
-}): Promise<{ rzpOrderId: string; rzpKeyId: string }> {
-  if (!isRazorpayServerConfigured()) {
-    return { rzpOrderId: "", rzpKeyId: "" };
-  }
-  const rzpOrder = await createRazorpayOrder({
-    amountMinor: input.totalMinor,
-    receipt: input.orderNumber,
-    notes: {
-      order_id: input.orderId,
-      payment_id: input.paymentId,
-      gvrze_order_id: input.orderId,
-      customer_email: input.customerEmail,
-      order_type: "gstore_one_time",
-      ...input.notes,
-    },
-  });
-  return { rzpOrderId: rzpOrder.id, rzpKeyId: getRazorpayKeyId() };
 }
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -352,6 +300,8 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
 
     const sbAuth = makeSupabaseClient(access_token);
 
+    const rzp = await import("./gstoreRazorpay.server");
+
     if (result.idempotent) {
       const { data: existingPay } = await sbAuth
         .from("gstore_payments")
@@ -367,14 +317,14 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
           total_minor:  totalMinor,
           currency:     "INR",
           rzp_order_id: existingId,
-          rzp_key_id:   getRazorpayKeyId(),
+          rzp_key_id:   rzp.getRazorpayKeyId(),
           mock_enabled: false,
           idempotent:   true,
         };
       }
     }
 
-    const placed = await placeRazorpayOrder({
+    const placed = await rzp.placeRazorpayOrder({
       orderId: result.order_id,
       paymentId: result.payment_id,
       orderNumber: result.order_number,
@@ -453,7 +403,8 @@ export const verifyGstorePaymentFn = createServerFn({ method: "POST" })
       return { success: true, order_id: data.order_id, order_number: order.order_number };
     }
 
-    await verifyCapturedOrderPayment({
+    const rzp = await import("./gstoreRazorpay.server");
+    await rzp.verifyCapturedOrderPayment({
       rzpOrderId: data.rzp_order_id,
       rzpPaymentId: data.rzp_payment_id,
       rzpSignature: data.rzp_signature,
@@ -764,7 +715,8 @@ export const createGstoreGuestOrderFn = createServerFn({ method: "POST" })
   .validator((raw: unknown) => GuestOrderSchema.parse(raw))
   .handler(async ({ data }): Promise<CreateGstoreGuestOrderResult> => {
     const mockEnabled = isMockEnabled();
-    const keyId       = getRazorpayKeyId();
+    const rzp = await import("./gstoreRazorpay.server");
+    const keyId = rzp.getRazorpayKeyId();
     assertRateLimit(`gstore-guest-create:${data.details.customerEmail}`, 8, 60_000);
 
     // Early service-role check with a mock-mode-aware hint.
@@ -882,7 +834,7 @@ export const createGstoreGuestOrderFn = createServerFn({ method: "POST" })
       };
     }
 
-    const placed = await placeRazorpayOrder({
+    const placed = await rzp.placeRazorpayOrder({
       orderId: r.order_id,
       paymentId: r.payment_id,
       orderNumber: r.order_number,
@@ -944,7 +896,8 @@ export const verifyGstoreGuestPaymentFn = createServerFn({ method: "POST" })
     if (order.payment_status === "paid") return { success: true };
 
     try {
-      await verifyCapturedOrderPayment({
+      const rzp = await import("./gstoreRazorpay.server");
+      await rzp.verifyCapturedOrderPayment({
         rzpOrderId: data.rzp_order_id,
         rzpPaymentId: data.rzp_payment_id,
         rzpSignature: data.rzp_signature,
@@ -1209,7 +1162,8 @@ export const retryGstorePaymentFn = createServerFn({ method: "POST" })
     if (!["unpaid", "pending", "failed"].includes(row.payment_status)) {
       throw new Error("This order cannot be retried.");
     }
-    const placed = await placeRazorpayOrder({
+    const rzp = await import("./gstoreRazorpay.server");
+    const placed = await rzp.placeRazorpayOrder({
       orderId: row.id,
       paymentId: data.payment_id,
       orderNumber: row.order_number,

@@ -4,6 +4,7 @@
  * pass the secret into these functions.
  */
 
+import "@tanstack/react-start/server-only";
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 /** Constant-time hex comparison. Length mismatch fails closed. */
