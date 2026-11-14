@@ -58,7 +58,9 @@ export function LoginPage({ redirect }: { redirect?: string }) {
           email: parsed.data.email,
           password: parsed.data.password,
         });
-        if (signInError) return { ok: false, error: mapAuthError(signInError.message) };
+        if (signInError) {
+          return { ok: false, error: mapAuthError(signInError.message, signInError.code) };
+        }
         return { ok: true };
       },
     });
@@ -100,6 +102,19 @@ export function LoginPage({ redirect }: { redirect?: string }) {
       >
         <form className="space-y-5" onSubmit={onSubmit} noValidate>
           {error ? <ValidationMessage>{error}</ValidationMessage> : null}
+          {error?.toLowerCase().includes("confirm your email") ? (
+            <p className="text-xs leading-relaxed text-foreground/55">
+              Didn&apos;t get the email?{" "}
+              <Link
+                to="/auth/verify-email"
+                search={{ email: values.email || undefined }}
+                className="text-bronze hover:text-bronze-glow"
+              >
+                Resend confirmation
+              </Link>
+              .
+            </p>
+          ) : null}
 
           <AuthField
             id="email"

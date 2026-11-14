@@ -35,14 +35,18 @@ test("duplicate signup users have an empty identities array", () => {
 test("mapAuthError covers duplicate, credentials, and provider failures", () => {
   assert.match(mapAuthError("User already registered"), /already exists/i);
   assert.match(mapAuthError("Invalid login credentials"), /incorrect/i);
+  assert.match(mapAuthError("Invalid login credentials"), /confirm your email/i);
   assert.match(mapAuthError("Email not confirmed"), /confirm your email/i);
   assert.match(mapAuthError("Password should be at least 8 characters"), /stronger password/i);
   assert.match(mapAuthError("Unsupported provider: provider is not enabled"), /Google sign-in is not enabled/i);
   assert.match(mapAuthError("Failed to fetch"), /authentication service/i);
+  assert.match(mapAuthError("email rate limit exceeded", "over_email_send_rate_limit"), /confirmation email/i);
+  assert.match(mapAuthError("Database error saving new user"), /profile/i);
   assert.equal(mapAuthError(""), "Something went wrong. Please try again.");
 });
 
 test("mapOAuthCallbackError treats cancellation as a recoverable state", () => {
   assert.match(mapOAuthCallbackError("access_denied"), /cancelled/i);
   assert.match(mapOAuthCallbackError("flow_state not found"), /expired/i);
+  assert.match(mapOAuthCallbackError("otp_expired"), /confirmation or sign-in link/i);
 });

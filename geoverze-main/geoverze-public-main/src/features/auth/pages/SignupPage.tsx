@@ -19,7 +19,12 @@ import {
   type FieldErrors,
   type SignupValues,
 } from "@/features/auth/lib/schemas";
-import { isDuplicateSignupUser, mapAuthError, oauthCallbackUrl } from "@/features/auth/lib/oauth";
+import { oauthCallbackUrl } from "@/features/auth/lib/oauth";
+import {
+  interpretSignupResult,
+  logSignupFailure,
+  rememberVerifyEmail,
+} from "@/features/auth/lib/signupResult";
 import { useMockRequest } from "@/features/auth/lib/useMockRequest";
 import { supabase } from "@/lib/supabase/client";
 
@@ -78,17 +83,19 @@ export function SignupPage() {
             ...(typeof window !== "undefined" ? { emailRedirectTo: oauthCallbackUrl() } : {}),
           },
         });
-        if (signUpError) return { ok: false, error: mapAuthError(signUpError.message) };
-        if (isDuplicateSignupUser(data.user)) {
-          return {
-            ok: false,
-            error: "An account with this email already exists. Sign in or continue with Google.",
-          };
+        const mappedError = signUpError
+          ? { message: signUpError.message, code: signUpError.code, status: signUpError.status }
+          : null;
+        if (mappedError) logSignupFailure(mappedError);
+        const outcome = interpretSignupResult(data, mappedError);
+        if (outcome.kind === "error" || outcome.kind === "existing_account") {
+          return { ok: false, error: outcome.message };
         }
         return { ok: true };
       },
     });
     if (ok) {
+      rememberVerifyEmail(parsed.data.email);
       const { data: sessionData } = await supabase.auth.getSession();
       if (sessionData.session) {
         navigate({ to: "/auth/age-verification" });

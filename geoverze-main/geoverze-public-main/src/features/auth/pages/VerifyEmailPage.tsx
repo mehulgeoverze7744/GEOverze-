@@ -13,6 +13,7 @@ import {
   ValidationMessage,
 } from "@/features/auth/components";
 import { AUTH_CALLBACK_PATH, mapAuthError } from "@/features/auth/lib/oauth";
+import { readStoredVerifyEmail, rememberVerifyEmail } from "@/features/auth/lib/signupResult";
 import { useMockRequest } from "@/features/auth/lib/useMockRequest";
 import { supabase } from "@/lib/supabase/client";
 import { selectIsSignedIn, useAuthStore } from "@/stores/authStore";
@@ -34,6 +35,11 @@ export function VerifyEmailPage({ email }: { email?: string }) {
   const confirm = useMockRequest({ delay: 600 });
   const [cooldown, setCooldown] = useState(0);
   const signedIn = useAuthStore(selectIsSignedIn);
+  const destinationEmail = email?.trim() || readStoredVerifyEmail() || undefined;
+
+  useEffect(() => {
+    if (destinationEmail) rememberVerifyEmail(destinationEmail);
+  }, [destinationEmail]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -52,11 +58,11 @@ export function VerifyEmailPage({ email }: { email?: string }) {
   }, [cooldown]);
 
   const onResend = async () => {
-    if (!email) return;
+    if (!destinationEmail) return;
     const ok = await resend.run({
       action: async () => {
-        const { error } = await supabase.auth.resend({ type: "signup", email });
-        if (error) return { ok: false, error: mapAuthError(error.message) };
+        const { error } = await supabase.auth.resend({ type: "signup", email: destinationEmail });
+        if (error) return { ok: false, error: mapAuthError(error.message, error.code) };
         return { ok: true };
       },
     });
@@ -99,8 +105,8 @@ export function VerifyEmailPage({ email }: { email?: string }) {
         eyebrow="One last step"
         title="Verify your email"
         description={
-          email
-            ? `We sent a confirmation link to ${email}. Open it to activate your account.`
+          destinationEmail
+            ? `We sent a confirmation link to ${destinationEmail}. Open it on this device if you can, and check spam if it is not in your inbox.`
             : "We sent a confirmation link to your inbox. Open it to activate your account."
         }
         footer={
@@ -157,7 +163,7 @@ export function VerifyEmailPage({ email }: { email?: string }) {
               variant="secondary"
               size="lg"
               className="w-full"
-              disabled={resend.isPending || cooldown > 0}
+              disabled={!destinationEmail || resend.isPending || cooldown > 0}
               onClick={() => void onResend()}
             >
               {resend.isPending

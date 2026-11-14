@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
+import type { EmailOtpType } from "@supabase/supabase-js";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { GeoButton } from "@/components/shared/GeoButton";
@@ -7,11 +8,26 @@ import { Spinner } from "@/components/shared/Spinner";
 import { AuthLayout, ValidationMessage } from "@/features/auth/components";
 import {
   consumeStoredAuthRedirect,
+  mapAuthError,
   mapOAuthCallbackError,
   resolvePostAuthDestination,
   safeInternalPath,
 } from "@/features/auth/lib/oauth";
 import { supabase } from "@/lib/supabase/client";
+
+const EMAIL_OTP_TYPES: readonly EmailOtpType[] = [
+  "signup",
+  "invite",
+  "magiclink",
+  "recovery",
+  "email_change",
+  "email",
+];
+
+function asEmailOtpType(value: string | null): EmailOtpType | null {
+  if (!value) return null;
+  return EMAIL_OTP_TYPES.includes(value as EmailOtpType) ? (value as EmailOtpType) : null;
+}
 
 /**
  * PKCE landing page for Google OAuth and email-confirmation links.
@@ -41,6 +57,20 @@ export function AuthCallbackPage() {
       }
 
       let session = (await supabase.auth.getSession()).data.session;
+
+      const tokenHash = url.searchParams.get("token_hash");
+      const otpType = asEmailOtpType(url.searchParams.get("type"));
+      if (!session && tokenHash && otpType) {
+        const { data, error: otpError } = await supabase.auth.verifyOtp({
+          type: otpType,
+          token_hash: tokenHash,
+        });
+        if (otpError) {
+          if (!cancelled) setError(mapAuthError(otpError.message, otpError.code));
+          return;
+        }
+        session = data.session;
+      }
 
       if (!session && code) {
         const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
@@ -86,7 +116,7 @@ export function AuthCallbackPage() {
         <AuthLayout
           eyebrow="Sign in"
           title="Could not complete sign-in"
-          description="You can try Google again or use your email and password."
+          description="Try signing in again, request a new confirmation email, or create an account."
         >
           <div className="space-y-5">
             <ValidationMessage>{error}</ValidationMessage>

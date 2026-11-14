@@ -51,11 +51,20 @@ export function isDuplicateSignupUser(
   return Boolean(user && Array.isArray(user.identities) && user.identities.length === 0);
 }
 
-export function mapAuthError(message: string | null | undefined): string {
+export function mapAuthError(message: string | null | undefined, code?: string | null): string {
   const raw = (message ?? "").trim();
   const lower = raw.toLowerCase();
+  const errorCode = (code ?? "").trim().toLowerCase();
 
-  if (!raw) return "Something went wrong. Please try again.";
+  if (!raw && !errorCode) return "Something went wrong. Please try again.";
+
+  if (
+    errorCode === "over_email_send_rate_limit" ||
+    lower.includes("email rate limit") ||
+    lower.includes("over_email_send_rate_limit")
+  ) {
+    return "We could not send the confirmation email because too many sign-up emails were requested. Wait a few minutes, then try again and check spam. If you already submitted this form, open the verification link from your inbox.";
+  }
 
   if (
     lower.includes("already registered") ||
@@ -63,13 +72,13 @@ export function mapAuthError(message: string | null | undefined): string {
     lower.includes("user already") ||
     lower.includes("email address is already")
   ) {
-    return "An account with this email already exists. Sign in or continue with Google.";
+    return "An account with this email already exists. Sign in, confirm your email if it is waiting, or continue with Google.";
   }
-  if (lower.includes("invalid login") || lower.includes("invalid credentials")) {
-    return "Email or password is incorrect.";
+  if (lower.includes("invalid login") || lower.includes("invalid credentials") || errorCode === "invalid_credentials") {
+    return "Email or password is incorrect. If you just created an account, confirm your email first.";
   }
-  if (lower.includes("email not confirmed") || lower.includes("not confirmed")) {
-    return "Please confirm your email before signing in. Check your inbox for the verification link.";
+  if (lower.includes("email not confirmed") || lower.includes("not confirmed") || errorCode === "email_not_confirmed") {
+    return "Please confirm your email before signing in. Check your inbox and spam for the verification link.";
   }
   if (
     (lower.includes("password") &&
@@ -81,7 +90,12 @@ export function mapAuthError(message: string | null | undefined): string {
   ) {
     return "Choose a stronger password: at least 8 characters with upper, lower, number, and a special character.";
   }
-  if (lower.includes("rate limit") || lower.includes("too many") || lower.includes("over_request")) {
+  if (
+    errorCode === "over_request_rate_limit" ||
+    lower.includes("rate limit") ||
+    lower.includes("too many") ||
+    lower.includes("over_request")
+  ) {
     return "Too many attempts. Please wait a moment and try again.";
   }
   if (
@@ -92,7 +106,7 @@ export function mapAuthError(message: string | null | undefined): string {
     return "Google sign-in is not enabled on the authentication service yet. Use email and password, or try again later.";
   }
   if (lower.includes("redirect") && (lower.includes("not allowed") || lower.includes("whitelist") || lower.includes("allow"))) {
-    return "Google sign-in could not return to this site. The callback URL needs to be added in the authentication settings.";
+    return "This sign-in link could not return to this site. The callback URL needs to be added in the authentication settings.";
   }
   if (
     lower.includes("failed to fetch") ||
@@ -102,17 +116,38 @@ export function mapAuthError(message: string | null | undefined): string {
   ) {
     return "Could not reach the authentication service. Check your connection and try again.";
   }
-  if (lower.includes("invalid api key") || lower.includes("invalid jwt")) {
+  if (
+    lower.includes("invalid api key") ||
+    lower.includes("invalid jwt") ||
+    errorCode === "invalid_api_key"
+  ) {
     return "Authentication is misconfigured. Please try again later.";
   }
-  if (lower.includes("signup is disabled") || lower.includes("signups not allowed")) {
+  if (
+    lower.includes("signup is disabled") ||
+    lower.includes("signups not allowed") ||
+    errorCode === "signup_disabled"
+  ) {
     return "New account registration is temporarily closed. Please try again later.";
   }
   if (lower.includes("unable to validate email") || lower.includes("invalid email")) {
     return "Enter a valid email address.";
   }
+  if (
+    lower.includes("database error saving") ||
+    lower.includes("error saving new user") ||
+    lower.includes("unexpected_failure")
+  ) {
+    return "We could not finish creating your profile. Please try again in a moment.";
+  }
+  if (lower.includes("error sending confirmation") || lower.includes("error sending email")) {
+    return "Your account was started but the confirmation email could not be sent. Wait a few minutes and use Resend on the verification page.";
+  }
+  if (lower.includes("otp_expired") || lower.includes("token has expired") || lower.includes("expired")) {
+    return "This confirmation link has expired. Request a new email from the verification page.";
+  }
 
-  return raw;
+  return raw || "Something went wrong. Please try again.";
 }
 
 export function mapOAuthCallbackError(error: string | null | undefined): string {
@@ -123,7 +158,7 @@ export function mapOAuthCallbackError(error: string | null | undefined): string 
     return "Google sign-in was cancelled. You can try again or use email and password.";
   }
   if (lower.includes("otp_expired") || lower.includes("flow_state") || lower.includes("expired")) {
-    return "This sign-in link expired. Please start Google sign-in again.";
+    return "This confirmation or sign-in link has expired. Request a new email from the verification page, or try signing in again.";
   }
   return mapAuthError(raw);
 }
