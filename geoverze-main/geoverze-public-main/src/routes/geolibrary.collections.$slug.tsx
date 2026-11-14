@@ -25,13 +25,13 @@ export const Route = createFileRoute("/geolibrary/collections/$slug")({
         { name: "twitter:card", content: "summary_large_image" },
         {
           property: "og:url",
-          content: `https://geoverze.com/geolibrary/collections/${collection.slug}`,
+          content: `https://gvrze.com/geolibrary/collections/${collection.slug}`,
         },
       ],
       links: [
         {
           rel: "canonical",
-          href: `https://geoverze.com/geolibrary/collections/${collection.slug}`,
+          href: `https://gvrze.com/geolibrary/collections/${collection.slug}`,
         },
       ],
     };

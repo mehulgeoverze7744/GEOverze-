@@ -18,9 +18,9 @@ export const Route = createFileRoute("/auth/reset-password")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "robots", content: "noindex" },
-      { property: "og:url", content: "https://geoverze.com/auth/reset-password" },
+      { property: "og:url", content: "https://gvrze.com/auth/reset-password" },
     ],
-    links: [{ rel: "canonical", href: "https://geoverze.com/auth/reset-password" }],
+    links: [{ rel: "canonical", href: "https://gvrze.com/auth/reset-password" }],
   }),
   component: ResetPasswordPage,
 });

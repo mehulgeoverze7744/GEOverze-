@@ -17,9 +17,9 @@ export const Route = createFileRoute("/auth/login")({
       { property: "og:description", content: "Sign in to GVRZE to continue your progress." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://geoverze.com/auth/login" },
+      { property: "og:url", content: "https://gvrze.com/auth/login" },
     ],
-    links: [{ rel: "canonical", href: "https://geoverze.com/auth/login" }],
+    links: [{ rel: "canonical", href: "https://gvrze.com/auth/login" }],
   }),
   component: LoginRoute,
 });

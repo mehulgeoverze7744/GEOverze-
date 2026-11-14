@@ -18,9 +18,9 @@ export const Route = createFileRoute("/auth/age-verification")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://geoverze.com/auth/age-verification" },
+      { property: "og:url", content: "https://gvrze.com/auth/age-verification" },
     ],
-    links: [{ rel: "canonical", href: "https://geoverze.com/auth/age-verification" }],
+    links: [{ rel: "canonical", href: "https://gvrze.com/auth/age-verification" }],
   }),
   component: AgeVerificationPage,
 });

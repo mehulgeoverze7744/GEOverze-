@@ -1,45 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://geoverze.com/</loc>
+    <loc>https://gvrze.com/</loc>
   </url>
   <url>
-    <loc>https://geoverze.com/play</loc>
+    <loc>https://gvrze.com/play</loc>
   </url>
   <url>
-    <loc>https://geoverze.com/library</loc>
+    <loc>https://gvrze.com/geostore</loc>
   </url>
   <url>
-    <loc>https://geoverze.com/store</loc>
+    <loc>https://gvrze.com/geolibrary</loc>
   </url>
   <url>
-    <loc>https://geoverze.com/pricing</loc>
+    <loc>https://gvrze.com/community</loc>
   </url>
   <url>
-    <loc>https://geoverze.com/leaderboard</loc>
+    <loc>https://gvrze.com/pricing</loc>
   </url>
   <url>
-    <loc>https://geoverze.com/profile</loc>
+    <loc>https://gvrze.com/leaderboard</loc>
   </url>
   <url>
-    <loc>https://geoverze.com/about</loc>
+    <loc>https://gvrze.com/about</loc>
   </url>
   <url>
-    <loc>https://geoverze.com/contact</loc>
+    <loc>https://gvrze.com/contact</loc>
   </url>
   <url>
-    <loc>https://geoverze.com/login</loc>
+    <loc>https://gvrze.com/auth/login</loc>
   </url>
   <url>
-    <loc>https://geoverze.com/register</loc>
+    <loc>https://gvrze.com/auth/signup</loc>
   </url>
   <url>
-    <loc>https://geoverze.com/forgot-password</loc>
+    <loc>https://gvrze.com/privacy-policy</loc>
   </url>
   <url>
-    <loc>https://geoverze.com/privacy</loc>
+    <loc>https://gvrze.com/terms-of-service</loc>
   </url>
   <url>
-    <loc>https://geoverze.com/terms</loc>
+    <loc>https://gvrze.com/shipping-policy</loc>
+  </url>
+  <url>
+    <loc>https://gvrze.com/refund-policy</loc>
   </url>
 </urlset>

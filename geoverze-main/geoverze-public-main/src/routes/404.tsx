@@ -15,9 +15,9 @@ export const Route = createFileRoute("/404")({
       { property: "og:description", content: "This GVRZE coordinate doesn't exist." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://geoverze.com/404" },
+      { property: "og:url", content: "https://gvrze.com/404" },
     ],
-    links: [{ rel: "canonical", href: "https://geoverze.com/404" }],
+    links: [{ rel: "canonical", href: "https://gvrze.com/404" }],
   }),
   component: NotFoundPage,
 });

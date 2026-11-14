@@ -1,6 +1,8 @@
+import { site } from "@/config/site";
+
 import type { ArticleCatalogueMeta } from "../data/fetchPublishedArticles";
 
-const SITE_ORIGIN = "https://geoverze.com";
+const SITE_ORIGIN = site.url;
 
 /** Build TanStack Router head config from catalogue-safe article metadata. */
 export function buildArticleRouteHead(meta: ArticleCatalogueMeta | null | undefined) {

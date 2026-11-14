@@ -24,9 +24,9 @@ export const Route = createFileRoute("/_app/settings")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://geoverze.com/settings" },
+      { property: "og:url", content: "https://gvrze.com/settings" },
     ],
-    links: [{ rel: "canonical", href: "https://geoverze.com/settings" }],
+    links: [{ rel: "canonical", href: "https://gvrze.com/settings" }],
   }),
   component: SettingsPage,
 });

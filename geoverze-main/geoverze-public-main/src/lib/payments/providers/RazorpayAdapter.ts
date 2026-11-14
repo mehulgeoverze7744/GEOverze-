@@ -192,7 +192,7 @@ export class RazorpayAdapter implements PaymentProviderInterface {
         order_id:    rzpOrder.id,
         amount:      intent.amountMinor,
         currency:    intent.currency,
-        name:        "GeoVerze Gstore",
+        name:        "GVRZE Gstore",
         description: `Order ${intent.orderNumber}`,
         prefill: {
           name:    intent.customer.name,

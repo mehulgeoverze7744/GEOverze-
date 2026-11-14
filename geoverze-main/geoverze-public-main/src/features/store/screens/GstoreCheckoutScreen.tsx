@@ -353,7 +353,7 @@ export function GstoreCheckoutScreen() {
         order_id:   rzpOrderId,
         amount:     totalMinor,
         currency:   "INR",
-        name:       "GeoVerze Gstore",
+        name:       "GVRZE Gstore",
         description: `Order ${orderNumber}`,
         prefill: {
           name:    form.customerName,

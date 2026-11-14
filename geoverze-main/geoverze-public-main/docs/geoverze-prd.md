@@ -1,4 +1,4 @@
-# GEOverze — Product Requirements Document (PRD)
+# GVRZE — Product Requirements Document (PRD)
 
 **Status:** Living document
 **Audience:** Developers, designers, AI assistants, future contributors

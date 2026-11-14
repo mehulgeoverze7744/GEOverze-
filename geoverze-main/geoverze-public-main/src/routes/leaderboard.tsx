@@ -18,9 +18,9 @@ export const Route = createFileRoute("/leaderboard")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://geoverze.com/leaderboard" },
+      { property: "og:url", content: "https://gvrze.com/leaderboard" },
     ],
-    links: [{ rel: "canonical", href: "https://geoverze.com/leaderboard" }],
+    links: [{ rel: "canonical", href: "https://gvrze.com/leaderboard" }],
   }),
   component: LeaderboardPage,
 });

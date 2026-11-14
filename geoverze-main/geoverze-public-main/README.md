@@ -1,6 +1,6 @@
-# GEOverze Orbit
+# GVRZE
 
-Create a dark, premium 3D landing page for GEOverze using React + React Three Fiber + GSAP ScrollTrigger.
+Create a dark, premium 3D landing page for GVRZE using React + React Three Fiber + GSAP ScrollTrigger.
 
 Logo & Assets
 

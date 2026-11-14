@@ -28,11 +28,11 @@ export const Route = createFileRoute("/geolibrary/creators/$handle")({
         { name: "twitter:card", content: "summary_large_image" },
         {
           property: "og:url",
-          content: `https://geoverze.com/geolibrary/creators/${creator.handle}`,
+          content: `https://gvrze.com/geolibrary/creators/${creator.handle}`,
         },
       ],
       links: [
-        { rel: "canonical", href: `https://geoverze.com/geolibrary/creators/${creator.handle}` },
+        { rel: "canonical", href: `https://gvrze.com/geolibrary/creators/${creator.handle}` },
       ],
     };
   },

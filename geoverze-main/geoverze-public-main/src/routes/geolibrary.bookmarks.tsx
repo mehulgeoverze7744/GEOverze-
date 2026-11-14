@@ -18,9 +18,9 @@ export const Route = createFileRoute("/geolibrary/bookmarks")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://geoverze.com/geolibrary/bookmarks" },
+      { property: "og:url", content: "https://gvrze.com/geolibrary/bookmarks" },
     ],
-    links: [{ rel: "canonical", href: "https://geoverze.com/geolibrary/bookmarks" }],
+    links: [{ rel: "canonical", href: "https://gvrze.com/geolibrary/bookmarks" }],
   }),
   component: LibraryBookmarksScreen,
 });

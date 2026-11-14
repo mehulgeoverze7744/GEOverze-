@@ -24,9 +24,9 @@ export const Route = createFileRoute("/_app/quiz-history-and-rewards")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://geoverze.com/quiz-history-and-rewards" },
+      { property: "og:url", content: "https://gvrze.com/quiz-history-and-rewards" },
     ],
-    links: [{ rel: "canonical", href: "https://geoverze.com/quiz-history-and-rewards" }],
+    links: [{ rel: "canonical", href: "https://gvrze.com/quiz-history-and-rewards" }],
   }),
   component: QuizHistoryAndRewardsPage,
 });

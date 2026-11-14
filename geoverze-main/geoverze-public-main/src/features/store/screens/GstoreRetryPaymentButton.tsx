@@ -41,7 +41,7 @@ export function GstoreRetryPaymentButton({
         openGstoreRazorpayCheckout({
           key: retry.rzp_key_id,
           order_id: retry.rzp_order_id,
-          name: "GeoVerze Gstore",
+          name: "GVRZE Gstore",
           description: `Retry ${orderNumber}`,
           theme: { color: "#111827" },
           handler: (response) => {

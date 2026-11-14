@@ -34,9 +34,9 @@ export const Route = createFileRoute("/geolibrary/browse")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://geoverze.com/geolibrary/browse" },
+      { property: "og:url", content: "https://gvrze.com/geolibrary/browse" },
     ],
-    links: [{ rel: "canonical", href: "https://geoverze.com/geolibrary/browse" }],
+    links: [{ rel: "canonical", href: "https://gvrze.com/geolibrary/browse" }],
   }),
   component: LibraryBrowse,
 });

@@ -18,9 +18,9 @@ export const Route = createFileRoute("/_app/bookmarks")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://geoverze.com/bookmarks" },
+      { property: "og:url", content: "https://gvrze.com/bookmarks" },
     ],
-    links: [{ rel: "canonical", href: "https://geoverze.com/bookmarks" }],
+    links: [{ rel: "canonical", href: "https://gvrze.com/bookmarks" }],
   }),
   component: BookmarksPage,
 });

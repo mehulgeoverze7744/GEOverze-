@@ -18,9 +18,9 @@ export const Route = createFileRoute("/geolibrary/collections/")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://geoverze.com/geolibrary/collections" },
+      { property: "og:url", content: "https://gvrze.com/geolibrary/collections" },
     ],
-    links: [{ rel: "canonical", href: "https://geoverze.com/geolibrary/collections" }],
+    links: [{ rel: "canonical", href: "https://gvrze.com/geolibrary/collections" }],
   }),
   component: CollectionsScreen,
 });

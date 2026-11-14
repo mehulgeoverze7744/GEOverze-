@@ -67,7 +67,7 @@ export function useCommunityActions() {
     },
 
     share: (postId: string) => {
-      toast.success("Link copied", { description: `geoverze.com/community/post/${postId}` });
+      toast.success("Link copied", { description: `gvrze.com/community/post/${postId}` });
     },
 
     report: (postId: string) => {

@@ -18,9 +18,9 @@ export const Route = createFileRoute("/about")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://geoverze.com/about" },
+      { property: "og:url", content: "https://gvrze.com/about" },
     ],
-    links: [{ rel: "canonical", href: "https://geoverze.com/about" }],
+    links: [{ rel: "canonical", href: "https://gvrze.com/about" }],
   }),
   component: AboutPage,
 });

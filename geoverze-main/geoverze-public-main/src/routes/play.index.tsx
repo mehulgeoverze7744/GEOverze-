@@ -19,9 +19,9 @@ export const Route = createFileRoute("/play/")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://geoverze.com/play" },
+      { property: "og:url", content: "https://gvrze.com/play" },
     ],
-    links: [{ rel: "canonical", href: "https://geoverze.com/play" }],
+    links: [{ rel: "canonical", href: "https://gvrze.com/play" }],
   }),
   component: PlayPage,
 });

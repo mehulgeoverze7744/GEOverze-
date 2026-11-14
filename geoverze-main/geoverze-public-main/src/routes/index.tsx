@@ -18,10 +18,10 @@ export const Route = createFileRoute("/")({
           "An interactive 3D geography universe: explore, learn and compete your way across the planet.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://geoverze.com/" },
+      { property: "og:url", content: "https://gvrze.com/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://geoverze.com/" }],
+    links: [{ rel: "canonical", href: "https://gvrze.com/" }],
   }),
   component: HomePage,
 });

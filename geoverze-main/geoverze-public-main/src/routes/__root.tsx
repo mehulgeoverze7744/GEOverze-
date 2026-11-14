@@ -70,6 +70,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { name: "author", content: site.name },
       { property: "og:site_name", content: site.name },
+      { property: "og:url", content: site.url },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "color-scheme", content: "light" },
@@ -86,6 +87,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         as: "image",
         type: "image/png",
       },
+      { rel: "canonical", href: site.url },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
       {
         href: "https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap",

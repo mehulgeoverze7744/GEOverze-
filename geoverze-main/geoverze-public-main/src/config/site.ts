@@ -9,8 +9,10 @@ export const site = {
   slogan: "Know Earth",
   /** Official tagline — the second line of the brand lockup. */
   tagline: "Think Global",
-  domain: "geoverze.com",
-  url: "https://geoverze.com",
+  domain: "gvrze.com",
+  url: "https://gvrze.com",
+  /** Previous public hosts that should 301 to gvrze.com. */
+  legacyDomains: ["geoverze.com", "www.geoverze.com", "www.gvrze.com"] as const,
   description:
     "GVRZE is a cinematic geography universe — play, learn and collect your way across the planet.",
 } as const;

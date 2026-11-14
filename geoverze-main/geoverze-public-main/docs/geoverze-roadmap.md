@@ -1,6 +1,6 @@
-# GEOverze Roadmap
+# GVRZE Roadmap
 
-> **Project:** GEOverze  
+> **Project:** GVRZE  
 > **Slogan:** Know Earth  
 > **Tagline:** Think Global  
 > **Document type:** Internal reference  

@@ -8,18 +8,18 @@
 
 export const legalConfig = {
   serviceName: "GVRZE",
-  siteUrl: "https://geoverze.com",
+  siteUrl: "https://gvrze.com",
   /**
    * Published on the contact page as the general address. The on-site
    * contact form does not deliver messages yet, so this email is the
    * working support route.
    */
-  supportEmail: "hello@geoverze.com",
+  supportEmail: "hello@gvrze.com",
   /**
    * TODO: Confirm a dedicated privacy contact. Until then, privacy
    * questions use the published support email.
    */
-  privacyEmail: "hello@geoverze.com",
+  privacyEmail: "hello@gvrze.com",
   /**
    * TODO: Confirm the contracting legal entity before publication.
    * Do not present a proposed company as already incorporated.

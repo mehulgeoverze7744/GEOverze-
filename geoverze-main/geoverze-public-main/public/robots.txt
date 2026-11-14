@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://geoverze.com/sitemap.xml
+Sitemap: https://gvrze.com/sitemap.xml

@@ -18,9 +18,9 @@ export const Route = createFileRoute("/_app/billing")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://geoverze.com/billing" },
+      { property: "og:url", content: "https://gvrze.com/billing" },
     ],
-    links: [{ rel: "canonical", href: "https://geoverze.com/billing" }],
+    links: [{ rel: "canonical", href: "https://gvrze.com/billing" }],
   }),
   component: SubscriptionScreen,
 });

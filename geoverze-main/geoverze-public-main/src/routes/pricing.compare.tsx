@@ -18,9 +18,9 @@ export const Route = createFileRoute("/pricing/compare")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://geoverze.com/pricing/compare" },
+      { property: "og:url", content: "https://gvrze.com/pricing/compare" },
     ],
-    links: [{ rel: "canonical", href: "https://geoverze.com/pricing/compare" }],
+    links: [{ rel: "canonical", href: "https://gvrze.com/pricing/compare" }],
   }),
   component: ComparePlansScreen,
 });

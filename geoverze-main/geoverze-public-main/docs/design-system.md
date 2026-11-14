@@ -1,4 +1,4 @@
-# GEOverze — Design System
+# GVRZE — Design System
 
 **Status:** Official, living document
 **Audience:** Designers, developers, AI assistants, future contributors

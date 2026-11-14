@@ -21,9 +21,9 @@ export const Route = createFileRoute("/auth/verify-email")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://geoverze.com/auth/verify-email" },
+      { property: "og:url", content: "https://gvrze.com/auth/verify-email" },
     ],
-    links: [{ rel: "canonical", href: "https://geoverze.com/auth/verify-email" }],
+    links: [{ rel: "canonical", href: "https://gvrze.com/auth/verify-email" }],
   }),
   component: VerifyEmailRoute,
 });

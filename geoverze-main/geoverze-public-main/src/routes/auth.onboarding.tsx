@@ -18,9 +18,9 @@ export const Route = createFileRoute("/auth/onboarding")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "https://geoverze.com/auth/onboarding" },
+      { property: "og:url", content: "https://gvrze.com/auth/onboarding" },
     ],
-    links: [{ rel: "canonical", href: "https://geoverze.com/auth/onboarding" }],
+    links: [{ rel: "canonical", href: "https://gvrze.com/auth/onboarding" }],
   }),
   component: OnboardingPage,
 });
