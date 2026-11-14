@@ -11,8 +11,13 @@ export const site = {
   tagline: "Think Global",
   domain: "gvrze.com",
   url: "https://gvrze.com",
-  /** Previous public hosts that should 301 to gvrze.com. */
-  legacyDomains: ["geoverze.com", "www.geoverze.com", "www.gvrze.com"] as const,
+  /**
+   * Retired public hosts. Apex/www for gvrze.com is configured in Vercel
+   * Domains (gvrze.com = production, www.gvrze.com redirects to gvrze.com).
+   * Do not also 301 those hosts in application code or vercel.json — that
+   * fights Vercel's domain redirect and loops.
+   */
+  legacyDomains: ["geoverze.com", "www.geoverze.com"] as const,
   description:
     "GVRZE is a cinematic geography universe — play, learn and collect your way across the planet.",
 } as const;

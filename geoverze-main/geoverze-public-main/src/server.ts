@@ -44,25 +44,12 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
-const LEGACY_HOSTS = new Set(["geoverze.com", "www.geoverze.com", "www.gvrze.com"]);
-const CANONICAL_HOST = "gvrze.com";
-
-function redirectLegacyHost(request: Request): Response | null {
-  if (request.method === "POST") return null;
-  const host = (request.headers.get("host") ?? "").split(":")[0]?.toLowerCase() ?? "";
-  if (!LEGACY_HOSTS.has(host)) return null;
-  const dest = new URL(request.url);
-  dest.protocol = "https:";
-  dest.host = CANONICAL_HOST;
-  dest.port = "";
-  return Response.redirect(dest.toString(), 301);
-}
-
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
-      const legacyRedirect = redirectLegacyHost(request);
-      if (legacyRedirect) return legacyRedirect;
+      // Host canonicalization (gvrze.com vs www) is owned by Vercel Domains.
+      // Do not 301/308 hosts here — a second layer fights Vercel's apex/www
+      // redirect and produces ERR_TOO_MANY_REDIRECTS.
       const url = new URL(request.url);
       if (request.method === "POST" && url.pathname === "/api/webhooks/razorpay") {
         const { handleRazorpayWebhookRequest } =

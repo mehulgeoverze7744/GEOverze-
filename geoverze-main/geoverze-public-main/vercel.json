@@ -1,20 +1,14 @@
 {
   "redirects": [
     {
-      "source": "/((?!api/webhooks/razorpay).*)",
+      "source": "/((?!api/).*)",
       "has": [{ "type": "host", "value": "geoverze.com" }],
       "destination": "https://gvrze.com/$1",
       "permanent": true
     },
     {
-      "source": "/((?!api/webhooks/razorpay).*)",
+      "source": "/((?!api/).*)",
       "has": [{ "type": "host", "value": "www.geoverze.com" }],
-      "destination": "https://gvrze.com/$1",
-      "permanent": true
-    },
-    {
-      "source": "/((?!api/webhooks/razorpay).*)",
-      "has": [{ "type": "host", "value": "www.gvrze.com" }],
       "destination": "https://gvrze.com/$1",
       "permanent": true
     }
