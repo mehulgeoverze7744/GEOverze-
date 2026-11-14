@@ -35,12 +35,18 @@ export function usePaymentConfig() {
 
   const mockEnabled     = query.isSuccess ? query.data.mockEnabled     : buildTimeMock;
   const razorpayEnabled = query.isSuccess ? query.data.razorpayEnabled : buildTimeRazorpay;
+  const testMode        = query.isSuccess ? query.data.testMode        : (
+    Boolean(import.meta.env["VITE_RAZORPAY_KEY_ID"]) &&
+    String(import.meta.env["VITE_RAZORPAY_KEY_ID"]).startsWith("rzp_test_")
+  );
 
   return {
     /** True when VITE_MOCK_PAYMENTS=true is set in the server env. */
     mockEnabled,
     /** True when VITE_RAZORPAY_KEY_ID is set in the server env. */
     razorpayEnabled,
+    /** True when Razorpay TEST MODE keys are active. */
+    testMode,
     /**
      * True while the initial server config call hasn't resolved yet.
      * Both mock and Razorpay buttons are hidden during this window to

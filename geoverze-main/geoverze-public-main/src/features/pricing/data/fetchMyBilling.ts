@@ -41,6 +41,8 @@ export type MyBillingSnapshot = {
   isMockSubscription: boolean;
   /** UUID of the active mock subscription, or null if not a mock subscription. */
   mockSubscriptionId: string | null;
+  /** UUID of the active subscription (mock or Razorpay). */
+  subscriptionId: string | null;
   /** True when cancel_at_period_end is set — renewal cancelled but access still active. */
   cancelAtPeriodEnd: boolean;
   /**
@@ -279,6 +281,7 @@ export async function fetchMyBilling(): Promise<MyBillingSnapshot> {
     isPaidMembership: isPaidTier,
     isMockSubscription: activeSub?.provider_name === "mock",
     mockSubscriptionId: activeSub?.provider_name === "mock" ? (activeSub.id as string) : null,
+    subscriptionId: (activeSub?.id as string | undefined) ?? null,
     history: payments.map((row) => {
       const historyTier = parseLibraryAccessTier(row.plan_tier);
       return {

@@ -206,7 +206,7 @@ export function GstoreCheckoutScreen() {
   const cartCount     = useCartStore(selectCartCount);
   const wishlistCount = useStoreStore(selectWishlistCount);
 
-  const { mockEnabled, razorpayEnabled: rzpConfigured } = usePaymentConfig();
+  const { mockEnabled, razorpayEnabled: rzpConfigured, testMode } = usePaymentConfig();
 
   // Guest mode toggle
   const [guestMode, setGuestMode] = useState(!user);
@@ -401,19 +401,8 @@ export function GstoreCheckoutScreen() {
         },
 
         modal: {
-          ondismiss: async () => {
-            try {
-              if (guestToken) {
-                await confirmMockGstoreGuestPaymentFn({
-                  data: { order_id: orderId, payment_id: paymentId, guest_token: guestToken, outcome: "cancel" },
-                });
-              } else {
-                const { data: { session: s } } = await supabase.auth.getSession();
-                await confirmMockGstorePaymentFn({
-                  data: { order_id: orderId, payment_id: paymentId, access_token: s?.access_token ?? "", outcome: "cancel" },
-                });
-              }
-            } catch { /* best effort */ }
+          ondismiss: () => {
+            // Leave the pending order unpaid so the shopper can retry.
             setStatus("cancelled");
             inflight.current = false;
             resolve();
@@ -854,7 +843,7 @@ export function GstoreCheckoutScreen() {
                     <strong>Test mode tip:</strong> Guest checkout requires the{" "}
                     <code className="bg-amber-100 px-1 rounded text-[0.68rem]">SUPABASE_SERVICE_ROLE_KEY</code>{" "}
                     env var. The easiest way to test mock payments is to{" "}
-                    <Link to="/auth/login" className="underline font-medium">sign in</Link>{" "}
+                    <Link to="/auth/login" search={{ redirect: undefined }} className="underline font-medium">sign in</Link>{" "}
                     — authenticated checkout works without that key.
                   </p>
                 </div>
@@ -876,6 +865,7 @@ export function GstoreCheckoutScreen() {
                 </button>
                 <Link
                   to="/auth/login"
+                  search={{ redirect: undefined }}
                   className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium border border-[#E5E7EB] text-[#374151] hover:border-[#9CA3AF] bg-white transition-all text-center"
                 >
                   <UserCheck className="w-4 h-4" />
@@ -1105,7 +1095,7 @@ export function GstoreCheckoutScreen() {
                       {mockEnabled && (
                         <p>
                           <strong>Quickest fix:</strong>{" "}
-                          <Link to="/auth/login" className="underline font-medium">Sign in</Link>{" "}
+                          <Link to="/auth/login" search={{ redirect: undefined }} className="underline font-medium">Sign in</Link>{" "}
                           — authenticated mock payments work without that key.
                         </p>
                       )}
@@ -1181,6 +1171,11 @@ export function GstoreCheckoutScreen() {
                   </div>
                 ) : rzpConfigured ? (
                   <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-4 py-3 space-y-1">
+                    {testMode ? (
+                      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-amber-700">
+                        Razorpay TEST MODE — no live charges
+                      </p>
+                    ) : null}
                     <p className="text-sm text-[#374151] font-medium">Accepted payment methods</p>
                     <p className="text-sm text-[#6B7280]">UPI · Credit / Debit Cards · Net Banking · Wallets</p>
                     <p className="text-xs text-[#9CA3AF] mt-1">Secured by Razorpay · 256-bit SSL encryption</p>

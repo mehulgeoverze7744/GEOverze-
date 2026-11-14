@@ -49,6 +49,8 @@ export type PaymentConfig = {
    * True when VITE_RAZORPAY_KEY_ID is present in the server environment.
    */
   razorpayEnabled: boolean;
+  /** True when Razorpay is running in TEST MODE (rzp_test_ keys or RAZORPAY_MODE=test). */
+  testMode: boolean;
 };
 
 export const getPaymentConfig = createServerFn({ method: "GET" }).handler(
@@ -61,15 +63,23 @@ export const getPaymentConfig = createServerFn({ method: "GET" }).handler(
     // Auto-enable mock on local dev servers when Razorpay isn't configured.
     // NODE_ENV=development is set by Vite/TanStack Start during `npm run dev`.
     // This never fires on Vercel Production/Preview where NODE_ENV=production.
-    const razorpayConfigured = Boolean(
-      process.env["VITE_RAZORPAY_KEY_ID"] || process.env["RAZORPAY_KEY_ID"],
-    );
+    const keyId =
+      process.env["RAZORPAY_KEY_ID"] ||
+      process.env["VITE_RAZORPAY_KEY_ID"] ||
+      process.env["NEXT_PUBLIC_RAZORPAY_KEY_ID"] ||
+      "";
+    const razorpayConfigured = keyId.length > 0;
     const autoMockDev =
       process.env["NODE_ENV"] === "development" && !razorpayConfigured;
+    const mode = (process.env["RAZORPAY_MODE"] ?? "").toLowerCase();
+    const testMode =
+      razorpayConfigured &&
+      (mode === "test" || (mode !== "live" && !keyId.startsWith("rzp_live_")));
 
     return {
       mockEnabled: explicitMock || autoMockDev,
       razorpayEnabled: razorpayConfigured,
+      testMode,
     };
   },
 );

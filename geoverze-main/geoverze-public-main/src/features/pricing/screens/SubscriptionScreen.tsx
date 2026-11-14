@@ -19,6 +19,7 @@ import {
   scheduleCancelMockSubscription,
   reactivateMockSubscription,
 } from "../lib/mock-payment";
+import { cancelRazorpaySubscriptionFn } from "../lib/subscriptionServerFns";
 import "../styles/billing-membership.css";
 
 const PAYMENT_EMOJIS: Record<string, string> = {
@@ -126,6 +127,19 @@ export function SubscriptionScreen() {
 
       } else {
         // ── Live subscription path (Razorpay) — cancel at period end ────────
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (sessionData.session && data?.subscriptionId) {
+          try {
+            await cancelRazorpaySubscriptionFn({
+              data: {
+                access_token: sessionData.session.access_token,
+                subscription_id: data.subscriptionId,
+              },
+            });
+          } catch (rzpCancelErr) {
+            console.warn("[handleConfirmCancel] Razorpay cancel:", rzpCancelErr);
+          }
+        }
         type CancelRpcResult = { ok: boolean; reason?: string; period_end?: string } | null;
         const { data: result, error: rpcError } = await supabase.rpc(
           "request_cancel_subscription" as never,
@@ -277,7 +291,7 @@ export function SubscriptionScreen() {
               Your billing details, credits, and subscription status are only available when
               you're signed in to your GVRZE account.
             </p>
-            <Link to="/auth/login" className="bm-btn bm-btn--primary">
+            <Link to="/auth/login" search={{ redirect: undefined }} className="bm-btn bm-btn--primary">
               Sign in
             </Link>
           </article>
@@ -289,7 +303,7 @@ export function SubscriptionScreen() {
             {isAuthError ? (
               <>
                 <p className="bm-error-copy">Your session has expired. Please sign in again to view your billing details.</p>
-                <Link to="/auth/login" className="bm-btn bm-btn--primary">
+                <Link to="/auth/login" search={{ redirect: undefined }} className="bm-btn bm-btn--primary">
                   Sign in
                 </Link>
               </>

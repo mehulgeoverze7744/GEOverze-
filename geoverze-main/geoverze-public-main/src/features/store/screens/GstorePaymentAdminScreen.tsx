@@ -204,7 +204,7 @@ export function GstorePaymentAdminScreen() {
         <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-6 text-center">
           <ShieldAlert className="h-10 w-10 text-[#999]" />
           <p className="text-[16px] text-[#555]">Sign in to access the admin panel.</p>
-          <Link to="/auth/login" className="text-sm font-medium underline">Sign in</Link>
+          <Link to="/auth/login" search={{ redirect: undefined }} className="text-sm font-medium underline">Sign in</Link>
         </div>
       </div>
     );
@@ -214,6 +214,9 @@ export function GstorePaymentAdminScreen() {
   const currencies  = (config?.currencies ?? []) as CurrencyRow[];
   const zones       = (config?.zones ?? []) as ShippingZoneRow[];
   const mockEnabled = config?.mockEnabled ?? false;
+  const razorpayTestMode = Boolean(
+    (config as { razorpayTestMode?: boolean } | null)?.razorpayTestMode,
+  );
 
   function toggleSection(id: string) {
     setOpenSection(v => v === id ? null : id);
@@ -235,7 +238,12 @@ export function GstorePaymentAdminScreen() {
             <div className="flex items-center gap-2">
               {mockEnabled && (
                 <span className="text-[11px] font-semibold bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full border border-amber-200">
-                  ⚗️ MOCK MODE ACTIVE
+                  MOCK MODE ACTIVE
+                </span>
+              )}
+              {razorpayTestMode && !mockEnabled && (
+                <span className="text-[11px] font-semibold bg-sky-100 text-sky-800 px-2.5 py-1 rounded-full border border-sky-200">
+                  RAZORPAY TEST MODE
                 </span>
               )}
               <button

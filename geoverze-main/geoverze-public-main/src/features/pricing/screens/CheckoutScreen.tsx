@@ -56,10 +56,12 @@ import type { BillingCycle, TierId } from "../data/plans";
 import { TIER_ORDER } from "../data/plans";
 import { usePricingCatalog } from "../hooks/usePricingCatalog";
 import { useMyBilling } from "../hooks/useMyBilling";
+import { supabase } from "@/lib/supabase/client";
 import {
   createCheckoutSession,
   CheckoutSessionError,
 } from "../lib/createCheckoutSession";
+import { verifyRazorpaySubscriptionFn } from "../lib/subscriptionServerFns";
 import {
   loadRazorpayScript,
   getRazorpayKeyId,
@@ -158,7 +160,7 @@ export function CheckoutScreen() {
   // razorpayEnabled comes from the server runtime check (process.env).
   // This unifies mock + razorpay config reads so changing a Vercel env var
   // is reflected immediately on the next page load — no rebuild needed.
-  const { mockEnabled, razorpayEnabled: razorpayReady, configLoading } = usePaymentConfig();
+  const { mockEnabled, razorpayEnabled: razorpayReady, testMode, configLoading } = usePaymentConfig();
 
   /* UI state */
   const [cycle, setCycle] = useState<BillingCycle>(initialCycle);
@@ -399,7 +401,7 @@ export function CheckoutScreen() {
         },
       });
 
-      const keyId = getRazorpayKeyId();
+      const keyId = session.razorpay_key_id || getRazorpayKeyId();
       if (!window.Razorpay) {
         throw new Error("Razorpay SDK did not load. Try refreshing the page.");
       }
@@ -422,14 +424,42 @@ export function CheckoutScreen() {
         },
         theme: { color: "#1e3a5f" },
         handler: (response: RazorpaySuccessResponse) => {
-          void navigate({
-            to: "/pricing/payment-result",
-            search: {
-              status: "processing",
-              payment_id: response.razorpay_payment_id,
-              plan: plan.id,
-            },
-          });
+          void (async () => {
+            try {
+              const { data: auth } = await supabase.auth.getSession();
+              await verifyRazorpaySubscriptionFn({
+                data: {
+                  access_token: auth.session?.access_token ?? "",
+                  subscription_id: session.subscription_id,
+                  rzp_payment_id: response.razorpay_payment_id,
+                  rzp_subscription_id: response.razorpay_subscription_id,
+                  rzp_signature: response.razorpay_signature,
+                },
+              });
+              void navigate({
+                to: "/pricing/payment-result",
+                search: {
+                  status: "success",
+                  payment_id: response.razorpay_payment_id,
+                  plan: plan.id,
+                },
+              });
+            } catch (verifyErr) {
+              const msg =
+                verifyErr instanceof Error
+                  ? verifyErr.message
+                  : "Payment could not be verified yet. If you were charged, membership will activate shortly.";
+              void navigate({
+                to: "/pricing/payment-result",
+                search: {
+                  status: "processing",
+                  payment_id: response.razorpay_payment_id,
+                  plan: plan.id,
+                  reason: msg,
+                },
+              });
+            }
+          })();
         },
         modal: {
           confirm_close: true,
@@ -497,6 +527,20 @@ export function CheckoutScreen() {
             ]}
             className="checkout-crumb"
           />
+
+            {!mockEnabled && razorpayReady && testMode ? (
+              <div
+                className="checkout-mock-banner"
+                role="status"
+                aria-label="Razorpay TEST MODE"
+              >
+                <FlaskConical size={14} strokeWidth={2} aria-hidden />
+                <span>
+                  <strong>RAZORPAY TEST MODE</strong>
+                  {" "}Use Razorpay test cards and test UPI. No live charges.
+                </span>
+              </div>
+            ) : null}
 
             {/* Mock mode indicator banner — TEST MODE — NO REAL PAYMENTS */}
             {mockEnabled ? (
@@ -823,7 +867,7 @@ export function CheckoutScreen() {
                   <div className="checkout-unavailable" role="status">
                     <Info className="checkout-unavailable__icon" size={16} strokeWidth={1.8} />
                     <div>
-                      <Link to="/auth/login" className="font-semibold underline underline-offset-2">Sign in</Link>{" "}
+                      <Link to="/auth/login" search={{ redirect: undefined }} className="font-semibold underline underline-offset-2">Sign in</Link>{" "}
                       or{" "}
                       <Link to="/auth/signup" className="font-semibold underline underline-offset-2">create an account</Link>{" "}
                       to complete your purchase.

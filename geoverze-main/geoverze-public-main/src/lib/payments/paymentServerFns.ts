@@ -379,9 +379,16 @@ export const getAdminPaymentConfigFn = createServerFn({ method: "POST" })
     ]);
 
     const mockEnabled = isMockEnabled();
+    const razorpayKeyId =
+      process.env["RAZORPAY_KEY_ID"] ?? process.env["VITE_RAZORPAY_KEY_ID"] ?? "";
+    const razorpayTestMode =
+      razorpayKeyId.startsWith("rzp_test_") ||
+      (process.env["RAZORPAY_MODE"] ?? "").toLowerCase() === "test";
 
     return {
       mockEnabled,
+      razorpayTestMode,
+      razorpayConfigured: razorpayKeyId.length > 0,
       providers:   providersRes.data ?? [],
       currencies:  currenciesRes.data ?? [],
       zones:       zonesRes.data ?? [],

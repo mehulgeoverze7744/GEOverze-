@@ -23,10 +23,17 @@
 
 import { createServerFn } from "@tanstack/react-start";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { createHmac } from "crypto";
 import { z } from "zod";
 
 import { isSlugAvailableForSale } from "../data/catalogAvailability";
+import { assertRateLimit } from "@/lib/payments/paymentRateLimit";
+import {
+  createRazorpayOrder,
+  getRazorpayKeyId as getServerRazorpayKeyId,
+  getRazorpayKeySecret,
+  isRazorpayServerConfigured,
+  verifyCapturedOrderPayment,
+} from "@/lib/payments/razorpayServer";
 import {
   getProductPrice,
   computeShippingMinor,
@@ -47,15 +54,11 @@ function makeSupabaseClient(accessToken: string): SupabaseClient {
 }
 
 function getRazorpayKeyId(): string {
-  return (
-    process.env["RAZORPAY_KEY_ID"] ??
-    process.env["VITE_RAZORPAY_KEY_ID"] ??
-    ""
-  );
+  return getServerRazorpayKeyId();
 }
 
 function getRazorpaySecret(): string {
-  return process.env["RAZORPAY_KEY_SECRET"] ?? "";
+  return getRazorpayKeySecret();
 }
 
 function isMockEnabled(): boolean {
@@ -124,6 +127,32 @@ function makeServiceRoleClient(): SupabaseClient {
 function getAdminEmails(): string[] {
   const raw = process.env["GSTORE_ADMIN_EMAILS"] ?? "";
   return raw.split(",").map(e => e.trim().toLowerCase()).filter(Boolean);
+}
+
+async function placeRazorpayOrder(input: {
+  orderId: string;
+  paymentId: string;
+  orderNumber: string;
+  totalMinor: number;
+  customerEmail: string;
+  notes?: Record<string, string>;
+}): Promise<{ rzpOrderId: string; rzpKeyId: string }> {
+  if (!isRazorpayServerConfigured()) {
+    return { rzpOrderId: "", rzpKeyId: "" };
+  }
+  const rzpOrder = await createRazorpayOrder({
+    amountMinor: input.totalMinor,
+    receipt: input.orderNumber,
+    notes: {
+      order_id: input.orderId,
+      payment_id: input.paymentId,
+      gvrze_order_id: input.orderId,
+      customer_email: input.customerEmail,
+      order_type: "gstore_one_time",
+      ...input.notes,
+    },
+  });
+  return { rzpOrderId: rzpOrder.id, rzpKeyId: getRazorpayKeyId() };
 }
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -203,6 +232,7 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
   .validator((raw: unknown) => CreateOrderSchema.parse(raw))
   .handler(async ({ data }): Promise<CreateGstoreOrderResult> => {
     const { access_token, items, details, idempotency_key } = data;
+    assertRateLimit(`gstore-create:${access_token.slice(-24)}`, 10, 60_000);
 
     // ── Validate + price every cart item server-side ──────────────────────
     type ValidatedItem = {
@@ -320,13 +350,39 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
       };
     }
 
-    // ── Create Razorpay one-time order ────────────────────────────────────
-    const keyId     = getRazorpayKeyId();
-    const keySecret = getRazorpaySecret();
+    const sbAuth = makeSupabaseClient(access_token);
 
-    if (!keyId || !keySecret) {
-      // Razorpay not configured — return order without rzp_order_id.
-      // Client will show "payment unavailable" state.
+    if (result.idempotent) {
+      const { data: existingPay } = await sbAuth
+        .from("gstore_payments")
+        .select("provider_order_id")
+        .eq("id", result.payment_id)
+        .maybeSingle();
+      const existingId = (existingPay as { provider_order_id?: string } | null)?.provider_order_id;
+      if (existingId) {
+        return {
+          order_id:     result.order_id,
+          order_number: result.order_number,
+          payment_id:   result.payment_id,
+          total_minor:  totalMinor,
+          currency:     "INR",
+          rzp_order_id: existingId,
+          rzp_key_id:   getRazorpayKeyId(),
+          mock_enabled: false,
+          idempotent:   true,
+        };
+      }
+    }
+
+    const placed = await placeRazorpayOrder({
+      orderId: result.order_id,
+      paymentId: result.payment_id,
+      orderNumber: result.order_number,
+      totalMinor,
+      customerEmail: details.customerEmail,
+    });
+
+    if (!placed.rzpOrderId) {
       return {
         order_id:     result.order_id,
         order_number: result.order_number,
@@ -339,34 +395,11 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
       };
     }
 
-    // POST to Razorpay /v1/orders
-    const rzpResponse = await fetch("https://api.razorpay.com/v1/orders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization:
-          "Basic " +
-          Buffer.from(`${keyId}:${keySecret}`).toString("base64"),
-      },
-      body: JSON.stringify({
-        amount:          totalMinor,
-        currency:        "INR",
-        receipt:         result.order_number,
-        notes: {
-          gvrze_order_id: result.order_id,
-          customer_email: details.customerEmail,
-        },
-      }),
+    await sbAuth.rpc("attach_gstore_razorpay_order", {
+      p_order_id: result.order_id,
+      p_payment_id: result.payment_id,
+      p_provider_order_id: placed.rzpOrderId,
     });
-
-    if (!rzpResponse.ok) {
-      const rzpBody = await rzpResponse.text();
-      throw new Error(
-        `Razorpay order creation failed (${rzpResponse.status}): ${rzpBody}`,
-      );
-    }
-
-    const rzpOrder = (await rzpResponse.json()) as { id: string };
 
     return {
       order_id:     result.order_id,
@@ -374,8 +407,8 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
       payment_id:   result.payment_id,
       total_minor:  totalMinor,
       currency:     "INR",
-      rzp_order_id: rzpOrder.id,
-      rzp_key_id:   keyId,
+      rzp_order_id: placed.rzpOrderId,
+      rzp_key_id:   placed.rzpKeyId,
       mock_enabled: false,
       idempotent:   result.idempotent,
     };
@@ -410,47 +443,48 @@ export type VerifyGstorePaymentResult = {
 export const verifyGstorePaymentFn = createServerFn({ method: "POST" })
   .validator((raw: unknown) => VerifyPaymentSchema.parse(raw))
   .handler(async ({ data }): Promise<VerifyGstorePaymentResult> => {
-    const keySecret = getRazorpaySecret();
-    if (!keySecret) throw new Error("Payment configuration error.");
-
-    // ── Verify Razorpay HMAC-SHA256 signature ─────────────────────────────
-    // Razorpay signs: "<rzp_order_id>|<rzp_payment_id>"
-    const expectedBody    = `${data.rzp_order_id}|${data.rzp_payment_id}`;
-    const expectedSig     = createHmac("sha256", keySecret)
-      .update(expectedBody)
-      .digest("hex");
-
-    if (expectedSig !== data.rzp_signature) {
-      throw new Error("Payment signature verification failed. Do not trust this payment.");
-    }
-
-    // ── Confirm in DB ──────────────────────────────────────────────────────
+    assertRateLimit(`gstore-verify:${data.access_token.slice(-24)}`, 20, 60_000);
     const sb = makeSupabaseClient(data.access_token);
-    const { data: confirmResult, error: confirmError } = await sb.rpc(
-      "confirm_gstore_payment",
-      {
-        p_order_id:            data.order_id,
-        p_payment_id:          data.payment_id,
-        p_provider_order_id:   data.rzp_order_id,
-        p_provider_payment_id: data.rzp_payment_id,
-        p_provider_signature:  data.rzp_signature,
-        p_outcome:             "success",
-      },
-    );
-
-    if (confirmError) throw new Error(`Failed to confirm payment: ${confirmError.message}`);
-
-    // Fetch order number for the confirmation page
-    const { data: order } = await sb
+    const { data: orderRow, error: orderError } = await sb
       .from("gstore_orders")
-      .select("order_number")
+      .select("order_number, total_minor, currency, payment_status")
       .eq("id", data.order_id)
       .single();
+    if (orderError || !orderRow) throw new Error("Order not found.");
+    const order = orderRow as {
+      order_number: string;
+      total_minor: number;
+      currency: string;
+      payment_status: string;
+    };
+
+    if (order.payment_status === "paid") {
+      return { success: true, order_id: data.order_id, order_number: order.order_number };
+    }
+
+    await verifyCapturedOrderPayment({
+      rzpOrderId: data.rzp_order_id,
+      rzpPaymentId: data.rzp_payment_id,
+      rzpSignature: data.rzp_signature,
+      expectedAmountMinor: Number(order.total_minor),
+      expectedCurrency: order.currency || "INR",
+    });
+
+    const { error: confirmError } = await sb.rpc("confirm_gstore_payment", {
+      p_order_id:            data.order_id,
+      p_payment_id:          data.payment_id,
+      p_provider_order_id:   data.rzp_order_id,
+      p_provider_payment_id: data.rzp_payment_id,
+      p_provider_signature:  data.rzp_signature,
+      p_outcome:             "success",
+    });
+
+    if (confirmError) throw new Error(`Failed to confirm payment: ${confirmError.message}`);
 
     return {
       success:      true,
       order_id:     data.order_id,
-      order_number: (order as { order_number: string } | null)?.order_number ?? "",
+      order_number: order.order_number,
     };
   });
 
@@ -610,6 +644,7 @@ export type GstoreOrderDetail = GstoreOrderRow & {
   shipping_minor:   number;
   tax_minor:        number;
   discount_minor:   number;
+  latest_payment_id: string | null;
 };
 
 export const getGstoreOrderDetailFn = createServerFn({ method: "GET" })
@@ -638,6 +673,14 @@ export const getGstoreOrderDetailFn = createServerFn({ method: "GET" })
     if (error || !order) {
       throw new Error("Order not found or access denied.");
     }
+
+    const { data: latestPayment } = await sb
+      .from("gstore_payments")
+      .select("id")
+      .eq("order_id", data.order_id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
     const o = order as typeof order & {
       customer_name: string; customer_email: string; customer_phone: string;
@@ -673,6 +716,7 @@ export const getGstoreOrderDetailFn = createServerFn({ method: "GET" })
       shipping_minor:   o.shipping_minor,
       tax_minor:        o.tax_minor,
       discount_minor:   o.discount_minor,
+      latest_payment_id: (latestPayment as { id?: string } | null)?.id ?? null,
       items:            o.gstore_order_items ?? [],
     };
   });
@@ -730,7 +774,7 @@ export const createGstoreGuestOrderFn = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<CreateGstoreGuestOrderResult> => {
     const mockEnabled = isMockEnabled();
     const keyId       = getRazorpayKeyId();
-    const keySecret   = getRazorpaySecret();
+    assertRateLimit(`gstore-guest-create:${data.details.customerEmail}`, 8, 60_000);
 
     // Early service-role check with a mock-mode-aware hint.
     // Guest orders (no auth.uid()) need the service-role key to bypass RLS.
@@ -847,36 +891,24 @@ export const createGstoreGuestOrderFn = createServerFn({ method: "POST" })
       };
     }
 
-    // 4. Create Razorpay order
-    if (!keyId || !keySecret) {
+    const placed = await placeRazorpayOrder({
+      orderId: r.order_id,
+      paymentId: r.payment_id,
+      orderNumber: r.order_number,
+      totalMinor,
+      customerEmail: data.details.customerEmail,
+      notes: { order_type: "gstore_guest" },
+    });
+    if (!placed.rzpOrderId) {
       throw new Error("Razorpay keys not configured.");
     }
 
-    const basicAuth = Buffer.from(`${keyId}:${keySecret}`).toString("base64");
-    const rzpRes = await fetch("https://api.razorpay.com/v1/orders", {
-      method:  "POST",
-      headers: {
-        "Content-Type":  "application/json",
-        "Authorization": `Basic ${basicAuth}`,
-      },
-      body: JSON.stringify({
-        amount:          totalMinor,
-        currency:        "INR",
-        receipt:         r.order_number,
-        notes:           {
-          order_id:    r.order_id,
-          payment_id:  r.payment_id,
-          order_type:  "gstore_guest",
-        },
-      }),
+    await serviceClient.rpc("attach_gstore_razorpay_order_guest", {
+      p_order_id: r.order_id,
+      p_payment_id: r.payment_id,
+      p_guest_token: r.guest_token,
+      p_provider_order_id: placed.rzpOrderId,
     });
-
-    if (!rzpRes.ok) {
-      const errText = await rzpRes.text();
-      throw new Error(`Razorpay order creation failed: ${errText}`);
-    }
-
-    const rzpOrder = (await rzpRes.json()) as { id: string };
 
     return {
       order_id:       r.order_id,
@@ -887,8 +919,8 @@ export const createGstoreGuestOrderFn = createServerFn({ method: "POST" })
       subtotal_minor: subtotalMinor,
       shipping_minor: shippingMinor,
       tax_minor:      taxMinor,
-      rzp_order_id:   rzpOrder.id,
-      rzp_key_id:     keyId,
+      rzp_order_id:   placed.rzpOrderId,
+      rzp_key_id:     placed.rzpKeyId,
       mock_enabled:   false,
       idempotent:     r.idempotent,
     };
@@ -908,18 +940,27 @@ const VerifyGuestPaymentSchema = z.object({
 export const verifyGstoreGuestPaymentFn = createServerFn({ method: "POST" })
   .validator((raw: unknown) => VerifyGuestPaymentSchema.parse(raw))
   .handler(async ({ data }) => {
-    const keySecret = getRazorpaySecret();
-    if (!keySecret) throw new Error("Razorpay not configured.");
+    assertRateLimit(`gstore-guest-verify:${data.guest_token}`, 20, 60_000);
+    const svc = makeServiceRoleClient();
+    const { data: orderRow, error: orderError } = await svc
+      .from("gstore_orders")
+      .select("total_minor, currency, payment_status, guest_token")
+      .eq("id", data.order_id)
+      .eq("guest_token", data.guest_token)
+      .single();
+    if (orderError || !orderRow) throw new Error("Order not found.");
+    const order = orderRow as { total_minor: number; currency: string; payment_status: string };
+    if (order.payment_status === "paid") return { success: true };
 
-    // HMAC-SHA256 verification
-    const expectedBody = `${data.rzp_order_id}|${data.rzp_payment_id}`;
-    const expectedSig  = createHmac("sha256", keySecret)
-      .update(expectedBody)
-      .digest("hex");
-
-    if (expectedSig !== data.rzp_signature) {
-      // Confirm as failed so order is not left dangling
-      const svc = makeServiceRoleClient();
+    try {
+      await verifyCapturedOrderPayment({
+        rzpOrderId: data.rzp_order_id,
+        rzpPaymentId: data.rzp_payment_id,
+        rzpSignature: data.rzp_signature,
+        expectedAmountMinor: Number(order.total_minor),
+        expectedCurrency: order.currency || "INR",
+      });
+    } catch (err) {
       await svc.rpc("confirm_gstore_payment_guest", {
         p_order_id:            data.order_id,
         p_payment_id:          data.payment_id,
@@ -929,10 +970,9 @@ export const verifyGstoreGuestPaymentFn = createServerFn({ method: "POST" })
         p_provider_signature:  data.rzp_signature,
         p_outcome:             "failed",
       });
-      throw new Error("Payment signature verification failed — payment not confirmed.");
+      throw err instanceof Error ? err : new Error("Payment verification failed.");
     }
 
-    const svc = makeServiceRoleClient();
     const { error } = await svc.rpc("confirm_gstore_payment_guest", {
       p_order_id:            data.order_id,
       p_payment_id:          data.payment_id,
@@ -1143,4 +1183,60 @@ export const adminUpdateOrderFn = createServerFn({ method: "POST" })
 
     if (error) throw new Error(error.message ?? "Failed to update order.");
     return { success: true };
+  });
+
+
+// ── 12. retryGstorePaymentFn ──────────────────────────────────────────────────
+
+const RetryPaymentSchema = z.object({
+  access_token: z.string().min(10),
+  order_id:     z.string().uuid(),
+  payment_id:   z.string().uuid(),
+});
+
+export const retryGstorePaymentFn = createServerFn({ method: "POST" })
+  .validator((raw: unknown) => RetryPaymentSchema.parse(raw))
+  .handler(async ({ data }) => {
+    assertRateLimit(`gstore-retry:${data.access_token.slice(-24)}`, 8, 60_000);
+    const sb = makeSupabaseClient(data.access_token);
+    const { data: order, error } = await sb
+      .from("gstore_orders")
+      .select("id, order_number, total_minor, payment_status, customer_email")
+      .eq("id", data.order_id)
+      .single();
+    if (error || !order) throw new Error("Order not found.");
+    const row = order as {
+      id: string;
+      order_number: string;
+      total_minor: number;
+      payment_status: string;
+      customer_email: string;
+    };
+    if (row.payment_status === "paid") {
+      throw new Error("This order is already paid.");
+    }
+    if (!["unpaid", "pending", "failed"].includes(row.payment_status)) {
+      throw new Error("This order cannot be retried.");
+    }
+    const placed = await placeRazorpayOrder({
+      orderId: row.id,
+      paymentId: data.payment_id,
+      orderNumber: row.order_number,
+      totalMinor: Number(row.total_minor),
+      customerEmail: row.customer_email,
+      notes: { retry: "true" },
+    });
+    if (!placed.rzpOrderId) throw new Error("Razorpay is not configured.");
+    await sb.rpc("attach_gstore_razorpay_order", {
+      p_order_id: row.id,
+      p_payment_id: data.payment_id,
+      p_provider_order_id: placed.rzpOrderId,
+    });
+    return {
+      order_id: row.id,
+      order_number: row.order_number,
+      rzp_order_id: placed.rzpOrderId,
+      rzp_key_id: placed.rzpKeyId,
+      total_minor: Number(row.total_minor),
+    };
   });

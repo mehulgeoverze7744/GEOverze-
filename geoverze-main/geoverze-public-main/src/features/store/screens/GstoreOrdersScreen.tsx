@@ -161,7 +161,7 @@ export function GstoreOrdersScreen() {
             title="Sign in to view orders"
             description="Your order history is available once you're signed in."
             action={
-              <Link to="/auth/login" className={gstorePrimaryBtn}>
+              <Link to="/auth/login" search={{ redirect: undefined }} className={gstorePrimaryBtn}>
                 Sign in
               </Link>
             }

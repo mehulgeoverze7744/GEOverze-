@@ -4,7 +4,7 @@ import { LoginPage } from "@/features/auth/pages/LoginPage";
 
 export const Route = createFileRoute("/auth/login")({
   validateSearch: (search: Record<string, unknown>) => ({
-    redirect: typeof search.redirect === "string" ? search.redirect : undefined,
+    redirect: typeof search["redirect"] === "string" ? search["redirect"] : undefined,
   }),
   head: () => ({
     meta: [

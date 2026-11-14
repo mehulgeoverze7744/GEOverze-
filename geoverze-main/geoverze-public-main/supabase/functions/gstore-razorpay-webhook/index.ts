@@ -1,47 +1,13 @@
 /**
- * Supabase Edge Function: gstore-razorpay-webhook
+ * Legacy Gstore webhook URL. Delegates to the same RPCs as razorpay-webhook
+ * so existing Razorpay dashboard endpoints keep working.
  *
- * Handles Razorpay webhook events for Gstore one-time orders.
- *
- * SETUP:
- *   1. Deploy this function:
- *      npx supabase functions deploy gstore-razorpay-webhook --project-ref hcxifkgzugxqijttmpzc
- *
- *   2. Add secrets (never commit these):
- *      npx supabase secrets set RAZORPAY_WEBHOOK_SECRET=<your_webhook_secret> --project-ref hcxifkgzugxqijttmpzc
- *      npx supabase secrets set SUPABASE_SERVICE_ROLE_KEY=<your_service_role_key> --project-ref hcxifkgzugxqijttmpzc
- *
- *   3. Add this URL to Razorpay Dashboard → Settings → Webhooks:
- *      https://hcxifkgzugxqijttmpzc.supabase.co/functions/v1/gstore-razorpay-webhook
- *
- *   4. Enable events: payment.captured, payment.failed, order.paid
- *
- * SECURITY:
- *   - Verifies X-Razorpay-Signature using HMAC-SHA256(raw_body, WEBHOOK_SECRET)
- *   - Uses service role to update order status (bypasses RLS)
- *   - Idempotent: safe to receive the same event multiple times
- *
- * This webhook is a SECONDARY confirmation mechanism.
- * The primary confirmation is done by verifyGstorePaymentFn / verifyGstoreGuestPaymentFn
- * in the browser after the user completes payment.
- * The webhook catches edge cases where the browser callback doesn't fire
- * (network issues, page close, etc.).
+ * Prefer: /functions/v1/razorpay-webhook
  */
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function hexToUint8Array(hex: string): Uint8Array {
-  const matches = hex.match(/.{1,2}/g) ?? [];
-  return new Uint8Array(matches.map(byte => parseInt(byte, 16)));
-}
-
-async function verifyRazorpayWebhookSignature(
-  body: string,
-  signature: string,
-  secret: string,
-): Promise<boolean> {
+async function hmacHex(secret: string, body: string): Promise<string> {
   const enc = new TextEncoder();
   const key = await crypto.subtle.importKey(
     "raw",
@@ -51,157 +17,93 @@ async function verifyRazorpayWebhookSignature(
     ["sign"],
   );
   const sig = await crypto.subtle.sign("HMAC", key, enc.encode(body));
-  const expected = Array.from(new Uint8Array(sig))
-    .map(b => b.toString(16).padStart(2, "0"))
-    .join("");
-  // Constant-time compare
-  return expected === signature;
+  return Array.from(new Uint8Array(sig)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-// ── Main handler ──────────────────────────────────────────────────────────────
+function notesOf(entity: Record<string, unknown> | undefined): Record<string, string> {
+  const raw = entity?.["notes"];
+  if (!raw || typeof raw !== "object") return {};
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
+    if (typeof v === "string") out[k] = v;
+  }
+  return out;
+}
 
 Deno.serve(async (req: Request) => {
-  // Only accept POST
-  if (req.method !== "POST") {
-    return new Response("Method not allowed", { status: 405 });
-  }
+  if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
 
   const webhookSecret = Deno.env.get("RAZORPAY_WEBHOOK_SECRET");
-  if (!webhookSecret) {
-    console.error("RAZORPAY_WEBHOOK_SECRET not set");
-    return new Response("Webhook not configured", { status: 500 });
-  }
+  if (!webhookSecret) return new Response("Webhook not configured", { status: 500 });
 
-  // Read raw body for signature verification
   const rawBody = await req.text();
   const signature = req.headers.get("x-razorpay-signature") ?? "";
-
-  if (!signature) {
-    return new Response("Missing signature", { status: 400 });
-  }
-
-  // Verify signature
-  const isValid = await verifyRazorpayWebhookSignature(rawBody, signature, webhookSecret);
-  if (!isValid) {
-    console.warn("Invalid Razorpay webhook signature");
+  if (!signature) return new Response("Missing signature", { status: 400 });
+  if ((await hmacHex(webhookSecret, rawBody)) !== signature) {
     return new Response("Invalid signature", { status: 400 });
   }
 
-  // Parse event
-  let event: { event: string; payload: { payment?: { entity?: Record<string, unknown> }; order?: { entity?: Record<string, unknown> } } };
+  let event: { event?: string; id?: string; payload?: Record<string, { entity?: Record<string, unknown> }> };
   try {
     event = JSON.parse(rawBody);
   } catch {
     return new Response("Invalid JSON", { status: 400 });
   }
 
-  console.log("Received Razorpay webhook:", event.event);
+  const eventType = event.event ?? "unknown";
+  const eventId = event.id ?? `${eventType}:${await hmacHex("id", rawBody)}`;
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL") ?? "",
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    { auth: { persistSession: false } },
+  );
 
-  // Setup Supabase service role client
-  const supabaseUrl  = Deno.env.get("SUPABASE_URL") ?? "";
-  const serviceRole  = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-  const supabase     = createClient(supabaseUrl, serviceRole, { auth: { persistSession: false } });
+  const { data: claim } = await supabase.rpc("claim_payment_webhook_event", {
+    p_razorpay_event_id: eventId,
+    p_event_type: eventType,
+    p_payload: event,
+  });
+  const claimed = claim as { id?: string; duplicate?: boolean; processed?: boolean } | null;
+  if (claimed?.duplicate && claimed.processed) return new Response("OK — duplicate", { status: 200 });
+
+  const payment = event.payload?.["payment"]?.entity ?? {};
+  const notes = notesOf(payment);
 
   try {
-    if (event.event === "payment.captured" || event.event === "order.paid") {
-      const paymentEntity = event.payload?.payment?.entity ?? {};
-      const notes         = (paymentEntity["notes"] ?? {}) as Record<string, string>;
-
-      const orderId   = notes["order_id"]   ?? "";
-      const paymentId = notes["payment_id"] ?? "";
-
-      if (!orderId || !paymentId) {
-        console.warn("Webhook: missing order_id or payment_id in notes", notes);
-        return new Response("OK — no action (missing notes)", { status: 200 });
-      }
-
-      // Check if order is already confirmed (idempotency)
-      const { data: order, error: orderError } = await supabase
-        .from("gstore_orders")
-        .select("id, payment_status, user_id, guest_token")
-        .eq("id", orderId)
-        .single();
-
-      if (orderError || !order) {
-        console.warn("Webhook: order not found", orderId, orderError?.message);
-        return new Response("OK — order not found", { status: 200 });
-      }
-
-      if (order.payment_status === "paid") {
-        console.log("Webhook: order already paid, skipping", orderId);
-        return new Response("OK — already paid", { status: 200 });
-      }
-
-      // Update payment record
-      const rzpOrderId   = (paymentEntity["order_id"]   ?? "") as string;
-      const rzpPaymentId = (paymentEntity["id"]          ?? "") as string;
-
-      await supabase
-        .from("gstore_payments")
-        .update({
-          provider_order_id:   rzpOrderId,
-          provider_payment_id: rzpPaymentId,
-          provider_signature:  "webhook-confirmed",
-          status:              "paid",
-          updated_at:          new Date().toISOString(),
-        })
-        .eq("id", paymentId);
-
-      // Update order status
-      await supabase
-        .from("gstore_orders")
-        .update({
-          payment_status: "paid",
-          order_status:   "confirmed",
-          updated_at:     new Date().toISOString(),
-        })
-        .eq("id", orderId);
-
-      console.log(`Webhook: confirmed order ${orderId} via ${event.event}`);
-      return new Response("OK", { status: 200 });
+    if (eventType === "payment.captured" || eventType === "order.paid") {
+      await supabase.rpc("fulfill_gstore_order_from_webhook", {
+        p_provider_order_id: (payment["order_id"] as string) ?? "",
+        p_provider_payment_id: (payment["id"] as string) ?? "",
+        p_gstore_order_id: notes["order_id"] || notes["gvrze_order_id"] || null,
+        p_gstore_payment_id: notes["payment_id"] || null,
+        p_payment_method: (payment["method"] as string) ?? null,
+        p_outcome: "success",
+      });
+    } else if (eventType === "payment.failed") {
+      await supabase.rpc("fulfill_gstore_order_from_webhook", {
+        p_provider_order_id: (payment["order_id"] as string) ?? "",
+        p_provider_payment_id: (payment["id"] as string) ?? "",
+        p_gstore_order_id: notes["order_id"] || notes["gvrze_order_id"] || null,
+        p_gstore_payment_id: notes["payment_id"] || null,
+        p_outcome: "failed",
+      });
     }
-
-    if (event.event === "payment.failed") {
-      const paymentEntity = event.payload?.payment?.entity ?? {};
-      const notes         = (paymentEntity["notes"] ?? {}) as Record<string, string>;
-      const orderId   = notes["order_id"]   ?? "";
-      const paymentId = notes["payment_id"] ?? "";
-
-      if (!orderId) {
-        return new Response("OK — no order_id in notes", { status: 200 });
-      }
-
-      // Only mark failed if currently unpaid/pending
-      const { data: order } = await supabase
-        .from("gstore_orders")
-        .select("payment_status")
-        .eq("id", orderId)
-        .single();
-
-      if (order && order.payment_status === "unpaid") {
-        if (paymentId) {
-          await supabase
-            .from("gstore_payments")
-            .update({ status: "failed", updated_at: new Date().toISOString() })
-            .eq("id", paymentId);
-        }
-        await supabase
-          .from("gstore_orders")
-          .update({ payment_status: "failed", updated_at: new Date().toISOString() })
-          .eq("id", orderId);
-      }
-
-      console.log(`Webhook: marked order ${orderId} as failed`);
-      return new Response("OK", { status: 200 });
+    if (claimed?.id) {
+      await supabase.rpc("mark_payment_webhook_event", {
+        p_id: claimed.id,
+        p_processed: true,
+        p_error: null,
+      });
     }
-
-    // Unhandled event type — return 200 so Razorpay doesn't retry
-    console.log(`Webhook: unhandled event type ${event.event}, ignoring`);
-    return new Response("OK — event not handled", { status: 200 });
-
+    return new Response("OK", { status: 200 });
   } catch (err) {
-    console.error("Webhook handler error:", err);
-    // Return 200 to prevent Razorpay from retrying (we log errors separately)
-    return new Response("OK — internal error logged", { status: 200 });
+    if (claimed?.id) {
+      await supabase.rpc("mark_payment_webhook_event", {
+        p_id: claimed.id,
+        p_processed: false,
+        p_error: err instanceof Error ? err.message : "unknown",
+      });
+    }
+    return new Response("Webhook processing failed", { status: 500 });
   }
 });

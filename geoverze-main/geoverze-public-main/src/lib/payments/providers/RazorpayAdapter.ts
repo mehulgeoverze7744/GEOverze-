@@ -227,7 +227,7 @@ export class RazorpayAdapter implements PaymentProviderInterface {
     // Razorpay Subscriptions API call here and remove the delegation.
 
     throw new Error(
-      "Razorpay subscriptions are created via the create-razorpay-subscription Edge Function. " +
+      "Razorpay subscriptions are created via createRazorpaySubscriptionFn. " +
       "Call createCheckoutSession() from createCheckoutSession.ts instead.",
     );
   }

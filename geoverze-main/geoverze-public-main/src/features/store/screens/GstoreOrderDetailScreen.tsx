@@ -27,6 +27,7 @@ import {
   GstorePaymentBadge,
   gstoreGhostBtn,
 } from "./gstoreOrderUi";
+import { GstoreRetryPaymentButton } from "./GstoreRetryPaymentButton";
 
 export function GstoreOrderDetailScreen() {
   const user     = useAuthStore(selectUser);
@@ -39,7 +40,7 @@ export function GstoreOrderDetailScreen() {
     });
   }, []);
 
-  const { data: order, isLoading, error } = useQuery({
+  const { data: order, isLoading, error, refetch } = useQuery({
     queryKey: ["gstoreOrderDetail", orderId],
     queryFn: () =>
       getGstoreOrderDetailFn({
@@ -197,6 +198,20 @@ export function GstoreOrderDetailScreen() {
                 Test order — no real payment was charged
               </div>
             )}
+
+            {order.latest_payment_id &&
+            (order.payment_status === "unpaid" ||
+              order.payment_status === "pending" ||
+              order.payment_status === "failed") ? (
+              <div className="mt-6">
+                <GstoreRetryPaymentButton
+                  orderId={order.id}
+                  paymentId={order.latest_payment_id}
+                  orderNumber={order.order_number}
+                  onPaid={() => void refetch()}
+                />
+              </div>
+            ) : null}
           </article>
         )}
       </div>

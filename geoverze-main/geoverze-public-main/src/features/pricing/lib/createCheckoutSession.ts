@@ -1,19 +1,16 @@
 /**
- * Calls the `create-razorpay-subscription` Supabase Edge Function and returns
- * the data needed to open the Razorpay checkout modal.
+ * Creates a Razorpay membership checkout session.
  *
- * The Edge Function runs with the Supabase service role so it can:
- *  1. Look up the user's billing_provider_plan_instance (Razorpay Plan ID).
- *  2. Create a Razorpay Subscription via the Razorpay REST API.
- *  3. Insert a pending user_subscriptions row via begin_razorpay_subscription().
- *  4. Calculate GST from billing_gst_config and return the breakdown.
- *  5. Save billing address and return invoice-ready amounts.
+ * Primary path: TanStack server function `createRazorpaySubscriptionFn`
+ * (works in local `npm run dev` without deploying Edge Functions).
  *
- * This file contains NO secrets — it only forwards the user's auth session JWT.
+ * Prices are loaded from subscription_plans on the server. The browser never
+ * chooses the charge amount.
  */
 
 import { supabase } from "@/lib/supabase/client";
 import type { BillingCycle, TierId } from "../data/plans";
+import { createRazorpaySubscriptionFn } from "./subscriptionServerFns";
 
 /** Billing address provided by the user at checkout. */
 export type CheckoutBillingDetails = {
@@ -42,6 +39,7 @@ export type CheckoutSessionResponse = {
   subscription_id: string;
   /** Razorpay Subscription ID (sub_xxxx). Open the modal with this. */
   razorpay_subscription_id: string;
+  razorpay_key_id?: string;
 
   /** GST breakdown (server-authoritative) ─────────────────────────── */
   /** Subscription base amount in paise (pre-tax). */
@@ -63,6 +61,7 @@ export type CheckoutSessionResponse = {
   promotion_applied: boolean;
   /** Promo label if applied. */
   promotion_label?: string;
+  test_mode?: boolean;
 };
 
 export class CheckoutSessionError extends Error {
@@ -87,43 +86,24 @@ export async function createCheckoutSession(
     );
   }
 
-  const supabaseUrl = import.meta.env["VITE_SUPABASE_URL"] as string;
-  const functionUrl = `${supabaseUrl}/functions/v1/create-razorpay-subscription`;
+  if (request.plan_tier === "explorer") {
+    throw new CheckoutSessionError("Explorer is free and does not require payment.", "FREE_PLAN");
+  }
 
-  let response: Response;
   try {
-    response = await fetch(functionUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionData.session.access_token}`,
+    const result = await createRazorpaySubscriptionFn({
+      data: {
+        access_token: sessionData.session.access_token,
+        plan_tier: request.plan_tier,
+        billing_interval: request.billing_interval,
+        idempotency_key: `${request.plan_tier}:${request.billing_interval}:${sessionData.session.user.id}`,
+        billing_details: request.billing_details,
+        ...(request.coupon_code ? { coupon_code: request.coupon_code } : {}),
       },
-      body: JSON.stringify(request),
     });
-  } catch {
-    throw new CheckoutSessionError(
-      "Could not reach the payment server. Check your connection and try again.",
-      "NETWORK_ERROR",
-    );
+    return result;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Could not start checkout.";
+    throw new CheckoutSessionError(message, "CHECKOUT_FAILED");
   }
-
-  let body: unknown;
-  try {
-    body = await response.json();
-  } catch {
-    throw new CheckoutSessionError(
-      `Payment server returned an unexpected response (${response.status}).`,
-      "PARSE_ERROR",
-    );
-  }
-
-  if (!response.ok) {
-    const err = body as { error?: string; code?: string } | null;
-    throw new CheckoutSessionError(
-      err?.error ?? `Payment server error (${response.status}).`,
-      err?.code ?? `HTTP_${response.status}`,
-    );
-  }
-
-  return body as CheckoutSessionResponse;
 }

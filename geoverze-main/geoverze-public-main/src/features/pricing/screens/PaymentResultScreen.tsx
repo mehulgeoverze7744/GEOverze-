@@ -53,16 +53,26 @@ type ResultConfig = {
 function getConfig(status: PaymentStatus, planName: string, reason?: string): ResultConfig {
   switch (status) {
     case "success":
+      return {
+        iconRingClass: "pr-icon-ring pr-icon-ring--success",
+        Icon: CheckCircle2,
+        iconSize: 28,
+        heading: "Membership activated",
+        body: `Your ${planName} membership is now active. Welcome to GVRZE!`,
+        primaryLabel: "Go to billing dashboard",
+        primaryTo: "/billing",
+        secondaryLabel: "Return to home",
+        secondaryTo: "/",
+      };
     case "processing":
       return {
         iconRingClass: "pr-icon-ring pr-icon-ring--processing",
         Icon: Clock,
         iconSize: 28,
-        heading: "Payment received",
+        heading: "Verifying payment",
         body:
-          status === "success"
-            ? `Your ${planName} membership is now active. Welcome to GVRZE!`
-            : `Your payment is being verified. Your ${planName} membership will be activated within a few minutes. You'll be able to access all features once confirmed.`,
+          reason ??
+          `Your payment is being verified. Your ${planName} membership will activate once Razorpay confirms capture. This page never marks a payment successful on its own.`,
         primaryLabel: "Go to billing dashboard",
         primaryTo: "/billing",
         secondaryLabel: "Return to home",

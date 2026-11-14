@@ -8,8 +8,9 @@
  */
 
 import {
+  AlertCircle,
   CheckCircle2,
-  ChevronRight,
+  Clock,
   Package,
   ShoppingBag,
   Truck,
@@ -29,6 +30,7 @@ import {
 } from "../lib/gstoreServerFns";
 import { formatInrPaise } from "../lib/gstoreProductPrices";
 import { StorefrontNav } from "../storefront/StorefrontNav";
+import { GstoreRetryPaymentButton } from "./GstoreRetryPaymentButton";
 import "../storefront/storefront.css";
 
 // ── Status badge ──────────────────────────────────────────────────────────────
@@ -42,6 +44,48 @@ const ORDER_STATUS_COLOR: Record<string, string> = {
   cancelled:  "bg-red-100 text-red-800",
   refunded:   "bg-gray-100 text-gray-800",
 };
+
+function ConfirmationHeader({
+  paymentStatus,
+  orderNumber,
+}: {
+  paymentStatus: string | undefined;
+  orderNumber: string;
+}) {
+  const paid = paymentStatus === "paid";
+  const failed = paymentStatus === "failed" || paymentStatus === "cancelled";
+  return (
+    <div className="mb-10 text-center">
+      <div
+        className={`mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full ${
+          paid ? "bg-green-100" : failed ? "bg-red-100" : "bg-amber-100"
+        }`}
+      >
+        {paid ? (
+          <CheckCircle2 className="h-8 w-8 text-green-600" />
+        ) : failed ? (
+          <AlertCircle className="h-8 w-8 text-red-600" />
+        ) : (
+          <Clock className="h-8 w-8 text-amber-600" />
+        )}
+      </div>
+      <h1 className="text-[28px] font-bold text-black">
+        {paid ? "Order Confirmed!" : failed ? "Payment unsuccessful" : "Verifying payment"}
+      </h1>
+      <p className="mt-2 text-[14px] text-[#555]">
+        {paid
+          ? "Thank you for your purchase. We'll send you a shipping confirmation once your order is on its way."
+          : failed
+            ? "No order was fulfilled. You can retry payment from checkout or contact support if you were charged."
+            : "We only confirm orders after Razorpay reports a captured payment. Refresh this page in a moment."}
+      </p>
+      <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#e0e0e0] bg-[#f9f9f9] px-4 py-2 text-[13px] font-medium text-black">
+        <Package className="h-4 w-4 text-[#777]" />
+        {orderNumber}
+      </div>
+    </div>
+  );
+}
 
 function StatusBadge({ status }: { status: string }) {
   const cls = ORDER_STATUS_COLOR[status] ?? "bg-gray-100 text-gray-800";
@@ -73,7 +117,7 @@ export function GstoreOrderConfirmation() {
   }, [isGuest]);
 
   // Authenticated order fetch
-  const { data: authOrder, isLoading: authLoading } = useQuery({
+  const { data: authOrder, isLoading: authLoading, refetch: refetchAuthOrder } = useQuery({
     queryKey: ["gstoreOrder", orderId],
     queryFn: () => getGstoreOrderDetailFn({ data: { access_token: accessToken!, order_id: orderId } }),
     enabled: Boolean(orderId && accessToken && !isGuest),
@@ -115,21 +159,13 @@ export function GstoreOrderConfirmation() {
       <main className="min-h-screen bg-white">
         <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
 
-          {/* Success header */}
-          <div className="mb-10 text-center">
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-              <CheckCircle2 className="h-8 w-8 text-green-600" />
-            </div>
-            <h1 className="text-[28px] font-bold text-black">Order Confirmed!</h1>
-            <p className="mt-2 text-[14px] text-[#555]">
-              Thank you for your purchase. We'll send you a shipping confirmation
-              once your order is on its way.
-            </p>
-            <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#e0e0e0] bg-[#f9f9f9] px-4 py-2 text-[13px] font-medium text-black">
-              <Package className="h-4 w-4 text-[#777]" />
-              {orderNumber || order?.order_number || "Processing…"}
-            </div>
-          </div>
+          {/* Header — only celebrate after a verified paid order */}
+          <ConfirmationHeader
+            paymentStatus={
+              isLoading ? "loading" : (order as GstoreOrderDetail | undefined)?.payment_status
+            }
+            orderNumber={orderNumber || order?.order_number || "Processing…"}
+          />
 
           {/* Guest note */}
           {isGuest && (
@@ -151,6 +187,19 @@ export function GstoreOrderConfirmation() {
 
           {/* Actions */}
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            {!isGuest &&
+            authOrder &&
+            authOrder.latest_payment_id &&
+            (authOrder.payment_status === "unpaid" ||
+              authOrder.payment_status === "pending" ||
+              authOrder.payment_status === "failed") ? (
+              <GstoreRetryPaymentButton
+                orderId={authOrder.id}
+                paymentId={authOrder.latest_payment_id}
+                orderNumber={authOrder.order_number}
+                onPaid={() => void refetchAuthOrder()}
+              />
+            ) : null}
             {!isGuest ? (
               <Link
                 to="/geostore/orders"
@@ -231,9 +280,9 @@ function OrderDetailCard({ order }: { order: GstoreOrderDetail }) {
           <span>GST (included)</span>
           <span>{formatInrPaise(order.tax_minor)}</span>
         </div>
-        <div className="flex justify-between border-t border-[#e0e0e0] pt-2.5 text-[16px] font-bold text-black">
+          <div className="flex justify-between border-t border-[#e0e0e0] pt-2.5 text-[16px] font-bold text-black">
           <div>
-            <span>Total paid</span>
+            <span>{order.payment_status === "paid" ? "Total paid" : "Total payable"}</span>
             <p className="text-[10px] font-normal text-[#999] mt-0.5">Inclusive of all taxes</p>
           </div>
           <span>{formatInrPaise(order.total_minor)}</span>
