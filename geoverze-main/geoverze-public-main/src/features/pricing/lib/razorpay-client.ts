@@ -92,7 +92,7 @@ export function loadRazorpayScript(): Promise<void> {
 
 /** Returns the Razorpay Key ID from env. Empty string = not configured. */
 export function getRazorpayKeyId(): string {
-  return (import.meta.env["VITE_RAZORPAY_KEY_ID"] as string | undefined) ?? "";
+  return (import.meta.env.VITE_RAZORPAY_KEY_ID ?? import.meta.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? "").trim();
 }
 
 /** True when Razorpay credentials are configured in the environment. */

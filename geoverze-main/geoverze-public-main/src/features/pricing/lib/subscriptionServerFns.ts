@@ -102,7 +102,10 @@ export const createRazorpaySubscriptionFn = createServerFn({ method: "POST" })
     assertRateLimit(`sub-create:${data.access_token.slice(-24)}`, 8, 60_000);
     const rzp = await import("./subscriptionRazorpay.server");
     if (!rzp.isRazorpayServerConfigured()) {
-      throw new Error("Razorpay is not configured on the server.");
+      const diag = rzp.getRazorpayDiagnostics();
+      throw new Error(
+        `Razorpay is not configured on the server. Key ID prefix: ${diag.keyIdPrefix}. Key Secret present: ${diag.keySecretPresent}. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET as a matching pair in Vercel Production, plus VITE_RAZORPAY_KEY_ID with the same Key ID.`,
+      );
     }
 
     const amounts = await catalogChargePaise(data.plan_tier, data.billing_interval);

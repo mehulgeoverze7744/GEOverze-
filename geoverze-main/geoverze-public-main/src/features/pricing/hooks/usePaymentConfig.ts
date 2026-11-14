@@ -40,14 +40,22 @@ export function usePaymentConfig() {
     Boolean(import.meta.env.VITE_RAZORPAY_KEY_ID) &&
     String(import.meta.env.VITE_RAZORPAY_KEY_ID).startsWith("rzp_test_")
   );
+  const frontendKeyId = (import.meta.env.VITE_RAZORPAY_KEY_ID ?? "").trim();
+  const backendKeyId = query.data?.razorpayKeyId ?? "";
+  const keyIdMismatch =
+    query.isSuccess && Boolean(frontendKeyId && backendKeyId && frontendKeyId !== backendKeyId);
 
   return {
     /** True when VITE_MOCK_PAYMENTS=true is set in the server env. */
     mockEnabled,
-    /** True when VITE_RAZORPAY_KEY_ID is set in the server env. */
+    /** True when Razorpay Key ID + Secret are configured and mock mode is off. */
     razorpayEnabled,
     /** True when Razorpay TEST MODE keys are active. */
     testMode,
+    razorpayKeyId: backendKeyId || frontendKeyId,
+    razorpayKeyIdPrefix: query.data?.razorpayKeyIdPrefix,
+    razorpaySecretConfigured: query.data?.razorpaySecretConfigured ?? false,
+    keyIdMismatch,
     /**
      * True while the initial server config call hasn't resolved yet.
      * Both mock and Razorpay buttons are hidden during this window to

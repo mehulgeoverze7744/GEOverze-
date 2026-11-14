@@ -39,7 +39,8 @@
 
 import { createServerFn } from "@tanstack/react-start";
 
-import { isMockPaymentsExplicit, readRazorpayKeyId, readRazorpayMode } from "@/lib/payments/razorpayEnv";
+import { isMockPaymentsExplicit } from "@/lib/payments/razorpayEnv";
+import type { RazorpayCredentialSource, RazorpayKeyPrefix } from "@/lib/payments/razorpayCredentialParse";
 
 export type PaymentConfig = {
   /**
@@ -48,29 +49,38 @@ export type PaymentConfig = {
    */
   mockEnabled: boolean;
   /**
-   * True when VITE_RAZORPAY_KEY_ID is present in the server environment.
+   * True when a Razorpay Key ID is present and mock mode is off.
    */
   razorpayEnabled: boolean;
   /** True when Razorpay is running in TEST MODE (rzp_test_ keys or RAZORPAY_MODE=test). */
   testMode: boolean;
+  /** Public Key ID used by the server for Basic Auth (never the Key Secret). */
+  razorpayKeyId: string;
+  razorpayKeyIdPrefix: RazorpayKeyPrefix;
+  razorpayKeyIdFingerprint: string;
+  razorpaySecretConfigured: boolean;
+  razorpayCredentialSource: RazorpayCredentialSource;
 };
 
 export const getPaymentConfig = createServerFn({ method: "GET" }).handler(
   async (): Promise<PaymentConfig> => {
-    // Explicit env var — always wins (set in Vercel for preview/production testing).
-    const keyId = readRazorpayKeyId();
-    const razorpayConfigured = keyId.length > 0;
-    // Auto-mock only when the tester explicitly opted in, or local dev has
-    // no Razorpay Key ID at all. Presence of rzp_test_/rzp_live_ keys wins.
+    const rzp = await import("@/lib/payments/razorpayServer");
+    const diag = rzp.getRazorpayDiagnostics();
+    const razorpayConfigured = diag.keyIdPresent && diag.keySecretPresent;
     const autoMockDev =
       process.env["NODE_ENV"] === "development" && !razorpayConfigured;
     const mockEnabled = isMockPaymentsExplicit() || autoMockDev;
-    const testMode = razorpayConfigured && readRazorpayMode() === "test";
+    const testMode = razorpayConfigured && diag.mode === "test";
 
     return {
       mockEnabled,
       razorpayEnabled: razorpayConfigured && !mockEnabled,
       testMode: testMode && !mockEnabled,
+      razorpayKeyId: diag.razorpayKeyId,
+      razorpayKeyIdPrefix: diag.keyIdPrefix,
+      razorpayKeyIdFingerprint: diag.keyIdFingerprint,
+      razorpaySecretConfigured: diag.keySecretPresent,
+      razorpayCredentialSource: diag.credentialSource,
     };
   },
 );

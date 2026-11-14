@@ -401,7 +401,10 @@ export function CheckoutScreen() {
         },
       });
 
-      const keyId = session.razorpay_key_id || getRazorpayKeyId();
+      const keyId = (session.razorpay_key_id || getRazorpayKeyId()).trim();
+      if (!keyId) {
+        throw new Error("Razorpay Key ID is missing on the server response.");
+      }
       if (!window.Razorpay) {
         throw new Error("Razorpay SDK did not load. Try refreshing the page.");
       }

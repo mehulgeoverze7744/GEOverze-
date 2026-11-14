@@ -12,6 +12,8 @@
  * publishable key) is safe to expose to the browser.
  */
 
+import { gstoreRazorpayCheckoutExtras } from "./gstoreRazorpayCheckoutConfig";
+
 export type GstoreRazorpayOptions = {
   key: string;
   /** Razorpay Order ID for the one-time payment (order_xxxx). */
@@ -19,6 +21,7 @@ export type GstoreRazorpayOptions = {
   name: string;
   description: string;
   image?: string;
+  currency?: string;
   prefill?: {
     name?: string;
     email?: string;
@@ -26,6 +29,20 @@ export type GstoreRazorpayOptions = {
   };
   notes?: Record<string, string>;
   theme?: { color?: string };
+  method?: {
+    upi?: boolean;
+    card?: boolean;
+    netbanking?: boolean;
+    wallet?: boolean;
+  };
+  config?: {
+    display: {
+      blocks: Record<string, { name: string; instruments: Array<Record<string, unknown>> }>;
+      sequence: readonly string[];
+      preferences: { show_default_blocks: boolean };
+      hide?: Array<{ method: string }>;
+    };
+  };
   handler: (response: GstoreRazorpaySuccessResponse) => void;
   onFailed?: (description: string) => void;
   modal?: {
@@ -90,9 +107,13 @@ export function getGstoreRazorpayKeyId(): string {
 export function openGstoreRazorpayCheckout(options: GstoreRazorpayOptions): void {
   const RazorpayClass = (window as unknown as { Razorpay: new (o: unknown) => { open(): void; on(e: string, h: unknown): void } }).Razorpay;
   if (!RazorpayClass) throw new Error("Razorpay script not loaded.");
-  const rzp = new RazorpayClass(options as unknown);
+  const { onFailed, ...checkoutOptions } = options;
+  const rzp = new RazorpayClass({
+    ...checkoutOptions,
+    ...gstoreRazorpayCheckoutExtras(),
+  });
   rzp.on("payment.failed", (response: { error?: { description?: string } }) => {
-    options.onFailed?.(response.error?.description ?? "Payment failed.");
+    onFailed?.(response.error?.description ?? "Payment failed.");
   });
   rzp.open();
 }

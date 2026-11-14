@@ -12,16 +12,38 @@ import {
   verifyRazorpayOrderSignature,
   verifyRazorpaySubscriptionSignature,
 } from "./razorpayCrypto";
-import { readRazorpayKeyId, readRazorpayMode } from "./razorpayEnv";
+import {
+  classifyRazorpayKeyPrefix,
+  encodeRazorpayBasicAuth,
+  formatRazorpayHttpError,
+  razorpayKeyFingerprint,
+  resolveRazorpayCredentialPair,
+  secretLooksLikeKeyId,
+  stripEnvValue,
+  usableRazorpaySecret,
+  type RazorpayCredentialPair,
+  type RazorpayKeyPrefix,
+} from "./razorpayCredentialParse";
 
 const RAZORPAY_API = "https://api.razorpay.com/v1";
 
-function stripEnvValue(value: string | undefined): string {
-  return (value ?? "").trim().replace(/^["']|["']$/g, "");
+/** Dynamic lookup so Nitro/Vite cannot inline a stale build-time secret. */
+function readRuntimeEnv(name: string): string {
+  const runtime = globalThis as {
+    process?: { env?: Record<string, string | undefined> };
+  };
+  return stripEnvValue(runtime.process?.env?.[name]);
 }
 
-/** Prefers `.env.local` so a stale process env cannot pair the wrong Key Secret. */
+function allowDotEnvLocal(): boolean {
+  const vercel = readRuntimeEnv("VERCEL").toLowerCase();
+  if (vercel === "1" || vercel === "true") return false;
+  if (readRuntimeEnv("NODE_ENV") === "production") return false;
+  return true;
+}
+
 function readDotEnvLocal(name: string): string {
+  if (!allowDotEnvLocal()) return "";
   try {
     const raw = readFileSync(resolve(process.cwd(), ".env.local"), "utf8");
     for (const line of raw.split(/\r?\n/)) {
@@ -29,7 +51,9 @@ function readDotEnvLocal(name: string): string {
       if (!trimmed || trimmed.startsWith("#")) continue;
       const eq = trimmed.indexOf("=");
       if (eq < 0) continue;
-      if (trimmed.slice(0, eq) === name) return stripEnvValue(trimmed.slice(eq + 1));
+      if (trimmed.slice(0, eq).trim() === name) {
+        return stripEnvValue(trimmed.slice(eq + 1));
+      }
     }
   } catch {
     // Production/Vercel has no .env.local — fall through to process.env.
@@ -37,78 +61,119 @@ function readDotEnvLocal(name: string): string {
   return "";
 }
 
-function usableSecret(value: string | undefined): string {
-  const trimmed = stripEnvValue(value);
-  if (!trimmed) return "";
-  const lowered = trimmed.toLowerCase();
-  if (
-    lowered === "your_webhook_secret" ||
-    lowered === "whsec_xxxx" ||
-    lowered === "changeme" ||
-    lowered === "placeholder"
-  ) {
-    return "";
-  }
-  return trimmed;
+function readCredentialPair(): RazorpayCredentialPair {
+  return resolveRazorpayCredentialPair({
+    allowLocal: allowDotEnvLocal(),
+    localKeyId: readDotEnvLocal("RAZORPAY_KEY_ID") || readDotEnvLocal("VITE_RAZORPAY_KEY_ID"),
+    localKeySecret: readDotEnvLocal("RAZORPAY_KEY_SECRET"),
+    runtimeKeyId:
+      readRuntimeEnv("RAZORPAY_KEY_ID") ||
+      readRuntimeEnv("VITE_RAZORPAY_KEY_ID") ||
+      readRuntimeEnv("NEXT_PUBLIC_RAZORPAY_KEY_ID"),
+    runtimeKeySecret: readRuntimeEnv("RAZORPAY_KEY_SECRET"),
+  });
 }
 
 export function getRazorpayKeyId(): string {
-  return (
-    readDotEnvLocal("RAZORPAY_KEY_ID") ||
-    readDotEnvLocal("VITE_RAZORPAY_KEY_ID") ||
-    readRazorpayKeyId()
-  );
+  return readCredentialPair().keyId;
 }
 
 export function getRazorpayKeySecret(): string {
-  return usableSecret(readDotEnvLocal("RAZORPAY_KEY_SECRET") || process.env["RAZORPAY_KEY_SECRET"]);
+  return usableRazorpaySecret(readCredentialPair().keySecret);
 }
 
 export function getRazorpayWebhookSecret(): string {
-  return usableSecret(readDotEnvLocal("RAZORPAY_WEBHOOK_SECRET") || process.env["RAZORPAY_WEBHOOK_SECRET"]);
+  return usableRazorpaySecret(
+    readDotEnvLocal("RAZORPAY_WEBHOOK_SECRET") || readRuntimeEnv("RAZORPAY_WEBHOOK_SECRET"),
+  );
 }
 
 export function getRazorpayMode(): "test" | "live" {
-  return readRazorpayMode();
+  const explicit = (
+    readDotEnvLocal("RAZORPAY_MODE") || readRuntimeEnv("RAZORPAY_MODE")
+  ).toLowerCase();
+  if (explicit === "live") return "live";
+  if (explicit === "test") return "test";
+  return getRazorpayKeyId().startsWith("rzp_live_") ? "live" : "test";
 }
 
 export function isRazorpayServerConfigured(): boolean {
-  return getRazorpayKeyId().length > 0 && getRazorpayKeySecret().length > 0;
+  const pair = readCredentialPair();
+  return pair.keyId.length > 0 && pair.keySecret.length > 0;
 }
 
-function basicAuthHeader(): string {
-  return `Basic ${Buffer.from(`${getRazorpayKeyId()}:${getRazorpayKeySecret()}`).toString("base64")}`;
+export type RazorpayServerDiagnostics = {
+  keyIdPresent: boolean;
+  keySecretPresent: boolean;
+  keyIdPrefix: RazorpayKeyPrefix;
+  keyIdFingerprint: string;
+  razorpayKeyId: string;
+  credentialSource: RazorpayCredentialPair["source"];
+  mode: "test" | "live";
+  secretLooksLikeKeyId: boolean;
+};
+
+/** Public-safe snapshot of Razorpay env. Never includes the Key Secret. */
+export function getRazorpayDiagnostics(): RazorpayServerDiagnostics {
+  const pair = readCredentialPair();
+  return {
+    keyIdPresent: pair.keyId.length > 0,
+    keySecretPresent: pair.keySecret.length > 0,
+    keyIdPrefix: classifyRazorpayKeyPrefix(pair.keyId),
+    keyIdFingerprint: razorpayKeyFingerprint(pair.keyId),
+    razorpayKeyId: pair.keyId,
+    credentialSource: pair.source,
+    mode: getRazorpayMode(),
+    secretLooksLikeKeyId: secretLooksLikeKeyId(pair.keySecret),
+  };
 }
 
-function assertKeysMatchMode(): void {
-  const keyId = getRazorpayKeyId();
+function basicAuthHeader(pair: RazorpayCredentialPair): string {
+  return `Basic ${encodeRazorpayBasicAuth(pair.keyId, pair.keySecret)}`;
+}
+
+function assertKeysMatchMode(pair: RazorpayCredentialPair): void {
   const mode = getRazorpayMode();
-  if (mode !== "live" && keyId.startsWith("rzp_live_")) {
+  if (mode !== "live" && pair.keyId.startsWith("rzp_live_")) {
     throw new Error("Live Razorpay keys cannot be used while RAZORPAY_MODE=test.");
+  }
+  if (mode === "live" && pair.keyId.startsWith("rzp_test_")) {
+    throw new Error("TEST Razorpay keys cannot be used while RAZORPAY_MODE=live.");
+  }
+  if (secretLooksLikeKeyId(pair.keySecret)) {
+    throw new Error(
+      "RAZORPAY_KEY_SECRET looks like a Key ID. Set the Key Secret from dashboard.razorpay.com → Settings → API Keys.",
+    );
   }
 }
 
 async function razorpayRequest<T>(method: "GET" | "POST" | "PATCH", path: string, body?: unknown): Promise<T> {
-  if (!isRazorpayServerConfigured()) {
+  const pair = readCredentialPair();
+  if (!pair.keyId || !pair.keySecret) {
     throw new Error("Razorpay is not configured. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET.");
   }
-  assertKeysMatchMode();
+  assertKeysMatchMode(pair);
   const res = await fetch(`${RAZORPAY_API}${path}`, {
     method,
     headers: {
       "Content-Type": "application/json",
-      Authorization: basicAuthHeader(),
+      Authorization: basicAuthHeader(pair),
     },
     ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
   });
   if (!res.ok) {
     const err = await res.text();
-    if (res.status === 401) {
-      throw new Error(
-        "Razorpay rejected the API keys (401). Confirm RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET are a matching TEST pair from dashboard.razorpay.com → Settings → API Keys.",
-      );
-    }
-    throw new Error(`Razorpay API error (${res.status}): ${err}`);
+    throw new Error(
+      formatRazorpayHttpError({
+        status: res.status,
+        method,
+        path,
+        bodyText: err,
+        keyPrefix: classifyRazorpayKeyPrefix(pair.keyId),
+        secretConfigured: pair.keySecret.length > 0,
+        secretLooksLikeKeyId: secretLooksLikeKeyId(pair.keySecret),
+      }),
+    );
   }
   return res.json() as Promise<T>;
 }
@@ -280,5 +345,50 @@ export async function verifyCapturedSubscriptionPayment(input: {
 
 export function envPlanId(tier: string, interval: string): string {
   const key = `RAZORPAY_PLAN_${tier.toUpperCase()}_${interval.toUpperCase()}`;
-  return process.env[key] ?? "";
+  return readRuntimeEnv(key);
+}
+
+/** Authenticated GET used to verify the Key ID/Secret pair. Does not create a charge. */
+export async function probeRazorpayApiAuth(): Promise<{
+  ok: boolean;
+  status: number;
+  endpoint: string;
+  errorCode: string | null;
+  errorDescription: string | null;
+}> {
+  const pair = readCredentialPair();
+  const endpoint = "GET /orders?count=1";
+  if (!pair.keyId || !pair.keySecret) {
+    return {
+      ok: false,
+      status: 0,
+      endpoint,
+      errorCode: "NOT_CONFIGURED",
+      errorDescription: "RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET is missing.",
+    };
+  }
+  const res = await fetch(`${RAZORPAY_API}/orders?count=1`, {
+    method: "GET",
+    headers: { Authorization: basicAuthHeader(pair) },
+  });
+  const text = await res.text();
+  let errorCode: string | null = null;
+  let errorDescription: string | null = null;
+  try {
+    const parsed = JSON.parse(text) as {
+      error?: { code?: string; description?: string };
+      items?: unknown[];
+    };
+    errorCode = parsed?.error?.code ?? null;
+    errorDescription = parsed?.error?.description ?? null;
+  } catch {
+    errorDescription = res.ok ? null : "Unreadable Razorpay response";
+  }
+  return {
+    ok: res.ok,
+    status: res.status,
+    endpoint,
+    errorCode,
+    errorDescription,
+  };
 }

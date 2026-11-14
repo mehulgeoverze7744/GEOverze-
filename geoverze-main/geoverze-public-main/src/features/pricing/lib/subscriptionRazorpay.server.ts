@@ -11,6 +11,7 @@ import {
   createRazorpayPlan,
   createRazorpaySubscription,
   envPlanId,
+  getRazorpayDiagnostics,
   getRazorpayKeyId,
   getRazorpayMode,
   isRazorpayServerConfigured,
@@ -20,6 +21,7 @@ import {
 export {
   cancelRazorpaySubscription,
   createRazorpaySubscription,
+  getRazorpayDiagnostics,
   getRazorpayKeyId,
   getRazorpayMode,
   isRazorpayServerConfigured,
