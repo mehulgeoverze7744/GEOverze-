@@ -27,6 +27,17 @@ async function hmacHex(secret: string, body: string): Promise<string> {
   return Array.from(new Uint8Array(sig)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+function timingSafeEqualHex(a: string, b: string): boolean {
+  const left = a.toLowerCase();
+  const right = b.toLowerCase();
+  if (left.length !== right.length || left.length === 0) return false;
+  let mismatch = 0;
+  for (let i = 0; i < left.length; i++) {
+    mismatch |= left.charCodeAt(i) ^ right.charCodeAt(i);
+  }
+  return mismatch === 0;
+}
+
 function notesOf(entity: Record<string, unknown> | undefined): Record<string, string> {
   const raw = entity?.["notes"];
   if (!raw || typeof raw !== "object") return {};
@@ -42,8 +53,8 @@ Deno.serve(async (req: Request) => {
     return new Response("Method not allowed", { status: 405 });
   }
 
-  const webhookSecret = Deno.env.get("RAZORPAY_WEBHOOK_SECRET");
-  if (!webhookSecret) {
+  const webhookSecret = (Deno.env.get("RAZORPAY_WEBHOOK_SECRET") ?? "").trim();
+  if (!webhookSecret || webhookSecret === "your_webhook_secret") {
     console.error("RAZORPAY_WEBHOOK_SECRET not set");
     return new Response("Webhook not configured", { status: 500 });
   }
@@ -53,7 +64,7 @@ Deno.serve(async (req: Request) => {
   if (!signature) return new Response("Missing signature", { status: 400 });
 
   const expected = await hmacHex(webhookSecret, rawBody);
-  if (expected !== signature) {
+  if (!timingSafeEqualHex(expected, signature)) {
     console.warn("Invalid Razorpay webhook signature");
     return new Response("Invalid signature", { status: 400 });
   }
@@ -70,19 +81,24 @@ Deno.serve(async (req: Request) => {
   }
 
   const eventType = event.event ?? "unknown";
-  const eventId = event.id ?? `${eventType}:${await hmacHex("id", rawBody)}`;
+  const envelopeId = typeof event.id === "string" ? event.id.trim() : "";
+  const eventId = envelopeId || `${eventType}:${await hmacHex("id", rawBody)}`;
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceRole = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
   const supabase = createClient(supabaseUrl, serviceRole, { auth: { persistSession: false } });
 
-  const { data: claim } = await supabase.rpc("claim_payment_webhook_event", {
+  const { data: claim, error: claimError } = await supabase.rpc("claim_payment_webhook_event", {
     p_razorpay_event_id: eventId,
     p_event_type: eventType,
     p_payload: event,
   });
+  if (claimError) {
+    console.error("Webhook claim failed:", claimError.message);
+    return new Response("Webhook claim failed", { status: 500 });
+  }
   const claimed = claim as { id?: string; duplicate?: boolean; processed?: boolean } | null;
-  if (claimed?.duplicate && claimed.processed) {
+  if (claimed?.processed === true) {
     return new Response("OK — duplicate", { status: 200 });
   }
 

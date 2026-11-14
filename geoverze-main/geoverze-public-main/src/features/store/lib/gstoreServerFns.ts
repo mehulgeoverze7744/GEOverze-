@@ -383,16 +383,7 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
     });
 
     if (!placed.rzpOrderId) {
-      return {
-        order_id:     result.order_id,
-        order_number: result.order_number,
-        payment_id:   result.payment_id,
-        total_minor:  totalMinor,
-        currency:     "INR",
-        rzp_key_id:   "",
-        mock_enabled: false,
-        idempotent:   result.idempotent,
-      };
+      throw new Error("Razorpay keys not configured.");
     }
 
     await sbAuth.rpc("attach_gstore_razorpay_order", {

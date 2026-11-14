@@ -42,6 +42,26 @@ export function shouldSkipProcessedWebhook(existing: {
   return existing.processing_status === "processed";
 }
 
+/**
+ * Razorpay webhook envelopes do not include a stable top-level `id`.
+ * Never fall back to the event type alone — that would collapse every
+ * `payment.captured` (etc.) into one idempotency key.
+ */
+export function resolveRazorpayWebhookEventId(input: {
+  envelopeId?: string | null | undefined;
+  eventType: string;
+  rawBodyHash: string;
+}): string {
+  const envelopeId = input.envelopeId?.trim() ?? "";
+  if (envelopeId.length > 0) return envelopeId;
+  const eventType = input.eventType.trim() || "unknown";
+  const hash = input.rawBodyHash.trim();
+  if (!hash) {
+    throw new Error("Webhook event hash is required when Razorpay envelope id is missing.");
+  }
+  return `${eventType}:${hash}`;
+}
+
 function asRecord(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" ? (value as Record<string, unknown>) : {};
 }

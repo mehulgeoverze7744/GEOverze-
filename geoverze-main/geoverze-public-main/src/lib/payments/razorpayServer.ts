@@ -11,21 +11,36 @@ import {
 
 const RAZORPAY_API = "https://api.razorpay.com/v1";
 
+function usableSecret(value: string | undefined): string {
+  const trimmed = (value ?? "").trim();
+  if (!trimmed) return "";
+  const lowered = trimmed.toLowerCase();
+  if (
+    lowered === "your_webhook_secret" ||
+    lowered === "whsec_xxxx" ||
+    lowered === "changeme" ||
+    lowered === "placeholder"
+  ) {
+    return "";
+  }
+  return trimmed;
+}
+
 export function getRazorpayKeyId(): string {
   return (
     process.env["RAZORPAY_KEY_ID"] ??
     process.env["VITE_RAZORPAY_KEY_ID"] ??
     process.env["NEXT_PUBLIC_RAZORPAY_KEY_ID"] ??
     ""
-  );
+  ).trim();
 }
 
 export function getRazorpayKeySecret(): string {
-  return process.env["RAZORPAY_KEY_SECRET"] ?? "";
+  return usableSecret(process.env["RAZORPAY_KEY_SECRET"]);
 }
 
 export function getRazorpayWebhookSecret(): string {
-  return process.env["RAZORPAY_WEBHOOK_SECRET"] ?? "";
+  return usableSecret(process.env["RAZORPAY_WEBHOOK_SECRET"]);
 }
 
 export function getRazorpayMode(): "test" | "live" {
@@ -43,10 +58,19 @@ function basicAuthHeader(): string {
   return `Basic ${Buffer.from(`${getRazorpayKeyId()}:${getRazorpayKeySecret()}`).toString("base64")}`;
 }
 
+function assertKeysMatchMode(): void {
+  const keyId = getRazorpayKeyId();
+  const mode = getRazorpayMode();
+  if (mode !== "live" && keyId.startsWith("rzp_live_")) {
+    throw new Error("Live Razorpay keys cannot be used while RAZORPAY_MODE=test.");
+  }
+}
+
 async function razorpayRequest<T>(method: "GET" | "POST" | "PATCH", path: string, body?: unknown): Promise<T> {
   if (!isRazorpayServerConfigured()) {
     throw new Error("Razorpay is not configured. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET.");
   }
+  assertKeysMatchMode();
   const res = await fetch(`${RAZORPAY_API}${path}`, {
     method,
     headers: {

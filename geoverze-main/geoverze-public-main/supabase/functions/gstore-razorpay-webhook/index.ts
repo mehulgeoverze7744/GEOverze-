@@ -33,8 +33,10 @@ function notesOf(entity: Record<string, unknown> | undefined): Record<string, st
 Deno.serve(async (req: Request) => {
   if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
 
-  const webhookSecret = Deno.env.get("RAZORPAY_WEBHOOK_SECRET");
-  if (!webhookSecret) return new Response("Webhook not configured", { status: 500 });
+  const webhookSecret = (Deno.env.get("RAZORPAY_WEBHOOK_SECRET") ?? "").trim();
+  if (!webhookSecret || webhookSecret === "your_webhook_secret") {
+    return new Response("Webhook not configured", { status: 500 });
+  }
 
   const rawBody = await req.text();
   const signature = req.headers.get("x-razorpay-signature") ?? "";
@@ -58,13 +60,17 @@ Deno.serve(async (req: Request) => {
     { auth: { persistSession: false } },
   );
 
-  const { data: claim } = await supabase.rpc("claim_payment_webhook_event", {
+  const { data: claim, error: claimError } = await supabase.rpc("claim_payment_webhook_event", {
     p_razorpay_event_id: eventId,
     p_event_type: eventType,
     p_payload: event,
   });
+  if (claimError) {
+    console.error("Webhook claim failed:", claimError.message);
+    return new Response("Webhook claim failed", { status: 500 });
+  }
   const claimed = claim as { id?: string; duplicate?: boolean; processed?: boolean } | null;
-  if (claimed?.duplicate && claimed.processed) return new Response("OK — duplicate", { status: 200 });
+  if (claimed?.processed === true) return new Response("OK — duplicate", { status: 200 });
 
   const payment = event.payload?.["payment"]?.entity ?? {};
   const notes = notesOf(payment);

@@ -9,12 +9,13 @@
 
 import { createClient } from "@supabase/supabase-js";
 
-import { verifyRazorpayWebhookSignature } from "./razorpayCrypto";
+import { hmacSha256Hex, verifyRazorpayWebhookSignature } from "./razorpayCrypto";
 import {
   extractGstoreWebhookRefs,
   extractSubscriptionWebhookRefs,
   RAZORPAY_GSTORE_EVENTS,
   RAZORPAY_SUBSCRIPTION_EVENTS,
+  resolveRazorpayWebhookEventId,
   shouldSkipProcessedWebhook,
   type RazorpayWebhookEnvelope,
 } from "./razorpayWebhookLogic";
@@ -61,14 +62,22 @@ export async function handleRazorpayWebhookRequest(request: Request): Promise<Re
   }
 
   const eventType = envelope.event ?? "unknown";
-  const eventId = envelope.id ?? `unsigned:${eventType}`;
+  const eventId = resolveRazorpayWebhookEventId({
+    envelopeId: envelope.id,
+    eventType,
+    rawBodyHash: hmacSha256Hex("id", rawBody),
+  });
   const supabase = serviceClient();
 
-  const { data: claim } = await supabase.rpc("claim_payment_webhook_event", {
+  const { data: claim, error: claimError } = await supabase.rpc("claim_payment_webhook_event", {
     p_razorpay_event_id: eventId,
     p_event_type: eventType,
     p_payload: envelope,
   });
+  if (claimError) {
+    console.error("[razorpay-webhook] claim failed:", claimError.message);
+    return new Response("Webhook claim failed", { status: 500 });
+  }
   const claimed = claim as { id?: string; duplicate?: boolean; processed?: boolean } | null;
   if (shouldSkipProcessedWebhook(claimed)) {
     return new Response("OK — duplicate", { status: 200 });

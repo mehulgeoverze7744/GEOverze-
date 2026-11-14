@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   extractGstoreWebhookRefs,
   extractSubscriptionWebhookRefs,
+  resolveRazorpayWebhookEventId,
   shouldSkipProcessedWebhook,
 } from "./razorpayWebhookLogic.ts";
 
@@ -49,6 +50,41 @@ test("extractGstoreWebhookRefs reads both order_id and gvrze_order_id notes", ()
     },
   });
   assert.equal(fromLegacy.gstoreOrderId, "legacy-order");
+});
+
+test("resolveRazorpayWebhookEventId never collapses to event type alone", () => {
+  assert.equal(
+    resolveRazorpayWebhookEventId({
+      envelopeId: "evt_1",
+      eventType: "payment.captured",
+      rawBodyHash: "abc",
+    }),
+    "evt_1",
+  );
+  assert.equal(
+    resolveRazorpayWebhookEventId({
+      envelopeId: "  ",
+      eventType: "payment.captured",
+      rawBodyHash: "deadbeef",
+    }),
+    "payment.captured:deadbeef",
+  );
+  assert.notEqual(
+    resolveRazorpayWebhookEventId({
+      eventType: "payment.captured",
+      rawBodyHash: "hash-one",
+    }),
+    resolveRazorpayWebhookEventId({
+      eventType: "payment.captured",
+      rawBodyHash: "hash-two",
+    }),
+  );
+  assert.throws(() =>
+    resolveRazorpayWebhookEventId({
+      eventType: "payment.captured",
+      rawBodyHash: "",
+    }),
+  );
 });
 
 test("extractSubscriptionWebhookRefs reads internal_subscription_id notes", () => {

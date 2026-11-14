@@ -273,6 +273,12 @@ export function GstoreCheckoutScreen() {
   // Status state
   const [status, setStatus]     = useState<"idle" | "creating" | "paying" | "verifying" | "done" | "failed" | "cancelled">("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [pendingOrder, setPendingOrder] = useState<{
+    orderId: string;
+    paymentId: string;
+    orderNumber: string;
+    guestToken?: string;
+  } | null>(null);
   const inflight        = useRef(false);
   const idempotencyKey  = useRef(crypto.randomUUID());
 
@@ -351,8 +357,6 @@ export function GstoreCheckoutScreen() {
       const rzp = new (window as unknown as { Razorpay: new (opts: unknown) => { open(): void } }).Razorpay({
         key:        rzpKeyId,
         order_id:   rzpOrderId,
-        amount:     totalMinor,
-        currency:   "INR",
         name:       "GVRZE Gstore",
         description: `Order ${orderNumber}`,
         prefill: {
@@ -487,14 +491,6 @@ export function GstoreCheckoutScreen() {
       inflight.current = false;
     }
   }
-
-  // Track order state for mock payment UI
-  const [pendingOrder, setPendingOrder] = useState<{
-    orderId: string;
-    paymentId: string;
-    orderNumber: string;
-    guestToken?: string;
-  } | null>(null);
 
   async function handleCheckoutWithMockCapture() {
     if (inflight.current) return;

@@ -64,7 +64,9 @@ function getRazorpayKeySecret(): string {
 }
 
 function getRazorpayWebhookSecret(): string {
-  return process.env["RAZORPAY_WEBHOOK_SECRET"] ?? "";
+  const value = (process.env["RAZORPAY_WEBHOOK_SECRET"] ?? "").trim();
+  if (!value || value === "your_webhook_secret") return "";
+  return value;
 }
 
 function getBasicAuthHeader(): string {
