@@ -17,6 +17,7 @@ import {
   getRazorpayMode,
   isRazorpayServerConfigured,
   updateRazorpayOrderNotes,
+  updateRazorpaySubscriptionPlan,
   verifyCapturedOrderPayment,
   verifyCapturedSubscriptionPayment,
 } from "@/lib/payments/razorpayServer";
@@ -30,6 +31,7 @@ export {
   getRazorpayMode,
   isRazorpayServerConfigured,
   updateRazorpayOrderNotes,
+  updateRazorpaySubscriptionPlan,
   verifyCapturedOrderPayment,
   verifyCapturedSubscriptionPayment,
 };

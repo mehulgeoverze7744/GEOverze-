@@ -8,6 +8,11 @@ import {
 } from "@/features/library/lib/access-tier";
 import { TIER_PRESENTATION } from "./plans";
 import { formatMinorAmount, formatInrRupees } from "../lib/formatInr";
+import {
+  isPendingAuthorizationStatus,
+  pickMembershipForCheckout,
+  type MembershipCheckoutRecord,
+} from "../lib/membershipCheckoutGuard";
 
 export type BillingPaymentStatus = "paid" | "pending" | "refunded" | "failed" | "cancelled";
 
@@ -79,6 +84,12 @@ export type MyBillingSnapshot = {
    * this is always true for active paid subscriptions.
    */
   reactivationSupported: boolean;
+  /** Raw user_subscriptions.status for the membership used at checkout. */
+  membershipStatus: string | null;
+  /** True when a previous checkout is still authorizing and must not be charged again. */
+  hasPendingAuthorization: boolean;
+  /** Plan tier of a pending authorization, if any. */
+  pendingPlanTier: string | null;
 };
 
 type PlanTierRpc = {
@@ -211,14 +222,13 @@ export async function fetchMyBilling(): Promise<MyBillingSnapshot> {
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
-    // Active subscription details (to detect mock subscriptions)
+    // Membership rows used for checkout detection (active, pending, retryable).
     supabase
       .from("user_subscriptions")
-      .select("id, provider_name")
-      .in("status", ["active", "trialing", "past_due"])
+      .select("id, provider_name, status, plan_tier, billing_interval")
+      .in("status", ["active", "trialing", "past_due", "pending", "incomplete"])
       .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
+      .limit(8),
   ]);
 
   if (planResult.error) throw new Error(planResult.error.message);
@@ -226,7 +236,9 @@ export async function fetchMyBilling(): Promise<MyBillingSnapshot> {
   if (progressionResult.error) throw new Error(progressionResult.error.message);
   if (grantResult.error) throw new Error(grantResult.error.message);
   // activeSubResult errors are non-fatal (best-effort)
-  const activeSub = activeSubResult.data ?? null;
+  const membershipRows = (activeSubResult.data ?? []) as MembershipCheckoutRecord[];
+  const pickedMembership = pickMembershipForCheckout(membershipRows);
+  const activeSub = pickedMembership;
 
   const rpc = parsePlanTierRpc(planResult.data);
   const tier = parseLibraryAccessTier(asString(rpc.tier)) ?? "explorer";
@@ -280,8 +292,14 @@ export async function fetchMyBilling(): Promise<MyBillingSnapshot> {
     canSwitchToAnnual: isPaidTier && billingInterval === "monthly" && annualPrice != null,
     isPaidMembership: isPaidTier,
     isMockSubscription: activeSub?.provider_name === "mock",
-    mockSubscriptionId: activeSub?.provider_name === "mock" ? (activeSub.id as string) : null,
-    subscriptionId: (activeSub?.id as string | undefined) ?? null,
+    mockSubscriptionId: activeSub?.provider_name === "mock" ? activeSub.id : null,
+    subscriptionId: activeSub?.id ?? null,
+    membershipStatus: activeSub?.status ?? asString(subscription?.status),
+    hasPendingAuthorization: Boolean(
+      activeSub && isPendingAuthorizationStatus(activeSub.status),
+    ),
+    pendingPlanTier:
+      activeSub && isPendingAuthorizationStatus(activeSub.status) ? activeSub.plan_tier : null,
     history: payments.map((row) => {
       const historyTier = parseLibraryAccessTier(row.plan_tier);
       return {

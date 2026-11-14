@@ -104,7 +104,11 @@ export async function handleRazorpayWebhookRequest(request: Request): Promise<Re
 
     const subRefs = extractSubscriptionWebhookRefs(envelope);
     const rzpSub = subRefs.rzpSubscriptionId;
-    if (
+    if (subRefs.checkout === "membership_upgrade") {
+      // Upgrade orders are confirmed by verifyRazorpaySubscriptionFn after
+      // signature check. Do not mark the pending upgrade payment succeeded here
+      // or the in-place plan change / credit grant would be skipped.
+    } else if (
       rzpSub &&
       (RAZORPAY_SUBSCRIPTION_EVENTS.has(eventType) ||
         eventType === "payment.captured" ||

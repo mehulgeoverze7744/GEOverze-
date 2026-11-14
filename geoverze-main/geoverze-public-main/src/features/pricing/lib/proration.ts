@@ -173,3 +173,14 @@ export function generateUpgradeIdempotencyKey(
   const dateKey = new Date().toISOString().slice(0, 13); // YYYY-MM-DDTHH
   return `mock_upgrade_${userId}_${currentTier}_to_${targetTier}_${billingInterval}_${dateKey}`;
 }
+
+/** Generates the idempotency key for a live Razorpay upgrade payment. */
+export function generateRazorpayUpgradeIdempotencyKey(
+  userId: string,
+  currentTier: string,
+  targetTier: string,
+  billingInterval: string,
+): string {
+  const dateKey = new Date().toISOString().slice(0, 13);
+  return `rzp_upgrade_${userId}_${currentTier}_to_${targetTier}_${billingInterval}_${dateKey}`;
+}

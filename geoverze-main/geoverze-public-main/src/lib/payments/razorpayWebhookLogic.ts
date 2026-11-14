@@ -31,6 +31,8 @@ export type SubscriptionWebhookRefs = {
   rzpPlanId: string | null;
   internalSubscriptionId: string | null;
   status: string | null;
+  checkout: string | null;
+  upgradePaymentId: string | null;
 };
 
 export function shouldSkipProcessedWebhook(existing: {
@@ -109,7 +111,8 @@ function webhookNotes(envelope: RazorpayWebhookEnvelope): Record<string, unknown
 }
 
 export function isMembershipOrderWebhook(envelope: RazorpayWebhookEnvelope): boolean {
-  return asString(webhookNotes(envelope)["checkout"]) === "membership";
+  const checkout = asString(webhookNotes(envelope)["checkout"]);
+  return checkout === "membership" || checkout === "membership_upgrade";
 }
 
 export function extractSubscriptionWebhookRefs(
@@ -132,6 +135,8 @@ export function extractSubscriptionWebhookRefs(
     internalSubscriptionId:
       asString(notes["internal_subscription_id"]) ?? asString(notes["subscription_id"]),
     status: asString(sub["status"]),
+    checkout: asString(notes["checkout"]),
+    upgradePaymentId: asString(notes["upgrade_payment_id"]),
   };
 }
 

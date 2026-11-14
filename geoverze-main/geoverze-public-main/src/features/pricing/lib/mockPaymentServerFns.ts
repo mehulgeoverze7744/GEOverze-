@@ -27,6 +27,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 
+import { evaluateMembershipCheckoutIntent } from "./membershipCheckoutGuard";
+import { loadMembershipForCheckout } from "./loadMembershipForCheckout";
+
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 /**
@@ -82,6 +85,23 @@ export const beginMockPaymentFn = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<BeginMockPaymentResult> => {
     assertMockEnabled();
     const sb = makeAuthenticatedClient(data.access_token);
+    const existing = await loadMembershipForCheckout(sb);
+    const intent = evaluateMembershipCheckoutIntent({
+      existing,
+      targetTier: data.plan_tier,
+      targetInterval: data.billing_interval,
+    });
+    if (intent.action === "pending_authorization") {
+      throw new Error(
+        "A membership payment is still processing. You will not be charged again until it is resolved.",
+      );
+    }
+    if (intent.action === "already_active") {
+      throw new Error("You already have an active GVRZE membership for this plan.");
+    }
+    if (intent.action === "upgrade") {
+      throw new Error("This purchase is an upgrade. Return to checkout and use Upgrade to Pro.");
+    }
 
     const { data: result, error } = await sb.rpc("begin_mock_subscription", {
       p_plan_tier:            data.plan_tier,
@@ -255,6 +275,19 @@ export const beginMockUpgradeFn = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<BeginMockUpgradeResult> => {
     assertMockEnabled();
     const sb = makeAuthenticatedClient(data.access_token);
+    const existing = await loadMembershipForCheckout(sb);
+    const intent = evaluateMembershipCheckoutIntent({
+      existing,
+      targetTier: data.target_plan_tier,
+      targetInterval: data.billing_interval,
+    });
+    if (intent.action !== "upgrade") {
+      throw new Error(
+        intent.action === "pending_authorization"
+          ? "A membership payment is still processing. You will not be charged again until it is resolved."
+          : "This membership cannot be upgraded from checkout. Manage it from billing instead.",
+      );
+    }
 
     const { data: result, error } = await sb.rpc("begin_mock_upgrade", {
       p_target_plan_tier: data.target_plan_tier,

@@ -310,6 +310,18 @@ export async function cancelRazorpaySubscription(
   );
 }
 
+/** Schedule the next Razorpay cycle onto a higher plan after a prorated upgrade. */
+export async function updateRazorpaySubscriptionPlan(input: {
+  subscriptionId: string;
+  planId: string;
+  scheduleChangeAt?: "now" | "cycle_end";
+}): Promise<RazorpaySubscription> {
+  return razorpayRequest<RazorpaySubscription>("PATCH", `/subscriptions/${input.subscriptionId}`, {
+    plan_id: input.planId,
+    schedule_change_at: input.scheduleChangeAt ?? "cycle_end",
+  });
+}
+
 export async function verifyCapturedOrderPayment(input: {
   rzpOrderId: string;
   rzpPaymentId: string;

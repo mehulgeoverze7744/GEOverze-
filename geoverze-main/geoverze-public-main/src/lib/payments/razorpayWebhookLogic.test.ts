@@ -127,6 +127,28 @@ test("extractSubscriptionWebhookRefs maps membership order.paid to the order id"
   assert.equal(refs.internalSubscriptionId, "uuid-mem");
 });
 
+test("extractSubscriptionWebhookRefs maps membership upgrades without treating them as Gstore", () => {
+  const refs = extractSubscriptionWebhookRefs({
+    event: "order.paid",
+    payload: {
+      payment: {
+        entity: {
+          id: "pay_upg",
+          order_id: "order_upg",
+          notes: {
+            checkout: "membership_upgrade",
+            internal_subscription_id: "uuid-upg",
+            upgrade_payment_id: "pay-uuid",
+          },
+        },
+      },
+    },
+  });
+  assert.equal(refs.checkout, "membership_upgrade");
+  assert.equal(refs.upgradePaymentId, "pay-uuid");
+  assert.equal(refs.internalSubscriptionId, "uuid-upg");
+});
+
 test("extractSubscriptionWebhookRefs does not treat Gstore orders as membership", () => {
   const refs = extractSubscriptionWebhookRefs({
     event: "order.paid",

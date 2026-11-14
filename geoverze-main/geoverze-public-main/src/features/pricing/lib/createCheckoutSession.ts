@@ -37,6 +37,12 @@ export type CheckoutSessionRequest = {
 export type CheckoutSessionResponse = {
   /** True when the user already has a continuing membership for this plan. */
   already_active?: boolean;
+  /** True when checkout must not open Razorpay (duplicate, pending, or unsupported). */
+  checkout_blocked?: boolean;
+  block_reason?: "already_active" | "pending_authorization" | null;
+  existing_plan_tier?: string | null;
+  is_upgrade?: boolean;
+  upgrade_payment_id?: string | null;
   /** Internal GVRZE subscription UUID (stored in user_subscriptions). */
   subscription_id: string;
   /** Razorpay Subscription ID (sub_xxxx). Open the modal with this when set. */

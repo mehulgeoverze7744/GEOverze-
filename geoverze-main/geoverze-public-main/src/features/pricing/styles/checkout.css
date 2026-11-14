@@ -351,6 +351,52 @@ body:has(#gvrze-checkout) header[data-scrolled="true"] {
   margin: 0;
 }
 
+.checkout-membership-notice {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 1rem 1.05rem;
+  border-radius: 0.9rem;
+  border: 1px solid #dce5ed;
+  background: #f7fafc;
+}
+
+.checkout-membership-notice--blocked {
+  background: linear-gradient(180deg, #fffdf9 0%, #f7fafc 100%);
+  border-color: #e4d5c4;
+}
+
+.checkout-membership-notice--upgrade {
+  background: linear-gradient(180deg, #f4f8fc 0%, #eef4f9 100%);
+  border-color: #c9d7e6;
+}
+
+.checkout-membership-notice__title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: #172338;
+}
+
+.checkout-membership-notice__body {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: #64748b;
+}
+
+.checkout-membership-notice__cta {
+  margin-top: 0.35rem;
+  text-decoration: none;
+}
+
+@media (max-width: 720px) {
+  .checkout-membership-notice {
+    padding: 0.9rem 0.95rem;
+  }
+}
+
 /* ── Billing cycle toggle ────────────────────────────────────────────────── */
 .checkout-cycle-row {
   display: flex;

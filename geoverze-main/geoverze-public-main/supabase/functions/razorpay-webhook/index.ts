@@ -106,7 +106,9 @@ Deno.serve(async (req: Request) => {
   const subscription = event.payload?.["subscription"]?.entity ?? {};
   const order = event.payload?.["order"]?.entity ?? {};
   const notes = { ...notesOf(order), ...notesOf(payment), ...notesOf(subscription) };
-  const isMembership = notes["checkout"] === "membership";
+  const isMembership =
+    notes["checkout"] === "membership" || notes["checkout"] === "membership_upgrade";
+  const isMembershipUpgrade = notes["checkout"] === "membership_upgrade";
   const membershipOrderId = isMembership
     ? (typeof payment["order_id"] === "string" && payment["order_id"]) ||
       (typeof order["id"] === "string" && order["id"]) ||
@@ -125,7 +127,10 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    if (eventType === "payment.captured" || eventType === "order.paid") {
+    if (isMembershipUpgrade) {
+      // Upgrade orders are confirmed by the signed checkout verify path so
+      // Basic is not replaced until the prorated Razorpay payment is verified.
+    } else if (eventType === "payment.captured" || eventType === "order.paid") {
       const rzpSub =
         (payment["subscription_id"] as string) ||
         (subscription["id"] as string) ||

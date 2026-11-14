@@ -84,10 +84,14 @@ import { formatInrRupees } from "../lib/formatInr";
 import { GST_CONFIG, calcGst } from "../lib/gstConfig";
 import {
   calcClientProration,
-  isUpgradeTo,
   generateUpgradeIdempotencyKey,
   type ProrationResult,
 } from "../lib/proration";
+import {
+  describeMembershipCheckout,
+  evaluateMembershipCheckoutIntent,
+  type MembershipCheckoutRecord,
+} from "../lib/membershipCheckoutGuard";
 import { MockPaymentGateway } from "../components/MockPaymentGateway";
 import { usePaymentConfig } from "../hooks/usePaymentConfig";
 import "../styles/checkout.css";
@@ -189,24 +193,42 @@ export function CheckoutScreen() {
   const price = plan?.prices[cycle];
 
   /* Current subscription state — used for upgrade detection */
-  const { data: billingData } = useMyBilling();
+  const { data: billingData, loading: billingLoading } = useMyBilling();
 
-  /**
-   * Is this checkout an upgrade?
-   *
-   * Conditions:
-   *   1. User has an active paid subscription (not explorer).
-   *   2. The target plan tier is strictly higher than the current tier.
-   *   3. The billing interval matches the user's current interval
-   *      (cross-interval upgrades are handled via the full flow, not proration).
-   */
-  const isUpgrade = !!(
-    billingData?.isPaidMembership &&
-    billingData.tier !== "explorer" &&
-    plan &&
-    isUpgradeTo(billingData.tier as TierId, plan.id as TierId) &&
-    billingData.billingInterval === cycle
-  );
+  const existingMembership: MembershipCheckoutRecord | null = (() => {
+    if (!billingData) return null;
+    if (billingData.hasPendingAuthorization) {
+      return {
+        id: billingData.subscriptionId ?? "pending",
+        plan_tier: billingData.pendingPlanTier ?? (billingData.tier === "explorer" ? "basic" : billingData.tier),
+        billing_interval: billingData.billingInterval,
+        status: billingData.membershipStatus ?? "pending",
+      };
+    }
+    if (billingData.isPaidMembership && billingData.tier !== "explorer") {
+      return {
+        id: billingData.subscriptionId ?? "active",
+        plan_tier: billingData.tier,
+        billing_interval: billingData.billingInterval,
+        status: billingData.membershipStatus ?? "active",
+      };
+    }
+    return null;
+  })();
+
+  const membershipIntent = evaluateMembershipCheckoutIntent({
+    existing: existingMembership,
+    targetTier: plan?.id ?? initialPlan,
+    targetInterval: cycle,
+  });
+  const membershipNotice = describeMembershipCheckout({
+    action: membershipIntent.action,
+    existingPlan: membershipIntent.existing?.plan_tier ?? existingMembership?.plan_tier ?? null,
+    targetPlan: plan?.id ?? initialPlan,
+  });
+  const billingReady = !user || !billingLoading;
+  const paymentAllowed = billingReady && membershipNotice.paymentAllowed;
+  const isUpgrade = membershipIntent.action === "upgrade";
 
   /**
    * Client-side proration calculation for display.
@@ -328,6 +350,7 @@ export function CheckoutScreen() {
   /* ── MOCK payment handler ─────────────────────────────────────────────── */
   async function handleMockPay() {
     if (!plan || !price || !user || inflight.current) return;
+    if (!paymentAllowed) return;
     if (!validateForMock()) return;
 
     inflight.current = true;
@@ -381,6 +404,7 @@ export function CheckoutScreen() {
   /* ── RAZORPAY payment handler ─────────────────────────────────────────── */
   async function handleRazorpayPay() {
     if (!plan || !price || !user || inflight.current) return;
+    if (!paymentAllowed) return;
     if (!validate()) return;
 
     inflight.current = true;
@@ -407,18 +431,13 @@ export function CheckoutScreen() {
         },
       });
 
-      if (session.already_active) {
+      if (session.checkout_blocked || session.already_active) {
         inflight.current = false;
         setLoading(false);
-        void navigate({
-          to: "/pricing/payment-result",
-          search: {
-            status: "existing",
-            plan: plan.id,
-            cycle,
-            subscription_id: session.subscription_id,
-          },
-        });
+        setPaymentError(
+          membershipNotice.title ||
+            "You already have an active GVRZE membership. Payment was not started.",
+        );
         return;
       }
 
@@ -495,6 +514,9 @@ export function CheckoutScreen() {
                         rzp_subscription_id:
                           session.razorpay_subscription_id || checkout.subscriptionId,
                       }
+                    : {}),
+                  ...(session.upgrade_payment_id
+                    ? { upgrade_payment_id: session.upgrade_payment_id }
                     : {}),
                 },
               });
@@ -775,7 +797,11 @@ export function CheckoutScreen() {
               {/* ── RIGHT: Payment Form ─────────────────────────────────── */}
               <section className="checkout-form-card" aria-label="Payment details">
                 <h2 className="checkout-form-card__title">
-                  {isUpgrade ? `Upgrade to ${plan?.name ?? initialPlan}` : "Complete your membership"}
+                  {isUpgrade
+                    ? `Upgrade to ${plan?.name ?? initialPlan}`
+                    : !paymentAllowed && billingReady && membershipNotice.action !== "create"
+                      ? "Membership status"
+                      : "Complete your membership"}
                 </h2>
 
                 {/* Billing cycle toggle */}
@@ -903,6 +929,38 @@ export function CheckoutScreen() {
                   )}
                 </div>
 
+                {user && billingReady && membershipNotice.action !== "create" ? (
+                  <div
+                    className={`checkout-membership-notice${
+                      membershipNotice.action === "upgrade"
+                        ? " checkout-membership-notice--upgrade"
+                        : " checkout-membership-notice--blocked"
+                    }`}
+                    role="status"
+                    aria-live="polite"
+                  >
+                    <p className="checkout-membership-notice__title">{membershipNotice.title}</p>
+                    <p className="checkout-membership-notice__body">{membershipNotice.body}</p>
+                    {membershipNotice.cta === "upgrade_pro" ? (
+                      <Link
+                        to="/pricing/checkout"
+                        search={{ plan: "pro", cycle }}
+                        className="checkout-pay-btn checkout-membership-notice__cta"
+                      >
+                        Upgrade to Pro
+                      </Link>
+                    ) : null}
+                    {membershipNotice.cta === "manage" ? (
+                      <Link
+                        to="/billing"
+                        className="checkout-pay-btn checkout-membership-notice__cta"
+                      >
+                        Manage Membership
+                      </Link>
+                    ) : null}
+                  </div>
+                ) : null}
+
                 {/* Terms */}
                 <div className="checkout-terms-row">
                   <input id="checkout-terms" type="checkbox" className="checkout-terms-checkbox"
@@ -946,6 +1004,13 @@ export function CheckoutScreen() {
                   </div>
                 ) : null}
 
+                {user && billingLoading ? (
+                  <div className="checkout-unavailable" role="status">
+                    <Info className="checkout-unavailable__icon" size={16} strokeWidth={1.8} />
+                    <div>Checking your membership…</div>
+                  </div>
+                ) : null}
+
                 {/* Config loading shimmer — prevents "unavailable" flash on first render */}
                 {configLoading ? (
                   <div
@@ -960,11 +1025,11 @@ export function CheckoutScreen() {
                 ) : null}
 
                 {/* ── CTA: MOCK mode — any authenticated user when mock mode is enabled ── */}
-                {!configLoading && mockEnabled && user ? (
+                {!configLoading && mockEnabled && user && paymentAllowed ? (
                   <button
                     type="button"
                     className={`checkout-pay-btn checkout-pay-btn--mock${loading ? " checkout-pay-btn--loading" : ""}`}
-                    disabled={loading || !agreed}
+                    disabled={loading || !agreed || !paymentAllowed}
                     onClick={() => void handleMockPay()}
                     aria-busy={loading}
                     aria-label={
@@ -985,11 +1050,11 @@ export function CheckoutScreen() {
                 ) : null}
 
                 {/* ── CTA: RAZORPAY ───────────────────────────────────── */}
-                {!configLoading && !mockEnabled && razorpayReady && user ? (
+                {!configLoading && !mockEnabled && razorpayReady && user && paymentAllowed ? (
                   <button
                     type="button"
                     className={`checkout-pay-btn${loading ? " checkout-pay-btn--loading" : ""}`}
-                    disabled={loading || !agreed}
+                    disabled={loading || !agreed || !paymentAllowed}
                     onClick={() => void handleRazorpayPay()}
                     aria-busy={loading}
                     aria-label={
