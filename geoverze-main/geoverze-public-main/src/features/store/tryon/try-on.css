@@ -27,6 +27,7 @@ body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer) {
   color: var(--tryon-ink);
   font-family: var(--tryon-font);
   -webkit-font-smoothing: antialiased;
+  isolation: isolate;
 }
 
 #gvrze-tryon-studio.tryon--overlay {
@@ -40,7 +41,7 @@ body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer) {
   position: absolute;
   top: 0.75rem;
   right: 1rem;
-  z-index: 4;
+  z-index: 8;
   display: inline-flex;
   width: 40px;
   height: 40px;
@@ -52,35 +53,40 @@ body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer) {
   color: var(--tryon-ink);
 }
 
-.gmake-studio {
+/* Figma Desktop 11 (50:132): 577px config card + contained 649px preview. */
+#gvrze-tryon-studio .gmake-studio {
   display: grid;
   min-width: 0;
   max-width: 100%;
   gap: 1.5rem;
-  padding: 1.5rem clamp(16px, 3.75vw, 54px) 2.5rem;
+  padding: 1.5rem clamp(16px, 3.75vw, 53px) 2.5rem;
   background: #f6f6f6;
   border-bottom-left-radius: 26px;
   border-bottom-right-radius: 26px;
+  overflow-x: clip;
+  box-sizing: border-box;
 }
 
 @media (min-width: 1024px) {
-  .gmake-studio {
-    grid-template-columns: minmax(320px, 577px) minmax(0, 1fr);
+  #gvrze-tryon-studio .gmake-studio {
+    grid-template-columns: minmax(280px, 577px) minmax(0, 1fr);
     align-items: start;
-    gap: 2rem;
-    min-height: 1098px;
+    column-gap: 58px;
+    row-gap: 2rem;
     padding-top: 3rem;
     padding-bottom: 3.5rem;
   }
 }
 
-.gmake-panel {
+#gvrze-tryon-studio .gmake-panel {
+  position: relative;
+  z-index: 2;
   display: flex;
   min-width: 0;
   max-width: 100%;
   flex-direction: column;
   gap: 1.35rem;
-  padding: 1.5rem 1.35rem 1.6rem;
+  padding: 2.3rem 2.9rem 1.6rem;
   border-radius: 11px;
   background: #ffffff;
   box-sizing: border-box;
@@ -256,6 +262,7 @@ body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer) {
 
 .gmake-size {
   height: 35px;
+  min-width: 0;
   border: 1px solid #bdbdbd;
   border-radius: 26px;
   background: #ffffff;
@@ -316,16 +323,47 @@ body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer) {
   color: #000000;
 }
 
-.gmake-stage {
+.gmake-stage,
+#gvrze-tryon-studio .tryon-stage {
   position: relative;
+  z-index: 1;
   display: flex;
   min-width: 0;
   max-width: 100%;
-  min-height: 560px;
+  width: 100%;
+  min-height: 0;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding-top: 0.25rem;
+  overflow: hidden;
+  padding-top: 0;
+}
+
+#gvrze-tryon-studio .tryon-stage__toolbar {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 1.35rem;
+  flex-shrink: 0;
+}
+
+#gvrze-tryon-studio .tryon-stage__toolbar .gmake-gender {
+  margin: 0;
+}
+
+#gvrze-tryon-studio .tryon-stage__gallery {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 100%;
+  max-width: 649px;
+  min-width: 0;
+  flex: 1 1 auto;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .gmake-tee {
@@ -494,6 +532,83 @@ body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer) {
   clip-path: inset(0 0 0 calc(64 / 470 * 100%));
 }
 
+.tryon-model__label {
+  display: none;
+}
+
+/* Studio plates must stay inside the preview column — never overlap the config card. */
+#gvrze-tryon-studio .tryon-stage__canvas {
+  --tryon-model-h: min(58vh, 647px);
+  display: grid;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 0.75rem;
+}
+
+#gvrze-tryon-studio .tryon-model,
+#gvrze-tryon-studio .tryon-model[data-view="back"] {
+  width: 100%;
+  height: auto;
+  margin: 0;
+}
+
+#gvrze-tryon-studio .tryon-model__label {
+  display: block;
+  margin: 0 0 0.4rem;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tryon-muted);
+}
+
+#gvrze-tryon-studio .tryon-model.is-selected .tryon-model__label {
+  color: var(--tryon-ink);
+}
+
+#gvrze-tryon-studio .tryon-model__frame {
+  width: 100%;
+  height: var(--tryon-model-h);
+  max-height: 647px;
+  overflow: hidden;
+  background: #ececec;
+  clip-path: none;
+}
+
+#gvrze-tryon-studio .tryon-model[data-view="back"] .tryon-model__frame {
+  clip-path: none;
+}
+
+#gvrze-tryon-studio .tryon-model__base {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center top;
+}
+
+#gvrze-tryon-studio .tryon-model__dye,
+#gvrze-tryon-studio .tryon-model__shadow {
+  opacity: 1;
+}
+
+#gvrze-tryon-studio .tryon-model__shadow {
+  mix-blend-mode: multiply;
+  opacity: 0.22;
+}
+
+#gvrze-tryon-studio .tryon-model__note {
+  position: static;
+  top: auto;
+  left: auto;
+  width: auto;
+  max-width: none;
+  margin: 0.45rem 0 0;
+  transform: none;
+}
+
 .tryon-model__dye,
 .tryon-model__shadow,
 .tryon-model__art-clip {
@@ -590,8 +705,7 @@ body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer) {
   object-position: center 42%;
 }
 
-/* Tablet and phone: preview first, then the full-width customization panel.
-   Desktop two-column layout starts at 769px and is unchanged above 1024px. */
+/* Tablet and phone: preview first, then the full-width configuration panel. */
 @media (max-width: 768px) {
   #gvrze-tryon-studio .gmake-studio {
     display: flex;
@@ -604,16 +718,35 @@ body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer) {
     border-bottom-right-radius: 18px;
   }
 
-  #gvrze-tryon-studio .gmake-stage {
+  #gvrze-tryon-studio .gmake-stage,
+  #gvrze-tryon-studio .tryon-stage {
     order: -1;
     width: 100%;
     min-height: 0;
     padding: 4px 0 0;
+    overflow: hidden;
+  }
+
+  #gvrze-tryon-studio .tryon-stage__toolbar {
+    margin-bottom: 10px;
   }
 
   #gvrze-tryon-studio .gmake-gender {
     width: min(220px, 100%);
-    margin: 0 auto 10px;
+    margin: 0 auto;
+  }
+
+  #gvrze-tryon-studio .tryon-stage__gallery {
+    max-width: 100%;
+  }
+
+  #gvrze-tryon-studio .tryon-stage__canvas {
+    --tryon-model-h: min(42vh, 360px);
+    gap: 8px;
+  }
+
+  #gvrze-tryon-studio .tryon-model__frame {
+    max-height: 360px;
   }
 
   #gvrze-tryon-studio .gmake-tee,
@@ -784,6 +917,10 @@ body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer) {
     padding: 16px 20px 32px;
   }
 
+  #gvrze-tryon-studio .tryon-stage__canvas {
+    --tryon-model-h: min(48vh, 420px);
+  }
+
   #gvrze-tryon-studio .gmake-tee,
   #gvrze-tryon-studio .gmake-tee.is-diptych {
     width: min(100%, 480px);
@@ -802,15 +939,25 @@ body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer) {
 
 @media (min-width: 769px) and (max-width: 1023px) {
   #gvrze-tryon-studio .gmake-studio {
-    grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
+    grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
     align-items: start;
     gap: 1.25rem;
     min-height: 0;
+    padding: 1.5rem 24px 2.5rem;
   }
 
-  #gvrze-tryon-studio .gmake-stage {
+  #gvrze-tryon-studio .gmake-panel {
+    padding: 1.35rem 1.25rem 1.4rem;
+  }
+
+  #gvrze-tryon-studio .gmake-stage,
+  #gvrze-tryon-studio .tryon-stage {
     order: 0;
-    min-height: 480px;
+    min-height: 0;
+  }
+
+  #gvrze-tryon-studio .tryon-stage__canvas {
+    --tryon-model-h: min(52vh, 520px);
   }
 }
 
@@ -825,6 +972,7 @@ body:has(#gvrze-gmake-product) footer:not(.gvrze-storefront-footer) {
 .tryon-garment-nav__name {
   min-width: 0;
   flex: 1;
+  overflow-wrap: anywhere;
   text-align: center;
   font-size: 14px;
   font-weight: 600;

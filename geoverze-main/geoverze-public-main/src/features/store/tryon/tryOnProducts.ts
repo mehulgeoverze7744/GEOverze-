@@ -36,7 +36,7 @@ export const TRY_ON_CATEGORY_LABELS: Record<TryOnCategoryId, string> = {
   sweatshirts: "Sweatshirts",
 };
 
-export const TRY_ON_SIZES = ["S", "M", "L", "XL", "XXL"] as const;
+export const TRY_ON_SIZES = ["S", "M", "L", "XL"] as const;
 
 export type TryOnImageLayout = "single" | "diptych";
 

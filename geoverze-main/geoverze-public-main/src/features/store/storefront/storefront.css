@@ -346,7 +346,7 @@ body:has(#gvrze-storefront) footer .mt-16.border-t {
   isolation: isolate;
 }
 
-/* Desktop 8: page scrolls as a whole. Do not lock the info column. */
+/* Desktop: gallery stays put; description panel scrolls inside the right column. */
 @media (min-width: 1024px) {
   #gvrze-storefront.gvrze-storefront-product .sfpp-product-grid {
     align-items: start;
@@ -354,15 +354,75 @@ body:has(#gvrze-storefront) footer .mt-16.border-t {
     column-gap: 40px;
   }
 
+  #gvrze-storefront.gvrze-storefront-product .sfpp-left-col {
+    position: sticky;
+    top: 1.25rem;
+    align-self: start;
+  }
+
   #gvrze-storefront.gvrze-storefront-product .sfpp-right-col {
-    overflow: visible;
-    max-height: none;
+    position: sticky;
+    top: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-height: 0;
+    max-height: calc(100dvh - 6.5rem);
+    overflow: hidden;
+  }
+
+  #gvrze-storefront.gvrze-storefront-product .sfpp-info-card {
+    flex: 0 0 auto;
+  }
+
+  #gvrze-storefront.gvrze-storefront-product .sfpp-desc-card {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  #gvrze-storefront.gvrze-storefront-product .sfpp-desc-tabs {
+    flex-shrink: 0;
+  }
+
+  #gvrze-storefront.gvrze-storefront-product .sfpp-desc-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding-right: 0.35rem;
+    padding-bottom: 1.25rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(0 0 0 / 0.28) transparent;
+  }
+
+  #gvrze-storefront.gvrze-storefront-product .sfpp-desc-body::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  #gvrze-storefront.gvrze-storefront-product .sfpp-desc-body::-webkit-scrollbar-thumb {
+    border-radius: 99px;
+    background: rgb(0 0 0 / 0.28);
   }
 
   #gvrze-storefront.gvrze-storefront-product .sfpp-thumbs {
     max-height: 684px;
     overflow-y: auto;
     scrollbar-width: thin;
+  }
+}
+
+/* Mobile/tablet: page scroll only. Do not trap the details panel. */
+@media (max-width: 1023px) {
+  #gvrze-storefront.gvrze-storefront-product .sfpp-right-col,
+  #gvrze-storefront.gvrze-storefront-product .sfpp-desc-card,
+  #gvrze-storefront.gvrze-storefront-product .sfpp-desc-body {
+    max-height: none;
+    overflow: visible;
   }
 }
 

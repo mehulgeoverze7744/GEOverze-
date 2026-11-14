@@ -7,8 +7,10 @@
  */
 
 export const APPAREL_SIZE_ORDER = ["XS", "S", "M", "L", "XL", "XXL"] as const;
+export const TSHIRT_SELECTABLE_SIZES = ["S", "M", "L", "XL"] as const;
 
 export type ApparelSizeId = (typeof APPAREL_SIZE_ORDER)[number];
+export type TshirtSelectableSize = (typeof TSHIRT_SELECTABLE_SIZES)[number];
 
 export type SizeGuideRow = {
   size: ApparelSizeId;
@@ -45,4 +47,24 @@ export function rowsForSizes(available: readonly string[]): SizeGuideRow[] {
   const wanted = new Set(available.map((s) => s.toUpperCase()));
   const filtered = APPAREL_SIZE_GUIDE.filter((row) => wanted.has(row.size));
   return filtered.length > 0 ? [...filtered] : [...APPAREL_SIZE_GUIDE];
+}
+
+export function isSelectableTshirtSize(size: string): boolean {
+  return (TSHIRT_SELECTABLE_SIZES as readonly string[]).includes(size);
+}
+
+/** T-shirt pickers only offer S–XL. Historical XS/XXL orders are left intact. */
+export function tshirtSizesFrom(available: readonly string[]): string[] {
+  const filtered = available.filter(isSelectableTshirtSize);
+  return filtered.length > 0 ? filtered : [...TSHIRT_SELECTABLE_SIZES];
+}
+
+/** Drop XS/XXL from T-shirt Buy Now / checkout options. Hoodies keep the requested size. */
+export function checkoutSizeForProduct(
+  category: string | undefined,
+  size: string | undefined,
+): string | undefined {
+  if (!size) return undefined;
+  if (category === "tshirts" && !isSelectableTshirtSize(size)) return undefined;
+  return size;
 }

@@ -78,6 +78,7 @@ import {
 } from "../lib/gstoreProductPrices";
 import { isSlugAvailableForSale } from "../data/catalogAvailability";
 import { productImageForSlug } from "../data/productImages";
+import { checkoutSizeForProduct } from "../storefront/sizeGuide";
 import { MockPaymentGateway } from "../components/MockPaymentGateway";
 
 // ── India-specific validation helpers ────────────────────────────────────────
@@ -233,12 +234,16 @@ export function GstoreCheckoutScreen() {
 
   // Build cart items from URL params (Buy Now) or cart store
   const isBuyNow = search.buyNow === "1" && !!search.slug;
+  const buyNowSize = checkoutSizeForProduct(
+    search.slug ? getProductPrice(search.slug)?.category : undefined,
+    search.Size,
+  );
   const checkoutItems: GstoreCartItem[] = (isBuyNow
     ? [{
         slug:     search.slug!,
         quantity: buyNowQty,
         options:  {
-          ...(search.Size   ? { Size:   search.Size   } : {}),
+          ...(buyNowSize    ? { Size:   buyNowSize    } : {}),
           ...(search.Colour ? { Colour: search.Colour } : {}),
           ...(search.Design ? { Design: search.Design } : {}),
           ...(search.CustomDesign ? { "Custom Design": search.CustomDesign } : {}),

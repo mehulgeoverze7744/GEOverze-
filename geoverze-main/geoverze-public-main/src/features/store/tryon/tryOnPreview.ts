@@ -136,8 +136,12 @@ function onModelSlot(
   };
 }
 
-export function resolveTryOnPair(garment: TryOnGarment, colorId: string): TryOnPairPreview {
-  const color = tryOnColorById(garment, colorId);
+export function resolveTryOnPair(
+  garment: TryOnGarment,
+  colorId: string,
+  colorOverride?: TryOnColor | null,
+): TryOnPairPreview {
+  const color = colorOverride ?? tryOnColorById(garment, colorId);
   const colorLabel = color?.label ?? "";
   const layout = color ? garmentLayoutFor(garment, color) : "single";
   const shirtHex = color?.hex ?? SIGNATURE_DYE[garment.slug] ?? "#111111";
@@ -165,24 +169,37 @@ export function resolveTryOnPair(garment: TryOnGarment, colorId: string): TryOnP
     return { front: slot("front"), back: slot("back") };
   }
 
+  const plate = (view: ModelView, extras: Partial<TryOnModelSlot> = {}): TryOnModelSlot => ({
+    view,
+    modelSrc: view === "back" ? GVRZE_MODEL_BACK : GVRZE_MODEL_FRONT,
+    modelAlt: `${garment.name}${colorLabel ? `, ${colorLabel}` : ""} on the GVRZE studio model, ${view} view`,
+    maskSrc: view === "back" ? GVRZE_MODEL_BACK_MASK : GVRZE_MODEL_FRONT_MASK,
+    shirtHex,
+    artSrc: "",
+    artAlt: `${garment.name}${colorLabel ? `, ${colorLabel}` : ""}`,
+    artLayout: layout,
+    artMode: "none",
+    placement: "none",
+    lightShirt: isLightHex(shirtHex),
+    hasArtwork: false,
+    unavailableLabel: null,
+    ...extras,
+  });
+
+  if (color?.id === "cream") {
+    return { front: plate("front"), back: plate("back") };
+  }
+
   const make = (view: ModelView, hasArt: boolean, placement: PrintPlacement): TryOnModelSlot => {
     const printSrc = SIGNATURE_PRINT[garment.slug] ?? color?.image ?? "";
-    if (!hasArt || !printSrc) return emptySlot(view, garment, colorLabel);
-    return {
-      view,
-      modelSrc: view === "back" ? GVRZE_MODEL_BACK : GVRZE_MODEL_FRONT,
-      modelAlt: `${garment.name}${colorLabel ? `, ${colorLabel}` : ""} on the GVRZE studio model, ${view} view`,
-      maskSrc: view === "back" ? GVRZE_MODEL_BACK_MASK : GVRZE_MODEL_FRONT_MASK,
-      shirtHex,
+    if (!hasArt || !printSrc) return plate(view);
+    return plate(view, {
       artSrc: printSrc,
       artAlt: `${garment.name}${colorLabel ? `, ${colorLabel}` : ""}, ${view} design`,
-      artLayout: layout,
       artMode: layout === "diptych" ? "print-transfer" : "garment-photo",
       placement,
-      lightShirt: isLightHex(shirtHex),
       hasArtwork: true,
-      unavailableLabel: null,
-    };
+    });
   };
 
   if (isApparelDiptych(garment.slug) || layout === "diptych") {

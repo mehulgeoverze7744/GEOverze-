@@ -12,7 +12,7 @@ import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
 
-import { formatRsPaise, GMAKE_ASSETS } from "../gmake/gmake-assets";
+import { formatRsPaise, GMAKE_ASSETS, gmakeProductTitle } from "../gmake/gmake-assets";
 import { GMAKE_CUSTOMIZATION_ENABLED } from "../gmake/gmakeFlags";
 import { GMakeRainbowButton } from "../gmake/GMakeRainbowButton";
 import { GMakeTeePreview } from "../gmake/GMakeTeePreview";
@@ -188,6 +188,12 @@ export function TryOnStudio({
     node.scrollBy({ left: dir * 140, behavior: "smooth" });
   };
 
+  function selectView(next: "front" | "back") {
+    setView(next);
+    const plate = document.querySelector<HTMLElement>(`#gvrze-tryon-studio [data-tryon-view="${next}"]`);
+    plate?.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
+  }
+
   return (
     <div
       id="gvrze-tryon-studio"
@@ -221,7 +227,9 @@ export function TryOnStudio({
                 >
                   <img src={GMAKE_ASSETS.chevron} alt="" className="rotate-180" />
                 </button>
-                <p className="tryon-garment-nav__name">{selected?.name ?? "No garment"}</p>
+                <p className="tryon-garment-nav__name">
+                  {selected ? gmakeProductTitle(selected.name) : "No garment"}
+                </p>
                 <button
                   type="button"
                   aria-label="Next garment"
@@ -398,48 +406,44 @@ export function TryOnStudio({
                 <span> {includedNote}</span>
               </p>
 
-              {GMAKE_CUSTOMIZATION_ENABLED ? (
-                <GMakeRainbowButton disabled={!canPurchase} onClick={handleBuyNow}>
-                  BUY NOW
-                </GMakeRainbowButton>
-              ) : (
-                <button
-                  type="button"
-                  disabled={!canPurchase}
-                  onClick={handleBuyNow}
-                  className="gmake-cta gmake-cta--solid"
-                >
-                  BUY NOW
-                </button>
-              )}
+              <GMakeRainbowButton disabled={!canPurchase} onClick={handleBuyNow}>
+                BUY NOW
+              </GMakeRainbowButton>
             </div>
           </aside>
 
-          <section className="gmake-stage" aria-label="Product preview">
-            <div className="gmake-gender" role="group" aria-label="Garment view">
-              <button type="button" aria-pressed={view === "front"} onClick={() => setView("front")}>
-                Front
-              </button>
-              <button type="button" aria-pressed={view === "back"} onClick={() => setView("back")}>
-                Back
-              </button>
+          <section className="gmake-stage tryon-stage" aria-label="Product preview">
+            <div className="tryon-stage__toolbar">
+              <div className="gmake-gender" role="group" aria-label="Garment view">
+                <button type="button" aria-pressed={view === "front"} onClick={() => selectView("front")}>
+                  Front
+                </button>
+                <button type="button" aria-pressed={view === "back"} onClick={() => selectView("back")}>
+                  Back
+                </button>
+              </div>
             </div>
 
             {selected ? (
               GMAKE_CUSTOMIZATION_ENABLED ? (
-                <GMakeTeePreview
-                  color={selectedColor}
-                  view={view}
-                  design={selectedDesign}
-                  customSrc={customSrc}
-                  productName={selected.name}
-                />
+                <div className="tryon-stage__gallery">
+                  <GMakeTeePreview
+                    color={selectedColor}
+                    view={view}
+                    design={selectedDesign}
+                    customSrc={customSrc}
+                    productName={selected.name}
+                  />
+                </div>
               ) : (
-                <TryOnModelPreview
-                  garment={selected}
-                  colorId={selectedColor?.id ?? colorId}
-                  activeView={view}
-                />
+                <div className="tryon-stage__gallery">
+                  <TryOnModelPreview
+                    garment={selected}
+                    colorId={selectedColor?.id ?? colorId}
+                    {...(selectedColor ? { color: selectedColor } : {})}
+                    activeView={view}
+                  />
+                </div>
               )
             ) : (
               <p className="tryon-empty">No looks in this category yet.</p>

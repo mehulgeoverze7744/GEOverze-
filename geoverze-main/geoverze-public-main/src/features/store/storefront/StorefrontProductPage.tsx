@@ -28,6 +28,12 @@ import { ComingSoonImageOverlay } from "./ComingSoonImageOverlay";
 import { SizeGuideDialog } from "./SizeGuideDialog";
 import { StorefrontNav } from "./StorefrontNav";
 import { StorefrontProductImage } from "./StorefrontProductImage";
+import {
+  APPAREL_SIZE_ORDER,
+  TSHIRT_SELECTABLE_SIZES,
+  isSelectableTshirtSize,
+  tshirtSizesFrom,
+} from "./sizeGuide";
 import { SF_SHELL, SF_UI_FONT } from "./storefront-ui";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -73,7 +79,7 @@ export type StorefrontProductPageProps = {
   images: SFGalleryImage[];
   /** When provided, renders colour swatches; selecting one changes the main image. */
   colors?: SFColorOption[];
-  /** Available size labels. Defaults to S / M / L / XL. */
+  /** Available size labels. T-shirts default to S / M / L / XL. */
   sizes?: string[];
   /** Hide the apparel size row (stickers, desk objects). */
   hideSizes?: boolean;
@@ -94,7 +100,7 @@ export type StorefrontProductPageProps = {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const DEFAULT_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
+const DEFAULT_SIZES = [...APPAREL_SIZE_ORDER];
 
 /** Ignore tiny taps; require a mostly-horizontal gesture so page scroll still works. */
 const GALLERY_SWIPE_PX = 48;
@@ -297,6 +303,8 @@ export function StorefrontProductPage({
   const isSaved = wishlistItems.includes(slug);
   const { addProduct } = useStoreActions();
   const product = resolveStoreProduct(slug);
+  const selectableSizes =
+    categorySlug === "tshirts" ? tshirtSizesFrom(sizes) : sizes;
 
   useEffect(() => {
     setSelectedImageIdx(0);
@@ -411,12 +419,22 @@ export function StorefrontProductPage({
     goToGalleryImage(galleryIndexRef.current + (dx < 0 ? 1 : -1));
   }
 
+  function assertSelectableSize(): boolean {
+    if (hideSizes) return true;
+    if (!selectedSize) {
+      toast.error("Please select a size first.");
+      return false;
+    }
+    if (categorySlug === "tshirts" && !isSelectableTshirtSize(selectedSize)) {
+      toast.error("Please choose S, M, L or XL.");
+      return false;
+    }
+    return true;
+  }
+
   function handleAddToCart() {
     if (comingSoon) return;
-    if (!hideSizes && !selectedSize) {
-      toast.error("Please select a size before adding to cart.");
-      return;
-    }
+    if (!assertSelectableSize()) return;
     if (!product) {
       toast.error("This product isn’t available to add yet.");
       return;
@@ -430,10 +448,7 @@ export function StorefrontProductPage({
 
   function handleBuyNow() {
     if (comingSoon) return;
-    if (!hideSizes && !selectedSize) {
-      toast.error("Please select a size first.");
-      return;
-    }
+    if (!assertSelectableSize()) return;
     // Navigate to checkout in Buy Now mode.
     // The server validates the price by slug — the client only passes identifiers.
     const color = colors?.find((c) => c.id === selectedColorId);
@@ -652,7 +667,7 @@ export function StorefrontProductPage({
                     </button>
                   </div>
                   <div className="mt-2.5 flex flex-wrap gap-2">
-                    {sizes.map((s) => (
+                    {selectableSizes.map((s) => (
                       <SizeButton
                         key={s}
                         label={s}
@@ -722,7 +737,7 @@ export function StorefrontProductPage({
             </section>
 
             <section className="sfpp-desc-card rounded-[11px] bg-[#f6f6f6] p-5 sm:p-6">
-              <div className="flex gap-6 border-b border-[#e0e0e0]">
+              <div className="sfpp-desc-tabs flex shrink-0 gap-6 border-b border-[#e0e0e0]">
                 {(
                   [
                     { id: "description", label: "Product Description" },
@@ -739,7 +754,7 @@ export function StorefrontProductPage({
                 ))}
               </div>
 
-              <div className="mt-4 space-y-4 text-[13px] leading-relaxed text-[#444]">
+              <div className="sfpp-desc-body mt-4 space-y-4 text-[13px] leading-relaxed text-[#444]">
                 {activeTab === "description" && (
                   <>
                     {description && <p>{description}</p>}
@@ -812,7 +827,7 @@ export function StorefrontProductPage({
         <SizeGuideDialog
           open={sizeGuideOpen}
           onOpenChange={setSizeGuideOpen}
-          sizes={sizes}
+          sizes={selectableSizes}
           categorySlug={categorySlug}
         />
       )}
@@ -870,7 +885,7 @@ export function StorefrontTeeProductPage({ tee }: { tee: StorefrontTeeProduct })
         tone: r.tone,
       }))}
       categorySlug="tshirts"
-      sizes={DEFAULT_SIZES}
+      sizes={[...TSHIRT_SELECTABLE_SIZES]}
       showQuantity
     />
   );

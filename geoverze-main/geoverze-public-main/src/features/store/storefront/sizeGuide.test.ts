@@ -1,7 +1,13 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { rowsForSizes, sizeGuideKindForCategory } from "./sizeGuide.ts";
+import {
+  checkoutSizeForProduct,
+  isSelectableTshirtSize,
+  rowsForSizes,
+  sizeGuideKindForCategory,
+  tshirtSizesFrom,
+} from "./sizeGuide.ts";
 
 describe("sizeGuide", () => {
   it("maps category slugs", () => {
@@ -16,5 +22,23 @@ describe("sizeGuide", () => {
       rows.map((row) => row.size),
       ["S", "M", "L"],
     );
+  });
+
+  it("drops XS and XXL from T-shirt selectors", () => {
+    assert.equal(isSelectableTshirtSize("XS"), false);
+    assert.equal(isSelectableTshirtSize("XXL"), false);
+    assert.deepEqual(tshirtSizesFrom(["XS", "S", "M", "L", "XL", "XXL"]), [
+      "S",
+      "M",
+      "L",
+      "XL",
+    ]);
+  });
+
+  it("blocks XS/XXL on T-shirt checkout but keeps hoodie sizes", () => {
+    assert.equal(checkoutSizeForProduct("tshirts", "XS"), undefined);
+    assert.equal(checkoutSizeForProduct("tshirts", "XXL"), undefined);
+    assert.equal(checkoutSizeForProduct("tshirts", "M"), "M");
+    assert.equal(checkoutSizeForProduct("hoodies", "XXL"), "XXL");
   });
 });

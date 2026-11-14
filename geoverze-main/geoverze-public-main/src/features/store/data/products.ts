@@ -128,6 +128,11 @@ const APPAREL_SIZES: ProductOption = {
   values: ["XS", "S", "M", "L", "XL", "XXL"],
 };
 
+const TSHIRT_SIZES: ProductOption = {
+  label: "Size",
+  values: ["S", "M", "L", "XL"],
+};
+
 const APPAREL_COLOURS: ProductOption = {
   label: "Colour",
   values: ["Charcoal", "Deep space", "Bronze sand"],
@@ -178,8 +183,8 @@ function storefrontTeeDraft(tee: StorefrontTeeProduct): Draft {
     bestSeller: rank?.bestSeller ?? true,
     featured: true,
     options: colourValues.length
-      ? [APPAREL_SIZES, { label: "Colour", values: colourValues }]
-      : [APPAREL_SIZES],
+      ? [TSHIRT_SIZES, { label: "Colour", values: colourValues }]
+      : [TSHIRT_SIZES],
     tags: ["apparel", "graphic", "signature", "t-shirt"],
   };
 }
