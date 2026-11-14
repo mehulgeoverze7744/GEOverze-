@@ -24,7 +24,7 @@ export type RazorpayCheckoutOptions = {
   };
   notes?: Record<string, string>;
   theme?: { color?: string };
-  handler: (response: RazorpaySuccessResponse) => void;
+  handler: (response: unknown) => void;
   modal?: {
     ondismiss?: () => void;
     confirm_close?: boolean;
@@ -32,10 +32,10 @@ export type RazorpayCheckoutOptions = {
 };
 
 export type RazorpaySuccessResponse = {
-  razorpay_payment_id: string;
+  razorpay_payment_id?: string;
   razorpay_subscription_id?: string;
   razorpay_order_id?: string;
-  razorpay_signature: string;
+  razorpay_signature?: string;
 };
 
 export type RazorpayError = {
@@ -96,7 +96,11 @@ export function loadRazorpayScript(): Promise<void> {
 
 /** Returns the Razorpay Key ID from env. Empty string = not configured. */
 export function getRazorpayKeyId(): string {
-  return (import.meta.env.VITE_RAZORPAY_KEY_ID ?? import.meta.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? "").trim();
+  return (
+    import.meta.env["VITE_RAZORPAY_KEY_ID"] ??
+    import.meta.env["NEXT_PUBLIC_RAZORPAY_KEY_ID"] ??
+    ""
+  ).trim();
 }
 
 /** True when Razorpay credentials are configured in the environment. */

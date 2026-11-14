@@ -57,6 +57,25 @@ test("verifyRazorpaySubscriptionSignature uses paymentId|subscriptionId", () => 
     }),
     true,
   );
+  const swapped = hmacSha256Hex(SECRET, `${subscriptionId}|${paymentId}`);
+  assert.equal(
+    verifyRazorpaySubscriptionSignature({
+      keySecret: SECRET,
+      razorpayPaymentId: paymentId,
+      razorpaySubscriptionId: subscriptionId,
+      razorpaySignature: swapped,
+    }),
+    false,
+  );
+  assert.equal(
+    verifyRazorpaySubscriptionSignature({
+      keySecret: SECRET,
+      razorpayPaymentId: paymentId,
+      razorpaySubscriptionId: subscriptionId,
+      razorpaySignature: "",
+    }),
+    false,
+  );
 });
 
 test("verifyRazorpayWebhookSignature hashes the raw body", () => {

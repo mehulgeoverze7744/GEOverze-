@@ -133,6 +133,61 @@ body:has(#gvrze-payment-result) header {
   margin-bottom: 2rem;
 }
 
+.pr-mock-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.6rem;
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  font-size: 0.72rem;
+  color: #78350f;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.pr-details {
+  width: 100%;
+  margin: 0 0 2rem;
+  padding: 1rem 1.1rem;
+  border-radius: 0.9rem;
+  background: #f7fafc;
+  border: 1px solid #dce5ed;
+  text-align: left;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.pr-details > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.pr-details dt {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.pr-details dd {
+  margin: 0;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #172338;
+}
+
+.pr-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.7rem !important;
+  font-weight: 500 !important;
+  word-break: break-all;
+}
+
 /* ── Action buttons ──────────────────────────────────────────────────────── */
 .pr-actions {
   display: flex;

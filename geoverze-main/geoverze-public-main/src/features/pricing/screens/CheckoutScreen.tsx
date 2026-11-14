@@ -46,6 +46,7 @@ import {
 } from "lucide-react";
 import { useRef, useState } from "react";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { Breadcrumb } from "@/components/shared/Breadcrumb";
@@ -63,9 +64,13 @@ import {
 } from "../lib/createCheckoutSession";
 import { verifyRazorpaySubscriptionFn } from "../lib/subscriptionServerFns";
 import {
+  customerFacingPaymentError,
+  normalizeRazorpayCheckoutResponse,
+} from "../lib/razorpayCheckoutResponse";
+import {
   loadRazorpayScript,
   getRazorpayKeyId,
-  type RazorpaySuccessResponse,
+  type RazorpayCheckoutOptions,
   type RazorpayError as RzpError,
 } from "../lib/razorpay-client";
 import {
@@ -150,6 +155,7 @@ function validateBilling(d: BillingDetails): Partial<Record<keyof BillingDetails
 export function CheckoutScreen() {
   const { plan: initialPlan, cycle: initialCycle } = useSafeSearch();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const user = useAuthStore(selectUser);
 
   /**
@@ -405,7 +411,8 @@ export function CheckoutScreen() {
       if (!keyId) {
         throw new Error("Razorpay Key ID is missing on the server response.");
       }
-      if (!window.Razorpay) {
+      const RazorpayCtor = window.Razorpay;
+      if (!RazorpayCtor) {
         throw new Error("Razorpay SDK did not load. Try refreshing the page.");
       }
 
@@ -418,15 +425,8 @@ export function CheckoutScreen() {
         throw new Error("Membership checkout is missing a Razorpay subscription id.");
       }
 
-      const rzp = new window.Razorpay({
+      const checkoutOptions: RazorpayCheckoutOptions = {
         key: keyId,
-        ...(useOrderCheckout
-          ? {
-              order_id: session.razorpay_order_id,
-              amount: session.charge_amount_minor,
-              currency: session.charge_currency,
-            }
-          : { subscription_id: session.razorpay_subscription_id }),
         name: "GVRZE",
         description: `${plan.name} membership — ${cycle}`,
         image: "/assets/brand/gvrze-mark-light.png",
@@ -442,46 +442,53 @@ export function CheckoutScreen() {
           gstin: billingDetails.gstin.trim().toUpperCase() || "",
         },
         theme: { color: "#1e3a5f" },
-        handler: (response: RazorpaySuccessResponse) => {
+        handler: (response: unknown) => {
           void (async () => {
+            const checkout = normalizeRazorpayCheckoutResponse(response);
+            const paymentId = checkout.paymentId;
+            const resultSearch = {
+              plan: plan.id,
+              cycle,
+              subscription_id: session.subscription_id,
+              ...(paymentId ? { payment_id: paymentId } : {}),
+            };
+            const goToResult = (status: "success" | "processing" | "failed") => {
+              void navigate({
+                to: "/pricing/payment-result",
+                search: { status, ...resultSearch },
+              });
+            };
+
+            if (!paymentId || !checkout.signature) {
+              goToResult("processing");
+              return;
+            }
+
             try {
               const { data: auth } = await supabase.auth.getSession();
               await verifyRazorpaySubscriptionFn({
                 data: {
                   access_token: auth.session?.access_token ?? "",
                   subscription_id: session.subscription_id,
-                  rzp_payment_id: response.razorpay_payment_id,
-                  rzp_signature: response.razorpay_signature,
-                  ...(response.razorpay_order_id
-                    ? { rzp_order_id: response.razorpay_order_id }
+                  rzp_payment_id: paymentId,
+                  rzp_signature: checkout.signature,
+                  ...(session.razorpay_order_id || checkout.orderId
+                    ? { rzp_order_id: session.razorpay_order_id || checkout.orderId }
                     : {}),
-                  ...(response.razorpay_subscription_id
-                    ? { rzp_subscription_id: response.razorpay_subscription_id }
+                  ...(session.razorpay_subscription_id || checkout.subscriptionId
+                    ? {
+                        rzp_subscription_id:
+                          session.razorpay_subscription_id || checkout.subscriptionId,
+                      }
                     : {}),
                 },
               });
-              void navigate({
-                to: "/pricing/payment-result",
-                search: {
-                  status: "success",
-                  payment_id: response.razorpay_payment_id,
-                  plan: plan.id,
-                },
-              });
+              void queryClient.invalidateQueries({ queryKey: ["billing"] });
+              void queryClient.invalidateQueries({ queryKey: ["librarySubscriptionTier"] });
+              goToResult("success");
             } catch (verifyErr) {
-              const msg =
-                verifyErr instanceof Error
-                  ? verifyErr.message
-                  : "Payment could not be verified yet. If you were charged, membership will activate shortly.";
-              void navigate({
-                to: "/pricing/payment-result",
-                search: {
-                  status: "processing",
-                  payment_id: response.razorpay_payment_id,
-                  plan: plan.id,
-                  reason: msg,
-                },
-              });
+              setPaymentError(customerFacingPaymentError(verifyErr));
+              goToResult("processing");
             }
           })();
         },
@@ -491,9 +498,20 @@ export function CheckoutScreen() {
             setLoading(false);
             inflight.current = false;
             setPaymentError("Payment window closed. No charge was made — you can try again.");
+            void navigate({
+              to: "/pricing/payment-result",
+              search: { status: "cancelled", plan: plan.id, cycle },
+            });
           },
         },
-      });
+      };
+      if (useOrderCheckout) {
+        checkoutOptions.order_id = session.razorpay_order_id ?? "";
+      } else {
+        checkoutOptions.subscription_id = session.razorpay_subscription_id ?? "";
+      }
+
+      const rzp = new RazorpayCtor(checkoutOptions);
 
       rzp.on("payment.failed", (response: RzpError) => {
         setLoading(false);
@@ -504,7 +522,7 @@ export function CheckoutScreen() {
         setPaymentError(desc);
         void navigate({
           to: "/pricing/payment-result",
-          search: { status: "failed", plan: plan.id, reason: desc },
+          search: { status: "failed", plan: plan.id, cycle, reason: desc },
         });
       });
 

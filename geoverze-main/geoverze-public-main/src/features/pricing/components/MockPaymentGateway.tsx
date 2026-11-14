@@ -110,9 +110,10 @@ export function MockPaymentGateway({
           void navigate({
             to: "/pricing/payment-result",
             search: {
-              status: "processing",
+              status: "success",
               payment_id: `mock_${session.subscription_id.slice(0, 8)}`,
               plan: planTier,
+              subscription_id: session.subscription_id,
             },
           });
         }, 2200);
