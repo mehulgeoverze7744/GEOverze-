@@ -37,8 +37,11 @@ export type CheckoutSessionRequest = {
 export type CheckoutSessionResponse = {
   /** Internal GVRZE subscription UUID (stored in user_subscriptions). */
   subscription_id: string;
-  /** Razorpay Subscription ID (sub_xxxx). Open the modal with this. */
+  /** Razorpay Subscription ID (sub_xxxx). Open the modal with this when set. */
   razorpay_subscription_id: string;
+  /** Razorpay Order ID (order_xxxx). Used when Subscriptions API is unavailable. */
+  razorpay_order_id?: string;
+  checkout_mode?: "subscription" | "order";
   razorpay_key_id?: string;
 
   /** GST breakdown (server-authoritative) ─────────────────────────── */

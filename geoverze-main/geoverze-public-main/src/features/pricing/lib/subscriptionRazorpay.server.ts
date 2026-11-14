@@ -8,6 +8,7 @@ import { createClient } from "@supabase/supabase-js";
 
 import {
   cancelRazorpaySubscription,
+  createRazorpayOrder,
   createRazorpayPlan,
   createRazorpaySubscription,
   envPlanId,
@@ -15,18 +16,25 @@ import {
   getRazorpayKeyId,
   getRazorpayMode,
   isRazorpayServerConfigured,
+  updateRazorpayOrderNotes,
+  verifyCapturedOrderPayment,
   verifyCapturedSubscriptionPayment,
 } from "@/lib/payments/razorpayServer";
 
 export {
   cancelRazorpaySubscription,
+  createRazorpayOrder,
   createRazorpaySubscription,
   getRazorpayDiagnostics,
   getRazorpayKeyId,
   getRazorpayMode,
   isRazorpayServerConfigured,
+  updateRazorpayOrderNotes,
+  verifyCapturedOrderPayment,
   verifyCapturedSubscriptionPayment,
 };
+
+let subscriptionsApiBlocked = false;
 
 function makeServiceClient() {
   const url = process.env["SUPABASE_URL"] ?? process.env["VITE_SUPABASE_URL"] ?? "";
@@ -62,19 +70,39 @@ export async function resolveRazorpayPlanId(
   const existingId = match?.provider_plan_id ?? "";
   if (existingId.startsWith("plan_")) return existingId;
 
-  const plan = await createRazorpayPlan({
-    period: interval === "annual" ? "yearly" : "monthly",
-    interval: 1,
-    name: `GVRZE ${tier} ${interval}`,
-    amountMinor: chargeMinor,
-  });
+  if (subscriptionsApiBlocked) {
+    return existingId || `catalog:${tier}:${interval}`;
+  }
 
-  await svc.rpc("upsert_razorpay_plan_id", {
-    p_plan_tier: tier,
-    p_billing_interval: interval,
-    p_provider_plan_id: plan.id,
-    p_charge_amount_minor: chargeMinor,
-  });
+  // This Razorpay account authorizes Payments/Orders but returns
+  // 401 {"error":"Unauthorized"} on POST /plans until Subscriptions is
+  // enabled in the Dashboard. Do not block membership checkout on that.
+  try {
+    const plan = await createRazorpayPlan({
+      period: interval === "annual" ? "yearly" : "monthly",
+      interval: 1,
+      name: `GVRZE ${tier} ${interval}`,
+      amountMinor: chargeMinor,
+    });
+    await svc.rpc("upsert_razorpay_plan_id", {
+      p_plan_tier: tier,
+      p_billing_interval: interval,
+      p_provider_plan_id: plan.id,
+      p_charge_amount_minor: chargeMinor,
+    });
+    return plan.id;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "";
+    if (/POST \/plans/.test(message) && /401|Unauthorized/i.test(message)) {
+      subscriptionsApiBlocked = true;
+      return existingId || `catalog:${tier}:${interval}`;
+    }
+    throw err;
+  }
+}
 
-  return plan.id;
+export type SubscriptionRazorpayDiagnostics = ReturnType<typeof getRazorpayDiagnostics>;
+
+export function getSubscriptionRazorpayDiagnostics(): SubscriptionRazorpayDiagnostics {
+  return getRazorpayDiagnostics();
 }

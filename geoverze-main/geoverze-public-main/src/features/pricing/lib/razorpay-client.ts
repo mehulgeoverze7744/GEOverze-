@@ -10,7 +10,10 @@
 
 export type RazorpayCheckoutOptions = {
   key: string;
-  subscription_id: string;
+  subscription_id?: string;
+  order_id?: string;
+  amount?: number;
+  currency?: string;
   name: string;
   description: string;
   image?: string;
@@ -30,7 +33,8 @@ export type RazorpayCheckoutOptions = {
 
 export type RazorpaySuccessResponse = {
   razorpay_payment_id: string;
-  razorpay_subscription_id: string;
+  razorpay_subscription_id?: string;
+  razorpay_order_id?: string;
   razorpay_signature: string;
 };
 

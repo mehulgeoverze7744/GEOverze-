@@ -106,3 +106,59 @@ test("extractSubscriptionWebhookRefs reads internal_subscription_id notes", () =
   assert.equal(refs.internalSubscriptionId, "uuid-sub");
   assert.equal(refs.rzpPaymentId, "pay_sub");
 });
+
+test("extractSubscriptionWebhookRefs maps membership order.paid to the order id", () => {
+  const refs = extractSubscriptionWebhookRefs({
+    event: "order.paid",
+    payload: {
+      payment: {
+        entity: {
+          id: "pay_mem",
+          order_id: "order_mem",
+          notes: {
+            checkout: "membership",
+            internal_subscription_id: "uuid-mem",
+          },
+        },
+      },
+    },
+  });
+  assert.equal(refs.rzpSubscriptionId, "order_mem");
+  assert.equal(refs.internalSubscriptionId, "uuid-mem");
+});
+
+test("extractSubscriptionWebhookRefs does not treat Gstore orders as membership", () => {
+  const refs = extractSubscriptionWebhookRefs({
+    event: "order.paid",
+    payload: {
+      payment: {
+        entity: {
+          id: "pay_gs",
+          order_id: "order_gs",
+          notes: { order_type: "gstore_one_time" },
+        },
+      },
+    },
+  });
+  assert.equal(refs.rzpSubscriptionId, null);
+});
+
+test("extractSubscriptionWebhookRefs reads membership notes from the order entity", () => {
+  const refs = extractSubscriptionWebhookRefs({
+    event: "order.paid",
+    payload: {
+      order: {
+        entity: {
+          id: "order_from_entity",
+          notes: {
+            checkout: "membership",
+            internal_subscription_id: "uuid-order-notes",
+          },
+        },
+      },
+      payment: { entity: { id: "pay_entity" } },
+    },
+  });
+  assert.equal(refs.rzpSubscriptionId, "order_from_entity");
+  assert.equal(refs.internalSubscriptionId, "uuid-order-notes");
+});

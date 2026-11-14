@@ -111,11 +111,27 @@ export type RazorpayServerDiagnostics = {
   credentialSource: RazorpayCredentialPair["source"];
   mode: "test" | "live";
   secretLooksLikeKeyId: boolean;
+  frontendKeyIdPrefix: RazorpayKeyPrefix;
+  frontendBackendKeyIdsMatch: boolean;
+  envVarNames: {
+    keyId: string[];
+    keySecret: string[];
+    frontendKeyId: string[];
+  };
 };
+
+function readFrontendKeyId(): string {
+  return (
+    readDotEnvLocal("VITE_RAZORPAY_KEY_ID") ||
+    readRuntimeEnv("VITE_RAZORPAY_KEY_ID") ||
+    readRuntimeEnv("NEXT_PUBLIC_RAZORPAY_KEY_ID")
+  );
+}
 
 /** Public-safe snapshot of Razorpay env. Never includes the Key Secret. */
 export function getRazorpayDiagnostics(): RazorpayServerDiagnostics {
   const pair = readCredentialPair();
+  const frontendKeyId = readFrontendKeyId();
   return {
     keyIdPresent: pair.keyId.length > 0,
     keySecretPresent: pair.keySecret.length > 0,
@@ -125,6 +141,13 @@ export function getRazorpayDiagnostics(): RazorpayServerDiagnostics {
     credentialSource: pair.source,
     mode: getRazorpayMode(),
     secretLooksLikeKeyId: secretLooksLikeKeyId(pair.keySecret),
+    frontendKeyIdPrefix: classifyRazorpayKeyPrefix(frontendKeyId),
+    frontendBackendKeyIdsMatch: !frontendKeyId || frontendKeyId === pair.keyId,
+    envVarNames: {
+      keyId: ["RAZORPAY_KEY_ID", "VITE_RAZORPAY_KEY_ID"],
+      keySecret: ["RAZORPAY_KEY_SECRET"],
+      frontendKeyId: ["VITE_RAZORPAY_KEY_ID"],
+    },
   };
 }
 
@@ -235,6 +258,13 @@ export async function fetchRazorpayPayment(paymentId: string): Promise<RazorpayP
 
 export async function fetchRazorpayOrder(orderId: string): Promise<RazorpayOrder> {
   return razorpayRequest<RazorpayOrder>("GET", `/orders/${orderId}`);
+}
+
+export async function updateRazorpayOrderNotes(
+  orderId: string,
+  notes: Record<string, string>,
+): Promise<RazorpayOrder> {
+  return razorpayRequest<RazorpayOrder>("PATCH", `/orders/${orderId}`, { notes });
 }
 
 export async function createRazorpayPlan(input: {

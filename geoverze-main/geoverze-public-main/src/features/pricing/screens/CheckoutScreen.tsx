@@ -409,9 +409,24 @@ export function CheckoutScreen() {
         throw new Error("Razorpay SDK did not load. Try refreshing the page.");
       }
 
+      const useOrderCheckout =
+        session.checkout_mode === "order" || Boolean(session.razorpay_order_id);
+      if (useOrderCheckout && !session.razorpay_order_id) {
+        throw new Error("Membership checkout is missing a Razorpay order id.");
+      }
+      if (!useOrderCheckout && !session.razorpay_subscription_id) {
+        throw new Error("Membership checkout is missing a Razorpay subscription id.");
+      }
+
       const rzp = new window.Razorpay({
         key: keyId,
-        subscription_id: session.razorpay_subscription_id,
+        ...(useOrderCheckout
+          ? {
+              order_id: session.razorpay_order_id,
+              amount: session.charge_amount_minor,
+              currency: session.charge_currency,
+            }
+          : { subscription_id: session.razorpay_subscription_id }),
         name: "GVRZE",
         description: `${plan.name} membership — ${cycle}`,
         image: "/assets/brand/gvrze-mark-light.png",
@@ -420,6 +435,7 @@ export function CheckoutScreen() {
           email: user.email,
         },
         notes: {
+          checkout: "membership",
           internal_subscription_id: session.subscription_id,
           plan_tier: plan.id,
           billing_interval: cycle,
@@ -435,8 +451,13 @@ export function CheckoutScreen() {
                   access_token: auth.session?.access_token ?? "",
                   subscription_id: session.subscription_id,
                   rzp_payment_id: response.razorpay_payment_id,
-                  rzp_subscription_id: response.razorpay_subscription_id,
                   rzp_signature: response.razorpay_signature,
+                  ...(response.razorpay_order_id
+                    ? { rzp_order_id: response.razorpay_order_id }
+                    : {}),
+                  ...(response.razorpay_subscription_id
+                    ? { rzp_subscription_id: response.razorpay_subscription_id }
+                    : {}),
                 },
               });
               void navigate({

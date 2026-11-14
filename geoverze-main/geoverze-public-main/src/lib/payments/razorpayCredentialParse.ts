@@ -115,8 +115,11 @@ export function parseRazorpayErrorBody(bodyText: string): {
 } {
   try {
     const parsed = JSON.parse(bodyText) as {
-      error?: { code?: string; description?: string; reason?: string };
+      error?: string | { code?: string; description?: string; reason?: string };
     };
+    if (typeof parsed?.error === "string") {
+      return { code: "", description: redactSecrets(stripEnvValue(parsed.error)) };
+    }
     const code = stripEnvValue(parsed?.error?.code);
     const description = stripEnvValue(
       parsed?.error?.description || parsed?.error?.reason,
@@ -156,9 +159,17 @@ export function formatRazorpayHttpError(input: {
     if (parsed.description) {
       parts.push(`Razorpay said: "${parsed.description}".`);
     }
-    parts.push(
-      "Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in Vercel Production to a matching pair from the same mode (TEST keys start with rzp_test_), then redeploy. Do not mix a build-time VITE_RAZORPAY_KEY_ID with a different runtime secret.",
-    );
+    const subscriptionsPath =
+      input.path.startsWith("/plans") || input.path.startsWith("/subscriptions");
+    if (subscriptionsPath && parsed.description.toLowerCase() === "unauthorized") {
+      parts.push(
+        "This Razorpay account authorizes Payments/Orders but not the Subscriptions product. Enable Subscriptions in dashboard.razorpay.com → Subscriptions → Get Started (Test Mode), or membership checkout will charge via a one-time Razorpay Order using the same keys as Gstore.",
+      );
+    } else {
+      parts.push(
+        "Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in Vercel Production to a matching pair from the same mode (TEST keys start with rzp_test_), then redeploy. Do not mix a build-time VITE_RAZORPAY_KEY_ID with a different runtime secret.",
+      );
+    }
     return parts.join(" ");
   }
 

@@ -97,16 +97,36 @@ export function extractGstoreWebhookRefs(envelope: RazorpayWebhookEnvelope): Gst
   };
 }
 
+function webhookNotes(envelope: RazorpayWebhookEnvelope): Record<string, unknown> {
+  const sub = asRecord(envelope.payload?.subscription?.entity);
+  const payment = asRecord(envelope.payload?.payment?.entity);
+  const order = asRecord(envelope.payload?.order?.entity);
+  return {
+    ...asRecord(order["notes"]),
+    ...asRecord(payment["notes"]),
+    ...asRecord(sub["notes"]),
+  };
+}
+
+export function isMembershipOrderWebhook(envelope: RazorpayWebhookEnvelope): boolean {
+  return asString(webhookNotes(envelope)["checkout"]) === "membership";
+}
+
 export function extractSubscriptionWebhookRefs(
   envelope: RazorpayWebhookEnvelope,
 ): SubscriptionWebhookRefs {
   const event = envelope.event ?? "unknown";
   const sub = asRecord(envelope.payload?.subscription?.entity);
   const payment = asRecord(envelope.payload?.payment?.entity);
-  const notes = asRecord(sub["notes"] ?? payment["notes"]);
+  const order = asRecord(envelope.payload?.order?.entity);
+  const notes = webhookNotes(envelope);
+  const membershipOrderId = isMembershipOrderWebhook(envelope)
+    ? asString(payment["order_id"]) ?? asString(order["id"])
+    : null;
   return {
     event,
-    rzpSubscriptionId: asString(sub["id"]) ?? asString(payment["subscription_id"]),
+    rzpSubscriptionId:
+      asString(sub["id"]) ?? asString(payment["subscription_id"]) ?? membershipOrderId,
     rzpPaymentId: asString(payment["id"]),
     rzpPlanId: asString(sub["plan_id"]),
     internalSubscriptionId:

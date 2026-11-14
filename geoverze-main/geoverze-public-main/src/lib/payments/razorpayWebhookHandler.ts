@@ -13,6 +13,7 @@ import { hmacSha256Hex, verifyRazorpayWebhookSignature } from "./razorpayCrypto"
 import {
   extractGstoreWebhookRefs,
   extractSubscriptionWebhookRefs,
+  isMembershipOrderWebhook,
   RAZORPAY_GSTORE_EVENTS,
   RAZORPAY_SUBSCRIPTION_EVENTS,
   resolveRazorpayWebhookEventId,
@@ -84,7 +85,7 @@ export async function handleRazorpayWebhookRequest(request: Request): Promise<Re
   }
 
   try {
-    if (RAZORPAY_GSTORE_EVENTS.has(eventType)) {
+    if (RAZORPAY_GSTORE_EVENTS.has(eventType) && !isMembershipOrderWebhook(envelope)) {
       const refs = extractGstoreWebhookRefs(envelope);
       const outcome = eventType === "payment.failed" ? "failed" : "success";
       await supabase.rpc("fulfill_gstore_order_from_webhook", {

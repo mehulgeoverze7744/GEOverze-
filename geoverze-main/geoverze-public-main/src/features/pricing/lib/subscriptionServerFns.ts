@@ -84,6 +84,8 @@ const CreateSubSchema = z.object({
 export type CreateRazorpaySubscriptionResult = {
   subscription_id: string;
   razorpay_subscription_id: string;
+  razorpay_order_id: string;
+  checkout_mode: "subscription" | "order";
   razorpay_key_id: string;
   base_amount_minor: number;
   gst_amount_minor: number;
@@ -94,6 +96,14 @@ export type CreateRazorpaySubscriptionResult = {
   price_label: string;
   promotion_applied: boolean;
   test_mode: boolean;
+  diagnostics: {
+    keyIdPrefix: string;
+    keyIdFingerprint: string;
+    frontendKeyIdPrefix: string;
+    frontendBackendKeyIdsMatch: boolean;
+    envVarNames: { keyId: string[]; keySecret: string[]; frontendKeyId: string[] };
+    checkoutMode: "subscription" | "order";
+  };
 };
 
 export const createRazorpaySubscriptionFn = createServerFn({ method: "POST" })
@@ -111,16 +121,45 @@ export const createRazorpaySubscriptionFn = createServerFn({ method: "POST" })
     const amounts = await catalogChargePaise(data.plan_tier, data.billing_interval);
     const planId = await rzp.resolveRazorpayPlanId(data.plan_tier, data.billing_interval, amounts.chargeMinor);
     const totalCount = data.billing_interval === "annual" ? 10 : 120;
+    const diag = rzp.getSubscriptionRazorpayDiagnostics();
 
-    const rzpSub = await rzp.createRazorpaySubscription({
-      planId,
-      totalCount,
-      notes: {
-        plan_tier: data.plan_tier,
-        billing_interval: data.billing_interval,
-        idempotency_key: data.idempotency_key,
-      },
-    });
+    let checkoutMode: "subscription" | "order" = "order";
+    let rzpSubId = "";
+    let rzpOrderId = "";
+
+    if (planId.startsWith("plan_")) {
+      try {
+        const rzpSub = await rzp.createRazorpaySubscription({
+          planId,
+          totalCount,
+          notes: {
+            plan_tier: data.plan_tier,
+            billing_interval: data.billing_interval,
+            idempotency_key: data.idempotency_key,
+          },
+        });
+        rzpSubId = rzpSub.id;
+        checkoutMode = "subscription";
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "";
+        if (!/401|Unauthorized/i.test(message)) throw err;
+      }
+    }
+
+    if (!rzpSubId) {
+      const order = await rzp.createRazorpayOrder({
+        amountMinor: amounts.chargeMinor,
+        receipt: `mem_${data.plan_tier}_${Date.now()}`.slice(0, 40),
+        notes: {
+          checkout: "membership",
+          plan_tier: data.plan_tier,
+          billing_interval: data.billing_interval,
+          idempotency_key: data.idempotency_key,
+        },
+      });
+      rzpOrderId = order.id;
+      checkoutMode = "order";
+    }
 
     const sb = makeUserClient(data.access_token);
     const { data: rpcResult, error } = await sb.rpc("begin_razorpay_subscription", {
@@ -129,7 +168,7 @@ export const createRazorpaySubscriptionFn = createServerFn({ method: "POST" })
       p_base_amount_minor: amounts.baseMinor,
       p_gst_amount_minor: amounts.gstMinor,
       p_charge_amount_minor: amounts.chargeMinor,
-      p_provider_subscription_id: rzpSub.id,
+      p_provider_subscription_id: rzpSubId || rzpOrderId,
       p_provider_plan_id: planId,
       p_idempotency_key: data.idempotency_key,
     });
@@ -138,12 +177,28 @@ export const createRazorpaySubscriptionFn = createServerFn({ method: "POST" })
     }
     const result = rpcResult as { subscription_id: string };
 
+    if (rzpOrderId && result.subscription_id) {
+      try {
+        await rzp.updateRazorpayOrderNotes(rzpOrderId, {
+          checkout: "membership",
+          plan_tier: data.plan_tier,
+          billing_interval: data.billing_interval,
+          internal_subscription_id: result.subscription_id,
+          idempotency_key: data.idempotency_key,
+        });
+      } catch {
+        // Checkout still verifies against the order id stored on the subscription row.
+      }
+    }
+
     const rupees = amounts.chargeMinor / 100;
     const cadence = data.billing_interval === "annual" ? "year" : "month";
 
     return {
       subscription_id: result.subscription_id,
-      razorpay_subscription_id: rzpSub.id,
+      razorpay_subscription_id: rzpSubId,
+      razorpay_order_id: rzpOrderId,
+      checkout_mode: checkoutMode,
       razorpay_key_id: rzp.getRazorpayKeyId(),
       base_amount_minor: amounts.baseMinor,
       gst_amount_minor: amounts.gstMinor,
@@ -154,32 +209,64 @@ export const createRazorpaySubscriptionFn = createServerFn({ method: "POST" })
       price_label: `₹${rupees.toLocaleString("en-IN")} / ${cadence}`,
       promotion_applied: false,
       test_mode: rzp.getRazorpayMode() === "test",
+      diagnostics: {
+        keyIdPrefix: diag.keyIdPrefix,
+        keyIdFingerprint: diag.keyIdFingerprint,
+        frontendKeyIdPrefix: diag.frontendKeyIdPrefix,
+        frontendBackendKeyIdsMatch: diag.frontendBackendKeyIdsMatch,
+        envVarNames: diag.envVarNames,
+        checkoutMode,
+      },
     };
   });
 
-const VerifySubSchema = z.object({
-  access_token: z.string().min(10),
-  subscription_id: z.string().uuid(),
-  rzp_payment_id: z.string().min(1),
-  rzp_subscription_id: z.string().min(1),
-  rzp_signature: z.string().min(1),
-});
+const VerifySubSchema = z
+  .object({
+    access_token: z.string().min(10),
+    subscription_id: z.string().uuid(),
+    rzp_payment_id: z.string().min(1),
+    rzp_signature: z.string().min(1),
+    rzp_subscription_id: z.string().min(1).optional(),
+    rzp_order_id: z.string().min(1).optional(),
+  })
+  .refine((value) => Boolean(value.rzp_order_id || value.rzp_subscription_id), {
+    message: "razorpay_order_id or razorpay_subscription_id is required.",
+  });
 
 export const verifyRazorpaySubscriptionFn = createServerFn({ method: "POST" })
   .validator((raw: unknown) => VerifySubSchema.parse(raw))
   .handler(async ({ data }) => {
     assertRateLimit(`sub-verify:${data.access_token.slice(-24)}`, 20, 60_000);
     const rzp = await import("./subscriptionRazorpay.server");
-    await rzp.verifyCapturedSubscriptionPayment({
-      rzpSubscriptionId: data.rzp_subscription_id,
-      rzpPaymentId: data.rzp_payment_id,
-      rzpSignature: data.rzp_signature,
-    });
     const sb = makeUserClient(data.access_token);
+    const providerRef = data.rzp_order_id || data.rzp_subscription_id || "";
+
+    if (data.rzp_order_id) {
+      const { data: subRow, error: subError } = await sb
+        .from("user_subscriptions")
+        .select("plan_tier, billing_interval")
+        .eq("id", data.subscription_id)
+        .single();
+      if (subError || !subRow) throw new Error("Subscription not found.");
+      const amounts = await catalogChargePaise(subRow.plan_tier, subRow.billing_interval);
+      await rzp.verifyCapturedOrderPayment({
+        rzpOrderId: data.rzp_order_id,
+        rzpPaymentId: data.rzp_payment_id,
+        rzpSignature: data.rzp_signature,
+        expectedAmountMinor: amounts.chargeMinor,
+      });
+    } else {
+      await rzp.verifyCapturedSubscriptionPayment({
+        rzpSubscriptionId: data.rzp_subscription_id ?? "",
+        rzpPaymentId: data.rzp_payment_id,
+        rzpSignature: data.rzp_signature,
+      });
+    }
+
     const { data: result, error } = await sb.rpc("confirm_razorpay_subscription", {
       p_subscription_id: data.subscription_id,
       p_provider_payment_id: data.rzp_payment_id,
-      p_provider_subscription_id: data.rzp_subscription_id,
+      p_provider_subscription_id: providerRef,
     });
     if (error) throw new Error(error.message);
     return { success: true, result };
@@ -203,9 +290,14 @@ export const cancelRazorpaySubscriptionFn = createServerFn({ method: "POST" })
     if (sub.provider_name !== "razorpay") {
       throw new Error("This subscription is not billed through Razorpay.");
     }
-    if (sub.provider_subscription_id) {
+    if (sub.provider_subscription_id?.startsWith("sub_")) {
       const rzp = await import("./subscriptionRazorpay.server");
-      await rzp.cancelRazorpaySubscription(sub.provider_subscription_id, true);
+      try {
+        await rzp.cancelRazorpaySubscription(sub.provider_subscription_id, true);
+      } catch (cancelErr) {
+        const message = cancelErr instanceof Error ? cancelErr.message : "";
+        if (!/401|Unauthorized/i.test(message)) throw cancelErr;
+      }
     }
     const { error: cancelError } = await sb.rpc("request_cancel_subscription");
     if (cancelError) {

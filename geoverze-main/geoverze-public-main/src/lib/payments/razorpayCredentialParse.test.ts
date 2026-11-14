@@ -103,6 +103,25 @@ test("parseRazorpayErrorBody redacts key ids in descriptions", () => {
   assert.match(parsed.description, /rzp_test_\*\*\*/);
 });
 
+test("parseRazorpayErrorBody accepts string Unauthorized from Plans API", () => {
+  const parsed = parseRazorpayErrorBody(JSON.stringify({ error: "Unauthorized" }));
+  assert.equal(parsed.description, "Unauthorized");
+});
+
+test("formatRazorpayHttpError explains Subscriptions product 401", () => {
+  const message = formatRazorpayHttpError({
+    status: 401,
+    method: "POST",
+    path: "/plans",
+    bodyText: JSON.stringify({ error: "Unauthorized" }),
+    keyPrefix: "rzp_test_",
+    secretConfigured: true,
+    secretLooksLikeKeyId: false,
+  });
+  assert.match(message, /Subscriptions product/);
+  assert.match(message, /one-time Razorpay Order/);
+});
+
 test("encodeRazorpayBasicAuth is username=keyId password=secret", () => {
   const encoded = encodeRazorpayBasicAuth("key", "secret");
   assert.equal(Buffer.from(encoded, "base64").toString("utf8"), "key:secret");

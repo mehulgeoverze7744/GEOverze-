@@ -104,10 +104,17 @@ Deno.serve(async (req: Request) => {
 
   const payment = event.payload?.["payment"]?.entity ?? {};
   const subscription = event.payload?.["subscription"]?.entity ?? {};
-  const notes = { ...notesOf(subscription), ...notesOf(payment) };
+  const order = event.payload?.["order"]?.entity ?? {};
+  const notes = { ...notesOf(order), ...notesOf(payment), ...notesOf(subscription) };
+  const isMembership = notes["checkout"] === "membership";
+  const membershipOrderId = isMembership
+    ? (typeof payment["order_id"] === "string" && payment["order_id"]) ||
+      (typeof order["id"] === "string" && order["id"]) ||
+      ""
+    : "";
 
   try {
-    if (eventType === "payment.captured" || eventType === "order.paid") {
+    if ((eventType === "payment.captured" || eventType === "order.paid") && !isMembership) {
       await supabase.rpc("fulfill_gstore_order_from_webhook", {
         p_provider_order_id: (payment["order_id"] as string) ?? "",
         p_provider_payment_id: (payment["id"] as string) ?? "",
@@ -116,8 +123,13 @@ Deno.serve(async (req: Request) => {
         p_payment_method: (payment["method"] as string) ?? null,
         p_outcome: "success",
       });
+    }
 
-      const rzpSub = (payment["subscription_id"] as string) || (subscription["id"] as string) || "";
+    if (eventType === "payment.captured" || eventType === "order.paid") {
+      const rzpSub =
+        (payment["subscription_id"] as string) ||
+        (subscription["id"] as string) ||
+        membershipOrderId;
       if (rzpSub) {
         await supabase.rpc("apply_razorpay_subscription_event", {
           p_event_type: "subscription.charged",
@@ -127,7 +139,7 @@ Deno.serve(async (req: Request) => {
           p_period_key: null,
         });
       }
-    } else if (eventType === "payment.failed") {
+    } else if (eventType === "payment.failed" && !isMembership) {
       await supabase.rpc("fulfill_gstore_order_from_webhook", {
         p_provider_order_id: (payment["order_id"] as string) ?? "",
         p_provider_payment_id: (payment["id"] as string) ?? "",
