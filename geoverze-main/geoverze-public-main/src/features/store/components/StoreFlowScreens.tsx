@@ -165,7 +165,21 @@ export function CartScreen() {
                   variant="solid"
                   className="mt-6 w-full uppercase tracking-[0.14em]"
                 >
-                  <Link to="/geostore/checkout">Checkout</Link>
+                  <Link
+                    to="/geostore/checkout"
+                    search={{
+                      buyNow: undefined,
+                      slug: undefined,
+                      qty: undefined,
+                      Size: undefined,
+                      Colour: undefined,
+                      Design: undefined,
+                      CustomDesign: undefined,
+                      Instructions: undefined,
+                    }}
+                  >
+                    Checkout
+                  </Link>
                 </GeoButton>
               </AnimatedSection>
             </div>

@@ -7,7 +7,8 @@ const BASE = "/assets/gvrze-storefront";
 
 export const SF_ASSETS = {
   logo: { src: "/assets/home/gvrze-wordmark.png", width: 581, height: 85 },
-  hero: { src: `${BASE}/hero.webp`, width: 1672, height: 941 },
+  hero: { src: `${BASE}/hero-hd.png`, width: 1672, height: 941 },
+  heroWebp: { src: `${BASE}/hero.webp`, width: 1672, height: 941 },
   heroFade: { src: `${BASE}/hero-fade.png`, width: 1024, height: 99 },
   heroUnderline: { src: `${BASE}/hero-underline.svg`, width: 83, height: 1 },
   categoryTees: { src: `${BASE}/category-tees.webp`, width: 1816, height: 866 },

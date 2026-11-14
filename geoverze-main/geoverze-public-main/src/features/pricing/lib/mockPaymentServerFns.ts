@@ -126,6 +126,12 @@ export const confirmMockPaymentFn = createServerFn({ method: "POST" })
     });
 
     if (error) throw new Error(error.message ?? "confirm_mock_subscription RPC failed.");
+    if (data.outcome === "success") {
+      const { schedulePaidSubscriptionNotifications } = await import(
+        "@/lib/notifications/commerceNotifications.server"
+      );
+      schedulePaidSubscriptionNotifications(data.subscription_id);
+    }
     return (result as ConfirmMockPaymentResult) ?? { success: false };
   });
 

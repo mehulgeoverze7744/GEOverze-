@@ -4,7 +4,7 @@ import { GeostoreCartButton } from "./GeostoreCartButton";
 import { GeostoreSearchButton } from "./GeostoreSearchButton";
 import { GeostoreWishlistButton } from "./GeostoreWishlistButton";
 
-function isFashionStorefront(pathname: string) {
+export function isFashionStorefront(pathname: string) {
   return (
     pathname === "/geostore" ||
     pathname === "/geostore/" ||
@@ -12,7 +12,10 @@ function isFashionStorefront(pathname: string) {
     pathname.startsWith("/geostore/category") ||
     pathname.startsWith("/geostore/product") ||
     pathname.startsWith("/geostore/try-on") ||
-    pathname.startsWith("/geostore/order")
+    pathname.startsWith("/geostore/order") ||
+    pathname.startsWith("/geostore/cart") ||
+    pathname.startsWith("/geostore/checkout") ||
+    pathname.startsWith("/geostore/wishlist")
   );
 }
 

@@ -1,6 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import type { CSSProperties } from "react";
+import { Plus } from "lucide-react";
+import type { CSSProperties, MouseEvent } from "react";
 
+import { defaultOptions } from "../lib/cart";
+import { resolveStoreProduct } from "../lib/resolveStoreProduct";
+import { useStoreActions } from "../lib/useStoreActions";
 import { SF_ASSETS } from "./storefront-assets";
 import { STOREFRONT_TEE_PRICE_LABEL } from "./storefront-product-data";
 import { ExploreMoreLink, SF_SHELL, SF_UI_FONT } from "./storefront-ui";
@@ -84,10 +88,19 @@ const BEST_SELLERS: readonly BestSeller[] = [
 ];
 
 function BestSellerCard({ item }: { item: BestSeller }) {
+  const { addProduct } = useStoreActions();
   const productLink = {
     to: "/geostore/product/$slug",
     params: { slug: item.slug },
   } as const;
+
+  function handleQuickAdd(event: MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+    const product = resolveStoreProduct(item.slug);
+    if (!product) return;
+    addProduct(product, defaultOptions(product));
+  }
 
   // ── Full-bleed cover path ──────────────────────────────────────────────────
   // For portrait model/product shots whose aspect ratio closely matches the
@@ -152,13 +165,24 @@ function BestSellerCard({ item }: { item: BestSeller }) {
         </Link>
       </div>
 
-      <div className="mt-3.5 px-0.5 sm:px-3">
-        <h3 className="text-[12.5px] font-normal leading-snug text-black [overflow-wrap:anywhere] sm:text-[16px]">
-          <Link {...productLink} className="transition-opacity hover:opacity-60">
-            {item.name}
-          </Link>
-        </h3>
-        <p className="mt-1.5 text-[13px] text-[#353535] sm:text-[16px]">{item.price}</p>
+      <div className="mt-3.5 flex items-end justify-between gap-2 px-0.5 sm:px-3">
+        <div className="min-w-0">
+          <h3 className="text-[12.5px] font-normal leading-snug text-black [overflow-wrap:anywhere] sm:text-[16px]">
+            <Link {...productLink} className="transition-opacity hover:opacity-60">
+              {item.name}
+            </Link>
+          </h3>
+          <p className="mt-1.5 text-[13px] text-[#353535] sm:text-[16px]">{item.price}</p>
+        </div>
+        <button
+          type="button"
+          onClick={handleQuickAdd}
+          aria-label={`Add ${item.name} to cart`}
+          title="Add to cart"
+          className="mb-0.5 inline-flex h-[29px] w-[39px] shrink-0 items-center justify-center rounded-[8px] border border-black/10 bg-white text-black transition-colors hover:bg-black hover:text-white"
+        >
+          <Plus className="h-3.5 w-3.5" strokeWidth={2.2} />
+        </button>
       </div>
     </li>
   );

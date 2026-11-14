@@ -378,9 +378,17 @@ export const verifyRazorpaySubscriptionFn = createServerFn({ method: "POST" })
       .eq("id", data.subscription_id)
       .single();
 
+    const activated = (refreshed?.status ?? subRow.status) === "active";
+    if (activated) {
+      const { schedulePaidSubscriptionNotifications } = await import(
+        "@/lib/notifications/commerceNotifications.server"
+      );
+      schedulePaidSubscriptionNotifications(data.subscription_id);
+    }
+
     return {
       success: true,
-      activated: (refreshed?.status ?? subRow.status) === "active",
+      activated,
       idempotent: confirmed.idempotent === true,
       plan_tier: refreshed?.plan_tier ?? subRow.plan_tier,
       billing_interval: refreshed?.billing_interval ?? subRow.billing_interval,

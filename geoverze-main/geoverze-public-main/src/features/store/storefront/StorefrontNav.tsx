@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { ArrowLeft, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -33,7 +33,6 @@ const BADGE =
   "absolute right-0.5 top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-black px-1 text-[10px] font-semibold leading-none text-white";
 
 const STORE_LINKS: { label: string; to: NavLink }[] = [
-  { label: "Shop all", to: "/geostore/browse" },
   { label: "Rewards", to: "/geostore/rewards" },
   { label: "Orders", to: "/geostore/orders" },
   { label: "Wishlist", to: "/geostore/wishlist" },
@@ -77,15 +76,9 @@ type StorefrontNavProps = {
    * `solid` — inner store pages: in-flow bar so content never sits underneath.
    */
   variant?: "overlay" | "solid";
-  /**
-   * Try-On Studio is launched from the GStore hero / homepage nav only.
-   * Defaults to the homepage (`overlay`) so category and product pages stay clean.
-   */
+  /** @deprecated Try-On Studio is always shown. Kept so existing callers type-check. */
   showTryOn?: boolean;
-  /**
-   * `gmake` — product / Try-On chrome from the Figma studio frames
-   * (New In, Collections, GMake Studio). Homepage keeps `default`.
-   */
+  /** @deprecated GMake / Customization chrome is archived. Ignored. */
   linkSet?: "default" | "gmake";
 };
 
@@ -94,11 +87,14 @@ type StorefrontNavProps = {
  * once the page scrolls. Cart, wishlist, search and account all stay wired to
  * the existing store state; the menu carries the rest of the store and site.
  */
-export function StorefrontNav({ variant = "overlay", showTryOn, linkSet = "default" }: StorefrontNavProps) {
+export function StorefrontNav({ variant = "overlay" }: StorefrontNavProps) {
   const solid = variant === "solid";
-  const tryOnLink = showTryOn ?? !solid;
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const collectionActive =
+    pathname.startsWith("/geostore/browse") || pathname.startsWith("/geostore/category");
+  const tryOnActive = pathname.startsWith("/geostore/try-on");
   const cartCount = useCartStore(selectCartCount);
   const wishlistCount = useStoreStore(selectWishlistCount);
   const signedIn = useAuthStore(selectIsSignedIn);
@@ -150,39 +146,21 @@ export function StorefrontNav({ variant = "overlay", showTryOn, linkSet = "defau
           aria-label="Gstore"
           className="hidden min-w-0 items-center gap-[clamp(16px,2.2vw,28px)] md:flex"
         >
-          {linkSet === "gmake" ? (
-            <>
-              <Link to="/geostore/browse" className={navLink}>
-                New In
-              </Link>
-              <Link to="/geostore" hash="collections" className={navLink}>
-                Collections
-              </Link>
-              <Link to="/geostore/try-on" className={navLink}>
-                GMake Studio
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link to="/geostore/browse" className={navLink}>
-                Shop
-              </Link>
-              {solid ? (
-                <Link to="/geostore" hash="collections" className={navLink}>
-                  Collections
-                </Link>
-              ) : (
-                <a href="#collections" className={navLink}>
-                  Collections
-                </a>
-              )}
-              {tryOnLink ? (
-                <Link to="/geostore/try-on" className={navLink} aria-label="Open Try-On Studio">
-                  Try-On Studio
-                </Link>
-              ) : null}
-            </>
-          )}
+          <Link
+            to="/geostore/browse"
+            className={cn(navLink, collectionActive && "font-semibold")}
+            aria-current={collectionActive ? "page" : undefined}
+          >
+            Collection
+          </Link>
+          <Link
+            to="/geostore/try-on"
+            className={cn(navLink, tryOnActive && "font-semibold")}
+            aria-label="Open Try-On Studio"
+            aria-current={tryOnActive ? "page" : undefined}
+          >
+            Try-On Studio
+          </Link>
         </nav>
 
         <Link
@@ -236,13 +214,24 @@ export function StorefrontNav({ variant = "overlay", showTryOn, linkSet = "defau
                 <span className={BADGE}>{cartCount > 99 ? "99+" : cartCount}</span>
               ) : null}
             </Link>
-            <Link
-              to={signedIn ? "/dashboard" : "/auth/login"}
-              aria-label={signedIn ? "Your account" : "Sign in"}
-              className={cn(ICON_BUTTON, "hidden sm:inline-flex")}
-            >
-              <Icon asset={SF_ASSETS.iconAccount} />
-            </Link>
+            {signedIn ? (
+              <Link
+                to="/dashboard"
+                aria-label="Your account"
+                className={cn(ICON_BUTTON, "hidden sm:inline-flex")}
+              >
+                <Icon asset={SF_ASSETS.iconAccount} />
+              </Link>
+            ) : (
+              <Link
+                to="/auth/login"
+                search={{ redirect: undefined }}
+                aria-label="Sign in"
+                className={cn(ICON_BUTTON, "hidden sm:inline-flex")}
+              >
+                <Icon asset={SF_ASSETS.iconAccount} />
+              </Link>
+            )}
             <button
               type="button"
               onClick={() => setMenuOpen(true)}
@@ -262,7 +251,7 @@ export function StorefrontNav({ variant = "overlay", showTryOn, linkSet = "defau
       <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
         <SheetContent
           side="right"
-          overlayClassName="sf-glass-drawer-overlay bg-[rgb(23_35_53/0.08)]"
+          overlayClassName="sf-glass-drawer-overlay overlay-scrim bg-[rgb(23_35_53/0.28)] backdrop-blur-[16px] backdrop-saturate-150"
           className={cn(
             "sf-glass-drawer flex w-full flex-col gap-0 overflow-x-hidden overflow-y-auto bg-white/50 p-0 backdrop-blur-[30px] backdrop-saturate-[160%] sm:max-w-sm",
             DRAWER_FONT,
@@ -309,15 +298,20 @@ export function StorefrontNav({ variant = "overlay", showTryOn, linkSet = "defau
               >
                 Accessories
               </Link>
-              {tryOnLink ? (
-                <Link
-                  to="/geostore/try-on"
-                  onClick={closeMenu}
-                  className={DRAWER_LINK}
-                >
-                  Try-On Studio
-                </Link>
-              ) : null}
+              <Link
+                to="/geostore/browse"
+                onClick={closeMenu}
+                className={DRAWER_LINK}
+              >
+                Collection
+              </Link>
+              <Link
+                to="/geostore/try-on"
+                onClick={closeMenu}
+                className={DRAWER_LINK}
+              >
+                Try-On Studio
+              </Link>
               {STORE_LINKS.map((item) => (
                 <Link
                   key={item.to}
@@ -393,6 +387,7 @@ export function StorefrontNav({ variant = "overlay", showTryOn, linkSet = "defau
               <div className="mt-3 flex flex-col gap-3">
                 <Link
                   to="/auth/login"
+                  search={{ redirect: undefined }}
                   onClick={closeMenu}
                   className="inline-flex h-11 w-full items-center justify-center rounded-lg border border-black/20 text-[14px] font-medium text-black transition-colors hover:bg-black hover:text-white"
                 >

@@ -26,6 +26,7 @@ import {
   TRY_ON_CATEGORY_LABELS,
 } from "../tryon/tryOnProducts";
 import { formatRsPaise, GMAKE_ASSETS, gmakeProductTitle } from "./gmake-assets";
+import { GMAKE_CUSTOMIZATION_ENABLED } from "./gmakeFlags";
 import { GMakeRainbowButton } from "./GMakeRainbowButton";
 
 export function GMakeStudioProductPage({ tee }: { tee: StorefrontTeeProduct }) {
@@ -120,7 +121,9 @@ export function GMakeStudioProductPage({ tee }: { tee: StorefrontTeeProduct }) {
                 </button>
               </div>
 
-              <GMakeRainbowButton onClick={openStudio}>Customization</GMakeRainbowButton>
+              {GMAKE_CUSTOMIZATION_ENABLED ? (
+                <GMakeRainbowButton onClick={openStudio}>Customization</GMakeRainbowButton>
+              ) : null}
             </div>
 
             <div className="gmake-preview">

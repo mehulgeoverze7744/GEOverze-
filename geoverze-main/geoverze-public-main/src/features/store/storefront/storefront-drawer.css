@@ -3,11 +3,12 @@
  * Other sheets (site GeoDrawer, dialogs) keep their own chrome.
  */
 
+.sf-glass-drawer-overlay,
 .sf-glass-drawer-overlay.overlay-scrim,
 .overlay-scrim:has(+ .sf-glass-drawer) {
-  background-color: rgb(23 35 53 / 0.08) !important;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  background-color: rgb(23 35 53 / 0.28) !important;
+  backdrop-filter: blur(16px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
 }
 
 .sf-glass-drawer {
@@ -197,8 +198,9 @@
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .overlay-scrim:has(+ .sf-glass-drawer) {
-    background-color: rgb(23 35 53 / 0.28);
+  .overlay-scrim:has(+ .sf-glass-drawer),
+  .sf-glass-drawer-overlay.overlay-scrim {
+    background-color: rgb(23 35 53 / 0.48);
   }
 
   .sf-glass-drawer {

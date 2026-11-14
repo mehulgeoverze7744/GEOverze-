@@ -6,6 +6,8 @@ import type { TryOnGarment } from "./tryOnProducts";
 type TryOnModelPreviewProps = {
   garment: TryOnGarment;
   colorId: string;
+  /** When set, the inactive view is dimmed but both remain visible (studio only). */
+  activeView?: "front" | "back";
 };
 
 function ModelFigure({ slot }: { slot: TryOnModelSlot }) {
@@ -66,13 +68,17 @@ function ModelFigure({ slot }: { slot: TryOnModelSlot }) {
   );
 }
 
-export function TryOnModelPreview({ garment, colorId }: TryOnModelPreviewProps) {
+export function TryOnModelPreview({ garment, colorId, activeView }: TryOnModelPreviewProps) {
   const pair = resolveTryOnPair(garment, colorId);
 
   return (
     <div className="tryon-stage__canvas" role="group" aria-label="Front and back model preview">
-      <ModelFigure slot={pair.front} />
-      <ModelFigure slot={pair.back} />
+      <div className={cn(activeView === "back" && "opacity-45 transition-opacity")}>
+        <ModelFigure slot={pair.front} />
+      </div>
+      <div className={cn(activeView === "front" && "opacity-45 transition-opacity")}>
+        <ModelFigure slot={pair.back} />
+      </div>
     </div>
   );
 }

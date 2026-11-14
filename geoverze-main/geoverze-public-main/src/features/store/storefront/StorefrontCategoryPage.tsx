@@ -109,7 +109,7 @@ function EditorialGrid({
           key={item.id}
           item={item}
           isHero={i === 0 && items.length >= 3}
-          onAdd={item.comingSoon ? undefined : () => onAdd(item)}
+          {...(item.comingSoon ? {} : { onAdd: () => onAdd(item) })}
         />
       ))}
     </div>
@@ -134,6 +134,8 @@ export interface StorefrontCategoryPageProps {
   notice?: ReactNode;
   /** Slot rendered just above the grid — e.g. filter/sort controls. */
   controls?: ReactNode;
+  /** Optional floating control (mobile Filter). Rendered inside the storefront shell. */
+  floatingAction?: ReactNode;
 }
 
 export function StorefrontCategoryPage({
@@ -143,6 +145,7 @@ export function StorefrontCategoryPage({
   onAdd,
   notice,
   controls,
+  floatingAction,
 }: StorefrontCategoryPageProps) {
   const [page, setPage] = useState(1);
   const totalPages = Math.max(1, Math.ceil(items.length / PER_PAGE));
@@ -169,28 +172,20 @@ export function StorefrontCategoryPage({
       <StorefrontNav variant="solid" />
 
       <main className="min-h-screen bg-[#f5f5f5]">
-        <div className={cn(SF_SHELL, "py-10 md:py-14")}>
+        <div className={cn(SF_SHELL, "pb-10 pt-5 md:py-14")}>
           {/* ── Heading row ── */}
-          <div className="mb-8 flex items-start justify-between gap-4">
-            <div className="min-w-0">
+          <div className="mb-5 flex items-start justify-between gap-4 md:mb-8">
+            <div className="min-w-0 pr-16 md:pr-0">
               <h1
-                className="text-[28px] font-semibold tracking-tight text-black md:text-[40px]"
+                className="text-[22px] font-semibold tracking-tight text-black md:text-[40px]"
                 style={{ fontFamily: "var(--sf-font-body)" }}
               >
                 {title}
               </h1>
               {description ? (
-                <p className="mt-1 text-sm text-black/50">{description}</p>
+                <p className="mt-1 hidden text-sm text-black/50 md:block">{description}</p>
               ) : null}
             </div>
-
-            <button
-              type="button"
-              className="mt-1 hidden shrink-0 items-center gap-2 rounded-full border border-black/25 px-5 py-2 text-sm font-medium text-black transition-colors duration-200 hover:bg-black hover:text-white sm:inline-flex"
-              style={{ fontFamily: "var(--sf-font-ui)" }}
-            >
-              Filters
-            </button>
           </div>
 
           {/* ── Optional banner / notice ── */}
@@ -214,6 +209,7 @@ export function StorefrontCategoryPage({
           <Pagination current={page} total={totalPages} onChange={handlePageChange} />
         </div>
       </main>
+      {floatingAction}
     </div>
   );
 }

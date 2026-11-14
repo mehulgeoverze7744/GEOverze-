@@ -40,7 +40,9 @@ import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 import { GeostoreSearchButton } from "../components/GeostoreSearchButton";
+import { StorefrontNav } from "../storefront/StorefrontNav";
 import { SF_ASSETS } from "../storefront/storefront-assets";
+import "../storefront/storefront.css";
 
 import "@/features/store/styles/checkout-light.css";
 
@@ -155,21 +157,24 @@ const CO = {
 
 function EmptyCartState() {
   return (
-    <div className={cn("min-h-[60vh] flex items-center justify-center p-6", CO.pageBg)}>
-      <div className="text-center space-y-5 max-w-sm">
-        <div className="mx-auto w-16 h-16 rounded-full bg-[#F3F4F6] flex items-center justify-center">
-          <ShoppingBag className="w-7 h-7 text-[#9CA3AF]" />
+    <div id="gvrze-storefront" className={cn("min-h-screen", CO.pageBg)}>
+      <StorefrontNav variant="solid" />
+      <div className="flex min-h-[60vh] items-center justify-center p-6">
+        <div className="max-w-sm space-y-5 text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#F3F4F6]">
+            <ShoppingBag className="h-7 w-7 text-[#9CA3AF]" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-[#111827]">Your cart is empty</h2>
+            <p className="mt-1 text-[#6B7280]">Add some products to get started.</p>
+          </div>
+          <Link
+            to="/geostore"
+            className="inline-flex items-center gap-2 rounded-xl bg-[#111827] px-6 py-3 font-semibold text-white transition-colors hover:bg-[#1F2937]"
+          >
+            Browse Gstore
+          </Link>
         </div>
-        <div>
-          <h2 className="text-xl font-bold text-[#111827]">Your cart is empty</h2>
-          <p className="text-[#6B7280] mt-1">Add some products to get started.</p>
-        </div>
-        <Link
-          to="/geostore"
-          className="inline-flex items-center gap-2 bg-[#111827] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#1F2937] transition-colors"
-        >
-          Browse Gstore
-        </Link>
       </div>
     </div>
   );
@@ -700,7 +705,8 @@ export function GstoreCheckoutScreen() {
      *     so the checkout sub-header appears directly below the navbar, not
      *     hidden beneath it.  Every other page applies the same offset.
      */
-    <div className="gvrze-checkout min-h-screen bg-[#F3F4F6] pt-[var(--nav-height)]">
+    <div id="gvrze-storefront" className="gvrze-checkout min-h-screen bg-[#F3F4F6]">
+      <StorefrontNav variant="solid" />
 
       {/* ── Checkout sub-header (Back to Store / Secure Checkout) ─────────── */}
       {/* Normal document flow — sits flush below the fixed navbar, no overlap. */}

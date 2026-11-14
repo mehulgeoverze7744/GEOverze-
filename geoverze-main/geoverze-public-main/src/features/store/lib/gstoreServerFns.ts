@@ -400,6 +400,10 @@ export const verifyGstorePaymentFn = createServerFn({ method: "POST" })
     };
 
     if (order.payment_status === "paid") {
+      const { schedulePaidGstoreOrderNotifications } = await import(
+        "@/lib/notifications/commerceNotifications.server"
+      );
+      schedulePaidGstoreOrderNotifications(data.order_id);
       return { success: true, order_id: data.order_id, order_number: order.order_number };
     }
 
@@ -422,6 +426,11 @@ export const verifyGstorePaymentFn = createServerFn({ method: "POST" })
     });
 
     if (confirmError) throw new Error(`Failed to confirm payment: ${confirmError.message}`);
+
+    const { schedulePaidGstoreOrderNotifications } = await import(
+      "@/lib/notifications/commerceNotifications.server"
+    );
+    schedulePaidGstoreOrderNotifications(data.order_id);
 
     return {
       success:      true,
@@ -474,6 +483,13 @@ export const confirmMockGstorePaymentFn = createServerFn({ method: "POST" })
       .select("order_number")
       .eq("id", data.order_id)
       .single();
+
+    if (data.outcome === "success") {
+      const { schedulePaidGstoreOrderNotifications } = await import(
+        "@/lib/notifications/commerceNotifications.server"
+      );
+      schedulePaidGstoreOrderNotifications(data.order_id);
+    }
 
     return {
       success:      data.outcome === "success",
@@ -893,7 +909,13 @@ export const verifyGstoreGuestPaymentFn = createServerFn({ method: "POST" })
       .single();
     if (orderError || !orderRow) throw new Error("Order not found.");
     const order = orderRow as { total_minor: number; currency: string; payment_status: string };
-    if (order.payment_status === "paid") return { success: true };
+    if (order.payment_status === "paid") {
+      const { schedulePaidGstoreOrderNotifications } = await import(
+        "@/lib/notifications/commerceNotifications.server"
+      );
+      schedulePaidGstoreOrderNotifications(data.order_id);
+      return { success: true };
+    }
 
     try {
       const rzp = await import("./gstoreRazorpay.server");
@@ -928,6 +950,10 @@ export const verifyGstoreGuestPaymentFn = createServerFn({ method: "POST" })
     });
 
     if (error) throw new Error(error.message ?? "Failed to confirm guest payment.");
+    const { schedulePaidGstoreOrderNotifications } = await import(
+      "@/lib/notifications/commerceNotifications.server"
+    );
+    schedulePaidGstoreOrderNotifications(data.order_id);
     return { success: true };
   });
 
@@ -955,6 +981,12 @@ export const confirmMockGstoreGuestPaymentFn = createServerFn({ method: "POST" }
       p_outcome:             data.outcome === "cancel" ? "cancel" : data.outcome,
     });
     if (error) throw new Error(error.message ?? "Failed to confirm mock guest payment.");
+    if (data.outcome === "success") {
+      const { schedulePaidGstoreOrderNotifications } = await import(
+        "@/lib/notifications/commerceNotifications.server"
+      );
+      schedulePaidGstoreOrderNotifications(data.order_id);
+    }
     return { success: true };
   });
 

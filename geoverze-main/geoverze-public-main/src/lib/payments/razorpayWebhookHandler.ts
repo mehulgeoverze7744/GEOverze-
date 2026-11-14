@@ -95,6 +95,11 @@ export async function handleRazorpayWebhookRequest(request: Request): Promise<Re
         p_gstore_payment_id: refs.gstorePaymentId,
         p_outcome: outcome,
       });
+      if (outcome === "success" && refs.gstoreOrderId) {
+        const { schedulePaidGstoreOrderNotifications } =
+          await import("@/lib/notifications/commerceNotifications.server");
+        schedulePaidGstoreOrderNotifications(refs.gstoreOrderId);
+      }
     }
 
     const subRefs = extractSubscriptionWebhookRefs(envelope);
@@ -114,6 +119,17 @@ export async function handleRazorpayWebhookRequest(request: Request): Promise<Re
         p_internal_subscription_id: subRefs.internalSubscriptionId,
         p_period_key: null,
       });
+      if (
+        subRefs.internalSubscriptionId &&
+        (eventType === "subscription.activated" ||
+          eventType === "subscription.charged" ||
+          eventType === "payment.captured" ||
+          eventType === "order.paid")
+      ) {
+        const { schedulePaidSubscriptionNotifications } =
+          await import("@/lib/notifications/commerceNotifications.server");
+        schedulePaidSubscriptionNotifications(subRefs.internalSubscriptionId);
+      }
     }
 
     if (claimed?.id) {

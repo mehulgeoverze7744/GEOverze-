@@ -19,6 +19,7 @@ import { GeoDropdown, GeoDropdownItem } from "@/components/shared/GeoDropdown";
 import { GlobalSearch } from "@/components/shared/GlobalSearch";
 import { NotificationBell } from "@/components/shared/NotificationBell";
 import { mainNav, site } from "@/config/site";
+import { isFashionStorefront } from "@/features/store/components/GeostoreLayout";
 import { scrollToHomeHero } from "@/lib/scrollToHomeHero";
 import { signOut } from "@/lib/supabase/auth-sync";
 import { selectIsSignedIn, useAuthStore } from "@/stores/authStore";
@@ -72,6 +73,7 @@ export function Navbar() {
     pathname.startsWith("/notifications/");
   const signedIn = useAuthStore(selectIsSignedIn);
   const navigate = useNavigate();
+  const fashionStorefront = isFashionStorefront(pathname);
 
   const handleLogoClick = (event: MouseEvent<HTMLAnchorElement>) => {
     if (!isHome) return;
@@ -107,6 +109,8 @@ export function Navbar() {
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
+
+  if (fashionStorefront) return null;
 
   return (
     <header

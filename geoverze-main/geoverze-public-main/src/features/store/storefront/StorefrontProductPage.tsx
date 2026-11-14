@@ -13,7 +13,7 @@
 
 import "./storefront.css";
 
-import { useState, useRef, useEffect, useLayoutEffect, type ReactNode } from "react";
+import { useState, useRef, useEffect, useLayoutEffect, type MouseEvent } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Bookmark, BookmarkCheck, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -21,11 +21,13 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useStoreStore } from "@/stores/storeStore";
 
+import { defaultOptions } from "../lib/cart";
 import { resolveStoreProduct } from "../lib/resolveStoreProduct";
 import { useStoreActions } from "../lib/useStoreActions";
-import { getTryOnGarmentBySlug } from "../tryon/tryOnProducts";
 import { ComingSoonImageOverlay } from "./ComingSoonImageOverlay";
+import { SizeGuideDialog } from "./SizeGuideDialog";
 import { StorefrontNav } from "./StorefrontNav";
+import { StorefrontProductImage } from "./StorefrontProductImage";
 import { SF_SHELL, SF_UI_FONT } from "./storefront-ui";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -92,7 +94,7 @@ export type StorefrontProductPageProps = {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const DEFAULT_SIZES = ["S", "M", "L", "XL"];
+const DEFAULT_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
 
 /** Ignore tiny taps; require a mostly-horizontal gesture so page scroll still works. */
 const GALLERY_SWIPE_PX = 48;
@@ -119,7 +121,7 @@ function SizeButton({
       onClick={onClick}
       aria-pressed={selected}
       className={cn(
-        "flex h-9 min-w-[2.25rem] items-center justify-center rounded-md px-2 text-[12px] font-medium transition-colors duration-150",
+        "sfpp-size-pill flex h-[35px] min-w-[88px] items-center justify-center rounded-[26px] px-4 text-[13px] font-medium transition-colors duration-150",
         selected
           ? "bg-black text-white"
           : "border border-[#d0d0d0] bg-white text-black hover:border-black",
@@ -178,17 +180,31 @@ function ColorSwatch({
 }
 
 function RelatedCard({ product }: { product: SFRelatedProduct }) {
+  const { addProduct } = useStoreActions();
+  const productLink = {
+    to: "/geostore/product/$slug" as const,
+    params: { slug: product.slug },
+  };
+
+  function handleQuickAdd(event: MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+    const resolved = resolveStoreProduct(product.slug);
+    if (!resolved || product.comingSoon) return;
+    addProduct(resolved, defaultOptions(resolved));
+  }
+
   return (
     <li className="min-w-0">
-      <Link
-        to="/geostore/product/$slug"
-        params={{ slug: product.slug }}
-        className="group block"
+      <div
+        className="relative overflow-hidden rounded-[11px] aspect-[324/407]"
+        style={{ backgroundColor: product.tone ?? "#f0f0f0" }}
       >
-        {/* Card with coloured or neutral background */}
-        <div
-          className="relative overflow-hidden rounded-[11px] aspect-[324/407]"
-          style={{ backgroundColor: product.tone ?? "#f0f0f0" }}
+        <Link
+          {...productLink}
+          tabIndex={-1}
+          aria-hidden="true"
+          className="absolute inset-0 block"
         >
           <img
             src={product.image}
@@ -197,27 +213,35 @@ function RelatedCard({ product }: { product: SFRelatedProduct }) {
               "absolute inset-0 h-full w-full object-cover object-center",
               product.comingSoon
                 ? "scale-[1.14] blur-[12px]"
-                : "transition-transform duration-300 group-hover:scale-105",
+                : "transition-transform duration-300 hover:scale-105",
             )}
             loading="lazy"
             decoding="async"
           />
-          {product.comingSoon ? <ComingSoonImageOverlay /> : (
-            <span
-              aria-hidden="true"
-              className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm"
-            >
-              <Plus className="h-4 w-4 text-black" strokeWidth={2} />
-            </span>
-          )}
-        </div>
-        <div className="mt-3 px-0.5">
+          {product.comingSoon ? <ComingSoonImageOverlay /> : null}
+        </Link>
+      </div>
+      <div className="mt-3 flex items-end justify-between gap-2 px-0.5">
+        <div className="min-w-0">
           <p className="text-[13px] font-normal leading-snug text-black sm:text-[15px]">
-            {product.name}
+            <Link {...productLink} className="transition-opacity hover:opacity-60">
+              {product.name}
+            </Link>
           </p>
           <p className="mt-1 text-[13px] text-[#353535] sm:text-[15px]">{product.priceLabel}</p>
         </div>
-      </Link>
+        {product.comingSoon ? null : (
+          <button
+            type="button"
+            onClick={handleQuickAdd}
+            aria-label={`Add ${product.name} to cart`}
+            title="Add to cart"
+            className="mb-0.5 inline-flex h-[29px] w-[39px] shrink-0 items-center justify-center rounded-[8px] border border-black/10 bg-white text-black transition-colors hover:bg-black hover:text-white"
+          >
+            <Plus className="h-3.5 w-3.5" strokeWidth={2.2} />
+          </button>
+        )}
+      </div>
     </li>
   );
 }
@@ -257,6 +281,7 @@ export function StorefrontProductPage({
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<Tab>("description");
+  const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const thumbsRef = useRef<HTMLDivElement>(null);
   const gallerySurfaceRef = useRef<HTMLDivElement>(null);
   const gallerySwipeStart = useRef<{ x: number; y: number } | null>(null);
@@ -266,54 +291,24 @@ export function StorefrontProductPage({
   const setGalleryIndexRef = useRef(setSelectedImageIdx);
   setGalleryIndexRef.current = setSelectedImageIdx;
 
-  // ── Equal-height two-column layout ──────────────────────────────────────
-  // CSS Grid `auto` rows are inflated by both columns' max-content sizes
-  // even when overflow-y: auto is set, so pure-CSS tricks don't reliably
-  // constrain the right col. We use a ResizeObserver to sync the right col's
-  // maxHeight to the left col's exact rendered height on desktop (≥1024px).
-  // useLayoutEffect fires synchronously before paint → no flash.
-  const leftColRef = useRef<HTMLDivElement>(null);
-  const rightColRef = useRef<HTMLDivElement>(null);
-
-  useLayoutEffect(() => {
-    const leftCol = leftColRef.current;
-    const rightCol = rightColRef.current;
-    if (!leftCol || !rightCol) return;
-
-    const mq = window.matchMedia("(min-width: 1024px)");
-
-    function syncHeight() {
-      if (!leftColRef.current || !rightColRef.current) return;
-      if (mq.matches) {
-        // Lock right col to exactly the left col's rendered height so they
-        // appear equal while the right col scrolls its overflowing content.
-        rightColRef.current.style.maxHeight = `${leftColRef.current.offsetHeight}px`;
-      } else {
-        // Mobile: natural height — right col grows with content, page scrolls.
-        rightColRef.current.style.maxHeight = "";
-      }
-    }
-
-    // Re-sync whenever the left col resizes (viewport resize, gallery change).
-    const ro = new ResizeObserver(syncHeight);
-    ro.observe(leftCol);
-    mq.addEventListener("change", syncHeight);
-    syncHeight(); // initial sync
-
-    return () => {
-      ro.disconnect();
-      mq.removeEventListener("change", syncHeight);
-    };
-  }, []);
-  // ────────────────────────────────────────────────────────────────────────
-
   const navigate = useNavigate();
   const wishlistItems = useStoreStore((s) => s.wishlist);
   const wishlistToggleFn = useStoreStore((s) => s.toggleWishlist);
   const isSaved = wishlistItems.includes(slug);
   const { addProduct } = useStoreActions();
   const product = resolveStoreProduct(slug);
-  const canOpenTryOn = Boolean(getTryOnGarmentBySlug(slug));
+
+  useEffect(() => {
+    setSelectedImageIdx(0);
+    setSelectedColorId(colors?.[0]?.id ?? null);
+    setSelectedSize(null);
+    setQuantity(1);
+    setActiveTab("description");
+    setSizeGuideOpen(false);
+    // Reset only when the product route changes — not when the colours array
+    // is a new identity from the parent on re-render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug]);
 
   // When a colour swatch is selected, switch to that colour's gallery and
   // reset the thumbnail strip to the first slide.
@@ -328,14 +323,16 @@ export function StorefrontProductPage({
   //   1. Active colour has a full gallery  → use it
   //   2. Active colour has only a single image → wrap in a one-element array
   //   3. No colours defined               → use the `images` prop directly
-  const activeColor = colors?.find((c) => c.id === selectedColorId);
+  const activeColor = colors?.find((c) => c.id === selectedColorId) ?? colors?.[0];
   const galleryImages: SFGalleryImage[] = (() => {
-    if (!colors || colors.length === 0) return images;
     if (activeColor?.gallery && activeColor.gallery.length > 0) return activeColor.gallery;
-    return [{ src: activeColor?.image ?? "", alt: `${name} — ${activeColor?.label ?? ""}` }];
+    if (activeColor?.image) {
+      return [{ src: activeColor.image, alt: `${name} — ${activeColor.label}` }];
+    }
+    return images.filter((img) => Boolean(img.src));
   })();
 
-  const mainImage = galleryImages[selectedImageIdx] ?? galleryImages[0] ?? { src: "", alt: name };
+  const mainImage = galleryImages[selectedImageIdx] ?? galleryImages[0] ?? images[0] ?? { src: "", alt: name };
   const galleryCount = galleryImages.length;
   galleryIndexRef.current = selectedImageIdx;
   galleryCountRef.current = galleryCount;
@@ -428,7 +425,7 @@ export function StorefrontProductPage({
     if (selectedSize) options["Size"] = selectedSize;
     const color = colors?.find((entry) => entry.id === selectedColorId);
     if (color) options['Colour'] = color.label;
-    addProduct(product, options, showQuantity ? quantity : 1);
+    addProduct(product, options, quantity);
   }
 
   function handleBuyNow() {
@@ -439,24 +436,20 @@ export function StorefrontProductPage({
     }
     // Navigate to checkout in Buy Now mode.
     // The server validates the price by slug — the client only passes identifiers.
-    const searchParams: Record<string, string> = {
-      buyNow: "1",
-      slug,
-      qty: String(showQuantity ? quantity : 1),
-    };
-    if (selectedSize) searchParams["Size"] = selectedSize;
     const color = colors?.find((c) => c.id === selectedColorId);
-    if (color) searchParams["Colour"] = color.label;
-
-    void navigate({ to: "/geostore/checkout", search: searchParams });
-  }
-
-  function handleCustomization() {
-    if (!canOpenTryOn) return;
-    const search: Record<string, string> = { slug };
-    if (selectedColorId) search["color"] = selectedColorId;
-    if (selectedSize) search["size"] = selectedSize;
-    void navigate({ to: "/geostore/try-on", search: search as never });
+    void navigate({
+      to: "/geostore/checkout",
+      search: {
+        buyNow: "1",
+        slug,
+        qty: String(quantity),
+        Size: selectedSize ?? undefined,
+        Colour: color?.label,
+        Design: undefined,
+        CustomDesign: undefined,
+        Instructions: undefined,
+      },
+    });
   }
 
   const washcareList = washcare ?? [
@@ -502,7 +495,7 @@ export function StorefrontProductPage({
           className={`${SF_SHELL} sfpp-product-grid grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-10`}
         >
           {/* ── Left: Gallery ──────────────────────────────────────────────── */}
-          <div className="sfpp-left-col flex min-w-0 w-full flex-col gap-4 sm:flex-row" ref={leftColRef}>
+          <div className="sfpp-left-col flex min-w-0 w-full flex-col gap-4 sm:flex-row">
             {/* Vertical thumbnail strip (desktop: col, mobile: row at bottom) */}
             {galleryImages.length > 1 && (
               <div
@@ -518,19 +511,17 @@ export function StorefrontProductPage({
                     onClick={() => goToGalleryImage(i)}
                     aria-label={img.alt}
                     className={cn(
-                      "h-16 w-14 shrink-0 overflow-hidden rounded-lg border-2 transition-all duration-150 sm:h-[72px] sm:w-[60px]",
+                      "h-16 w-14 shrink-0 overflow-hidden rounded-[11px] border-2 transition-all duration-150 sm:h-[154px] sm:w-[155px]",
                       i === selectedImageIdx
                         ? "border-black"
                         : "border-transparent hover:border-[#ccc]",
                     )}
                   >
-                    <img
+                    <StorefrontProductImage
                       src={img.src}
                       alt={img.alt}
-                      className={cn(
-                        "h-full w-full object-cover object-center",
-                        comingSoon && "scale-[1.14] blur-[8px]",
-                      )}
+                      comingSoon={comingSoon}
+                      className="h-full w-full"
                     />
                   </button>
                 ))}
@@ -542,7 +533,7 @@ export function StorefrontProductPage({
               <div
                 ref={gallerySurfaceRef}
                 data-sfpp-gallery-swipe=""
-                className="relative w-full max-w-full overflow-hidden rounded-2xl bg-[#f6f6f6] touch-pan-y"
+                className="relative w-full max-w-full overflow-hidden rounded-[11px] bg-[#f6f6f6] touch-pan-y"
                 onTouchStart={(event) => {
                   const touch = event.changedTouches[0];
                   if (touch) beginGallerySwipe(touch.clientX, touch.clientY);
@@ -566,173 +557,171 @@ export function StorefrontProductPage({
                   gallerySwipeStart.current = null;
                 }}
               >
-                <img
-                  key={mainImage.src}
+                <StorefrontProductImage
+                  key={`${slug}-${selectedColorId ?? "base"}-${mainImage.src}`}
                   src={mainImage.src}
                   alt={mainImage.alt}
-                  draggable={false}
-                  className={cn(
-                    "aspect-[4/5] h-auto w-full max-w-full object-cover object-center",
-                    comingSoon && "scale-[1.14] blur-[12px]",
-                  )}
+                  priority
+                  comingSoon={comingSoon}
+                  className="aspect-[562/684] h-auto w-full max-w-full"
                 />
                 {comingSoon ? <ComingSoonImageOverlay /> : null}
               </div>
             </div>
           </div>
 
-          {/* ── Right: Info + tabs ─────────────────────────────────────────── */}
-          <div className="sfpp-right-col rounded-2xl bg-[#f6f6f6] p-5 sm:p-7 lg:p-8" ref={rightColRef}>
-            {/* Header: name + wishlist bookmark */}
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className={`text-[10px] uppercase tracking-[0.2em] text-[#888] ${SF_UI_FONT}`}>
-                  {categoryLabel}
-                </p>
-                <h1 className="mt-1 text-[20px] font-semibold leading-tight text-black sm:text-[22px]">
-                  {name}
-                </h1>
-              </div>
-              <button
-                type="button"
-                aria-label={isSaved ? "Remove from wishlist" : "Save to wishlist"}
-                onClick={() => wishlistToggleFn(slug)}
-                className="mt-1 shrink-0 transition-opacity hover:opacity-60"
-              >
-                {isSaved ? (
-                  <BookmarkCheck className="h-5 w-5 text-black" strokeWidth={1.75} />
-                ) : (
-                  <Bookmark className="h-5 w-5 text-black" strokeWidth={1.75} />
-                )}
-              </button>
-            </div>
-
-            {/* Price */}
-            <p className="mt-3 text-[20px] font-bold text-black sm:text-[22px]">{priceLabel}</p>
-            {comingSoon ? (
-              <p className={`mt-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-black/40 ${SF_UI_FONT}`}>
-                Coming soon
-              </p>
-            ) : null}
-
-            {/* Colour swatches (if multiple colours available) */}
-            {colors && colors.length > 1 && !comingSoon && (
-              <div className="mt-5">
-                <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.15em] text-[#555]">
-                  Colour:{" "}
-                  <span className="normal-case text-black">
-                    {colors.find((c) => c.id === selectedColorId)?.label ?? ""}
-                  </span>
-                </p>
-                <div className="flex flex-wrap gap-2.5">
-                  {colors.map((c) => (
-                    <ColorSwatch
-                      key={c.id}
-                      color={c}
-                      selected={c.id === selectedColorId}
-                      onClick={() => handleColorSelect(c.id)}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Size selector */}
-            {hideSizes || comingSoon ? null : (
-              <div className="mt-5">
-                <div className="flex items-center justify-between">
-                  <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-[#555]">
-                    Size
+          {/* ── Right: Figma Desktop 8 — info card + description card ─────── */}
+          <div className="sfpp-right-col flex min-w-0 flex-col gap-4">
+            <section className="sfpp-info-card rounded-[11px] bg-[#f6f6f6] p-5 sm:p-6">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className={`text-[10px] uppercase tracking-[0.2em] text-[#888] ${SF_UI_FONT}`}>
+                    {categoryLabel}
                   </p>
-                  <button
-                    type="button"
-                    className="text-[11px] text-[#555] underline transition-opacity hover:opacity-60"
-                  >
-                    Size Guide
-                  </button>
+                  <div className="mt-1 flex items-start gap-2">
+                    <h1 className="min-w-0 text-[20px] font-semibold leading-tight text-black sm:text-[22px]">
+                      {name}
+                    </h1>
+                    {comingSoon ? null : (
+                      <button
+                        type="button"
+                        onClick={handleAddToCart}
+                        aria-label={`Add ${name} to cart`}
+                        title="Add to cart"
+                        className="mt-0.5 inline-flex h-[29px] w-[39px] shrink-0 items-center justify-center rounded-[8px] border border-black/10 bg-white text-black transition-colors hover:bg-black hover:text-white"
+                      >
+                        <Plus className="h-3.5 w-3.5" strokeWidth={2.2} />
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <div className="mt-2.5 flex flex-wrap gap-2">
-                  {sizes.map((s) => (
-                    <SizeButton
-                      key={s}
-                      label={s}
-                      selected={selectedSize === s}
-                      onClick={() => setSelectedSize(s)}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {showQuantity && !comingSoon ? (
-              <div className="mt-5">
-                <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-[#555]">
-                  Quantity
-                </p>
-                <div className="mt-2.5 inline-flex items-center gap-3 rounded-lg border border-[#d8dee6] bg-white px-3 py-2">
-                  <button
-                    type="button"
-                    aria-label="Decrease quantity"
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="h-7 w-7 text-[16px] leading-none text-[#555] transition-colors hover:text-black"
-                  >
-                    −
-                  </button>
-                  <span className="w-6 text-center text-sm font-medium text-black">{quantity}</span>
-                  <button
-                    type="button"
-                    aria-label="Increase quantity"
-                    onClick={() => setQuantity((q) => Math.min(10, q + 1))}
-                    className="h-7 w-7 text-[16px] leading-none text-[#555] transition-colors hover:text-black"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            ) : null}
-
-            {/* CTAs */}
-            <div className="mt-6 flex flex-col gap-3">
-              {comingSoon ? (
                 <button
                   type="button"
-                  disabled
-                  className="w-full cursor-not-allowed rounded-lg bg-black/80 px-6 py-3.5 text-[13px] font-semibold tracking-wide text-white opacity-70"
+                  aria-label={isSaved ? "Remove from wishlist" : "Save to wishlist"}
+                  onClick={() => wishlistToggleFn(slug)}
+                  className="mt-1 shrink-0 transition-opacity hover:opacity-60"
                 >
-                  COMING SOON
+                  {isSaved ? (
+                    <BookmarkCheck className="h-5 w-5 text-black" strokeWidth={1.75} />
+                  ) : (
+                    <Bookmark className="h-5 w-5 text-black" strokeWidth={1.75} />
+                  )}
                 </button>
-              ) : (
-                <>
-                  <button
-                    type="button"
-                    onClick={handleAddToCart}
-                    className="w-full rounded-lg border border-black bg-white px-6 py-3.5 text-[13px] font-semibold tracking-wide text-black transition-colors duration-150 hover:bg-[#f0f0f0] active:bg-[#e8e8e8]"
-                  >
-                    ADD TO CART
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleBuyNow}
-                    className="w-full rounded-lg bg-black px-6 py-3.5 text-[13px] font-semibold tracking-wide text-white transition-colors duration-150 hover:bg-[#222] active:bg-[#333]"
-                  >
-                    BUY NOW
-                  </button>
-                  {canOpenTryOn ? (
+              </div>
+
+              <p className="mt-3 text-[20px] font-bold text-black sm:text-[22px]">{priceLabel}</p>
+              {comingSoon ? (
+                <p className={`mt-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-black/40 ${SF_UI_FONT}`}>
+                  Coming soon
+                </p>
+              ) : null}
+
+              {colors && colors.length > 0 && !comingSoon ? (
+                <div className="mt-5">
+                  <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.15em] text-[#555]">
+                    Colour:{" "}
+                    <span className="normal-case text-black">
+                      {colors.find((c) => c.id === selectedColorId)?.label ?? ""}
+                    </span>
+                  </p>
+                  <div className="flex flex-wrap gap-2.5">
+                    {colors.map((c) => (
+                      <ColorSwatch
+                        key={c.id}
+                        color={c}
+                        selected={c.id === selectedColorId}
+                        onClick={() => handleColorSelect(c.id)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {hideSizes || comingSoon ? null : (
+                <div className="mt-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-[#555]">
+                      Size
+                    </p>
                     <button
                       type="button"
-                      onClick={handleCustomization}
-                      className="w-full rounded-lg border border-black/25 bg-transparent px-6 py-3.5 text-[13px] font-semibold tracking-wide text-black transition-colors duration-150 hover:border-black hover:bg-[#f0f0f0] active:bg-[#e8e8e8]"
+                      onClick={() => setSizeGuideOpen(true)}
+                      className="inline-flex h-[29px] min-w-[111px] items-center justify-center rounded-[26px] border border-black/15 bg-white px-3 text-[11px] font-medium text-black transition-colors hover:border-black"
                     >
-                      CUSTOMIZATION
+                      Size Guide
                     </button>
-                  ) : null}
-                </>
+                  </div>
+                  <div className="mt-2.5 flex flex-wrap gap-2">
+                    {sizes.map((s) => (
+                      <SizeButton
+                        key={s}
+                        label={s}
+                        selected={selectedSize === s}
+                        onClick={() => setSelectedSize(s)}
+                      />
+                    ))}
+                  </div>
+                </div>
               )}
-            </div>
 
-            {/* ── Tabs: Description / Shipping / Washcare ──────────────────── */}
-            <div className="mt-7 border-t border-[#e0e0e0] pt-5">
-              {/* Tab nav */}
+              {!comingSoon ? (
+                <div className="mt-5">
+                  <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-[#555]">
+                    Quantity
+                  </p>
+                  <div className="mt-2.5 inline-flex items-center gap-3 rounded-[26px] border border-[#d8dee6] bg-white px-3 py-1.5">
+                    <button
+                      type="button"
+                      aria-label="Decrease quantity"
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      className="h-7 w-7 text-[16px] leading-none text-[#555] transition-colors hover:text-black"
+                    >
+                      −
+                    </button>
+                    <span className="w-6 text-center text-sm font-medium text-black">{quantity}</span>
+                    <button
+                      type="button"
+                      aria-label="Increase quantity"
+                      onClick={() => setQuantity((q) => Math.min(10, q + 1))}
+                      className="h-7 w-7 text-[16px] leading-none text-[#555] transition-colors hover:text-black"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                {comingSoon ? (
+                  <button
+                    type="button"
+                    disabled
+                    className="sfpp-cta h-11 w-full cursor-not-allowed rounded-[26px] bg-black/80 text-[13px] font-semibold tracking-wide text-white opacity-70"
+                  >
+                    COMING SOON
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleAddToCart}
+                      className="sfpp-cta h-11 min-h-[44px] flex-1 rounded-[26px] border border-black bg-white px-6 text-[13px] font-semibold tracking-wide text-black transition-colors duration-150 hover:bg-[#f0f0f0]"
+                    >
+                      ADD TO BAG
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleBuyNow}
+                      className="sfpp-cta h-11 min-h-[44px] flex-1 rounded-[26px] bg-black px-6 text-[13px] font-semibold tracking-wide text-white transition-colors duration-150 hover:bg-[#222]"
+                    >
+                      BUY NOW
+                    </button>
+                  </>
+                )}
+              </div>
+            </section>
+
+            <section className="sfpp-desc-card rounded-[11px] bg-[#f6f6f6] p-5 sm:p-6">
               <div className="flex gap-6 border-b border-[#e0e0e0]">
                 {(
                   [
@@ -750,7 +739,6 @@ export function StorefrontProductPage({
                 ))}
               </div>
 
-              {/* Tab content */}
               <div className="mt-4 space-y-4 text-[13px] leading-relaxed text-[#444]">
                 {activeTab === "description" && (
                   <>
@@ -779,7 +767,7 @@ export function StorefrontProductPage({
                   </>
                 )}
 
-                {activeTab === "shipping" && <p>{DEFAULT_SHIPPING}</p>}
+                {activeTab === "shipping" && <p className="whitespace-pre-line">{DEFAULT_SHIPPING}</p>}
 
                 {activeTab === "washcare" && (
                   <ul className="space-y-1.5">
@@ -792,7 +780,7 @@ export function StorefrontProductPage({
                   </ul>
                 )}
               </div>
-            </div>
+            </section>
           </div>
         </div>
 
@@ -819,6 +807,15 @@ export function StorefrontProductPage({
           </section>
         )}
       </main>
+
+      {hideSizes ? null : (
+        <SizeGuideDialog
+          open={sizeGuideOpen}
+          onOpenChange={setSizeGuideOpen}
+          sizes={sizes}
+          categorySlug={categorySlug}
+        />
+      )}
     </div>
   );
 }
@@ -873,6 +870,8 @@ export function StorefrontTeeProductPage({ tee }: { tee: StorefrontTeeProduct })
         tone: r.tone,
       }))}
       categorySlug="tshirts"
+      sizes={DEFAULT_SIZES}
+      showQuantity
     />
   );
 }

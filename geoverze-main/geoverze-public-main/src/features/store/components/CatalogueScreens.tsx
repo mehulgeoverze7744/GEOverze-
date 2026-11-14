@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link, useParams } from "@tanstack/react-router";
-import { Coins, Heart, Lock, ShoppingBag, Truck } from "lucide-react";
+import { Coins, Heart, Lock, ShoppingBag, SlidersHorizontal, Truck } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
 import {
@@ -11,6 +11,13 @@ import {
   SectionContainer,
 } from "@/components/shared";
 import { useStoreStore } from "@/stores/storeStore";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import {
   isMerchProductListed,
@@ -205,31 +212,63 @@ function useCardFactory(
   };
 }
 
+const BROWSE_COLOURS = Array.from(
+  new Set(
+    BROWSE_PRODUCTS.flatMap(
+      (product) =>
+        product.options.find((option) => option.label === "Colour" || option.label === "Color")
+          ?.values ?? [],
+    ),
+  ),
+).sort();
+
+const BROWSE_SIZES = Array.from(
+  new Set(
+    BROWSE_PRODUCTS.flatMap(
+      (product) => product.options.find((option) => option.label === "Size")?.values ?? [],
+    ),
+  ),
+);
+
 /** Faceted catalogue browse — editorial storefront layout. */
 export function StoreBrowse() {
   const { addProduct } = useStoreActions();
 
   const [category, setCategory] = useState("all");
   const [price, setPrice] = useState("all");
+  const [color, setColor] = useState("all");
+  const [size, setSize] = useState("all");
   const [sort, setSort] = useState<StoreSortId>("popular");
   const [query, setQuery] = useState("");
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
-  const results = useMemo(
-    () =>
-      sortProducts(
-        filterProducts(BROWSE_PRODUCTS, {
-          group: "all",
-          category,
-          price,
-          credits: "all",
-          availability: "all",
-          query,
-          balance: null,
-        }),
-        sort,
-      ),
-    [category, price, query, sort],
-  );
+  const results = useMemo(() => {
+    const base = sortProducts(
+      filterProducts(BROWSE_PRODUCTS, {
+        group: "all",
+        category,
+        price,
+        credits: "all",
+        availability: "all",
+        query,
+        balance: null,
+      }),
+      sort,
+    );
+    return base.filter((product) => {
+      if (color !== "all") {
+        const values =
+          product.options.find((option) => option.label === "Colour" || option.label === "Color")
+            ?.values ?? [];
+        if (values.length > 0 && !values.includes(color)) return false;
+      }
+      if (size !== "all") {
+        const values = product.options.find((option) => option.label === "Size")?.values ?? [];
+        if (values.length > 0 && !values.includes(size)) return false;
+      }
+      return true;
+    });
+  }, [category, price, query, sort, color, size]);
 
   /** Convert browse results to EditorialItem (prefer merch image if available). */
   const editorialItems: EditorialItem[] = results.map((product) => {
@@ -260,14 +299,19 @@ export function StoreBrowse() {
   function clearFilters() {
     setCategory("all");
     setPrice("all");
+    setColor("all");
+    setSize("all");
     setQuery("");
   }
 
-  /* Key resets StorefrontCategoryPage pagination whenever filters change. */
-  const filterKey = [category, price, query, sort].join("|");
+  const activeFilterCount = [category, price, color, size].filter((value) => value !== "all").length
+    + (query.trim() ? 1 : 0);
 
-  const controls = (
-    <div className="mb-8 rounded-2xl border border-black/8 bg-white/90 p-4 shadow-sm backdrop-blur-sm sm:p-5">
+  /* Key resets StorefrontCategoryPage pagination whenever filters change. */
+  const filterKey = [category, price, color, size, query, sort].join("|");
+
+  const filterFields = (
+    <>
       <label className="block">
         <span
           className="block text-[11px] font-semibold uppercase tracking-[0.22em] text-black/40"
@@ -294,6 +338,18 @@ export function StoreBrowse() {
           ]}
           value={category}
           onChange={setCategory}
+        />
+        <LightChipRow
+          label="Colour"
+          options={[ALL, ...BROWSE_COLOURS.map((value) => ({ id: value, label: value }))]}
+          value={color}
+          onChange={setColor}
+        />
+        <LightChipRow
+          label="Size"
+          options={[ALL, ...BROWSE_SIZES.map((value) => ({ id: value, label: value }))]}
+          value={size}
+          onChange={setSize}
         />
         <LightChipRow
           label="Price"
@@ -325,8 +381,10 @@ export function StoreBrowse() {
           Clear filters
         </button>
       </div>
-    </div>
+    </>
   );
+
+  const controls = <div className="mb-8 hidden rounded-2xl border border-black/8 bg-white/90 p-4 shadow-sm md:block md:p-5">{filterFields}</div>;
 
   return (
     <StorefrontCategoryPage
@@ -336,6 +394,47 @@ export function StoreBrowse() {
       items={editorialItems}
       onAdd={handleAdd}
       controls={controls}
+      floatingAction={
+        <>
+          <button
+            type="button"
+            onClick={() => setMobileFiltersOpen(true)}
+            aria-label={activeFilterCount > 0 ? `Open filters, ${activeFilterCount} active` : "Open filters"}
+            className="fixed right-[max(1rem,env(safe-area-inset-right))] top-[calc(4.75rem+env(safe-area-inset-top))] z-30 inline-flex h-11 items-center gap-2 rounded-full border border-black/10 bg-white/95 px-4 text-[13px] font-semibold text-black shadow-[0_8px_24px_rgb(0_0_0/0.12)] backdrop-blur-md md:hidden"
+          >
+            <SlidersHorizontal className="h-4 w-4" strokeWidth={1.8} />
+            Filter
+            {activeFilterCount > 0 ? (
+              <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-black px-1 text-[10px] text-white">
+                {activeFilterCount}
+              </span>
+            ) : null}
+          </button>
+          <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
+            <SheetContent
+              side="bottom"
+              className="max-h-[min(86dvh,720px)] overflow-y-auto rounded-t-[22px] bg-white p-0"
+            >
+              <SheetHeader className="px-5 pb-2 pt-5 text-left">
+                <SheetTitle>Filters</SheetTitle>
+                <SheetDescription className="sr-only">
+                  Filter Gstore products by category, colour, size, and price.
+                </SheetDescription>
+              </SheetHeader>
+              <div className="px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+                {filterFields}
+                <button
+                  type="button"
+                  onClick={() => setMobileFiltersOpen(false)}
+                  className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-full bg-black text-[13px] font-semibold text-white"
+                >
+                  Show {results.length} {results.length === 1 ? "item" : "items"}
+                </button>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </>
+      }
     />
   );
 }

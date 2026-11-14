@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 import { formatRsPaise, GMAKE_ASSETS } from "../gmake/gmake-assets";
+import { GMAKE_CUSTOMIZATION_ENABLED } from "../gmake/gmakeFlags";
 import { GMakeRainbowButton } from "../gmake/GMakeRainbowButton";
 import { GMakeTeePreview } from "../gmake/GMakeTeePreview";
 import {
@@ -25,6 +26,7 @@ import {
 import { computeShippingMinor, getProductPrice } from "../lib/gstoreProductPrices";
 import { StorefrontFooter } from "../storefront/StorefrontFooter";
 import { StorefrontNav } from "../storefront/StorefrontNav";
+import { TryOnModelPreview } from "./TryOnModelPreview";
 import { fileToTryOnPayload } from "./tryOnImage";
 import {
   getTryOnGarments,
@@ -193,7 +195,7 @@ export function TryOnStudio({
       data-tryon-mode={mode}
     >
       <div id={mode === "page" ? "gvrze-storefront" : undefined} className="gvrze-tryon-page">
-        <StorefrontNav variant="solid" linkSet="gmake" />
+        <StorefrontNav variant="solid" />
 
         {mode === "overlay" && onClose ? (
           <button type="button" className="tryon-close" onClick={onClose} aria-label="Close Try-On Studio">
@@ -202,7 +204,41 @@ export function TryOnStudio({
         ) : null}
 
         <div className="gmake-studio">
-          <aside className="gmake-panel" aria-label="Customization">
+          <aside className="gmake-panel" aria-label="Try-On Studio">
+            <section className="gmake-section">
+              <h1 className="gmake-section__title">Try-On Studio</h1>
+              <div className="tryon-garment-nav" role="group" aria-label="Choose garment">
+                <button
+                  type="button"
+                  aria-label="Previous garment"
+                  className="tryon-garment-nav__arrow"
+                  onClick={() => {
+                    if (garments.length < 2) return;
+                    const index = Math.max(0, garments.findIndex((item) => item.slug === selectedSlug));
+                    const next = garments[(index - 1 + garments.length) % garments.length];
+                    if (next) setSelectedSlug(next.slug);
+                  }}
+                >
+                  <img src={GMAKE_ASSETS.chevron} alt="" className="rotate-180" />
+                </button>
+                <p className="tryon-garment-nav__name">{selected?.name ?? "No garment"}</p>
+                <button
+                  type="button"
+                  aria-label="Next garment"
+                  className="tryon-garment-nav__arrow"
+                  onClick={() => {
+                    if (garments.length < 2) return;
+                    const index = Math.max(0, garments.findIndex((item) => item.slug === selectedSlug));
+                    const next = garments[(index + 1) % garments.length];
+                    if (next) setSelectedSlug(next.slug);
+                  }}
+                >
+                  <img src={GMAKE_ASSETS.chevron} alt="" />
+                </button>
+              </div>
+            </section>
+
+            {GMAKE_CUSTOMIZATION_ENABLED ? (
             <section className="gmake-section">
               <h1 className="gmake-section__title">GVRZE Design Library</h1>
               <div className="gmake-library">
@@ -252,6 +288,7 @@ export function TryOnStudio({
                 </button>
               </div>
             </section>
+            ) : null}
 
             <section className="gmake-section">
               <h2 className="gmake-section__title">Color</h2>
@@ -276,6 +313,7 @@ export function TryOnStudio({
               </div>
             </section>
 
+            {GMAKE_CUSTOMIZATION_ENABLED ? (
             <section className="gmake-section">
               <div className="gmake-section__head">
                 <h2 className="gmake-section__title">Custom Design</h2>
@@ -312,6 +350,7 @@ export function TryOnStudio({
                 }}
               />
             </section>
+            ) : null}
 
             <section className="gmake-section">
               <h2 className="gmake-section__title">Size</h2>
@@ -331,23 +370,27 @@ export function TryOnStudio({
             </section>
 
             <div className="gmake-footer-block">
-              <button
-                type="button"
-                className="gmake-instructions"
-                aria-expanded={instructionsOpen}
-                onClick={() => setInstructionsOpen((open) => !open)}
-              >
-                <span>Design Instructions</span>
-                <img src={GMAKE_ASSETS.plusCircle} alt="" width={28} height={28} />
-              </button>
-              {instructionsOpen ? (
-                <textarea
-                  className="gmake-instructions__field"
-                  rows={3}
-                  placeholder="Tell us where to place the print, size, or any other notes."
-                  value={instructions}
-                  onChange={(event) => setInstructions(event.target.value)}
-                />
+              {GMAKE_CUSTOMIZATION_ENABLED ? (
+                <>
+                  <button
+                    type="button"
+                    className="gmake-instructions"
+                    aria-expanded={instructionsOpen}
+                    onClick={() => setInstructionsOpen((open) => !open)}
+                  >
+                    <span>Design Instructions</span>
+                    <img src={GMAKE_ASSETS.plusCircle} alt="" width={28} height={28} />
+                  </button>
+                  {instructionsOpen ? (
+                    <textarea
+                      className="gmake-instructions__field"
+                      rows={3}
+                      placeholder="Tell us where to place the print, size, or any other notes."
+                      value={instructions}
+                      onChange={(event) => setInstructions(event.target.value)}
+                    />
+                  ) : null}
+                </>
               ) : null}
 
               <p className="gmake-total">
@@ -355,9 +398,20 @@ export function TryOnStudio({
                 <span> {includedNote}</span>
               </p>
 
-              <GMakeRainbowButton disabled={!canPurchase} onClick={handleBuyNow}>
-                BUY NOW
-              </GMakeRainbowButton>
+              {GMAKE_CUSTOMIZATION_ENABLED ? (
+                <GMakeRainbowButton disabled={!canPurchase} onClick={handleBuyNow}>
+                  BUY NOW
+                </GMakeRainbowButton>
+              ) : (
+                <button
+                  type="button"
+                  disabled={!canPurchase}
+                  onClick={handleBuyNow}
+                  className="gmake-cta gmake-cta--solid"
+                >
+                  BUY NOW
+                </button>
+              )}
             </div>
           </aside>
 
@@ -372,13 +426,21 @@ export function TryOnStudio({
             </div>
 
             {selected ? (
-              <GMakeTeePreview
-                color={selectedColor}
-                view={view}
-                design={selectedDesign}
-                customSrc={customSrc}
-                productName={selected.name}
-              />
+              GMAKE_CUSTOMIZATION_ENABLED ? (
+                <GMakeTeePreview
+                  color={selectedColor}
+                  view={view}
+                  design={selectedDesign}
+                  customSrc={customSrc}
+                  productName={selected.name}
+                />
+              ) : (
+                <TryOnModelPreview
+                  garment={selected}
+                  colorId={selectedColor?.id ?? colorId}
+                  activeView={view}
+                />
+              )
             ) : (
               <p className="tryon-empty">No looks in this category yet.</p>
             )}
@@ -388,7 +450,7 @@ export function TryOnStudio({
         {mode === "page" ? <StorefrontFooter /> : null}
       </div>
 
-      {approvalOpen ? (
+      {GMAKE_CUSTOMIZATION_ENABLED && approvalOpen ? (
         <div className="gmake-modal" role="dialog" aria-labelledby="gmake-approval-title">
           <div className="gmake-modal__card">
             <img src={GMAKE_ASSETS.uploadCloud} alt="" width={64} height={64} />
