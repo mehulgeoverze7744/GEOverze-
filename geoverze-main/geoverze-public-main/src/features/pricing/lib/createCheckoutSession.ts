@@ -35,6 +35,8 @@ export type CheckoutSessionRequest = {
 };
 
 export type CheckoutSessionResponse = {
+  /** True when the user already has a continuing membership for this plan. */
+  already_active?: boolean;
   /** Internal GVRZE subscription UUID (stored in user_subscriptions). */
   subscription_id: string;
   /** Razorpay Subscription ID (sub_xxxx). Open the modal with this when set. */

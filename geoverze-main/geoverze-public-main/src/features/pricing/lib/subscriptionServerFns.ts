@@ -12,6 +12,7 @@ import { z } from "zod";
 
 import { GST_CONFIG, calcGst } from "./gstConfig";
 import { assertRateLimit } from "@/lib/payments/paymentRateLimit";
+import { evaluateMembershipCheckoutIntent } from "./membershipCheckoutGuard";
 
 function makeUserClient(accessToken: string): SupabaseClient {
   const url = process.env["VITE_SUPABASE_URL"];
@@ -82,6 +83,7 @@ const CreateSubSchema = z.object({
 });
 
 export type CreateRazorpaySubscriptionResult = {
+  already_active: boolean;
   subscription_id: string;
   razorpay_subscription_id: string;
   razorpay_order_id: string;
@@ -116,6 +118,66 @@ export const createRazorpaySubscriptionFn = createServerFn({ method: "POST" })
       throw new Error(
         `Razorpay is not configured on the server. Key ID prefix: ${diag.keyIdPrefix}. Key Secret present: ${diag.keySecretPresent}. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET as a matching pair in Vercel Production, plus VITE_RAZORPAY_KEY_ID with the same Key ID.`,
       );
+    }
+
+    const sb = makeUserClient(data.access_token);
+    const { data: continuingRow } = await sb
+      .from("user_subscriptions")
+      .select("id, plan_tier, billing_interval, status, current_period_end")
+      .in("status", ["active", "trialing"])
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    let existingRow = continuingRow;
+    if (!existingRow) {
+      const { data: retryableRow } = await sb
+        .from("user_subscriptions")
+        .select("id, plan_tier, billing_interval, status, current_period_end")
+        .in("status", ["past_due", "incomplete"])
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      existingRow = retryableRow;
+    }
+    const intent = evaluateMembershipCheckoutIntent({
+      existing: existingRow
+        ? {
+            id: existingRow.id,
+            plan_tier: existingRow.plan_tier,
+            billing_interval: existingRow.billing_interval,
+            status: existingRow.status,
+          }
+        : null,
+      targetTier: data.plan_tier,
+      targetInterval: data.billing_interval,
+    });
+    if (intent.action === "already_active" && existingRow) {
+      const diag = rzp.getSubscriptionRazorpayDiagnostics();
+      return {
+        already_active: true,
+        subscription_id: existingRow.id,
+        razorpay_subscription_id: "",
+        razorpay_order_id: "",
+        checkout_mode: "order",
+        razorpay_key_id: rzp.getRazorpayKeyId(),
+        base_amount_minor: 0,
+        gst_amount_minor: 0,
+        charge_amount_minor: 0,
+        charge_currency: "INR",
+        gst_rate_percent: GST_CONFIG.ratePercent,
+        gst_label: GST_CONFIG.taxLabel,
+        price_label: "",
+        promotion_applied: false,
+        test_mode: rzp.getRazorpayMode() === "test",
+        diagnostics: {
+          keyIdPrefix: diag.keyIdPrefix,
+          keyIdFingerprint: diag.keyIdFingerprint,
+          frontendKeyIdPrefix: diag.frontendKeyIdPrefix,
+          frontendBackendKeyIdsMatch: diag.frontendBackendKeyIdsMatch,
+          envVarNames: diag.envVarNames,
+          checkoutMode: "order",
+        },
+      };
     }
 
     const amounts = await catalogChargePaise(data.plan_tier, data.billing_interval);
@@ -161,7 +223,6 @@ export const createRazorpaySubscriptionFn = createServerFn({ method: "POST" })
       checkoutMode = "order";
     }
 
-    const sb = makeUserClient(data.access_token);
     const { data: rpcResult, error } = await sb.rpc("begin_razorpay_subscription", {
       p_plan_tier: data.plan_tier,
       p_billing_interval: data.billing_interval,
@@ -195,6 +256,7 @@ export const createRazorpaySubscriptionFn = createServerFn({ method: "POST" })
     const cadence = data.billing_interval === "annual" ? "year" : "month";
 
     return {
+      already_active: false,
       subscription_id: result.subscription_id,
       razorpay_subscription_id: rzpSubId,
       razorpay_order_id: rzpOrderId,
@@ -336,12 +398,16 @@ const StatusSubSchema = z.object({
 export type SubscriptionPaymentStatusResult = {
   found: boolean;
   activated: boolean;
+  checkout_pending: boolean;
+  existing_active: boolean;
   status: string | null;
   plan_tier: string | null;
   billing_interval: string | null;
   current_period_end: string | null;
   payment_id: string | null;
   payment_status: string | null;
+  checkout_subscription_id: string | null;
+  continuing_subscription_id: string | null;
 };
 
 export const getSubscriptionPaymentStatusFn = createServerFn({ method: "POST" })
@@ -365,46 +431,77 @@ export const getSubscriptionPaymentStatusFn = createServerFn({ method: "POST" })
       subscriptionId = payment?.subscription_id ?? "";
     }
 
-    let query = sb
+    const { data: continuing } = await sb
       .from("user_subscriptions")
       .select("id, status, plan_tier, billing_interval, current_period_end")
-      .eq("provider_name", "razorpay");
-    if (subscriptionId) query = query.eq("id", subscriptionId);
-
-    const { data: sub } = await query
+      .in("status", ["active", "trialing"])
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
-    if (!sub) {
+
+    let checkout: {
+      id: string;
+      status: string;
+      plan_tier: string;
+      billing_interval: string;
+      current_period_end: string | null;
+    } | null = null;
+    if (subscriptionId) {
+      const { data: target } = await sb
+        .from("user_subscriptions")
+        .select("id, status, plan_tier, billing_interval, current_period_end")
+        .eq("id", subscriptionId)
+        .maybeSingle();
+      if (target) checkout = target;
+    }
+
+    const display = checkout ?? continuing ?? null;
+    if (!display) {
       return {
         found: false,
         activated: false,
+        checkout_pending: false,
+        existing_active: false,
         status: null,
         plan_tier: null,
         billing_interval: null,
         current_period_end: null,
         payment_id: data.payment_id ?? null,
         payment_status: null,
+        checkout_subscription_id: null,
+        continuing_subscription_id: null,
       };
     }
 
     const { data: payment } = await sb
       .from("billing_payments")
       .select("provider_payment_id, status")
-      .eq("subscription_id", sub.id)
+      .eq("subscription_id", display.id)
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
 
+    const checkoutActivated =
+      checkout != null && (checkout.status === "active" || checkout.status === "trialing");
+    const checkoutPending =
+      checkout != null &&
+      (checkout.status === "pending" ||
+        checkout.status === "incomplete" ||
+        checkout.status === "past_due");
+
     return {
       found: true,
-      activated: sub.status === "active",
-      status: sub.status,
-      plan_tier: sub.plan_tier,
-      billing_interval: sub.billing_interval,
-      current_period_end: sub.current_period_end,
+      activated: checkoutActivated,
+      checkout_pending: checkoutPending,
+      existing_active: Boolean(continuing),
+      status: display.status,
+      plan_tier: display.plan_tier,
+      billing_interval: display.billing_interval,
+      current_period_end: display.current_period_end,
       payment_id: payment?.provider_payment_id ?? data.payment_id ?? null,
       payment_status: payment?.status ?? null,
+      checkout_subscription_id: checkout?.id ?? null,
+      continuing_subscription_id: continuing?.id ?? null,
     };
   });
 

@@ -407,6 +407,21 @@ export function CheckoutScreen() {
         },
       });
 
+      if (session.already_active) {
+        inflight.current = false;
+        setLoading(false);
+        void navigate({
+          to: "/pricing/payment-result",
+          search: {
+            status: "existing",
+            plan: plan.id,
+            cycle,
+            subscription_id: session.subscription_id,
+          },
+        });
+        return;
+      }
+
       const keyId = (session.razorpay_key_id || getRazorpayKeyId()).trim();
       if (!keyId) {
         throw new Error("Razorpay Key ID is missing on the server response.");
