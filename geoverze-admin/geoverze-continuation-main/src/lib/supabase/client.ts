@@ -5,27 +5,10 @@
  * pair, configured separately per app via this app's own .env.local). Session
  * persistence, refresh and cross-tab sync are handled by supabase-js itself.
  */
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database } from "./database.types";
-
-const supabaseUrl = import.meta.env["VITE_SUPABASE_URL"];
-const supabaseAnonKey =
-  import.meta.env["VITE_SUPABASE_ANON_KEY"] ?? import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error(
-    "Missing VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY or VITE_SUPABASE_PUBLISHABLE_KEY. Copy .env.example to .env.local and fill in the project values.",
-  );
-}
-
-export const supabase = createClient<Database>(supabaseUrl ?? "", supabaseAnonKey ?? "", {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-  },
-});
+import { getSupabasePublicConfig } from "./env";
 
 export type AppRole = Database["public"]["Enums"]["app_role"];
 
@@ -45,3 +28,33 @@ export function highestRole(roles: AppRole[]): AppRole | null {
 export function isPrivilegedRole(role: AppRole | null): boolean {
   return role === "admin" || role === "super_admin";
 }
+
+let supabaseClient: SupabaseClient<Database> | null = null;
+
+function getSupabaseClient(): SupabaseClient<Database> {
+  if (supabaseClient) return supabaseClient;
+
+  const { url, anonKey } = getSupabasePublicConfig();
+
+  supabaseClient = createClient<Database>(url, anonKey, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+    },
+  });
+
+  return supabaseClient;
+}
+
+/**
+ * Shared Supabase client. Initialized lazily so importing role helpers from this
+ * module does not call `createClient` during SSR module evaluation.
+ */
+export const supabase: SupabaseClient<Database> = new Proxy({} as SupabaseClient<Database>, {
+  get(_target, prop, _receiver) {
+    const client = getSupabaseClient();
+    const value = Reflect.get(client, prop, client);
+    return typeof value === "function" ? (value as (...args: unknown[]) => unknown).bind(client) : value;
+  },
+});

@@ -1,5 +1,7 @@
 import type { PostgrestError } from "@supabase/supabase-js";
 
+import { SupabaseConfigError } from "./env";
+
 export class AdminQueryError extends Error {
   constructor(
     message: string,
@@ -24,6 +26,7 @@ export function throwOnError<T>(
 }
 
 export function formatAdminError(error: unknown, fallback = "Something went wrong"): string {
+  if (error instanceof SupabaseConfigError) return error.message;
   if (error instanceof Error && error.message) return error.message;
   if (typeof error === "string" && error) return error;
   return fallback;

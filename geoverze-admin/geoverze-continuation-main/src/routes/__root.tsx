@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { initAuthSync, signOut } from "@/lib/supabase/auth-sync";
 import { isPrivilegedRole } from "@/lib/supabase/client";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { selectIsSignedIn, selectRole, useAuthStore } from "@/stores/authStore";
 
 const PUBLIC_PATHS = new Set(["/login", "/forgot-password", "/reset-password"]);
@@ -219,8 +220,31 @@ function AdminGate() {
   );
 }
 
+function SupabaseConfigMissing() {
+  return (
+    <div className="flex min-h-dvh items-center justify-center bg-background px-4">
+      <div className="max-w-lg text-center">
+        <div className="mx-auto flex size-10 items-center justify-center rounded-lg bg-destructive/10 text-destructive">
+          <ShieldAlert className="size-5" aria-hidden="true" />
+        </div>
+        <h1 className="mt-4 text-lg font-semibold text-foreground">Supabase is not configured</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Set <code className="text-foreground">VITE_SUPABASE_URL</code> and{" "}
+          <code className="text-foreground">VITE_SUPABASE_ANON_KEY</code> (or{" "}
+          <code className="text-foreground">VITE_SUPABASE_PUBLISHABLE_KEY</code>) in Vercel for
+          Production and Preview, then redeploy this project.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  if (!isSupabaseConfigured()) {
+    return <SupabaseConfigMissing />;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
