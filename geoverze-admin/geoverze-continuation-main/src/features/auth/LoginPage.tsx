@@ -1,13 +1,14 @@
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { AlertCircle, ShieldCheck } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { supabase } from "@/lib/supabase/client";
+import { isPrivilegedRole, supabase } from "@/lib/supabase/client";
+import { selectIsSignedIn, selectRole, useAuthStore } from "@/stores/authStore";
 
 /**
  * Admin sign-in. Authenticates against the same Supabase project as the
@@ -17,10 +18,19 @@ import { supabase } from "@/lib/supabase/client";
  */
 export function LoginPage() {
   const navigate = useNavigate();
+  const signedIn = useAuthStore(selectIsSignedIn);
+  const role = useAuthStore(selectRole);
+  const roleChecked = useAuthStore((s) => s.roleChecked);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (signedIn && roleChecked && isPrivilegedRole(role)) {
+      void navigate({ to: "/" });
+    }
+  }, [navigate, role, roleChecked, signedIn]);
 
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -95,9 +105,15 @@ export function LoginPage() {
               {pending ? "Signing in…" : "Sign in"}
             </Button>
 
+            <p className="text-center text-xs">
+              <Link to="/forgot-password" className="text-primary hover:underline">
+                Forgot password?
+              </Link>
+            </p>
+
             <p className="text-center text-xs text-muted-foreground">
-              Access is restricted to accounts with an admin or super admin role. Contact a super
-              admin if you believe you should have access.
+              Access is restricted to allowlisted administrator accounts. There is no public
+              registration for this console.
             </p>
           </form>
         </CardContent>

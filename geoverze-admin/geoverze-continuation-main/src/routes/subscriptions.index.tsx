@@ -9,11 +9,10 @@ import { StatCard } from "@/components/shared/stat-card";
 import { StatGrid } from "@/components/shared/stat-grid";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  subscribers,
-  subscriptionPlans,
-  summarizeSubscriptions,
-} from "@/features/subscriptions/data";
+import { summarizeSubscriptions } from "@/features/subscriptions/data";
+import { fetchMappedPlans, fetchMappedSubscribers } from "@/features/subscriptions/live";
+import { adminKeys } from "@/lib/admin/keys";
+import { useAdminQuery } from "@/lib/admin/hooks";
 import { money, num } from "@/lib/format";
 
 export const Route = createFileRoute("/subscriptions/")({
@@ -35,7 +34,11 @@ export const Route = createFileRoute("/subscriptions/")({
 
 function SubscriptionPlansPage() {
   const [cycle, setCycle] = useState<"Monthly" | "Annual">("Monthly");
-  const summary = useMemo(() => summarizeSubscriptions(subscribers), []);
+  const plansQuery = useAdminQuery(adminKeys.subscriptions, fetchMappedPlans);
+  const subsQuery = useAdminQuery(adminKeys.subscribers, fetchMappedSubscribers);
+  const subscriptionPlans = plansQuery.data ?? [];
+  const subscribers = subsQuery.data ?? [];
+  const summary = useMemo(() => summarizeSubscriptions(subscribers), [subscribers]);
 
   return (
     <>

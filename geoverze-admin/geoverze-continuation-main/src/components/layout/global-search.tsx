@@ -19,7 +19,9 @@ import { SearchBar } from "@/components/shared/search-bar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/empty-state";
-import { articles, creators, orders, questions, quizzes, reports, users } from "@/lib/mock-data";
+import { fetchSearchIndex } from "@/features/search/live";
+import { adminKeys } from "@/lib/admin/keys";
+import { useAdminQuery } from "@/lib/admin/hooks";
 import { cn } from "@/lib/utils";
 
 /** Every resource type the enterprise search can surface. */
@@ -44,59 +46,8 @@ const resourceMeta: Record<SearchResourceType, { label: string; icon: LucideIcon
   reports: { label: "Reports", icon: Flag },
 };
 
-const index: SearchResult[] = [
-  ...users.slice(0, 40).map((row) => ({
-    id: row.id,
-    type: "users" as const,
-    title: row.name,
-    subtitle: `${row.email} · ${row.role}`,
-    url: "/users",
-  })),
-  ...creators.slice(0, 30).map((row) => ({
-    id: row.id,
-    type: "creators" as const,
-    title: row.name,
-    subtitle: `${row.handle} · ${row.tier}`,
-    url: "/creators",
-  })),
-  ...quizzes.slice(0, 30).map((row) => ({
-    id: row.id,
-    type: "quizzes" as const,
-    title: row.title,
-    subtitle: `${row.category} · ${row.author}`,
-    url: "/quizzes",
-  })),
-  ...questions.slice(0, 30).map((row) => ({
-    id: row.id,
-    type: "questions" as const,
-    title: row.prompt,
-    subtitle: `${row.type} · ${row.difficulty}`,
-    url: "/questions",
-  })),
-  ...articles.slice(0, 20).map((row) => ({
-    id: row.id,
-    type: "articles" as const,
-    title: row.title,
-    subtitle: `${row.section} · ${row.author}`,
-    url: "/library",
-  })),
-  ...orders.slice(0, 25).map((row) => ({
-    id: row.id,
-    type: "orders" as const,
-    title: `${row.id} — ${row.product}`,
-    subtitle: `${row.customer} · ${row.status}`,
-    url: "/store",
-  })),
-  ...reports.slice(0, 25).map((row) => ({
-    id: row.id,
-    type: "reports" as const,
-    title: row.subject,
-    subtitle: `${row.type} · ${row.severity}`,
-    url: "/reports",
-  })),
-];
+const recentSearches = ["suspended users", "refunded orders", "open reports", "library creators"];
 
-const recentSearches = ["suspended users", "refunded orders", "critical reports", "gold creators"];
 
 export interface GlobalSearchProps {
   open: boolean;
@@ -107,6 +58,8 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [type, setType] = useState<SearchResourceType | "all">("all");
+  const indexQuery = useAdminQuery(adminKeys.search("index"), fetchSearchIndex);
+  const index = indexQuery.data ?? [];
 
   const results = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -118,7 +71,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
           entry.title.toLowerCase().includes(term) || entry.subtitle.toLowerCase().includes(term),
       )
       .slice(0, 24);
-  }, [query, type]);
+  }, [index, query, type]);
 
   const go = (url: string) => {
     onOpenChange(false);

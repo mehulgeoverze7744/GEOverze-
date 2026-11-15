@@ -1,9 +1,8 @@
 import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import {
   Ban,
   Download,
-  Plus,
   RefreshCw,
   ShieldCheck,
   Star,
@@ -31,14 +30,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MembershipBadge, UserAvatar, buildUserColumns } from "@/features/users/columns";
-import { platformUsers } from "@/features/users/data";
 import { filterUsers } from "@/features/users/filtering";
+import { useUserMutations, useUsers } from "@/features/users/hooks";
 import { UserFilters } from "@/features/users/user-filters";
 import { UserStats } from "@/features/users/user-stats";
 import { UserDetailDrawer, type UserDrawerTab } from "@/features/users/user-detail-drawer";
 import { emptyUserFilters, type PlatformUser, type UserFilterState } from "@/features/users/types";
+import { downloadCsv } from "@/lib/admin/csv";
 import { num } from "@/lib/format";
-import { notReady } from "@/lib/placeholder";
 
 export const Route = createFileRoute("/users")({
   head: () => ({
@@ -61,13 +60,10 @@ export const Route = createFileRoute("/users")({
   component: UsersPage,
 });
 
-const placeholder = notReady;
-
 function UsersPage() {
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<UserFilterState>(emptyUserFilters);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
   const [activeUser, setActiveUser] = useState<PlatformUser | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerTab, setDrawerTab] = useState<UserDrawerTab>("overview");
@@ -77,8 +73,15 @@ function UsersPage() {
     confirmLabel: string;
     onConfirm: () => void;
   } | null>(null);
+  const { users: platformUsers, loading, refetch } = useUsers();
+  const mutations = useUserMutations();
+  const resetRedirect =
+    typeof window === "undefined" ? "/reset-password" : `${window.location.origin}/reset-password`;
 
-  const rows = useMemo(() => filterUsers(platformUsers, query, filters), [query, filters]);
+  const rows = useMemo(
+    () => filterUsers(platformUsers, query, filters),
+    [platformUsers, query, filters],
+  );
   const columns = useMemo(() => buildUserColumns(query), [query]);
 
   const openUser = (user: PlatformUser, tab: UserDrawerTab = "overview") => {
@@ -88,11 +91,25 @@ function UsersPage() {
   };
 
   const refresh = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      toast.success("User list refreshed.");
-    }, 600);
+    void refetch().then(() => toast.success("User list refreshed."));
+  };
+
+  const exportUsers = (rows: PlatformUser[]) => {
+    downloadCsv(
+      "geoverze-users.csv",
+      ["id", "username", "display_name", "email", "role", "status", "membership", "credits", "xp"],
+      rows.map((user) => [
+        user.id,
+        user.username,
+        user.displayName,
+        user.email,
+        user.role,
+        user.status,
+        user.membership,
+        user.credits,
+        user.xp,
+      ]),
+    );
   };
 
   const resetAll = () => {
@@ -107,15 +124,7 @@ function UsersPage() {
         description="Manage user accounts, memberships, activity and permissions."
         actions={
           <>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={placeholder("Create User will open a form once the backend is connected.")}
-            >
-              <Plus className="size-4" aria-hidden="true" />
-              Create user
-            </Button>
-            <Button size="sm" onClick={placeholder("Export queued — backend integration pending.")}>
+            <Button size="sm" onClick={() => exportUsers(rows)}>
               <Download className="size-4" aria-hidden="true" />
               Export users
             </Button>
@@ -124,7 +133,7 @@ function UsersPage() {
       />
 
       <PageBody>
-        <UserStats state={loading ? "loading" : "ready"} />
+        <UserStats state={loading ? "loading" : "ready"} users={platformUsers} />
 
         <ActionToolbar
           selectedCount={selectedIds.length}
@@ -136,31 +145,38 @@ function UsersPage() {
               onSelect: () =>
                 setConfirm({
                   title: `Suspend ${selectedIds.length} users?`,
-                  description:
-                    "Suspended users lose access until reinstated. This is a placeholder action.",
+                  description: "Suspended users lose access until reinstated.",
                   confirmLabel: "Suspend",
-                  onConfirm: () => toast.info(`${selectedIds.length} users queued for suspension.`),
+                  onConfirm: () => {
+                    selectedIds.forEach((id) => mutations.status.mutate({ userId: id, next: "suspended" }));
+                    setSelectedIds([]);
+                  },
                 }),
             },
             {
               label: "Activate selected",
               icon: <UserCheck className="size-4" aria-hidden="true" />,
-              onSelect: () => toast.info(`${selectedIds.length} users queued for activation.`),
+              onSelect: () => {
+                selectedIds.forEach((id) => mutations.status.mutate({ userId: id, next: "active" }));
+                setSelectedIds([]);
+              },
             },
             {
               label: "Export selected",
               icon: <Download className="size-4" aria-hidden="true" />,
-              onSelect: () => toast.info(`Exporting ${selectedIds.length} users (placeholder).`),
+              onSelect: () =>
+                exportUsers(platformUsers.filter((user) => selectedIds.includes(user.id))),
             },
             {
               label: "Assign role",
               icon: <ShieldCheck className="size-4" aria-hidden="true" />,
-              onSelect: placeholder("Role assignment requires backend integration."),
+              onSelect: () => toast.info("Grant or revoke roles from the Roles page or a user row action."),
             },
             {
               label: "Grant membership",
               icon: <Star className="size-4" aria-hidden="true" />,
-              onSelect: placeholder("Membership grants require backend integration."),
+              onSelect: () =>
+                toast.info("Membership is owned by the billing provider. Do not change it here."),
             },
             {
               label: "Delete",
@@ -170,17 +186,16 @@ function UsersPage() {
                 setConfirm({
                   title: `Delete ${selectedIds.length} users?`,
                   description:
-                    "Deletion is permanent and removes all activity history. This is a placeholder action.",
-                  confirmLabel: "Delete",
-                  onConfirm: () =>
-                    toast.error("Delete is disabled until the backend is connected."),
+                    "Account deletion is not available from Admin. Suspend the account instead.",
+                  confirmLabel: "Understood",
+                  onConfirm: () => toast.info("Use Suspend to block access without deleting records."),
                 }),
             },
           ]}
           actions={[
             {
               label: "Saved views",
-              onSelect: placeholder("Saved views arrive with backend persistence."),
+              onSelect: () => toast.info("Saved views are not persisted yet."),
             },
             {
               label: "Refresh",
@@ -190,7 +205,7 @@ function UsersPage() {
             {
               label: "Export",
               icon: <Download className="size-4" aria-hidden="true" />,
-              onSelect: placeholder("Export queued — backend integration pending."),
+              onSelect: () => exportUsers(rows),
             },
           ]}
         >
@@ -203,7 +218,11 @@ function UsersPage() {
           />
         </ActionToolbar>
 
-        <UserFilters value={filters} onChange={setFilters} />
+        <UserFilters
+          value={filters}
+          onChange={setFilters}
+          countries={[...new Set(platformUsers.map((user) => user.country).filter((c) => c !== "—"))].sort()}
+        />
 
         <p className="text-xs text-muted-foreground" aria-live="polite">
           {num(rows.length)} of {num(platformUsers.length)} users
@@ -233,18 +252,39 @@ function UsersPage() {
           rowActions={[
             { label: "View profile", onSelect: (user) => openUser(user) },
             { label: "View activity", onSelect: (user) => openUser(user, "activity") },
-            { label: "Edit user", onSelect: placeholder("Editing requires backend integration.") },
             {
               label: "Reset password",
-              onSelect: placeholder("Password reset is a placeholder."),
+              onSelect: (user) => {
+                if (!user.email) {
+                  toast.error("This account has no email.");
+                  return;
+                }
+                mutations.resetPassword.mutate({ email: user.email, redirectTo: resetRedirect });
+              },
             },
             {
               label: "Grant membership",
-              onSelect: placeholder("Membership grants require backend integration."),
+              onSelect: () =>
+                toast.info("Membership is owned by the billing provider. Do not change it here."),
             },
             {
               label: "Adjust credits",
-              onSelect: placeholder("Credit adjustments are a placeholder."),
+              onSelect: (user) => {
+                void (async () => {
+                  const raw = window.prompt(`Adjust credits for ${user.displayName} (positive grant, negative deduct)`, "100");
+                  if (!raw) return;
+                  const amount = Number(raw);
+                  if (!Number.isFinite(amount) || amount === 0) {
+                    toast.error("Enter a non-zero number.");
+                    return;
+                  }
+                  mutations.credits.mutate({
+                    userId: user.id,
+                    amount,
+                    reason: "Manual adjustment",
+                  });
+                })();
+              },
             },
             {
               label: "Suspend",
@@ -252,9 +292,9 @@ function UsersPage() {
               onSelect: (user) =>
                 setConfirm({
                   title: `Suspend ${user.displayName}?`,
-                  description: "The account loses access until reinstated. Placeholder action.",
+                  description: "The account loses access until reinstated.",
                   confirmLabel: "Suspend",
-                  onConfirm: () => toast.info(`${user.displayName} queued for suspension.`),
+                  onConfirm: () => mutations.status.mutate({ userId: user.id, next: "suspended" }),
                 }),
             },
             {
@@ -263,9 +303,9 @@ function UsersPage() {
               onSelect: (user) =>
                 setConfirm({
                   title: `Ban ${user.displayName}?`,
-                  description: "Banning permanently blocks this account. Placeholder action.",
-                  confirmLabel: "Ban",
-                  onConfirm: () => toast.error(`${user.displayName} queued for ban.`),
+                  description: "Bans are not a separate state. This will suspend the account.",
+                  confirmLabel: "Suspend",
+                  onConfirm: () => mutations.status.mutate({ userId: user.id, next: "suspended" }),
                 }),
             },
           ]}
@@ -304,11 +344,11 @@ function UsersPage() {
             <DropdownMenuContent align="start">
               <DropdownMenuLabel>Related</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onSelect={placeholder("Opens Roles & Permissions.")}>
-                Roles &amp; permissions
+              <DropdownMenuItem asChild>
+                <Link to="/roles">Roles &amp; permissions</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={placeholder("Opens Creator applications.")}>
-                Creator applications
+              <DropdownMenuItem asChild>
+                <Link to="/creators">Creator applications</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

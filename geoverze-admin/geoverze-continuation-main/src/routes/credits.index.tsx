@@ -11,8 +11,11 @@ import { SearchBar } from "@/components/shared/search-bar";
 import { StatCard } from "@/components/shared/stat-card";
 import { StatGrid } from "@/components/shared/stat-grid";
 import { buildTransactionColumns } from "@/features/credits/columns";
-import { creditTransactions, summarizeCredits } from "@/features/credits/data";
+import { summarizeCredits } from "@/features/credits/data";
 import { filterTransactions } from "@/features/credits/filtering";
+import { fetchCreditTransactions } from "@/features/credits/live";
+import { adminKeys } from "@/lib/admin/keys";
+import { useAdminQuery } from "@/lib/admin/hooks";
 import { creditDirections, creditReasons, emptyCreditFilters } from "@/features/credits/types";
 import { num } from "@/lib/format";
 
@@ -61,6 +64,8 @@ const filterDefs: FilterDefinition[] = [
 function CreditLedgerPage() {
   const [query, setQuery] = useState("");
   const [filterValues, setFilterValues] = useState<Record<string, string[]>>({});
+  const ledger = useAdminQuery(adminKeys.credits, fetchCreditTransactions);
+  const creditTransactions = ledger.data ?? [];
 
   const filters = useMemo(
     () => ({
@@ -73,10 +78,10 @@ function CreditLedgerPage() {
 
   const rows = useMemo(
     () => filterTransactions(creditTransactions, query, filters),
-    [query, filters],
+    [creditTransactions, query, filters],
   );
   const columns = useMemo(() => buildTransactionColumns(query), [query]);
-  const summary = useMemo(() => summarizeCredits(creditTransactions), []);
+  const summary = useMemo(() => summarizeCredits(creditTransactions), [creditTransactions]);
 
   return (
     <>
@@ -118,6 +123,7 @@ function CreditLedgerPage() {
         <DataTable
           data={rows}
           columns={columns}
+          loading={ledger.loading}
           getRowId={(item) => item.id}
           highlight={query}
           hideToolbar

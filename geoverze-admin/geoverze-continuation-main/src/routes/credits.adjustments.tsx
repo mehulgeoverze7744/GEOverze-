@@ -18,6 +18,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { creditReasons } from "@/features/credits/types";
+import { adjustCredits } from "@/features/users/api";
+import { fetchUsers } from "@/features/users/api";
 import { num } from "@/lib/format";
 
 export const Route = createFileRoute("/credits/adjustments")({
@@ -76,11 +78,25 @@ function CreditAdjustmentsPage() {
               onSubmit={(event) => {
                 event.preventDefault();
                 if (singleInvalid) return;
-                toast.success(
-                  `${operation === "grant" ? "Granted" : "Deducted"} ${num(amount)} credits for ${member}.`,
-                );
-                setMember("");
-                setNote("");
+                void (async () => {
+                  const users = await fetchUsers();
+                  const target = users.find(
+                    (user) =>
+                      user.id === member.trim() ||
+                      user.email.toLowerCase() === member.trim().toLowerCase(),
+                  );
+                  if (!target) {
+                    toast.error("No user matched that email or ID.");
+                    return;
+                  }
+                  const signed = operation === "deduct" ? -Math.abs(amount) : Math.abs(amount);
+                  await adjustCredits(target.id, signed, reason, note);
+                  toast.success(
+                    `${operation === "grant" ? "Granted" : "Deducted"} ${num(amount)} credits for ${target.displayName}.`,
+                  );
+                  setMember("");
+                  setNote("");
+                })();
               }}
             >
               <div className="grid gap-3 sm:grid-cols-2">
@@ -215,9 +231,22 @@ function CreditAdjustmentsPage() {
         description={`${num(bulkTargets.length)} members will each receive ${num(bulkAmount)} credits (${num(bulkTargets.length * bulkAmount)} total).`}
         confirmLabel="Apply grant"
         onConfirm={() => {
-          toast.success(`Granted credits to ${num(bulkTargets.length)} members.`);
-          setBulkList("");
-          setConfirmBulk(false);
+          void (async () => {
+            const users = await fetchUsers();
+            let applied = 0;
+            for (const target of bulkTargets) {
+              const match = users.find(
+                (user) =>
+                  user.id === target || user.email.toLowerCase() === target.toLowerCase(),
+              );
+              if (!match) continue;
+              await adjustCredits(match.id, Math.abs(bulkAmount), bulkReason);
+              applied += 1;
+            }
+            toast.success(`Granted credits to ${num(applied)} members.`);
+            setBulkList("");
+            setConfirmBulk(false);
+          })();
         }}
       />
     </>

@@ -11,7 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { userCountries, userRoles } from "@/features/users/data";
 import { emptyUserFilters, type UserFilterState } from "@/features/users/types";
 import { cn } from "@/lib/utils";
 
@@ -19,10 +18,10 @@ const selectFields = [
   {
     id: "membership" as const,
     label: "Membership",
-    options: ["Free", "Plus", "Premium", "Elite"],
+    options: ["Explorer", "Basic", "Pro", "Advance"],
   },
-  { id: "role" as const, label: "Role", options: userRoles },
-  { id: "country" as const, label: "Country", options: userCountries },
+  { id: "role" as const, label: "Role", options: ["User", "Creator", "Admin", "Super Admin"] },
+  { id: "country" as const, label: "Country", options: [] as string[] },
   { id: "status" as const, label: "Status", options: ["active", "pending", "suspended"] },
   {
     id: "creatorStatus" as const,
@@ -61,15 +60,19 @@ export interface UserFiltersProps {
   value: UserFilterState;
   onChange: (next: UserFilterState) => void;
   className?: string | undefined;
+  countries?: string[] | undefined;
 }
 
-export function UserFilters({ value, onChange, className }: UserFiltersProps) {
+export function UserFilters({ value, onChange, className, countries = [] }: UserFiltersProps) {
+  const fields = selectFields.map((field) =>
+    field.id === "country" ? { ...field, options: countries } : field,
+  );
   const active = countActiveFilters(value);
   const set = <K extends keyof UserFilterState>(key: K, next: UserFilterState[K]) =>
     onChange({ ...value, [key]: next });
 
   const chips = [
-    ...selectFields
+    ...fields
       .filter((field) => value[field.id] !== "all")
       .map((field) => ({
         key: field.id as keyof UserFilterState,
@@ -147,7 +150,7 @@ export function UserFilters({ value, onChange, className }: UserFiltersProps) {
 
       <CollapsibleContent>
         <div className="grid gap-3 border-t border-border p-3 sm:grid-cols-2 lg:grid-cols-4">
-          {selectFields.map((field) => (
+          {fields.map((field) => (
             <div key={field.id} className="space-y-1.5">
               <Label htmlFor={`filter-${field.id}`} className="text-xs text-muted-foreground">
                 {field.label}

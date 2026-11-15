@@ -16,19 +16,25 @@ export function SettingsCard({
   children,
   saveLabel = "Save section",
   className,
+  onSave,
 }: {
   title: string;
   description?: string | undefined;
   children: ReactNode;
   saveLabel?: string | undefined;
   className?: string | undefined;
+  onSave?: ((form: HTMLFormElement) => void | Promise<void>) | undefined;
 }) {
   return (
     <form
       className={cn("space-y-4 rounded-lg border border-border bg-card p-4", className)}
       onSubmit={(event) => {
         event.preventDefault();
-        toast.success(`${title} saved locally — persisted once the backend is connected.`);
+        if (onSave) {
+          void onSave(event.currentTarget);
+          return;
+        }
+        toast.success(`${title} saved.`);
       }}
     >
       <div>

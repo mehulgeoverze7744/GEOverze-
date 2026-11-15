@@ -19,16 +19,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { buildProductColumns } from "@/features/store/columns";
-import {
-  redemptionItems,
-  storeCategorySeries,
-  storeCoupons,
-  storeOrders,
-  storeProducts,
-  storeRevenueSeries,
-  summarizeStore,
-  topProducts,
-} from "@/features/store/data";
+import { storeCategorySeries, storeRevenueSeries, summarizeStore, topProducts } from "@/features/store/data";
+import { fetchMappedGstoreOrders, fetchMappedStoreProducts } from "@/features/store/live";
+import { adminKeys } from "@/lib/admin/keys";
+import { useAdminQuery } from "@/lib/admin/hooks";
 import { filterProducts } from "@/features/store/filtering";
 import { ProductEditor, createDraftProduct } from "@/features/store/product-editor";
 import { ProductFilters } from "@/features/store/store-filters";
@@ -73,7 +67,9 @@ function StoreProductsPage() {
   const [creating, setCreating] = useState(false);
   const [stockDraft, setStockDraft] = useState(0);
 
-  const actions = useStoreActions(storeProducts, storeOrders, storeCoupons, redemptionItems);
+  const productsQuery = useAdminQuery(adminKeys.storeProducts, fetchMappedStoreProducts);
+  const ordersQuery = useAdminQuery(adminKeys.gstoreOrders, fetchMappedGstoreOrders);
+  const actions = useStoreActions(productsQuery.data ?? [], ordersQuery.data ?? [], [], []);
 
   const rows = useMemo(
     () => filterProducts(actions.products, query, filters),

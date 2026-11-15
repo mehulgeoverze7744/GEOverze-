@@ -24,6 +24,7 @@ import {
   type LibraryStatus,
 } from "@/features/library/types";
 import { formatDate } from "@/features/users/format";
+import { notReadyNow } from "@/lib/placeholder";
 import { ResourceMediaPanel } from "@/features/library/components/ResourceMediaPanel";
 import {
   allCountries,

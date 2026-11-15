@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
 
@@ -14,8 +14,10 @@ import { SideDrawer } from "@/components/shared/side-drawer";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { formatDate } from "@/features/users/format";
 import { buildSubscriberColumns } from "@/features/subscriptions/columns";
-import { subscribers } from "@/features/subscriptions/data";
 import { filterSubscribers } from "@/features/subscriptions/filtering";
+import { fetchMappedSubscribers } from "@/features/subscriptions/live";
+import { adminKeys } from "@/lib/admin/keys";
+import { useAdminQuery } from "@/lib/admin/hooks";
 import {
   billingCycles,
   emptySubscriberFilters,
@@ -64,7 +66,11 @@ const filterDefs: FilterDefinition[] = [
 ];
 
 function SubscribersPage() {
-  const [directory, setDirectory] = useState<Subscriber[]>(subscribers);
+  const live = useAdminQuery(adminKeys.subscribers, fetchMappedSubscribers);
+  const [directory, setDirectory] = useState<Subscriber[]>([]);
+  useEffect(() => {
+    if (live.data) setDirectory(live.data);
+  }, [live.data]);
   const [query, setQuery] = useState("");
   const [filterValues, setFilterValues] = useState<Record<string, string[]>>({});
   const [selectedIds, setSelectedIds] = useState<string[]>([]);

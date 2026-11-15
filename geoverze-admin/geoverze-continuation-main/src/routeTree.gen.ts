@@ -15,6 +15,7 @@ import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AuditLogsRouteImport } from './routes/audit-logs'
 import { Route as CreatorsRouteImport } from './routes/creators'
 import { Route as CreditsRouteImport } from './routes/credits'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as LibraryRouteImport } from './routes/library'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ModerationRouteImport } from './routes/moderation'
@@ -24,6 +25,7 @@ import { Route as PaymentsRouteImport } from './routes/payments'
 import { Route as QuestionsRouteImport } from './routes/questions'
 import { Route as QuizzesRouteImport } from './routes/quizzes'
 import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as RolesRouteImport } from './routes/roles'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -99,6 +101,11 @@ const CreditsRoute = CreditsRouteImport.update({
   path: '/credits',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LibraryRoute = LibraryRouteImport.update({
   id: '/library',
   path: '/library',
@@ -142,6 +149,11 @@ const QuizzesRoute = QuizzesRouteImport.update({
 const ReportsRoute = ReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RewardsRoute = RewardsRouteImport.update({
@@ -374,6 +386,7 @@ export interface FileRoutesByFullPath {
   '/audit-logs': typeof AuditLogsRoute
   '/creators': typeof CreatorsRouteWithChildren
   '/credits': typeof CreditsRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
   '/library': typeof LibraryRouteWithChildren
   '/login': typeof LoginRoute
   '/moderation': typeof ModerationRouteWithChildren
@@ -383,6 +396,7 @@ export interface FileRoutesByFullPath {
   '/questions': typeof QuestionsRoute
   '/quizzes': typeof QuizzesRouteWithChildren
   '/reports': typeof ReportsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/rewards': typeof RewardsRoute
   '/roles': typeof RolesRoute
   '/settings': typeof SettingsRouteWithChildren
@@ -432,12 +446,14 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/achievements': typeof AchievementsRoute
   '/audit-logs': typeof AuditLogsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/monitoring': typeof MonitoringRoute
   '/notifications': typeof NotificationsRoute
   '/payments': typeof PaymentsRoute
   '/questions': typeof QuestionsRoute
   '/reports': typeof ReportsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/rewards': typeof RewardsRoute
   '/roles': typeof RolesRoute
   '/support': typeof SupportRoute
@@ -488,6 +504,7 @@ export interface FileRoutesById {
   '/audit-logs': typeof AuditLogsRoute
   '/creators': typeof CreatorsRouteWithChildren
   '/credits': typeof CreditsRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
   '/library': typeof LibraryRouteWithChildren
   '/login': typeof LoginRoute
   '/moderation': typeof ModerationRouteWithChildren
@@ -497,6 +514,7 @@ export interface FileRoutesById {
   '/questions': typeof QuestionsRoute
   '/quizzes': typeof QuizzesRouteWithChildren
   '/reports': typeof ReportsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/rewards': typeof RewardsRoute
   '/roles': typeof RolesRoute
   '/settings': typeof SettingsRouteWithChildren
@@ -551,6 +569,7 @@ export interface FileRouteTypes {
     | '/audit-logs'
     | '/creators'
     | '/credits'
+    | '/forgot-password'
     | '/library'
     | '/login'
     | '/moderation'
@@ -560,6 +579,7 @@ export interface FileRouteTypes {
     | '/questions'
     | '/quizzes'
     | '/reports'
+    | '/reset-password'
     | '/rewards'
     | '/roles'
     | '/settings'
@@ -609,12 +629,14 @@ export interface FileRouteTypes {
     | '/'
     | '/achievements'
     | '/audit-logs'
+    | '/forgot-password'
     | '/login'
     | '/monitoring'
     | '/notifications'
     | '/payments'
     | '/questions'
     | '/reports'
+    | '/reset-password'
     | '/rewards'
     | '/roles'
     | '/support'
@@ -664,6 +686,7 @@ export interface FileRouteTypes {
     | '/audit-logs'
     | '/creators'
     | '/credits'
+    | '/forgot-password'
     | '/library'
     | '/login'
     | '/moderation'
@@ -673,6 +696,7 @@ export interface FileRouteTypes {
     | '/questions'
     | '/quizzes'
     | '/reports'
+    | '/reset-password'
     | '/rewards'
     | '/roles'
     | '/settings'
@@ -726,6 +750,7 @@ export interface RootRouteChildren {
   AuditLogsRoute: typeof AuditLogsRoute
   CreatorsRoute: typeof CreatorsRouteWithChildren
   CreditsRoute: typeof CreditsRouteWithChildren
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   LibraryRoute: typeof LibraryRouteWithChildren
   LoginRoute: typeof LoginRoute
   ModerationRoute: typeof ModerationRouteWithChildren
@@ -735,6 +760,7 @@ export interface RootRouteChildren {
   QuestionsRoute: typeof QuestionsRoute
   QuizzesRoute: typeof QuizzesRouteWithChildren
   ReportsRoute: typeof ReportsRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   RewardsRoute: typeof RewardsRoute
   RolesRoute: typeof RolesRoute
   SettingsRoute: typeof SettingsRouteWithChildren
@@ -786,6 +812,13 @@ declare module '@tanstack/react-router' {
       path: '/credits'
       fullPath: '/credits'
       preLoaderRoute: typeof CreditsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/library': {
@@ -849,6 +882,13 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/reports'
       preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rewards': {
@@ -1328,6 +1368,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuditLogsRoute: AuditLogsRoute,
   CreatorsRoute: CreatorsRouteWithChildren,
   CreditsRoute: CreditsRouteWithChildren,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   LibraryRoute: LibraryRouteWithChildren,
   LoginRoute: LoginRoute,
   ModerationRoute: ModerationRouteWithChildren,
@@ -1337,6 +1378,7 @@ const rootRouteChildren: RootRouteChildren = {
   QuestionsRoute: QuestionsRoute,
   QuizzesRoute: QuizzesRouteWithChildren,
   ReportsRoute: ReportsRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   RewardsRoute: RewardsRoute,
   RolesRoute: RolesRoute,
   SettingsRoute: SettingsRouteWithChildren,

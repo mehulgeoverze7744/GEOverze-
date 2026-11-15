@@ -1,8 +1,10 @@
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
-import { notReady } from "@/lib/placeholder";
 
+import { setCreatorTier, setCreatorVerification } from "@/features/creators/live";
 import type { CreatorRecord, VerificationState } from "@/features/creators/types";
+import { formatAdminError } from "@/lib/supabase/query";
+import { downloadCsv } from "@/lib/admin/csv";
 
 export interface PendingConfirm {
   title: string;
@@ -12,108 +14,130 @@ export interface PendingConfirm {
   onConfirm: () => void;
 }
 
-/**
- * Verification + moderation workflow. Mutations are optimistic-local only until
- * the backend is connected; every handler is a single swap point.
- */
-export function useCreatorActions(initial: CreatorRecord[]) {
-  const [creators, setCreators] = useState(initial);
+export function useCreatorActions(creators: CreatorRecord[], refetch: () => void) {
   const [confirm, setConfirm] = useState<PendingConfirm | null>(null);
 
-  const patch = useCallback((ids: string[], changes: Partial<CreatorRecord>) => {
-    const set = new Set(ids);
-    setCreators((prev) =>
-      prev.map((creator) => (set.has(creator.id) ? { ...creator, ...changes } : creator)),
-    );
-  }, []);
-
-  const setVerification = useCallback(
-    (ids: string[], state: VerificationState) => {
-      patch(ids, {
-        verification: state,
-        status: state === "Suspended" ? "suspended" : state === "Pending" ? "pending" : "active",
-      });
-      toast.success(
-        ids.length === 1
-          ? `Creator marked as ${state.toLowerCase()}.`
-          : `${ids.length} creators marked as ${state.toLowerCase()}.`,
-      );
+  const applyVerification = useCallback(
+    async (targets: CreatorRecord[], state: VerificationState) => {
+      try {
+        for (const creator of targets) {
+          await setCreatorVerification(creator, state);
+        }
+        toast.success(
+          targets.length === 1
+            ? `Creator marked as ${state.toLowerCase()}.`
+            : `${targets.length} creators marked as ${state.toLowerCase()}.`,
+        );
+        refetch();
+      } catch (error) {
+        toast.error(formatAdminError(error));
+      }
     },
-    [patch],
+    [refetch],
   );
 
   const requestVerify = useCallback(
     (creator: CreatorRecord) =>
       setConfirm({
         title: `Verify ${creator.displayName}?`,
-        description: "Verified creators get the badge, higher payout tiers and priority placement.",
+        description: "Grants the creator role and the library verified badge.",
         confirmLabel: "Verify creator",
-        onConfirm: () => setVerification([creator.id], "Verified"),
+        onConfirm: () => void applyVerification([creator], "Verified"),
       }),
-    [setVerification],
+    [applyVerification],
   );
 
   const requestReject = useCallback(
     (creator: CreatorRecord) =>
       setConfirm({
         title: `Reject ${creator.displayName}'s application?`,
-        description: "The creator can reapply after 30 days. They are notified by email.",
+        description: "Removes the creator role and clears the verified badge.",
         confirmLabel: "Reject application",
         destructive: true,
-        onConfirm: () => setVerification([creator.id], "Rejected"),
+        onConfirm: () => void applyVerification([creator], "Rejected"),
       }),
-    [setVerification],
+    [applyVerification],
   );
 
   const requestSuspend = useCallback(
     (creator: CreatorRecord) =>
       setConfirm({
         title: `Suspend ${creator.displayName}?`,
-        description: "Suspension hides all published quizzes and pauses payouts until reinstated.",
+        description: "Suspends the linked account when a user id exists.",
         confirmLabel: "Suspend creator",
         destructive: true,
-        onConfirm: () => setVerification([creator.id], "Suspended"),
+        onConfirm: () => void applyVerification([creator], "Suspended"),
       }),
-    [setVerification],
+    [applyVerification],
   );
 
   const reinstate = useCallback(
-    (creator: CreatorRecord) => setVerification([creator.id], "Verified"),
-    [setVerification],
+    (creator: CreatorRecord) => void applyVerification([creator], "Verified"),
+    [applyVerification],
   );
 
   const changeTier = useCallback(
-    (creator: CreatorRecord, tier: CreatorRecord["tier"]) => {
-      patch([creator.id], { tier });
-      toast.success(`${creator.displayName} moved to the ${tier} tier.`);
+    async (creator: CreatorRecord, tier: CreatorRecord["tier"]) => {
+      try {
+        await setCreatorTier(creator, tier);
+        toast.success(`${creator.displayName} moved to the ${tier} tier.`);
+        refetch();
+      } catch (error) {
+        toast.error(formatAdminError(error));
+      }
     },
-    [patch],
+    [refetch],
   );
 
   const bulkVerify = useCallback(
     (ids: string[]) =>
       setConfirm({
         title: `Verify ${ids.length} creators?`,
-        description: "All selected applications are approved and badges granted immediately.",
+        description: "Selected creators receive the verified badge and creator role.",
         confirmLabel: "Verify all",
-        onConfirm: () => setVerification(ids, "Verified"),
+        onConfirm: () =>
+          void applyVerification(
+            creators.filter((creator) => ids.includes(creator.id)),
+            "Verified",
+          ),
       }),
-    [setVerification],
+    [applyVerification, creators],
   );
 
   const bulkSuspend = useCallback(
     (ids: string[]) =>
       setConfirm({
         title: `Suspend ${ids.length} creators?`,
-        description: "Their quizzes are hidden and payouts paused until reinstated.",
+        description: "Linked accounts are suspended until reinstated.",
         confirmLabel: "Suspend all",
         destructive: true,
-        onConfirm: () => setVerification(ids, "Suspended"),
+        onConfirm: () =>
+          void applyVerification(
+            creators.filter((creator) => ids.includes(creator.id)),
+            "Suspended",
+          ),
       }),
-    [setVerification],
+    [applyVerification, creators],
   );
 
-  const placeholder = notReady;
+  const exportCreators = useCallback(
+    (rows: CreatorRecord[]) => {
+      downloadCsv(
+        "geoverze-creators.csv",
+        ["id", "display_name", "username", "email", "verification", "status", "quizzes"],
+        rows.map((row) => [
+          row.id,
+          row.displayName,
+          row.username,
+          row.email,
+          row.verification,
+          row.status,
+          row.totalQuizzes,
+        ]),
+      );
+    },
+    [],
+  );
 
   return {
     creators,
@@ -126,6 +150,6 @@ export function useCreatorActions(initial: CreatorRecord[]) {
     changeTier,
     bulkVerify,
     bulkSuspend,
-    placeholder,
+    exportCreators,
   };
 }

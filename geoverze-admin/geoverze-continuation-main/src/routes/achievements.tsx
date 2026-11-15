@@ -4,8 +4,10 @@ import { toast } from "sonner";
 
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import { Progress } from "@/components/ui/progress";
+import { fetchUsers } from "@/features/users/api";
+import { adminKeys } from "@/lib/admin/keys";
+import { useAdminQuery } from "@/lib/admin/hooks";
 
 export const Route = createFileRoute("/achievements")({
   head: () => ({
@@ -22,55 +24,53 @@ export const Route = createFileRoute("/achievements")({
   component: AchievementsPage,
 });
 
-const achievements = [
-  {
-    id: "a1",
-    name: "First Expedition",
-    criteria: "Complete your first quiz",
-    unlocked: 92,
-    live: true,
-  },
-  {
-    id: "a2",
-    name: "Continental Sweep",
-    criteria: "Finish a quiz from every continent",
-    unlocked: 34,
-    live: true,
-  },
-  {
-    id: "a3",
-    name: "Cartographer",
-    criteria: "Score 100% on 10 map-pin quizzes",
-    unlocked: 12,
-    live: true,
-  },
-  { id: "a4", name: "Streak Keeper", criteria: "Play 30 days in a row", unlocked: 8, live: false },
-  {
-    id: "a5",
-    name: "Atlas Author",
-    criteria: "Publish 5 quizzes as a creator",
-    unlocked: 3,
-    live: true,
-  },
-  {
-    id: "a6",
-    name: "Deep Field",
-    criteria: "Answer 1,000 expert questions",
-    unlocked: 2,
-    live: false,
-  },
-];
+function percent(count: number, total: number) {
+  if (total <= 0) return 0;
+  return Math.round((count / total) * 100);
+}
 
 function AchievementsPage() {
+  const users = useAdminQuery(adminKeys.users, fetchUsers);
+  const list = users.data ?? [];
+  const total = list.length;
+  const achievements = [
+    {
+      id: "level-5",
+      name: "Level 5",
+      criteria: "Reach level 5 in user_progression",
+      unlocked: percent(list.filter((user) => user.level >= 5).length, total),
+    },
+    {
+      id: "streak-7",
+      name: "Week Streak",
+      criteria: "Current streak of 7 or more days",
+      unlocked: percent(list.filter((user) => user.currentStreak >= 7).length, total),
+    },
+    {
+      id: "credits-250",
+      name: "Credit Collector",
+      criteria: "Hold 250 or more GEOcredits",
+      unlocked: percent(list.filter((user) => user.credits >= 250).length, total),
+    },
+    {
+      id: "creator",
+      name: "Published Creator",
+      criteria: "Has the creator role",
+      unlocked: percent(list.filter((user) => user.creatorStatus === "Approved").length, total),
+    },
+  ];
+
   return (
     <>
       <PageHeader
         title="Achievements"
-        description="Badge definitions, unlock criteria and player attainment rates."
+        description="The public application has no achievement_definitions table. These rates are derived from user_progression and roles."
         actions={
           <Button
             size="sm"
-            onClick={() => toast.info("Achievement editor comes with the backend.")}
+            onClick={() =>
+              toast.info("Achievement definitions are not stored in the shared database yet.")
+            }
           >
             New achievement
           </Button>
@@ -87,11 +87,6 @@ function AchievementsPage() {
                 <h2 className="text-sm font-semibold">{item.name}</h2>
                 <p className="text-xs text-muted-foreground">{item.criteria}</p>
               </div>
-              <Switch
-                defaultChecked={item.live}
-                aria-label={`Toggle ${item.name}`}
-                onCheckedChange={() => toast.info("Toggle persists after backend integration.")}
-              />
             </div>
             <div className="mt-4 space-y-1.5">
               <div className="flex justify-between text-xs text-muted-foreground">

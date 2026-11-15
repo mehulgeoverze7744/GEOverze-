@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Check, Minus, Pencil, ShieldCheck, Users } from "lucide-react";
+import { toast } from "sonner";
 
 import { PageBody } from "@/components/shared/page-body";
 import { PageHeader } from "@/components/shared/page-header";
@@ -15,8 +17,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { permissionAreas, roles } from "@/features/users/roles";
+import { fetchRoleCounts } from "@/features/ops/api";
+import { adminKeys } from "@/lib/admin/keys";
+import { useAdminQuery } from "@/lib/admin/hooks";
+import { supabase } from "@/lib/supabase/client";
+import { formatAdminError } from "@/lib/supabase/query";
 import { num } from "@/lib/format";
-import { notReady } from "@/lib/placeholder";
+import { selectRole, useAuthStore } from "@/stores/authStore";
+import { Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/roles")({
   head: () => ({
@@ -40,24 +48,69 @@ export const Route = createFileRoute("/roles")({
 });
 
 function RolesPage() {
+  const counts = useAdminQuery(adminKeys.roles, fetchRoleCounts);
+  const role = useAuthStore(selectRole);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const liveRoles = roles
+    .filter((role) => role.id === "super_admin" || role.id === "administrator")
+    .map((role) => ({
+      ...role,
+      assignedUsers:
+        role.id === "super_admin"
+          ? counts.data?.["super_admin"] ?? 0
+          : counts.data?.["admin"] ?? 0,
+    }));
+
   return (
     <>
       <PageHeader
         title="Roles & Permissions"
-        description="Role-based access control for the operations team. Editing arrives with the backend."
-        actions={
-          <Button size="sm" onClick={notReady("Creating roles requires backend integration.")}>
-            <ShieldCheck className="size-4" aria-hidden="true" />
-            New role
-          </Button>
-        }
+        description="Database-backed app_role values are Super Admin and Admin. Additional operator titles are documentation only until a finer RBAC model exists."
       />
 
       <PageBody gap="lg">
+        {role === "super_admin" && (
+          <form
+            className="flex flex-wrap items-end gap-2 rounded-lg border border-border bg-card p-4"
+            onSubmit={(event) => {
+              event.preventDefault();
+              void supabase.functions
+                .invoke("admin-provision", { body: { email: inviteEmail, role: "admin" } })
+                .then(({ data, error }) => {
+                  if (error) throw error;
+                  if (data && typeof data === "object" && "error" in data) {
+                    throw new Error(String((data as { error: string }).error));
+                  }
+                  toast.success(`Invited ${inviteEmail} as Admin.`);
+                  setInviteEmail("");
+                  void counts.refetch();
+                })
+                .catch((error) => toast.error(formatAdminError(error)));
+            }}
+          >
+            <div className="min-w-56 flex-1 space-y-1.5">
+              <p className="text-sm font-medium text-foreground">Provision administrator</p>
+              <p className="text-xs text-muted-foreground">
+                Super Admin only. Invites the email through a trusted Edge Function and grants the admin role.
+              </p>
+              <Input
+                type="email"
+                required
+                value={inviteEmail}
+                onChange={(event) => setInviteEmail(event.target.value)}
+                placeholder="admin@example.com"
+              />
+            </div>
+            <Button type="submit" size="sm">
+              Invite admin
+            </Button>
+          </form>
+        )}
+
         <section className="space-y-3">
-          <SectionHeader title="Roles" description="Eight predefined operator roles." />
+          <SectionHeader title="Live roles" description="Granted via public.user_roles. Only a super admin can change grants." />
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            {roles.map((role) => (
+            {liveRoles.map((role) => (
               <article
                 key={role.id}
                 className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4"
@@ -69,7 +122,7 @@ function RolesPage() {
                     variant="ghost"
                     className="size-7"
                     aria-label={`Edit ${role.name}`}
-                    onClick={notReady("Role editing requires backend integration.")}
+                    disabled
                   >
                     <Pencil className="size-3.5" aria-hidden="true" />
                   </Button>

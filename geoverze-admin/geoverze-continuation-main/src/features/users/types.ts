@@ -1,6 +1,6 @@
 import type { AdminUser, Status } from "@/types";
 
-export type Membership = "Free" | "Plus" | "Premium" | "Elite";
+export type Membership = "Explorer" | "Basic" | "Pro" | "Advance";
 export type CreatorStatus = "None" | "Applied" | "Approved" | "Rejected";
 
 export interface UserAchievement {
@@ -81,6 +81,9 @@ export interface PlatformUser extends AdminUser {
   bookmarks: UserBookmark[];
   loginHistory: UserLoginEvent[];
   creator?: UserCreatorProfile | undefined;
+  appRoles?: import("@/lib/supabase/client").AppRole[] | undefined;
+  planTier?: string | null | undefined;
+  bio?: string | null | undefined;
 }
 
 export interface UserFilterState {

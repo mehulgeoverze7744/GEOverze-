@@ -4,17 +4,16 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Highlight } from "@/components/shared/highlight";
 import { StatusBadge } from "@/components/shared/status-badge";
 import type { DataTableColumn } from "@/components/shared/data-table";
-import { daysSince } from "@/features/users/data";
 import { formatDate, initials, relativeDays } from "@/features/users/format";
 import type { CreatorStatus, Membership, PlatformUser } from "@/features/users/types";
-import { num } from "@/lib/format";
+import { daysSince, num } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 const membershipTone: Record<Membership, string> = {
-  Free: "border-border-strong bg-muted text-muted-foreground",
-  Plus: "border-info/30 bg-info/10 text-info",
-  Premium: "border-primary/40 bg-primary/10 text-primary",
-  Elite: "border-warning/40 bg-warning/10 text-warning",
+  Explorer: "border-border-strong bg-muted text-muted-foreground",
+  Basic: "border-info/30 bg-info/10 text-info",
+  Pro: "border-primary/40 bg-primary/10 text-primary",
+  Advance: "border-warning/40 bg-warning/10 text-warning",
 };
 
 const creatorTone: Record<CreatorStatus, string> = {

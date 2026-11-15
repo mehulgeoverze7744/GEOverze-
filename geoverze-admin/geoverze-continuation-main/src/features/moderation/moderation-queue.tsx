@@ -10,7 +10,11 @@ import { PageHeader } from "@/components/shared/page-header";
 import { SearchBar } from "@/components/shared/search-bar";
 import { CaseDrawer } from "@/features/moderation/case-drawer";
 import { buildCaseColumns } from "@/features/moderation/columns";
-import { moderationCases, summarizeCases } from "@/features/moderation/data";
+import { summarizeCases } from "@/features/moderation/data";
+import { fetchModerationCases } from "@/features/moderation/live";
+import { adminKeys } from "@/lib/admin/keys";
+import { useAdminQuery } from "@/lib/admin/hooks";
+import { useAdminRealtime } from "@/lib/admin/realtime";
 import { filterCases } from "@/features/moderation/filtering";
 import { ModerationStats } from "@/features/moderation/moderation-stats";
 import { useModerationActions } from "@/features/moderation/use-moderation-actions";
@@ -79,6 +83,9 @@ export function ModerationQueue({
   const filters = useMemo(() => toFilterState(filterValues), [filterValues]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [active, setActive] = useState<ModerationCase | null>(null);
+  const live = useAdminQuery(adminKeys.reports, fetchModerationCases);
+  useAdminRealtime("content_reports", [adminKeys.reports, adminKeys.dashboard]);
+  const moderationCases = live.data ?? [];
 
   const actions = useModerationActions(moderationCases);
 

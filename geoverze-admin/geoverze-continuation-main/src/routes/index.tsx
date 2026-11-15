@@ -1,9 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
-  Activity,
-  AlertTriangle,
   Award,
-  BadgeCheck,
   Coins,
   CreditCard,
   Flag,
@@ -11,33 +8,18 @@ import {
   LifeBuoy,
   ListChecks,
   RefreshCw,
-  ServerCog,
-  ShieldAlert,
   ShoppingBag,
   TrendingUp,
   UserCheck,
   UserCog,
   Users,
 } from "lucide-react";
-import { useState } from "react";
 
-import {
-  ActivityCard,
-  ChartCard,
-  PageHeader,
-  SectionHeader,
-  StatCard,
-  Widget,
-} from "@/components/shared";
+import { ChartCard, PageHeader, SectionHeader, StatCard, Widget } from "@/components/shared";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { summarizeCases, moderationCases } from "@/features/moderation/data";
-import { creditTransactions, summarizeCredits } from "@/features/credits/data";
-import { topRewards } from "@/features/rewards/data";
-import { subscribers, summarizeSubscriptions } from "@/features/subscriptions/data";
-import { money, num } from "@/lib/format";
-import { recentActivity } from "@/lib/mock-data";
+import { useDashboard } from "@/features/dashboard/hooks";
+import { moneyMinor, num } from "@/lib/format";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -46,276 +28,128 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Real-time operational overview of GVRZE: users, creators, content, commerce, moderation and platform health.",
-      },
-      { property: "og:title", content: "Operations Dashboard — GVRZE Admin" },
-      {
-        property: "og:description",
-        content:
-          "Monitor users, creators, quizzes, orders, revenue, support and platform health from one console.",
+          "Live operational overview of GVRZE: users, creators, content, commerce, moderation and platform health.",
       },
     ],
   }),
   component: DashboardPage,
 });
 
-const primaryStats = [
-  { label: "Total Users", value: "2,481,930", delta: 4.2, hint: "vs last month", icon: Users },
-  { label: "Active Users", value: "184,204", delta: 2.1, hint: "daily active", icon: UserCheck },
-  {
-    label: "Creator Applications",
-    value: "87",
-    delta: 9.1,
-    hint: "awaiting review",
-    icon: UserCog,
-  },
-  {
-    label: "Published Quizzes",
-    value: "48,219",
-    delta: 3.6,
-    hint: "vs last month",
-    icon: ListChecks,
-  },
-  { label: "Pending Reviews", value: "428", delta: 12.4, hint: "moderation queue", icon: Flag },
-  { label: "Store Orders", value: "18,663", delta: -1.8, hint: "last 30 days", icon: ShoppingBag },
-  { label: "Revenue", value: "$1,284,510", delta: 7.3, hint: "last 30 days", icon: TrendingUp },
-  { label: "Subscriptions", value: "26,402", delta: 5.4, hint: "active plans", icon: CreditCard },
-  { label: "Support Tickets", value: "196", delta: -6.2, hint: "open, SLA 24h", icon: LifeBuoy },
-];
-
-const healthServices = [
-  { name: "API Gateway", status: "Operational", uptime: 99.98, tone: "success" as const },
-  { name: "Quiz Engine", status: "Degraded", uptime: 97.4, tone: "warning" as const },
-  { name: "Payments", status: "Operational", uptime: 99.99, tone: "success" as const },
-  { name: "Media CDN", status: "Operational", uptime: 99.91, tone: "success" as const },
-];
+function seriesFrom(
+  points: Array<{ count?: number; minor?: number }>,
+  key: "count" | "minor",
+): number[] {
+  return points.map((point) => Number(point[key] ?? 0));
+}
 
 function DashboardPage() {
-  const [refreshing, setRefreshing] = useState(false);
-
-  const refresh = () => {
-    setRefreshing(true);
-    window.setTimeout(() => setRefreshing(false), 900);
-  };
-
-  const state = refreshing ? "loading" : "ready";
-
-  const subscriptionSummary = summarizeSubscriptions(subscribers);
-  const creditSummary = summarizeCredits(creditTransactions);
-  const caseSummary = summarizeCases(moderationCases);
-  const rewardClaimTotal = topRewards.reduce((sum, reward) => sum + reward.claims, 0);
-  const mostReported = [...moderationCases]
-    .sort((a, b) => b.reportCount - a.reportCount)
-    .slice(0, 5);
+  const { metrics, growth, loading, error, refetch } = useDashboard();
+  const state = loading ? "loading" : error ? "error" : "ready";
+  const revenueMinor =
+    (metrics?.gstore_revenue_minor_30d ?? 0) + (metrics?.billing_revenue_minor_30d ?? 0);
 
   return (
     <>
       <PageHeader
         title="Operations Dashboard"
-        description="Platform-wide health, growth and workload at a glance."
+        description="Live counters from the shared GEOverze database. Metric definitions are listed on each card."
         breadcrumbs={null}
         actions={
           <>
             <Badge variant="outline" className="text-[11px]">
-              Last 30 days
+              Live
             </Badge>
-            <Button variant="outline" size="sm" onClick={refresh} disabled={refreshing}>
-              <RefreshCw
-                className={refreshing ? "size-4 animate-spin" : "size-4"}
-                aria-hidden="true"
-              />
+            <Button variant="outline" size="sm" onClick={() => refetch()} disabled={loading}>
+              <RefreshCw className={loading ? "size-4 animate-spin" : "size-4"} aria-hidden="true" />
               Refresh
             </Button>
           </>
         }
       />
 
+      {error ? (
+        <p className="mb-4 text-sm text-destructive">{error}</p>
+      ) : null}
+
       <section aria-label="Key metrics">
-        <SectionHeader title="Key metrics" description="Core counters across the platform." />
+        <SectionHeader
+          title="Key metrics"
+          description="DAU/MAU = distinct quiz_attempts in the last 1/30 days. Revenue = paid Gstore + succeeded billing in 30 days."
+        />
         <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-          {primaryStats.map((stat) => (
-            <StatCard key={stat.label} {...stat} state={state} />
-          ))}
+          <StatCard label="Total Users" value={num(metrics?.total_users ?? 0)} hint="profiles" icon={Users} state={state} />
+          <StatCard label="Active Users" value={num(metrics?.active_users ?? 0)} hint="status = active" icon={UserCheck} state={state} />
+          <StatCard label="Daily active" value={num(metrics?.dau ?? 0)} hint="quiz attempts 24h" icon={UserCheck} state={state} />
+          <StatCard label="Monthly active" value={num(metrics?.mau ?? 0)} hint="quiz attempts 30d" icon={Users} state={state} />
+          <StatCard
+            label="Creators"
+            value={num(metrics?.creators ?? 0)}
+            hint={`${num(metrics?.unverified_library_creators ?? 0)} unverified library personas`}
+            icon={UserCog}
+            state={state}
+          />
+          <StatCard
+            label="Published Quizzes"
+            value={num(metrics?.published_quizzes ?? 0)}
+            hint={`${num(metrics?.total_quizzes ?? 0)} total`}
+            icon={ListChecks}
+            state={state}
+          />
+          <StatCard label="Question bank" value={num(metrics?.question_bank ?? 0)} hint="quiz_questions" icon={ListChecks} state={state} />
+          <StatCard
+            label="GEOlibrary"
+            value={num(metrics?.published_library_resources ?? 0)}
+            hint={`${num(metrics?.library_resources ?? 0)} including drafts`}
+            icon={Flag}
+            state={state}
+          />
+          <StatCard
+            label="Store orders"
+            value={num((metrics?.gstore_orders_30d ?? 0) + (metrics?.credit_orders ?? 0))}
+            hint={`${num(metrics?.gstore_orders_30d ?? 0)} Gstore 30d · ${num(metrics?.credit_orders ?? 0)} credit orders`}
+            icon={ShoppingBag}
+            state={state}
+          />
+          <StatCard
+            label="Revenue (30d)"
+            value={moneyMinor(revenueMinor, "INR")}
+            hint="Gstore paid + billing succeeded"
+            icon={TrendingUp}
+            state={state}
+          />
         </div>
       </section>
 
       <section aria-label="Community and economy">
-        <SectionHeader
-          title="Community & economy"
-          description="Moderation load, credit flow and subscription revenue."
-        />
+        <SectionHeader title="Community & economy" description="Credits, subscriptions, reports and tickets." />
         <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           <StatCard
             label="Active Subscribers"
-            value={num(subscriptionSummary.activeSubscribers)}
+            value={num(metrics?.active_subscriptions ?? 0)}
             icon={CreditCard}
-            hint={`${money(subscriptionSummary.mrr)} MRR`}
+            hint="active + trialing"
             state={state}
           />
-          <StatCard
-            label="Credits Issued"
-            value={num(creditSummary.issued)}
-            icon={Coins}
-            hint="lifetime"
-            state={state}
-          />
-          <StatCard
-            label="Credits Redeemed"
-            value={num(creditSummary.redeemed)}
-            icon={Gift}
-            hint="lifetime"
-            state={state}
-          />
-          <StatCard
-            label="Pending Reports"
-            value={num(caseSummary.open)}
-            icon={ShieldAlert}
-            hint={`${num(caseSummary.escalated)} escalated`}
-            state={state}
-          />
-          <StatCard
-            label="Reward Claims"
-            value={num(rewardClaimTotal)}
-            icon={Award}
-            hint="across catalogue"
-            state={state}
-          />
+          <StatCard label="Credits Issued" value={num(metrics?.credits_issued ?? 0)} icon={Coins} hint="ledger amount > 0" state={state} />
+          <StatCard label="Credits Redeemed" value={num(metrics?.credits_redeemed ?? 0)} icon={Gift} hint="ledger amount < 0" state={state} />
+          <StatCard label="Pending Reports" value={num(metrics?.open_reports ?? 0)} icon={Flag} hint="open + pending" state={state} />
+          <StatCard label="Support Tickets" value={num(metrics?.open_tickets ?? 0)} icon={LifeBuoy} hint="open + pending" state={state} />
         </div>
-      </section>
-
-      <section aria-label="Rewards and moderation" className="grid gap-4 lg:grid-cols-2">
-        <Widget
-          title="Top rewards"
-          description="Most claimed rewards in the catalogue."
-          state={state}
-          action={
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/rewards">View rewards</Link>
-            </Button>
-          }
-        >
-          <ul className="divide-y divide-border text-sm">
-            {topRewards.map((reward) => (
-              <li key={reward.id} className="flex items-center justify-between gap-2 py-2">
-                <span className="min-w-0 truncate text-foreground">{reward.name}</span>
-                <span className="shrink-0 text-xs text-muted-foreground">{reward.type}</span>
-                <span className="shrink-0 font-mono text-sm text-muted-foreground">
-                  {num(reward.claims)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </Widget>
-
-        <Widget
-          title="Most reported content"
-          description="Open cases with the highest report volume."
-          state={state}
-          action={
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/moderation">Open queue</Link>
-            </Button>
-          }
-        >
-          <ul className="divide-y divide-border text-sm">
-            {mostReported.map((item) => (
-              <li key={item.id} className="flex items-center justify-between gap-2 py-2">
-                <span className="min-w-0 truncate text-foreground">{item.title}</span>
-                <span className="shrink-0 text-xs text-muted-foreground">{item.surface}</span>
-                <span className="shrink-0 font-mono text-sm text-muted-foreground">
-                  {num(item.reportCount)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </Widget>
       </section>
 
       <section aria-label="Trends" className="grid gap-4 lg:grid-cols-3">
         <ChartCard
           title="User growth"
-          description="New and returning accounts per week."
+          description="New profiles per week (last 12 weeks)."
           state={state}
           className="lg:col-span-2"
-          series={[32, 44, 40, 55, 51, 63, 60, 71, 68, 79, 84, 92]}
+          series={seriesFrom(growth?.users_by_week ?? [], "count")}
         />
         <ChartCard
-          title="Revenue"
-          description="Gross revenue across store and subscriptions."
+          title="Gstore revenue"
+          description="Paid Gstore payments per week."
           state={state}
-          series={[48, 52, 47, 60, 58, 66, 71, 69, 78, 82, 88, 94]}
-        />
-      </section>
-
-      <section aria-label="Operations" className="grid gap-4 lg:grid-cols-3">
-        <ActivityCard
-          events={recentActivity}
-          title="Recent activity"
-          description="Latest administrative actions recorded in the audit trail."
-          state={state}
-          className="lg:col-span-2"
-          action={
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/audit-logs">View audit logs</Link>
-            </Button>
-          }
-        />
-
-        <Widget
-          title="Platform health"
-          description="Service availability over the last 24 hours."
-          state={state}
-          action={<ServerCog className="size-4 text-muted-foreground" aria-hidden="true" />}
-        >
-          <ul className="space-y-3">
-            {healthServices.map((service) => (
-              <li key={service.name} className="space-y-1.5">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="truncate text-sm text-foreground">{service.name}</span>
-                  <span
-                    className={
-                      service.tone === "success"
-                        ? "flex items-center gap-1 text-xs text-success"
-                        : "flex items-center gap-1 text-xs text-warning"
-                    }
-                  >
-                    {service.tone === "success" ? (
-                      <BadgeCheck className="size-3.5" aria-hidden="true" />
-                    ) : (
-                      <AlertTriangle className="size-3.5" aria-hidden="true" />
-                    )}
-                    {service.status}
-                  </span>
-                </div>
-                <Progress value={service.uptime} aria-label={`${service.name} uptime`} />
-                <p className="text-[11px] text-muted-foreground">{service.uptime}% uptime</p>
-              </li>
-            ))}
-          </ul>
-        </Widget>
-      </section>
-
-      <section aria-label="Widget states" className="grid gap-4 lg:grid-cols-3">
-        <Widget
-          title="Live sessions"
-          description="Streaming counter — connects after backend integration."
-          state="loading"
-          bodyMinHeight={120}
-        />
-        <Widget
-          title="Scheduled campaigns"
-          state="empty"
-          bodyMinHeight={120}
-          emptyTitle="No campaigns scheduled"
-          emptyDescription="Reward campaigns you schedule will be listed here."
-        />
-        <Widget
-          title="Fraud signals"
-          state="error"
-          bodyMinHeight={120}
-          errorTitle="Signal feed unavailable"
-          errorDescription="The risk service did not respond in time."
-          onRetry={refresh}
+          series={seriesFrom(growth?.gstore_revenue_by_week ?? [], "minor")}
         />
       </section>
 
@@ -323,18 +157,16 @@ function DashboardPage() {
         <Widget title="Queues" description="Work waiting on an operator." state={state}>
           <ul className="divide-y divide-border text-sm">
             {[
-              { label: "Creator applications", value: 87, url: "/creators" as const },
-              { label: "Moderation queue", value: 428, url: "/moderation" as const },
-              { label: "Open reports", value: 152, url: "/reports" as const },
-              { label: "Support tickets", value: 196, url: "/support" as const },
+              { label: "Unverified library creators", value: metrics?.unverified_library_creators ?? 0, url: "/library/creators" as const },
+              { label: "Moderation queue", value: metrics?.open_reports ?? 0, url: "/moderation" as const },
+              { label: "Open reports", value: metrics?.open_reports ?? 0, url: "/reports" as const },
+              { label: "Support tickets", value: metrics?.open_tickets ?? 0, url: "/support" as const },
             ].map((row) => (
               <li key={row.label} className="flex items-center justify-between gap-2 py-2">
                 <Link to={row.url} className="truncate text-foreground hover:text-primary">
                   {row.label}
                 </Link>
-                <span className="shrink-0 font-mono text-sm text-muted-foreground">
-                  {row.value}
-                </span>
+                <span className="shrink-0 font-mono text-sm text-muted-foreground">{num(row.value)}</span>
               </li>
             ))}
           </ul>
@@ -342,12 +174,42 @@ function DashboardPage() {
 
         <ChartCard
           title="Engagement"
-          description="Quiz plays per day."
+          description="Quiz attempts per day (last 14 days)."
           state={state}
           className="lg:col-span-2"
-          series={[55, 62, 58, 70, 66, 74, 69, 81, 77, 85, 80, 90]}
-          action={<Activity className="size-4 text-muted-foreground" aria-hidden="true" />}
+          series={seriesFrom(growth?.attempts_by_day ?? [], "count")}
         />
+      </section>
+
+      <section aria-label="Catalogue" className="grid gap-4 lg:grid-cols-3">
+        <Widget title="Catalogue" description="Live inventory counts." state={state}>
+          <ul className="divide-y divide-border text-sm">
+            <li className="flex justify-between py-2">
+              <span>Credit-store products</span>
+              <span className="font-mono">{num(metrics?.store_products ?? 0)}</span>
+            </li>
+            <li className="flex justify-between py-2">
+              <span>Reward claims / entitlements</span>
+              <span className="font-mono">{num(metrics?.reward_claims ?? 0)}</span>
+            </li>
+            <li className="flex justify-between py-2">
+              <span>Billing payments</span>
+              <span className="font-mono">{num(metrics?.billing_payments ?? 0)}</span>
+            </li>
+            <li className="flex justify-between py-2">
+              <span>Gstore payments</span>
+              <span className="font-mono">{num(metrics?.gstore_payments ?? 0)}</span>
+            </li>
+          </ul>
+        </Widget>
+        <Widget title="Quiz activity" description="Attempts in the last 7 days." state={state} className="lg:col-span-2">
+          <div className="flex items-center gap-3">
+            <Award className="size-5 text-primary" aria-hidden="true" />
+            <p className="text-sm text-foreground">
+              {num(metrics?.quiz_attempts_7d ?? 0)} graded quiz attempts this week.
+            </p>
+          </div>
+        </Widget>
       </section>
     </>
   );

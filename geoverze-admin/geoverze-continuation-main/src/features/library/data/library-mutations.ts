@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase/client";
+import type { Json } from "@/lib/supabase/database.types";
 import type { LibraryResource } from "@/features/library/types";
 
 import { fetchLibraryResourceById } from "./fetchLibraryResources";
@@ -36,7 +37,7 @@ async function replaceBlocks(resourceId: string, body: string): Promise<void> {
     resource_id: resourceId,
     position,
     kind: block.kind,
-    payload: block.payload,
+    payload: block.payload as Json,
   }));
 
   const { error: insertError } = await supabase.from("library_resource_blocks").insert(payload);

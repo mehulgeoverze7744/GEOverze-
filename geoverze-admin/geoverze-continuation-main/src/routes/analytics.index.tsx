@@ -23,20 +23,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { creatorRecords, summarizeCreators } from "@/features/creators/data";
-import { creditTransactions, summarizeCredits } from "@/features/credits/data";
-import { libraryResources, summarizeLibrary } from "@/features/library/data";
-import { moderationCases, summarizeCases } from "@/features/moderation/data";
-import { quizRecords, summarizeQuizzes } from "@/features/quizzes/data";
-import { storeOrders, storeProducts, summarizeStore } from "@/features/store/data";
-import { subscribers, summarizeSubscriptions } from "@/features/subscriptions/data";
-import { userStats } from "@/features/users/data";
+import { useDashboard } from "@/features/dashboard/hooks";
+import { fetchQuizzes } from "@/features/quizzes/data/fetchQuizzes";
+import { fetchUsers } from "@/features/users/api";
 import { analyticsWindows, type ReportRow } from "@/features/ops/types";
-import { biReports, growthSeries } from "@/features/ops/data";
 import { ReportTable } from "@/features/ops/report-table";
-import { catalogMonths } from "@/lib/catalog";
-import { money, num } from "@/lib/format";
-import { notReadyNow } from "@/lib/placeholder";
+import { adminKeys } from "@/lib/admin/keys";
+import { useAdminQuery } from "@/lib/admin/hooks";
+import { downloadCsv } from "@/lib/admin/csv";
+import { moneyMinor, num } from "@/lib/format";
 
 export const Route = createFileRoute("/analytics/")({
   head: () => ({
@@ -58,34 +53,68 @@ export const Route = createFileRoute("/analytics/")({
   component: AnalyticsOverviewPage,
 });
 
-function scaleRows(rows: ReportRow[], factor: number): ReportRow[] {
-  return rows.map((row) => ({
-    ...row,
-    primary: Math.round(row.primary * factor),
-    secondary: Math.round(row.secondary * factor),
-  }));
+function normalize(values: number[]) {
+  const max = Math.max(1, ...values);
+  return values.map((value) => Math.round((value / max) * 100));
 }
 
 function AnalyticsOverviewPage() {
   const [window, setWindow] = useState("90d");
+  const dash = useDashboard();
+  const users = useAdminQuery(adminKeys.users, fetchUsers);
+  const quizzes = useAdminQuery(["admin", "quizzes"], fetchQuizzes);
+  const metrics = dash.metrics;
 
-  const summaries = useMemo(
-    () => ({
-      creators: summarizeCreators(creatorRecords),
-      quizzes: summarizeQuizzes(quizRecords),
-      library: summarizeLibrary(libraryResources),
-      store: summarizeStore(storeProducts, storeOrders),
-      subscriptions: summarizeSubscriptions(subscribers),
-      credits: summarizeCredits(creditTransactions),
-      moderation: summarizeCases(moderationCases),
-    }),
-    [],
-  );
+  const countries = useMemo<ReportRow[]>(() => {
+    const counts = new Map<string, number>();
+    for (const user of users.data ?? []) {
+      const country = user.country || "—";
+      counts.set(country, (counts.get(country) ?? 0) + 1);
+    }
+    return [...counts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 12)
+      .map(([label, primary], index) => ({
+        id: label,
+        label,
+        primary,
+        secondary: 0,
+        change: 0,
+        meta: index === 0 ? "top" : "",
+      }));
+  }, [users.data]);
 
-  const factor = window === "7d" ? 0.08 : window === "30d" ? 0.33 : window === "90d" ? 1 : 3.9;
+  const categories = useMemo<ReportRow[]>(() => {
+    const counts = new Map<string, { plays: number; count: number }>();
+    for (const quiz of quizzes.data ?? []) {
+      const current = counts.get(quiz.category) ?? { plays: 0, count: 0 };
+      current.plays += quiz.plays;
+      current.count += 1;
+      counts.set(quiz.category, current);
+    }
+    return [...counts.entries()]
+      .sort((a, b) => b[1].plays - a[1].plays)
+      .slice(0, 12)
+      .map(([label, value]) => ({
+        id: label,
+        label,
+        primary: value.plays,
+        secondary: value.count,
+        change: 0,
+        meta: "",
+      }));
+  }, [quizzes.data]);
 
-  const countries = useMemo(() => scaleRows(biReports.countries, factor), [factor]);
-  const categories = useMemo(() => scaleRows(biReports.categories, factor), [factor]);
+  const take = window === "7d" ? 7 : window === "30d" ? 5 : window === "90d" ? 12 : 24;
+  const userPoints = (dash.growth?.users_by_week ?? []).slice(-take);
+  const attemptPoints = (dash.growth?.attempts_by_day ?? []).slice(-take);
+  const revenuePoints = (dash.growth?.gstore_revenue_by_week ?? []).slice(-take);
+  const userSeries = normalize(userPoints.map((row) => row.count));
+  const attemptSeries = normalize(attemptPoints.map((row) => row.count));
+  const revenueSeries = normalize(revenuePoints.map((row) => row.minor));
+  const userLabels = userPoints.map((row) => row.week.slice(5, 10));
+  const attemptLabels = attemptPoints.map((row) => row.day.slice(5, 10));
+  const revenueLabels = revenuePoints.map((row) => row.week.slice(5, 10));
 
   return (
     <>
@@ -109,7 +138,14 @@ function AnalyticsOverviewPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => notReadyNow("Export runs server-side once the backend is connected.")}
+              onClick={() => {
+                if (!metrics) return;
+                downloadCsv(
+                  "geoverze-analytics.csv",
+                  ["metric", "value"],
+                  Object.entries(metrics),
+                );
+              }}
             >
               <Download className="size-4" aria-hidden="true" />
               Export
@@ -127,74 +163,64 @@ function AnalyticsOverviewPage() {
           <StatGrid columns={5} label="Platform KPIs">
             <StatCard
               label="Total users"
-              value={num(userStats.total)}
-              delta={6.2}
+              value={num(metrics?.total_users ?? 0)}
               icon={Users}
-              hint={`${num(userStats.activeToday)} active today`}
+              hint={`${num(metrics?.dau ?? 0)} active today`}
             />
             <StatCard
-              label="Active creators"
-              value={num(summaries.creators.active)}
-              delta={summaries.creators.monthlyGrowth}
+              label="Creators"
+              value={num(metrics?.creators ?? 0)}
               icon={UserCog}
-              hint={`${num(summaries.creators.verified)} verified`}
+              hint={`${num(metrics?.library_creators ?? 0)} library creators`}
             />
             <StatCard
               label="Published quizzes"
-              value={num(summaries.quizzes.published)}
-              delta={4.8}
+              value={num(metrics?.published_quizzes ?? 0)}
               icon={ListChecks}
-              hint={`${num(summaries.quizzes.totalQuestions)} questions`}
+              hint={`${num(metrics?.question_bank ?? 0)} questions`}
             />
             <StatCard
-              label="Library views"
-              value={num(summaries.library.views)}
-              delta={3.1}
+              label="Library resources"
+              value={num(metrics?.published_library_resources ?? 0)}
               icon={BookOpen}
-              hint={`${num(summaries.library.published)} published`}
+              hint={`${num(metrics?.library_resources ?? 0)} total`}
             />
             <StatCard
-              label="Store revenue"
-              value={money(summaries.store.revenue)}
-              delta={7.4}
+              label="Store revenue (30d)"
+              value={moneyMinor(metrics?.gstore_revenue_minor_30d ?? 0)}
               icon={ShoppingBag}
-              hint={`${num(summaries.store.orders)} orders`}
+              hint={`${num(metrics?.gstore_orders_30d ?? 0)} orders`}
             />
           </StatGrid>
           <StatGrid columns={5} label="Economy KPIs">
             <StatCard
-              label="MRR"
-              value={money(summaries.subscriptions.mrr)}
-              delta={5.6}
+              label="Billing revenue (30d)"
+              value={moneyMinor(metrics?.billing_revenue_minor_30d ?? 0)}
               icon={CreditCard}
-              hint={`${num(summaries.subscriptions.activeSubscribers)} subscribers`}
+              hint={`${num(metrics?.active_subscriptions ?? 0)} subscribers`}
             />
             <StatCard
-              label="ARR"
-              value={money(summaries.subscriptions.arr)}
-              delta={5.6}
+              label="Active subscriptions"
+              value={num(metrics?.active_subscriptions ?? 0)}
               icon={CreditCard}
             />
             <StatCard
-              label="Credits outstanding"
-              value={num(summaries.credits.outstanding)}
-              delta={-2.3}
+              label="Credits issued"
+              value={num(metrics?.credits_issued ?? 0)}
               icon={Coins}
-              hint={`${num(summaries.credits.issued)} issued`}
+              hint={`${num(metrics?.credits_redeemed ?? 0)} redeemed`}
             />
             <StatCard
               label="Open cases"
-              value={num(summaries.moderation.open)}
-              delta={-4.9}
+              value={num(metrics?.open_reports ?? 0)}
               icon={ShieldAlert}
-              hint={`${num(summaries.moderation.escalated)} escalated`}
+              hint={`${num(metrics?.open_tickets ?? 0)} tickets`}
             />
             <StatCard
-              label="Churn rate"
-              value={`${summaries.subscriptions.churnRate}%`}
-              delta={-0.8}
+              label="Quiz attempts (7d)"
+              value={num(metrics?.quiz_attempts_7d ?? 0)}
               icon={Activity}
-              hint="rolling 12 months"
+              hint={`${num(metrics?.mau ?? 0)} MAU`}
             />
           </StatGrid>
         </section>
@@ -202,27 +228,31 @@ function AnalyticsOverviewPage() {
         <section className="grid gap-4 lg:grid-cols-2">
           <ChartCard
             title="User growth"
-            description="New and returning accounts per month."
-            series={growthSeries.users}
-            labels={catalogMonths}
+            description="New accounts by week."
+            series={userSeries}
+            labels={userLabels}
+            footnote="Live counts from profiles.created_at"
           />
           <ChartCard
             title="Revenue trend"
-            description="Store and subscription revenue combined."
-            series={growthSeries.revenue}
-            labels={catalogMonths}
+            description="Gstore revenue by week."
+            series={revenueSeries}
+            labels={revenueLabels}
+            footnote="Live Gstore paid totals"
           />
           <ChartCard
             title="Quiz activity"
-            description="Plays and completions across all categories."
-            series={growthSeries.activity}
-            labels={catalogMonths}
+            description="Quiz attempts by day."
+            series={attemptSeries}
+            labels={attemptLabels}
+            footnote="Live quiz_attempts"
           />
           <ChartCard
-            title="Retention curve"
-            description="Share of a cohort still active after N months."
-            series={growthSeries.retention}
-            labels={catalogMonths}
+            title="Monthly active users"
+            description="Current MAU snapshot. Cohort retention is not stored in the database."
+            series={[metrics?.mau ?? 0]}
+            labels={["MAU"]}
+            footnote="No retention-cohort table exists — showing the live MAU metric only."
           />
         </section>
 
@@ -231,8 +261,8 @@ function AnalyticsOverviewPage() {
             title="Top countries"
             description="Sessions by country for the selected window."
             rows={countries}
-            primaryLabel="sessions"
-            secondaryLabel="new users"
+            primaryLabel="users"
+            secondaryLabel="n/a"
           />
           <ReportTable
             title="Top quiz categories"

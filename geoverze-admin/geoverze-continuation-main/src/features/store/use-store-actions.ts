@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import type { PendingConfirm } from "@/components/shared/confirm-dialog";
@@ -28,6 +28,11 @@ export function useStoreActions(
   const [coupons, setCoupons] = useState(initialCoupons);
   const [redemptions, setRedemptions] = useState(initialRedemptions);
   const [confirm, setConfirm] = useState<PendingConfirm | null>(null);
+
+  useEffect(() => setProducts(initialProducts), [initialProducts]);
+  useEffect(() => setOrders(initialOrders), [initialOrders]);
+  useEffect(() => setCoupons(initialCoupons), [initialCoupons]);
+  useEffect(() => setRedemptions(initialRedemptions), [initialRedemptions]);
 
   const patchProducts = useCallback((ids: string[], changes: Partial<StoreProduct>) => {
     const set = new Set(ids);

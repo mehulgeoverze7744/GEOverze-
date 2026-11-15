@@ -16,8 +16,12 @@ import { StatGrid } from "@/components/shared/stat-grid";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { buildClaimColumns, buildRewardColumns } from "@/features/rewards/columns";
-import { claimTrend, rewardClaims, rewards, summarizeRewards } from "@/features/rewards/data";
+import { summarizeRewards } from "@/features/rewards/data";
+import { fetchMappedRewards, saveMappedReward, setRewardStatus } from "@/features/rewards/live";
 import { filterRewards } from "@/features/rewards/filtering";
+import { adminKeys } from "@/lib/admin/keys";
+import { useAdminQuery } from "@/lib/admin/hooks";
+import { formatAdminError } from "@/lib/supabase/query";
 import { RewardEditor, createDraftReward } from "@/features/rewards/reward-editor";
 import {
   eligibilityRules,
@@ -26,7 +30,6 @@ import {
   rewardTypes,
   type Reward,
 } from "@/features/rewards/types";
-import { catalogMonths } from "@/lib/catalog";
 import { num } from "@/lib/format";
 
 export const Route = createFileRoute("/rewards")({
@@ -72,7 +75,9 @@ const filterDefs: FilterDefinition[] = [
 ];
 
 function RewardsPage() {
-  const [catalogue, setCatalogue] = useState<Reward[]>(rewards);
+  const live = useAdminQuery(adminKeys.rewards, fetchMappedRewards);
+  const catalogue = live.data?.rewards ?? [];
+  const rewardClaims = live.data?.claims ?? [];
   const [query, setQuery] = useState("");
   const [filterValues, setFilterValues] = useState<Record<string, string[]>>({});
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -96,23 +101,24 @@ function RewardsPage() {
   const current = active ? (catalogue.find((item) => item.id === active.id) ?? active) : null;
 
   const setStatus = (ids: string[], status: Reward["status"]) => {
-    setCatalogue((prev) =>
-      prev.map((reward) => (ids.includes(reward.id) ? { ...reward, status } : reward)),
-    );
-    toast.success(`${ids.length} reward${ids.length === 1 ? "" : "s"} marked ${status}.`);
-    setSelectedIds([]);
+    void setRewardStatus(ids, status)
+      .then(() => {
+        toast.success(`${ids.length} reward${ids.length === 1 ? "" : "s"} marked ${status}.`);
+        setSelectedIds([]);
+        void live.refetch();
+      })
+      .catch((error) => toast.error(formatAdminError(error)));
   };
 
   const saveReward = (reward: Reward) => {
-    setCatalogue((prev) => {
-      const exists = prev.some((item) => item.id === reward.id);
-      return exists
-        ? prev.map((item) => (item.id === reward.id ? reward : item))
-        : [reward, ...prev];
-    });
-    toast.success(`Saved “${reward.name}”.`);
-    setActive(null);
-    setCreating(false);
+    void saveMappedReward(reward)
+      .then(() => {
+        toast.success(`Saved “${reward.name}”.`);
+        setActive(null);
+        setCreating(false);
+        void live.refetch();
+      })
+      .catch((error) => toast.error(formatAdminError(error)));
   };
 
   return (
@@ -229,9 +235,10 @@ function RewardsPage() {
           <TabsContent value="trends" className="mt-4">
             <ChartCard
               title="Reward claims"
-              description="Claims per month across the catalogue"
-              series={claimTrend}
-              labels={catalogMonths}
+              description="Claim counts from user_entitlements, grouped by catalogue size."
+              series={catalogue.map((item) => item.claims)}
+              labels={catalogue.map((item) => item.name)}
+              footnote="Live entitlement counts — not a fabricated monthly trend."
             />
           </TabsContent>
         </Tabs>

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export interface PageBodyProps {
-  children: ReactNode;
+  children?: ReactNode;
   /** Vertical rhythm between page sections. */
   gap?: "sm" | "md" | "lg" | undefined;
   className?: string | undefined;

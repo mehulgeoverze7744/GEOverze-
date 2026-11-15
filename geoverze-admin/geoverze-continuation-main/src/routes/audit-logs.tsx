@@ -8,10 +8,13 @@ import { InspectorField, InspectorPanel } from "@/components/shared/inspector-pa
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { auditColumns } from "@/features/ops/audit-columns";
-import { auditActors, auditEvents, summarizeAudit } from "@/features/ops/data";
-import { auditCategories, auditResults, type AuditEvent } from "@/features/ops/types";
+import { summarizeAudit } from "@/features/ops/data";
+import { fetchAuditLogs } from "@/features/ops/api";
+import { auditCategories, auditResults, type AuditCategory, type AuditEvent } from "@/features/ops/types";
+import { downloadCsv } from "@/lib/admin/csv";
+import { adminKeys } from "@/lib/admin/keys";
+import { useAdminQuery } from "@/lib/admin/hooks";
 import { num } from "@/lib/format";
-import { notReadyNow } from "@/lib/placeholder";
 
 export const Route = createFileRoute("/audit-logs")({
   head: () => ({
@@ -33,9 +36,37 @@ export const Route = createFileRoute("/audit-logs")({
   component: AuditLogsPage,
 });
 
+function categoryFrom(action: string): AuditCategory {
+  if (action.startsWith("user.") || action.startsWith("role.")) return "User";
+  if (action.startsWith("gstore.") || action.startsWith("store.")) return "Store";
+  if (action.startsWith("credits.")) return "Reward";
+  if (action.startsWith("settings.")) return "Settings";
+  if (action.startsWith("moderation.")) return "Admin";
+  return "Admin";
+}
+
 function AuditLogsPage() {
   const [active, setActive] = useState<AuditEvent | null>(null);
-  const summary = useMemo(() => summarizeAudit(auditEvents), []);
+  const logs = useAdminQuery(adminKeys.auditLogs, fetchAuditLogs);
+  const auditEvents: AuditEvent[] = useMemo(
+    () =>
+      (logs.data ?? []).map((row) => ({
+        id: row.id,
+        at: row.created_at,
+        actor: row.actor_id ?? "system",
+        actorRole: "Admin",
+        category: categoryFrom(row.action),
+        action: row.action,
+        target: `${row.entity_type}:${row.entity_id ?? ""}`,
+        result: (row.outcome as AuditEvent["result"]) ?? "success",
+        ip: "—",
+        channel: "Console",
+        details: JSON.stringify(row.metadata ?? {}),
+      })),
+    [logs.data],
+  );
+  const summary = useMemo(() => summarizeAudit(auditEvents), [auditEvents]);
+  const auditActors = [...new Set(auditEvents.map((event) => event.actor))];
 
   return (
     <>
@@ -46,7 +77,13 @@ function AuditLogsPage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => notReadyNow("Signed CSV exports arrive with the backend.")}
+            onClick={() =>
+              downloadCsv(
+                "geoverze-audit-logs.csv",
+                ["id", "at", "actor", "action", "target", "result"],
+                auditEvents.map((event) => [event.id, event.at, event.actor, event.action, event.target, event.result]),
+              )
+            }
           >
             <Download className="size-4" aria-hidden="true" />
             Export trail
@@ -66,6 +103,7 @@ function AuditLogsPage() {
         <DataTable
           data={auditEvents}
           columns={auditColumns}
+          loading={logs.loading}
           getRowId={(row) => row.id}
           searchPlaceholder="Search actor, action or target…"
           pageSize={15}

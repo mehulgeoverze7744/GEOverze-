@@ -1,4 +1,4 @@
-import type { Enums, Tables, TablesInsert, TablesUpdate } from "@/lib/supabase/database.types";
+import type { Enums, Json, Tables, TablesInsert, TablesUpdate } from "@/lib/supabase/database.types";
 import { libraryCategories } from "@/lib/catalog";
 import type {
   LibraryDifficulty,
@@ -80,7 +80,7 @@ export function mapResourceRow(
   const blocks = options.blocks ?? [];
   const body = blocks.length > 0 ? blocksToMarkdown(blocks) : "";
   const attachments = Array.isArray(row.attachments)
-    ? (row.attachments as LibraryResource["attachments"])
+    ? (row.attachments as unknown as LibraryResource["attachments"])
     : [];
 
   return {
@@ -173,7 +173,7 @@ export function resourceRecordToInsert(
     cover_art_key: resource.coverArtKey,
     cover_label: resource.coverLabel || null,
     gallery_paths: resource.gallery,
-    attachments: resource.attachments,
+    attachments: resource.attachments as unknown as Json,
     seo_meta_title: resource.seo.metaTitle || null,
     seo_meta_description: resource.seo.metaDescription || null,
     seo_canonical_path: resource.seo.canonicalUrl || null,

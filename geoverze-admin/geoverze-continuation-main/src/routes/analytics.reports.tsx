@@ -6,15 +6,17 @@ import { ChartCard, PageBody, PageHeader, StatCard, StatGrid } from "@/component
 import { Button } from "@/components/ui/button";
 import { FilterBar, type FilterDefinition } from "@/components/shared/filter-bar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { biReports, growthSeries } from "@/features/ops/data";
 import { emptyBiFilters } from "@/features/ops/types";
 import { ReportTable } from "@/features/ops/report-table";
-import { creatorRecords } from "@/features/creators/data";
-import { quizRecords, summarizeQuizzes } from "@/features/quizzes/data";
-import { subscribers, summarizeSubscriptions } from "@/features/subscriptions/data";
-import { catalogMonths, quizCategories, regions } from "@/lib/catalog";
-import { money, num } from "@/lib/format";
-import { notReadyNow } from "@/lib/placeholder";
+import { fetchMappedCreators } from "@/features/creators/live";
+import { fetchQuizzes } from "@/features/quizzes/data/fetchQuizzes";
+import { fetchUsers } from "@/features/users/api";
+import { useDashboard } from "@/features/dashboard/hooks";
+import { adminKeys } from "@/lib/admin/keys";
+import { useAdminQuery } from "@/lib/admin/hooks";
+import { downloadCsv } from "@/lib/admin/csv";
+import { quizCategories } from "@/lib/catalog";
+import { moneyMinor, num } from "@/lib/format";
 
 export const Route = createFileRoute("/analytics/reports")({
   head: () => ({
@@ -40,10 +42,15 @@ function BusinessIntelligencePage() {
   const [filters, setFilters] = useState<Record<string, string[]>>({
     window: [emptyBiFilters.window],
   });
+  const dash = useDashboard();
+  const creators = useAdminQuery(adminKeys.creators, fetchMappedCreators);
+  const quizzes = useAdminQuery(["admin", "quizzes"], fetchQuizzes);
+  const users = useAdminQuery(adminKeys.users, fetchUsers);
+  const categoryFilter = filters["category"]?.[0];
 
   const creatorRows = useMemo(
     () =>
-      [...creatorRecords]
+      [...(creators.data ?? [])]
         .sort((a, b) => b.publishedQuizzes - a.publishedQuizzes)
         .slice(0, 10)
         .map((creator) => ({
@@ -51,15 +58,16 @@ function BusinessIntelligencePage() {
           label: creator.displayName,
           primary: creator.publishedQuizzes,
           secondary: Math.round(creator.rating * 100),
-          change: Math.round((creator.rating - 4) * 100) / 10,
+          change: 0,
           meta: creator.tier,
         })),
-    [],
+    [creators.data],
   );
 
   const quizRows = useMemo(
     () =>
-      [...quizRecords]
+      [...(quizzes.data ?? [])]
+        .filter((quiz) => !categoryFilter || categoryFilter === "all" || quiz.category === categoryFilter)
         .sort((a, b) => b.plays - a.plays)
         .slice(0, 10)
         .map((quiz) => ({
@@ -67,14 +75,35 @@ function BusinessIntelligencePage() {
           label: quiz.title,
           primary: quiz.plays,
           secondary: quiz.questionCount,
-          change: Math.round((quiz.rating - 4) * 100) / 10,
+          change: 0,
           meta: quiz.category,
         })),
-    [],
+    [categoryFilter, quizzes.data],
   );
 
-  const quizSummary = useMemo(() => summarizeQuizzes(quizRecords), []);
-  const subSummary = useMemo(() => summarizeSubscriptions(subscribers), []);
+  const countryRows = useMemo(
+    () => {
+      const counts = new Map<string, number>();
+      for (const user of users.data ?? []) {
+        counts.set(user.country || "—", (counts.get(user.country || "—") ?? 0) + 1);
+      }
+      return [...counts.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10)
+        .map(([label, primary]) => ({
+          id: label,
+          label,
+          primary,
+          secondary: 0,
+          change: 0,
+          meta: "",
+        }));
+    },
+    [users.data],
+  );
+
+  const quizSummaryPlays = (quizzes.data ?? []).reduce((sum, quiz) => sum + quiz.plays, 0);
+  const quizSummaryCount = quizzes.data?.length ?? 0;
 
   const definitions: FilterDefinition[] = [
     {
@@ -88,23 +117,9 @@ function BusinessIntelligencePage() {
       ],
     },
     {
-      id: "region",
-      label: "Region",
-      options: regions.map((region) => ({ value: region, label: region })),
-    },
-    {
       id: "category",
       label: "Category",
       options: quizCategories.map((category) => ({ value: category, label: category })),
-    },
-    {
-      id: "subscription",
-      label: "Plan",
-      options: [
-        { value: "Basic", label: "Basic" },
-        { value: "Pro", label: "Pro" },
-        { value: "Institution", label: "Institution" },
-      ],
     },
   ];
 
@@ -117,7 +132,13 @@ function BusinessIntelligencePage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => notReadyNow("Scheduled reports arrive with the backend.")}
+            onClick={() =>
+              downloadCsv(
+                "geoverze-bi-quizzes.csv",
+                ["quiz", "plays", "questions", "category"],
+                quizRows.map((row) => [row.label, row.primary, row.secondary, row.meta]),
+              )
+            }
           >
             <Download className="size-4" aria-hidden="true" />
             Schedule report
@@ -129,10 +150,10 @@ function BusinessIntelligencePage() {
         <FilterBar filters={definitions} value={filters} onChange={setFilters} />
 
         <StatGrid columns={4} label="Reporting KPIs">
-          <StatCard label="Quiz plays" value={num(quizSummary.total * 412)} delta={5.2} />
-          <StatCard label="Completion rate" value="68.4%" delta={1.7} />
-          <StatCard label="Avg. session" value="12m 40s" delta={2.4} />
-          <StatCard label="ARPU" value={money(Math.round(subSummary.mrr / 100))} delta={3.3} />
+          <StatCard label="Quiz plays" value={num(quizSummaryPlays)} />
+          <StatCard label="Published quizzes" value={num(dash.metrics?.published_quizzes ?? quizSummaryCount)} />
+          <StatCard label="Active subscriptions" value={num(dash.metrics?.active_subscriptions ?? 0)} />
+          <StatCard label="Store revenue (30d)" value={moneyMinor(dash.metrics?.gstore_revenue_minor_30d ?? 0)} />
         </StatGrid>
 
         <Tabs defaultValue="usage">
@@ -147,40 +168,34 @@ function BusinessIntelligencePage() {
           <TabsContent value="usage" className="mt-4 space-y-4">
             <div className="grid gap-4 lg:grid-cols-2">
               <ChartCard
-                title="Daily active users"
-                series={growthSeries.activity}
-                labels={catalogMonths}
+                title="Quiz attempts"
+                series={(dash.growth?.attempts_by_day ?? []).map((row) => row.count)}
+                labels={(dash.growth?.attempts_by_day ?? []).map((row) => row.day.slice(5, 10))}
+                footnote="Live quiz_attempts by day"
               />
               <ChartCard
-                title="Retention by cohort month"
-                series={growthSeries.retention}
-                labels={catalogMonths}
+                title="New users"
+                series={(dash.growth?.users_by_week ?? []).map((row) => row.count)}
+                labels={(dash.growth?.users_by_week ?? []).map((row) => row.week.slice(5, 10))}
+                footnote="Live profiles.created_at by week. No cohort-retention table exists."
               />
             </div>
             <ReportTable
               title="Quiz categories"
-              rows={biReports.categories}
+              rows={quizRows}
               primaryLabel="plays"
-              secondaryLabel="completions"
+              secondaryLabel="questions"
             />
           </TabsContent>
 
           <TabsContent value="geography" className="mt-4 space-y-4">
-            <div className="grid gap-4 lg:grid-cols-2">
-              <ReportTable
-                title="Countries"
-                rows={biReports.countries}
-                primaryLabel="sessions"
-                secondaryLabel="new users"
-                limit={10}
-              />
-              <ReportTable
-                title="Regions"
-                rows={biReports.regions}
-                primaryLabel="sessions"
-                secondaryLabel="new users"
-              />
-            </div>
+            <ReportTable
+              title="Countries"
+              rows={countryRows}
+              primaryLabel="users"
+              secondaryLabel="n/a"
+              limit={10}
+            />
           </TabsContent>
 
           <TabsContent value="creators" className="mt-4 space-y-4">
@@ -192,11 +207,6 @@ function BusinessIntelligencePage() {
               secondaryLabel="rating pts"
               limit={10}
             />
-            <ChartCard
-              title="Creator growth"
-              series={growthSeries.creators}
-              labels={catalogMonths}
-            />
           </TabsContent>
 
           <TabsContent value="content" className="mt-4 space-y-4">
@@ -207,31 +217,15 @@ function BusinessIntelligencePage() {
               secondaryLabel="questions"
               limit={10}
             />
-            <div className="grid gap-4 lg:grid-cols-2">
-              <ReportTable
-                title="GVRZE Library categories"
-                rows={biReports.libraryCategories}
-                primaryLabel="views"
-                secondaryLabel="bookmarks"
-              />
-              <ChartCard
-                title="Content publishing"
-                series={growthSeries.quizzes}
-                labels={catalogMonths}
-              />
-            </div>
           </TabsContent>
 
           <TabsContent value="revenue" className="mt-4 space-y-4">
-            <div className="grid gap-4 lg:grid-cols-2">
-              <ChartCard title="Revenue" series={growthSeries.revenue} labels={catalogMonths} />
-              <ReportTable
-                title="Store categories"
-                rows={biReports.storeCategories}
-                primaryLabel="revenue"
-                secondaryLabel="orders"
-              />
-            </div>
+            <ChartCard
+              title="Gstore revenue"
+              series={(dash.growth?.gstore_revenue_by_week ?? []).map((row) => row.minor)}
+              labels={(dash.growth?.gstore_revenue_by_week ?? []).map((row) => row.week.slice(5, 10))}
+              footnote="Live Gstore paid totals by week"
+            />
           </TabsContent>
         </Tabs>
       </PageBody>

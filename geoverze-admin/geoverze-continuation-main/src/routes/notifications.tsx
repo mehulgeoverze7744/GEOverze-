@@ -20,12 +20,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  adminNotifications,
-  notificationHistory,
-  notificationTemplates,
-  scheduledNotifications,
-} from "@/features/ops/data";
+import { notificationTemplates } from "@/features/ops/data";
+import { fetchAdminNotifications, upsertAdminNotification } from "@/features/ops/api";
+import { adminKeys } from "@/lib/admin/keys";
+import { useAdminQuery } from "@/lib/admin/hooks";
+import { formatAdminError } from "@/lib/supabase/query";
 import {
   notificationAudiences,
   notificationChannels,
@@ -62,23 +61,35 @@ const typeTone: Record<string, string> = {
   announcement: "text-primary",
 };
 
+function mapAudience(label: string): "all" | "creators" | "subscribers" | "admins" {
+  if (label === "Creators") return "creators";
+  if (label === "Subscribers") return "subscribers";
+  if (label === "Admins" || label === "Moderators") return "admins";
+  return "all";
+}
+
+function mapChannel(label: string): "in_app" | "email" {
+  return label === "Email" ? "email" : "in_app";
+}
+
 function NotificationsPage() {
   const [template, setTemplate] = useState("none");
+  const [audience, setAudience] = useState("All users");
+  const [channel, setChannel] = useState("In-app");
+  const notifications = useAdminQuery(adminKeys.notifications, fetchAdminNotifications);
+  const rows = notifications.data ?? [];
 
   const stats = useMemo(() => {
-    const sent = adminNotifications.filter((item) => item.status === "sent");
-    const delivered = sent.reduce((sum, item) => sum + item.recipients, 0);
-    const openRate = sent.length
-      ? Math.round(sent.reduce((sum, item) => sum + item.openRate, 0) / sent.length)
-      : 0;
+    const sent = rows.filter((item) => item.status === "sent");
+    const scheduled = rows.filter((item) => item.status === "draft");
     return {
       sent: sent.length,
-      scheduled: scheduledNotifications.length,
-      delivered,
-      openRate,
-      failed: adminNotifications.filter((item) => item.status === "failed").length,
+      scheduled: scheduled.length,
+      delivered: sent.length,
+      openRate: 0,
+      failed: rows.filter((item) => item.status === "failed").length,
     };
-  }, []);
+  }, [rows]);
 
   const selected = notificationTemplates.find((item) => item.id === template);
 
@@ -121,7 +132,23 @@ function NotificationsPage() {
               className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]"
               onSubmit={(event) => {
                 event.preventDefault();
-                toast.success("Notification queued locally — delivery needs the backend.");
+                const data = new FormData(event.currentTarget);
+                const title = String(data.get("title") ?? "").trim();
+                const body = String(data.get("body") ?? "").trim();
+                if (!title || !body) return;
+                void upsertAdminNotification({
+                  title,
+                  body,
+                  audience: mapAudience(audience),
+                  channel: mapChannel(channel),
+                  status: String(data.get("schedule") ?? "") ? "draft" : "sent",
+                })
+                  .then(() => {
+                    toast.success("Notification saved. In-app delivery to public users is not available yet.");
+                    void notifications.refetch();
+                    event.currentTarget.reset();
+                  })
+                  .catch((error) => toast.error(formatAdminError(error)));
               }}
             >
               <div className="space-y-4 rounded-lg border border-border bg-card p-4">
@@ -131,12 +158,13 @@ function NotificationsPage() {
                 />
                 <div className="space-y-1.5">
                   <Label htmlFor="ntf-title">Title</Label>
-                  <Input id="ntf-title" placeholder="Scheduled maintenance window" required />
+                  <Input id="ntf-title" name="title" placeholder="Scheduled maintenance window" required />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="ntf-body">Message</Label>
                   <Textarea
                     id="ntf-body"
+                    name="body"
                     rows={5}
                     defaultValue={selected?.body ?? ""}
                     placeholder="What should recipients know?"
@@ -146,7 +174,7 @@ function NotificationsPage() {
                 <div className="grid gap-4 sm:grid-cols-3">
                   <div className="space-y-1.5">
                     <Label htmlFor="ntf-audience">Audience</Label>
-                    <Select defaultValue="All users">
+                    <Select value={audience} onValueChange={setAudience}>
                       <SelectTrigger id="ntf-audience">
                         <SelectValue />
                       </SelectTrigger>
@@ -161,7 +189,7 @@ function NotificationsPage() {
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="ntf-channel">Channel</Label>
-                    <Select defaultValue="In-app">
+                    <Select value={channel} onValueChange={setChannel}>
                       <SelectTrigger id="ntf-channel">
                         <SelectValue />
                       </SelectTrigger>
@@ -192,7 +220,7 @@ function NotificationsPage() {
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="ntf-schedule">Schedule for</Label>
-                  <Input id="ntf-schedule" type="datetime-local" className="max-w-64" />
+                  <Input id="ntf-schedule" name="schedule" type="datetime-local" className="max-w-64" />
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Button type="submit" size="sm">
@@ -244,23 +272,25 @@ function NotificationsPage() {
 
           <TabsContent value="scheduled" className="mt-4">
             <div className="overflow-hidden rounded-lg border border-border bg-card">
-              {scheduledNotifications.length === 0 ? (
+              {rows.filter((item) => item.status === "draft").length === 0 ? (
                 <EmptyState
                   title="Nothing scheduled"
                   description="Queue a broadcast to see it here."
                 />
               ) : (
                 <ul className="divide-y divide-border">
-                  {scheduledNotifications.map((item) => (
+                  {rows
+                    .filter((item) => item.status === "draft")
+                    .map((item) => (
                     <li key={item.id} className="flex flex-wrap gap-3 px-4 py-3">
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-medium text-foreground">{item.title}</p>
                         <p className="truncate text-xs text-muted-foreground">
-                          {item.audience} · {item.channel} · by {item.createdBy}
+                          {item.audience} · {item.channel}
                         </p>
                       </div>
                       <span className="text-xs text-muted-foreground">
-                        {item.scheduledFor.replace("T", " ").slice(0, 16)}
+                        {(item.created_at ?? "").replace("T", " ").slice(0, 16)}
                       </span>
                       <Button
                         variant="ghost"
@@ -302,7 +332,7 @@ function NotificationsPage() {
           <TabsContent value="history" className="mt-4">
             <div className="overflow-hidden rounded-lg border border-border bg-card">
               <ul className="divide-y divide-border">
-                {notificationHistory.map((item) => (
+                {rows.map((item) => (
                   <li key={item.id} className="flex gap-3 px-4 py-3">
                     <span
                       className={cn(
@@ -318,9 +348,7 @@ function NotificationsPage() {
                     <span className="shrink-0 text-right text-xs text-muted-foreground">
                       {item.audience} · {item.channel}
                       <br />
-                      {item.status === "sent"
-                        ? `${num(item.recipients)} sent · ${item.openRate}% opened`
-                        : "delivery failed"}
+                      {item.status}
                     </span>
                   </li>
                 ))}

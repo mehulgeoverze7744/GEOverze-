@@ -20,6 +20,8 @@ import { initAuthSync, signOut } from "@/lib/supabase/auth-sync";
 import { isPrivilegedRole } from "@/lib/supabase/client";
 import { selectIsSignedIn, selectRole, useAuthStore } from "@/stores/authStore";
 
+const PUBLIC_PATHS = new Set(["/login", "/forgot-password", "/reset-password"]);
+
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -143,16 +145,23 @@ function AdminGate() {
   const signedIn = useAuthStore(selectIsSignedIn);
   const role = useAuthStore(selectRole);
   const roleChecked = useAuthStore((s) => s.roleChecked);
+  const status = useAuthStore((s) => s.status);
 
   useEffect(() => {
     initAuthSync();
   }, []);
 
-  // The login page renders standalone (no dashboard chrome) and is never
-  // gated — it's the one place a signed-out visitor needs to reach.
-  if (pathname === "/login") return <Outlet />;
+  if (PUBLIC_PATHS.has(pathname)) return <Outlet />;
 
-  if (!signedIn || !roleChecked) {
+  if (status === "unknown" || (signedIn && !roleChecked)) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center bg-background px-4">
+        <p className="text-sm text-muted-foreground">Checking your account…</p>
+      </div>
+    );
+  }
+
+  if (!signedIn) {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-background px-4">
         <div className="max-w-sm text-center">
@@ -161,9 +170,7 @@ function AdminGate() {
           </div>
           <h1 className="mt-4 text-lg font-semibold text-foreground">Sign in required</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            {roleChecked || !signedIn
-              ? "This console is restricted to authorized administrators."
-              : "Checking your account…"}
+            This console is restricted to authorized administrators.
           </p>
           <div className="mt-6">
             <Button asChild>

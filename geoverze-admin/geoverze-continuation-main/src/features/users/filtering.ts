@@ -1,5 +1,5 @@
-import { daysSince } from "@/features/users/data";
 import type { PlatformUser, UserFilterState } from "@/features/users/types";
+import { daysSince } from "@/lib/format";
 
 const registeredWindow: Record<string, number> = {
   "Last 7 days": 7,

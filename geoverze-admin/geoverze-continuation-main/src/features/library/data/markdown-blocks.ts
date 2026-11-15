@@ -74,7 +74,7 @@ export function markdownToBlocks(markdown: string): CanonicalBlock[] {
       const caption = image[1]!.trim();
       const src = image[2]!.trim();
       const payload: Record<string, unknown> = { caption, art: src };
-      if (isLibraryMediaPath(src)) payload.storage_path = src;
+      if (isLibraryMediaPath(src)) payload["storage_path"] = src;
       blocks.push({ kind: "image", payload });
       continue;
     }
@@ -113,8 +113,8 @@ export function blocksToMarkdown(blocks: readonly CanonicalBlock[]): string {
   for (const block of blocks) {
     switch (block.kind) {
       case "heading": {
-        const text = String(block.payload.text ?? "");
-        const id = String(block.payload.id ?? slugifyHeading(text));
+        const text = String(block.payload["text"] ?? "");
+        const id = String(block.payload["id"] ?? slugifyHeading(text));
         parts.push(`## ${text}`, "");
         if (id && id !== slugifyHeading(text)) {
           /* id preserved in payload only */
@@ -122,11 +122,11 @@ export function blocksToMarkdown(blocks: readonly CanonicalBlock[]): string {
         break;
       }
       case "paragraph":
-        parts.push(String(block.payload.text ?? ""), "");
+        parts.push(String(block.payload["text"] ?? ""), "");
         break;
       case "list": {
-        const items = (block.payload.items as string[] | undefined) ?? [];
-        const ordered = Boolean(block.payload.ordered);
+        const items = (block.payload["items"] as string[] | undefined) ?? [];
+        const ordered = Boolean(block.payload["ordered"]);
         for (const [index, item] of items.entries()) {
           parts.push(ordered ? `${index + 1}. ${item}` : `- ${item}`);
         }
@@ -134,27 +134,27 @@ export function blocksToMarkdown(blocks: readonly CanonicalBlock[]): string {
         break;
       }
       case "quote": {
-        const text = String(block.payload.text ?? "");
-        const attribution = block.payload.attribution
-          ? `\n— ${String(block.payload.attribution)}`
+        const text = String(block.payload["text"] ?? "");
+        const attribution = block.payload["attribution"]
+          ? `\n— ${String(block.payload["attribution"])}`
           : "";
         parts.push(`> ${text}${attribution}`, "");
         break;
       }
       case "image": {
-        const art = String(block.payload.storage_path ?? block.payload.art ?? "image");
-        parts.push(`![${String(block.payload.caption ?? "Image")}](${art})`, "");
+        const art = String(block.payload["storage_path"] ?? block.payload["art"] ?? "image");
+        parts.push(`![${String(block.payload["caption"] ?? "Image")}](${art})`, "");
         break;
       }
       case "map":
         parts.push(
-          `[map:${String(block.payload.region ?? "region")}] ${String(block.payload.caption ?? "")}`,
+          `[map:${String(block.payload["region"] ?? "region")}] ${String(block.payload["caption"] ?? "")}`,
           "",
         );
         break;
       case "facts": {
-        const title = String(block.payload.title ?? "Facts");
-        const facts = (block.payload.facts as { label: string; value: string }[] | undefined) ?? [];
+        const title = String(block.payload["title"] ?? "Facts");
+        const facts = (block.payload["facts"] as { label: string; value: string }[] | undefined) ?? [];
         parts.push(`### ${title}`, "");
         for (const fact of facts) {
           parts.push(`- **${fact.label}:** ${fact.value}`);
@@ -163,7 +163,7 @@ export function blocksToMarkdown(blocks: readonly CanonicalBlock[]): string {
         break;
       }
       case "didYouKnow":
-        parts.push(`> Did you know: ${String(block.payload.text ?? "")}`, "");
+        parts.push(`> Did you know: ${String(block.payload["text"] ?? "")}`, "");
         break;
       case "table":
       case "reference":

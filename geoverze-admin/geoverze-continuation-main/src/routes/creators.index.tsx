@@ -13,11 +13,13 @@ import { Button } from "@/components/ui/button";
 import { buildCreatorColumns } from "@/features/creators/columns";
 import {
   creatorGrowthSeries,
-  creatorRecords,
   creatorTierSeries,
   monthLabels,
   summarizeCreators,
 } from "@/features/creators/data";
+import { fetchMappedCreators } from "@/features/creators/live";
+import { adminKeys } from "@/lib/admin/keys";
+import { useAdminQuery } from "@/lib/admin/hooks";
 import {
   CreatorDetailDrawer,
   type CreatorDrawerTab,
@@ -59,12 +61,15 @@ function CreatorDirectoryPage() {
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<CreatorFilterState>(emptyCreatorFilters);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
   const [active, setActive] = useState<CreatorRecord | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerTab, setDrawerTab] = useState<CreatorDrawerTab>("overview");
+  const creatorsQuery = useAdminQuery(adminKeys.creators, fetchMappedCreators);
+  const loading = creatorsQuery.loading;
 
-  const actions = useCreatorActions(creatorRecords);
+  const actions = useCreatorActions(creatorsQuery.data ?? [], () => {
+    void creatorsQuery.refetch();
+  });
   const rows = useMemo(
     () => filterCreators(actions.creators, query, filters),
     [actions.creators, query, filters],
@@ -81,8 +86,7 @@ function CreatorDirectoryPage() {
   };
 
   const refresh = () => {
-    setLoading(true);
-    setTimeout(() => setLoading(false), 500);
+    void creatorsQuery.refetch();
   };
 
   const resetAll = () => {
@@ -96,10 +100,7 @@ function CreatorDirectoryPage() {
         title="Creator Management"
         description="Applications, verification, tiers and performance for the GVRZE creator program."
         actions={
-          <Button
-            size="sm"
-            onClick={actions.placeholder("Export queued — backend integration pending.")}
-          >
+          <Button size="sm" onClick={() => actions.exportCreators(rows)}>
             <Download className="size-4" aria-hidden="true" />
             Export creators
           </Button>
@@ -144,9 +145,8 @@ function CreatorDirectoryPage() {
             {
               label: "Export selection",
               icon: <Download className="size-4" aria-hidden="true" />,
-              onSelect: actions.placeholder(
-                `Exporting ${selectedIds.length} creators (placeholder).`,
-              ),
+              onSelect: () =>
+                actions.exportCreators(rows.filter((creator) => selectedIds.includes(creator.id))),
             },
           ]}
           actions={[

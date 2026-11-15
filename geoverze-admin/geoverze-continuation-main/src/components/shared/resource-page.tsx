@@ -9,7 +9,8 @@ import {
 import { InspectorPanel } from "@/components/shared/inspector-panel";
 import { PageBody } from "@/components/shared/page-body";
 import { Button } from "@/components/ui/button";
-import { notReady } from "@/lib/placeholder";
+import { EmptyState } from "@/components/shared/empty-state";
+import type { DataTableRowAction } from "@/components/shared/data-table";
 
 interface ResourcePageProps<T> {
   title: string;
@@ -22,6 +23,10 @@ interface ResourcePageProps<T> {
   inspectorTitle?: ((row: T) => string) | undefined;
   renderInspector?: ((row: T) => ReactNode) | undefined;
   actions?: ReactNode | undefined;
+  loading?: boolean | undefined;
+  error?: string | null | undefined;
+  onRetry?: (() => void) | undefined;
+  rowActions?: DataTableRowAction<T>[] | undefined;
 }
 
 export function ResourcePage<T>({
@@ -35,44 +40,43 @@ export function ResourcePage<T>({
   inspectorTitle,
   renderInspector,
   actions,
+  loading,
+  error,
+  onRetry,
+  rowActions,
 }: ResourcePageProps<T>) {
   const [active, setActive] = useState<T | null>(null);
 
   return (
     <>
-      <PageHeader
-        title={title}
-        description={description}
-        actions={
-          actions ?? (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={notReady("This action connects to the backend later.")}
-            >
-              New record
-            </Button>
-          )
-        }
-      />
+      <PageHeader title={title} description={description} actions={actions} />
       <PageBody>
+        {error ? (
+          <EmptyState
+            title="Could not load records"
+            description={error}
+            action={
+              onRetry ? (
+                <Button size="sm" variant="outline" className="mt-2" onClick={onRetry}>
+                  Try again
+                </Button>
+              ) : null
+            }
+          />
+        ) : (
         <DataTable
           data={data}
           columns={columns}
           filters={filters}
           getRowId={getRowId}
+          loading={loading}
           searchPlaceholder={searchPlaceholder}
           onRowClick={renderInspector ? (row) => setActive(row) : undefined}
-          rowActions={[
-            { label: "View details", onSelect: (row) => setActive(row) },
-            { label: "Edit", onSelect: notReady("Editing is not wired up yet.") },
-            {
-              label: "Delete",
-              destructive: true,
-              onSelect: notReady("Deletion requires backend integration."),
-            },
-          ]}
+          rowActions={
+            rowActions ?? [{ label: "View details", onSelect: (row) => setActive(row) }]
+          }
         />
+        )}
       </PageBody>
       {renderInspector && (
         <InspectorPanel

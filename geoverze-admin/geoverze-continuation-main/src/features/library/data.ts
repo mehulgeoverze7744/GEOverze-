@@ -133,6 +133,8 @@ function buildResource(index: number): LibraryResource {
     author,
     status,
     featured: rand() > 0.84 && status === "published",
+    minAccessTier: null,
+    coverArtKey: slug,
     views,
     bookmarks: Math.floor(views * (0.02 + rand() * 0.08)),
     readTime: 3 + Math.floor(rand() * 18),

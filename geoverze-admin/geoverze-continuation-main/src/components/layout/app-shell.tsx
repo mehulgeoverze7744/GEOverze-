@@ -10,7 +10,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { InspectorProvider, useInspector } from "@/context/inspector";
 import { SideDrawer } from "@/components/shared/side-drawer";
 import { useTheme } from "@/hooks/use-theme";
-import { notifications } from "@/lib/mock-data";
+import { useAdminInboxQuery } from "@/components/layout/notification-drawer";
+import { adminKeys } from "@/lib/admin/keys";
+import { useAdminRealtime } from "@/lib/admin/realtime";
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
@@ -48,7 +50,11 @@ function ShellFrame({ children }: { children: ReactNode }) {
     return () => document.removeEventListener("keydown", handler);
   }, []);
 
-  const unreadCount = notifications.filter((item) => item.unread).length;
+  const inbox = useAdminInboxQuery();
+  useAdminRealtime("content_reports", [adminKeys.inbox]);
+  useAdminRealtime("support_tickets", [adminKeys.inbox]);
+  useAdminRealtime("gstore_orders", [adminKeys.inbox]);
+  const unreadCount = (inbox.data ?? []).filter((item) => item.unread).length;
 
   return (
     <div className="flex h-dvh w-full overflow-hidden bg-background">

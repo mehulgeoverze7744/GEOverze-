@@ -18,13 +18,12 @@ import { StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { buildOrderColumns } from "@/features/store/columns";
-import {
-  orderStatusSeries,
-  redemptionItems,
-  storeCoupons,
-  storeOrders,
-  storeProducts,
-} from "@/features/store/data";
+import { orderStatusSeries } from "@/features/store/data";
+import { fetchMappedGstoreOrders, fetchMappedStoreProducts } from "@/features/store/live";
+import { updateGstoreOrder } from "@/features/commerce/api";
+import { adminKeys } from "@/lib/admin/keys";
+import { useAdminQuery } from "@/lib/admin/hooks";
+import { useAdminRealtime } from "@/lib/admin/realtime";
 import { filterOrders } from "@/features/store/filtering";
 import { OrderFilters } from "@/features/store/store-filters";
 import { emptyOrderFilters, type OrderFilterState, type StoreOrder } from "@/features/store/types";
@@ -59,7 +58,10 @@ function StoreOrdersPage() {
   const [loading, setLoading] = useState(false);
   const [active, setActive] = useState<StoreOrder | null>(null);
 
-  const actions = useStoreActions(storeProducts, storeOrders, storeCoupons, redemptionItems);
+  const productsQuery = useAdminQuery(adminKeys.storeProducts, fetchMappedStoreProducts);
+  const ordersQuery = useAdminQuery(adminKeys.gstoreOrders, fetchMappedGstoreOrders);
+  useAdminRealtime("gstore_orders", [adminKeys.gstoreOrders, adminKeys.dashboard]);
+  const actions = useStoreActions(productsQuery.data ?? [], ordersQuery.data ?? [], [], []);
 
   const rows = useMemo(
     () => filterOrders(actions.orders, query, filters),
@@ -228,7 +230,9 @@ function StoreOrdersPage() {
               <div className="mt-4 flex flex-wrap gap-2">
                 <Button
                   size="sm"
-                  onClick={() => actions.setOrderStatus([current.id], "shipped")}
+                  onClick={() => {
+                    void updateGstoreOrder(current.id, "shipped").then(() => void ordersQuery.refetch());
+                  }}
                   disabled={current.status === "shipped"}
                 >
                   <Truck className="size-4" aria-hidden="true" />
@@ -237,7 +241,9 @@ function StoreOrdersPage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => actions.requestRefund([current.id])}
+                  onClick={() => {
+                    void updateGstoreOrder(current.id, "refunded").then(() => void ordersQuery.refetch());
+                  }}
                 >
                   <Undo2 className="size-4" aria-hidden="true" />
                   Refund
@@ -245,7 +251,9 @@ function StoreOrdersPage() {
                 <Button
                   size="sm"
                   variant="destructive"
-                  onClick={() => actions.requestCancel([current.id])}
+                  onClick={() => {
+                    void updateGstoreOrder(current.id, "cancelled").then(() => void ordersQuery.refetch());
+                  }}
                 >
                   <XCircle className="size-4" aria-hidden="true" />
                   Cancel

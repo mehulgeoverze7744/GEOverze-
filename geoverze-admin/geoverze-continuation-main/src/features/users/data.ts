@@ -11,6 +11,7 @@ import type {
   UserReportRecord,
 } from "@/features/users/types";
 import type { Status } from "@/types";
+import { daysSince } from "@/lib/format";
 
 /** Deterministic pseudo-random so SSR and client render identically. */
 function rng(seed: number) {
@@ -30,7 +31,7 @@ function isoDaysAgo(days: number, hourSeed = 9) {
   return new Date(NOW - days * 86400000 + hourSeed * 3600000).toISOString();
 }
 
-const memberships: Membership[] = ["Free", "Free", "Plus", "Premium", "Premium", "Elite"];
+const memberships: Membership[] = ["Explorer", "Explorer", "Basic", "Pro", "Pro", "Advance"];
 const creatorStatuses: CreatorStatus[] = [
   "None",
   "None",
@@ -195,15 +196,13 @@ export const platformUsers: PlatformUser[] = baseUsers.map((user, index) => {
 export const userCountries = [...new Set(platformUsers.map((u) => u.country))].sort();
 export const userRoles = [...new Set(platformUsers.map((u) => u.role))].sort();
 
-export function daysSince(iso: string) {
-  return Math.floor((NOW - new Date(iso).getTime()) / 86400000);
-}
+export { daysSince };
 
 export const userStats = {
   total: platformUsers.length,
   activeToday: platformUsers.filter((u) => daysSince(u.lastActiveAt) < 1).length,
   newThisWeek: platformUsers.filter((u) => daysSince(u.registeredAt) <= 7).length,
-  premium: platformUsers.filter((u) => u.membership === "Premium" || u.membership === "Elite")
+  premium: platformUsers.filter((u) => u.membership === "Pro" || u.membership === "Advance")
     .length,
   creators: platformUsers.filter((u) => u.creatorStatus === "Approved").length,
   suspended: platformUsers.filter((u) => u.status === "suspended").length,

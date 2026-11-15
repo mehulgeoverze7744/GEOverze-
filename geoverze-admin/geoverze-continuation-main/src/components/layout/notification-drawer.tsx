@@ -11,7 +11,9 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { notifications as seedNotifications } from "@/lib/mock-data";
+import { fetchAdminInbox } from "@/features/ops/inbox";
+import { adminKeys } from "@/lib/admin/keys";
+import { useAdminQuery } from "@/lib/admin/hooks";
 import type { NotificationItem } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +21,6 @@ const sections = [
   "Platform Alerts",
   "Creator Requests",
   "Reports",
-  "Orders",
   "Support Tickets",
   "System Alerts",
 ] as const;
@@ -29,9 +30,23 @@ export interface NotificationDrawerProps {
   onOpenChange: (open: boolean) => void;
 }
 
+export function useAdminInboxQuery() {
+  return useAdminQuery(adminKeys.inbox, fetchAdminInbox);
+}
+
 export function NotificationDrawer({ open, onOpenChange }: NotificationDrawerProps) {
-  const [items, setItems] = useState<NotificationItem[]>(seedNotifications);
+  const inbox = useAdminInboxQuery();
+  const [readIds, setReadIds] = useState<string[]>([]);
   const [filter, setFilter] = useState<string>("all");
+
+  const items = useMemo<NotificationItem[]>(
+    () =>
+      (inbox.data ?? []).map((item) => ({
+        ...item,
+        unread: item.unread && !readIds.includes(item.id),
+      })),
+    [inbox.data, readIds],
+  );
 
   const visible = useMemo(
     () => (filter === "all" ? items : items.filter((item) => item.category === filter)),
@@ -40,7 +55,7 @@ export function NotificationDrawer({ open, onOpenChange }: NotificationDrawerPro
 
   const unread = items.filter((item) => item.unread).length;
 
-  const markAllRead = () => setItems((current) => current.map((i) => ({ ...i, unread: false })));
+  const markAllRead = () => setReadIds(items.map((item) => item.id));
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -55,7 +70,7 @@ export function NotificationDrawer({ open, onOpenChange }: NotificationDrawerPro
             )}
           </div>
           <SheetDescription className="text-xs">
-            Platform alerts, creator requests, reports, orders and support activity.
+            Live reports, creator applications, orders and support activity.
           </SheetDescription>
         </SheetHeader>
 

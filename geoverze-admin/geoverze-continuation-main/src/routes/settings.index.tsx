@@ -12,6 +12,10 @@ import {
 } from "@/components/ui/select";
 import { SettingsCard, SettingsField, SettingsToggle } from "@/features/ops/settings-card";
 import { defaultSettings, featureFlags } from "@/features/ops/data";
+import { fetchPlatformSettings, setPlatformSetting } from "@/features/ops/api";
+import { adminKeys } from "@/lib/admin/keys";
+import { useAdminQuery } from "@/lib/admin/hooks";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/settings/")({
   head: () => ({
@@ -33,7 +37,29 @@ export const Route = createFileRoute("/settings/")({
   component: GeneralSettingsPage,
 });
 
+function settingString(
+  rows: Array<{ key: string; value: unknown }> | undefined,
+  key: string,
+  fallback: string,
+) {
+  const match = rows?.find((row) => row.key === key);
+  if (typeof match?.value === "string") return match.value;
+  return fallback;
+}
+
+function settingBool(
+  rows: Array<{ key: string; value: unknown }> | undefined,
+  key: string,
+  fallback: boolean,
+) {
+  const match = rows?.find((row) => row.key === key);
+  if (typeof match?.value === "boolean") return match.value;
+  return fallback;
+}
+
 function GeneralSettingsPage() {
+  const settings = useAdminQuery(adminKeys.settings, fetchPlatformSettings);
+  const rows = settings.data ?? [];
   return (
     <>
       <PageHeader
@@ -42,15 +68,34 @@ function GeneralSettingsPage() {
       />
       <PageBody>
         <div className="grid gap-4 lg:grid-cols-2">
-          <SettingsCard title="Platform" description="Names and contact details shown to users.">
+          <SettingsCard
+            title="Platform"
+            description="Names and contact details shown to users. Secrets cannot be stored here."
+            onSave={async (form) => {
+              const data = new FormData(form);
+              await setPlatformSetting("platform_name", JSON.parse(JSON.stringify(data.get("platform_name") ?? "GEOverze")));
+              await setPlatformSetting("support_email", JSON.parse(JSON.stringify(data.get("support_email") ?? "")));
+              await setPlatformSetting("default_locale", JSON.parse(JSON.stringify(data.get("default_locale") ?? "en-US")));
+              await setPlatformSetting("timezone", JSON.parse(JSON.stringify(data.get("timezone") ?? "UTC")));
+              toast.success("Platform settings saved.");
+              void settings.refetch();
+            }}
+          >
             <SettingsField label="Platform name" htmlFor="platform-name">
-              <Input id="platform-name" defaultValue={defaultSettings.platformName} />
+              <Input id="platform-name" name="platform_name" defaultValue={settingString(rows, "platform_name", defaultSettings.platformName)} />
             </SettingsField>
             <SettingsField label="Support email" htmlFor="support-email">
-              <Input id="support-email" type="email" defaultValue={defaultSettings.supportEmail} />
+              <Input id="support-email" name="support_email" type="email" defaultValue={settingString(rows, "support_email", defaultSettings.supportEmail)} />
             </SettingsField>
             <SettingsField label="Default locale" htmlFor="default-locale">
-              <Select defaultValue={defaultSettings.defaultLocale}>
+              <input type="hidden" name="default_locale" value={settingString(rows, "default_locale", defaultSettings.defaultLocale)} />
+              <Select
+                defaultValue={settingString(rows, "default_locale", defaultSettings.defaultLocale)}
+                onValueChange={(value) => {
+                  const input = document.querySelector<HTMLInputElement>('input[name="default_locale"]');
+                  if (input) input.value = value;
+                }}
+              >
                 <SelectTrigger id="default-locale">
                   <SelectValue />
                 </SelectTrigger>
@@ -64,7 +109,14 @@ function GeneralSettingsPage() {
               </Select>
             </SettingsField>
             <SettingsField label="Timezone" htmlFor="timezone">
-              <Select defaultValue={defaultSettings.timezone}>
+              <input type="hidden" name="timezone" value={settingString(rows, "timezone", defaultSettings.timezone)} />
+              <Select
+                defaultValue={settingString(rows, "timezone", defaultSettings.timezone)}
+                onValueChange={(value) => {
+                  const input = document.querySelector<HTMLInputElement>('input[name="timezone"]');
+                  if (input) input.value = value;
+                }}
+              >
                 <SelectTrigger id="timezone">
                   <SelectValue />
                 </SelectTrigger>
@@ -81,21 +133,41 @@ function GeneralSettingsPage() {
             </SettingsField>
           </SettingsCard>
 
-          <SettingsCard title="Availability" description="Control access while you ship changes.">
+          <SettingsCard
+            title="Availability"
+            description="Control access while you ship changes."
+            onSave={async (form) => {
+              const data = new FormData(form);
+              await setPlatformSetting(
+                "maintenance_banner",
+                JSON.parse(JSON.stringify(data.get("maintenance_banner") ?? "")),
+              );
+              toast.success("Availability settings saved.");
+              void settings.refetch();
+            }}
+          >
             <SettingsToggle
               label="Maintenance mode"
               description="Show a maintenance screen to everyone except admins."
-              defaultChecked={defaultSettings.maintenanceMode}
+              defaultChecked={settingBool(rows, "maintenance_mode", defaultSettings.maintenanceMode)}
+              onChange={(checked) => {
+                void setPlatformSetting("maintenance_mode", checked).then(() => settings.refetch());
+              }}
             />
             <SettingsToggle
               label="Open registrations"
               description="Allow new accounts to sign up."
-              defaultChecked={defaultSettings.signupsOpen}
+              defaultChecked={settingBool(rows, "signups_open", defaultSettings.signupsOpen)}
+              onChange={(checked) => {
+                void setPlatformSetting("signups_open", checked).then(() => settings.refetch());
+              }}
             />
             <SettingsField label="Maintenance banner" htmlFor="maintenance-note">
               <Textarea
                 id="maintenance-note"
+                name="maintenance_banner"
                 rows={3}
+                defaultValue={settingString(rows, "maintenance_banner", "")}
                 placeholder="Shown to all users when maintenance mode is enabled."
               />
             </SettingsField>
@@ -106,7 +178,7 @@ function GeneralSettingsPage() {
           <div className="border-b border-border px-4 py-3">
             <h2 className="text-sm font-semibold tracking-tight text-foreground">Feature flags</h2>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Progressive rollout switches — local only until the backend is connected.
+              Stored in platform_settings. The public application must read these keys to honor them.
             </p>
           </div>
           <ul className="divide-y divide-border">
@@ -115,7 +187,10 @@ function GeneralSettingsPage() {
                 <SettingsToggle
                   label={flag.name}
                   description={`${flag.description} · ${flag.rollout}`}
-                  defaultChecked={flag.on}
+                  defaultChecked={settingBool(rows, `flag_${flag.id}`, flag.on)}
+                  onChange={(checked) => {
+                    void setPlatformSetting(`flag_${flag.id}`, checked).then(() => settings.refetch());
+                  }}
                 />
               </li>
             ))}

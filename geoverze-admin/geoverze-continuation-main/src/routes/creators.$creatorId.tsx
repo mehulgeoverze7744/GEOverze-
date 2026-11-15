@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, createFileRoute, notFound } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft, BadgeCheck, Ban, Star, Users } from "lucide-react";
 
 import { ChartCard } from "@/components/shared/chart-card";
@@ -14,28 +14,19 @@ import { InspectorField } from "@/components/shared/inspector-panel";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CreatorAvatar, TierBadge, VerificationBadge } from "@/features/creators/columns";
-import { creatorRecords, daysSince, getCreatorById, monthLabels } from "@/features/creators/data";
+import { daysSince, monthLabels } from "@/features/creators/data";
+import { fetchMappedCreators } from "@/features/creators/live";
 import { useCreatorActions } from "@/features/creators/use-creator-actions";
+import { adminKeys } from "@/lib/admin/keys";
+import { useAdminQuery } from "@/lib/admin/hooks";
 import { formatDate, formatDateTime, relativeDays } from "@/features/users/format";
 import { money, num } from "@/lib/format";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/creators/$creatorId")({
-  loader: ({ params }) => {
-    const creator = getCreatorById(params.creatorId);
-    if (!creator) throw notFound();
-    return { creatorId: creator.id, displayName: creator.displayName };
-  },
-  head: ({ loaderData }) => {
-    if (!loaderData) {
-      return {
-        meta: [
-          { title: "Creator not found — GVRZE Admin" },
-          { name: "robots", content: "noindex" },
-        ],
-      };
-    }
-    const title = `${loaderData.displayName} — Creator Profile | GVRZE Admin`;
-    const description = `Verification, quiz ownership, analytics and moderation history for ${loaderData.displayName}.`;
+  head: () => {
+    const title = "Creator Profile | GVRZE Admin";
+    const description = "Verification, quiz ownership, analytics and moderation history.";
     return {
       meta: [
         { title },
@@ -69,9 +60,18 @@ function CreatorNotFound() {
 
 function CreatorProfilePage() {
   const { creatorId } = Route.useParams();
-  const actions = useCreatorActions(creatorRecords);
+  const query = useAdminQuery(adminKeys.creators, fetchMappedCreators);
+  const actions = useCreatorActions(query.data ?? [], () => {
+    void query.refetch();
+  });
   const creator = actions.creators.find((c) => c.id === creatorId);
   const [tab, setTab] = useState("overview");
+
+  if (query.loading) {
+    return (
+      <PageHeader title="Creator profile" description="Loading creator from the live directory…" />
+    );
+  }
 
   if (!creator) return <CreatorNotFound />;
 
@@ -97,7 +97,7 @@ function CreatorProfilePage() {
               <Button
                 size="sm"
                 variant="outline"
-                onClick={actions.placeholder("Tier changes require backend integration.")}
+                onClick={() => void actions.changeTier(creator, "Gold")}
               >
                 Change tier
               </Button>
@@ -301,7 +301,9 @@ function CreatorProfilePage() {
                 size="sm"
                 variant="outline"
                 className="mt-3"
-                onClick={actions.placeholder("Notes are saved once the backend is connected.")}
+                onClick={() =>
+                  toast.info("Creator notes are not stored in the public application schema.")
+                }
               >
                 Add note
               </Button>
