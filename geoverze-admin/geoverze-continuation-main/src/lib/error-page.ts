@@ -1,4 +1,10 @@
-export function renderErrorPage(): string {
+import { SupabaseConfigError } from "@/lib/supabase/env";
+
+export function renderErrorPage(error?: unknown): string {
+  const configMessage = error instanceof SupabaseConfigError ? escapeHtml(error.message) : null;
+  const detail =
+    configMessage ?? "Something went wrong on our end. You can try refreshing or head back home.";
+
   return `<!doctype html>
 <html lang="en">
   <head>
@@ -19,7 +25,7 @@ export function renderErrorPage(): string {
   <body>
     <div class="card">
       <h1>This page didn't load</h1>
-      <p>Something went wrong on our end. You can try refreshing or head back home.</p>
+      <p>${detail}</p>
       <div class="actions">
         <button class="primary" onclick="location.reload()">Try again</button>
         <a class="secondary" href="/">Go home</a>
@@ -27,4 +33,12 @@ export function renderErrorPage(): string {
     </div>
   </body>
 </html>`;
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
 }

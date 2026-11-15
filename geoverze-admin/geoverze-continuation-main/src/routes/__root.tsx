@@ -19,7 +19,11 @@ import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { initAuthSync, signOut } from "@/lib/supabase/auth-sync";
 import { isPrivilegedRole } from "@/lib/supabase/client";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import {
+  SupabaseConfigError,
+  getSupabaseEnvDiagnostics,
+  isSupabaseConfigured,
+} from "@/lib/supabase/env";
 import { selectIsSignedIn, selectRole, useAuthStore } from "@/stores/authStore";
 
 const PUBLIC_PATHS = new Set(["/login", "/forgot-password", "/reset-password"]);
@@ -48,11 +52,19 @@ function NotFoundComponent() {
 
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
   const normalizedError = error instanceof Error ? error : new Error(String(error));
+  const configError =
+    normalizedError instanceof SupabaseConfigError
+      ? normalizedError
+      : normalizedError.cause instanceof SupabaseConfigError
+        ? normalizedError.cause
+        : null;
   console.error(normalizedError);
   const router = useRouter();
   useEffect(() => {
     reportLovableError(normalizedError, { boundary: "tanstack_root_error_component" });
   }, [normalizedError]);
+
+  const missingKeys = configError?.missingKeys?.length ? configError.missingKeys.join(", ") : null;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -61,8 +73,12 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
           This page didn't load
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+          {configError?.message ??
+            "Something went wrong on our end. You can try refreshing or head back home."}
         </p>
+        {missingKeys ? (
+          <p className="mt-2 text-xs text-muted-foreground">Missing configuration: {missingKeys}</p>
+        ) : null}
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
@@ -221,6 +237,8 @@ function AdminGate() {
 }
 
 function SupabaseConfigMissing() {
+  const diagnostics = getSupabaseEnvDiagnostics();
+  const missing = diagnostics.missingRequired.join(", ");
   return (
     <div className="flex min-h-dvh items-center justify-center bg-background px-4">
       <div className="max-w-lg text-center">
@@ -232,8 +250,13 @@ function SupabaseConfigMissing() {
           Set <code className="text-foreground">VITE_SUPABASE_URL</code> and{" "}
           <code className="text-foreground">VITE_SUPABASE_ANON_KEY</code> (or{" "}
           <code className="text-foreground">VITE_SUPABASE_PUBLISHABLE_KEY</code>) in Vercel for
-          Production and Preview, then redeploy this project.
+          Production and Preview (build and runtime), then redeploy this project.
         </p>
+        {missing ? (
+          <p className="mt-3 text-xs text-muted-foreground">
+            Detected on {diagnostics.runtime} runtime. Missing: {missing}.
+          </p>
+        ) : null}
       </div>
     </div>
   );

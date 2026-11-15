@@ -14,4 +14,7 @@ export default defineConfig({
   },
   // Outside Lovable's sandbox, pin Nitro to Vercel for self-hosted deploys (e.g. Vercel CI).
   nitro: { preset: "vercel" },
+  vite: {
+    envPrefix: ["VITE_"],
+  },
 });

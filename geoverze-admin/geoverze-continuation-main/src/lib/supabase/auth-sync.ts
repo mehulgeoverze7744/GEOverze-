@@ -10,6 +10,11 @@ import type { Session, User } from "@supabase/supabase-js";
 import { useAuthStore, type AdminSessionUser } from "@/stores/authStore";
 
 import { highestRole, supabase, type AppRole } from "./client";
+import {
+  formatSupabaseEnvDiagnosticsForLog,
+  getSupabaseEnvDiagnostics,
+  isSupabaseConfigured,
+} from "./env";
 
 let initialized = false;
 
@@ -48,6 +53,16 @@ function applySession(session: Session | null) {
 export function initAuthSync() {
   if (initialized) return;
   initialized = true;
+
+  if (!isSupabaseConfigured()) {
+    console.error(
+      "[admin:auth] Supabase env not configured",
+      formatSupabaseEnvDiagnosticsForLog(getSupabaseEnvDiagnostics()),
+    );
+    useAuthStore.getState().setRoleChecked(true);
+    useAuthStore.getState().clear();
+    return;
+  }
 
   void supabase.auth.getSession().then(({ data, error }) => {
     if (error) console.error("Failed to restore session", error);

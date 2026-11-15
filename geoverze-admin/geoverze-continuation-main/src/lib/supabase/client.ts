@@ -8,7 +8,12 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database } from "./database.types";
-import { getSupabasePublicConfig } from "./env";
+import {
+  SupabaseConfigError,
+  formatSupabaseEnvDiagnosticsForLog,
+  getSupabaseEnvDiagnostics,
+  getSupabasePublicConfig,
+} from "./env";
 
 export type AppRole = Database["public"]["Enums"]["app_role"];
 
@@ -34,7 +39,19 @@ let supabaseClient: SupabaseClient<Database> | null = null;
 function getSupabaseClient(): SupabaseClient<Database> {
   if (supabaseClient) return supabaseClient;
 
-  const { url, anonKey } = getSupabasePublicConfig();
+  let url: string;
+  let anonKey: string;
+  try {
+    ({ url, anonKey } = getSupabasePublicConfig());
+  } catch (error) {
+    if (error instanceof SupabaseConfigError) {
+      console.error(
+        "[admin:supabase] client initialization failed",
+        formatSupabaseEnvDiagnosticsForLog(error.diagnostics ?? getSupabaseEnvDiagnostics()),
+      );
+    }
+    throw error;
+  }
 
   supabaseClient = createClient<Database>(url, anonKey, {
     auth: {
@@ -55,6 +72,8 @@ export const supabase: SupabaseClient<Database> = new Proxy({} as SupabaseClient
   get(_target, prop, _receiver) {
     const client = getSupabaseClient();
     const value = Reflect.get(client, prop, client);
-    return typeof value === "function" ? (value as (...args: unknown[]) => unknown).bind(client) : value;
+    return typeof value === "function"
+      ? (value as (...args: unknown[]) => unknown).bind(client)
+      : value;
   },
 });
