@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
+import { ENABLE_TRY_ON_STUDIO } from "../tryon/tryOnFlags";
 import { SF_ASSETS } from "./storefront-assets";
 
 /**
@@ -34,7 +35,7 @@ export function StorefrontHero() {
         className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[16%] min-h-24 w-full object-cover"
       />
 
-      {/* CTA row — Shop Now + Try-On Studio */}
+      {/* CTA row — Shop Now; Try-On Studio is gated until launch. */}
       <div className="absolute bottom-[clamp(20px,2.8vw,40px)] left-1/2 flex -translate-x-1/2 items-end gap-6">
         <Link
           to="/geostore/browse"
@@ -51,24 +52,26 @@ export function StorefrontHero() {
           />
         </Link>
 
-        {/* divider */}
-        <span className="mb-1.5 inline-block h-5 w-px bg-white/30" aria-hidden="true" />
-
-        <Link
-          to="/geostore/try-on"
-          className="group/tryon inline-flex min-h-11 flex-col items-center justify-center gap-1.5 text-[16px] font-semibold text-white"
-          aria-label="Open Try-On Studio"
-        >
-          <span>Try-On Studio</span>
-          <img
-            src={SF_ASSETS.heroUnderline.src}
-            width={SF_ASSETS.heroUnderline.width}
-            height={SF_ASSETS.heroUnderline.height}
-            alt=""
-            aria-hidden="true"
-            className="h-px w-[110px] transition-[width] duration-300 group-hover/tryon:w-[140px] motion-reduce:transition-none"
-          />
-        </Link>
+        {ENABLE_TRY_ON_STUDIO ? (
+          <>
+            <span className="mb-1.5 inline-block h-5 w-px bg-white/30" aria-hidden="true" />
+            <Link
+              to="/geostore/try-on"
+              className="group/tryon inline-flex min-h-11 flex-col items-center justify-center gap-1.5 text-[16px] font-semibold text-white"
+              aria-label="Open Try-On Studio"
+            >
+              <span>Try-On Studio</span>
+              <img
+                src={SF_ASSETS.heroUnderline.src}
+                width={SF_ASSETS.heroUnderline.width}
+                height={SF_ASSETS.heroUnderline.height}
+                alt=""
+                aria-hidden="true"
+                className="h-px w-[110px] transition-[width] duration-300 group-hover/tryon:w-[140px] motion-reduce:transition-none"
+              />
+            </Link>
+          </>
+        ) : null}
       </div>
     </section>
   );

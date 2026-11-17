@@ -77,8 +77,18 @@ export type StorefrontProductPageProps = {
   priceLabel: string;
   /** Primary gallery images (at least one required). */
   images: SFGalleryImage[];
-  /** When provided, renders colour swatches; selecting one changes the main image. */
+  /**
+   * Colour variants. Swatches render only when `enableColorSelector` is true
+   * and this array has more than one entry.
+   */
   colors?: SFColorOption[];
+  /**
+   * Opt-in colour picker. Default is false — Gstore products ship as one
+   * colour unless a product is explicitly approved for variants.
+   */
+  enableColorSelector?: boolean;
+  /** Locked default colour label for cart and checkout when there is no picker. */
+  defaultColourLabel?: string;
   /** Available size labels. T-shirts default to S / M / L / XL. */
   sizes?: string[];
   /** Hide the apparel size row (stickers, desk objects). */
@@ -268,6 +278,8 @@ export function StorefrontProductPage({
   priceLabel,
   images,
   colors,
+  enableColorSelector = false,
+  defaultColourLabel,
   sizes = DEFAULT_SIZES,
   hideSizes = false,
   showQuantity = false,
@@ -280,9 +292,11 @@ export function StorefrontProductPage({
   comingSoon = false,
   careTabLabel = "Washcare",
 }: StorefrontProductPageProps) {
+  const colorPickerColors =
+    enableColorSelector && colors && colors.length > 1 ? colors : undefined;
   const [selectedImageIdx, setSelectedImageIdx] = useState(0);
   const [selectedColorId, setSelectedColorId] = useState<string | null>(
-    colors?.[0]?.id ?? null,
+    colorPickerColors?.[0]?.id ?? null,
   );
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
@@ -308,7 +322,7 @@ export function StorefrontProductPage({
 
   useEffect(() => {
     setSelectedImageIdx(0);
-    setSelectedColorId(colors?.[0]?.id ?? null);
+    setSelectedColorId(colorPickerColors?.[0]?.id ?? null);
     setSelectedSize(null);
     setQuantity(1);
     setActiveTab("description");
@@ -331,7 +345,8 @@ export function StorefrontProductPage({
   //   1. Active colour has a full gallery  → use it
   //   2. Active colour has only a single image → wrap in a one-element array
   //   3. No colours defined               → use the `images` prop directly
-  const activeColor = colors?.find((c) => c.id === selectedColorId) ?? colors?.[0];
+  const activeColor =
+    colorPickerColors?.find((c) => c.id === selectedColorId) ?? colorPickerColors?.[0];
   const galleryImages: SFGalleryImage[] = (() => {
     if (activeColor?.gallery && activeColor.gallery.length > 0) return activeColor.gallery;
     if (activeColor?.image) {
@@ -441,8 +456,10 @@ export function StorefrontProductPage({
     }
     const options: Record<string, string> = {};
     if (selectedSize) options["Size"] = selectedSize;
-    const color = colors?.find((entry) => entry.id === selectedColorId);
-    if (color) options['Colour'] = color.label;
+    const colorLabel =
+      colorPickerColors?.find((entry) => entry.id === selectedColorId)?.label ??
+      defaultColourLabel;
+    if (colorLabel) options["Colour"] = colorLabel;
     addProduct(product, options, quantity);
   }
 
@@ -451,7 +468,8 @@ export function StorefrontProductPage({
     if (!assertSelectableSize()) return;
     // Navigate to checkout in Buy Now mode.
     // The server validates the price by slug — the client only passes identifiers.
-    const color = colors?.find((c) => c.id === selectedColorId);
+    const colorLabel =
+      colorPickerColors?.find((c) => c.id === selectedColorId)?.label ?? defaultColourLabel;
     void navigate({
       to: "/geostore/checkout",
       search: {
@@ -459,7 +477,7 @@ export function StorefrontProductPage({
         slug,
         qty: String(quantity),
         Size: selectedSize ?? undefined,
-        Colour: color?.label,
+        Colour: colorLabel,
         Design: undefined,
         CustomDesign: undefined,
         Instructions: undefined,
@@ -631,16 +649,16 @@ export function StorefrontProductPage({
                 </p>
               ) : null}
 
-              {colors && colors.length > 0 && !comingSoon ? (
+              {colorPickerColors && !comingSoon ? (
                 <div className="mt-5">
                   <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.15em] text-[#555]">
                     Colour:{" "}
                     <span className="normal-case text-black">
-                      {colors.find((c) => c.id === selectedColorId)?.label ?? ""}
+                      {colorPickerColors.find((c) => c.id === selectedColorId)?.label ?? ""}
                     </span>
                   </p>
                   <div className="flex flex-wrap gap-2.5">
-                    {colors.map((c) => (
+                    {colorPickerColors.map((c) => (
                       <ColorSwatch
                         key={c.id}
                         color={c}
@@ -839,30 +857,30 @@ export function StorefrontProductPage({
 
 import {
   relatedStorefrontTees,
+  teeDefaultGallery,
+  teeShowsColorSelector,
   type StorefrontTeeProduct,
 } from "./storefront-product-data";
 
 /** Renders a storefront signature tee on the standard product detail page. */
 export function StorefrontTeeProductPage({ tee }: { tee: StorefrontTeeProduct }) {
   const related = relatedStorefrontTees(tee.id);
+  const showColorSelector = teeShowsColorSelector(tee);
 
-  // Map tee colour variants to the SFColorOption shape understood by StorefrontProductPage.
-  // Each colour carries its own full gallery so switching colour replaces the
-  // entire thumbnail strip with that colour's images.
-  const sfColors: SFColorOption[] | undefined = tee.colors?.map((c) => ({
-    id: c.id,
-    label: c.label,
-    hex: c.hex,
-    image: c.image.src,
-    gallery: c.gallery,
-  }));
+  const sfColors: SFColorOption[] | undefined = showColorSelector
+    ? tee.colors?.map((c) => ({
+        id: c.id,
+        label: c.label,
+        hex: c.hex,
+        image: c.image.src,
+        gallery: c.gallery,
+      }))
+    : undefined;
 
-  // Base gallery: used only when no colour variants are defined.
-  const baseImages: SFGalleryImage[] = tee.gallery ?? [tee.image];
-
-  // `exactOptionalPropertyTypes` is on — only pass `colors` when defined so we
-  // never assign `undefined` to an optional-but-not-undefined-typed prop.
-  const colorsProp = sfColors ? { colors: sfColors } : {};
+  const colorsProp = sfColors ? { colors: sfColors, enableColorSelector: true as const } : {};
+  const defaultColourProp = tee.defaultColour
+    ? { defaultColourLabel: tee.defaultColour.label }
+    : {};
 
   return (
     <StorefrontProductPage
@@ -870,8 +888,9 @@ export function StorefrontTeeProductPage({ tee }: { tee: StorefrontTeeProduct })
       name={tee.name}
       categoryLabel={tee.categoryLabel}
       priceLabel={tee.priceLabel}
-      images={baseImages}
+      images={teeDefaultGallery(tee)}
       {...colorsProp}
+      {...defaultColourProp}
       description={tee.description}
       highlights={tee.highlights}
       stylingTip={tee.stylingTip}

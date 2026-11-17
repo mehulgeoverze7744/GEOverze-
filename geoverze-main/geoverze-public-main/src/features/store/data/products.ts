@@ -168,7 +168,12 @@ const STOREFRONT_TEE_RANK: Record<
 
 function storefrontTeeDraft(tee: StorefrontTeeProduct): Draft {
   const rank = STOREFRONT_TEE_RANK[tee.id];
-  const colourValues = tee.colors?.map((color) => color.label) ?? [];
+  const colourValues =
+    tee.enableColorSelector && (tee.colors?.length ?? 0) > 1
+      ? (tee.colors?.map((color) => color.label) ?? [])
+      : tee.defaultColour
+        ? [tee.defaultColour.label]
+        : [];
   return {
     slug: tee.id,
     name: tee.name,

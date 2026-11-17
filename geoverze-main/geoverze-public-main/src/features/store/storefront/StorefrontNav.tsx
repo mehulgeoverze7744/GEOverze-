@@ -18,6 +18,7 @@ import { selectWishlistCount, useStoreStore } from "@/stores/storeStore";
 
 import { GeostoreSearchButton } from "../components/GeostoreSearchButton";
 import { useStoreCreditsState } from "../lib/useStoreCredits";
+import { ENABLE_TRY_ON_STUDIO } from "../tryon/tryOnFlags";
 import { SF_ASSETS } from "./storefront-assets";
 import { SF_SHELL, SF_UI_FONT } from "./storefront-ui";
 
@@ -76,7 +77,7 @@ type StorefrontNavProps = {
    * `solid` — inner store pages: in-flow bar so content never sits underneath.
    */
   variant?: "overlay" | "solid";
-  /** @deprecated Try-On Studio is always shown. Kept so existing callers type-check. */
+  /** @deprecated Use ENABLE_TRY_ON_STUDIO. Kept so existing callers type-check. */
   showTryOn?: boolean;
   /** @deprecated GMake / Customization chrome is archived. Ignored. */
   linkSet?: "default" | "gmake";
@@ -94,7 +95,7 @@ export function StorefrontNav({ variant = "overlay" }: StorefrontNavProps) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const collectionActive =
     pathname.startsWith("/geostore/browse") || pathname.startsWith("/geostore/category");
-  const tryOnActive = pathname.startsWith("/geostore/try-on");
+  const tryOnActive = ENABLE_TRY_ON_STUDIO && pathname.startsWith("/geostore/try-on");
   const cartCount = useCartStore(selectCartCount);
   const wishlistCount = useStoreStore(selectWishlistCount);
   const signedIn = useAuthStore(selectIsSignedIn);
@@ -151,16 +152,18 @@ export function StorefrontNav({ variant = "overlay" }: StorefrontNavProps) {
             className={cn(navLink, collectionActive && "font-semibold")}
             aria-current={collectionActive ? "page" : undefined}
           >
-            Collection
+            Collections
           </Link>
-          <Link
-            to="/geostore/try-on"
-            className={cn(navLink, tryOnActive && "font-semibold")}
-            aria-label="Open Try-On Studio"
-            aria-current={tryOnActive ? "page" : undefined}
-          >
-            Try-On Studio
-          </Link>
+          {ENABLE_TRY_ON_STUDIO ? (
+            <Link
+              to="/geostore/try-on"
+              className={cn(navLink, tryOnActive && "font-semibold")}
+              aria-label="Open Try-On Studio"
+              aria-current={tryOnActive ? "page" : undefined}
+            >
+              Try-On Studio
+            </Link>
+          ) : null}
         </nav>
 
         <Link
@@ -303,15 +306,13 @@ export function StorefrontNav({ variant = "overlay" }: StorefrontNavProps) {
                 onClick={closeMenu}
                 className={DRAWER_LINK}
               >
-                Collection
+                Collections
               </Link>
-              <Link
-                to="/geostore/try-on"
-                onClick={closeMenu}
-                className={DRAWER_LINK}
-              >
-                Try-On Studio
-              </Link>
+              {ENABLE_TRY_ON_STUDIO ? (
+                <Link to="/geostore/try-on" onClick={closeMenu} className={DRAWER_LINK}>
+                  Try-On Studio
+                </Link>
+              ) : null}
               {STORE_LINKS.map((item) => (
                 <Link
                   key={item.to}

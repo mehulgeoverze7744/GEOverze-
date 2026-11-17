@@ -3,6 +3,7 @@ import "./storefront.css";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
+import { ENABLE_TRY_ON_STUDIO } from "../tryon/tryOnFlags";
 import { TryOnStudio } from "../tryon/TryOnStudio";
 import { StorefrontBestSellers } from "./StorefrontBestSellers";
 import { StorefrontBrandStatement } from "./StorefrontBrandStatement";
@@ -12,6 +13,7 @@ import { StorefrontHero } from "./StorefrontHero";
 import { StorefrontNav } from "./StorefrontNav";
 
 function readTryOnHash(): boolean {
+  if (!ENABLE_TRY_ON_STUDIO) return false;
   if (typeof window === "undefined") return false;
   return window.location.hash.replace(/^#/, "") === "try-on";
 }
@@ -55,7 +57,7 @@ export function GvrzeStorefront() {
       <StorefrontCategories />
       <StorefrontFeatured />
       <StorefrontBrandStatement />
-      {studioOpen ? (
+      {ENABLE_TRY_ON_STUDIO && studioOpen ? (
         <TryOnStudio
           mode="overlay"
           onClose={() => {

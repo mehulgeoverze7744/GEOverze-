@@ -1,9 +1,15 @@
-import { createFileRoute, useSearch } from "@tanstack/react-router";
+import { createFileRoute, redirect, useSearch } from "@tanstack/react-router";
 
-import { TryOnStudio } from "@/features/store/tryon/TryOnStudio";
 import { SF_FONTS_HREF } from "@/features/store/storefront/storefront-assets";
+import { ENABLE_TRY_ON_STUDIO } from "@/features/store/tryon/tryOnFlags";
+import { TryOnStudio } from "@/features/store/tryon/TryOnStudio";
 
 export const Route = createFileRoute("/geostore/try-on")({
+  beforeLoad: () => {
+    if (!ENABLE_TRY_ON_STUDIO) {
+      throw redirect({ to: "/geostore", replace: true });
+    }
+  },
   head: () => ({
     meta: [
       { title: "Try-On Studio — Gstore | GVRZE" },

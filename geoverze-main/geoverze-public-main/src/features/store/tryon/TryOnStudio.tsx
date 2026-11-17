@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 
 import { formatRsPaise, GMAKE_ASSETS, gmakeProductTitle } from "../gmake/gmake-assets";
 import { GMAKE_CUSTOMIZATION_ENABLED } from "../gmake/gmakeFlags";
+import { ENABLE_TRY_ON_STUDIO } from "./tryOnFlags";
 import { GMakeRainbowButton } from "../gmake/GMakeRainbowButton";
 import { GMakeTeePreview } from "../gmake/GMakeTeePreview";
 import {
@@ -68,6 +69,14 @@ export function TryOnStudio({
   initialColor,
   initialSize,
 }: TryOnStudioProps) {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (ENABLE_TRY_ON_STUDIO) return;
+    onClose?.();
+    void navigate({ to: "/geostore", replace: true });
+  }, [navigate, onClose]);
+
   const garments = useMemo(() => getTryOnGarments(), []);
   const [selectedSlug, setSelectedSlug] = useState(() => {
     if (initialSlug && garments.some((item) => item.slug === initialSlug)) return initialSlug;
@@ -105,7 +114,6 @@ export function TryOnStudio({
   const carouselRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const navigate = useNavigate();
   const selectedColor = selected ? (tryOnColorById(
     { ...selected, colors },
     colorId,
@@ -193,6 +201,8 @@ export function TryOnStudio({
     const plate = document.querySelector<HTMLElement>(`#gvrze-tryon-studio [data-tryon-view="${next}"]`);
     plate?.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
   }
+
+  if (!ENABLE_TRY_ON_STUDIO) return null;
 
   return (
     <div

@@ -25,6 +25,7 @@ import {
   TRY_ON_CATEGORY_IDS,
   TRY_ON_CATEGORY_LABELS,
 } from "../tryon/tryOnProducts";
+import { ENABLE_TRY_ON_STUDIO } from "../tryon/tryOnFlags";
 import { formatRsPaise, GMAKE_ASSETS, gmakeProductTitle } from "./gmake-assets";
 import { GMAKE_CUSTOMIZATION_ENABLED } from "./gmakeFlags";
 import { GMakeRainbowButton } from "./GMakeRainbowButton";
@@ -68,6 +69,7 @@ export function GMakeStudioProductPage({ tee }: { tee: StorefrontTeeProduct }) {
   };
 
   const openStudio = () => {
+    if (!ENABLE_TRY_ON_STUDIO) return;
     void navigate({
       to: "/geostore/try-on",
       search: {
@@ -121,7 +123,7 @@ export function GMakeStudioProductPage({ tee }: { tee: StorefrontTeeProduct }) {
                 </button>
               </div>
 
-              {GMAKE_CUSTOMIZATION_ENABLED ? (
+              {GMAKE_CUSTOMIZATION_ENABLED && ENABLE_TRY_ON_STUDIO ? (
                 <GMakeRainbowButton onClick={openStudio}>Customization</GMakeRainbowButton>
               ) : null}
             </div>

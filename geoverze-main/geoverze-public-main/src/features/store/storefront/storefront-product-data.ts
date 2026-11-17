@@ -8,13 +8,8 @@
 
 const BASE = "/assets/gvrze-storefront/best-sellers";
 const CB_BASE = `${BASE}/cherry-blossom`;
-const MB_BASE = `${BASE}/midnight-black`;
-const SG_BASE = `${BASE}/starlight-grey`;
-const NA_BASE  = `${BASE}/new-age`;
-const NM_BASE  = `${BASE}/new-age-mulberry`;
-const NB_BASE  = `${BASE}/new-age-midnight-black`;
-const GA_BASE  = `${BASE}/golden-arc`;
-const GAB_BASE = `${BASE}/golden-arc-midnight-black`;
+const NA_BASE = `${BASE}/new-age`;
+const GA_BASE = `${BASE}/golden-arc`;
 
 /**
  * A single colour variant for a storefront tee.
@@ -61,15 +56,24 @@ export type StorefrontTeeProduct = {
    */
   image: { src: string; alt: string };
   /**
-   * Full ordered gallery for the product detail page (single-colour products).
-   * Ignored when `colors` is present — each colour carries its own `gallery`.
+   * Full ordered gallery for the product detail page.
+   * Always the approved default colour's images unless a colour picker is
+   * explicitly enabled below.
    */
   gallery?: { src: string; alt: string }[];
   /**
-   * Colour variants for multi-colour products.
-   * When present, the product page renders colour swatches and switches the
-   * entire gallery when the customer selects a different colour.
-   * The first colour in the array is selected by default.
+   * Locked default colour for cart, checkout, and browse filters.
+   * Not shown as a picker — every Gstore product ships as one colour.
+   */
+  defaultColour?: { id: string; label: string; hex: string };
+  /**
+   * Opt-in colour picker. Default is off. Set this to true AND provide two or
+   * more `colors` only when a product is explicitly approved for variants.
+   */
+  enableColorSelector?: boolean;
+  /**
+   * Extra colour variants. Ignored by the product page unless
+   * `enableColorSelector` is true and this array has more than one entry.
    */
   colors?: StorefrontTeeColorVariant[];
   description: string;
@@ -120,158 +124,47 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     categoryLabel: "T-SHIRT",
     priceLabel: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#e29ecc",
-    // Default card image = Cherry Blossom Pink primary (cb-2.jpg).
-    // The product detail page gallery is driven by `colors` below.
+    defaultColour: { id: "cherry-blossom-pink", label: "Cherry Blossom Pink", hex: "#e29ecc" },
     image: {
       src: `${CB_BASE}/cb-2.jpg`,
       alt: "GVRZE Cherry Blossom Oversized Graphic T-Shirt — Cherry Blossom Pink front design",
     },
-
-    // ── Colour variants ──────────────────────────────────────────────────────
-    // Two colours share the same product page, name, description, price, and
-    // size options.  Selecting a colour switches the entire gallery.
-    colors: [
-      // ── 1. Cherry Blossom Pink (default) ──────────────────────────────────
+    gallery: [
       {
-        id: "cherry-blossom-pink",
-        label: "Cherry Blossom Pink",
-        hex: "#e29ecc",
-        image: {
-          src: `${CB_BASE}/cb-2.jpg`,
-          alt: "Cherry Blossom T-Shirt in Cherry Blossom Pink — front design",
-        },
-        // Gallery order:
-        // cb-1 neckline/branding  cb-2 front (PRIMARY)  cb-3 full back
-        // cb-4 chest logo detail  cb-5 back graphic      cb-6 sleeve detail
-        // cb-7 model wearing (front)
-        gallery: [
-          {
-            src: `${CB_BASE}/cb-1.jpg`,
-            alt: "Cherry Blossom Pink — neckline and GVRZE branding close-up",
-          },
-          {
-            src: `${CB_BASE}/cb-2.jpg`,
-            alt: "Cherry Blossom Pink — front design overview",
-          },
-          {
-            src: `${CB_BASE}/cb-3.jpg`,
-            alt: "Cherry Blossom Pink — full back graphic design",
-          },
-          {
-            src: `${CB_BASE}/cb-4.jpg`,
-            alt: "Cherry Blossom Pink — front chest GVRZE logo detail",
-          },
-          {
-            src: `${CB_BASE}/cb-5.jpg`,
-            alt: "Cherry Blossom Pink — back graphic detail close-up",
-          },
-          {
-            src: `${CB_BASE}/cb-6.jpg`,
-            alt: "Cherry Blossom Pink — front sleeve and graphic detail",
-          },
-          {
-            src: `${CB_BASE}/cb-7.jpg`,
-            alt: "Cherry Blossom Pink — model wearing the tee, front view",
-          },
-        ],
+        src: `${CB_BASE}/cb-1.jpg`,
+        alt: "Cherry Blossom Pink — neckline and GVRZE branding close-up",
       },
-
-      // ── 2. Midnight Black ─────────────────────────────────────────────────
       {
-        id: "midnight-black",
-        label: "Midnight Black",
-        hex: "#1a1a1a",
-        image: {
-          src: `${MB_BASE}/mb-1.jpg`,
-          alt: "Cherry Blossom T-Shirt in Midnight Black — front design",
-        },
-        // Gallery order:
-        // mb-1 front product (PRIMARY)  mb-2 back product
-        // mb-3 chest branding detail    mb-4 sleeve/graphic detail
-        // mb-5 neck label & collar      mb-6 model front  mb-7 model back
-        gallery: [
-          {
-            src: `${MB_BASE}/mb-1.jpg`,
-            alt: "Midnight Black — front T-shirt product image",
-          },
-          {
-            src: `${MB_BASE}/mb-2.jpg`,
-            alt: "Midnight Black — back T-shirt product image",
-          },
-          {
-            src: `${MB_BASE}/mb-3.png`,
-            alt: "Midnight Black — front GVRZE chest branding detail",
-          },
-          {
-            src: `${MB_BASE}/mb-4.jpg`,
-            alt: "Midnight Black — sleeve and graphic detail",
-          },
-          {
-            src: `${MB_BASE}/mb-5.png`,
-            alt: "Midnight Black — neck label and collar detail",
-          },
-          {
-            src: `${MB_BASE}/mb-6.jpg`,
-            alt: "Midnight Black — model wearing the tee, front view",
-          },
-          {
-            src: `${MB_BASE}/mb-7.jpg`,
-            alt: "Midnight Black — model wearing the tee, back view",
-          },
-        ],
+        src: `${CB_BASE}/cb-2.jpg`,
+        alt: "Cherry Blossom Pink — front design overview",
       },
-
-      // ── 3. Starlight Grey ─────────────────────────────────────────────────
       {
-        id: "starlight-grey",
-        label: "Starlight Grey",
-        hex: "#6b6b6b",
-        image: {
-          src: `${SG_BASE}/sg-1.jpg`,
-          alt: "Cherry Blossom T-Shirt in Starlight Grey — front design",
-        },
-        // Gallery order:
-        // sg-1 front product (PRIMARY)  sg-2 back product
-        // sg-3 chest branding detail    sg-4 collar & label close-up
-        // sg-5 sleeve / back graphic    sg-6 model back  sg-7 model front
-        gallery: [
-          {
-            src: `${SG_BASE}/sg-1.jpg`,
-            alt: "Starlight Grey — front T-shirt product image",
-          },
-          {
-            src: `${SG_BASE}/sg-2.jpg`,
-            alt: "Starlight Grey — back T-shirt product image",
-          },
-          {
-            src: `${SG_BASE}/sg-3.jpg`,
-            alt: "Starlight Grey — front GVRZE chest branding detail",
-          },
-          {
-            src: `${SG_BASE}/sg-4.jpg`,
-            alt: "Starlight Grey — collar and GVRZE label close-up",
-          },
-          {
-            src: `${SG_BASE}/sg-5.jpg`,
-            alt: "Starlight Grey — sleeve and back graphic detail",
-          },
-          {
-            src: `${SG_BASE}/sg-6.jpg`,
-            alt: "Starlight Grey — model wearing the tee, back view",
-          },
-          {
-            src: `${SG_BASE}/sg-7.jpg`,
-            alt: "Starlight Grey — model wearing the tee, front view",
-          },
-        ],
+        src: `${CB_BASE}/cb-3.jpg`,
+        alt: "Cherry Blossom Pink — full back graphic design",
+      },
+      {
+        src: `${CB_BASE}/cb-4.jpg`,
+        alt: "Cherry Blossom Pink — front chest GVRZE logo detail",
+      },
+      {
+        src: `${CB_BASE}/cb-5.jpg`,
+        alt: "Cherry Blossom Pink — back graphic detail close-up",
+      },
+      {
+        src: `${CB_BASE}/cb-6.jpg`,
+        alt: "Cherry Blossom Pink — front sleeve and graphic detail",
+      },
+      {
+        src: `${CB_BASE}/cb-7.jpg`,
+        alt: "Cherry Blossom Pink — model wearing the tee, front view",
       },
     ],
 
     description:
-      "Inspired by the beauty of cherry blossoms and the spirit of exploration, the Cherry Blossom T-shirt combines expressive artwork with GVRZE's distinctive geographic identity. The tee features an abstract map-inspired graphic flowing across the front and back, complemented by compass elements, coordinates, and signature GVRZE branding. The front carries a minimal GVRZE chest logo and bold artistic geographic composition; the back showcases an oversized graphic with exploration-inspired typography and navigation elements. Available in three colourways — Cherry Blossom Pink, Midnight Black, and Starlight Grey.",
+      "Inspired by the beauty of cherry blossoms and the spirit of exploration, the Cherry Blossom T-shirt combines expressive artwork with GVRZE's distinctive geographic identity. The tee features an abstract map-inspired graphic flowing across the front and back, complemented by compass elements, coordinates, and signature GVRZE branding. The front carries a minimal GVRZE chest logo and bold artistic geographic composition; the back showcases an oversized graphic with exploration-inspired typography and navigation elements. Offered in Cherry Blossom Pink.",
     highlights: [
       "Premium oversized streetwear silhouette.",
-      "Available in Cherry Blossom Pink, Midnight Black, and Starlight Grey colourways.",
+      "Cherry Blossom Pink colourway.",
       "Distinctive front and back graphic artwork with GVRZE signature branding.",
       "Geographic coordinates and compass-inspired detailing across the design.",
       "100% Cotton Comfort — breathable, pre-shrunk fabric built for all-day wear.",
@@ -280,7 +173,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
       "Comfortable everyday streetwear — pairs easily with denim, cargo pants, or joggers.",
     ],
     stylingTip:
-      "Cherry Blossom Pink: style with white or cream trousers and minimalist sneakers for a clean contrast look. Midnight Black: pair with black cargo pants or dark denim for a bold monochrome fit. Starlight Grey: wear with beige chinos or olive trousers for an effortless tonal look. Layer an open overshirt over any colourway for transitional weather.",
+      "Style with white or cream trousers and minimalist sneakers for a clean contrast look. Layer an open overshirt for transitional weather.",
     washcare: [
       "Machine wash inside out with similar colors, cold water (30°C / 86°F).",
       "Do not bleach.",
@@ -296,99 +189,42 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     categoryLabel: "T-SHIRT",
     priceLabel: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#8cc8e8",
-    // Default card image = Skyblue front shot (ga-1.jpg).
-    // Gallery is driven by the `colors` array below.
+    defaultColour: { id: "skyblue", label: "Skyblue", hex: "#a8d4f0" },
     image: {
       src: `${GA_BASE}/ga-1.jpg`,
       alt: "GVRZE Golden Arc T-Shirt in Skyblue — front product view",
     },
-
-    // ── Colour variants ──────────────────────────────────────────────────────
-    // Currently one colourway; additional colours can be appended here when
-    // their images are ready — the UI swatch selector appears automatically
-    // once two or more colours are present.
-    colors: [
+    gallery: [
       {
-        id: "skyblue",
-        label: "Skyblue",
-        hex: "#a8d4f0",
-        image: {
-          src: `${GA_BASE}/ga-1.jpg`,
-          alt: "Golden Arc T-Shirt in Skyblue — front design",
-        },
-        // Gallery order:
-        // ga-1 front product (PRIMARY)   ga-2 back product
-        // ga-3 front + back presentation ga-4 collar / fabric close-up
-        // ga-5 model back                ga-6 model front
-        gallery: [
-          {
-            src: `${GA_BASE}/ga-1.jpg`,
-            alt: "Skyblue — front T-shirt product image",
-          },
-          {
-            src: `${GA_BASE}/ga-2.jpg`,
-            alt: "Skyblue — back T-shirt product image",
-          },
-          {
-            src: `${GA_BASE}/ga-3.jpg`,
-            alt: "Skyblue — front and back product presentation",
-          },
-          {
-            src: `${GA_BASE}/ga-4.jpg`,
-            alt: "Skyblue — collar, fabric and GVRZE label close-up",
-          },
-          {
-            src: `${GA_BASE}/ga-5.jpg`,
-            alt: "Skyblue — model wearing the tee, back view",
-          },
-          {
-            src: `${GA_BASE}/ga-6.jpg`,
-            alt: "Skyblue — model wearing the tee, front view",
-          },
-        ],
+        src: `${GA_BASE}/ga-1.jpg`,
+        alt: "Skyblue — front T-shirt product image",
       },
-      // ── 2. Midnight Black ─────────────────────────────────────────────────
       {
-        id: "golden-arc-midnight-black",
-        label: "Midnight Black",
-        hex: "#1a1a1a",
-        image: {
-          src: `${GAB_BASE}/gab-1.png`,
-          alt: "Golden Arc T-Shirt in Midnight Black — front design",
-        },
-        // Gallery order:
-        // gab-1 front product (PRIMARY)  gab-2 back product
-        // gab-3 front + back presentation gab-4 collar / neck close-up
-        // gab-5 model wearing (front)
-        gallery: [
-          {
-            src: `${GAB_BASE}/gab-1.png`,
-            alt: "Midnight Black — front T-shirt product image",
-          },
-          {
-            src: `${GAB_BASE}/gab-2.png`,
-            alt: "Midnight Black — back T-shirt product image",
-          },
-          {
-            src: `${GAB_BASE}/gab-3.png`,
-            alt: "Midnight Black — front and back product presentation",
-          },
-          {
-            src: `${GAB_BASE}/gab-4.png`,
-            alt: "Midnight Black — collar and GVRZE label close-up",
-          },
-          {
-            src: `${GAB_BASE}/gab-5.jpg`,
-            alt: "Midnight Black — model wearing the tee, front view",
-          },
-        ],
+        src: `${GA_BASE}/ga-2.jpg`,
+        alt: "Skyblue — back T-shirt product image",
+      },
+      {
+        src: `${GA_BASE}/ga-3.jpg`,
+        alt: "Skyblue — front and back product presentation",
+      },
+      {
+        src: `${GA_BASE}/ga-4.jpg`,
+        alt: "Skyblue — collar, fabric and GVRZE label close-up",
+      },
+      {
+        src: `${GA_BASE}/ga-5.jpg`,
+        alt: "Skyblue — model wearing the tee, back view",
+      },
+      {
+        src: `${GA_BASE}/ga-6.jpg`,
+        alt: "Skyblue — model wearing the tee, front view",
       },
     ],
 
     description:
-      "A statement piece inspired by celestial geometry and cosmic exploration. The Golden Arc T-Shirt combines a relaxed oversized silhouette with a distinctive planetary graphic composition — intricate celestial artwork, orbital lines, and the signature GVRZE wordmark. Available in Skyblue and Midnight Black, each colourway brings a different energy to the same bold graphic composition. Designed for everyday wear with a premium streetwear aesthetic.",
+      "A statement piece inspired by celestial geometry and cosmic exploration. The Golden Arc T-Shirt combines a relaxed oversized silhouette with a distinctive planetary graphic composition — intricate celestial artwork, orbital lines, and the signature GVRZE wordmark. Offered in Skyblue. Designed for everyday wear with a premium streetwear aesthetic.",
     highlights: [
-      "Available in Skyblue and Midnight Black — two distinctive colourways, one bold graphic.",
+      "Skyblue colourway.",
       "Signature GVRZE wordmark on the front chest.",
       "Large celestial planetary artwork on the back — globe, orbital lines, star elements.",
       "Abstract topographic artwork on the front for a layered graphic composition.",
@@ -397,7 +233,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
       "Premium Screen Printing — sharp, fade-resistant graphics that last wash after wash.",
     ],
     stylingTip:
-      "Skyblue: style with white or off-white trousers for a tonal look, or contrast with dark denim. Midnight Black: a true all-rounder — pairs with any bottom; the vibrant multicolour artwork pops cleanly against the pure black fabric. Both colourways work equally well layered under an open overshirt.",
+      "Style with white or off-white trousers for a tonal look, or contrast with dark denim. Layer an open overshirt for transitional weather.",
     washcare: WASHCARE_STANDARD,
     relatedIds: ["midnight-black-tshirt", "cherry-blossom-tshirt", "new-age-tshirt"],
   },
@@ -407,141 +243,43 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     categoryLabel: "T-SHIRT",
     priceLabel: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#6c0036",
-    // Default card image = Rose Wine Burgundy front shot (na-1.jpg).
-    // Gallery is driven by the `colors` array below.
+    defaultColour: { id: "rose-wine-burgundy", label: "Rose Wine Burgundy", hex: "#6c0036" },
     image: {
       src: `${NA_BASE}/na-1.jpg`,
       alt: "GVRZE New Age T-Shirt in Rose Wine Burgundy — front product view",
     },
-
-    // ── Colour variants ──────────────────────────────────────────────────────
-    // Currently one colourway; additional colours can be appended here when
-    // their images are ready — the UI swatch selector appears automatically
-    // once two or more colours are present.
-    colors: [
+    gallery: [
       {
-        id: "rose-wine-burgundy",
-        label: "Rose Wine Burgundy",
-        hex: "#6c0036",
-        image: {
-          src: `${NA_BASE}/na-1.jpg`,
-          alt: "New Age T-Shirt in Rose Wine Burgundy — front design",
-        },
-        // Gallery order:
-        // na-1 front product (PRIMARY)   na-2 back product
-        // na-3 additional back design    na-4 collar & chest close-up
-        // na-5 model front               na-6 model angled
-        gallery: [
-          {
-            src: `${NA_BASE}/na-1.jpg`,
-            alt: "Rose Wine Burgundy — front T-shirt product image",
-          },
-          {
-            src: `${NA_BASE}/na-2.jpg`,
-            alt: "Rose Wine Burgundy — back T-shirt product image",
-          },
-          {
-            src: `${NA_BASE}/na-3.jpg`,
-            alt: "Rose Wine Burgundy — additional back graphic design",
-          },
-          {
-            src: `${NA_BASE}/na-4.jpg`,
-            alt: "Rose Wine Burgundy — collar, chest star and graphic close-up",
-          },
-          {
-            src: `${NA_BASE}/na-5.jpg`,
-            alt: "Rose Wine Burgundy — model wearing the tee, front view",
-          },
-          {
-            src: `${NA_BASE}/na-6.jpg`,
-            alt: "Rose Wine Burgundy — model wearing the tee, angled view",
-          },
-        ],
+        src: `${NA_BASE}/na-1.jpg`,
+        alt: "Rose Wine Burgundy — front T-shirt product image",
       },
-      // ── 2. Mulberry ───────────────────────────────────────────────────────
       {
-        id: "mulberry",
-        label: "Mulberry",
-        hex: "#4a0e4e",
-        image: {
-          src: `${NM_BASE}/nm-1.jpg`,
-          alt: "New Age T-Shirt in Mulberry — front design",
-        },
-        // Gallery order:
-        // nm-1 front product (PRIMARY)  nm-2 back product
-        // nm-3 back/sleeve design       nm-4 collar & neck detail
-        // nm-5 model front              nm-6 lifestyle / editorial
-        gallery: [
-          {
-            src: `${NM_BASE}/nm-1.jpg`,
-            alt: "Mulberry — front T-shirt product image",
-          },
-          {
-            src: `${NM_BASE}/nm-2.jpg`,
-            alt: "Mulberry — back T-shirt product image",
-          },
-          {
-            src: `${NM_BASE}/nm-3.png`,
-            alt: "Mulberry — back and sleeve graphic design detail",
-          },
-          {
-            src: `${NM_BASE}/nm-4.jpg`,
-            alt: "Mulberry — collar and GVRZE label close-up",
-          },
-          {
-            src: `${NM_BASE}/nm-5.jpg`,
-            alt: "Mulberry — model wearing the tee, front view",
-          },
-          {
-            src: `${NM_BASE}/nm-6.jpg`,
-            alt: "Mulberry — lifestyle editorial, front and back views",
-          },
-        ],
+        src: `${NA_BASE}/na-2.jpg`,
+        alt: "Rose Wine Burgundy — back T-shirt product image",
       },
-
-      // ── 3. Midnight Black ─────────────────────────────────────────────────
       {
-        id: "new-age-midnight-black",
-        label: "Midnight Black",
-        hex: "#1a1a1a",
-        image: {
-          src: `${NB_BASE}/nb-1.jpg`,
-          alt: "New Age T-Shirt in Midnight Black — front design",
-        },
-        // Gallery order:
-        // nb-1 front product (PRIMARY)  nb-2 back product full
-        // nb-3 back / sleeve detail     nb-4 collar & label close-up
-        // nb-5 lifestyle / dual model
-        gallery: [
-          {
-            src: `${NB_BASE}/nb-1.jpg`,
-            alt: "Midnight Black — front T-shirt product image",
-          },
-          {
-            src: `${NB_BASE}/nb-2.png`,
-            alt: "Midnight Black — back T-shirt product image",
-          },
-          {
-            src: `${NB_BASE}/nb-3.png`,
-            alt: "Midnight Black — back and sleeve graphic design detail",
-          },
-          {
-            src: `${NB_BASE}/nb-4.png`,
-            alt: "Midnight Black — collar and GVRZE label close-up",
-          },
-          {
-            src: `${NB_BASE}/nb-5.jpg`,
-            alt: "Midnight Black — lifestyle editorial, front and back views",
-          },
-        ],
+        src: `${NA_BASE}/na-3.jpg`,
+        alt: "Rose Wine Burgundy — additional back graphic design",
+      },
+      {
+        src: `${NA_BASE}/na-4.jpg`,
+        alt: "Rose Wine Burgundy — collar, chest star and graphic close-up",
+      },
+      {
+        src: `${NA_BASE}/na-5.jpg`,
+        alt: "Rose Wine Burgundy — model wearing the tee, front view",
+      },
+      {
+        src: `${NA_BASE}/na-6.jpg`,
+        alt: "Rose Wine Burgundy — model wearing the tee, angled view",
       },
     ],
 
     description:
-      "The New Age T-shirt is a statement piece inspired by cosmic exploration, celestial navigation and contemporary streetwear. It features intricate multicolour celestial artwork across the sleeve and shoulder, a minimal star emblem on the front, and a clean GVRZE chest wordmark. The back showcases an expressive celestial composition with a half-globe illustration, orbital detailing, star elements and vertical GVRZE typography. Combining understated front branding with an elaborate back graphic, New Age brings together modern streetwear aesthetics and the GVRZE universe. Available in Rose Wine Burgundy, Mulberry, and Midnight Black.",
+      "The New Age T-shirt is a statement piece inspired by cosmic exploration, celestial navigation and contemporary streetwear. It features intricate celestial artwork across the sleeve and shoulder, a minimal star emblem on the front, and a clean GVRZE chest wordmark. The back showcases an expressive celestial composition with a half-globe illustration, orbital detailing, star elements and vertical GVRZE typography. Combining understated front branding with an elaborate back graphic, New Age brings together modern streetwear aesthetics and the GVRZE universe. Offered in Rose Wine Burgundy.",
     highlights: [
-      "Available in Rose Wine Burgundy, Mulberry, and Midnight Black — three deep-tone colourways.",
-      "Intricate celestial sleeve and shoulder artwork in multicolour print.",
+      "Rose Wine Burgundy colourway.",
+      "Intricate celestial sleeve and shoulder artwork.",
       "Minimal star emblem and GVRZE chest wordmark on the front.",
       "Expressive back graphic: half-globe, orbital detailing and vertical GVRZE type.",
       "Premium oversized streetwear silhouette for a relaxed, modern fit.",
@@ -549,7 +287,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
       "Comfortable everyday streetwear — pairs easily with dark denim, black cargo pants, or slim trousers.",
     ],
     stylingTip:
-      "Rose Wine Burgundy: style with black straight-leg trousers or dark denim for a tonal contrast-forward fit. Mulberry: works with charcoal cargo pants, olive trousers or dark denim. Midnight Black: a true all-rounder — pairs with any bottom; white sneakers add contrast, all-black keeps it monochrome. All three colourways work equally well layered under an open overshirt.",
+      "Style with black straight-leg trousers or dark denim for a tonal contrast-forward fit. Layer an open overshirt for transitional weather.",
     washcare: WASHCARE_STANDARD,
     relatedIds: ["midnight-black-tshirt", "cherry-blossom-tshirt", "golden-arc-tshirt"],
   },
@@ -560,6 +298,21 @@ const BY_ID = new Map(STOREFRONT_TEES.map((p) => [p.id, p]));
 /** Returns a storefront signature tee by slug, or undefined. */
 export function storefrontTeeById(id: string): StorefrontTeeProduct | undefined {
   return BY_ID.get(id);
+}
+
+/**
+ * Colour swatches are off unless a product is explicitly approved for variants
+ * (`enableColorSelector`) and actually has more than one colour.
+ */
+export function teeShowsColorSelector(tee: StorefrontTeeProduct): boolean {
+  return tee.enableColorSelector === true && (tee.colors?.length ?? 0) > 1;
+}
+
+/** Gallery for the product page — always the approved default colour. */
+export function teeDefaultGallery(tee: StorefrontTeeProduct): { src: string; alt: string }[] {
+  if (tee.gallery?.length) return tee.gallery;
+  if (tee.colors?.[0]?.gallery?.length) return tee.colors[0].gallery;
+  return [tee.image];
 }
 
 /** Returns the three related storefront tees for a given product id. */

@@ -1,6 +1,6 @@
 /**
  * GMake / Customization is archived for now.
- * Try-On Studio keeps the simple garment-arrow + front/back preview.
+ * Try-On Studio is separately gated by ENABLE_TRY_ON_STUDIO in tryOnFlags.ts.
  * Library, upload, and design-instruction UI stay in the repo but must not
  * mount while this flag is false.
  */
