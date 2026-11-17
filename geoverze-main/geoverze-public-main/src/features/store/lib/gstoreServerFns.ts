@@ -34,6 +34,7 @@ import {
   computeTaxMinor,
   computeOrderTotalMinor,
 } from "./gstoreProductPrices";
+import { computeMembershipDiscountMinor } from "./membershipDiscount";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -51,6 +52,60 @@ function isMockEnabled(): boolean {
   if (isMockPaymentsExplicit()) return true;
   if (process.env["NODE_ENV"] === "development" && !readRazorpayKeyId()) return true;
   return false;
+}
+
+type MembershipDiscountQuote = {
+  discountBps: number;
+  discountMinor: number;
+  planTier: string;
+  userId: string | null;
+};
+
+/** Server-side membership discount. Client percentages are never trusted. */
+async function quoteMembershipDiscount(
+  sb: SupabaseClient,
+  subtotalMinor: number,
+): Promise<MembershipDiscountQuote> {
+  const [{ data: bpsRaw }, { data: userData }, { data: planRaw }] = await Promise.all([
+    sb.rpc("get_gstore_membership_discount_bps"),
+    sb.auth.getUser(),
+    sb.rpc("get_my_plan_tier"),
+  ]);
+  const discountBps = typeof bpsRaw === "number" && Number.isFinite(bpsRaw) ? Math.max(0, Math.trunc(bpsRaw)) : 0;
+  const planTier =
+    planRaw && typeof planRaw === "object" && "tier" in planRaw && typeof (planRaw as { tier: unknown }).tier === "string"
+      ? (planRaw as { tier: string }).tier
+      : "explorer";
+  return {
+    discountBps,
+    discountMinor: computeMembershipDiscountMinor(subtotalMinor, discountBps),
+    planTier,
+    userId: userData.user?.id ?? null,
+  };
+}
+
+async function persistMembershipDiscount(input: {
+  orderId: string;
+  userId: string | null;
+  planTier: string;
+  discountBps: number;
+  subtotalMinor: number;
+  discountMinor: number;
+}): Promise<void> {
+  if (!input.userId || input.discountMinor <= 0) return;
+  try {
+    const service = makeServiceRoleClient();
+    await service.rpc("record_gstore_membership_discount", {
+      _order_id: input.orderId,
+      _user_id: input.userId,
+      _plan_tier: input.planTier,
+      _discount_bps: input.discountBps,
+      _subtotal_minor: input.subtotalMinor,
+      _discount_minor: input.discountMinor,
+    });
+  } catch {
+    // Order already stores discount_minor; audit row is best-effort.
+  }
 }
 
 /**
@@ -164,8 +219,10 @@ export type CreateGstoreOrderResult = {
   order_id:         string;
   order_number:     string;
   payment_id:       string;
-  /** GST-inclusive total = subtotal + shipping. */
+  /** GST-inclusive total = subtotal + shipping - membership discount. */
   total_minor:      number;
+  discount_minor?:  number;
+  discount_bps?:    number;
   currency:         string;
   /** Razorpay order ID — present when Razorpay is configured. */
   rzp_order_id?:    string | null;
@@ -230,11 +287,14 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
       subtotalMinor,
       hasPhysical,
     );
-    const taxMinor   = computeTaxMinor(subtotalMinor, shippingMinor); // extracted, not added
-    const totalMinor = computeOrderTotalMinor(subtotalMinor, shippingMinor, 0);
+    const sb = makeSupabaseClient(access_token);
+    const membershipDiscount = await quoteMembershipDiscount(sb, subtotalMinor);
+    const discountMinor = membershipDiscount.discountMinor;
+    const discountedSubtotal = Math.max(0, subtotalMinor - discountMinor);
+    const taxMinor   = computeTaxMinor(discountedSubtotal, shippingMinor); // extracted, not added
+    const totalMinor = computeOrderTotalMinor(subtotalMinor, shippingMinor, discountMinor);
 
     // ── Create DB order via RPC ───────────────────────────────────────────
-    const sb = makeSupabaseClient(access_token);
     const mock = isMockEnabled();
 
     const { data: rpcResult, error: rpcError } = await sb.rpc("create_gstore_order", {
@@ -252,7 +312,7 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
       p_subtotal_minor:   subtotalMinor,
       p_shipping_minor:   shippingMinor,
       p_tax_minor:        taxMinor,
-      p_discount_minor:   0,
+      p_discount_minor:   discountMinor,
       p_total_minor:      totalMinor,
       p_shipping_method:  details.shippingMethod,
       p_items:            validatedItems.map((i) => ({
@@ -284,6 +344,15 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
       order_id: string; order_number: string; payment_id: string; idempotent: boolean;
     };
 
+    await persistMembershipDiscount({
+      orderId: result.order_id,
+      userId: membershipDiscount.userId,
+      planTier: membershipDiscount.planTier,
+      discountBps: membershipDiscount.discountBps,
+      subtotalMinor,
+      discountMinor,
+    });
+
     // ── Mock mode: skip Razorpay ──────────────────────────────────────────
     if (mock) {
       return {
@@ -291,6 +360,8 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
         order_number: result.order_number,
         payment_id:   result.payment_id,
         total_minor:  totalMinor,
+        discount_minor: discountMinor,
+        discount_bps: membershipDiscount.discountBps,
         currency:     "INR",
         rzp_key_id:   "",
         mock_enabled: true,
@@ -315,6 +386,8 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
           order_number: result.order_number,
           payment_id:   result.payment_id,
           total_minor:  totalMinor,
+          discount_minor: discountMinor,
+          discount_bps: membershipDiscount.discountBps,
           currency:     "INR",
           rzp_order_id: existingId,
           rzp_key_id:   rzp.getRazorpayKeyId(),
@@ -347,6 +420,8 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
       order_number: result.order_number,
       payment_id:   result.payment_id,
       total_minor:  totalMinor,
+      discount_minor: discountMinor,
+      discount_bps: membershipDiscount.discountBps,
       currency:     "INR",
       rzp_order_id: placed.rzpOrderId,
       rzp_key_id:   placed.rzpKeyId,

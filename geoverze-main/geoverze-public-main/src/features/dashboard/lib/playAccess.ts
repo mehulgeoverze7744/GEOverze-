@@ -3,7 +3,10 @@ import type { SubscriptionPlanRow } from "@/features/pricing/data/fetchSubscript
 
 export type ContinuePlayMode = "solo" | "pvp" | "multiplayer";
 
-/** Mirrors pricing comparison: a 0/null competitive cap means the mode is closed. */
+/**
+ * Competitive modes are open when the plan's mode cap is unlimited (null)
+ * or greater than zero. A monthly quiz bundle does not unlock PvP/multiplayer.
+ */
 export function isPlayModeOpen(
   plan: SubscriptionPlanRow | undefined,
   mode: ContinuePlayMode,
@@ -11,10 +14,8 @@ export function isPlayModeOpen(
   if (mode === "solo") return true;
   if (!plan) return false;
 
-  if (plan.monthly_quiz_limit != null) return true;
-
   const limit = mode === "pvp" ? plan.pvp_limit : plan.multiplayer_limit;
-  return typeof limit === "number" && limit > 0;
+  return limit == null || (typeof limit === "number" && limit > 0);
 }
 
 export function planRowForTier(

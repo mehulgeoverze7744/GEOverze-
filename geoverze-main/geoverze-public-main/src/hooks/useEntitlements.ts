@@ -14,7 +14,7 @@
  * alone for security.
  */
 
-import { useMyBilling } from "@/features/pricing/hooks/useMyBilling";
+import { useMyMembership } from "@/features/pricing/hooks/useMyMembership";
 import {
   resolveEntitlements,
   EXPLORER_ENTITLEMENTS,
@@ -23,6 +23,11 @@ import {
   type Entitlements,
 } from "@/features/pricing/lib/entitlements";
 import type { TierId } from "@/features/pricing/data/plans";
+import {
+  getRemainingQuizzes,
+  type RemainingQuizzes,
+  type UserMembership,
+} from "@/features/pricing/lib/membership";
 
 export type UseEntitlementsResult = {
   /** Feature entitlement flags for the current user. */
@@ -37,12 +42,29 @@ export type UseEntitlementsResult = {
   meetsMinTier: (required: TierId) => boolean;
   /** Helper: human-readable label for a required tier. */
   minTierLabel: (required: TierId) => string;
+  /** Live membership snapshot when signed in. */
+  membership: UserMembership | null;
+  /** Remaining monthly quiz allowances. */
+  remaining: RemainingQuizzes | null;
+  /** Gstore discount in basis points (300 = 3%). */
+  gstoreDiscountBps: number;
 };
 
 export function useEntitlements(): UseEntitlementsResult {
-  const { data, loading, error } = useMyBilling();
-  const tier: TierId = data?.tier ?? "explorer";
-  const can = data ? resolveEntitlements(tier) : EXPLORER_ENTITLEMENTS;
+  const { membership, remaining, loading, error } = useMyMembership();
+  const tier: TierId = membership?.tier ?? "explorer";
+  const can: Entitlements = membership
+    ? {
+        ...resolveEntitlements(tier),
+        pvpAccess: membership.pvpAccess,
+        multiplayerAccess: membership.multiplayerAccess,
+        allAtlases: membership.allAtlases,
+        advancedAnalytics: membership.advancedAnalytics,
+        memberChallenges: membership.memberChallenges,
+        gstoreDiscount3Pct: membership.gstoreDiscountBps >= 300,
+        gstoreDiscount10Pct: membership.gstoreDiscountBps >= 1000,
+      }
+    : EXPLORER_ENTITLEMENTS;
 
   return {
     can,
@@ -51,5 +73,8 @@ export function useEntitlements(): UseEntitlementsResult {
     error,
     meetsMinTier: (required: TierId) => meetsMinTier(tier, required),
     minTierLabel,
+    membership,
+    remaining: membership ? remaining ?? getRemainingQuizzes(membership) : remaining,
+    gstoreDiscountBps: membership?.gstoreDiscountBps ?? 0,
   };
 }

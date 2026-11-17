@@ -23,6 +23,8 @@ export type Quiz = {
   description?: string;
   /** 0-100, only present for in-progress runs. */
   progress?: number;
+  /** Membership gate. Null or omitted means the quiz is open to every published catalogue visitor. */
+  minAccessTier?: "explorer" | "basic" | "pro" | "advance" | null;
 };
 
 /** Resolve editorial id lists against a live published catalogue. */

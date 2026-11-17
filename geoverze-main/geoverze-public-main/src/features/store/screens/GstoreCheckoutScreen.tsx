@@ -76,6 +76,11 @@ import {
   FREE_SHIPPING_THRESHOLD_MINOR,
   getProductPrice,
 } from "../lib/gstoreProductPrices";
+import {
+  computeMembershipDiscountMinor,
+  membershipDiscountLabel,
+} from "../lib/membershipDiscount";
+import { useEntitlements } from "@/hooks/useEntitlements";
 import { isSlugAvailableForSale } from "../data/catalogAvailability";
 import { productImageForSlug } from "../data/productImages";
 import { checkoutSizeForProduct } from "../storefront/sizeGuide";
@@ -196,6 +201,7 @@ function Card({ children, className }: { children: React.ReactNode; className?: 
 export function GstoreCheckoutScreen() {
   const user    = useAuthStore(selectUser);
   const navigate = useNavigate();
+  const { gstoreDiscountBps } = useEntitlements();
 
   const search = useSearch({ from: "/geostore/checkout" });
 
@@ -275,8 +281,12 @@ export function GstoreCheckoutScreen() {
   // taxMinor = GST extracted from the inclusive subtotal (display/reporting only).
   // totalMinor = inclusive subtotal + shipping — GST is NOT added again.
   const shippingMinor = computeShippingMinor(shippingMethod, subtotalMinor, hasPhysical);
-  const taxMinor      = computeTaxMinor(subtotalMinor, shippingMinor); // extracted, not added
-  const totalMinor    = computeOrderTotalMinor(subtotalMinor, shippingMinor, 0);
+  const discountMinor = user
+    ? computeMembershipDiscountMinor(subtotalMinor, gstoreDiscountBps)
+    : 0;
+  const discountedSubtotal = Math.max(0, subtotalMinor - discountMinor);
+  const taxMinor      = computeTaxMinor(discountedSubtotal, shippingMinor); // extracted, not added
+  const totalMinor    = computeOrderTotalMinor(subtotalMinor, shippingMinor, discountMinor);
 
   // Status state
   const [status, setStatus]     = useState<"idle" | "creating" | "paying" | "verifying" | "done" | "failed" | "cancelled">("idle");
@@ -1367,6 +1377,16 @@ export function GstoreCheckoutScreen() {
                 <span className="text-[#6B7280]">Subtotal</span>
                 <span className="text-[#374151] font-medium">{formatInrPaise(subtotalMinor)}</span>
               </div>
+              {discountMinor > 0 ? (
+                <div className="flex justify-between">
+                  <span className="text-emerald-700">
+                    {membershipDiscountLabel(gstoreDiscountBps) ?? "Member discount"}
+                  </span>
+                  <span className="font-medium text-emerald-700">
+                    −{formatInrPaise(discountMinor)}
+                  </span>
+                </div>
+              ) : null}
               <div className="flex justify-between">
                 <span className="text-[#6B7280]">
                   Shipping ({SHIPPING_OPTIONS.find(o => o.value === shippingMethod)?.label ?? shippingMethod})

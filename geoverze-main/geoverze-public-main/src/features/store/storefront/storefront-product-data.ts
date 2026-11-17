@@ -288,8 +288,8 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     tone: "#111111",
     defaultColour: { id: "midnight-black", label: "Midnight Black", hex: "#111111" },
     image: {
-      src: `${IG_BASE}/ig-1.png`,
-      alt: "GVRZE IGNITE oversized T-shirt in Midnight Black — front product view with chest logo",
+      src: `${IG_BASE}/ig-2.png`,
+      alt: "GVRZE IGNITE oversized T-shirt in Midnight Black — back product view with orange 3D mesh artwork",
     },
     gallery: [
       {
@@ -387,8 +387,8 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     tone: "#c41e3a",
     defaultColour: { id: "racing-red", label: "Racing Red", hex: "#c41e3a" },
     image: {
-      src: `${PA_BASE}/pa-1.png`,
-      alt: "GVRZE PACE oversized T-shirt in Racing Red — front product view with cream GVRZE chest wordmark and checkerboard sleeves",
+      src: `${PA_BASE}/pa-2.png`,
+      alt: "GVRZE PACE oversized T-shirt in Racing Red — back product view with cream checkerboard flag artwork",
     },
     gallery: [
       {

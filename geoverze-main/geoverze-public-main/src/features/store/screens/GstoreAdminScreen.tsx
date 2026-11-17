@@ -314,6 +314,11 @@ export function GstoreAdminScreen() {
           <div className="mb-8 flex items-center justify-between gap-4">
             <div>
               <h1 className="text-[24px] font-bold text-black">Order Management</h1>
+              <p className="mt-1">
+                <Link to="/admin" className="text-[12px] font-semibold text-[#555] underline">
+                  Membership admin
+                </Link>
+              </p>
               <p className="text-[13px] text-[#777] mt-0.5">
                 {total} total order{total !== 1 ? "s" : ""}
                 {statusFilter !== "all" ? ` · filtered by "${statusFilter}"` : ""}

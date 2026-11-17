@@ -5,12 +5,18 @@ import { useEffect } from "react";
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
 import { MetaChip } from "@/features/play/components/Badges";
+import { MembershipUpgradePrompt } from "@/features/pricing/components/MembershipUpgradePrompt";
+import { useMyMembership } from "@/features/pricing/hooks/useMyMembership";
+import { getRemainingQuizzes } from "@/features/pricing/lib/membership";
 import { selectIsSignedIn, useAuthStore } from "@/stores/authStore";
 import { resetQuizRun } from "@/stores/quizStore";
 
 /** /play/pvp — private-room entry: create or join by code. */
 export function PvpHubScreen() {
   const signedIn = useAuthStore(selectIsSignedIn);
+  const { membership } = useMyMembership();
+  const remaining = membership ? getRemainingQuizzes(membership) : null;
+  const quotaBlocked = remaining?.pvpRemaining === 0;
 
   useEffect(() => {
     resetQuizRun();
@@ -62,6 +68,16 @@ export function PvpHubScreen() {
             lobby. Gameplay scoring arrives in the next phase.
           </p>
         </AnimatedSection>
+
+        {quotaBlocked ? (
+          <AnimatedSection className="mx-auto mt-10 max-w-xl">
+            <MembershipUpgradePrompt
+              requiredTier="pro"
+              title="Monthly PvP allowance used"
+              description="Explorer and Basic include one PvP duel each calendar month. Upgrade to Pro for unlimited duels."
+            />
+          </AnimatedSection>
+        ) : null}
 
         <AnimatedSection className="mx-auto mt-10 grid max-w-2xl gap-4 sm:grid-cols-2">
           <GeoButton variant="solid" size="lg" className="h-auto flex-col gap-3 py-8" asChild>

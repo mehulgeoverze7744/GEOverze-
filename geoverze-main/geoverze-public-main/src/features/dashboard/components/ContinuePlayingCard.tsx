@@ -4,6 +4,8 @@ import type { LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useLibrarySubscriptionTier } from "@/features/library/hooks/useLibrarySubscriptionTier";
+import { useMyMembership } from "@/features/pricing/hooks/useMyMembership";
+import { getRemainingQuizzes } from "@/features/pricing/lib/membership";
 
 import { useSubscriptionPlanRows } from "../hooks/useSubscriptionPlanRows";
 import { isPlayModeOpen, planRowForTier, type ContinuePlayMode } from "../lib/playAccess";
@@ -81,7 +83,9 @@ function CardContent({ mode, locked }: { mode: (typeof MODES)[number]; locked: b
 export function ContinuePlayingCard({ className }: { className?: string }) {
   const { tier } = useLibrarySubscriptionTier();
   const { plans } = useSubscriptionPlanRows();
-  const plan = planRowForTier(plans, tier);
+  const { membership } = useMyMembership();
+  const plan = planRowForTier(plans, membership?.tier ?? tier);
+  const remaining = membership ? getRemainingQuizzes(membership) : null;
 
   return (
     <section
@@ -101,10 +105,18 @@ export function ContinuePlayingCard({ className }: { className?: string }) {
         <ul className="grid w-full gap-4 sm:grid-cols-3">
           {MODES.map((mode) => {
             const open = isPlayModeOpen(plan, mode.id);
+            const remainingForMode =
+              mode.id === "solo"
+                ? remaining?.monthlyRemaining ?? remaining?.soloRemaining
+                : mode.id === "pvp"
+                  ? remaining?.pvpRemaining
+                  : remaining?.multiplayerRemaining;
+            const quotaOpen = remainingForMode == null || remainingForMode > 0;
+            const playable = open && quotaOpen;
 
             return (
               <li key={mode.id} className="relative aspect-square w-full">
-                {open && mode.id === "solo" ? (
+                {playable && mode.id === "solo" ? (
                   <Link
                     to="/play/lobby"
                     search={{ mode: "solo", quiz: undefined }}
@@ -114,7 +126,7 @@ export function ContinuePlayingCard({ className }: { className?: string }) {
                   >
                     <CardContent mode={mode} locked={false} />
                   </Link>
-                ) : open ? (
+                ) : playable ? (
                   <Link
                     to={mode.to}
                     className="dashboard-gamecard absolute inset-0"

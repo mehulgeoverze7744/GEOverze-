@@ -25,14 +25,13 @@ function ageDaysFromIso(iso: string): number {
 
 /** Maps a published quizzes row (+ question count) to the Play Hub Quiz card shape. */
 export function mapPublishedQuizRow(row: PublishedQuizRow): Quiz {
-  return {
+  const quiz: Quiz = {
     id: row.id,
     title: row.title,
     categoryId: row.category_id,
     creator: row.creator,
     art: row.art,
     difficulty: toDifficulty(row.difficulty),
-    ...(row.description ? { description: row.description } : {}),
     questions: row.quiz_questions?.length ?? 0,
     minutes: row.minutes,
     players: 0,
@@ -40,6 +39,11 @@ export function mapPublishedQuizRow(row: PublishedQuizRow): Quiz {
     popularity: 0,
     ageDays: ageDaysFromIso(row.created_at),
   };
+  if (row.description) quiz.description = row.description;
+  if (row.min_access_tier) {
+    quiz.minAccessTier = row.min_access_tier as Quiz["minAccessTier"];
+  }
+  return quiz;
 }
 
 export function mapPublishedQuizRows(rows: PublishedQuizRow[]): Quiz[] {

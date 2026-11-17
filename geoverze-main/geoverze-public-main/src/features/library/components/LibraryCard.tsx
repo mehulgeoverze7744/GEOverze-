@@ -152,14 +152,12 @@ export function LibraryCard({
           className,
         )}
       >
-        {!restricted ? (
-          <Link
-            to={articleTo}
-            params={articleParams}
-            aria-label={`Open ${article.title}`}
-            className="absolute inset-0 z-0 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
-          />
-        ) : null}
+        <Link
+          to={articleTo}
+          params={articleParams}
+          aria-label={restricted ? `Upgrade to read ${article.title}` : `Open ${article.title}`}
+          className="absolute inset-0 z-0 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+        />
         <div className="pointer-events-none relative z-[1] hidden w-28 shrink-0 overflow-hidden rounded-xl sm:block">
           <LibraryMediaImage
             storagePath={article.coverArtKey}

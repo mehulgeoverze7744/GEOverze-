@@ -10,7 +10,7 @@ export type SubscriptionCatalog = {
 };
 
 const PLAN_SELECT =
-  "tier, display_name, monthly_price_cents, annual_price_cents, monthly_credit_grant, rollover_tier_key, monthly_quiz_limit, solo_quiz_limit, pvp_limit, multiplayer_limit, credit_rollover_months, is_creator_plan, active";
+  "tier, display_name, monthly_price_cents, annual_price_cents, monthly_credit_grant, rollover_tier_key, monthly_quiz_limit, solo_quiz_limit, pvp_limit, multiplayer_limit, credit_rollover_months, gstore_discount_bps, is_creator_plan, active";
 
 const PROMOTION_SELECT =
   "id, plan_tier, billing_interval, price_cents, intro_period_months, label, active, metadata";

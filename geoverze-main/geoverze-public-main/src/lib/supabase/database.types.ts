@@ -29,6 +29,81 @@ export type Database = {
         }
         Relationships: []
       }
+      membership_challenges: {
+        Row: {
+          id: string
+          slug: string
+          title: string
+          description: string
+          starts_at: string
+          ends_at: string
+          status: string
+          min_access_tier: string
+          reward_credits: number
+          reward_config: Json
+          created_by: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          slug: string
+          title: string
+          description: string
+          starts_at: string
+          ends_at: string
+          status?: string
+          min_access_tier?: string
+          reward_credits?: number
+          reward_config?: Json
+          created_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          slug?: string
+          title?: string
+          description?: string
+          starts_at?: string
+          ends_at?: string
+          status?: string
+          min_access_tier?: string
+          reward_credits?: number
+          reward_config?: Json
+          created_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      challenge_participants: {
+        Row: {
+          challenge_id: string
+          user_id: string
+          status: string
+          joined_at: string
+          completed_at: string | null
+          progress: Json
+        }
+        Insert: {
+          challenge_id: string
+          user_id: string
+          status?: string
+          joined_at?: string
+          completed_at?: string | null
+          progress?: Json
+        }
+        Update: {
+          challenge_id?: string
+          user_id?: string
+          status?: string
+          joined_at?: string
+          completed_at?: string | null
+          progress?: Json
+        }
+        Relationships: []
+      }
       library_collection_items: {
         Row: {
           collection_id: string
@@ -618,6 +693,7 @@ export type Database = {
           id: string
           is_published: boolean
           language: string
+          min_access_tier: string | null
           minutes: number
           reward_credits: number
           reward_xp: number
@@ -634,6 +710,7 @@ export type Database = {
           id: string
           is_published?: boolean
           language?: string
+          min_access_tier?: string | null
           minutes?: number
           reward_credits?: number
           reward_xp?: number
@@ -650,6 +727,7 @@ export type Database = {
           id?: string
           is_published?: boolean
           language?: string
+          min_access_tier?: string | null
           minutes?: number
           reward_credits?: number
           reward_xp?: number
@@ -848,6 +926,7 @@ export type Database = {
           created_at: string
           credit_rollover_months: number
           display_name: string
+          gstore_discount_bps: number
           is_creator_plan: boolean
           metadata: Json
           monthly_credit_grant: number
@@ -866,6 +945,7 @@ export type Database = {
           created_at?: string
           credit_rollover_months?: number
           display_name: string
+          gstore_discount_bps?: number
           is_creator_plan?: boolean
           metadata?: Json
           monthly_credit_grant?: number
@@ -884,6 +964,7 @@ export type Database = {
           created_at?: string
           credit_rollover_months?: number
           display_name?: string
+          gstore_discount_bps?: number
           is_creator_plan?: boolean
           metadata?: Json
           monthly_credit_grant?: number
@@ -1247,6 +1328,53 @@ export type Database = {
         Returns: string
       }
       get_my_plan_tier: { Args: never; Returns: Json }
+      get_my_membership: { Args: never; Returns: Json }
+      get_remaining_quizzes: { Args: never; Returns: Json }
+      check_entitlement: { Args: { _feature: string }; Returns: boolean }
+      get_gstore_membership_discount_bps: { Args: never; Returns: number }
+      join_membership_challenge: { Args: { _challenge_id: string }; Returns: Json }
+      complete_membership_challenge: {
+        Args: { _challenge_id: string }
+        Returns: Json
+      }
+      admin_list_memberships: {
+        Args: { _status?: string; _tier?: string }
+        Returns: Json
+      }
+      admin_list_library_access: { Args: never; Returns: Json }
+      admin_list_membership_challenges: { Args: never; Returns: Json }
+      admin_set_library_resource_tier: {
+        Args: { _min_access_tier: string | null; _resource_id: string }
+        Returns: Json
+      }
+      admin_upsert_membership_challenge: {
+        Args: {
+          _description: string
+          _ends_at: string
+          _id: string
+          _min_access_tier: string
+          _reward_config: Json
+          _reward_credits: number
+          _slug: string
+          _starts_at: string
+          _status: string
+          _title: string
+        }
+        Returns: Json
+      }
+      admin_update_plan_entitlements: {
+        Args: {
+          _tier: string
+          _monthly_quiz_limit: number | null
+          _solo_quiz_limit: number | null
+          _pvp_limit: number | null
+          _multiplayer_limit: number | null
+          _monthly_credit_grant: number
+          _credit_rollover_months: number
+          _gstore_discount_bps: number
+        }
+        Returns: Json
+      }
       get_my_streak_stats: { Args: never; Returns: Json }
       get_user_plan_tier: { Args: { _user_id: string }; Returns: string }
       has_role: {

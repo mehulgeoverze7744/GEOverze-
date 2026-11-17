@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as R404RouteImport } from './routes/404'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DisclaimerRouteImport } from './routes/disclaimer'
@@ -44,6 +45,7 @@ import { Route as AppProgressRouteImport } from './routes/_app.progress'
 import { Route as AppQuizHistoryRouteImport } from './routes/_app.quiz-history'
 import { Route as AppQuizHistoryAndRewardsRouteImport } from './routes/_app.quiz-history-and-rewards'
 import { Route as AppSettingsRouteImport } from './routes/_app.settings'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AuthAgeVerificationRouteImport } from './routes/auth.age-verification'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
@@ -173,6 +175,11 @@ const AppRoute = AppRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CommunityRoute = CommunityRouteImport.update({
@@ -330,6 +337,11 @@ const AppSettingsRoute = AppSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => AppRoute,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AuthAgeVerificationRoute = AuthAgeVerificationRouteImport.update({
   id: '/auth/age-verification',
@@ -895,6 +907,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/community': typeof CommunityRouteWithChildren
   '/contact': typeof ContactRoute
   '/disclaimer': typeof DisclaimerRoute
@@ -983,6 +996,7 @@ export interface FileRoutesByFullPath {
   '/studio/earnings': typeof StudioEarningsRoute
   '/studio/media': typeof StudioMediaRoute
   '/studio/settings': typeof StudioSettingsRoute
+  '/admin/': typeof AdminIndexRoute
   '/community/': typeof CommunityIndexRoute
   '/geolibrary/': typeof GeolibraryIndexRoute
   '/geostore/': typeof GeostoreIndexRoute
@@ -1118,6 +1132,7 @@ export interface FileRoutesByTo {
   '/studio/earnings': typeof StudioEarningsRoute
   '/studio/media': typeof StudioMediaRoute
   '/studio/settings': typeof StudioSettingsRoute
+  '/admin': typeof AdminIndexRoute
   '/community': typeof CommunityIndexRoute
   '/geolibrary': typeof GeolibraryIndexRoute
   '/geostore': typeof GeostoreIndexRoute
@@ -1179,6 +1194,7 @@ export interface FileRoutesById {
   '/404': typeof R404Route
   '/_app': typeof AppRouteWithChildren
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/community': typeof CommunityRouteWithChildren
   '/contact': typeof ContactRoute
   '/disclaimer': typeof DisclaimerRoute
@@ -1267,6 +1283,7 @@ export interface FileRoutesById {
   '/studio/earnings': typeof StudioEarningsRoute
   '/studio/media': typeof StudioMediaRoute
   '/studio/settings': typeof StudioSettingsRoute
+  '/admin/': typeof AdminIndexRoute
   '/community/': typeof CommunityIndexRoute
   '/geolibrary/': typeof GeolibraryIndexRoute
   '/geostore/': typeof GeostoreIndexRoute
@@ -1328,6 +1345,7 @@ export interface FileRouteTypes {
     | '/'
     | '/404'
     | '/about'
+    | '/admin'
     | '/community'
     | '/contact'
     | '/disclaimer'
@@ -1416,6 +1434,7 @@ export interface FileRouteTypes {
     | '/studio/earnings'
     | '/studio/media'
     | '/studio/settings'
+    | '/admin/'
     | '/community/'
     | '/geolibrary/'
     | '/geostore/'
@@ -1551,6 +1570,7 @@ export interface FileRouteTypes {
     | '/studio/earnings'
     | '/studio/media'
     | '/studio/settings'
+    | '/admin'
     | '/community'
     | '/geolibrary'
     | '/geostore'
@@ -1611,6 +1631,7 @@ export interface FileRouteTypes {
     | '/404'
     | '/_app'
     | '/about'
+    | '/admin'
     | '/community'
     | '/contact'
     | '/disclaimer'
@@ -1699,6 +1720,7 @@ export interface FileRouteTypes {
     | '/studio/earnings'
     | '/studio/media'
     | '/studio/settings'
+    | '/admin/'
     | '/community/'
     | '/geolibrary/'
     | '/geostore/'
@@ -1760,6 +1782,7 @@ export interface RootRouteChildren {
   R404Route: typeof R404Route
   AppRoute: typeof AppRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRouteWithChildren
   CommunityRoute: typeof CommunityRouteWithChildren
   ContactRoute: typeof ContactRoute
   DisclaimerRoute: typeof DisclaimerRoute
@@ -1819,6 +1842,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/community': {
@@ -2037,6 +2067,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings'
       preLoaderRoute: typeof AppSettingsRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/auth/age-verification': {
       id: '/auth/age-verification'
@@ -2860,6 +2897,16 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+interface AdminRouteChildren {
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 interface CommunityRouteChildren {
   CommunityChallengesRoute: typeof CommunityChallengesRoute
   CommunityDiscoverRoute: typeof CommunityDiscoverRoute
@@ -3182,6 +3229,7 @@ const rootRouteChildren: RootRouteChildren = {
   R404Route: R404Route,
   AppRoute: AppRouteWithChildren,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRouteWithChildren,
   CommunityRoute: CommunityRouteWithChildren,
   ContactRoute: ContactRoute,
   DisclaimerRoute: DisclaimerRoute,

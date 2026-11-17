@@ -194,7 +194,12 @@ export function QuizResultScreen() {
         if (error) {
           console.error("submit_quiz_attempt failed", error);
           setSubmitError(true);
-          toast.error("Could not save your quiz result. Your score is shown below.");
+          const quota = error.message.includes("QUOTA_EXCEEDED");
+          toast.error(
+            quota
+              ? "You have used this month's quiz allowance. Upgrade to keep playing."
+              : "Could not save your quiz result. Your score is shown below.",
+          );
           return;
         }
 

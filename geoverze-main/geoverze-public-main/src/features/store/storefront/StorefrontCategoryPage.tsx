@@ -18,7 +18,8 @@ import { cn } from "@/lib/utils";
 
 import { StorefrontNav } from "./StorefrontNav";
 import { SF_SHELL } from "./storefront-ui";
-import { EditorialCard, type EditorialItem } from "./EditorialCard";
+import { StorefrontCategoryGrid } from "./StorefrontCategoryGrid";
+import { type EditorialItem } from "./EditorialCard";
 
 const PER_PAGE = 9;
 
@@ -80,39 +81,6 @@ function Pagination({
         <ChevronRight className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
       </button>
     </nav>
-  );
-}
-
-/* ─── Editorial grid ──────────────────────────────────────────────────────── */
-
-function EditorialGrid({
-  items,
-  onAdd,
-}: {
-  items: EditorialItem[];
-  onAdd: (item: EditorialItem) => void;
-}) {
-  return (
-    /*
-     * 3-column grid on desktop with fixed 280 px rows.
-     * The first card carries `lg:col-span-2 lg:row-span-2` from EditorialCard
-     * so it becomes the large hero tile (occupies 2 columns × 2 rows = the
-     * top-left editorial slot). Items 2–3 auto-flow into column 3, rows 1–2.
-     * Items 4+ continue as a normal 3-column flow.
-     *
-     * On tablet: 2 equal columns, all cards 240 px tall.
-     * On mobile : single column, all cards 240 px tall.
-     */
-    <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3 lg:[grid-auto-rows:280px]">
-      {items.map((item, i) => (
-        <EditorialCard
-          key={item.id}
-          item={item}
-          isHero={i === 0 && items.length >= 3}
-          {...(item.comingSoon ? {} : { onAdd: () => onAdd(item) })}
-        />
-      ))}
-    </div>
   );
 }
 
@@ -202,7 +170,7 @@ export function StorefrontCategoryPage({
               </p>
             </div>
           ) : (
-            <EditorialGrid items={pageItems} onAdd={handleAdd} />
+            <StorefrontCategoryGrid items={pageItems} onAdd={handleAdd} />
           )}
 
           {/* ── Pagination ── */}

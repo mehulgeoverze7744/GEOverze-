@@ -6,6 +6,8 @@ import { AnimatedSection } from "@/components/shared/AnimatedSection";
 import { ProgressBarFill } from "@/features/progression/components/ProgressBarFill";
 import { cn } from "@/lib/utils";
 
+import { MembershipUpgradePrompt } from "@/features/pricing/components/MembershipUpgradePrompt";
+
 import { useExplorerAnalytics } from "../lib/explorerAnalytics";
 import "../styles/explorer-analytics.css";
 
@@ -167,9 +169,45 @@ export function ExplorerAnalytics() {
         </AnimatedSection>
       </div>
 
+      {!data.isPro ? (
+        <AnimatedSection delay={80} className="mt-6">
+          <MembershipUpgradePrompt
+            requiredTier="pro"
+            title="Advanced progress analytics"
+            description="Category performance, trends, strengths and weaknesses are included with Pro. Your standard quiz counts and streak remain available on this plan."
+          />
+        </AnimatedSection>
+      ) : null}
+
+      {data.isPro && (data.strengths.length > 0 || data.weaknesses.length > 0) ? (
+        <AnimatedSection delay={90} className="mt-4">
+          <AnalyticsCard>
+            <PanelHeading title="Strengths and weaknesses" subtitle="From completed quizzes this year." />
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <div>
+                <p className="text-[0.58rem] uppercase tracking-[0.22em] text-foreground/45">Strongest</p>
+                <ul className="mt-2 space-y-1 text-sm text-foreground/75">
+                  {(data.strengths.length ? data.strengths : ["Keep playing to measure this"]).map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="text-[0.58rem] uppercase tracking-[0.22em] text-foreground/45">Needs work</p>
+                <ul className="mt-2 space-y-1 text-sm text-foreground/75">
+                  {(data.weaknesses.length ? data.weaknesses : ["Keep playing to measure this"]).map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </AnalyticsCard>
+        </AnimatedSection>
+      ) : null}
+
       <AnimatedSection delay={100} className="mt-4">
         <AnalyticsCard>
-          <PanelHeading title="Game mode performance" subtitle="Wins across expedition formats." />
+          <PanelHeading title="Game mode performance" subtitle="Completed quizzes across expedition formats." />
           <div className="mt-2 grid gap-8 lg:grid-cols-[minmax(0,1.4fr)_minmax(220px,1fr)] lg:items-end">
             <GameModeBars modes={data.gameModes} winRate={data.winRate} />
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">

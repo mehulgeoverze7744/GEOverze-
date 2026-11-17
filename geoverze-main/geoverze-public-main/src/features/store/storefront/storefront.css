@@ -306,44 +306,40 @@ body:has(#gvrze-storefront) footer .mt-16.border-t {
   box-shadow: 0 0 0 2px oklch(0.55 0.08 55 / 0.5); /* bronze focus ring */
 }
 
-/* ─── Editorial category pages ─────────────────────────────────────────────
- * Applied to every category and collection listing page that wraps its
- * content in #gvrze-storefront (T-Shirts, Hoodies, Accessories, Browse, etc.)
+/* ─── Category listing grid ────────────────────────────────────────────────
+ * Uniform equal-size cards on every category / browse page.
+ * No featured hero tile, no masonry row spanning.
  * ─────────────────────────────────────────────────────────────────────────── */
 
-/*
- * Give cards a 3:2-ish minimum height on mobile so the image + content bar
- * have room to breathe even before the desktop grid-auto-rows kicks in.
- */
-#gvrze-storefront .gvrze-editorial-card {
-  min-height: 200px;
+#gvrze-storefront .gvrze-category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  align-items: stretch;
 }
 
-@media (min-width: 640px) {
-  #gvrze-storefront .gvrze-editorial-card {
-    min-height: 240px;
+@media (min-width: 768px) {
+  #gvrze-storefront .gvrze-category-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
   }
 }
 
-/*
- * On large screens the CSS grid drives row heights (280 px via Tailwind
- * [grid-auto-rows:280px]), so the min-height must be reset to let the grid
- * control the card proportions.
- */
-@media (min-width: 1024px) {
-  #gvrze-storefront .gvrze-editorial-card {
-    min-height: 0;
+@media (min-width: 1280px) {
+  #gvrze-storefront .gvrze-category-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
-/*
- * The hero tile (first card on pages with ≥3 items) spans 2 columns × 2 rows
- * via the `lg:col-span-2 lg:row-span-2` Tailwind classes already on the
- * element. The image hover scale uses the `group` class but the article itself
- * must form a stacking context so the overflow:hidden clips correctly.
- */
 #gvrze-storefront .gvrze-editorial-card {
   isolation: isolate;
+  min-height: 0;
+  height: 100%;
+}
+
+#gvrze-storefront .gvrze-editorial-card__media {
+  aspect-ratio: 4 / 5;
+  flex: none;
 }
 
 /* Desktop: gallery stays put; description panel scrolls inside the right column. */

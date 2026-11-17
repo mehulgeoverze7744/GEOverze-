@@ -1,7 +1,10 @@
-import { Bookmark, Clock, HelpCircle, Play, Star, Users } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Bookmark, Clock, HelpCircle, Lock, Play, Star, Users } from "lucide-react";
 
 import { GeoButton } from "@/components/shared";
+import { useEntitlements } from "@/hooks/useEntitlements";
 import { cn } from "@/lib/utils";
+import type { TierId } from "@/features/pricing/data/plans";
 import { QUIZ_CATEGORIES } from "../data/categories";
 import type { Quiz } from "../data/quizzes";
 import { quizThumbnailForId } from "../data/quizThumbnails";
@@ -36,6 +39,9 @@ export function QuizCard({
 }) {
   const Icon = ICONS.get(quiz.categoryId);
   const thumbnail = quizThumbnailForId(quiz.id);
+  const { meetsMinTier, minTierLabel } = useEntitlements();
+  const requiredTier = quiz.minAccessTier ?? null;
+  const locked = Boolean(requiredTier) && !meetsMinTier(requiredTier as TierId);
 
   return (
     <GameCard className={cn("group/card flex flex-col", className)}>
@@ -76,6 +82,12 @@ export function QuizCard({
               className="block h-full bg-gradient-bronze"
               style={{ width: `${quiz.progress}%` }}
             />
+          </span>
+        ) : null}
+        {requiredTier ? (
+          <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full border border-bronze/40 bg-[oklch(0.12_0.006_60/0.85)] px-2.5 py-1 text-[0.58rem] font-semibold uppercase tracking-[0.16em] text-bronze-glow">
+            {locked ? <Lock className="h-3 w-3" strokeWidth={1.8} aria-hidden /> : null}
+            {locked ? `Requires ${minTierLabel(requiredTier as TierId)}` : minTierLabel(requiredTier as TierId)}
           </span>
         ) : null}
       </div>
@@ -120,7 +132,14 @@ export function QuizCard({
           </span>
         </div>
 
-        {browseOnly ? null : (
+        {browseOnly ? null : locked ? (
+          <GeoButton variant="dark" size="md" className="mt-5 w-full" asChild>
+            <Link to="/pricing">
+              <Lock className="h-4 w-4" strokeWidth={2.4} />
+              Upgrade to play
+            </Link>
+          </GeoButton>
+        ) : (
           <GeoButton
             variant="solid"
             size="md"

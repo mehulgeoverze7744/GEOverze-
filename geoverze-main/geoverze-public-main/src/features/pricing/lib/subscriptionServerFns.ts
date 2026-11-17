@@ -161,6 +161,9 @@ export const createRazorpaySubscriptionFn = createServerFn({ method: "POST" })
   .validator((raw: unknown) => CreateSubSchema.parse(raw))
   .handler(async ({ data }): Promise<CreateRazorpaySubscriptionResult> => {
     assertRateLimit(`sub-create:${data.access_token.slice(-24)}`, 8, 60_000);
+    if (data.plan_tier === "advance") {
+      throw new Error("Advance membership is coming soon and cannot be purchased yet.");
+    }
     const rzp = await import("./subscriptionRazorpay.server");
     if (!rzp.isRazorpayServerConfigured()) {
       const diag = rzp.getRazorpayDiagnostics();

@@ -18,8 +18,10 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Bookmark, BookmarkCheck, Plus } from "lucide-react";
 import { toast } from "sonner";
 
+import { useEntitlements } from "@/hooks/useEntitlements";
 import { cn } from "@/lib/utils";
 import { useStoreStore } from "@/stores/storeStore";
+import { membershipDiscountLabel } from "../lib/membershipDiscount";
 
 import { defaultOptions } from "../lib/cart";
 import { resolveStoreProduct } from "../lib/resolveStoreProduct";
@@ -118,6 +120,17 @@ const DEFAULT_SIZES = [...APPAREL_SIZE_ORDER];
 /** Ignore tiny taps; require a mostly-horizontal gesture so page scroll still works. */
 const GALLERY_SWIPE_PX = 48;
 const GALLERY_SWIPE_RATIO = 1.25;
+
+function MemberDiscountHint() {
+  const { gstoreDiscountBps, membership } = useEntitlements();
+  const label = membershipDiscountLabel(gstoreDiscountBps);
+  if (!label || !membership) return null;
+  return (
+    <p className={`mt-1.5 text-[12px] font-medium text-emerald-700 ${SF_UI_FONT}`}>
+      {membership.planName}: {label} at checkout
+    </p>
+  );
+}
 
 const DEFAULT_SHIPPING = `Orders are dispatched within 1–2 business days of payment confirmation. Delivery takes 5–7 business days across India. International shipping is available in select regions (10–15 business days).
 
@@ -649,6 +662,7 @@ export function StorefrontProductPage({
               </div>
 
               <p className="mt-3 text-[20px] font-bold text-black sm:text-[22px]">{priceLabel}</p>
+              <MemberDiscountHint />
               {comingSoon ? (
                 <p className={`mt-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-black/40 ${SF_UI_FONT}`}>
                   Coming soon

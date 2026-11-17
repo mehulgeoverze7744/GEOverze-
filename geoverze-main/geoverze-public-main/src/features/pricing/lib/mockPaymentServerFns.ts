@@ -84,6 +84,9 @@ export const beginMockPaymentFn = createServerFn({ method: "POST" })
   .validator((raw: unknown) => BeginSchema.parse(raw))
   .handler(async ({ data }): Promise<BeginMockPaymentResult> => {
     assertMockEnabled();
+    if (data.plan_tier === "advance") {
+      throw new Error("Advance membership is coming soon and cannot be purchased yet.");
+    }
     const sb = makeAuthenticatedClient(data.access_token);
     const existing = await loadMembershipForCheckout(sb);
     const intent = evaluateMembershipCheckoutIntent({

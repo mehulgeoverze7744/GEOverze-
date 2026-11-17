@@ -32,32 +32,26 @@ export type EditorialItem = {
 
 interface EditorialCardProps {
   item: EditorialItem;
-  /**
-   * True for the first card in a 3+ item page: causes `lg:col-span-2 lg:row-span-2`
-   * so it becomes a large editorial hero tile on desktop.
-   */
-  isHero?: boolean;
   /** Called when the user taps the "+" icon (add-to-cart action). */
   onAdd?: () => void;
   className?: string;
 }
 
 /**
- * Editorial product tile — crisp image plate, then a solid content bar.
+ * Equal-size catalogue tile — 4:5 image plate, then a solid content bar.
  * A single `<Link>` covers the whole card; the "+" button sits above it and
  * prevents navigation via `stopPropagation`.
  */
-export function EditorialCard({ item, isHero, onAdd, className }: EditorialCardProps) {
+export function EditorialCard({ item, onAdd, className }: EditorialCardProps) {
   return (
     <article
       className={cn(
-        "gvrze-editorial-card group relative flex h-full min-h-[240px] flex-col overflow-hidden rounded-[11px] bg-[#ffffff]",
-        isHero ? "lg:col-span-2 lg:row-span-2" : "",
+        "gvrze-editorial-card group relative flex h-full min-w-0 flex-col overflow-hidden rounded-[11px] bg-[#ffffff]",
         className,
       )}
       data-coming-soon={item.comingSoon ? "true" : undefined}
     >
-      <div className="relative min-h-0 flex-1 overflow-hidden bg-[#d8d8d8]">
+      <div className="gvrze-editorial-card__media relative w-full overflow-hidden bg-[#d8d8d8]">
         {item.image ? (
           <img
             src={item.image}
@@ -88,10 +82,10 @@ export function EditorialCard({ item, isHero, onAdd, className }: EditorialCardP
         />
       )}
 
-      <div className="relative z-[3] flex shrink-0 items-center justify-between gap-3 bg-[#ffffff] px-4 py-3">
+      <div className="relative z-[3] flex h-[4.75rem] shrink-0 items-center justify-between gap-2 bg-[#ffffff] px-3 py-2 sm:h-[4.25rem] sm:gap-3 sm:px-4 sm:py-3">
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold leading-tight text-[#111111]">{item.name}</p>
-          <p className="mt-0.5 text-xs text-[#555555]">{item.priceLabel}</p>
+          <p className="truncate text-[13px] font-semibold leading-tight text-[#111111] sm:text-sm">{item.name}</p>
+          <p className="mt-0.5 line-clamp-2 text-[11px] leading-snug text-[#555555] sm:line-clamp-1 sm:text-xs">{item.priceLabel}</p>
         </div>
 
         {onAdd && !item.comingSoon ? (
@@ -103,7 +97,7 @@ export function EditorialCard({ item, isHero, onAdd, className }: EditorialCardP
               onAdd();
             }}
             aria-label={`Add ${item.name} to cart`}
-            className="pointer-events-auto flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#d8dee6] bg-[#ffffff] text-[#111111] transition-colors duration-200 hover:bg-[#f4f6f8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]/40"
+            className="pointer-events-auto flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#d8dee6] bg-[#ffffff] text-[#111111] transition-colors duration-200 hover:bg-[#f4f6f8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]/40 sm:h-9 sm:w-9"
           >
             <Plus className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
           </button>
