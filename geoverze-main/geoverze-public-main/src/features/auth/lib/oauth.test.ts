@@ -45,8 +45,16 @@ test("mapAuthError covers duplicate, credentials, and provider failures", () => 
   assert.equal(mapAuthError(""), "Something went wrong. Please try again.");
 });
 
+test("mapAuthError covers login, unverified, and logout-safe copy", () => {
+  assert.match(mapAuthError("Invalid login credentials", "invalid_credentials"), /incorrect/i);
+  assert.match(mapAuthError("Email not confirmed", "email_not_confirmed"), /confirm your email/i);
+  assert.match(mapAuthError("Token has expired or is invalid"), /expired/i);
+  assert.doesNotMatch(mapAuthError("Invalid login credentials"), /@/);
+});
+
 test("mapOAuthCallbackError treats cancellation as a recoverable state", () => {
   assert.match(mapOAuthCallbackError("access_denied"), /cancelled/i);
   assert.match(mapOAuthCallbackError("flow_state not found"), /expired/i);
   assert.match(mapOAuthCallbackError("otp_expired"), /confirmation or sign-in link/i);
+  assert.match(mapOAuthCallbackError("invalid_grant"), /could not be completed/i);
 });

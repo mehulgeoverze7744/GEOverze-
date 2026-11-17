@@ -9,8 +9,13 @@ export type SignupAuthError = {
 };
 
 export type SignupAuthData = {
-  user?: { identities?: Array<unknown> | null; email?: string | null } | null;
-  session?: unknown | null;
+  user?: {
+    identities?: Array<unknown> | null;
+    email?: string | null;
+    email_confirmed_at?: string | null;
+    confirmed_at?: string | null;
+  } | null;
+  session?: { user?: { email_confirmed_at?: string | null } | null } | null;
 };
 
 export type SignupInterpretation =
@@ -36,8 +41,11 @@ export function logSignupFailure(error: SignupAuthError) {
   console.info("[auth] signup failed", {
     code: error.code ?? null,
     status: error.status ?? null,
-    message: error.message ?? null,
   });
+}
+
+export function isConfirmedSignupSession(data: SignupAuthData | null | undefined): boolean {
+  return Boolean(data?.user?.email_confirmed_at || data?.user?.confirmed_at || data?.session?.user?.email_confirmed_at);
 }
 
 /**
@@ -54,7 +62,10 @@ export function interpretSignupResult(
   if (error) {
     return { kind: "error", message: mapAuthError(error.message, error.code) };
   }
-  if (data?.session) return { kind: "signed_in" };
+  if (data?.session) {
+    if (!isConfirmedSignupSession(data)) return { kind: "needs_confirmation" };
+    return { kind: "signed_in" };
+  }
   if (isDuplicateSignupUser(data?.user)) {
     return {
       kind: "existing_account",

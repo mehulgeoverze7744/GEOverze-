@@ -108,7 +108,7 @@ const HIGHLIGHTS_STANDARD = [
 export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
   {
     id: "cherry-blossom-tshirt",
-    name: "BLOOM T-Shirt",
+    name: "BLOOM",
     categoryLabel: "T-SHIRT",
     priceLabel: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#e29ecc",
@@ -174,7 +174,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
   },
   {
     id: "golden-arc-tshirt",
-    name: "TERRA T-Shirt",
+    name: "TERRA",
     categoryLabel: "T-SHIRT",
     priceLabel: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#8cc8e8",
@@ -228,7 +228,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
   },
   {
     id: "orbit-tshirt",
-    name: "ORBIT T-Shirt",
+    name: "ORBIT",
     categoryLabel: "T-SHIRT",
     priceLabel: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#6c0036",
@@ -431,7 +431,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
   },
   {
     id: "eclipse",
-    name: "ECLIPSE T-Shirt",
+    name: "ECLIPSE",
     categoryLabel: "T-SHIRT",
     priceLabel: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#2b2b2b",

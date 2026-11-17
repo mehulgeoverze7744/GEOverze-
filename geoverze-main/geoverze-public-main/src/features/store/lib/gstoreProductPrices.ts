@@ -40,21 +40,21 @@ export const GSTORE_PRODUCT_PRICES: Record<string, GstoreProductPrice> = {
   },
   "cherry-blossom-tshirt": {
     slug: "cherry-blossom-tshirt",
-    name: "BLOOM T-Shirt",
+    name: "BLOOM",
     priceMinor: 299_900,   // ₹2,999
     physical: true,
     category: "tshirts",
   },
   "golden-arc-tshirt": {
     slug: "golden-arc-tshirt",
-    name: "TERRA T-Shirt",
+    name: "TERRA",
     priceMinor: 299_900,   // ₹2,999
     physical: true,
     category: "tshirts",
   },
   "orbit-tshirt": {
     slug: "orbit-tshirt",
-    name: "ORBIT T-Shirt",
+    name: "ORBIT",
     priceMinor: 299_900,   // ₹2,999
     physical: true,
     category: "tshirts",
@@ -63,7 +63,7 @@ export const GSTORE_PRODUCT_PRICES: Record<string, GstoreProductPrice> = {
   // carts and order lookups still resolve to the same GST-inclusive price.
   "new-age-tshirt": {
     slug: "new-age-tshirt",
-    name: "ORBIT T-Shirt",
+    name: "ORBIT",
     priceMinor: 299_900,   // ₹2,999
     physical: true,
     category: "tshirts",
@@ -91,7 +91,7 @@ export const GSTORE_PRODUCT_PRICES: Record<string, GstoreProductPrice> = {
   },
   eclipse: {
     slug: "eclipse",
-    name: "ECLIPSE T-Shirt",
+    name: "ECLIPSE",
     priceMinor: 299_900,   // ₹2,999
     physical: true,
     category: "tshirts",

@@ -17,9 +17,21 @@ test("interpretSignupResult maps Auth errors", () => {
 
 test("interpretSignupResult treats a session as signed in", () => {
   assert.equal(
-    interpretSignupResult({ user: { identities: [{ id: "1" }] }, session: { access_token: "x" } }, null)
-      .kind,
+    interpretSignupResult(
+      {
+        user: { identities: [{ id: "1" }], email_confirmed_at: "2026-01-01T00:00:00Z" },
+        session: { user: { email_confirmed_at: "2026-01-01T00:00:00Z" } },
+      },
+      null,
+    ).kind,
     "signed_in",
+  );
+});
+
+test("interpretSignupResult does not treat an unconfirmed session as signed in", () => {
+  assert.equal(
+    interpretSignupResult({ user: { identities: [{ id: "1" }] }, session: { user: {} } }, null).kind,
+    "needs_confirmation",
   );
 });
 

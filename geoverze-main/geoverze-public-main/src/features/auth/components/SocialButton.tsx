@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { startGoogleOAuth } from "@/features/auth/lib/oauth";
+import { isGoogleOAuthInFlight, startGoogleOAuth } from "@/features/auth/lib/oauth";
 import { cn } from "@/lib/utils";
 
 const PROVIDERS = {
@@ -50,6 +50,7 @@ export function SocialButton({
       return;
     }
 
+    if (pending || isGoogleOAuthInFlight()) return;
     setPending(true);
     try {
       await startGoogleOAuth(next);

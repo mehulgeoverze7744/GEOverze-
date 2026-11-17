@@ -17,6 +17,7 @@ import {
   type FieldErrors,
   type ResetPasswordValues,
 } from "@/features/auth/lib/schemas";
+import { completeBrowserAuthCallback, replaceAuthCallbackUrl } from "@/features/auth/lib/completeBrowserAuthCallback";
 import { mapAuthError } from "@/features/auth/lib/oauth";
 import { useMockRequest } from "@/features/auth/lib/useMockRequest";
 import { supabase } from "@/lib/supabase/client";
@@ -26,19 +27,36 @@ export function ResetPasswordPage() {
   const [values, setValues] = useState<ResetPasswordValues>({ password: "", confirmPassword: "" });
   const [errors, setErrors] = useState<FieldErrors<ResetPasswordValues>>({});
   const [linkError, setLinkError] = useState<string | null>(null);
+  const [sessionReady, setSessionReady] = useState(false);
   const { state, error, run, reset } = useMockRequest();
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const code = new URLSearchParams(window.location.search).get("code");
-    if (!code) return;
-    void supabase.auth.exchangeCodeForSession(code).then(({ error: exchangeError }) => {
-      if (exchangeError) {
-        setLinkError(mapAuthError(exchangeError.message));
+    let cancelled = false;
+    void (async () => {
+      const result = await completeBrowserAuthCallback(window.location.href);
+      if (cancelled) return;
+      if (result.status === "session") {
+        replaceAuthCallbackUrl("/auth/reset-password");
+        setSessionReady(true);
         return;
       }
-      window.history.replaceState({}, document.title, "/auth/reset-password");
-    });
+      const existing = (await supabase.auth.getSession()).data.session;
+      if (existing?.user) {
+        replaceAuthCallbackUrl("/auth/reset-password");
+        setSessionReady(true);
+        return;
+      }
+      if (result.status === "error") {
+        replaceAuthCallbackUrl("/auth/reset-password");
+        setLinkError(result.message);
+        return;
+      }
+      setLinkError("Open the reset link from your email to choose a new password. The link expires after a short time.");
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const update = <K extends keyof ResetPasswordValues>(key: K, value: string) => {
@@ -57,8 +75,7 @@ export function ResetPasswordPage() {
     setErrors({});
     await run({
       action: async () => {
-        // Reaching this page via a valid recovery link already established a
-        // recovery session (supabase-js reads it from the URL on load).
+        // A valid recovery link is exchanged once by completeBrowserAuthCallback.
         const { error: updateError } = await supabase.auth.updateUser({
           password: parsed.data.password,
         });
@@ -112,7 +129,11 @@ export function ResetPasswordPage() {
               {...(errors.confirmPassword ? { error: errors.confirmPassword } : {})}
               required
             />
-            <AuthSubmitButton pending={state === "pending"} pendingLabel="Updating password">
+            <AuthSubmitButton
+              pending={state === "pending"}
+              pendingLabel="Updating password"
+              disabled={!sessionReady || Boolean(linkError)}
+            >
               Update password
             </AuthSubmitButton>
           </form>

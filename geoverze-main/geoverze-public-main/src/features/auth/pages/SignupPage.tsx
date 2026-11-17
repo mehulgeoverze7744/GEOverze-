@@ -91,15 +91,21 @@ export function SignupPage() {
         if (outcome.kind === "error" || outcome.kind === "existing_account") {
           return { ok: false, error: outcome.message };
         }
+        if (outcome.kind === "needs_confirmation" && data.session) {
+          await supabase.auth.signOut();
+        }
         return { ok: true };
       },
     });
     if (ok) {
       rememberVerifyEmail(parsed.data.email);
       const { data: sessionData } = await supabase.auth.getSession();
-      if (sessionData.session) {
+      if (sessionData.session?.user.email_confirmed_at) {
         navigate({ to: "/auth/age-verification" });
         return;
+      }
+      if (sessionData.session && !sessionData.session.user.email_confirmed_at) {
+        await supabase.auth.signOut();
       }
       navigate({ to: "/auth/verify-email", search: { email: parsed.data.email } });
     }

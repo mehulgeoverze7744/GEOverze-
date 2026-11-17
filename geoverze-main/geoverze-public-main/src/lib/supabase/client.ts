@@ -24,7 +24,9 @@ export const supabase = createClient<Database>(supabaseUrl ?? "", supabaseAnonKe
   auth: {
     persistSession: true,
     autoRefreshToken: true,
-    detectSessionInUrl: true,
+    // Callback routes own PKCE/OTP exchange. Auto-detect racing
+    // exchangeCodeForSession would consume the one-time code twice.
+    detectSessionInUrl: false,
     flowType: "pkce",
   },
 });

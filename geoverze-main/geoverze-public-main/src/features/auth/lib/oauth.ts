@@ -157,8 +157,21 @@ export function mapOAuthCallbackError(error: string | null | undefined): string 
   if (lower.includes("access_denied") || lower.includes("user cancelled") || lower.includes("denied")) {
     return "Google sign-in was cancelled. You can try again or use email and password.";
   }
-  if (lower.includes("otp_expired") || lower.includes("flow_state") || lower.includes("expired")) {
+  if (
+    lower.includes("otp_expired") ||
+    lower.includes("flow_state") ||
+    lower.includes("expired") ||
+    lower.includes("state has expired")
+  ) {
     return "This confirmation or sign-in link has expired. Request a new email from the verification page, or try signing in again.";
+  }
+  if (
+    lower.includes("invalid request") ||
+    lower.includes("invalid_grant") ||
+    lower.includes("bad_oauth") ||
+    lower.includes("unable to exchange")
+  ) {
+    return "Google sign-in could not be completed. Try again, or use email and password.";
   }
   return mapAuthError(raw);
 }
@@ -193,25 +206,45 @@ async function assertGoogleProviderEnabled() {
   }
 }
 
+let googleOAuthInFlight = false;
+
+export function isGoogleOAuthInFlight(): boolean {
+  return googleOAuthInFlight;
+}
+
+export function resetGoogleOAuthInFlightForTests() {
+  googleOAuthInFlight = false;
+}
+
 export async function startGoogleOAuth(next?: string | null) {
   if (typeof window === "undefined") {
     throw new Error("Google sign-in is only available in the browser.");
   }
+  if (googleOAuthInFlight) {
+    return;
+  }
+  googleOAuthInFlight = true;
   rememberAuthRedirect(next);
-  await assertGoogleProviderEnabled();
-  const { supabase } = await import("@/lib/supabase/client");
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: oauthCallbackUrl(),
-      queryParams: {
-        access_type: "offline",
-        prompt: "select_account",
+  try {
+    await assertGoogleProviderEnabled();
+    const { supabase } = await import("@/lib/supabase/client");
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: oauthCallbackUrl(),
+        queryParams: {
+          access_type: "offline",
+          prompt: "select_account",
+        },
       },
-    },
-  });
-  if (error) {
-    throw new Error(mapAuthError(error.message));
+    });
+    if (error) {
+      googleOAuthInFlight = false;
+      throw new Error(mapAuthError(error.message, error.code));
+    }
+  } catch (error) {
+    googleOAuthInFlight = false;
+    throw error;
   }
 }
 

@@ -1,37 +1,20 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import type { EmailOtpType } from "@supabase/supabase-js";
 
 import { PageShell } from "@/components/layout/PageShell";
 import { GeoButton } from "@/components/shared/GeoButton";
 import { Spinner } from "@/components/shared/Spinner";
 import { AuthLayout, ValidationMessage } from "@/features/auth/components";
+import { completeBrowserAuthCallback, replaceAuthCallbackUrl } from "@/features/auth/lib/completeBrowserAuthCallback";
 import {
   consumeStoredAuthRedirect,
-  mapAuthError,
-  mapOAuthCallbackError,
   resolvePostAuthDestination,
   safeInternalPath,
 } from "@/features/auth/lib/oauth";
-import { supabase } from "@/lib/supabase/client";
-
-const EMAIL_OTP_TYPES: readonly EmailOtpType[] = [
-  "signup",
-  "invite",
-  "magiclink",
-  "recovery",
-  "email_change",
-  "email",
-];
-
-function asEmailOtpType(value: string | null): EmailOtpType | null {
-  if (!value) return null;
-  return EMAIL_OTP_TYPES.includes(value as EmailOtpType) ? (value as EmailOtpType) : null;
-}
 
 /**
  * PKCE landing page for Google OAuth and email-confirmation links.
- * Exchanges `?code=` for a session, then continues the existing auth journey.
+ * This route is the only OAuth/email-code owner besides password recovery.
  */
 export function AuthCallbackPage() {
   const navigate = useNavigate();
@@ -42,65 +25,33 @@ export function AuthCallbackPage() {
 
     const finish = async () => {
       const url = new URL(window.location.href);
-      const oauthError =
-        url.searchParams.get("error_description") ??
-        url.searchParams.get("error") ??
-        url.hash.match(/error_description=([^&]+)/)?.[1] ??
-        url.hash.match(/error=([^&]+)/)?.[1];
-      const code = url.searchParams.get("code");
       const requestedNext =
         consumeStoredAuthRedirect() ?? safeInternalPath(url.searchParams.get("next"));
+      const result = await completeBrowserAuthCallback(window.location.href);
 
-      if (oauthError) {
-        if (!cancelled) setError(mapOAuthCallbackError(decodeURIComponent(oauthError.replace(/\+/g, " "))));
+      if (cancelled) return;
+
+      if (result.status === "error") {
+        replaceAuthCallbackUrl("/auth/callback");
+        setError(result.message);
         return;
       }
 
-      let session = (await supabase.auth.getSession()).data.session;
-
-      const tokenHash = url.searchParams.get("token_hash");
-      const otpType = asEmailOtpType(url.searchParams.get("type"));
-      if (!session && tokenHash && otpType) {
-        const { data, error: otpError } = await supabase.auth.verifyOtp({
-          type: otpType,
-          token_hash: tokenHash,
-        });
-        if (otpError) {
-          if (!cancelled) setError(mapAuthError(otpError.message, otpError.code));
-          return;
-        }
-        session = data.session;
-      }
-
-      if (!session && code) {
-        const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-        if (exchangeError) {
-          session = (await supabase.auth.getSession()).data.session;
-          if (!session) {
-            if (!cancelled) setError(mapOAuthCallbackError(exchangeError.message));
-            return;
-          }
-        } else {
-          session = data.session;
-        }
-      }
-
-      if (!session?.user) {
-        if (!cancelled) {
-          setError("Sign-in did not complete. Please try again.");
-        }
+      if (result.status === "empty" || !result.session?.user) {
+        replaceAuthCallbackUrl("/auth/callback");
+        setError("Sign-in did not complete. Please try again.");
         return;
       }
 
-      if (url.searchParams.get("type") === "recovery") {
-        window.history.replaceState({}, document.title, "/auth/reset-password");
+      if (result.recovery) {
+        replaceAuthCallbackUrl("/auth/reset-password");
         await navigate({ to: "/auth/reset-password", replace: true });
         return;
       }
 
-      const destination = await resolvePostAuthDestination(session.user.id, requestedNext);
+      const destination = await resolvePostAuthDestination(result.session.user.id, requestedNext);
       if (cancelled) return;
-      window.history.replaceState({}, document.title, "/auth/callback");
+      replaceAuthCallbackUrl("/auth/callback");
       await navigate({ to: destination as never, replace: true });
     };
 
@@ -122,7 +73,9 @@ export function AuthCallbackPage() {
             <ValidationMessage>{error}</ValidationMessage>
             <div className="flex flex-col gap-3 sm:flex-row">
               <GeoButton asChild variant="primary" className="flex-1">
-                <Link to="/auth/login">Return to sign in</Link>
+                <Link to="/auth/login" search={{ redirect: undefined }}>
+                  Return to sign in
+                </Link>
               </GeoButton>
               <GeoButton asChild variant="secondary" className="flex-1">
                 <Link to="/auth/signup">Create account</Link>

@@ -7,7 +7,11 @@ import { resolveStoreProduct } from "../lib/resolveStoreProduct";
 import { useStoreActions } from "../lib/useStoreActions";
 import { SF_ASSETS } from "./storefront-assets";
 import { SpecialColourBadge } from "./SpecialColourBadge";
-import { STOREFRONT_TEE_PRICE_LABEL, teeHasSpecialColourBadge } from "./storefront-product-data";
+import {
+  STOREFRONT_TEE_PRICE_LABEL,
+  storefrontTeeById,
+  teeHasSpecialColourBadge,
+} from "./storefront-product-data";
 import { ExploreMoreLink, SF_SHELL, SF_UI_FONT } from "./storefront-ui";
 
 type BestSeller = {
@@ -45,7 +49,7 @@ type BestSeller = {
  */
 const BEST_SELLERS: readonly BestSeller[] = [
   {
-    name: "ECLIPSE T-Shirt",
+    name: storefrontTeeById("eclipse")?.name ?? "ECLIPSE",
     price: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#2b2b2b",
     image: SF_ASSETS.bestSellerEclipse,
@@ -54,7 +58,7 @@ const BEST_SELLERS: readonly BestSeller[] = [
     cover: true,
   },
   {
-    name: "BLOOM T-Shirt",
+    name: storefrontTeeById("cherry-blossom-tshirt")?.name ?? "BLOOM",
     price: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#e8729a",
     image: SF_ASSETS.bestSellerCherryBlossom,
@@ -64,7 +68,7 @@ const BEST_SELLERS: readonly BestSeller[] = [
     cover: true,
   },
   {
-    name: "TERRA T-Shirt",
+    name: storefrontTeeById("golden-arc-tshirt")?.name ?? "TERRA",
     price: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#8cc8e8",
     image: SF_ASSETS.bestSellerGoldenArc,
@@ -74,7 +78,7 @@ const BEST_SELLERS: readonly BestSeller[] = [
     cover: true,
   },
   {
-    name: "ORBIT T-Shirt",
+    name: storefrontTeeById("orbit-tshirt")?.name ?? "ORBIT",
     price: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#6c0036",
     image: SF_ASSETS.bestSellerOrbit,
