@@ -6,6 +6,7 @@ import type { CartLine } from "@/stores/cartStore";
 
 import { productImageForSlug } from "../data/productImages";
 import { categoryIcon, categoryLabel } from "../data/taxonomy";
+import { resolveCartLine } from "../lib/cart";
 import { credits as formatCredits, money } from "../lib/format";
 
 function IconButton({
@@ -45,18 +46,19 @@ export function CartLineRow({
   onMoveToCart?: (id: string) => void;
   variant?: "cart" | "saved";
 }) {
-  const optionSummary = Object.entries(line.options)
+  const display = resolveCartLine(line);
+  const optionSummary = Object.entries(display.options)
     .map(([k, v]) => `${k}: ${v}`)
     .join(" · ");
-  const image = productImageForSlug(line.slug);
+  const image = productImageForSlug(display.slug);
 
   return (
     <div className="flex gap-4 border-b border-bronze/10 py-5 last:border-0">
       <Link
         to="/geostore/product/$slug"
-        params={{ slug: line.slug }}
+        params={{ slug: display.slug }}
         className="w-20 shrink-0 overflow-hidden rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
-        aria-label={line.name}
+        aria-label={display.name}
       >
         {image ? (
           <img src={image.src} alt={image.alt} className="aspect-square w-full object-cover" />
@@ -72,10 +74,10 @@ export function CartLineRow({
         <h3 className="mt-1 text-sm font-light text-foreground">
           <Link
             to="/geostore/product/$slug"
-            params={{ slug: line.slug }}
+            params={{ slug: display.slug }}
             className="transition-colors motion-fast hover:text-bronze-glow"
           >
-            {line.name}
+            {display.name}
           </Link>
         </h3>
         {optionSummary ? (
@@ -86,7 +88,7 @@ export function CartLineRow({
           {variant === "cart" && onQuantity ? (
             <div className="flex items-center gap-2">
               <IconButton
-                label={`Decrease quantity of ${line.name}`}
+                label={`Decrease quantity of ${display.name}`}
                 onClick={() => onQuantity(line.id, line.quantity - 1)}
               >
                 <Minus className="h-3.5 w-3.5" />
@@ -95,7 +97,7 @@ export function CartLineRow({
                 {line.quantity}
               </span>
               <IconButton
-                label={`Increase quantity of ${line.name}`}
+                label={`Increase quantity of ${display.name}`}
                 onClick={() => onQuantity(line.id, line.quantity + 1)}
               >
                 <Plus className="h-3.5 w-3.5" />
@@ -125,7 +127,7 @@ export function CartLineRow({
             </button>
           ) : null}
 
-          <IconButton label={`Remove ${line.name}`} onClick={() => onRemove(line.id)}>
+          <IconButton label={`Remove ${display.name}`} onClick={() => onRemove(line.id)}>
             <Trash2 className="h-3.5 w-3.5" />
           </IconButton>
         </div>

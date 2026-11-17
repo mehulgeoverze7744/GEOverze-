@@ -18,10 +18,10 @@ export const SF_ASSETS = {
   featured: { src: `${BASE}/featured-collection.webp`, width: 1881, height: 836 },
   shadowFeatured: { src: `${BASE}/shadow-featured.svg`, width: 593, height: 338 },
   brand: { src: `${BASE}/brand-statement.webp`, width: 2050, height: 767 },
-  bestSellerMidnightBlack: {
-    src: `${BASE}/best-sellers/midnight-black-tshirt.webp`,
-    width: 1024,
-    height: 1536,
+  bestSellerEclipse: {
+    src: `${BASE}/best-sellers/eclipse/ec-5.jpg`,
+    width: 819,
+    height: 1024,
   },
   bestSellerCherryBlossom: {
     src: `${BASE}/best-sellers/cherry-blossom/cb-7.jpg`,
@@ -29,12 +29,12 @@ export const SF_ASSETS = {
     height: 1024,
   },
   bestSellerGoldenArc: {
-    src: `${BASE}/best-sellers/golden-arc/ga-2.jpg`,
+    src: `${BASE}/best-sellers/golden-arc/ga-3.jpg`,
     width: 819,
     height: 1024,
   },
-  bestSellerNewAge: {
-    src: `${BASE}/best-sellers/new-age/na-1.jpg`,
+  bestSellerOrbit: {
+    src: `${BASE}/best-sellers/orbit/or-1.jpg`,
     width: 819,
     height: 1024,
   },

@@ -14,10 +14,12 @@ describe("Gstore catalog availability", () => {
   it("retires Flag Sticker Pack and Continent Sticker Set", () => {
     assert.equal(isRetiredProductSlug("flag-sticker-pack"), true);
     assert.equal(isRetiredProductSlug("continent-sticker-set"), true);
-    assert.equal(RETIRED_PRODUCT_SLUGS.size, 2);
+    assert.equal(isRetiredProductSlug("midnight-black-tshirt"), true);
+    assert.equal(RETIRED_PRODUCT_SLUGS.size, 3);
     assert.equal(isPurchaseLockedProduct({ slug: "flag-sticker-pack", category: "stickers" }), true);
     assert.equal(isSlugAvailableForSale("flag-sticker-pack", "accessories"), false);
     assert.equal(isSlugAvailableForSale("continent-sticker-set", "accessories"), false);
+    assert.equal(isSlugAvailableForSale("midnight-black-tshirt", "tshirts"), false);
   });
 
   it("keeps remaining sticker packs purchasable", () => {
@@ -40,7 +42,12 @@ describe("Gstore catalog availability", () => {
   });
 
   it("does not lock storefront T-shirts", () => {
-    assert.ok(STOREFRONT_TEES.some((tee) => tee.id === "midnight-black-tshirt"));
+    assert.ok(STOREFRONT_TEES.every((tee) => tee.id !== "midnight-black-tshirt"));
+    assert.ok(STOREFRONT_TEES.some((tee) => tee.id === "ignite"));
+    assert.ok(STOREFRONT_TEES.some((tee) => tee.id === "eden"));
+    assert.ok(STOREFRONT_TEES.some((tee) => tee.id === "orbit-tshirt"));
+    assert.ok(STOREFRONT_TEES.some((tee) => tee.id === "pace"));
+    assert.ok(STOREFRONT_TEES.some((tee) => tee.id === "eclipse"));
     for (const tee of STOREFRONT_TEES) {
       assert.equal(isPurchaseLockedProduct({ slug: tee.id, category: "tshirts" }), false);
       assert.equal(isSlugAvailableForSale(tee.id, "tshirts"), true);

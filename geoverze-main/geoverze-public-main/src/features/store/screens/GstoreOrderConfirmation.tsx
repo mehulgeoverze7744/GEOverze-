@@ -28,7 +28,7 @@ import {
   type GstoreOrderDetail,
   type GuestOrderRow,
 } from "../lib/gstoreServerFns";
-import { formatInrPaise } from "../lib/gstoreProductPrices";
+import { displayGstoreProductName, formatInrPaise } from "../lib/gstoreProductPrices";
 import { StorefrontNav } from "../storefront/StorefrontNav";
 import { GstoreRetryPaymentButton } from "./GstoreRetryPaymentButton";
 import "../storefront/storefront.css";
@@ -257,7 +257,9 @@ function OrderDetailCard({ order }: { order: GstoreOrderDetail }) {
         {order.items.map((item, i) => (
           <div key={i} className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-[13px] font-medium text-black">{item.product_name}</p>
+              <p className="text-[13px] font-medium text-black">
+                {displayGstoreProductName(item.product_slug, item.product_name)}
+              </p>
               {Object.entries(item.options ?? {}).length > 0 && (
                 <p className="text-[11px] text-[#777]">
                   {Object.entries(item.options).map(([k, v]) => `${k}: ${v}`).join(" · ")}

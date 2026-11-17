@@ -12,6 +12,7 @@ import type { StoreCategoryId } from "./taxonomy";
 export const RETIRED_PRODUCT_SLUGS = new Set([
   "flag-sticker-pack",
   "continent-sticker-set",
+  "midnight-black-tshirt",
 ]);
 
 /**

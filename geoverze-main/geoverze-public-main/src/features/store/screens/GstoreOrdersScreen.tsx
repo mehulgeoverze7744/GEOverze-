@@ -20,7 +20,7 @@ import { supabase } from "@/lib/supabase/client";
 import { selectUser, useAuthStore } from "@/stores/authStore";
 
 import { getMyGstoreOrdersFn, type GstoreOrderRow } from "../lib/gstoreServerFns";
-import { formatInrPaise } from "../lib/gstoreProductPrices";
+import { displayGstoreProductName, formatInrPaise } from "../lib/gstoreProductPrices";
 import { StorefrontSolidShell } from "../storefront/StorefrontSolidShell";
 import { SF_SHELL, SF_UI_FONT } from "../storefront/storefront-ui";
 import {
@@ -69,7 +69,9 @@ function GstoreOrderCard({ order }: { order: GstoreOrderRow }) {
           {order.items.slice(0, 3).map((item, i) => (
             <div key={i} className="flex items-center justify-between gap-3 text-[13px]">
               <div className="min-w-0">
-                <p className="truncate font-medium text-[#1f2937]">{item.product_name}</p>
+                <p className="truncate font-medium text-[#1f2937]">
+                  {displayGstoreProductName(item.product_slug, item.product_name)}
+                </p>
                 {Object.entries(item.options ?? {}).length > 0 && (
                   <p className="text-[11px] text-[#6b7280]">
                     {Object.entries(item.options).map(([k, v]) => `${k}: ${v}`).join(" · ")}

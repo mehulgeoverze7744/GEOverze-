@@ -29,24 +29,24 @@ const ON_MODEL_MOCKUPS: Record<string, Record<string, OnModelMockup>> = {};
 
 /** Which view the signature catalogue photo actually shows. */
 const SIGNATURE_PHOTO_VIEW: Record<string, ModelView> = {
-  "midnight-black-tshirt": "back",
   "cherry-blossom-tshirt": "back",
   "golden-arc-tshirt": "front",
   "new-age-tshirt": "back",
+  "orbit-tshirt": "back",
 };
 
 const SIGNATURE_PRINT: Record<string, string> = {
-  "midnight-black-tshirt": "/assets/gvrze-tryon/midnight-black-back-print.webp",
   "cherry-blossom-tshirt": "/assets/gvrze-tryon/cherry-blossom-back-print.webp",
   "golden-arc-tshirt": "/assets/gvrze-tryon/golden-arc-front-print.webp",
   "new-age-tshirt": "/assets/gvrze-tryon/new-age-back-print.webp",
+  "orbit-tshirt": "/assets/gvrze-tryon/new-age-back-print.webp",
 };
 
 const SIGNATURE_DYE: Record<string, string> = {
-  "midnight-black-tshirt": "#111111",
   "cherry-blossom-tshirt": "#c45b7a",
   "golden-arc-tshirt": "#d4b08c",
   "new-age-tshirt": "#6b1a32",
+  "orbit-tshirt": "#6b1a32",
 };
 
 export function getOnModelMockup(slug: string, colorId: string): OnModelMockup | undefined {

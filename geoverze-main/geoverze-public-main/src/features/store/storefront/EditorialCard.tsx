@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { ComingSoonImageOverlay } from "./ComingSoonImageOverlay";
+import { SpecialColourBadge } from "./SpecialColourBadge";
 
 /**
  * Unified shape for an item displayed in the editorial category grid.
@@ -25,6 +26,8 @@ export type EditorialItem = {
   previewDisabled?: boolean;
   /** Letterbox the photo instead of cropping — used for sticker sheets. */
   imageContain?: boolean;
+  /** Exclusive colourway badge on the image (BLOOM). */
+  specialColour?: boolean;
 };
 
 interface EditorialCardProps {
@@ -73,6 +76,7 @@ export function EditorialCard({ item, isHero, onAdd, className }: EditorialCardP
           <div className="absolute inset-0 bg-[#d8d8d8]" />
         )}
         {item.comingSoon ? <ComingSoonImageOverlay /> : null}
+        {item.specialColour ? <SpecialColourBadge className="z-[4]" /> : null}
       </div>
 
       {item.comingSoon && item.previewDisabled ? null : (

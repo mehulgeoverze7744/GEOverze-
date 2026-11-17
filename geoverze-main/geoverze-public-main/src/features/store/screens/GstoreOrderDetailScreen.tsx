@@ -18,7 +18,7 @@ import { supabase } from "@/lib/supabase/client";
 import { selectUser, useAuthStore } from "@/stores/authStore";
 
 import { getGstoreOrderDetailFn } from "../lib/gstoreServerFns";
-import { formatInrPaise } from "../lib/gstoreProductPrices";
+import { displayGstoreProductName, formatInrPaise } from "../lib/gstoreProductPrices";
 import { StorefrontSolidShell } from "../storefront/StorefrontSolidShell";
 import { SF_SHELL, SF_UI_FONT } from "../storefront/storefront-ui";
 import {
@@ -131,7 +131,9 @@ export function GstoreOrderDetailScreen() {
                       <Package className="h-5 w-5 text-[#9ca3af]" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[13px] font-medium leading-snug text-[#111827]">{item.product_name}</p>
+                      <p className="text-[13px] font-medium leading-snug text-[#111827]">
+                        {displayGstoreProductName(item.product_slug, item.product_name)}
+                      </p>
                       {Object.entries(item.options ?? {}).length > 0 && (
                         <p className="mt-0.5 text-[11px] text-[#6b7280]">
                           {Object.entries(item.options).map(([k, v]) => `${k}: ${v}`).join(" · ")}

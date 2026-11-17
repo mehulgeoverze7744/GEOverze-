@@ -1,7 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import { ProductScreen } from "@/features/store/components/CatalogueScreens";
-import { storefrontTeeById } from "@/features/store/storefront/storefront-product-data";
+import {
+  STOREFRONT_TEE_SLUG_ALIASES,
+  storefrontTeeById,
+} from "@/features/store/storefront/storefront-product-data";
 
 /** Build product-specific SEO meta when the slug is known at route-eval time. */
 function buildProductMeta(slug: string) {
@@ -37,6 +40,16 @@ function buildProductMeta(slug: string) {
 }
 
 export const Route = createFileRoute("/geostore/product/$slug")({
+  beforeLoad: ({ params }) => {
+    const canonical = STOREFRONT_TEE_SLUG_ALIASES[params.slug];
+    if (canonical) {
+      throw redirect({
+        to: "/geostore/product/$slug",
+        params: { slug: canonical },
+        replace: true,
+      });
+    }
+  },
   head: ({ params }) => ({
     meta: buildProductMeta(params.slug),
   }),

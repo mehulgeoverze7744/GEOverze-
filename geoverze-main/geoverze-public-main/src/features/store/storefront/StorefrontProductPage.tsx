@@ -25,6 +25,7 @@ import { defaultOptions } from "../lib/cart";
 import { resolveStoreProduct } from "../lib/resolveStoreProduct";
 import { useStoreActions } from "../lib/useStoreActions";
 import { ComingSoonImageOverlay } from "./ComingSoonImageOverlay";
+import { SpecialColourBadge } from "./SpecialColourBadge";
 import { SizeGuideDialog } from "./SizeGuideDialog";
 import { StorefrontNav } from "./StorefrontNav";
 import { StorefrontProductImage } from "./StorefrontProductImage";
@@ -104,6 +105,8 @@ export type StorefrontProductPageProps = {
   categorySlug?: string;
   /** Lookbook preview — blurred gallery, disabled purchase, wishlist still works. */
   comingSoon?: boolean;
+  /** Exclusive colourway badge on the main gallery image. */
+  specialColour?: boolean;
   /** Third-tab label. Defaults to Washcare so T-shirt pages stay unchanged. */
   careTabLabel?: string;
 };
@@ -236,6 +239,7 @@ function RelatedCard({ product }: { product: SFRelatedProduct }) {
           />
           {product.comingSoon ? <ComingSoonImageOverlay /> : null}
         </Link>
+        {teeHasSpecialColourBadge(product.slug) ? <SpecialColourBadge /> : null}
       </div>
       <div className="mt-3 flex items-end justify-between gap-2 px-0.5">
         <div className="min-w-0">
@@ -290,6 +294,7 @@ export function StorefrontProductPage({
   related = [],
   categorySlug = "tshirts",
   comingSoon = false,
+  specialColour = false,
   careTabLabel = "Washcare",
 }: StorefrontProductPageProps) {
   const colorPickerColors =
@@ -599,6 +604,7 @@ export function StorefrontProductPage({
                   className="aspect-[562/684] h-auto w-full max-w-full"
                 />
                 {comingSoon ? <ComingSoonImageOverlay /> : null}
+                {specialColour ? <SpecialColourBadge /> : null}
               </div>
             </div>
           </div>
@@ -858,6 +864,7 @@ export function StorefrontProductPage({
 import {
   relatedStorefrontTees,
   teeDefaultGallery,
+  teeHasSpecialColourBadge,
   teeShowsColorSelector,
   type StorefrontTeeProduct,
 } from "./storefront-product-data";
@@ -906,6 +913,7 @@ export function StorefrontTeeProductPage({ tee }: { tee: StorefrontTeeProduct })
       categorySlug="tshirts"
       sizes={[...TSHIRT_SELECTABLE_SIZES]}
       showQuantity
+      specialColour={tee.specialColour === true}
     />
   );
 }

@@ -6,7 +6,8 @@ import { defaultOptions } from "../lib/cart";
 import { resolveStoreProduct } from "../lib/resolveStoreProduct";
 import { useStoreActions } from "../lib/useStoreActions";
 import { SF_ASSETS } from "./storefront-assets";
-import { STOREFRONT_TEE_PRICE_LABEL } from "./storefront-product-data";
+import { SpecialColourBadge } from "./SpecialColourBadge";
+import { STOREFRONT_TEE_PRICE_LABEL, teeHasSpecialColourBadge } from "./storefront-product-data";
 import { ExploreMoreLink, SF_SHELL, SF_UI_FONT } from "./storefront-ui";
 
 type BestSeller = {
@@ -44,45 +45,41 @@ type BestSeller = {
  */
 const BEST_SELLERS: readonly BestSeller[] = [
   {
-    name: "Midnight Black T-Shirt",
+    name: "ECLIPSE T-Shirt",
     price: STOREFRONT_TEE_PRICE_LABEL,
-    tone: "#000000",
-    image: SF_ASSETS.bestSellerMidnightBlack,
-    alt: "Midnight Black T-Shirt, back view",
-    slug: "midnight-black-tshirt",
-    // Figma-precise: x 12, y 24, 293×383; photo 114.75% tall, anchored top.
-    frame: { left: "3.704%", top: "5.897%", width: "90.432%", height: "94.103%" },
-    imageStyle: { height: "114.75%", top: "-0.07%" },
-    clip: true,
+    tone: "#2b2b2b",
+    image: SF_ASSETS.bestSellerEclipse,
+    alt: "GVRZE ECLIPSE T-Shirt in Charcoal Black — model wearing the tee, front view with monochrome world-map artwork",
+    slug: "eclipse",
+    cover: true,
   },
   {
-    name: "Cherry Blossom T-Shirt",
+    name: "BLOOM T-Shirt",
     price: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#e8729a",
     image: SF_ASSETS.bestSellerCherryBlossom,
-    alt: "Cherry Blossom T-Shirt in Cherry Blossom Pink — model back view showing full GVRZE graphic",
+    alt: "BLOOM T-Shirt in Cherry Blossom Pink — model back view showing full GVRZE graphic",
     slug: "cherry-blossom-tshirt",
     // Portrait model shot — full-bleed cover mode (image fills card edge-to-edge).
     cover: true,
   },
   {
-    name: "Golden Arc T-Shirt",
+    name: "TERRA T-Shirt",
     price: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#8cc8e8",
     image: SF_ASSETS.bestSellerGoldenArc,
-    alt: "Golden Arc T-Shirt in Skyblue — back view showing celestial globe graphic and GVRZE wordmark",
+    alt: "TERRA T-Shirt in Sky Blue — front and back product photograph",
     slug: "golden-arc-tshirt",
     // Portrait model shot — full-bleed cover mode (image fills card edge-to-edge).
     cover: true,
   },
   {
-    name: "New Age T-Shirt",
+    name: "ORBIT T-Shirt",
     price: STOREFRONT_TEE_PRICE_LABEL,
     tone: "#6c0036",
-    image: SF_ASSETS.bestSellerNewAge,
-    alt: "New Age T-Shirt in Rose Wine Burgundy — front view showing celestial sleeve artwork and GVRZE wordmark",
-    slug: "new-age-tshirt",
-    // Portrait model/product shot — full-bleed cover mode (image fills card edge-to-edge).
+    image: SF_ASSETS.bestSellerOrbit,
+    alt: "ORBIT T-Shirt in Rose Wine Burgundy — front product view with sleeve artwork, star emblem and GVRZE wordmark",
+    slug: "orbit-tshirt",
     cover: true,
   },
 ];
@@ -163,6 +160,7 @@ function BestSellerCard({ item }: { item: BestSeller }) {
           {coverImage}
           {framedImage}
         </Link>
+        {teeHasSpecialColourBadge(item.slug) ? <SpecialColourBadge /> : null}
       </div>
 
       <div className="mt-3.5 flex items-end justify-between gap-2 px-0.5 sm:px-3">

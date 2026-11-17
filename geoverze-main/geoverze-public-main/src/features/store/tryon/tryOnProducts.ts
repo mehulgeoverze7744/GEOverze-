@@ -70,12 +70,6 @@ export type TryOnGarment = {
 };
 
 const SIGNATURE_SWATCH: Record<string, TryOnColor> = {
-  "midnight-black-tshirt": {
-    id: "black",
-    label: "Black",
-    hex: "#111111",
-    image: "/assets/gvrze-storefront/best-sellers/midnight-black-tshirt.webp",
-  },
   "cherry-blossom-tshirt": {
     id: "black",
     label: "Black",
@@ -86,13 +80,19 @@ const SIGNATURE_SWATCH: Record<string, TryOnColor> = {
     id: "black",
     label: "Black",
     hex: "#111111",
-    image: "/assets/gvrze-storefront/best-sellers/golden-arc-tshirt.webp",
+    image: "/assets/gvrze-storefront/best-sellers/golden-arc/ga-3.jpg",
   },
   "new-age-tshirt": {
     id: "black",
     label: "Black",
     hex: "#111111",
-    image: "/assets/gvrze-storefront/best-sellers/new-age-tshirt.webp",
+    image: "/assets/gvrze-storefront/best-sellers/orbit/or-1.jpg",
+  },
+  "orbit-tshirt": {
+    id: "black",
+    label: "Black",
+    hex: "#111111",
+    image: "/assets/gvrze-storefront/best-sellers/orbit/or-1.jpg",
   },
 };
 

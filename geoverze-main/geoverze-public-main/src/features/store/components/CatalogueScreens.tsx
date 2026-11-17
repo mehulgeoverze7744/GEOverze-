@@ -29,7 +29,7 @@ import {
 import { ComingSoonLockChip } from "./ComingSoonLockChip";
 import { GeostoreProductPageBackground } from "./GeostoreProductPageBackground";
 import { MerchProductScreen } from "./MerchProductScreen";
-import { storefrontTeeById } from "../storefront/storefront-product-data";
+import { storefrontTeeById, teeHasSpecialColourBadge } from "../storefront/storefront-product-data";
 import { ComingSoonProductPage } from "../storefront/ComingSoonProductPage";
 import {
   StorefrontProductPage,
@@ -137,6 +137,7 @@ function productToEditorial(p: Product): EditorialItem {
     alt: img?.alt ?? p.name,
     comingSoon,
     imageContain: p.category === "stickers",
+    specialColour: teeHasSpecialColourBadge(p.slug),
   };
 }
 
@@ -743,7 +744,7 @@ export function ProductScreen() {
     if (product) view(product.slug);
   }, [product, view]);
 
-  // Storefront signature tees (Midnight Black, Cherry Blossom, Golden Arc, New Age)
+  // Storefront signature tees (BLOOM, TERRA, ORBIT, ECLIPSE)
   // get the clean-white storefront design. This check is placed after all hooks
   // so the Rules of Hooks are satisfied on every render path.
   if (isRetiredProductSlug(slug)) {

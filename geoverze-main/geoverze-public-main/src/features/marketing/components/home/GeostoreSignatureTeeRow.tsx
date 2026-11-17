@@ -2,10 +2,14 @@ import { Link } from "@tanstack/react-router";
 import { memo } from "react";
 
 import { SectionContainer } from "@/components/shared";
-import { storefrontTeeById } from "@/features/store/storefront/storefront-product-data";
+import { SpecialColourBadge } from "@/features/store/storefront/SpecialColourBadge";
+import {
+  storefrontTeeById,
+  teeHasSpecialColourBadge,
+} from "@/features/store/storefront/storefront-product-data";
 
 const HOMEPAGE_TEE_IDS = [
-  "midnight-black-tshirt",
+  "eclipse",
   "cherry-blossom-tshirt",
   "golden-arc-tshirt",
 ] as const;
@@ -27,13 +31,14 @@ export const GeostoreSignatureTeeRow = memo(function GeostoreSignatureTeeRow() {
               className="geostore-tee-card"
               aria-label={tee.name}
             >
-              <span className="geostore-tee-card__media">
+              <span className="geostore-tee-card__media relative">
                 <img
                   src={tee.image.src}
                   alt={tee.image.alt}
                   loading="lazy"
                   decoding="async"
                 />
+                {teeHasSpecialColourBadge(tee.id) ? <SpecialColourBadge /> : null}
               </span>
               <span className="geostore-tee-card__name">{tee.name}</span>
             </Link>

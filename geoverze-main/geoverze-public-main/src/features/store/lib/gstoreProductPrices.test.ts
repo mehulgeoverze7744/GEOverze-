@@ -11,9 +11,23 @@ import {
 } from "./gstoreProductPrices.ts";
 
 test("signature tees are ₹2,999 GST-inclusive", () => {
-  const tee = getProductPrice("midnight-black-tshirt");
-  assert.ok(tee);
-  assert.equal(tee.priceMinor, 299_900);
+  for (const slug of [
+    "midnight-black-tshirt",
+    "cherry-blossom-tshirt",
+    "golden-arc-tshirt",
+    "orbit-tshirt",
+    "new-age-tshirt",
+    "ignite",
+    "eden",
+    "pace",
+    "eclipse",
+  ]) {
+    const tee = getProductPrice(slug);
+    assert.ok(tee, slug);
+    assert.equal(tee.priceMinor, 299_900);
+    assert.equal(tee.physical, true);
+    assert.equal(tee.category, "tshirts");
+  }
 });
 
 test("GST is extracted from inclusive MRP and never added again", () => {

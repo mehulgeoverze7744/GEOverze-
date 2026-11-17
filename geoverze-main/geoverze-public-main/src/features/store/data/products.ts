@@ -8,6 +8,7 @@
 import { merchProductById } from "@/features/marketing/data/geostoreMerch";
 
 import {
+  canonicalStorefrontTeeSlug,
   STOREFRONT_TEE_CREDIT_PRICE,
   STOREFRONT_TEES,
   type StorefrontTeeProduct,
@@ -160,10 +161,13 @@ const STOREFRONT_TEE_RANK: Record<
   string,
   { popularity: number; reviews: number; rating: number; bestSeller?: boolean }
 > = {
-  "midnight-black-tshirt": { popularity: 96, reviews: 72, rating: 4.9, bestSeller: true },
   "cherry-blossom-tshirt": { popularity: 90, reviews: 64, rating: 4.9, bestSeller: true },
-  "new-age-tshirt": { popularity: 85, reviews: 48, rating: 4.8 },
+  "orbit-tshirt": { popularity: 85, reviews: 48, rating: 4.8 },
   "golden-arc-tshirt": { popularity: 82, reviews: 36, rating: 4.8 },
+  ignite: { popularity: 88, reviews: 12, rating: 4.9, bestSeller: false },
+  eden: { popularity: 87, reviews: 10, rating: 4.9, bestSeller: false },
+  pace: { popularity: 86, reviews: 8, rating: 4.9, bestSeller: false },
+  eclipse: { popularity: 85, reviews: 8, rating: 4.9, bestSeller: true },
 };
 
 function storefrontTeeDraft(tee: StorefrontTeeProduct): Draft {
@@ -1065,7 +1069,11 @@ export const PRODUCTS: readonly Product[] = [
 ];
 
 export function productBySlug(slug: string): Product | undefined {
-  return PRODUCTS.find((p) => p.slug === slug);
+  const direct = PRODUCTS.find((p) => p.slug === slug);
+  if (direct) return direct;
+  const canonical = canonicalStorefrontTeeSlug(slug);
+  if (canonical === slug) return undefined;
+  return PRODUCTS.find((p) => p.slug === canonical);
 }
 
 export function productById(id: string): Product | undefined {

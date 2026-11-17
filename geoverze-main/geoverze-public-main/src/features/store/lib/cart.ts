@@ -1,7 +1,7 @@
 /** Turns catalogue products into cart lines. */
 import type { CartLine } from "@/stores/cartStore";
 
-import type { Product } from "../data/products";
+import { productBySlug, type Product } from "../data/products";
 
 /** Stable line key so the same variant merges instead of duplicating. */
 export function lineKey(product: Product, options: Record<string, string>): string {
@@ -47,4 +47,11 @@ export function cartLineIdForProduct(product: Product, options?: Record<string, 
 
 export function isCartLinePresent(lines: CartLine[], lineId: string): boolean {
   return lines.some((line) => line.id === lineId);
+}
+
+/** Live catalogue name/slug for renamed products (e.g. New Age → ORBIT). */
+export function resolveCartLine(line: CartLine): CartLine {
+  const product = productBySlug(line.slug);
+  if (!product) return line;
+  return { ...line, slug: product.slug, name: product.name };
 }

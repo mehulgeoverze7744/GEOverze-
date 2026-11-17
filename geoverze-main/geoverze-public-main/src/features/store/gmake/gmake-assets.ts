@@ -19,7 +19,6 @@ export const GMAKE_ASSETS = {
 
 export const GMAKE_PRINTS = {
   "cherry-blossom-tshirt": "/assets/gvrze-tryon/cherry-blossom-back-print.webp",
-  "midnight-black-tshirt": "/assets/gvrze-tryon/midnight-black-back-print.webp",
   "golden-arc-tshirt": "/assets/gvrze-tryon/golden-arc-front-print.webp",
   "new-age-tshirt": "/assets/gvrze-tryon/new-age-back-print.webp",
 } as const;

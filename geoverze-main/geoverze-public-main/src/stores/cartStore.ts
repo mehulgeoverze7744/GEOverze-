@@ -92,7 +92,7 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: GVRZE_PERSIST_NAMES.cart,
-      version: 3,
+      version: 4,
       storage: createJSONStorage(() => createBrandStateStorage()),
       migrate: (persisted) => {
         const state = persisted as CartState;

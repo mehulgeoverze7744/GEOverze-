@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils";
 import { useCartStore } from "@/stores/cartStore";
 
 import { ComingSoonImageOverlay } from "../storefront/ComingSoonImageOverlay";
+import { SpecialColourBadge } from "../storefront/SpecialColourBadge";
+import { teeHasSpecialColourBadge } from "../storefront/storefront-product-data";
 import { ComingSoonLockChip } from "./ComingSoonLockChip";
 import { OwnedBadge } from "./OwnedBadge";
 import { PriceTag } from "./PriceTag";
@@ -171,6 +173,9 @@ export function ProductCard({
                   )}
                 />
                 {purchaseLocked ? <ComingSoonImageOverlay /> : null}
+                {teeHasSpecialColourBadge(product.slug) ? (
+                  <SpecialColourBadge className="right-3 top-3" />
+                ) : null}
               </div>
             )}
           </>

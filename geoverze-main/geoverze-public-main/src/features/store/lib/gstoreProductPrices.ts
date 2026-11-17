@@ -30,6 +30,7 @@ export type GstoreProductPrice = {
  */
 export const GSTORE_PRODUCT_PRICES: Record<string, GstoreProductPrice> = {
   // ── Storefront Signature Tees ─────────────────────────────────────────
+  // Retired from the live storefront. Kept so historical orders still resolve.
   "midnight-black-tshirt": {
     slug: "midnight-black-tshirt",
     name: "Midnight Black T-Shirt",
@@ -39,21 +40,58 @@ export const GSTORE_PRODUCT_PRICES: Record<string, GstoreProductPrice> = {
   },
   "cherry-blossom-tshirt": {
     slug: "cherry-blossom-tshirt",
-    name: "Cherry Blossom T-Shirt",
+    name: "BLOOM T-Shirt",
     priceMinor: 299_900,   // ₹2,999
     physical: true,
     category: "tshirts",
   },
   "golden-arc-tshirt": {
     slug: "golden-arc-tshirt",
-    name: "Golden Arc T-Shirt",
+    name: "TERRA T-Shirt",
     priceMinor: 299_900,   // ₹2,999
     physical: true,
     category: "tshirts",
   },
+  "orbit-tshirt": {
+    slug: "orbit-tshirt",
+    name: "ORBIT T-Shirt",
+    priceMinor: 299_900,   // ₹2,999
+    physical: true,
+    category: "tshirts",
+  },
+  // Alias: New Age was renamed to ORBIT. Keep the old slug so historical
+  // carts and order lookups still resolve to the same GST-inclusive price.
   "new-age-tshirt": {
     slug: "new-age-tshirt",
-    name: "New Age T-Shirt",
+    name: "ORBIT T-Shirt",
+    priceMinor: 299_900,   // ₹2,999
+    physical: true,
+    category: "tshirts",
+  },
+  ignite: {
+    slug: "ignite",
+    name: "IGNITE",
+    priceMinor: 299_900,   // ₹2,999
+    physical: true,
+    category: "tshirts",
+  },
+  eden: {
+    slug: "eden",
+    name: "EDEN",
+    priceMinor: 299_900,   // ₹2,999
+    physical: true,
+    category: "tshirts",
+  },
+  pace: {
+    slug: "pace",
+    name: "PACE",
+    priceMinor: 299_900,   // ₹2,999
+    physical: true,
+    category: "tshirts",
+  },
+  eclipse: {
+    slug: "eclipse",
+    name: "ECLIPSE T-Shirt",
     priceMinor: 299_900,   // ₹2,999
     physical: true,
     category: "tshirts",
@@ -212,6 +250,11 @@ export const GSTORE_PRODUCT_PRICES: Record<string, GstoreProductPrice> = {
  */
 export function getProductPrice(slug: string): GstoreProductPrice | null {
   return GSTORE_PRODUCT_PRICES[slug] ?? null;
+}
+
+/** Live catalogue name for renamed products without rewriting stored orders. */
+export function displayGstoreProductName(slug: string, storedName?: string): string {
+  return getProductPrice(slug)?.name ?? storedName ?? slug;
 }
 
 /**
