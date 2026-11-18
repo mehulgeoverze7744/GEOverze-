@@ -234,8 +234,8 @@ export function ProfileEditPage() {
                 <GlassCard className="profile-edit-card profile-edit-avatar-card space-y-7 p-7 sm:p-9">
                   <SectionHeading
                     as="h3"
-                    title="Your Explorer Avatar"
-                    description="This character appears on your profile, leaderboards and in play."
+                    title="Your GVRZE Avatar"
+                    description="Explorers and legacy characters — shown on your profile, leaderboards and in play."
                   />
                   <div className="flex justify-center">
                     <ExplorerAvatar

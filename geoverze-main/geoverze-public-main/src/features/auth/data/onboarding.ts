@@ -111,7 +111,31 @@ export const AVATARS: readonly (AvatarOption & { id: ExplorerAvatarId; src: stri
   { id: "orbit", label: "Orbit", hue: [66, 88], glyph: "◌", src: explorerPortrait("orbit") },
 ] as const;
 
-/** GVRZE character portraits used on Edit Profile — not glyph placeholders. */
+export type AvatarCategoryId = "explorer" | "superhero" | "alien" | "classic";
+
+export type AvatarCategory = {
+  id: AvatarCategoryId;
+  label: string;
+  /** Stable `profiles.avatar_id` values shown in this section. */
+  avatarIds: readonly string[];
+};
+
+/**
+ * Unified picker sections — every preset appears once; IDs match persisted profiles.
+ * `galactic` / `earthbound` are the armored hero portraits (incl. the Iron Man-style armor).
+ */
+export const AVATAR_CATEGORIES: readonly AvatarCategory[] = [
+  { id: "explorer", label: "Explorer Avatars", avatarIds: EXPLORER_AVATAR_IDS },
+  { id: "superhero", label: "Superhero Avatars", avatarIds: ["galactic", "earthbound"] as const },
+  { id: "alien", label: "Alien Avatars", avatarIds: ["alien", "cosmic"] as const },
+  {
+    id: "classic",
+    label: "Previously Available Avatars",
+    avatarIds: ["spy", "explorer"] as const,
+  },
+] as const;
+
+/** GVRZE character portraits — stable IDs; do not remove or re-point assets. */
 export const CHARACTER_AVATARS: readonly (AvatarOption & { src: string })[] = [
   {
     id: "spy",
@@ -162,6 +186,25 @@ export function findAvatar(id: string) {
     AVATARS.find((avatar) => avatar.id === id) ??
     CHARACTER_AVATARS.find((avatar) => avatar.id === id)
   );
+}
+
+/** Every built-in preset ID (explorer + legacy characters) — excludes custom uploads. */
+export const PRESET_AVATAR_IDS: readonly string[] = [
+  ...AVATARS.map((avatar) => avatar.id),
+  ...CHARACTER_AVATARS.map((avatar) => avatar.id),
+];
+
+export function isPresetAvatarId(id: string | null | undefined) {
+  const trimmed = id?.trim();
+  return Boolean(trimmed && PRESET_AVATAR_IDS.includes(trimmed));
+}
+
+export function avatarsInCategory(categoryId: AvatarCategoryId) {
+  const section = AVATAR_CATEGORIES.find((item) => item.id === categoryId);
+  if (!section) return [];
+  return section.avatarIds
+    .map((avatarId) => findAvatar(avatarId))
+    .filter((avatar): avatar is AvatarOption & { src: string } => Boolean(avatar?.src));
 }
 
 export const ONBOARDING_STEPS = ["Welcome", "Interests", "Skill", "Avatar", "Finish"] as const;

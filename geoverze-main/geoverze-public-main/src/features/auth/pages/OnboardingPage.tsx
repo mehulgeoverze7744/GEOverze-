@@ -320,10 +320,10 @@ function AvatarStep({
     <div className="ob-step space-y-5">
       <div className="space-y-1 text-center sm:text-left">
         <h2 className="text-[1.9rem] font-light leading-tight tracking-tight text-[#1D1D1F]">
-          Choose your explorer avatar.
+          Choose your avatar.
         </h2>
         <p className="text-[14px] text-[#86868B]">
-          Choose a character that represents you across GVRZE.
+          Explorers, heroes and classic characters — pick one identity for all of GVRZE.
         </p>
       </div>
 

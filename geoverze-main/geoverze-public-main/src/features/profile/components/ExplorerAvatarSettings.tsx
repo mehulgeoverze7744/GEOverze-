@@ -93,7 +93,7 @@ export function ExplorerAvatarSettings() {
     bumpProfileEpoch();
     refreshCurrentProfile();
     setTouched(false);
-    toast.success("Explorer avatar updated");
+    toast.success("Avatar updated");
     setSaving(false);
   };
 
@@ -101,10 +101,10 @@ export function ExplorerAvatarSettings() {
     <section className="space-y-5 rounded-[22px] border border-[#E5E5EA] bg-white p-5 sm:p-6">
       <div className="space-y-1">
         <h3 className="text-[17px] font-semibold tracking-tight text-[#1D1D1F]">
-          Your Explorer Avatar
+          Your GVRZE Avatar
         </h3>
         <p className="text-[13px] text-[#86868B]">
-          Choose a character that represents you across GVRZE.
+          Explorers, superheroes, aliens and classic characters — same avatar everywhere.
         </p>
       </div>
       <ExplorerAvatarPicker
