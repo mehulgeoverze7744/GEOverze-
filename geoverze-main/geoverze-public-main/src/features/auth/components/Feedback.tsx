@@ -15,7 +15,7 @@ export function ValidationMessage({
     <div
       role="alert"
       className={cn(
-        "flex items-start gap-2.5 rounded-xl border border-destructive/35 bg-destructive/10 px-4 py-3 text-xs leading-relaxed text-destructive",
+        "auth-error flex items-start gap-2.5 rounded-[14px] border border-[#FF3B30]/25 bg-[#FF3B30]/8 px-4 py-3 text-[13px] leading-relaxed text-[#FF3B30]",
         className,
       )}
     >
@@ -37,18 +37,18 @@ export function SuccessMessage({
     <div
       role="status"
       className={cn(
-        "flex items-start gap-2.5 rounded-xl border border-bronze/35 bg-bronze/10 px-4 py-3 text-xs leading-relaxed text-bronze-glow",
+        "auth-error flex items-start gap-2.5 rounded-[14px] border border-[#34C759]/30 bg-[#34C759]/10 px-4 py-3 text-[13px] leading-relaxed text-[#1D1D1F]",
         className,
       )}
     >
-      <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={1.6} aria-hidden="true" />
+      <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#34C759]" strokeWidth={1.6} aria-hidden="true" />
       <span>{children}</span>
     </div>
   );
 }
 
 /**
- * Full-panel success state: animated bronze ring + tick, headline, copy and
+ * Full-panel success state: animated ring + tick, headline, copy and
  * actions. Shared by login, reset, verification and onboarding completion.
  */
 export function SuccessBurst({
@@ -66,18 +66,17 @@ export function SuccessBurst({
 }) {
   return (
     <div className={cn("flex flex-col items-center text-center", className)} role="status">
-      <span className="relative mb-7 inline-flex h-16 w-16 items-center justify-center">
-        <span className="absolute inset-0 rounded-full border border-bronze/30 bg-bronze/5" />
-        <span className="absolute inset-0 animate-ping rounded-full border border-bronze/25 motion-reduce:animate-none" />
-        <span className="relative text-bronze-glow">
+      <span className="relative mb-6 inline-flex h-14 w-14 items-center justify-center">
+        <span className="absolute inset-0 rounded-full border border-[#E5E5EA] bg-[#F5F5F7]" />
+        <span className="relative text-[#111111]">
           {icon ?? <CheckCircle2 className="h-7 w-7" strokeWidth={1.2} aria-hidden="true" />}
         </span>
       </span>
-      <h2 className="text-lg font-light tracking-tight text-foreground">{title}</h2>
+      <h2 className="text-[1.15rem] font-semibold tracking-tight text-[#1D1D1F]">{title}</h2>
       {description ? (
-        <p className="mt-3 max-w-sm text-sm leading-relaxed text-foreground/50">{description}</p>
+        <p className="mt-2.5 max-w-sm text-[14px] leading-relaxed text-[#86868B]">{description}</p>
       ) : null}
-      {children ? <div className="mt-8 w-full">{children}</div> : null}
+      {children ? <div className="mt-7 w-full">{children}</div> : null}
     </div>
   );
 }

@@ -6,6 +6,9 @@ import { GeoButton, GeoInput, GeoTextarea } from "@/components/shared";
 import { GameCard } from "@/features/play/components/GameCard";
 import { cn } from "@/lib/utils";
 
+import { useProfile } from "@/features/profile/lib/useProfile";
+import { selectIsSignedIn, useAuthStore } from "@/stores/authStore";
+
 import { CURRENT_HANDLE } from "../data/members";
 import { MemberAvatar } from "./MemberAvatar";
 
@@ -32,6 +35,8 @@ const PLACEHOLDER: Record<Mode, string> = {
  * than persisting, since no backend exists yet.
  */
 export function PostComposer() {
+  const signedIn = useAuthStore(selectIsSignedIn);
+  const profile = useProfile();
   const [mode, setMode] = useState<Mode>("text");
   const [body, setBody] = useState("");
   const [question, setQuestion] = useState("");
@@ -51,7 +56,13 @@ export function PostComposer() {
   return (
     <GameCard interactive={false} className="p-6">
       <div className="flex items-start gap-3">
-        <MemberAvatar handle={CURRENT_HANDLE} size="md" linked={false} />
+        <MemberAvatar
+          handle={profile.handle?.replace(/^@/, "") || CURRENT_HANDLE}
+          size="md"
+          linked={false}
+          avatarId={signedIn ? profile.avatarId : null}
+          avatarUrl={signedIn ? profile.avatarUrl : null}
+        />
         <div className="min-w-0 flex-1">
           <ul className="flex flex-wrap gap-1.5">
             {MODES.map((m) => (

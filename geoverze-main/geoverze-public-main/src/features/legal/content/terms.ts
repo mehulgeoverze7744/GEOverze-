@@ -22,7 +22,7 @@ export const termsSections: LegalSection[] = [
       },
       {
         kind: "p",
-        text: `If you think someone else has used your account, change your password from the reset flow if you still can, and email ${legalConfig.supportEmail}. Prize-based competitive modes are limited to people who confirm they are 18 or older. People who answer that they are under 18 can keep using the educational parts of the service. The product does not publish a lower minimum age.`,
+        text: `If you think someone else has used your account, change your password from the reset flow if you still can, and email ${legalConfig.supportEmail}. Prize-based competitive modes are limited to people who are 18 or older. People under 18 can keep using the educational parts of the service. The product does not publish a lower minimum age.`,
       },
       {
         kind: "p",

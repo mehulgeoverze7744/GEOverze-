@@ -2,10 +2,10 @@ import { findAvatar } from "@/features/auth/data/onboarding";
 import { cn } from "@/lib/utils";
 
 /**
- * Generated avatar mark.
+ * Explorer identity mark.
  *
- * Deterministic bronze gradient + glyph derived from the avatar id, so the
- * onboarding gallery needs no image requests and stays on-palette.
+ * Named presets resolve to the shared character portraits. Unknown ids keep
+ * the generated bronze glyph so historical leaderboard rows never break.
  */
 export function AvatarMark({
   id,
@@ -17,6 +17,23 @@ export function AvatarMark({
   className?: string;
 }) {
   const avatar = findAvatar(id);
+  const label = avatar?.label ?? "Avatar";
+
+  if (avatar?.src) {
+    return (
+      <img
+        src={avatar.src}
+        alt={`${label} avatar`}
+        width={size}
+        height={size}
+        decoding="async"
+        draggable={false}
+        className={cn("shrink-0 rounded-full bg-[#E5E5EA] object-cover", className)}
+        style={{ width: size, height: size }}
+      />
+    );
+  }
+
   const [from, to] = avatar?.hue ?? [62, 78];
   const gradientId = `avatar-${id}`;
 
@@ -26,7 +43,7 @@ export function AvatarMark({
       width={size}
       height={size}
       role="img"
-      aria-label={`${avatar?.label ?? "Avatar"} avatar`}
+      aria-label={`${label} avatar`}
       className={cn("shrink-0 rounded-full", className)}
     >
       <defs>

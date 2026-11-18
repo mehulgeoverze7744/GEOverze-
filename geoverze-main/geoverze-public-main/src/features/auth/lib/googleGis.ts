@@ -352,6 +352,7 @@ export async function startGoogleIdentitySignIn(next?: string | null): Promise<G
         use_fedcm_for_prompt: true,
         callback: async (response) => {
           try {
+            googleSignInInFlight = false;
             const session = await exchangeGoogleIdToken(response.credential ?? "", rawNonce);
             finish(() => resolve({ session, userId: session.user.id }));
           } catch (error) {

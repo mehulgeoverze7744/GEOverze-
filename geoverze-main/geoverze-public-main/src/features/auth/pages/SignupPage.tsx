@@ -101,7 +101,7 @@ export function SignupPage() {
       rememberVerifyEmail(parsed.data.email);
       const { data: sessionData } = await supabase.auth.getSession();
       if (sessionData.session?.user.email_confirmed_at) {
-        navigate({ to: "/auth/age-verification" });
+        navigate({ to: "/auth/onboarding" });
         return;
       }
       if (sessionData.session && !sessionData.session.user.email_confirmed_at) {
@@ -112,7 +112,7 @@ export function SignupPage() {
   };
 
   return (
-    <PageShell>
+    <PageShell className="pb-0">
       <AuthLayout
         width="wide"
         eyebrow="Create your account"
@@ -121,7 +121,7 @@ export function SignupPage() {
         footer={
           <p>
             Already exploring?{" "}
-            <Link to="/auth/login" className="text-bronze transition-colors hover:text-bronze-glow">
+            <Link to="/auth/login" search={{ redirect: undefined }} className="auth-link">
               Sign in
             </Link>
           </p>
@@ -207,7 +207,7 @@ export function SignupPage() {
             />
           </div>
 
-          <div className="space-y-3 rounded-2xl border border-bronze/12 bg-charcoal/30 p-4">
+          <div className="space-y-1 rounded-[16px] border border-[#E5E5EA] bg-[#F5F5F7] p-4">
             <AuthCheckbox
               id="acceptTerms"
               checked={values.acceptTerms}
@@ -216,7 +216,7 @@ export function SignupPage() {
               label={
                 <>
                   I accept the{" "}
-                  <Link to="/terms-of-service" className="text-bronze hover:text-bronze-glow">
+                  <Link to="/terms-of-service" className="auth-link">
                     Terms of Service
                   </Link>
                   .
@@ -231,7 +231,7 @@ export function SignupPage() {
               label={
                 <>
                   I accept the{" "}
-                  <Link to="/privacy-policy" className="text-bronze hover:text-bronze-glow">
+                  <Link to="/privacy-policy" className="auth-link">
                     Privacy Policy
                   </Link>
                   .
@@ -252,7 +252,7 @@ export function SignupPage() {
 
           <AuthDivider />
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="space-y-3">
             <SocialButton provider="google" />
             <SocialButton provider="apple" />
           </div>

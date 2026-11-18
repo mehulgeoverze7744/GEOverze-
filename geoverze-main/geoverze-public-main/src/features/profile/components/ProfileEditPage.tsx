@@ -10,9 +10,11 @@ import { GlassCard } from "@/components/shared/GlassCard";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { SectionContainer } from "@/components/shared/SectionContainer";
 import { SectionHeading } from "@/components/shared/SectionHeading";
+import { ExplorerAvatar } from "@/features/auth/components/ExplorerAvatar";
+import { ExplorerAvatarPicker } from "@/features/auth/components/ExplorerAvatarPicker";
 import { persistableAvatarSelection, isBundledAvatarSrc } from "@/features/auth/lib/avatar";
 import { COUNTRIES } from "@/features/auth/data/countries";
-import { CHARACTER_AVATARS, INTERESTS } from "@/features/auth/data/onboarding";
+import { INTERESTS } from "@/features/auth/data/onboarding";
 import { PROFILE_CURRENT_PHOTO_SRC } from "@/features/profile/lib/profileAssets";
 import {
   bumpProfileEpoch,
@@ -230,61 +232,27 @@ export function ProfileEditPage() {
 
               <AnimatedSection delay={80} className="profile-edit-split-avatar">
                 <GlassCard className="profile-edit-card profile-edit-avatar-card space-y-7 p-7 sm:p-9">
-                  <SectionHeading as="h3" title="Avatar" />
-                  <div className="profile-edit-avatars">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setDirty(true);
-                        setAvatar(null);
-                      }}
-                      aria-pressed={photoSelected}
-                      className={cn(
-                        "profile-edit-avatar",
-                        photoSelected && "profile-edit-avatar--selected",
-                      )}
-                    >
-                      <img
-                        src={currentPhotoSrc}
-                        alt=""
-                        width={80}
-                        height={80}
-                        decoding="async"
-                        draggable={false}
-                        className="profile-edit-avatar-photo"
-                      />
-                      <span className="sr-only">Current profile photo</span>
-                    </button>
-                    {CHARACTER_AVATARS.map((option) => {
-                      const selected = option.id === avatarId;
-                      return (
-                        <button
-                          key={option.id}
-                          type="button"
-                          onClick={() => {
-                            setDirty(true);
-                            setAvatar(option.id);
-                          }}
-                          aria-pressed={selected}
-                          className={cn(
-                            "profile-edit-avatar",
-                            selected && "profile-edit-avatar--selected",
-                          )}
-                        >
-                          <img
-                            src={option.src}
-                            alt=""
-                            width={80}
-                            height={80}
-                            decoding="async"
-                            draggable={false}
-                            className="profile-edit-avatar-photo profile-edit-avatar-character"
-                          />
-                          <span className="sr-only">{option.label}</span>
-                        </button>
-                      );
-                    })}
+                  <SectionHeading
+                    as="h3"
+                    title="Your Explorer Avatar"
+                    description="This character appears on your profile, leaderboards and in play."
+                  />
+                  <div className="flex justify-center">
+                    <ExplorerAvatar
+                      avatarId={avatarId}
+                      avatarUrl={photoSelected ? currentPhotoSrc : null}
+                      size="xl"
+                      alt="Selected explorer avatar"
+                      priority
+                    />
                   </div>
+                  <ExplorerAvatarPicker
+                    selectedId={avatarId}
+                    onSelect={(id) => {
+                      setDirty(true);
+                      setAvatar(id);
+                    }}
+                  />
                 </GlassCard>
               </AnimatedSection>
             </div>

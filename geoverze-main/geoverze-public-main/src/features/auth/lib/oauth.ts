@@ -187,14 +187,25 @@ export {
 } from "./googleGis.ts";
 
 type PostAuthProfile = {
-  age_bracket?: string | null;
   avatar_id?: string | null;
 };
 
 /**
- * First-time users (unset age / no onboarding) continue the existing journey.
+ * First-time users (no onboarding yet) continue profile setup.
  * Returning users go to the requested page or the profile dashboard.
+ * Age confirmation is not part of this journey.
  */
+export function postAuthDestinationFromProfile(
+  profile: PostAuthProfile | null,
+  prefs: { skill_level?: string | null } | null,
+  requested?: string | null,
+): string {
+  const fallback = safeInternalPath(requested) ?? DEFAULT_SIGNED_IN_PATH;
+  const hasOnboarded = Boolean(profile?.avatar_id || prefs?.skill_level);
+  if (!hasOnboarded) return "/auth/onboarding";
+  return fallback;
+}
+
 export async function resolvePostAuthDestination(
   userId: string,
   requested?: string | null,
@@ -202,18 +213,14 @@ export async function resolvePostAuthDestination(
   const fallback = safeInternalPath(requested) ?? DEFAULT_SIGNED_IN_PATH;
   try {
     const { supabase } = await import("@/lib/supabase/client");
-    // age_bracket / profile_preferences exist in the live schema but are not
-    // yet in the generated Database types.
+    // profile_preferences exists in the live schema but is not yet in the
+    // generated Database types.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: profile } = await (supabase as any)
       .from("profiles")
-      .select("age_bracket, avatar_id")
+      .select("avatar_id")
       .eq("id", userId)
       .maybeSingle();
-
-    const typed = profile as PostAuthProfile | null;
-    const age = typed?.age_bracket;
-    if (!age || age === "unset") return "/auth/age-verification";
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: prefs } = await (supabase as any)
@@ -222,11 +229,11 @@ export async function resolvePostAuthDestination(
       .eq("user_id", userId)
       .maybeSingle();
 
-    const hasOnboarded = Boolean(
-      typed?.avatar_id || (prefs as { skill_level?: string | null } | null)?.skill_level,
+    return postAuthDestinationFromProfile(
+      profile as PostAuthProfile | null,
+      prefs as { skill_level?: string | null } | null,
+      requested,
     );
-    if (!hasOnboarded) return "/auth/onboarding";
-    return fallback;
   } catch {
     return fallback;
   }

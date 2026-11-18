@@ -41,7 +41,7 @@ export function PasswordField({
           className={cn(
             authFieldClass,
             "pr-12",
-            error && "border-destructive/60 focus:ring-destructive/25",
+            error && "border-[#FF3B30] focus:border-[#FF3B30] focus:shadow-[0_0_0_4px_rgba(255,59,48,0.14)]",
             className,
           )}
           {...props}
@@ -51,7 +51,7 @@ export function PasswordField({
           onClick={() => setVisible((v) => !v)}
           aria-label={visible ? "Hide password" : "Show password"}
           aria-pressed={visible}
-          className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-xl text-foreground/50 transition-colors motion-fast hover:text-bronze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+          className="absolute inset-y-0 right-0 flex w-12 items-center justify-center rounded-r-[16px] text-[#86868B] transition-colors duration-200 hover:text-[#1D1D1F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007AFF]/40"
         >
           {visible ? (
             <EyeOff className="h-4 w-4" strokeWidth={1.4} aria-hidden="true" />
@@ -65,12 +65,12 @@ export function PasswordField({
 }
 
 const METER_TONE = [
-  "bg-destructive/70",
-  "bg-destructive/70",
-  "bg-bronze/40",
-  "bg-bronze/70",
-  "bg-bronze",
-  "bg-bronze-glow",
+  "bg-[#FF3B30]/70",
+  "bg-[#FF3B30]/70",
+  "bg-[#FF9F0A]",
+  "bg-[#007AFF]/70",
+  "bg-[#007AFF]",
+  "bg-[#34C759]",
 ] as const;
 
 /** Live strength meter plus animated requirement checklist. */
@@ -82,7 +82,7 @@ export function PasswordStrengthMeter({ value, className }: { value: string; cla
     <div className={cn("space-y-3", className)}>
       <div className="flex items-center justify-between gap-4">
         <div
-          className="h-1 flex-1 overflow-hidden rounded-full bg-charcoal/70"
+          className="h-1 flex-1 overflow-hidden rounded-full bg-[#E5E5EA]"
           role="progressbar"
           aria-valuemin={0}
           aria-valuemax={PASSWORD_RULES.length}
@@ -101,7 +101,7 @@ export function PasswordStrengthMeter({ value, className }: { value: string; cla
           aria-live="polite"
           className={cn(
             "w-16 text-right text-[0.62rem] uppercase tracking-[0.24em]",
-            strength.valid ? "text-bronze-glow" : "text-foreground/50",
+            strength.valid ? "text-[#34C759]" : "text-[#86868B]",
           )}
         >
           {strength.label === "Empty" ? "" : strength.label}
@@ -116,13 +116,13 @@ export function PasswordStrengthMeter({ value, className }: { value: string; cla
               key={rule.id}
               className={cn(
                 "flex items-center gap-2 text-[0.7rem] transition-colors motion-fast motion-reduce:transition-none",
-                passed ? "text-bronze-glow" : "text-foreground/50",
+                passed ? "text-[#1D1D1F]" : "text-[#86868B]",
               )}
             >
               <span
                 className={cn(
                   "inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition-all motion-base motion-reduce:transition-none",
-                  passed ? "scale-100 border-bronze/60 bg-bronze/20" : "scale-95 border-bronze/15",
+                  passed ? "scale-100 border-[#34C759]/70 bg-[#34C759]/15 text-[#34C759]" : "scale-95 border-[#E5E5EA] text-[#C7C7CC]",
                 )}
               >
                 {passed ? (

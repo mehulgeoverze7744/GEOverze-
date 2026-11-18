@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { AvatarMark } from "@/features/auth/components/AvatarMark";
+import { ExplorerAvatar } from "@/features/auth/components/ExplorerAvatar";
 import { UserAvatar } from "@/features/auth/components/UserAvatar";
 import {
   DEFAULT_ASTRONAUT_AVATAR_SRC,
@@ -69,7 +69,7 @@ export function RoomPlayerAvatar({
       />
       {resolved.kind === "mark" ? (
         <div className="relative flex h-full items-center justify-center">
-          <AvatarMark id={resolved.id} size={56} className="border border-bronze/30" />
+          <ExplorerAvatar avatarId={resolved.id} size={56} alt={alt} />
         </div>
       ) : (
         <img

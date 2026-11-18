@@ -143,11 +143,11 @@ export const privacySections: LegalSection[] = [
     blocks: [
       {
         kind: "p",
-        text: "During signup, GVRZE asks whether you are 18 or older. Prize-based competitive modes are limited to people who confirm they are 18 or older. Answering that you are under 18 does not close educational quizzes, progress, or the library. The product does not set a separate minimum age below 18 for creating an account, and this page does not invent one.",
+        text: "Prize-based competitive modes are limited to people who are 18 or older. Creating an account does not require an 18+ confirmation step. Educational quizzes, progress, and the library remain available without that confirmation. The product does not set a separate minimum age below 18 for creating an account, and this page does not invent one.",
       },
       {
         kind: "p",
-        text: "The age step stores a bracket, not a full date of birth. If a parent or guardian believes an account should be restricted or removed, they can write to the support email. Where the law requires deletion or restriction, that request will be handled accordingly. This is not a statement that the service has been certified for children.",
+        text: "Existing accounts may already have an age bracket stored from an earlier onboarding step; the product does not collect a full date of birth. If a parent or guardian believes an account should be restricted or removed, they can write to the support email. Where the law requires deletion or restriction, that request will be handled accordingly. This is not a statement that the service has been certified for children.",
       },
     ],
   },

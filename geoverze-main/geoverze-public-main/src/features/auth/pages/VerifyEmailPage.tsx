@@ -3,10 +3,11 @@ import { Link } from "@tanstack/react-router";
 import { MailCheck, MailQuestion } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
-import { GeoButton } from "@/components/shared/GeoButton";
 import { Spinner } from "@/components/shared/Spinner";
 import {
+  AuthGhostButton,
   AuthLayout,
+  AuthSecondaryButton,
   AuthSubmitButton,
   SuccessBurst,
   SuccessMessage,
@@ -83,16 +84,16 @@ export function VerifyEmailPage({ email }: { email?: string }) {
 
   if (signedIn || confirm.state === "success") {
     return (
-      <PageShell>
+      <PageShell className="pb-0">
         <AuthLayout eyebrow="Verified" title="Your email is confirmed">
           <SuccessBurst
             icon={<MailCheck className="h-7 w-7" strokeWidth={1.2} aria-hidden="true" />}
             title="Email verified"
-            description="One quick eligibility question and you're into GVRZE."
+            description="Next, set up your explorer profile."
           >
-            <GeoButton asChild variant="primary" className="w-full sm:w-auto">
-              <Link to="/auth/age-verification">Continue</Link>
-            </GeoButton>
+            <AuthSubmitButton asChild>
+              <Link to="/auth/onboarding">Continue</Link>
+            </AuthSubmitButton>
           </SuccessBurst>
         </AuthLayout>
       </PageShell>
@@ -100,7 +101,7 @@ export function VerifyEmailPage({ email }: { email?: string }) {
   }
 
   return (
-    <PageShell>
+    <PageShell className="pb-0">
       <AuthLayout
         eyebrow="One last step"
         title="Verify your email"
@@ -114,7 +115,7 @@ export function VerifyEmailPage({ email }: { email?: string }) {
             Wrong address?{" "}
             <Link
               to="/auth/signup"
-              className="text-bronze transition-colors hover:text-bronze-glow"
+              className="auth-link"
             >
               Start over
             </Link>
@@ -122,16 +123,16 @@ export function VerifyEmailPage({ email }: { email?: string }) {
         }
       >
         <div className="space-y-6">
-          <div className="flex items-center gap-4 rounded-2xl border border-bronze/15 bg-charcoal/35 p-4">
-            <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-bronze/25 bg-bronze/5 text-bronze">
+          <div className="flex items-center gap-4 rounded-[16px] border border-[#E5E5EA] bg-[#F5F5F7] p-4">
+            <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#E5E5EA] bg-white text-[#1D1D1F]">
               <MailQuestion className="h-5 w-5" strokeWidth={1.3} aria-hidden="true" />
             </span>
             <div className="min-w-0">
-              <p className="flex items-center gap-2 text-sm font-light text-foreground">
+              <p className="flex items-center gap-2 text-[14px] font-medium text-[#1D1D1F]">
                 Waiting for confirmation
                 <Spinner size="sm" label="Waiting for email confirmation" />
               </p>
-              <p className="mt-1 text-xs leading-relaxed text-foreground/50">
+              <p className="mt-1 text-[12px] leading-relaxed text-[#86868B]">
                 This page updates automatically once the link is opened.
               </p>
             </div>
@@ -158,11 +159,7 @@ export function VerifyEmailPage({ email }: { email?: string }) {
             >
               I've verified my email
             </AuthSubmitButton>
-            <GeoButton
-              type="button"
-              variant="secondary"
-              size="lg"
-              className="w-full"
+            <AuthSecondaryButton
               disabled={!destinationEmail || resend.isPending || cooldown > 0}
               onClick={() => void onResend()}
             >
@@ -171,10 +168,12 @@ export function VerifyEmailPage({ email }: { email?: string }) {
                 : cooldown > 0
                   ? `Resend in ${cooldown}s`
                   : "Resend email"}
-            </GeoButton>
-            <GeoButton asChild variant="ghost" size="lg" className="w-full">
-              <Link to="/auth/login">Return to sign in</Link>
-            </GeoButton>
+            </AuthSecondaryButton>
+            <AuthGhostButton asChild>
+              <Link to="/auth/login" search={{ redirect: undefined }}>
+                Return to sign in
+              </Link>
+            </AuthGhostButton>
           </div>
         </div>
       </AuthLayout>

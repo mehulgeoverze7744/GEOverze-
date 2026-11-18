@@ -125,15 +125,15 @@ export function CountrySelect({
           className={cn(
             authFieldClass,
             "flex items-center justify-between text-left",
-            !selected && "text-foreground/50",
-            error && "border-destructive/60",
+            !selected && "text-[#86868B]",
+            error && "border-[#FF3B30]",
           )}
         >
           <span className="flex items-center gap-2 truncate">
             {selected ? (
               <>
                 <span aria-hidden="true">{selected.flag}</span>
-                <span className="truncate text-foreground">{selected.name}</span>
+                <span className="truncate text-[#1D1D1F]">{selected.name}</span>
               </>
             ) : (
               "Select your country"
@@ -141,7 +141,7 @@ export function CountrySelect({
           </span>
           <ChevronDown
             className={cn(
-              "h-4 w-4 shrink-0 text-foreground/50 transition-transform motion-fast",
+              "h-4 w-4 shrink-0 text-[#86868B] transition-transform duration-200",
               open && "rotate-180",
             )}
             strokeWidth={1.4}
@@ -150,10 +150,10 @@ export function CountrySelect({
         </button>
 
         {open ? (
-          <div className="glass-panel-strong absolute z-30 mt-2 w-full overflow-hidden rounded-xl border border-bronze/25 p-2 shadow-[var(--glow-bronze)]">
+          <div className="absolute z-30 mt-2 w-full overflow-hidden rounded-[16px] border border-[#E5E5EA] bg-white p-2 shadow-[0_12px_32px_rgba(0,0,0,0.08)]">
             <div className="relative">
               <Search
-                className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-foreground/50"
+                className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#86868B]"
                 strokeWidth={1.5}
                 aria-hidden="true"
               />
@@ -173,7 +173,7 @@ export function CountrySelect({
                 }
                 aria-label="Search countries"
                 placeholder="Search countries"
-                className="w-full rounded-lg border border-bronze/15 bg-charcoal/60 py-2 pl-9 pr-3 text-xs text-foreground placeholder:text-foreground/50 outline-none focus:border-bronze/50 focus:ring-2 focus:ring-bronze/20"
+                className="w-full rounded-[12px] border border-[#E5E5EA] bg-[#F5F5F7] py-2.5 pl-9 pr-3 text-[13px] text-[#1D1D1F] placeholder:text-[#86868B] outline-none focus:border-[#007AFF] focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,122,255,0.16)]"
               />
             </div>
             <ul
@@ -184,7 +184,7 @@ export function CountrySelect({
               className="mt-2 max-h-56 overflow-y-auto"
             >
               {options.length === 0 ? (
-                <li className="px-3 py-4 text-center text-xs text-foreground/50">
+                <li className="px-3 py-4 text-center text-[13px] text-[#86868B]">
                   No countries match that search.
                 </li>
               ) : (
@@ -202,15 +202,15 @@ export function CountrySelect({
                         onMouseEnter={() => setActiveIndex(index)}
                         onClick={() => commit(country.code)}
                         className={cn(
-                          "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs transition-colors motion-fast",
-                          isActive ? "bg-bronze/15 text-foreground" : "text-foreground/65",
+                          "flex w-full items-center gap-2.5 rounded-[12px] px-3 py-2.5 text-left text-[13px] transition-colors duration-150",
+                          isActive ? "bg-[#F5F5F7] text-[#1D1D1F]" : "text-[#86868B]",
                         )}
                       >
                         <span aria-hidden="true">{country.flag}</span>
                         <span className="flex-1 truncate">{country.name}</span>
                         {isSelected ? (
                           <Check
-                            className="h-3 w-3 text-bronze"
+                            className="h-3 w-3 text-[#007AFF]"
                             strokeWidth={2}
                             aria-hidden="true"
                           />

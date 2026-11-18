@@ -2,9 +2,13 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 
 import { PageShell } from "@/components/layout/PageShell";
-import { GeoButton } from "@/components/shared/GeoButton";
 import { Spinner } from "@/components/shared/Spinner";
-import { AuthLayout, ValidationMessage } from "@/features/auth/components";
+import {
+  AuthLayout,
+  AuthSecondaryButton,
+  AuthSubmitButton,
+  ValidationMessage,
+} from "@/features/auth/components";
 import { completeBrowserAuthCallback, replaceAuthCallbackUrl } from "@/features/auth/lib/completeBrowserAuthCallback";
 import {
   consumeStoredAuthRedirect,
@@ -63,7 +67,7 @@ export function AuthCallbackPage() {
 
   if (error) {
     return (
-      <PageShell>
+      <PageShell className="pb-0">
         <AuthLayout
           eyebrow="Sign in"
           title="Could not complete sign-in"
@@ -71,15 +75,15 @@ export function AuthCallbackPage() {
         >
           <div className="space-y-5">
             <ValidationMessage>{error}</ValidationMessage>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <GeoButton asChild variant="primary" className="flex-1">
+            <div className="flex flex-col gap-3">
+              <AuthSubmitButton asChild>
                 <Link to="/auth/login" search={{ redirect: undefined }}>
                   Return to sign in
                 </Link>
-              </GeoButton>
-              <GeoButton asChild variant="secondary" className="flex-1">
+              </AuthSubmitButton>
+              <AuthSecondaryButton asChild>
                 <Link to="/auth/signup">Create account</Link>
-              </GeoButton>
+              </AuthSecondaryButton>
             </div>
           </div>
         </AuthLayout>
@@ -88,9 +92,9 @@ export function AuthCallbackPage() {
   }
 
   return (
-    <PageShell>
+    <PageShell className="pb-0">
       <AuthLayout eyebrow="Signing you in" title="Finishing authentication" description="One moment while we restore your session.">
-        <div className="flex items-center gap-3 text-sm text-foreground/60">
+        <div className="flex items-center gap-3 text-[14px] text-[#86868B]">
           <Spinner label="Completing sign-in" />
           <span>Connecting your GVRZE account…</span>
         </div>

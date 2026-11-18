@@ -13,7 +13,6 @@ import { QuizProgressCard } from "./QuizProgressCard";
 import { RecentQuizzesPanel } from "./RecentQuizzesPanel";
 import { RecentlyViewedPanel } from "./RecentlyViewedPanel";
 import { SavedExplorationsPanel } from "./SavedExplorationsPanel";
-import { MemberChallengesCard } from "./MemberChallengesCard";
 import { SubscriptionCard } from "./SubscriptionCard";
 import { UpcomingEventsPanel } from "./UpcomingEventsPanel";
 
@@ -89,12 +88,6 @@ export function DashboardWidgets() {
             <SubscriptionCard className="h-full" />
           </AnimatedSection>
         </div>
-      </SectionContainer>
-
-      <SectionContainer className="mt-[var(--space-section-sm)]">
-        <AnimatedSection>
-          <MemberChallengesCard />
-        </AnimatedSection>
       </SectionContainer>
 
       <SectionContainer className="dashboard-order-store mt-[var(--space-section-sm)]">

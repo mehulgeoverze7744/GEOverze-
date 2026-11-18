@@ -50,8 +50,8 @@ function ExplorerAstronautAvatar({
 /**
  * Current-user avatar with centralized fallback to the default astronaut window.
  *
- * Preset glyph avatars (leaderboards, credit history, onboarding gallery)
- * should continue using {@link AvatarMark} directly.
+ * Named explorer presets resolve through {@link resolveUserAvatar} to local
+ * portraits. Surfaces should prefer {@link ExplorerAvatar} for size variants.
  */
 export function UserAvatar({
   avatarUrl,

@@ -15,6 +15,8 @@ import { useMyBilling } from "@/features/pricing/hooks/useMyBilling";
 import { cn } from "@/lib/utils";
 import { usePreferencesStore, type UnitSystem } from "@/stores/preferencesStore";
 
+import { ExplorerAvatarSettings } from "@/features/profile/components/ExplorerAvatarSettings";
+
 import { SettingsGroup, SettingsRow } from "./SettingsRow";
 
 type SettingsDetailProps = {
@@ -100,6 +102,8 @@ function AccountPanel({ profile }: { profile: ReturnType<typeof useProfile> }) {
 
 function ProfilePanel({ profile }: { profile: ReturnType<typeof useProfile> }) {
   return (
+    <>
+    <ExplorerAvatarSettings />
     <SettingsGroup label="Visibility">
       <SettingsRow
         title="Public profile"
@@ -128,6 +132,7 @@ function ProfilePanel({ profile }: { profile: ReturnType<typeof useProfile> }) {
         static
       />
     </SettingsGroup>
+    </>
   );
 }
 

@@ -1,0 +1,288 @@
+/* Scoped to the onboarding overlay. Does not alter global GVRZE chrome. */
+
+#gvrze-onboarding {
+  --ob-bg: #f5f5f7;
+  --ob-text: #1d1d1f;
+  --ob-muted: #86868b;
+  --ob-accent: #007aff;
+  --ob-surface: #ffffff;
+  --ob-border: #e5e5ea;
+  --ob-black: #111111;
+  --ob-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ob-duration: 420ms;
+  color: var(--ob-text);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI",
+    system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background:
+    radial-gradient(900px 380px at 50% -6%, rgba(255, 255, 255, 0.95), transparent 64%),
+    var(--ob-bg);
+}
+
+#gvrze-onboarding .ob-shell {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* ── Earth ──────────────────────────────────────────────────────────────── */
+
+#gvrze-onboarding .ob-earth {
+  --earth-size: clamp(156px, 44vw, 248px);
+  position: relative;
+  width: var(--earth-size);
+  height: var(--earth-size);
+  margin-inline: auto;
+  animation: ob-earth-in 0.9s var(--ob-ease) both;
+}
+
+#gvrze-onboarding .ob-earth__glow {
+  position: absolute;
+  inset: -14%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(90, 168, 255, 0.28) 0%,
+    rgba(90, 168, 255, 0.1) 42%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+#gvrze-onboarding .ob-earth__sphere {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 1px rgba(190, 224, 255, 0.28),
+    inset -22px -12px 36px rgba(4, 16, 40, 0.42),
+    inset 14px 10px 28px rgba(255, 255, 255, 0.18),
+    0 18px 40px rgba(20, 50, 90, 0.18),
+    0 0 48px rgba(70, 150, 255, 0.22);
+}
+
+#gvrze-onboarding .ob-earth__surface,
+#gvrze-onboarding .ob-earth__clouds {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat-x;
+  background-size: 200% 100%;
+  background-position: 22% 50%;
+}
+
+#gvrze-onboarding .ob-earth__surface {
+  animation: ob-earth-spin 96s linear infinite;
+}
+
+#gvrze-onboarding .ob-earth__clouds {
+  opacity: 0.42;
+  mix-blend-mode: screen;
+  animation: ob-earth-spin 118s linear infinite;
+}
+
+#gvrze-onboarding .ob-earth__light {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.34) 0%, transparent 34%),
+    radial-gradient(circle at 78% 72%, rgba(4, 12, 32, 0.42) 0%, transparent 52%),
+    linear-gradient(105deg, transparent 38%, rgba(4, 14, 36, 0.22) 100%);
+}
+
+@media (max-width: 430px) {
+  #gvrze-onboarding .ob-benefit {
+    padding: 0.35rem 0.75rem;
+    font-size: 11px;
+  }
+}
+
+@media (max-height: 740px) {
+  #gvrze-onboarding .ob-earth {
+    --earth-size: clamp(128px, 26vh, 176px);
+  }
+}
+
+@media (max-height: 620px) {
+  #gvrze-onboarding .ob-earth {
+    --earth-size: clamp(108px, 22vh, 140px);
+  }
+}
+
+/* ── Motion ─────────────────────────────────────────────────────────────── */
+
+#gvrze-onboarding .ob-step {
+  animation: ob-step-fwd var(--ob-duration) var(--ob-ease) both;
+}
+
+#gvrze-onboarding .ob-step--back,
+#gvrze-onboarding .ob-dir-back .ob-step {
+  animation-name: ob-step-back;
+}
+
+#gvrze-onboarding .ob-copy {
+  animation: ob-fade-up 0.55s var(--ob-ease) 0.12s both;
+}
+
+#gvrze-onboarding .ob-chips {
+  animation: ob-fade-up 0.55s var(--ob-ease) 0.2s both;
+}
+
+#gvrze-onboarding .ob-progress {
+  width: auto;
+}
+
+#gvrze-onboarding .ob-progress__seg {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 99px;
+  background: #d2d2d7;
+  transition:
+    width 280ms var(--ob-ease),
+    background 280ms var(--ob-ease);
+}
+
+#gvrze-onboarding .ob-progress__seg.is-done {
+  background: var(--ob-text);
+}
+
+#gvrze-onboarding .ob-progress__seg.is-active {
+  width: 22px;
+  background: var(--ob-text);
+}
+
+#gvrze-onboarding .ob-chip:active {
+  animation: ob-pop 0.18s ease both;
+}
+
+#gvrze-onboarding .ob-cta {
+  height: 56px;
+  border-radius: 16px;
+  background: var(--ob-black);
+  color: #fff;
+  transition: transform 180ms var(--ob-ease), opacity 180ms var(--ob-ease);
+}
+
+#gvrze-onboarding .ob-cta:active:not(:disabled) {
+  transform: scale(0.975);
+}
+
+@media (min-width: 640px) {
+  #gvrze-onboarding .ob-cta {
+    height: 58px;
+  }
+}
+
+@keyframes ob-earth-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes ob-earth-spin {
+  to {
+    background-position: 222% 50%;
+  }
+}
+
+@keyframes ob-step-fwd {
+  from {
+    opacity: 0;
+    transform: translateX(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes ob-step-back {
+  from {
+    opacity: 0;
+    transform: translateX(-22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes ob-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ob-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(0.96);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes ob-draw-circle {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes ob-draw-check {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes ob-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#gvrze-onboarding .ob-btn-spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.28);
+  border-top-color: #fff;
+  animation: ob-spin 0.7s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #gvrze-onboarding .ob-earth,
+  #gvrze-onboarding .ob-copy,
+  #gvrze-onboarding .ob-chips,
+  #gvrze-onboarding .ob-step,
+  #gvrze-onboarding .ob-step--back {
+    animation: none !important;
+  }
+
+  #gvrze-onboarding .ob-earth__surface,
+  #gvrze-onboarding .ob-earth__clouds,
+  #gvrze-onboarding .ob-btn-spinner,
+  #gvrze-onboarding .ob-chip:active {
+    animation: none !important;
+  }
+
+  #gvrze-onboarding .ob-cta:active:not(:disabled) {
+    transform: none;
+  }
+}

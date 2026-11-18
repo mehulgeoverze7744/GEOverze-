@@ -1,9 +1,9 @@
 /**
- * Onboarding + age-gate state.
+ * Onboarding state.
  *
- * Persisted locally so the chained signup journey survives a refresh. When a
- * real backend lands, these values are written to the user profile and this
- * store keeps only the in-flight step.
+ * Persisted locally so the chained signup journey survives a refresh.
+ * `ageAnswer` is kept for compatibility with existing local profiles; it is
+ * no longer part of the signup journey.
  */
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";

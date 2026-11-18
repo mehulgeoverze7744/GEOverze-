@@ -5,6 +5,7 @@ import {
   isDuplicateSignupUser,
   mapAuthError,
   mapOAuthCallbackError,
+  postAuthDestinationFromProfile,
   safeInternalPath,
 } from "./oauth.ts";
 
@@ -50,6 +51,26 @@ test("mapAuthError covers login, unverified, and logout-safe copy", () => {
   assert.match(mapAuthError("Email not confirmed", "email_not_confirmed"), /confirm your email/i);
   assert.match(mapAuthError("Token has expired or is invalid"), /expired/i);
   assert.doesNotMatch(mapAuthError("Invalid login credentials"), /@/);
+});
+
+test("postAuthDestinationFromProfile skips age verification and sends new users to onboarding", () => {
+  assert.equal(postAuthDestinationFromProfile(null, null, null), "/auth/onboarding");
+  assert.equal(
+    postAuthDestinationFromProfile({ avatar_id: null }, { skill_level: null }, "/play"),
+    "/auth/onboarding",
+  );
+  assert.equal(
+    postAuthDestinationFromProfile({ avatar_id: "atlas" }, null, "/play"),
+    "/play",
+  );
+  assert.equal(
+    postAuthDestinationFromProfile(null, { skill_level: "beginner" }, "/community"),
+    "/community",
+  );
+  assert.equal(
+    postAuthDestinationFromProfile({ avatar_id: "atlas" }, { skill_level: "beginner" }, "/auth/age-verification"),
+    "/profile",
+  );
 });
 
 test("mapOAuthCallbackError treats cancellation as a recoverable state", () => {

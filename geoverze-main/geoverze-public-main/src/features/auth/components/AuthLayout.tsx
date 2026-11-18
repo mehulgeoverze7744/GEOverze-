@@ -1,17 +1,16 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 
-import { AnimatedSection } from "@/components/shared/AnimatedSection";
 import { BrandMark } from "@/components/shared/BrandMark";
-import { GlassCard } from "@/components/shared/GlassCard";
-import { SectionContainer } from "@/components/shared/SectionContainer";
 import { cn } from "@/lib/utils";
 
+import "@/features/auth/styles/auth-experience.css";
+
 /**
- * Centered glass card shared by every auth screen.
+ * Centered Apple-inspired panel shared by every auth screen.
  *
- * `width` widens the panel for multi-column forms (signup) and step flows
- * (onboarding) without any screen re-implementing the shell.
+ * `width` widens the panel for multi-column forms (signup) without any
+ * screen re-implementing the shell.
  */
 export function AuthLayout({
   eyebrow,
@@ -35,50 +34,64 @@ export function AuthLayout({
 }) {
   return (
     <div id="gvrze-auth">
-      <section className="flex min-h-[calc(100vh-var(--nav-height))] items-center py-[var(--space-section-sm)] pt-[calc(var(--nav-height)+3rem)]">
-        <SectionContainer size={width === "wide" ? "default" : "narrow"}>
-          <AnimatedSection>
-            <GlassCard
-              strong
+      <div className="auth-shell flex flex-col px-5">
+        <section className="flex flex-1 items-center justify-center py-6 sm:py-10">
+          <div
+            className={cn(
+              "w-full",
+              width === "wide" ? "max-w-[640px]" : "max-w-[400px]",
+            )}
+          >
+            <header className="mb-4">
+              <Link
+                to="/"
+                className="text-[13px] font-medium text-[#86868B] transition-opacity duration-200 hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007AFF]/40"
+              >
+                Back to GVRZE
+              </Link>
+            </header>
+            <div
               className={cn(
-                "mx-auto p-7 sm:p-9 md:p-11",
-                width === "wide" ? "max-w-3xl" : "max-w-md",
+                "auth-card w-full border border-[#E5E5EA] bg-[rgba(255,255,255,0.88)] p-6 shadow-[0_12px_40px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] backdrop-blur-[18px] sm:p-8",
+                width === "wide" ? "rounded-[28px]" : "rounded-[26px]",
                 className,
               )}
             >
-              <Link
-                to="/"
-                aria-label="GVRZE home"
-                className="inline-flex rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
-              >
-                <BrandMark
-                  size="md"
-                  withWordmark
-                  wordmarkClassName="text-[0.68rem] tracking-[0.36em] text-foreground/70"
-                />
-              </Link>
+            <Link
+              to="/"
+              aria-label="GVRZE home"
+              className="inline-flex rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007AFF]/40"
+            >
+              <BrandMark size="sm" withWordmark className="h-5 w-auto opacity-90 sm:h-[1.35rem]" />
+            </Link>
 
-              {eyebrow ? <p className="eyebrow mt-8 sm:mt-9">{eyebrow}</p> : null}
-              <h1 className="mt-4 font-light leading-[1.1] tracking-tight text-foreground text-[clamp(1.6rem,3vw,2.1rem)]">
-                {title}
-              </h1>
-              {description ? (
-                <p className="mt-4 text-sm leading-relaxed text-foreground/55">{description}</p>
-              ) : null}
+            {eyebrow ? (
+              <p className="mt-7 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#86868B]">
+                {eyebrow}
+              </p>
+            ) : (
+              <div className="mt-7" />
+            )}
+            <h1 className="mt-2 text-[1.7rem] font-semibold leading-[1.15] tracking-[-0.022em] text-[#1D1D1F] sm:text-[1.85rem]">
+              {title}
+            </h1>
+            {description ? (
+              <p className="mt-2.5 text-[15px] leading-relaxed text-[#86868B]">{description}</p>
+            ) : null}
 
-              {aside ? <div className="mt-8">{aside}</div> : null}
+            {aside ? <div className="mt-6">{aside}</div> : null}
 
-              <div className="mt-8 sm:mt-9">{children}</div>
+            <div className="mt-6 sm:mt-7">{children}</div>
 
-              {footer ? (
-                <div className="mt-8 border-t border-bronze/12 pt-6 text-sm text-foreground/50">
-                  {footer}
-                </div>
-              ) : null}
-            </GlassCard>
-          </AnimatedSection>
-        </SectionContainer>
-      </section>
+            {footer ? (
+              <div className="mt-7 border-t border-[#E5E5EA] pt-5 text-[14px] text-[#86868B]">
+                {footer}
+              </div>
+            ) : null}
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

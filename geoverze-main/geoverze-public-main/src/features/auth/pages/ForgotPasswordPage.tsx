@@ -3,9 +3,9 @@ import { Link } from "@tanstack/react-router";
 import { MailCheck } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
-import { GeoButton } from "@/components/shared/GeoButton";
 import {
   AuthField,
+  AuthGhostButton,
   AuthLayout,
   AuthSubmitButton,
   SuccessBurst,
@@ -52,7 +52,7 @@ export function ForgotPasswordPage() {
   };
 
   return (
-    <PageShell>
+    <PageShell className="pb-0">
       <AuthLayout
         eyebrow="Recovery"
         title={state === "success" ? "Check your inbox" : "Reset your password"}
@@ -65,7 +65,7 @@ export function ForgotPasswordPage() {
         footer={
           <p>
             Remembered it?{" "}
-            <Link to="/auth/login" className="text-bronze transition-colors hover:text-bronze-glow">
+            <Link to="/auth/login" search={{ redirect: undefined }} className="auth-link">
               Back to sign in
             </Link>
           </p>
@@ -77,13 +77,11 @@ export function ForgotPasswordPage() {
             title="Reset link sent"
             description={`If ${email} belongs to a GVRZE account, a reset link is on its way. The link expires in 30 minutes.`}
           >
-            <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <GeoButton asChild variant="primary">
+            <div className="flex flex-col gap-3">
+              <AuthSubmitButton asChild>
                 <Link to="/auth/reset-password">Open reset screen</Link>
-              </GeoButton>
-              <GeoButton variant="ghost" onClick={reset}>
-                Use a different email
-              </GeoButton>
+              </AuthSubmitButton>
+              <AuthGhostButton onClick={reset}>Use a different email</AuthGhostButton>
             </div>
           </SuccessBurst>
         ) : (

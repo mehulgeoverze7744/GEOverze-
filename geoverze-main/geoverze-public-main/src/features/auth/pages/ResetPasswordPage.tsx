@@ -3,7 +3,6 @@ import { Link } from "@tanstack/react-router";
 import { ShieldCheck } from "lucide-react";
 
 import { PageShell } from "@/components/layout/PageShell";
-import { GeoButton } from "@/components/shared/GeoButton";
 import {
   AuthLayout,
   AuthSubmitButton,
@@ -86,7 +85,7 @@ export function ResetPasswordPage() {
   };
 
   return (
-    <PageShell>
+    <PageShell className="pb-0">
       <AuthLayout
         eyebrow="Recovery"
         title={state === "success" ? "Password updated" : "Choose a new password"}
@@ -100,9 +99,11 @@ export function ResetPasswordPage() {
             title="You're all set"
             description="Your password has been changed. Sign in with your new credentials to continue exploring."
           >
-            <GeoButton asChild variant="primary" className="w-full sm:w-auto">
-              <Link to="/auth/login">Back to sign in</Link>
-            </GeoButton>
+            <AuthSubmitButton asChild>
+              <Link to="/auth/login" search={{ redirect: undefined }}>
+                Back to sign in
+              </Link>
+            </AuthSubmitButton>
           </SuccessBurst>
         ) : (
           <form className="space-y-5" onSubmit={onSubmit} noValidate>

@@ -1,6 +1,6 @@
 import { CheckCircle2, MinusCircle, Scale } from "lucide-react";
 
-import { AvatarMark } from "@/features/auth/components/AvatarMark";
+import { ExplorerAvatar } from "@/features/auth/components/ExplorerAvatar";
 import { cn } from "@/lib/utils";
 
 import type { CreditLedgerDisplayEntry } from "../data/credits";
@@ -12,7 +12,7 @@ export function CreditHistoryCard({ entry }: { entry: CreditLedgerDisplayEntry }
 
   return (
     <li className="flex items-center gap-4 rounded-2xl border border-bronze/12 bg-[oklch(0.185_0.008_62)] p-4 sm:p-5">
-      <AvatarMark id={entry.avatarId} size={44} className="border border-bronze/25" />
+      <ExplorerAvatar avatarId={entry.avatarId} size="md" alt="" bordered />
 
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold text-foreground">{entry.headline}</p>

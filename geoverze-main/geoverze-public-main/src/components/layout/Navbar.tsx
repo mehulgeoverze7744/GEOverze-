@@ -19,6 +19,8 @@ import { GeoDropdown, GeoDropdownItem } from "@/components/shared/GeoDropdown";
 import { GlobalSearch } from "@/components/shared/GlobalSearch";
 import { NotificationBell } from "@/components/shared/NotificationBell";
 import { mainNav, site } from "@/config/site";
+import { ExplorerAvatar } from "@/features/auth/components/ExplorerAvatar";
+import { useProfile } from "@/features/profile/lib/useProfile";
 import { isFashionStorefront } from "@/features/store/components/GeostoreLayout";
 import { scrollToHomeHero } from "@/lib/scrollToHomeHero";
 import { signOut } from "@/lib/supabase/auth-sync";
@@ -72,6 +74,7 @@ export function Navbar() {
     pathname === "/notifications" ||
     pathname.startsWith("/notifications/");
   const signedIn = useAuthStore(selectIsSignedIn);
+  const profile = useProfile();
   const navigate = useNavigate();
   const fashionStorefront = isFashionStorefront(pathname);
 
@@ -110,7 +113,7 @@ export function Navbar() {
     setOpen(false);
   }, [pathname]);
 
-  if (fashionStorefront) return null;
+  if (fashionStorefront || isAuth) return null;
 
   return (
     <header
@@ -174,9 +177,19 @@ export function Navbar() {
               <button
                 type="button"
                 aria-label="Account menu"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-bronze/25 bg-bronze/5 text-bronze/90 transition-colors motion-fast hover:border-bronze/50 hover:text-bronze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
+                className="inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-bronze/25 bg-bronze/5 text-bronze/90 transition-colors motion-fast hover:border-bronze/50 hover:text-bronze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50"
               >
-                <User className="h-4 w-4" strokeWidth={1.5} />
+                {signedIn && !profile.identityPending ? (
+                  <ExplorerAvatar
+                    avatarId={profile.avatarId}
+                    avatarUrl={profile.avatarUrl}
+                    size={40}
+                    alt=""
+                    priority
+                  />
+                ) : (
+                  <User className="h-4 w-4" strokeWidth={1.5} />
+                )}
               </button>
             }
           >

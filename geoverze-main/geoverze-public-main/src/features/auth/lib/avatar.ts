@@ -1,4 +1,4 @@
-import { findAvatar } from "@/features/auth/data/onboarding";
+import { AVATARS, findAvatar } from "@/features/auth/data/onboarding";
 
 /** Default explorer identity — astronaut emerging from bronze spacecraft window. */
 export const DEFAULT_ASTRONAUT_AVATAR_SRC = "/assets/default-astronaut-window.jpg";
@@ -127,6 +127,15 @@ export function resolveDashboardAvatarSrc(input: {
 export function isBundledAvatarSrc(src: string | null | undefined) {
   const path = src?.trim() ? stripAvatarQuery(src.trim()) : "";
   return path.startsWith("/assets/avatars/") || path === DASHBOARD_3D_AVATAR_SRC;
+}
+
+/** Deterministic explorer portrait for illustrative community members. */
+export function explorerAvatarIdFromHandle(handle: string) {
+  let hash = 0;
+  for (let i = 0; i < handle.length; i += 1) {
+    hash = (hash * 31 + handle.charCodeAt(i)) % AVATARS.length;
+  }
+  return AVATARS[hash]?.id ?? "atlas";
 }
 
 /**

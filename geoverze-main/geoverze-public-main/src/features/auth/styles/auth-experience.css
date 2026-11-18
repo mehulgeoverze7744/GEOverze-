@@ -1,0 +1,81 @@
+/* Scoped to authentication routes. Does not alter global GVRZE chrome. */
+
+#gvrze-auth {
+  --auth-bg: #f5f5f7;
+  --auth-bg-tint: #eef0f4;
+  --auth-card: rgba(255, 255, 255, 0.88);
+  --auth-text: #1d1d1f;
+  --auth-muted: #86868b;
+  --auth-border: #e5e5ea;
+  --auth-accent: #007aff;
+  --auth-black: #111111;
+  --auth-danger: #ff3b30;
+  --auth-success: #34c759;
+  --auth-field: #f5f5f7;
+  --auth-radius-card: 26px;
+  --auth-radius-control: 16px;
+  --auth-shadow: 0 12px 40px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --auth-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --auth-duration: 220ms;
+  color: var(--auth-text);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI",
+    system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#gvrze-auth .auth-shell {
+  min-height: 100dvh;
+  background:
+    radial-gradient(1200px 480px at 50% -8%, rgba(255, 255, 255, 0.95), transparent 62%),
+    linear-gradient(180deg, var(--auth-bg) 0%, var(--auth-bg-tint) 100%);
+  padding-top: max(1.25rem, env(safe-area-inset-top));
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+}
+
+#gvrze-auth .auth-card {
+  animation: auth-card-enter var(--auth-duration) var(--auth-ease) both;
+}
+
+#gvrze-auth .auth-link {
+  color: var(--auth-accent);
+  text-decoration: none;
+  transition: opacity var(--auth-duration) var(--auth-ease);
+}
+
+#gvrze-auth .auth-link:hover {
+  opacity: 0.72;
+}
+
+#gvrze-auth .auth-error {
+  animation: auth-message-in var(--auth-duration) var(--auth-ease) both;
+}
+
+@keyframes auth-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes auth-message-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #gvrze-auth .auth-card,
+  #gvrze-auth .auth-error {
+    animation: none;
+  }
+}

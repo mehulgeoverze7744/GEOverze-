@@ -1,6 +1,6 @@
 import { Flame, Target } from "lucide-react";
 
-import { AvatarMark } from "@/features/auth/components/AvatarMark";
+import { ExplorerAvatar } from "@/features/auth/components/ExplorerAvatar";
 import { cn } from "@/lib/utils";
 import type { StandingRow } from "../data/standings";
 
@@ -16,7 +16,7 @@ export function LeaderboardRow({ row }: { row: StandingRow }) {
       </th>
       <td className="px-4 py-4">
         <div className="flex items-center gap-3">
-          <AvatarMark id={row.avatarId} size={36} className="border border-bronze/25" />
+          <ExplorerAvatar avatarId={row.avatarId} size="sm" alt={`${row.username} avatar`} bordered />
           <div className="min-w-0">
             <p className="truncate text-sm font-medium text-foreground">
               {row.username}

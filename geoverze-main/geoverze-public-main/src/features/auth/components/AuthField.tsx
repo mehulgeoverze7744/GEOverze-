@@ -3,7 +3,7 @@ import { type ComponentProps, type ReactNode, useId } from "react";
 import { cn } from "@/lib/utils";
 
 const fieldBase =
-  "w-full rounded-xl border border-bronze/20 bg-charcoal/50 px-4 py-3 text-sm text-foreground placeholder:text-foreground/50 outline-none transition-all motion-fast focus:border-bronze/60 focus:ring-2 focus:ring-bronze/25 focus:shadow-[var(--glow-bronze)] disabled:cursor-not-allowed disabled:opacity-45 motion-reduce:transition-none";
+  "h-[54px] w-full rounded-[16px] border border-[#E5E5EA] bg-[#F5F5F7] px-4 text-[16px] text-[#1D1D1F] placeholder:text-[#86868B] outline-none transition-[border-color,box-shadow,background-color] duration-200 ease-out focus:border-[#007AFF] focus:bg-white focus:shadow-[0_0_0_4px_rgba(0,122,255,0.16)] disabled:cursor-not-allowed disabled:opacity-45 motion-reduce:transition-none";
 
 export { fieldBase as authFieldClass };
 
@@ -26,23 +26,24 @@ export function AuthFieldFrame({
   required?: boolean;
 }) {
   return (
-    <div className={cn("space-y-2", className)}>
+    <div className={cn("space-y-1.5", className)}>
       {label ? (
-        <label
-          htmlFor={id}
-          className="block text-[0.62rem] uppercase tracking-[0.28em] text-foreground/50"
-        >
+        <label htmlFor={id} className="block text-[13px] font-medium text-[#1D1D1F]">
           {label}
-          {required ? <span className="ml-1 text-bronze/90">*</span> : null}
+          {required ? (
+            <span className="ml-0.5 text-[#86868B]" aria-hidden="true">
+              *
+            </span>
+          ) : null}
         </label>
       ) : null}
       {children}
       {error ? (
-        <p id={`${id}-error`} role="alert" className="text-xs text-destructive">
+        <p id={`${id}-error`} role="alert" className="auth-error text-[12px] text-[#FF3B30]">
           {error}
         </p>
       ) : hint ? (
-        <p id={`${id}-hint`} className="text-xs text-foreground/50">
+        <p id={`${id}-hint`} className="text-[12px] text-[#86868B]">
           {hint}
         </p>
       ) : null}
@@ -84,7 +85,7 @@ export function AuthField({
         aria-required={required || undefined}
         className={cn(
           fieldBase,
-          error && "border-destructive/60 focus:ring-destructive/25",
+          error && "border-[#FF3B30] focus:border-[#FF3B30] focus:shadow-[0_0_0_4px_rgba(255,59,48,0.14)]",
           className,
         )}
         {...props}
@@ -93,7 +94,7 @@ export function AuthField({
   );
 }
 
-/** Bronze checkbox with a rich label slot (for Terms / Privacy links). */
+/** iOS-style rounded checkbox with a rich label slot (for Terms / Privacy links). */
 export function AuthCheckbox({
   label,
   error,
@@ -105,37 +106,38 @@ export function AuthCheckbox({
   const id = idProp ?? generated;
   return (
     <div className={cn("space-y-1.5", className)}>
-      <div className="flex items-start gap-3">
-        <span className="relative mt-0.5 inline-flex h-[1.15rem] w-[1.15rem] shrink-0">
+      <div className="flex min-h-11 items-center gap-3">
+        <span className="relative inline-flex h-[22px] w-[22px] shrink-0">
           <input
             id={id}
             type="checkbox"
             aria-invalid={error ? true : undefined}
             aria-describedby={error ? `${id}-error` : undefined}
-            className="peer h-full w-full cursor-pointer appearance-none rounded-md border border-bronze/30 bg-charcoal/60 transition-all motion-fast checked:border-bronze checked:bg-bronze/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50 motion-reduce:transition-none"
+            className="peer absolute inset-0 z-10 cursor-pointer opacity-0"
             {...props}
           />
+          <span className="pointer-events-none h-full w-full rounded-[7px] border border-[#C7C7CC] bg-white transition-colors duration-200 peer-checked:border-[#007AFF] peer-checked:bg-[#007AFF] peer-focus-visible:ring-2 peer-focus-visible:ring-[#007AFF]/40" />
           <svg
             viewBox="0 0 16 16"
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 m-auto h-3 w-3 scale-50 text-bronze-glow opacity-0 transition-all motion-fast peer-checked:scale-100 peer-checked:opacity-100 motion-reduce:transition-none"
+            className="pointer-events-none absolute inset-0 m-auto h-3 w-3 scale-50 text-white opacity-0 transition-all duration-200 peer-checked:scale-100 peer-checked:opacity-100 motion-reduce:transition-none"
           >
             <path
               d="M2 8.5l4 4 8-9"
               fill="none"
               stroke="currentColor"
-              strokeWidth="2"
+              strokeWidth="2.2"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
           </svg>
         </span>
-        <label htmlFor={id} className="cursor-pointer text-xs leading-relaxed text-foreground/60">
+        <label htmlFor={id} className="cursor-pointer text-[14px] leading-snug text-[#86868B]">
           {label}
         </label>
       </div>
       {error ? (
-        <p id={`${id}-error`} role="alert" className="pl-8 text-xs text-destructive">
+        <p id={`${id}-error`} role="alert" className="auth-error pl-8 text-[12px] text-[#FF3B30]">
           {error}
         </p>
       ) : null}

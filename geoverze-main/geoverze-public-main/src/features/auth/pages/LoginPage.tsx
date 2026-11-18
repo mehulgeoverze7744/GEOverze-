@@ -71,7 +71,7 @@ export function LoginPage({ redirect }: { redirect?: string }) {
 
   if (state === "success") {
     return (
-      <PageShell>
+      <PageShell className="pb-0">
         <AuthLayout title="Welcome back to GVRZE" description="Signing you in…">
           <SuccessBurst
             title="Signed in"
@@ -83,7 +83,7 @@ export function LoginPage({ redirect }: { redirect?: string }) {
   }
 
   return (
-    <PageShell>
+    <PageShell className="pb-0">
       <AuthLayout
         eyebrow="Welcome back"
         title="Sign in to GVRZE"
@@ -91,24 +91,21 @@ export function LoginPage({ redirect }: { redirect?: string }) {
         footer={
           <p>
             New here?{" "}
-            <Link
-              to="/auth/signup"
-              className="text-bronze transition-colors hover:text-bronze-glow"
-            >
+            <Link to="/auth/signup" className="auth-link">
               Create an account
             </Link>
           </p>
         }
       >
-        <form className="space-y-5" onSubmit={onSubmit} noValidate>
+        <form className="space-y-4" onSubmit={onSubmit} noValidate>
           {error ? <ValidationMessage>{error}</ValidationMessage> : null}
           {error?.toLowerCase().includes("confirm your email") ? (
-            <p className="text-xs leading-relaxed text-foreground/55">
+            <p className="text-[13px] leading-relaxed text-[#86868B]">
               Didn&apos;t get the email?{" "}
               <Link
                 to="/auth/verify-email"
                 search={{ email: values.email || undefined }}
-                className="text-bronze hover:text-bronze-glow"
+                className="auth-link"
               >
                 Resend confirmation
               </Link>
@@ -138,7 +135,7 @@ export function LoginPage({ redirect }: { redirect?: string }) {
             required
           />
 
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center justify-between gap-3">
             <AuthCheckbox
               id="remember"
               label="Remember me"
@@ -147,7 +144,7 @@ export function LoginPage({ redirect }: { redirect?: string }) {
             />
             <Link
               to="/auth/forgot-password"
-              className="text-xs text-foreground/50 transition-colors hover:text-bronze"
+              className="shrink-0 py-2 text-[14px] text-[#86868B] transition-opacity duration-200 hover:opacity-70"
             >
               Forgot password?
             </Link>

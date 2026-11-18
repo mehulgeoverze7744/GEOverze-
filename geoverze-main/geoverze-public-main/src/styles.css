@@ -1059,7 +1059,7 @@
   }
 }
 
-/* Google Identity Services button inside auth (GIS renderButton). */
+/* Google Identity Services button inside auth (GIS renderButton, if present). */
 .gvrze-google-gis iframe {
   min-height: 44px;
 }

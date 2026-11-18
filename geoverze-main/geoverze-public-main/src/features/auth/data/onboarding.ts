@@ -72,26 +72,43 @@ export const SKILL_LEVELS: readonly SkillLevel[] = [
   },
 ] as const;
 
+export const EXPLORER_AVATAR_IDS = [
+  "meridian",
+  "atlas",
+  "compass",
+  "equator",
+  "summit",
+  "voyager",
+  "delta",
+  "orbit",
+] as const;
+
+export type ExplorerAvatarId = (typeof EXPLORER_AVATAR_IDS)[number];
+
 export type AvatarOption = {
   id: string;
   label: string;
-  /** Bronze-family hue pair used by the generated avatar mark. */
+  /** Bronze-family hue pair used by the generated avatar mark fallback. */
   hue: [number, number];
   glyph: string;
   /** Cropped character portrait for profile selection. */
   src?: string;
 };
 
-/** Deterministic, generated avatars — no external image requests. */
-export const AVATARS: readonly AvatarOption[] = [
-  { id: "meridian", label: "Meridian", hue: [62, 78], glyph: "◉" },
-  { id: "atlas", label: "Atlas", hue: [48, 66], glyph: "▲" },
-  { id: "compass", label: "Compass", hue: [74, 92], glyph: "✦" },
-  { id: "equator", label: "Equator", hue: [38, 58], glyph: "≡" },
-  { id: "summit", label: "Summit", hue: [84, 60], glyph: "◆" },
-  { id: "voyager", label: "Voyager", hue: [56, 84], glyph: "➤" },
-  { id: "delta", label: "Delta", hue: [70, 44], glyph: "△" },
-  { id: "orbit", label: "Orbit", hue: [66, 88], glyph: "◌" },
+function explorerPortrait(id: ExplorerAvatarId) {
+  return `/assets/avatars/${id}.webp`;
+}
+
+/** Eight explorer characters. Stable IDs persist on `profiles.avatar_id`. */
+export const AVATARS: readonly (AvatarOption & { id: ExplorerAvatarId; src: string })[] = [
+  { id: "meridian", label: "Meridian", hue: [62, 78], glyph: "◉", src: explorerPortrait("meridian") },
+  { id: "atlas", label: "Atlas", hue: [48, 66], glyph: "▲", src: explorerPortrait("atlas") },
+  { id: "compass", label: "Compass", hue: [74, 92], glyph: "✦", src: explorerPortrait("compass") },
+  { id: "equator", label: "Equator", hue: [38, 58], glyph: "≡", src: explorerPortrait("equator") },
+  { id: "summit", label: "Summit", hue: [84, 60], glyph: "◆", src: explorerPortrait("summit") },
+  { id: "voyager", label: "Voyager", hue: [56, 84], glyph: "➤", src: explorerPortrait("voyager") },
+  { id: "delta", label: "Delta", hue: [70, 44], glyph: "△", src: explorerPortrait("delta") },
+  { id: "orbit", label: "Orbit", hue: [66, 88], glyph: "◌", src: explorerPortrait("orbit") },
 ] as const;
 
 /** GVRZE character portraits used on Edit Profile — not glyph placeholders. */

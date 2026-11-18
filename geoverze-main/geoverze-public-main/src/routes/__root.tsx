@@ -3,6 +3,7 @@ import {
   Outlet,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -134,6 +135,9 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const isAuthRoute = useRouterState({
+    select: (state) => state.location.pathname.startsWith("/auth"),
+  });
 
   // Restores the Supabase session (if any) and keeps useAuthStore in sync for
   // the lifetime of the app. Guarded internally, so this is safe to call on
@@ -145,7 +149,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <UniverseBackground />
+        {isAuthRoute ? null : <UniverseBackground />}
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-6 focus:top-6 focus:z-[var(--z-skip)] focus:rounded-full focus:border focus:border-bronze/50 focus:bg-charcoal focus:px-5 focus:py-3 focus:text-[0.7rem] focus:uppercase focus:tracking-[var(--tracking-button)] focus:text-bronze"
@@ -153,12 +157,12 @@ function RootComponent() {
           Skip to content
         </a>
         <div className="relative flex min-h-dvh flex-col overflow-x-clip">
-          <Navbar />
+          {isAuthRoute ? null : <Navbar />}
           <main id="main" className="flex-1">
             {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
             <Outlet />
           </main>
-          <Footer />
+          {isAuthRoute ? null : <Footer />}
         </div>
         <OfflineNotice />
         <Toaster />
