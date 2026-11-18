@@ -66,14 +66,29 @@ const TABS: { id: TabId; label: string }[] = [
   { id: "entitlements", label: "Plan entitlements" },
 ];
 
-const PLAN_DEFAULTS: Record<
-  string,
-  { monthly: string; solo: string; pvp: string; multiplayer: string; credits: string; discount: string }
-> = {
+type PlanEntitlementDefaults = {
+  monthly: string;
+  solo: string;
+  pvp: string;
+  multiplayer: string;
+  credits: string;
+  discount: string;
+};
+
+const PLAN_DEFAULTS = {
   explorer: { monthly: "", solo: "8", pvp: "1", multiplayer: "1", credits: "0", discount: "0" },
   basic: { monthly: "60", solo: "", pvp: "1", multiplayer: "1", credits: "5", discount: "300" },
   pro: { monthly: "", solo: "", pvp: "", multiplayer: "", credits: "25", discount: "1000" },
-};
+} satisfies Record<string, PlanEntitlementDefaults>;
+
+const EXPLORER_PLAN_DEFAULTS = PLAN_DEFAULTS.explorer;
+
+function planEntitlementDefaults(tier: string): PlanEntitlementDefaults {
+  if (tier in PLAN_DEFAULTS) {
+    return PLAN_DEFAULTS[tier as keyof typeof PLAN_DEFAULTS];
+  }
+  return EXPLORER_PLAN_DEFAULTS;
+}
 
 function asArray<T>(value: unknown): T[] {
   return Array.isArray(value) ? (value as T[]) : [];
@@ -514,7 +529,7 @@ export function MembershipAdminScreen() {
 
 function EntitlementsPanel() {
   const [tier, setTier] = useState("basic");
-  const defaults = PLAN_DEFAULTS["basic"] ?? PLAN_DEFAULTS["explorer"];
+  const defaults = planEntitlementDefaults("basic");
   const [monthly, setMonthly] = useState(defaults.monthly);
   const [solo, setSolo] = useState(defaults.solo);
   const [pvp, setPvp] = useState(defaults.pvp);
@@ -524,7 +539,7 @@ function EntitlementsPanel() {
   const [discount, setDiscount] = useState(defaults.discount);
 
   useEffect(() => {
-    const next = PLAN_DEFAULTS[tier] ?? PLAN_DEFAULTS["explorer"];
+    const next = planEntitlementDefaults(tier);
     setMonthly(next.monthly);
     setSolo(next.solo);
     setPvp(next.pvp);

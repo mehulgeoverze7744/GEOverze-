@@ -62,12 +62,15 @@ test("mapGooglePromptDismissal treats user cancellation as recoverable", () => {
     getDismissedReason: () => "user_cancel",
     getMomentType: () => "dismissed",
   };
-  assert.match(mapGooglePromptDismissal(dismissed), /cancelled/i);
+  const cancellationMessage = mapGooglePromptDismissal(dismissed);
+  assert.ok(cancellationMessage);
+  assert.match(cancellationMessage, /cancelled/i);
 });
 
 test("exchangeGoogleIdToken calls signInWithIdToken with raw nonce and credential", async () => {
   resetGoogleSignInInFlightForTests();
-  let input: { provider: string; token: string; nonce: string } | null = null;
+  type GoogleSignInPayload = { provider: "google"; token: string; nonce: string };
+  const captured: { payload: GoogleSignInPayload | null } = { payload: null };
   const session = {
     access_token: "at",
     refresh_token: "rt",
@@ -78,14 +81,15 @@ test("exchangeGoogleIdToken calls signInWithIdToken with raw nonce and credentia
 
   const result = await exchangeGoogleIdToken(fakeJwt(), "raw-nonce-abc", {
     signInWithIdToken: async (payload) => {
-      input = payload;
+      captured.payload = payload;
       return { data: { session: session as never }, error: null };
     },
   });
 
-  assert.equal(input?.provider, "google");
-  assert.equal(input?.token, fakeJwt());
-  assert.equal(input?.nonce, "raw-nonce-abc");
+  assert.ok(captured.payload);
+  assert.equal(captured.payload.provider, "google");
+  assert.equal(captured.payload.token, fakeJwt());
+  assert.equal(captured.payload.nonce, "raw-nonce-abc");
   assert.equal(result.user.id, "user-1");
   assert.equal(isGoogleSignInInFlight(), false);
 });
@@ -106,7 +110,7 @@ test("exchangeGoogleIdToken surfaces invalid token errors without logging the JW
 
 test("exchangeGoogleIdToken blocks duplicate in-flight exchanges", async () => {
   resetGoogleSignInInFlightForTests();
-  let release: (() => void) | null = null;
+  let release!: () => void;
   const gate = new Promise<void>((resolve) => {
     release = resolve;
   });
@@ -137,7 +141,7 @@ test("exchangeGoogleIdToken blocks duplicate in-flight exchanges", async () => {
     /GOOGLE_SIGNIN_IN_FLIGHT/,
   );
 
-  release?.();
+  release();
   await first;
 });
 

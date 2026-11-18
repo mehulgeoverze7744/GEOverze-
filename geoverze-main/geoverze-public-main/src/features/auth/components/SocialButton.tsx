@@ -7,6 +7,7 @@ import {
   initializeGoogleIdentityButton,
   isGoogleSignInInFlight,
   readGoogleClientId,
+  type InitializeGoogleIdentityButtonOptions,
 } from "@/features/auth/lib/googleGis";
 import type { GoogleCredentialResponse } from "@/features/auth/lib/googleGis.types";
 import {
@@ -40,6 +41,23 @@ const PROVIDERS = {
     ),
   },
 } as const;
+
+function googleIdentityButtonOptions(
+  host: HTMLDivElement,
+  clientId: string,
+  onCredential: InitializeGoogleIdentityButtonOptions["onCredential"],
+): InitializeGoogleIdentityButtonOptions {
+  const options: InitializeGoogleIdentityButtonOptions = {
+    parent: host,
+    clientId,
+    onCredential,
+  };
+  const measuredWidth = host.clientWidth;
+  if (measuredWidth > 0) {
+    options.width = measuredWidth;
+  }
+  return options;
+}
 
 export function SocialButton({
   provider,
@@ -79,12 +97,9 @@ export function SocialButton({
         const clientId = readGoogleClientId();
         if (host && clientId) {
           rememberAuthRedirect(next);
-          void initializeGoogleIdentityButton({
-            parent: host,
-            clientId,
-            width: host.clientWidth || undefined,
-            onCredential: handleCredential,
-          }).then(() => {
+          void initializeGoogleIdentityButton(
+            googleIdentityButtonOptions(host, clientId, handleCredential),
+          ).then(() => {
             if (initGeneration.current === generation) setGisReady(true);
           });
         }
@@ -107,12 +122,7 @@ export function SocialButton({
     const generation = ++initGeneration.current;
     let cancelled = false;
 
-    void initializeGoogleIdentityButton({
-      parent: host,
-      clientId,
-      width: host.clientWidth || undefined,
-      onCredential: handleCredential,
-    })
+    void initializeGoogleIdentityButton(googleIdentityButtonOptions(host, clientId, handleCredential))
       .then(() => {
         if (!cancelled && initGeneration.current === generation) {
           setGisReady(true);
