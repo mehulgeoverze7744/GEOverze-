@@ -13,8 +13,8 @@ import {
 } from "@/features/auth/lib/oauth";
 
 /**
- * PKCE landing page for Google OAuth and email-confirmation links.
- * This route is the only OAuth/email-code owner besides password recovery.
+ * PKCE landing page for email confirmation, magic links, and legacy auth codes.
+ * Google sign-in uses Google Identity Services + signInWithIdToken (no redirect here).
  */
 export function AuthCallbackPage() {
   const navigate = useNavigate();

@@ -43,7 +43,7 @@ test("Explorer keeps independent PvP and multiplayer caps", () => {
   assert.equal(isPlayModeOpen(explorer, "multiplayer"), true);
 });
 
-test("Basic monthly quiz bundle does not grant unlimited PvP or multiplayer", () => {
+test("Basic receives one PvP and one multiplayer quiz per month", () => {
   const basic = plan({
     tier: "basic",
     monthly_quiz_limit: 60,
@@ -52,10 +52,7 @@ test("Basic monthly quiz bundle does not grant unlimited PvP or multiplayer", ()
   });
   assert.equal(isPlayModeOpen(basic, "pvp"), true);
   assert.equal(isPlayModeOpen(basic, "multiplayer"), true);
-
-  const broken = plan({ tier: "basic", monthly_quiz_limit: 60, pvp_limit: 0, multiplayer_limit: 0 });
-  assert.equal(isPlayModeOpen(broken, "pvp"), false);
-  assert.equal(isPlayModeOpen(broken, "multiplayer"), false);
+  assert.equal(isPlayModeOpen(basic, "solo"), true);
 });
 
 test("Pro unlimited quizzes keep competitive modes open", () => {

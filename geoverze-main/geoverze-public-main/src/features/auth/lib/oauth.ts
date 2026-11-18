@@ -181,72 +181,10 @@ export function oauthCallbackUrl(): string {
   return `${window.location.origin}${AUTH_CALLBACK_PATH}`;
 }
 
-async function assertGoogleProviderEnabled() {
-  const supabaseUrl = import.meta.env["VITE_SUPABASE_URL"] as string | undefined;
-  const anonKey = import.meta.env["VITE_SUPABASE_ANON_KEY"] as string | undefined;
-  if (!supabaseUrl || !anonKey) {
-    throw new Error("Authentication is misconfigured. Please try again later.");
-  }
-  try {
-    const response = await fetch(`${supabaseUrl.replace(/\/$/, "")}/auth/v1/settings`, {
-      headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` },
-    });
-    if (!response.ok) return;
-    const settings = (await response.json()) as { external?: { google?: boolean } };
-    if (settings.external?.google !== true) {
-      throw new Error(
-        "Google sign-in is not enabled on the authentication service yet. Use email and password, or try again later.",
-      );
-    }
-  } catch (error) {
-    if (error instanceof Error && error.message.includes("Google sign-in is not enabled")) {
-      throw error;
-    }
-    // If settings cannot be read, continue and let the OAuth call surface the real error.
-  }
-}
-
-let googleOAuthInFlight = false;
-
-export function isGoogleOAuthInFlight(): boolean {
-  return googleOAuthInFlight;
-}
-
-export function resetGoogleOAuthInFlightForTests() {
-  googleOAuthInFlight = false;
-}
-
-export async function startGoogleOAuth(next?: string | null) {
-  if (typeof window === "undefined") {
-    throw new Error("Google sign-in is only available in the browser.");
-  }
-  if (googleOAuthInFlight) {
-    return;
-  }
-  googleOAuthInFlight = true;
-  rememberAuthRedirect(next);
-  try {
-    await assertGoogleProviderEnabled();
-    const { supabase } = await import("@/lib/supabase/client");
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: oauthCallbackUrl(),
-        queryParams: {
-          access_type: "offline",
-          prompt: "select_account",
-        },
-      },
-    });
-    if (error) {
-      googleOAuthInFlight = false;
-      throw new Error(mapAuthError(error.message, error.code));
-    }
-  } catch (error) {
-    googleOAuthInFlight = false;
-    throw error;
-  }
-}
+export {
+  isGoogleSignInInFlight as isGoogleOAuthInFlight,
+  resetGoogleSignInInFlightForTests as resetGoogleOAuthInFlightForTests,
+} from "./googleGis.ts";
 
 type PostAuthProfile = {
   age_bracket?: string | null;

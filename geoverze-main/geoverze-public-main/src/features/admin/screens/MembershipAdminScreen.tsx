@@ -7,7 +7,7 @@ import { supabase } from "@/lib/supabase/client";
 import { selectUser, useAuthStore } from "@/stores/authStore";
 import type { Json } from "@/lib/supabase/database.types";
 
-type TabId = "members" | "library" | "challenges" | "entitlements";
+type TabId = "members" | "library" | "quizzes" | "challenges" | "entitlements";
 
 type MemberRow = {
   id: string;
@@ -38,6 +38,14 @@ type LibraryRow = {
   read_time_minutes: number | null;
 };
 
+type QuizAccessRow = {
+  id: string;
+  title: string;
+  category_id: string | null;
+  min_access_tier: string | null;
+  access_band: string;
+};
+
 type ChallengeRow = {
   id: string;
   slug: string;
@@ -53,9 +61,19 @@ type ChallengeRow = {
 const TABS: { id: TabId; label: string }[] = [
   { id: "members", label: "Members" },
   { id: "library", label: "Library access" },
+  { id: "quizzes", label: "Quiz access" },
   { id: "challenges", label: "Challenges" },
   { id: "entitlements", label: "Plan entitlements" },
 ];
+
+const PLAN_DEFAULTS: Record<
+  string,
+  { monthly: string; solo: string; pvp: string; multiplayer: string; credits: string; discount: string }
+> = {
+  explorer: { monthly: "", solo: "8", pvp: "1", multiplayer: "1", credits: "0", discount: "0" },
+  basic: { monthly: "60", solo: "", pvp: "1", multiplayer: "1", credits: "5", discount: "300" },
+  pro: { monthly: "", solo: "", pvp: "", multiplayer: "", credits: "25", discount: "1000" },
+};
 
 function asArray<T>(value: unknown): T[] {
   return Array.isArray(value) ? (value as T[]) : [];
@@ -82,6 +100,7 @@ export function MembershipAdminScreen() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [members, setMembers] = useState<MemberRow[]>([]);
   const [articles, setArticles] = useState<LibraryRow[]>([]);
+  const [quizzes, setQuizzes] = useState<QuizAccessRow[]>([]);
   const [challenges, setChallenges] = useState<ChallengeRow[]>([]);
 
   const [challengeForm, setChallengeForm] = useState({
@@ -117,16 +136,21 @@ export function MembershipAdminScreen() {
       const membershipFilters: { _tier?: string; _status?: string } = {};
       if (tierFilter !== "all") membershipFilters._tier = tierFilter;
       if (statusFilter !== "all") membershipFilters._status = statusFilter;
-      const [memberRes, libraryRes, challengeRes] = await Promise.all([
+      const [memberRes, libraryRes, quizRes, challengeRes] = await Promise.all([
         supabase.rpc("admin_list_memberships", membershipFilters),
         supabase.rpc("admin_list_library_access"),
+        (supabase.rpc as (name: string, args?: object) => ReturnType<typeof supabase.rpc>)(
+          "admin_list_quiz_access",
+        ),
         supabase.rpc("admin_list_membership_challenges"),
       ]);
       if (memberRes.error) throw memberRes.error;
       if (libraryRes.error) throw libraryRes.error;
+      if (quizRes.error) throw quizRes.error;
       if (challengeRes.error) throw challengeRes.error;
       setMembers(asArray<MemberRow>(memberRes.data));
       setArticles(asArray<LibraryRow>(libraryRes.data));
+      setQuizzes(asArray<QuizAccessRow>(quizRes.data));
       setChallenges(asArray<ChallengeRow>(challengeRes.data));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load admin data");
@@ -327,6 +351,52 @@ export function MembershipAdminScreen() {
         </section>
       ) : null}
 
+      {tab === "quizzes" ? (
+        <section className="space-y-3">
+          <p className="text-xs text-foreground/55">
+            NULL tier = open to all published explorers. Atlases and packs default to Pro when unclassified.
+          </p>
+          {quizzes.map((quiz) => (
+            <div
+              key={quiz.id}
+              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-bronze/20 px-4 py-3"
+            >
+              <div>
+                <p className="text-sm font-medium">{quiz.title}</p>
+                <p className="text-xs text-foreground/45">
+                  {quiz.id}
+                  {quiz.category_id ? ` · ${quiz.category_id}` : ""} · {quiz.access_band}
+                </p>
+              </div>
+              <select
+                className="rounded-lg border border-bronze/25 bg-transparent px-3 py-1.5 text-xs"
+                value={quiz.min_access_tier ?? "open"}
+                onChange={async (event) => {
+                  const next = event.target.value === "open" ? null : event.target.value;
+                  const { error: rpcError } = await (
+                    supabase.rpc as (name: string, args?: object) => ReturnType<typeof supabase.rpc>
+                  )("admin_set_quiz_access_tier", {
+                    _quiz_id: quiz.id,
+                    _min_access_tier: next,
+                  });
+                  if (rpcError) {
+                    toast.error(rpcError.message);
+                    return;
+                  }
+                  toast.success("Quiz access updated");
+                  void load();
+                }}
+              >
+                <option value="open">Open (Explorer)</option>
+                <option value="explorer">Explorer catalogue</option>
+                <option value="basic">Basic+</option>
+                <option value="pro">Pro exclusive</option>
+              </select>
+            </div>
+          ))}
+        </section>
+      ) : null}
+
       {tab === "challenges" ? (
         <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="space-y-3">
@@ -444,13 +514,24 @@ export function MembershipAdminScreen() {
 
 function EntitlementsPanel() {
   const [tier, setTier] = useState("basic");
-  const [monthly, setMonthly] = useState("60");
-  const [solo, setSolo] = useState("");
-  const [pvp, setPvp] = useState("1");
-  const [multiplayer, setMultiplayer] = useState("1");
-  const [credits, setCredits] = useState("5");
+  const defaults = PLAN_DEFAULTS["basic"] ?? PLAN_DEFAULTS["explorer"];
+  const [monthly, setMonthly] = useState(defaults.monthly);
+  const [solo, setSolo] = useState(defaults.solo);
+  const [pvp, setPvp] = useState(defaults.pvp);
+  const [multiplayer, setMultiplayer] = useState(defaults.multiplayer);
+  const [credits, setCredits] = useState(defaults.credits);
   const [rollover, setRollover] = useState("1");
-  const [discount, setDiscount] = useState("300");
+  const [discount, setDiscount] = useState(defaults.discount);
+
+  useEffect(() => {
+    const next = PLAN_DEFAULTS[tier] ?? PLAN_DEFAULTS["explorer"];
+    setMonthly(next.monthly);
+    setSolo(next.solo);
+    setPvp(next.pvp);
+    setMultiplayer(next.multiplayer);
+    setCredits(next.credits);
+    setDiscount(next.discount);
+  }, [tier]);
 
   return (
     <form

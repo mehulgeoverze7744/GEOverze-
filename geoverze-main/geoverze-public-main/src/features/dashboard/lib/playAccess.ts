@@ -5,7 +5,8 @@ export type ContinuePlayMode = "solo" | "pvp" | "multiplayer";
 
 /**
  * Competitive modes are open when the plan's mode cap is unlimited (null)
- * or greater than zero. A monthly quiz bundle does not unlock PvP/multiplayer.
+ * or greater than zero. Basic shares Explorer's one PvP / one multiplayer
+ * monthly allowance; Pro is unlimited (null caps).
  */
 export function isPlayModeOpen(
   plan: SubscriptionPlanRow | undefined,

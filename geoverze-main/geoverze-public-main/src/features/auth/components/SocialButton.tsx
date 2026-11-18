@@ -1,7 +1,19 @@
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 
-import { isGoogleOAuthInFlight, startGoogleOAuth } from "@/features/auth/lib/oauth";
+import {
+  exchangeGoogleIdToken,
+  initializeGoogleIdentityButton,
+  isGoogleSignInInFlight,
+  readGoogleClientId,
+} from "@/features/auth/lib/googleGis";
+import type { GoogleCredentialResponse } from "@/features/auth/lib/googleGis.types";
+import {
+  consumeStoredAuthRedirect,
+  rememberAuthRedirect,
+  resolvePostAuthDestination,
+} from "@/features/auth/lib/oauth";
 import { cn } from "@/lib/utils";
 
 const PROVIDERS = {
@@ -40,41 +52,155 @@ export function SocialButton({
   next?: string;
 }) {
   const { label, icon } = PROVIDERS[provider];
+  const navigate = useNavigate();
+  const googleButtonRef = useRef<HTMLDivElement | null>(null);
   const [pending, setPending] = useState(false);
+  const [gisReady, setGisReady] = useState(false);
+  const [gisError, setGisError] = useState<string | null>(null);
+  const initGeneration = useRef(0);
 
-  const onClick = async () => {
-    if (provider === "apple") {
-      toast("Continue with Apple isn't available yet", {
-        description: "Use email and password, or Continue with Google.",
-      });
+  const handleCredential = useCallback(
+    async (response: GoogleCredentialResponse, rawNonce: string) => {
+      if (pending || isGoogleSignInInFlight()) return;
+      setPending(true);
+      try {
+        const session = await exchangeGoogleIdToken(response.credential ?? "", rawNonce);
+        const requested =
+          consumeStoredAuthRedirect() ?? (typeof next === "string" ? next : null);
+        const destination = await resolvePostAuthDestination(session.user.id, requested);
+        await navigate({ to: destination as never, replace: true });
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : "Google sign-in failed. Please try again.";
+        toast.error(message, { duration: 8000 });
+        setPending(false);
+        const generation = ++initGeneration.current;
+        const host = googleButtonRef.current;
+        const clientId = readGoogleClientId();
+        if (host && clientId) {
+          rememberAuthRedirect(next);
+          void initializeGoogleIdentityButton({
+            parent: host,
+            clientId,
+            width: host.clientWidth || undefined,
+            onCredential: handleCredential,
+          }).then(() => {
+            if (initGeneration.current === generation) setGisReady(true);
+          });
+        }
+      }
+    },
+    [navigate, next, pending],
+  );
+
+  useEffect(() => {
+    if (provider !== "google") return;
+    const clientId = readGoogleClientId();
+    const host = googleButtonRef.current;
+    if (!clientId) {
+      setGisError("Google sign-in is not configured yet. Use email and password.");
       return;
     }
+    if (!host) return;
 
-    if (pending || isGoogleOAuthInFlight()) return;
-    setPending(true);
-    try {
-      await startGoogleOAuth(next);
-    } catch (error) {
-      setPending(false);
-      const message = error instanceof Error ? error.message : "Google sign-in failed. Please try again.";
-      toast.error(message, { duration: 8000 });
-    }
+    rememberAuthRedirect(next);
+    const generation = ++initGeneration.current;
+    let cancelled = false;
+
+    void initializeGoogleIdentityButton({
+      parent: host,
+      clientId,
+      width: host.clientWidth || undefined,
+      onCredential: handleCredential,
+    })
+      .then(() => {
+        if (!cancelled && initGeneration.current === generation) {
+          setGisReady(true);
+          setGisError(null);
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          setGisError(error instanceof Error ? error.message : "Could not load Google sign-in.");
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [handleCredential, next, provider]);
+
+  const onAppleClick = () => {
+    toast("Continue with Apple isn't available yet", {
+      description: "Use email and password, or Continue with Google.",
+    });
   };
 
+  if (provider === "apple") {
+    return (
+      <button
+        type="button"
+        onClick={onAppleClick}
+        className={cn(
+          "flex w-full items-center justify-center gap-3 rounded-full border border-bronze/20 bg-charcoal/40 px-5 py-3 text-xs tracking-[var(--tracking-button)] text-foreground/70 transition-all motion-base hover:border-bronze/45 hover:text-foreground active:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50 motion-reduce:transition-none",
+          className,
+        )}
+      >
+        {icon}
+        <span>{label}</span>
+      </button>
+    );
+  }
+
   return (
-    <button
-      type="button"
-      onClick={() => void onClick()}
-      disabled={pending}
-      aria-busy={pending}
+    <div
       className={cn(
-        "flex w-full items-center justify-center gap-3 rounded-full border border-bronze/20 bg-charcoal/40 px-5 py-3 text-xs tracking-[var(--tracking-button)] text-foreground/70 transition-all motion-base hover:border-bronze/45 hover:text-foreground active:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bronze/50 motion-reduce:transition-none disabled:cursor-wait disabled:opacity-70",
+        "relative w-full",
+        pending && "pointer-events-none opacity-70",
         className,
       )}
+      aria-busy={pending}
     >
-      {icon}
-      <span>{pending ? "Connecting to Google…" : label}</span>
-    </button>
+      {!gisReady && !gisError ? (
+        <button
+          type="button"
+          disabled
+          className="flex w-full items-center justify-center gap-3 rounded-full border border-bronze/20 bg-charcoal/40 px-5 py-3 text-xs tracking-[var(--tracking-button)] text-foreground/70"
+        >
+          {icon}
+          <span>Loading Google sign-in…</span>
+        </button>
+      ) : null}
+
+      {gisError ? (
+        <div className="space-y-2">
+          <button
+            type="button"
+            disabled
+            className="flex w-full items-center justify-center gap-3 rounded-full border border-bronze/20 bg-charcoal/40 px-5 py-3 text-xs text-foreground/55"
+          >
+            {icon}
+            <span>{label}</span>
+          </button>
+          <p className="text-center text-[11px] text-foreground/45">{gisError}</p>
+        </div>
+      ) : (
+        <div
+          ref={googleButtonRef}
+          className={cn(
+            "gvrze-google-gis flex w-full justify-center overflow-hidden rounded-full border border-bronze/20 bg-charcoal/40 [&>div]:!w-full",
+            !gisReady && "sr-only",
+          )}
+          data-gvrze-google-button
+        />
+      )}
+
+      {pending ? (
+        <p className="mt-2 text-center text-[11px] text-foreground/50" role="status">
+          Completing Google sign-in…
+        </p>
+      ) : null}
+    </div>
   );
 }
 

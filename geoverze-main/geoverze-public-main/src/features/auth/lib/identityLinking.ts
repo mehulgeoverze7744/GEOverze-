@@ -1,8 +1,9 @@
 /**
  * Product policy for automatic identity linking.
  *
- * Linking is performed by Supabase Auth when the Google provider is enabled
- * and automatic linking is on. This module does not merge accounts, match
+ * Linking is performed by Supabase Auth when the Google provider is enabled,
+ * automatic linking is on, and sign-in uses signInWithIdToken (GIS) or OAuth.
+ * This module does not merge accounts, match
  * emails in the browser, or call the service role.
  */
 export type IdentityLinkingScenario =
