@@ -113,8 +113,18 @@ body:has(#gvrze-tryon-studio) footer.mt-auto {
   color: #000000;
 }
 
+.gmake-copy__price-row {
+  display: flex;
+  min-width: 0;
+  max-width: 100%;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 0.65rem;
+  margin-top: 0.35rem;
+}
+
 .gmake-copy__price {
-  margin: 0.35rem 0 0;
+  margin: 0;
   font-size: 24px;
   font-weight: 400;
   color: var(--gmake-muted);

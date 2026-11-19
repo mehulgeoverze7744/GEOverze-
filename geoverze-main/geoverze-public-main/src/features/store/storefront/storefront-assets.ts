@@ -5,17 +5,45 @@
  */
 const BASE = "/assets/gvrze-storefront";
 
+const HERO_STEM = "gvrze-graphic-tees-studio-trio";
+/** Ultra HD campaign master (4K) — intrinsic size for CLS; Figma frame ≈ 1440×858. */
+export const SF_HERO_NATIVE = { width: 3840, height: 2161 } as const;
+export const SF_HERO_WIDTHS = [640, 960, 1280, 1920, 2560, 3840] as const;
+export const SF_HERO_SIZES = "100vw";
+
+function heroAssetPath(width: number, ext: "avif" | "webp" | "jpg"): string {
+  const file =
+    width === SF_HERO_NATIVE.width ? `${HERO_STEM}.${ext}` : `${HERO_STEM}-${width}w.${ext}`;
+  return `${BASE}/${file}`;
+}
+
+function heroSrcSet(ext: "avif" | "webp" | "jpg"): string {
+  return SF_HERO_WIDTHS.map((w) => `${heroAssetPath(w, ext)} ${w}w`).join(", ");
+}
+
+/** Responsive hero artwork — AVIF / WebP / JPEG generated from the campaign master PNG. */
+export const SF_HERO_PICTURE = {
+  ...SF_HERO_NATIVE,
+  sizes: SF_HERO_SIZES,
+  fallback: heroAssetPath(SF_HERO_NATIVE.width, "jpg"),
+  srcSetAvif: heroSrcSet("avif"),
+  srcSetWebp: heroSrcSet("webp"),
+  srcSetJpg: heroSrcSet("jpg"),
+  /** LCP preload candidate (responsive). */
+  preload: {
+    href: heroAssetPath(1920, "avif"),
+    type: "image/avif",
+    imageSrcSet: heroSrcSet("avif"),
+    imageSizes: SF_HERO_SIZES,
+  },
+} as const;
+
 export const SF_ASSETS = {
   logo: { src: "/assets/home/gvrze-wordmark.png", width: 581, height: 85 },
   hero: {
-    src: `${BASE}/gvrze-graphic-tees-studio-trio.jpg`,
-    width: 1024,
-    height: 576,
-  },
-  heroWebp: {
-    src: `${BASE}/gvrze-graphic-tees-studio-trio.jpg`,
-    width: 1024,
-    height: 576,
+    src: SF_HERO_PICTURE.fallback,
+    width: SF_HERO_NATIVE.width,
+    height: SF_HERO_NATIVE.height,
   },
   heroFade: { src: `${BASE}/hero-fade.png`, width: 1024, height: 99 },
   heroUnderline: { src: `${BASE}/hero-underline.svg`, width: 83, height: 1 },

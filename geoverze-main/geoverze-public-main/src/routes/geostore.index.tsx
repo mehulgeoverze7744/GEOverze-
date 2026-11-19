@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { GvrzeStorefront } from "@/features/store/storefront/GvrzeStorefront";
-import { SF_FONTS_HREF } from "@/features/store/storefront/storefront-assets";
+import { SF_FONTS_HREF, SF_HERO_PICTURE } from "@/features/store/storefront/storefront-assets";
 
 export const Route = createFileRoute("/geostore/")({
   head: () => ({
@@ -21,6 +21,15 @@ export const Route = createFileRoute("/geostore/")({
     ],
     // Storefront typography (Montserrat + Inter) loads only with this route.
     links: [
+      {
+        rel: "preload",
+        as: "image",
+        href: SF_HERO_PICTURE.preload.href,
+        type: SF_HERO_PICTURE.preload.type,
+        imageSrcSet: SF_HERO_PICTURE.preload.imageSrcSet,
+        imageSizes: SF_HERO_PICTURE.preload.imageSizes,
+        fetchPriority: "high",
+      },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: SF_FONTS_HREF },

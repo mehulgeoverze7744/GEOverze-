@@ -47,7 +47,7 @@ import { type EditorialItem } from "../storefront/EditorialCard";
 import { ProductCard } from "./ProductCard";
 import { ProductGallery } from "./ProductGallery";
 import { ProductRail } from "./ProductRail";
-import { ProStorePerkPill } from "./ProStorePerkPill";
+import { GvrzeProDiscountBadge } from "../storefront/GvrzeProDiscountBadge";
 import { QuickViewModal } from "./QuickViewModal";
 import { RatingStars } from "./RatingStars";
 import { StockPill } from "./StockPill";
@@ -938,9 +938,9 @@ export function ProductScreen() {
               </div>
 
               {product.comingSoon ? null : (
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <div className="flex min-w-0 max-w-full flex-wrap items-baseline gap-x-2.5 gap-y-1.5">
                   <PriceTag product={product} size="lg" />
-                  <ProStorePerkPill />
+                  <GvrzeProDiscountBadge />
                 </div>
               )}
               {!product.comingSoon && !purchaseLocked && product.credits !== null ? (

@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
 import { ENABLE_TRY_ON_STUDIO } from "../tryon/tryOnFlags";
-import { SF_ASSETS } from "./storefront-assets";
+import { SF_ASSETS, SF_HERO_PICTURE } from "./storefront-assets";
 
 /**
  * Editorial hero. The Figma frame is 1440x858; the height tracks that ratio and
@@ -16,15 +16,22 @@ export function StorefrontHero() {
     >
       <h1 className="sr-only">Gstore — premium streetwear</h1>
 
-      <img
-        src={SF_ASSETS.hero.src}
-        width={SF_ASSETS.hero.width}
-        height={SF_ASSETS.hero.height}
-        alt="Three models in GVRZE graphic tees: sky-blue wave design, dusty rose back print, and cream chest wordmark"
-        fetchPriority="high"
-        decoding="async"
-        className="absolute inset-0 -z-10 h-full w-full object-cover object-[center_20%] sm:object-center md:scale-[1.127]"
-      />
+      <picture className="absolute inset-0 -z-10 block h-full w-full">
+        <source type="image/avif" srcSet={SF_HERO_PICTURE.srcSetAvif} sizes={SF_HERO_PICTURE.sizes} />
+        <source type="image/webp" srcSet={SF_HERO_PICTURE.srcSetWebp} sizes={SF_HERO_PICTURE.sizes} />
+        <img
+          src={SF_ASSETS.hero.src}
+          srcSet={SF_HERO_PICTURE.srcSetJpg}
+          sizes={SF_HERO_PICTURE.sizes}
+          width={SF_ASSETS.hero.width}
+          height={SF_ASSETS.hero.height}
+          alt="Three models in GVRZE graphic tees: sky-blue wave design, dusty rose back print, and cream chest wordmark"
+          fetchPriority="high"
+          decoding="async"
+          loading="eager"
+          className="h-full w-full object-cover object-[center_20%] sm:object-center"
+        />
+      </picture>
 
       <img
         src={SF_ASSETS.heroFade.src}

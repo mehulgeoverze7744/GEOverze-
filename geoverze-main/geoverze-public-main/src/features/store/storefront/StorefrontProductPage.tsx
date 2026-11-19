@@ -37,6 +37,7 @@ import {
   isSelectableTshirtSize,
   tshirtSizesFrom,
 } from "./sizeGuide";
+import { StorefrontProductPriceRow } from "./StorefrontProductPriceRow";
 import { SF_SHELL, SF_UI_FONT, StorefrontCardPrice } from "./storefront-ui";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -708,7 +709,7 @@ export function StorefrontProductPage({
                 </button>
               </div>
 
-              <p className="mt-3 text-[20px] font-bold text-black sm:text-[22px]">{priceLabel}</p>
+              <StorefrontProductPriceRow priceLabel={priceLabel} showProBadge={!comingSoon} />
               <MemberDiscountHint />
               {comingSoon ? (
                 <p className={`mt-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-black/40 ${SF_UI_FONT}`}>

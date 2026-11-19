@@ -17,6 +17,7 @@ import { useStoreStore } from "@/stores/storeStore";
 import { getProductPrice } from "../lib/gstoreProductPrices";
 import { StorefrontFooter } from "../storefront/StorefrontFooter";
 import { StorefrontNav } from "../storefront/StorefrontNav";
+import { GvrzeProDiscountBadge } from "../storefront/GvrzeProDiscountBadge";
 import { SF_SHELL } from "../storefront/storefront-ui";
 import type { StorefrontTeeProduct } from "../storefront/storefront-product-data";
 import { TryOnModelPreview } from "../tryon/TryOnModelPreview";
@@ -90,7 +91,10 @@ export function GMakeStudioProductPage({ tee }: { tee: StorefrontTeeProduct }) {
               <div>
                 <p className="gmake-copy__kicker">GMake Studio</p>
                 <h1 className="gmake-copy__title">{gmakeProductTitle(tee.name)}</h1>
-                <p className="gmake-copy__price">{priceLabel}</p>
+                <div className="gmake-copy__price-row">
+                  <p className="gmake-copy__price">{priceLabel}</p>
+                  <GvrzeProDiscountBadge />
+                </div>
               </div>
 
               <div className="gmake-cats" role="group" aria-label="Apparel category">
