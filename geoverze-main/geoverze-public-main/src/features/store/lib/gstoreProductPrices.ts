@@ -7,11 +7,17 @@
  *
  * All prices are in INR minor units (paise). ₹1 = 100 paise.
  *
+ * Standard graphic T-shirts (PRIME, BASICS, signature tees): GST-inclusive MRP.
+ *
  * HOW TO ADD A NEW PRODUCT:
  *   1. Add the slug → priceMinor entry here.
  *   2. Update the product page / catalogue to match.
  *   3. No other changes required for checkout to work.
  */
+
+/** GST-inclusive MRP for all standard graphic T-shirts. */
+export const GSTORE_STANDARD_TEE_PRICE_MINOR = 269_900; // ₹2,699
+export const GSTORE_STANDARD_TEE_CREDITS = 449;
 
 export type GstoreProductPrice = {
   slug: string;
@@ -34,28 +40,28 @@ export const GSTORE_PRODUCT_PRICES: Record<string, GstoreProductPrice> = {
   "midnight-black-tshirt": {
     slug: "midnight-black-tshirt",
     name: "Midnight Black T-Shirt",
-    priceMinor: 299_900,   // ₹2,999
+    priceMinor: GSTORE_STANDARD_TEE_PRICE_MINOR,
     physical: true,
     category: "tshirts",
   },
   "cherry-blossom-tshirt": {
     slug: "cherry-blossom-tshirt",
     name: "BLOOM",
-    priceMinor: 299_900,   // ₹2,999
+    priceMinor: GSTORE_STANDARD_TEE_PRICE_MINOR,
     physical: true,
     category: "tshirts",
   },
   "golden-arc-tshirt": {
     slug: "golden-arc-tshirt",
     name: "TERRA",
-    priceMinor: 299_900,   // ₹2,999
+    priceMinor: GSTORE_STANDARD_TEE_PRICE_MINOR,
     physical: true,
     category: "tshirts",
   },
   "orbit-tshirt": {
     slug: "orbit-tshirt",
     name: "ORBIT",
-    priceMinor: 299_900,   // ₹2,999
+    priceMinor: GSTORE_STANDARD_TEE_PRICE_MINOR,
     physical: true,
     category: "tshirts",
   },
@@ -64,35 +70,70 @@ export const GSTORE_PRODUCT_PRICES: Record<string, GstoreProductPrice> = {
   "new-age-tshirt": {
     slug: "new-age-tshirt",
     name: "ORBIT",
-    priceMinor: 299_900,   // ₹2,999
+    priceMinor: GSTORE_STANDARD_TEE_PRICE_MINOR,
     physical: true,
     category: "tshirts",
   },
   ignite: {
     slug: "ignite",
     name: "IGNITE",
-    priceMinor: 299_900,   // ₹2,999
+    priceMinor: GSTORE_STANDARD_TEE_PRICE_MINOR,
     physical: true,
     category: "tshirts",
   },
   eden: {
     slug: "eden",
     name: "EDEN",
-    priceMinor: 299_900,   // ₹2,999
+    priceMinor: GSTORE_STANDARD_TEE_PRICE_MINOR,
     physical: true,
     category: "tshirts",
   },
   pace: {
     slug: "pace",
     name: "PACE",
-    priceMinor: 299_900,   // ₹2,999
+    priceMinor: GSTORE_STANDARD_TEE_PRICE_MINOR,
     physical: true,
     category: "tshirts",
   },
   eclipse: {
     slug: "eclipse",
     name: "ECLIPSE",
-    priceMinor: 299_900,   // ₹2,999
+    priceMinor: GSTORE_STANDARD_TEE_PRICE_MINOR,
+    physical: true,
+    category: "tshirts",
+  },
+  vanta: {
+    slug: "vanta",
+    name: "VANTA",
+    priceMinor: GSTORE_STANDARD_TEE_PRICE_MINOR,
+    physical: true,
+    category: "tshirts",
+  },
+  monogram: {
+    slug: "monogram",
+    name: "MONOGRAM",
+    priceMinor: GSTORE_STANDARD_TEE_PRICE_MINOR,
+    physical: true,
+    category: "tshirts",
+  },
+  earthform: {
+    slug: "earthform",
+    name: "EARTHFORM",
+    priceMinor: GSTORE_STANDARD_TEE_PRICE_MINOR,
+    physical: true,
+    category: "tshirts",
+  },
+  flux: {
+    slug: "flux",
+    name: "FLUX",
+    priceMinor: GSTORE_STANDARD_TEE_PRICE_MINOR,
+    physical: true,
+    category: "tshirts",
+  },
+  vertical: {
+    slug: "vertical",
+    name: "VERTICAL",
+    priceMinor: GSTORE_STANDARD_TEE_PRICE_MINOR,
     physical: true,
     category: "tshirts",
   },
@@ -101,35 +142,35 @@ export const GSTORE_PRODUCT_PRICES: Record<string, GstoreProductPrice> = {
   "tshirt-know-the-capital": {
     slug: "tshirt-know-the-capital",
     name: "I KNOW THE CAPITAL. YOU KNOW THE VIBES.",
-    priceMinor: 370_000,   // ₹3,700
+    priceMinor: GSTORE_STANDARD_TEE_PRICE_MINOR,
     physical: true,
     category: "tshirts",
   },
   "meridian-tee": {
     slug: "meridian-tee",
     name: "Meridian Tee",
-    priceMinor: 340_000,   // ₹3,400
+    priceMinor: GSTORE_STANDARD_TEE_PRICE_MINOR,
     physical: true,
     category: "tshirts",
   },
   "continents-tee": {
     slug: "continents-tee",
     name: "Seven Continents Tee",
-    priceMinor: 340_000,   // ₹3,400
+    priceMinor: GSTORE_STANDARD_TEE_PRICE_MINOR,
     physical: true,
     category: "tshirts",
   },
   "latitude-longitude-tee": {
     slug: "latitude-longitude-tee",
     name: "Lat/Long Coordinates Tee",
-    priceMinor: 320_000,   // ₹3,200
+    priceMinor: GSTORE_STANDARD_TEE_PRICE_MINOR,
     physical: true,
     category: "tshirts",
   },
   "country-silhouette-tee": {
     slug: "country-silhouette-tee",
     name: "Country Silhouette Tee",
-    priceMinor: 320_000,   // ₹3,200
+    priceMinor: GSTORE_STANDARD_TEE_PRICE_MINOR,
     physical: true,
     category: "tshirts",
   },
@@ -300,7 +341,7 @@ export function computeShippingMinor(
  * NOT be added on top of the product price.
  *
  * Formula:  GST_included = Inclusive_Price × Rate / (100 + Rate)
- * Example:  ₹2,999 × 18 / 118 = ₹457.47  (extracted, not added)
+ * Example:  ₹2,699 × 18 / 118 = ₹411.66  (extracted, not added)
  *
  * Order total = Subtotal (inclusive) + Shipping  ← GST already in Subtotal
  *
@@ -329,7 +370,7 @@ export function computeOrderTotalMinor(
   return subtotalMinor + shippingMinor - discountMinor;
 }
 
-/** Format paise as a rupee string: ₹2,999 */
+/** Format paise as a rupee string: ₹2,699 */
 export function formatInrPaise(paise: number): string {
   const rupees = paise / 100;
   return rupees.toLocaleString("en-IN", {

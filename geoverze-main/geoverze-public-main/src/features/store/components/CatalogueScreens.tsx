@@ -29,7 +29,12 @@ import {
 import { ComingSoonLockChip } from "./ComingSoonLockChip";
 import { GeostoreProductPageBackground } from "./GeostoreProductPageBackground";
 import { MerchProductScreen } from "./MerchProductScreen";
-import { storefrontTeeById, teeHasSpecialColourBadge } from "../storefront/storefront-product-data";
+import {
+  storefrontTeeById,
+  storefrontTeeCollectionLine,
+  teeHasSpecialColourBadge,
+} from "../storefront/storefront-product-data";
+import { StorefrontTshirtCollectionsPage } from "../storefront/StorefrontTshirtCollectionsPage";
 import { ComingSoonProductPage } from "../storefront/ComingSoonProductPage";
 import {
   StorefrontProductPage,
@@ -114,7 +119,7 @@ function merchToEditorial(
 /** Converts a `Product` record to the `EditorialItem` shape. */
 function productToEditorial(p: Product): EditorialItem {
   const img = productImageForSlug(p.slug);
-  // Storefront signature tees carry their own display priceLabel (e.g. "Rs. 2,999 or 499 credits").
+  // Storefront signature tees carry their own display priceLabel (e.g. "Rs. 2,699 or 449 credits").
   // Use it directly so the category card shows the correct currency instead of USD.
   const tee = storefrontTeeById(p.slug);
   const checkoutPrice = getProductPrice(p.slug);
@@ -658,6 +663,39 @@ function StorefrontStickerProductPage({ product }: { product: Product }) {
   );
 }
 
+/** T-Shirts — PRIME signature line + BASICS essentials. */
+function TshirtsCategoryShelf() {
+  const products = sortProducts(productsInCategory("tshirts"), "popular");
+  const prime: Product[] = [];
+  const basics: Product[] = [];
+
+  for (const product of products) {
+    const tee = storefrontTeeById(product.slug);
+    if (tee && storefrontTeeCollectionLine(product.slug) === "basics") {
+      basics.push(product);
+    } else {
+      prime.push(product);
+    }
+  }
+
+  const primeItems = prime.map(productToEditorial);
+  const basicsItems = basics.map(productToEditorial);
+  const { addProduct } = useStoreActions();
+
+  function handleAdd(item: EditorialItem) {
+    const product = productBySlug(item.slug);
+    if (product && !isPurchaseLocked(product)) addProduct(product, defaultOptions(product));
+  }
+
+  return (
+    <StorefrontTshirtCollectionsPage
+      primeItems={primeItems}
+      basicsItems={basicsItems}
+      onAdd={handleAdd}
+    />
+  );
+}
+
 /** Generic catalogue category page — editorial storefront layout. */
 function CatalogCategoryShelf({ slug }: { slug: string }) {
   const category = categoryById(slug);
@@ -699,9 +737,12 @@ function CatalogCategoryShelf({ slug }: { slug: string }) {
 export function CategoryScreen() {
   const { slug } = useParams({ from: "/geostore/category/$slug" });
 
-  // Signature tees live in PRODUCTS (sourced from STOREFRONT_TEES) and use
-  // CatalogCategoryShelf. Hoodies remain a merch lookbook shelf.
-  if (slug !== "tshirts" && isMerchStoreCategory(slug)) {
+  if (slug === "tshirts") {
+    return <TshirtsCategoryShelf />;
+  }
+
+  // Hoodies remain a merch lookbook shelf.
+  if (isMerchStoreCategory(slug)) {
     return <MerchCategoryShelf slug={slug} />;
   }
 

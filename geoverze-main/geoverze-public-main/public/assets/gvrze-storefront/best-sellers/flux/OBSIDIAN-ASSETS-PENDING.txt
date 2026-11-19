@@ -1,0 +1,5 @@
+@ flux-obsidian-front.jpg
+@ flux-obsidian-back-graphic.jpg
+@ flux-obsidian-back-model.jpg
+
+Obsidian FLUX photography not yet supplied — add files with these names to enable the Obsidian gallery.

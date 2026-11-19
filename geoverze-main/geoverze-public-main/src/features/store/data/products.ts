@@ -10,6 +10,7 @@ import { merchProductById } from "@/features/marketing/data/geostoreMerch";
 import {
   canonicalStorefrontTeeSlug,
   STOREFRONT_TEE_CREDIT_PRICE,
+  STOREFRONT_TEE_PRICE_MINOR,
   STOREFRONT_TEES,
   type StorefrontTeeProduct,
 } from "../storefront/storefront-product-data";
@@ -168,6 +169,11 @@ const STOREFRONT_TEE_RANK: Record<
   eden: { popularity: 87, reviews: 10, rating: 4.9, bestSeller: false },
   pace: { popularity: 86, reviews: 8, rating: 4.9, bestSeller: false },
   eclipse: { popularity: 85, reviews: 8, rating: 4.9, bestSeller: true },
+  vanta: { popularity: 84, reviews: 4, rating: 4.9, bestSeller: false },
+  monogram: { popularity: 83, reviews: 2, rating: 4.9, bestSeller: false },
+  earthform: { popularity: 82, reviews: 2, rating: 4.9, bestSeller: false },
+  flux: { popularity: 81, reviews: 1, rating: 4.9, bestSeller: false },
+  vertical: { popularity: 80, reviews: 1, rating: 4.9, bestSeller: false },
 };
 
 function storefrontTeeDraft(tee: StorefrontTeeProduct): Draft {
@@ -184,7 +190,7 @@ function storefrontTeeDraft(tee: StorefrontTeeProduct): Draft {
     tagline: tee.description.slice(0, 140),
     description: tee.description,
     category: "tshirts",
-    price: 299_900,
+    price: STOREFRONT_TEE_PRICE_MINOR,
     credits: STOREFRONT_TEE_CREDIT_PRICE,
     rating: rank?.rating ?? 4.8,
     reviews: rank?.reviews ?? 48,

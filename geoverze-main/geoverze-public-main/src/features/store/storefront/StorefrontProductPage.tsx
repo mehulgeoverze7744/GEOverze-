@@ -795,7 +795,7 @@ export function StorefrontProductPage({
               <div className="sfpp-desc-body mt-4 space-y-4 text-[13px] leading-relaxed text-[#444]">
                 {activeTab === "description" && (
                   <>
-                    {description && <p>{description}</p>}
+                    {description && <p className="whitespace-pre-line">{description}</p>}
 
                     {highlights && highlights.length > 0 && (
                       <div>

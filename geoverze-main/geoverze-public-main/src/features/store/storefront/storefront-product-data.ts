@@ -1,10 +1,16 @@
 /**
- * Product data for the Gstorefront Signature T-shirts:
- * BLOOM, TERRA, ORBIT, IGNITE, EDEN, PACE, and ECLIPSE.
+ * Product data for the Gstorefront T-shirts:
+ * PRIME — BLOOM, TERRA, ORBIT, IGNITE, EDEN, PACE, and ECLIPSE.
+ * BASICS — VANTA, MONOGRAM, EARTHFORM, FLUX, VERTICAL.
  *
  * These products are the hero "Best Sellers" of the GvrzeStorefront and link
  * to individual product detail pages at /geostore/product/$slug.
  */
+
+import {
+  GSTORE_STANDARD_TEE_CREDITS,
+  GSTORE_STANDARD_TEE_PRICE_MINOR,
+} from "../lib/gstoreProductPrices.ts";
 
 const BASE = "/assets/gvrze-storefront/best-sellers";
 const CB_BASE = `${BASE}/cherry-blossom`;
@@ -14,6 +20,14 @@ const IG_BASE = `${BASE}/ignite`;
 const ED_BASE = `${BASE}/eden`;
 const PA_BASE = `${BASE}/pace`;
 const EC_BASE = `${BASE}/eclipse`;
+const VN_BASE = `${BASE}/vanta`;
+const MG_BASE = `${BASE}/monogram`;
+const EF_BASE = `${BASE}/earthform`;
+const FX_BASE = `${BASE}/flux`;
+const VT_BASE = `${BASE}/vertical`;
+
+/** FLUX Obsidian gallery filenames — assets not yet in repo; see `flux/OBSIDIAN-ASSETS-PENDING.txt`. */
+export const FLUX_OBSIDIAN_ASSETS_PENDING = true as const;
 
 /**
  * A single colour variant for a storefront tee.
@@ -39,10 +53,13 @@ export type StorefrontTeeColorVariant = {
 };
 
 /** Credit redemption price shown beside the rupee price on every live T-shirt. */
-export const STOREFRONT_TEE_CREDIT_PRICE = 499;
+export const STOREFRONT_TEE_CREDIT_PRICE = GSTORE_STANDARD_TEE_CREDITS;
 
 /** Existing rupee label plus the credit option — same string used on every tee surface. */
-export const STOREFRONT_TEE_PRICE_LABEL = "Rs. 2,999 or 499 credits";
+export const STOREFRONT_TEE_PRICE_LABEL = `Rs. 2,699 or ${GSTORE_STANDARD_TEE_CREDITS} credits`;
+
+/** Paise MRP for storefront tees — kept in sync with `storefrontTeeDraft`. */
+export const STOREFRONT_TEE_PRICE_MINOR = GSTORE_STANDARD_TEE_PRICE_MINOR;
 
 export type StorefrontTeeProduct = {
   /** Route slug — also the DOM key. */
@@ -88,6 +105,8 @@ export type StorefrontTeeProduct = {
   relatedIds: string[];
   /** Exclusive colourway badge on product cards and the detail gallery. */
   specialColour?: boolean;
+  /** Shelf under T-Shirts → PRIME (default) or BASICS. */
+  collectionLine?: "prime" | "basics";
 };
 
 const WASHCARE_STANDARD = [
@@ -482,6 +501,472 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     washcare: WASHCARE_STANDARD,
     relatedIds: ["pace", "eden", "ignite"],
   },
+  {
+    id: "vanta",
+    name: "VANTA",
+    categoryLabel: "T-SHIRT",
+    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
+    tone: "#1e2433",
+    collectionLine: "basics",
+    defaultColour: { id: "midnight", label: "Midnight", hex: "#1a2744" },
+    enableColorSelector: true,
+    image: {
+      src: `${VN_BASE}/vanta-sage-back-model.png`,
+      alt: "GVRZE VANTA T-shirt in Sage — model back view with blurred GVRZE graphic and explorer back print",
+    },
+    gallery: [
+      {
+        src: `${VN_BASE}/vanta-midnight-front-model.png`,
+        alt: "Midnight — front model view",
+      },
+      {
+        src: `${VN_BASE}/vanta-midnight-back-angled.png`,
+        alt: "Midnight — back angled product view",
+      },
+      {
+        src: `${VN_BASE}/vanta-midnight-neck-detail.png`,
+        alt: "Midnight — neck and fabric detail",
+      },
+      {
+        src: `${VN_BASE}/vanta-midnight-back-model.png`,
+        alt: "Midnight — back model view",
+      },
+    ],
+    colors: [
+      {
+        id: "midnight",
+        label: "Midnight",
+        hex: "#1a2744",
+        image: {
+          src: `${VN_BASE}/vanta-midnight-front-model.png`,
+          alt: "GVRZE VANTA in Midnight — front model view",
+        },
+        gallery: [
+          {
+            src: `${VN_BASE}/vanta-midnight-front-model.png`,
+            alt: "Midnight — front model view",
+          },
+          {
+            src: `${VN_BASE}/vanta-midnight-back-angled.png`,
+            alt: "Midnight — back angled product view",
+          },
+          {
+            src: `${VN_BASE}/vanta-midnight-neck-detail.png`,
+            alt: "Midnight — neck and fabric detail",
+          },
+          {
+            src: `${VN_BASE}/vanta-midnight-back-model.png`,
+            alt: "Midnight — back model view",
+          },
+        ],
+      },
+      {
+        id: "sage",
+        label: "Sage",
+        hex: "#8f9b86",
+        image: {
+          src: `${VN_BASE}/vanta-sage-front-model.png`,
+          alt: "GVRZE VANTA in Sage — front model view",
+        },
+        gallery: [
+          {
+            src: `${VN_BASE}/vanta-sage-front-model.png`,
+            alt: "Sage — front model view",
+          },
+          {
+            src: `${VN_BASE}/vanta-sage-back-model.png`,
+            alt: "Sage — back model view",
+          },
+          {
+            src: `${VN_BASE}/vanta-sage-back-angled.png`,
+            alt: "Sage — back angled product view",
+          },
+          {
+            src: `${VN_BASE}/vanta-sage-neck-detail.png`,
+            alt: "Sage — neck and fabric detail",
+          },
+        ],
+      },
+    ],
+    description:
+      "VANTA — BUILT FOR EXPLORERS. MADE FOR EVERYWHERE.\n\nA statement in simplicity. VANTA brings together contemporary oversized streetwear and understated design, created for those who see the world differently.\n\nFeaturing a relaxed heavyweight silhouette, a minimal front and a distinctive blurred GVRZE graphic across the back, VANTA represents the beginning of every journey.\n\nThe back artwork carries the message:\n\n\"BUILD FOR EXPLORERS, MADE FOR EVERYWHERE.\"\n\nFinished with the signature GVRZE identity and Chapter 01 — The Journey detailing.",
+    highlights: [
+      "Premium heavyweight cotton construction.",
+      "Relaxed oversized silhouette.",
+      "Minimal front design.",
+      "Distinctive blurred GVRZE back graphic.",
+      "Midnight and Sage colourways.",
+      "Premium ribbed neckline.",
+      "Designed for everyday exploration.",
+    ],
+    stylingTip:
+      "Pair VANTA with neutral cargos or washed denim so the blurred back graphic stays the focal point.",
+    washcare: WASHCARE_STANDARD,
+    relatedIds: ["eclipse", "eden", "ignite"],
+  },
+  {
+    id: "monogram",
+    name: "MONOGRAM",
+    categoryLabel: "T-SHIRT",
+    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
+    tone: "#ebe6dc",
+    collectionLine: "basics",
+    defaultColour: { id: "starlight", label: "Starlight", hex: "#ebe6dc" },
+    enableColorSelector: true,
+    image: {
+      src: `${MG_BASE}/monogram-espresso-back-graphic.png`,
+      alt: "GVRZE MONOGRAM T-shirt in Espresso — back product view with cream GVRZE monogram typography",
+    },
+    gallery: [
+      {
+        src: `${MG_BASE}/monogram-starlight-front.png`,
+        alt: "Starlight — front product image",
+      },
+      {
+        src: `${MG_BASE}/monogram-starlight-back-graphic.png`,
+        alt: "Starlight — back graphic product image",
+      },
+      {
+        src: `${MG_BASE}/monogram-starlight-back-model.png`,
+        alt: "Starlight — model wearing the back design",
+      },
+    ],
+    colors: [
+      {
+        id: "starlight",
+        label: "Starlight",
+        hex: "#ebe6dc",
+        image: {
+          src: `${MG_BASE}/monogram-starlight-front.png`,
+          alt: "GVRZE MONOGRAM in Starlight — front product view",
+        },
+        gallery: [
+          {
+            src: `${MG_BASE}/monogram-starlight-front.png`,
+            alt: "Starlight — front product image",
+          },
+          {
+            src: `${MG_BASE}/monogram-starlight-back-graphic.png`,
+            alt: "Starlight — back graphic product image",
+          },
+          {
+            src: `${MG_BASE}/monogram-starlight-back-model.png`,
+            alt: "Starlight — model wearing the back design",
+          },
+        ],
+      },
+      {
+        id: "espresso",
+        label: "Espresso",
+        hex: "#4a3224",
+        image: {
+          src: `${MG_BASE}/monogram-espresso-front.png`,
+          alt: "GVRZE MONOGRAM in Espresso — front product view",
+        },
+        gallery: [
+          {
+            src: `${MG_BASE}/monogram-espresso-front.png`,
+            alt: "Espresso — front product image",
+          },
+          {
+            src: `${MG_BASE}/monogram-espresso-back-graphic.png`,
+            alt: "Espresso — back graphic product image",
+          },
+          {
+            src: `${MG_BASE}/monogram-espresso-back-model.png`,
+            alt: "Espresso — model wearing the back design",
+          },
+        ],
+      },
+    ],
+    description:
+      "MONOGRAM — MAKE YOUR MARK.\n\nBold identity meets understated streetwear.\n\nMONOGRAM is designed around an oversized silhouette and a striking signature GVRZE typographic graphic that stretches across the back. Its minimal front balances the bold rear artwork, creating a statement piece that doesn't need to say too much.\n\nCrafted for everyday exploration, MONOGRAM brings together expressive typography, premium heavyweight construction and timeless colourways.",
+    highlights: [
+      "Premium heavyweight cotton construction.",
+      "Relaxed oversized fit.",
+      "Bold oversized GVRZE back typography.",
+      "Minimal, clean front.",
+      "Premium ribbed neckline.",
+      "Starlight and Espresso colourways.",
+      "Designed for everyday streetwear.",
+    ],
+    stylingTip:
+      "Let the arched back typography read clean — pair MONOGRAM with neutral trousers and keep the front minimal.",
+    washcare: WASHCARE_STANDARD,
+    relatedIds: ["vanta", "eclipse", "eden"],
+  },
+  {
+    id: "earthform",
+    name: "EARTHFORM",
+    categoryLabel: "T-SHIRT",
+    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
+    tone: "#2c2c30",
+    collectionLine: "basics",
+    defaultColour: { id: "obsidian", label: "Obsidian", hex: "#2c2c30" },
+    enableColorSelector: true,
+    image: {
+      src: `${EF_BASE}/earthform-obsidian-back-graphic.png`,
+      alt: "GVRZE EARTHFORM T-shirt in Obsidian — back view with KNOW EARTH, THINK GLOBAL graphic",
+    },
+    gallery: [
+      {
+        src: `${EF_BASE}/earthform-obsidian-front.png`,
+        alt: "Obsidian — front flat-lay product image",
+      },
+      {
+        src: `${EF_BASE}/earthform-obsidian-back-graphic.png`,
+        alt: "Obsidian — back flat-lay graphic image",
+      },
+      {
+        src: `${EF_BASE}/earthform-obsidian-back-model.png`,
+        alt: "Obsidian — model wearing the back design",
+      },
+    ],
+    colors: [
+      {
+        id: "obsidian",
+        label: "Obsidian",
+        hex: "#2c2c30",
+        image: {
+          src: `${EF_BASE}/earthform-obsidian-front.png`,
+          alt: "GVRZE EARTHFORM in Obsidian — front flat-lay",
+        },
+        gallery: [
+          {
+            src: `${EF_BASE}/earthform-obsidian-front.png`,
+            alt: "Obsidian — front flat-lay product image",
+          },
+          {
+            src: `${EF_BASE}/earthform-obsidian-back-graphic.png`,
+            alt: "Obsidian — back flat-lay graphic image",
+          },
+          {
+            src: `${EF_BASE}/earthform-obsidian-back-model.png`,
+            alt: "Obsidian — model wearing the back design",
+          },
+        ],
+      },
+      {
+        id: "umber",
+        label: "Umber",
+        hex: "#5c3d2e",
+        image: {
+          src: `${EF_BASE}/earthform-umber-front.png`,
+          alt: "GVRZE EARTHFORM in Umber — front flat-lay",
+        },
+        gallery: [
+          {
+            src: `${EF_BASE}/earthform-umber-front.png`,
+            alt: "Umber — front flat-lay product image",
+          },
+          {
+            src: `${EF_BASE}/earthform-umber-back-graphic.jpg`,
+            alt: "Umber — back flat-lay graphic image",
+          },
+          {
+            src: `${EF_BASE}/earthform-umber-back-model.png`,
+            alt: "Umber — model wearing the back design",
+          },
+        ],
+      },
+    ],
+    description:
+      "EARTHFORM — KNOW EARTH. THINK GLOBAL.\n\nA statement rooted in perspective.\n\nEARTHFORM brings together expressive typography and everyday streetwear through a bold graphic that speaks to the way we see our world. Featuring the signature KNOW EARTH, THINK GLOBAL artwork across the back, this design makes a statement through typography while keeping the front clean and minimal.\n\nBuilt around a relaxed oversized silhouette, EARTHFORM is made for everyday exploration, global perspectives and those who see beyond borders.",
+    highlights: [
+      "Premium heavyweight cotton construction.",
+      "Relaxed oversized fit.",
+      "Bold KNOW EARTH, THINK GLOBAL back graphic.",
+      "Minimal front design.",
+      "Premium ribbed neckline.",
+      "Available in Obsidian and Umber.",
+      "Designed for everyday streetwear.",
+    ],
+    stylingTip:
+      "Keep the front minimal and let the KNOW EARTH, THINK GLOBAL back graphic carry the look — pair with neutral cargos or denim.",
+    washcare: WASHCARE_STANDARD,
+    relatedIds: ["monogram", "vanta", "eclipse"],
+  },
+  {
+    id: "flux",
+    name: "FLUX",
+    categoryLabel: "T-SHIRT",
+    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
+    tone: "#9f1239",
+    collectionLine: "basics",
+    defaultColour: { id: "crimson", label: "Crimson", hex: "#b42333" },
+    enableColorSelector: true,
+    image: {
+      src: `${FX_BASE}/flux-crimson-front.jpg`,
+      alt: "GVRZE FLUX oversized T-shirt in Crimson — front flat-lay",
+    },
+    gallery: [
+      {
+        src: `${FX_BASE}/flux-crimson-front.jpg`,
+        alt: "Crimson — front flat-lay product image",
+      },
+      {
+        src: `${FX_BASE}/flux-crimson-back-graphic.jpg`,
+        alt: "Crimson — back flat-lay with GVRZE artwork",
+      },
+      {
+        src: `${FX_BASE}/flux-crimson-back-model.jpg`,
+        alt: "Crimson — model wearing the back design",
+      },
+    ],
+    colors: [
+      {
+        id: "crimson",
+        label: "Crimson",
+        hex: "#b42333",
+        image: {
+          src: `${FX_BASE}/flux-crimson-front.jpg`,
+          alt: "GVRZE FLUX in Crimson — front flat-lay",
+        },
+        gallery: [
+          {
+            src: `${FX_BASE}/flux-crimson-front.jpg`,
+            alt: "Crimson — front flat-lay product image",
+          },
+          {
+            src: `${FX_BASE}/flux-crimson-back-graphic.jpg`,
+            alt: "Crimson — back flat-lay with GVRZE artwork",
+          },
+          {
+            src: `${FX_BASE}/flux-crimson-back-model.jpg`,
+            alt: "Crimson — model wearing the back design",
+          },
+        ],
+      },
+      {
+        id: "obsidian",
+        label: "Obsidian",
+        hex: "#2c2c30",
+        image: {
+          src: `${FX_BASE}/flux-obsidian-front.jpg`,
+          alt: "GVRZE FLUX in Obsidian — front flat-lay (assets pending)",
+        },
+        gallery: [
+          {
+            src: `${FX_BASE}/flux-obsidian-front.jpg`,
+            alt: "Obsidian — front flat-lay product image (assets pending)",
+          },
+          {
+            src: `${FX_BASE}/flux-obsidian-back-graphic.jpg`,
+            alt: "Obsidian — back flat-lay with GVRZE artwork (assets pending)",
+          },
+          {
+            src: `${FX_BASE}/flux-obsidian-back-model.jpg`,
+            alt: "Obsidian — model wearing the back design (assets pending)",
+          },
+        ],
+      },
+    ],
+    description:
+      "FLUX — MADE TO MOVE WITH YOU.\n\nAn expression of movement, individuality and modern streetwear.\n\nFLUX brings the GVRZE identity to life through expressive outlined typography across the back. Its bold graphic treatment creates a distinctive visual statement, balanced by a clean and minimal front.\n\nDesigned around an oversized silhouette, FLUX is an everyday essential for those who embrace change, move differently and make their own direction.",
+    highlights: [
+      "Premium heavyweight cotton construction.",
+      "Relaxed oversized silhouette.",
+      "Signature outlined GVRZE back artwork.",
+      "Minimal front design.",
+      "Premium ribbed neckline.",
+      "Available in Crimson and Obsidian.",
+      "Designed for everyday streetwear.",
+    ],
+    stylingTip:
+      "Let the outlined back graphic stand out — pair FLUX with black or neutral bottoms and keep the front clean.",
+    washcare: WASHCARE_STANDARD,
+    relatedIds: ["earthform", "monogram", "vanta"],
+  },
+  {
+    id: "vertical",
+    name: "VERTICAL",
+    categoryLabel: "T-SHIRT",
+    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
+    tone: "#5c2030",
+    collectionLine: "basics",
+    defaultColour: { id: "bordeaux", label: "Bordeaux", hex: "#5c2030" },
+    enableColorSelector: true,
+    image: {
+      src: `${VT_BASE}/vertical-pacific-teal-back-graphic.png`,
+      alt: "GVRZE VERTICAL T-shirt in Pacific Teal — back view with vertical GVRZE typography",
+    },
+    gallery: [
+      {
+        src: `${VT_BASE}/vertical-bordeaux-front.jpg`,
+        alt: "Bordeaux — front product image",
+      },
+      {
+        src: `${VT_BASE}/vertical-bordeaux-back-graphic.png`,
+        alt: "Bordeaux — back flat-lay with vertical GVRZE artwork",
+      },
+      {
+        src: `${VT_BASE}/vertical-bordeaux-back-model.png`,
+        alt: "Bordeaux — model wearing the back design",
+      },
+    ],
+    colors: [
+      {
+        id: "bordeaux",
+        label: "Bordeaux",
+        hex: "#5c2030",
+        image: {
+          src: `${VT_BASE}/vertical-bordeaux-front.jpg`,
+          alt: "GVRZE VERTICAL in Bordeaux — front product view",
+        },
+        gallery: [
+          {
+            src: `${VT_BASE}/vertical-bordeaux-front.jpg`,
+            alt: "Bordeaux — front product image",
+          },
+          {
+            src: `${VT_BASE}/vertical-bordeaux-back-graphic.png`,
+            alt: "Bordeaux — back flat-lay with vertical GVRZE artwork",
+          },
+          {
+            src: `${VT_BASE}/vertical-bordeaux-back-model.png`,
+            alt: "Bordeaux — model wearing the back design",
+          },
+        ],
+      },
+      {
+        id: "pacific-teal",
+        label: "Pacific Teal",
+        hex: "#1e4d5c",
+        image: {
+          src: `${VT_BASE}/vertical-pacific-teal-front.png`,
+          alt: "GVRZE VERTICAL in Pacific Teal — front product view",
+        },
+        gallery: [
+          {
+            src: `${VT_BASE}/vertical-pacific-teal-front.png`,
+            alt: "Pacific Teal — front product image",
+          },
+          {
+            src: `${VT_BASE}/vertical-pacific-teal-back-graphic.png`,
+            alt: "Pacific Teal — back flat-lay with vertical GVRZE artwork",
+          },
+          {
+            src: `${VT_BASE}/vertical-pacific-teal-back-model.png`,
+            alt: "Pacific Teal — model wearing the back design",
+          },
+        ],
+      },
+    ],
+    description:
+      "VERTICAL — MAKE YOUR PRESENCE KNOWN.\n\nA statement in simplicity. An identity without compromise.\n\nVERTICAL brings the GVRZE identity into focus with bold, vertically arranged typography across the back. Its clean front keeps the design understated, while the oversized rear graphic makes an unmistakable statement.\n\nBuilt around a relaxed streetwear silhouette, VERTICAL balances minimalism with expressive design. Made for those who prefer to stand out without saying too much.",
+    highlights: [
+      "Oversized streetwear silhouette.",
+      "Signature vertical GVRZE back typography.",
+      "Minimal, clean front.",
+      "Premium ribbed neckline.",
+      "Two distinctive colour options.",
+      "Designed for everyday styling.",
+    ],
+    stylingTip:
+      "Let the vertical back type carry the look — keep the front plain and pair with dark denim or neutral cargos.",
+    washcare: WASHCARE_STANDARD,
+    relatedIds: ["flux", "monogram", "earthform"],
+  },
 ];
 
 const BY_ID = new Map(STOREFRONT_TEES.map((p) => [p.id, p]));
@@ -525,6 +1010,10 @@ export function teeDefaultGallery(tee: StorefrontTeeProduct): { src: string; alt
 }
 
 /** Returns related storefront tees for a given product id. */
+export function storefrontTeeCollectionLine(id: string): "prime" | "basics" {
+  return storefrontTeeById(id)?.collectionLine === "basics" ? "basics" : "prime";
+}
+
 export function relatedStorefrontTees(
   id: string,
 ): StorefrontTeeProduct[] {

@@ -15,7 +15,7 @@
  *   // Server-side only
  *   const router = getPaymentRouter();
  *   const result = await router.createOneTimePayment({
- *     amountMinor: 299_900,
+ *     amountMinor: 269_900,
  *     currency: "INR",
  *     country: "IN",
  *     ...
