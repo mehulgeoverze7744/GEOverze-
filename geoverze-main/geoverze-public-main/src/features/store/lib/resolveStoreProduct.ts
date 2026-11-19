@@ -17,7 +17,7 @@ import {
   type StorefrontTeeProduct,
 } from "../storefront/storefront-product-data";
 
-import { GSTORE_STANDARD_TEE_CREDITS } from "./gstoreProductPrices.ts";
+import { storefrontTeeCredits } from "../storefront/storefront-product-data";
 
 function merchCategory(merch: GeostoreMerchProduct): StoreCategoryId {
   return merch.category === "hoodie" ? "hoodies" : "tshirts";
@@ -73,7 +73,7 @@ function storefrontTeeAsProduct(tee: StorefrontTeeProduct): Product {
     group: "merch",
     price: 37_00,
     compareAt: null,
-    credits: GSTORE_STANDARD_TEE_CREDITS,
+    credits: storefrontTeeCredits(tee),
     mode: "hybrid",
     rating: 4.8,
     reviews: 0,

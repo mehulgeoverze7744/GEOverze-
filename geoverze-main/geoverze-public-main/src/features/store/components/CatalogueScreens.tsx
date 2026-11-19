@@ -119,7 +119,7 @@ function merchToEditorial(
 /** Converts a `Product` record to the `EditorialItem` shape. */
 function productToEditorial(p: Product): EditorialItem {
   const img = productImageForSlug(p.slug);
-  // Storefront signature tees carry their own display priceLabel (e.g. "Rs. 2,699 or 449 credits").
+  // Storefront signature tees carry collection-specific priceLabel (PRIME vs BASICS).
   // Use it directly so the category card shows the correct currency instead of USD.
   const tee = storefrontTeeById(p.slug);
   const checkoutPrice = getProductPrice(p.slug);

@@ -37,7 +37,7 @@ import {
   isSelectableTshirtSize,
   tshirtSizesFrom,
 } from "./sizeGuide";
-import { SF_SHELL, SF_UI_FONT } from "./storefront-ui";
+import { SF_SHELL, SF_UI_FONT, StorefrontCardPrice } from "./storefront-ui";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -141,26 +141,71 @@ Free shipping on orders above Rs. 3,999. Tracking details are sent via email onc
 function SizeButton({
   label,
   selected,
+  disabled = false,
+  compactMobile = false,
   onClick,
 }: {
   label: string;
   selected: boolean;
+  disabled?: boolean;
+  /** T-shirt PDP: equal-width single-row pills below `sm`. */
+  compactMobile?: boolean;
   onClick: () => void;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       aria-pressed={selected}
+      aria-disabled={disabled || undefined}
       className={cn(
-        "sfpp-size-pill flex h-[35px] min-w-[88px] items-center justify-center rounded-[26px] px-4 text-[13px] font-medium transition-colors duration-150",
+        "sfpp-size-pill flex items-center justify-center font-medium transition-colors duration-150",
+        compactMobile
+          ? "h-[31px] min-h-[36px] min-w-0 flex-1 basis-0 rounded-full px-1.5 text-[12px] sm:h-[35px] sm:min-h-0 sm:min-w-[88px] sm:flex-none sm:basis-auto sm:rounded-[26px] sm:px-4 sm:text-[13px]"
+          : "h-[35px] min-w-[88px] rounded-[26px] px-4 text-[13px]",
         selected
           ? "bg-black text-white"
           : "border border-[#d0d0d0] bg-white text-black hover:border-black",
+        disabled && "cursor-not-allowed border-[#e8e8e8] bg-[#f5f5f5] text-[#b0b0b0] hover:border-[#e8e8e8]",
       )}
     >
       {label}
     </button>
+  );
+}
+
+function QuantityStepper({
+  quantity,
+  onDecrease,
+  onIncrease,
+}: {
+  quantity: number;
+  onDecrease: () => void;
+  onIncrease: () => void;
+}) {
+  return (
+    <div className="sfpp-qty-stepper mt-2.5 inline-flex max-w-full items-center gap-1.5 rounded-[22px] border border-[#d8dee6] bg-white px-2 py-0.5 sm:gap-3 sm:rounded-[26px] sm:px-3 sm:py-1.5">
+      <button
+        type="button"
+        aria-label="Decrease quantity"
+        onClick={onDecrease}
+        className="flex h-9 w-9 shrink-0 items-center justify-center text-[15px] leading-none text-[#555] transition-colors hover:text-black sm:h-7 sm:w-7 sm:text-[16px]"
+      >
+        −
+      </button>
+      <span className="w-5 text-center text-[13px] font-medium tabular-nums text-black sm:w-6 sm:text-sm">
+        {quantity}
+      </span>
+      <button
+        type="button"
+        aria-label="Increase quantity"
+        onClick={onIncrease}
+        className="flex h-9 w-9 shrink-0 items-center justify-center text-[15px] leading-none text-[#555] transition-colors hover:text-black sm:h-7 sm:w-7 sm:text-[16px]"
+      >
+        +
+      </button>
+    </div>
   );
 }
 
@@ -261,7 +306,9 @@ function RelatedCard({ product }: { product: SFRelatedProduct }) {
               {product.name}
             </Link>
           </p>
-          <p className="mt-1 text-[13px] text-[#353535] sm:text-[15px]">{product.priceLabel}</p>
+          <StorefrontCardPrice variant="promo" className="gvrze-card-price--related sm:mt-1">
+            {product.priceLabel}
+          </StorefrontCardPrice>
         </div>
         {product.comingSoon ? null : (
           <button
@@ -704,12 +751,20 @@ export function StorefrontProductPage({
                       Size Guide
                     </button>
                   </div>
-                  <div className="mt-2.5 flex flex-wrap gap-2">
+                  <div
+                    className={cn(
+                      "sfpp-size-row mt-2.5 flex w-full min-w-0 max-w-full gap-2",
+                      categorySlug === "tshirts"
+                        ? "flex-nowrap gap-1.5 sm:flex-wrap"
+                        : "flex-wrap",
+                    )}
+                  >
                     {selectableSizes.map((s) => (
                       <SizeButton
                         key={s}
                         label={s}
                         selected={selectedSize === s}
+                        compactMobile={categorySlug === "tshirts"}
                         onClick={() => setSelectedSize(s)}
                       />
                     ))}
@@ -722,25 +777,11 @@ export function StorefrontProductPage({
                   <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-[#555]">
                     Quantity
                   </p>
-                  <div className="mt-2.5 inline-flex items-center gap-3 rounded-[26px] border border-[#d8dee6] bg-white px-3 py-1.5">
-                    <button
-                      type="button"
-                      aria-label="Decrease quantity"
-                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                      className="h-7 w-7 text-[16px] leading-none text-[#555] transition-colors hover:text-black"
-                    >
-                      −
-                    </button>
-                    <span className="w-6 text-center text-sm font-medium text-black">{quantity}</span>
-                    <button
-                      type="button"
-                      aria-label="Increase quantity"
-                      onClick={() => setQuantity((q) => Math.min(10, q + 1))}
-                      className="h-7 w-7 text-[16px] leading-none text-[#555] transition-colors hover:text-black"
-                    >
-                      +
-                    </button>
-                  </div>
+                  <QuantityStepper
+                    quantity={quantity}
+                    onDecrease={() => setQuantity((q) => Math.max(1, q - 1))}
+                    onIncrease={() => setQuantity((q) => Math.min(10, q + 1))}
+                  />
                 </div>
               ) : null}
 

@@ -342,6 +342,36 @@ body:has(#gvrze-storefront) footer .mt-16.border-t {
   flex: none;
 }
 
+/* Product card hybrid price — one line on phones; restore prior type from tablet up. */
+#gvrze-storefront .gvrze-card-price {
+  font-size: 0.5625rem; /* 9px */
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 640px) {
+  #gvrze-storefront .gvrze-card-price {
+    font-size: 0.75rem; /* 12px — editorial sm:text-xs */
+    line-height: 1.333;
+    letter-spacing: 0;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+
+  #gvrze-storefront .gvrze-card-price.gvrze-card-price--promo {
+    font-size: 1rem; /* Best Sellers: sm:text-[16px] */
+    line-height: 1.375;
+  }
+
+  #gvrze-storefront .gvrze-card-price.gvrze-card-price--related {
+    font-size: 0.9375rem; /* PDP related: sm:text-[15px] */
+  }
+}
+
 /* Desktop: gallery stays put; description panel scrolls inside the right column. */
 @media (min-width: 1024px) {
   #gvrze-storefront.gvrze-storefront-product .sfpp-product-grid {

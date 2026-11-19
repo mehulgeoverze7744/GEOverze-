@@ -9,8 +9,8 @@ import { merchProductById } from "@/features/marketing/data/geostoreMerch";
 
 import {
   canonicalStorefrontTeeSlug,
-  STOREFRONT_TEE_CREDIT_PRICE,
-  STOREFRONT_TEE_PRICE_MINOR,
+  storefrontTeeCredits,
+  storefrontTeePriceMinor,
   STOREFRONT_TEES,
   type StorefrontTeeProduct,
 } from "../storefront/storefront-product-data";
@@ -190,8 +190,8 @@ function storefrontTeeDraft(tee: StorefrontTeeProduct): Draft {
     tagline: tee.description.slice(0, 140),
     description: tee.description,
     category: "tshirts",
-    price: STOREFRONT_TEE_PRICE_MINOR,
-    credits: STOREFRONT_TEE_CREDIT_PRICE,
+    price: storefrontTeePriceMinor(tee),
+    credits: storefrontTeeCredits(tee),
     rating: rank?.rating ?? 4.8,
     reviews: rank?.reviews ?? 48,
     popularity: rank?.popularity ?? 80,

@@ -8,8 +8,9 @@
  */
 
 import {
-  GSTORE_STANDARD_TEE_CREDITS,
-  GSTORE_STANDARD_TEE_PRICE_MINOR,
+  storefrontTeePriceLabelForCollection,
+  gstoreTeeCreditsForCollection,
+  gstoreTeePriceMinorForCollection,
 } from "../lib/gstoreProductPrices.ts";
 
 const BASE = "/assets/gvrze-storefront/best-sellers";
@@ -52,14 +53,28 @@ export type StorefrontTeeColorVariant = {
   gallery: { src: string; alt: string }[];
 };
 
-/** Credit redemption price shown beside the rupee price on every live T-shirt. */
-export const STOREFRONT_TEE_CREDIT_PRICE = GSTORE_STANDARD_TEE_CREDITS;
+/** PRIME line display label (Best Sellers, default signature tees). */
+export const STOREFRONT_PRIME_TEE_PRICE_LABEL = storefrontTeePriceLabelForCollection("prime");
+/** BASICS line display label. */
+export const STOREFRONT_BASICS_TEE_PRICE_LABEL = storefrontTeePriceLabelForCollection("basics");
 
-/** Existing rupee label plus the credit option — same string used on every tee surface. */
-export const STOREFRONT_TEE_PRICE_LABEL = `Rs. 2,699 or ${GSTORE_STANDARD_TEE_CREDITS} credits`;
+/** @deprecated Use collection-specific labels via `storefrontTeePriceLabelForCollection`. */
+export const STOREFRONT_TEE_PRICE_LABEL = STOREFRONT_PRIME_TEE_PRICE_LABEL;
 
-/** Paise MRP for storefront tees — kept in sync with `storefrontTeeDraft`. */
-export const STOREFRONT_TEE_PRICE_MINOR = GSTORE_STANDARD_TEE_PRICE_MINOR;
+export function storefrontTeePriceLabel(tee: { collectionLine?: "prime" | "basics" }): string {
+  const line = tee.collectionLine === "basics" ? "basics" : "prime";
+  return storefrontTeePriceLabelForCollection(line);
+}
+
+export function storefrontTeeCredits(tee: { collectionLine?: "prime" | "basics" }): number {
+  const line = tee.collectionLine === "basics" ? "basics" : "prime";
+  return gstoreTeeCreditsForCollection(line);
+}
+
+export function storefrontTeePriceMinor(tee: { collectionLine?: "prime" | "basics" }): number {
+  const line = tee.collectionLine === "basics" ? "basics" : "prime";
+  return gstoreTeePriceMinorForCollection(line);
+}
 
 export type StorefrontTeeProduct = {
   /** Route slug — also the DOM key. */
@@ -129,7 +144,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     id: "cherry-blossom-tshirt",
     name: "BLOOM",
     categoryLabel: "T-SHIRT",
-    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
+    priceLabel: STOREFRONT_PRIME_TEE_PRICE_LABEL,
     tone: "#e29ecc",
     defaultColour: { id: "cherry-blossom-pink", label: "Cherry Blossom Pink", hex: "#e29ecc" },
     specialColour: true,
@@ -195,7 +210,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     id: "golden-arc-tshirt",
     name: "TERRA",
     categoryLabel: "T-SHIRT",
-    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
+    priceLabel: STOREFRONT_PRIME_TEE_PRICE_LABEL,
     tone: "#8cc8e8",
     defaultColour: { id: "skyblue", label: "Sky Blue", hex: "#a8d4f0" },
     image: {
@@ -249,7 +264,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     id: "orbit-tshirt",
     name: "ORBIT",
     categoryLabel: "T-SHIRT",
-    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
+    priceLabel: STOREFRONT_PRIME_TEE_PRICE_LABEL,
     tone: "#6c0036",
     defaultColour: { id: "rose-wine-burgundy", label: "Rose Wine Burgundy", hex: "#6c0036" },
     image: {
@@ -303,7 +318,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     id: "ignite",
     name: "IGNITE",
     categoryLabel: "T-SHIRT",
-    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
+    priceLabel: STOREFRONT_PRIME_TEE_PRICE_LABEL,
     tone: "#111111",
     defaultColour: { id: "midnight-black", label: "Midnight Black", hex: "#111111" },
     image: {
@@ -353,7 +368,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     id: "eden",
     name: "EDEN",
     categoryLabel: "T-SHIRT",
-    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
+    priceLabel: STOREFRONT_PRIME_TEE_PRICE_LABEL,
     tone: "#efe6d4",
     defaultColour: { id: "ivory-cream", label: "Ivory / Cream", hex: "#efe6d4" },
     image: {
@@ -402,7 +417,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     id: "pace",
     name: "PACE",
     categoryLabel: "T-SHIRT",
-    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
+    priceLabel: STOREFRONT_PRIME_TEE_PRICE_LABEL,
     tone: "#c41e3a",
     defaultColour: { id: "racing-red", label: "Racing Red", hex: "#c41e3a" },
     image: {
@@ -452,7 +467,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     id: "eclipse",
     name: "ECLIPSE",
     categoryLabel: "T-SHIRT",
-    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
+    priceLabel: STOREFRONT_PRIME_TEE_PRICE_LABEL,
     tone: "#2b2b2b",
     defaultColour: { id: "charcoal-black", label: "Charcoal Black", hex: "#2b2b2b" },
     image: {
@@ -505,7 +520,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     id: "vanta",
     name: "VANTA",
     categoryLabel: "T-SHIRT",
-    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
+    priceLabel: STOREFRONT_BASICS_TEE_PRICE_LABEL,
     tone: "#1e2433",
     collectionLine: "basics",
     defaultColour: { id: "midnight", label: "Midnight", hex: "#1a2744" },
@@ -608,7 +623,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     id: "monogram",
     name: "MONOGRAM",
     categoryLabel: "T-SHIRT",
-    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
+    priceLabel: STOREFRONT_BASICS_TEE_PRICE_LABEL,
     tone: "#ebe6dc",
     collectionLine: "basics",
     defaultColour: { id: "starlight", label: "Starlight", hex: "#ebe6dc" },
@@ -699,7 +714,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     id: "earthform",
     name: "EARTHFORM",
     categoryLabel: "T-SHIRT",
-    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
+    priceLabel: STOREFRONT_BASICS_TEE_PRICE_LABEL,
     tone: "#2c2c30",
     collectionLine: "basics",
     defaultColour: { id: "obsidian", label: "Obsidian", hex: "#2c2c30" },
@@ -790,7 +805,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     id: "flux",
     name: "FLUX",
     categoryLabel: "T-SHIRT",
-    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
+    priceLabel: STOREFRONT_BASICS_TEE_PRICE_LABEL,
     tone: "#9f1239",
     collectionLine: "basics",
     defaultColour: { id: "crimson", label: "Crimson", hex: "#b42333" },
@@ -881,7 +896,7 @@ export const STOREFRONT_TEES: readonly StorefrontTeeProduct[] = [
     id: "vertical",
     name: "VERTICAL",
     categoryLabel: "T-SHIRT",
-    priceLabel: STOREFRONT_TEE_PRICE_LABEL,
+    priceLabel: STOREFRONT_BASICS_TEE_PRICE_LABEL,
     tone: "#5c2030",
     collectionLine: "basics",
     defaultColour: { id: "bordeaux", label: "Bordeaux", hex: "#5c2030" },

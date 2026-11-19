@@ -20,7 +20,7 @@ export function StorefrontHero() {
         src={SF_ASSETS.hero.src}
         width={SF_ASSETS.hero.width}
         height={SF_ASSETS.hero.height}
-        alt="Three models in GVRZE streetwear: a black tee, a pink tee seen from behind, and a white hoodie"
+        alt="Three models in GVRZE graphic tees: sky-blue wave design, dusty rose back print, and cream chest wordmark"
         fetchPriority="high"
         decoding="async"
         className="absolute inset-0 -z-10 h-full w-full object-cover object-[center_20%] sm:object-center md:scale-[1.127]"

@@ -8,11 +8,11 @@ import { useStoreActions } from "../lib/useStoreActions";
 import { SF_ASSETS } from "./storefront-assets";
 import { SpecialColourBadge } from "./SpecialColourBadge";
 import {
-  STOREFRONT_TEE_PRICE_LABEL,
+  STOREFRONT_PRIME_TEE_PRICE_LABEL,
   storefrontTeeById,
   teeHasSpecialColourBadge,
 } from "./storefront-product-data";
-import { ExploreMoreLink, SF_SHELL, SF_UI_FONT } from "./storefront-ui";
+import { ExploreMoreLink, SF_SHELL, SF_UI_FONT, StorefrontCardPrice } from "./storefront-ui";
 
 type BestSeller = {
   /** Exact product name from the Figma "Best Sellers" frame. */
@@ -50,7 +50,7 @@ type BestSeller = {
 const BEST_SELLERS: readonly BestSeller[] = [
   {
     name: storefrontTeeById("eclipse")?.name ?? "ECLIPSE",
-    price: STOREFRONT_TEE_PRICE_LABEL,
+    price: STOREFRONT_PRIME_TEE_PRICE_LABEL,
     tone: "#2b2b2b",
     image: SF_ASSETS.bestSellerEclipse,
     alt: "GVRZE ECLIPSE T-Shirt in Charcoal Black — model wearing the tee, front view with monochrome world-map artwork",
@@ -59,7 +59,7 @@ const BEST_SELLERS: readonly BestSeller[] = [
   },
   {
     name: storefrontTeeById("cherry-blossom-tshirt")?.name ?? "BLOOM",
-    price: STOREFRONT_TEE_PRICE_LABEL,
+    price: STOREFRONT_PRIME_TEE_PRICE_LABEL,
     tone: "#e8729a",
     image: SF_ASSETS.bestSellerCherryBlossom,
     alt: "BLOOM T-Shirt in Cherry Blossom Pink — model back view showing full GVRZE graphic",
@@ -69,7 +69,7 @@ const BEST_SELLERS: readonly BestSeller[] = [
   },
   {
     name: storefrontTeeById("golden-arc-tshirt")?.name ?? "TERRA",
-    price: STOREFRONT_TEE_PRICE_LABEL,
+    price: STOREFRONT_PRIME_TEE_PRICE_LABEL,
     tone: "#8cc8e8",
     image: SF_ASSETS.bestSellerGoldenArc,
     alt: "TERRA T-Shirt in Sky Blue — front and back product photograph",
@@ -79,7 +79,7 @@ const BEST_SELLERS: readonly BestSeller[] = [
   },
   {
     name: storefrontTeeById("orbit-tshirt")?.name ?? "ORBIT",
-    price: STOREFRONT_TEE_PRICE_LABEL,
+    price: STOREFRONT_PRIME_TEE_PRICE_LABEL,
     tone: "#6c0036",
     image: SF_ASSETS.bestSellerOrbit,
     alt: "ORBIT T-Shirt in Rose Wine Burgundy — front product view with sleeve artwork, star emblem and GVRZE wordmark",
@@ -174,7 +174,7 @@ function BestSellerCard({ item }: { item: BestSeller }) {
               {item.name}
             </Link>
           </h3>
-          <p className="mt-1.5 text-[13px] text-[#353535] sm:text-[16px]">{item.price}</p>
+          <StorefrontCardPrice variant="promo">{item.price}</StorefrontCardPrice>
         </div>
         <button
           type="button"
@@ -199,14 +199,14 @@ export function StorefrontBestSellers() {
       className="bg-[#f6f6f6] py-[clamp(40px,6vw,88px)]"
     >
       <div className={SF_SHELL}>
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center justify-between gap-3 sm:gap-4">
           <h2
             id="sf-best-sellers"
-            className={`text-[18px] font-semibold text-black md:text-[20px] ${SF_UI_FONT}`}
+            className={`min-w-0 text-[18px] font-semibold text-black md:text-[20px] ${SF_UI_FONT}`}
           >
             Best Sellers
           </h2>
-          <ExploreMoreLink />
+          <ExploreMoreLink variant="compact" />
         </div>
         <ul className="mt-[clamp(20px,3.2vw,46px)] grid grid-cols-2 gap-x-3 gap-y-9 lg:grid-cols-4">
           {BEST_SELLERS.map((item) => (
