@@ -132,7 +132,7 @@ export function calcClientProration(params: {
  * Builds a human-readable proration breakdown for the checkout order summary.
  *
  * Example:
- *   Pro Monthly          ₹499
+ *   Pro Monthly          ₹399
  *   Basic Credit (-22d)  −₹72
  *   ──────────────────────────
  *   Upgrade Payment      ₹427

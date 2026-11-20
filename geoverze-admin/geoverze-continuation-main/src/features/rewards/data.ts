@@ -1,3 +1,4 @@
+import { parseIsoDate } from "@/features/users/format";
 import { catalogDaysAgo, pickFrom, rng } from "@/lib/catalog";
 import {
   eligibilityRules,
@@ -97,9 +98,11 @@ export function summarizeRewards(list: Reward[]): RewardSummary {
     active: list.filter((reward) => reward.status === "active").length,
     claims: list.reduce((sum, reward) => sum + reward.claims, 0),
     creditsSpent: list.reduce((sum, reward) => sum + reward.claims * reward.creditsRequired, 0),
-    expiringSoon: list.filter(
-      (reward) => new Date(reward.expiresAt).getTime() - Date.now() < 45 * 86400000,
-    ).length,
+    expiringSoon: list.filter((reward) => {
+      const expires = parseIsoDate(reward.expiresAt);
+      if (!expires) return false;
+      return expires.getTime() - Date.now() < 45 * 86400000;
+    }).length,
   };
 }
 

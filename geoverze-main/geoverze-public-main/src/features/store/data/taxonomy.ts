@@ -238,11 +238,12 @@ export function categoriesInGroup(group: StoreGroupId): readonly StoreCategory[]
 }
 
 /** Browse facets. `all` is always prepended by the UI. */
+/** `min` / `max` are INR paise (same units as `Product.price` in the live catalogue). */
 export const PRICE_BANDS = [
-  { id: "under-15", label: "Under $15", min: 0, max: 1_500 },
-  { id: "15-35", label: "$15 – $35", min: 1_500, max: 3_500 },
-  { id: "35-75", label: "$35 – $75", min: 3_500, max: 7_500 },
-  { id: "75-plus", label: "$75+", min: 7_500, max: Number.POSITIVE_INFINITY },
+  { id: "under-1500", label: "Under ₹1,500", min: 0, max: 150_000 },
+  { id: "1500-3500", label: "₹1,500 – ₹3,500", min: 150_000, max: 350_000 },
+  { id: "3500-7500", label: "₹3,500 – ₹7,500", min: 350_000, max: 750_000 },
+  { id: "7500-plus", label: "₹7,500+", min: 750_000, max: Number.POSITIVE_INFINITY },
 ] as const;
 
 export type PriceBandId = (typeof PRICE_BANDS)[number]["id"];

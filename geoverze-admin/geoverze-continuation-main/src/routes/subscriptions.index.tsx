@@ -13,7 +13,7 @@ import { summarizeSubscriptions } from "@/features/subscriptions/data";
 import { fetchMappedPlans, fetchMappedSubscribers } from "@/features/subscriptions/live";
 import { adminKeys } from "@/lib/admin/keys";
 import { useAdminQuery } from "@/lib/admin/hooks";
-import { money, num } from "@/lib/format";
+import { money, moneyCatalogRupees, num } from "@/lib/format";
 
 export const Route = createFileRoute("/subscriptions/")({
   head: () => ({
@@ -90,7 +90,7 @@ function SubscriptionPlansPage() {
               </div>
 
               <p className="text-2xl font-semibold text-foreground tabular">
-                {money(cycle === "Monthly" ? plan.monthlyPrice : plan.annualPrice)}
+                {moneyCatalogRupees(cycle === "Monthly" ? plan.monthlyPrice : plan.annualPrice)}
                 <span className="ml-1 text-xs font-normal text-muted-foreground">
                   /{cycle === "Monthly" ? "month" : "year"}
                 </span>

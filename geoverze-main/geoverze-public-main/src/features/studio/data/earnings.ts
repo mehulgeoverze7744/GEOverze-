@@ -2,7 +2,7 @@
 import type { Payout, Transaction } from "./types";
 
 export const EARNINGS_SUMMARY = {
-  currency: "USD",
+  currency: "INR",
   totalEarned: 18_942.5,
   availableBalance: 2_418.75,
   pendingClearance: 640.2,

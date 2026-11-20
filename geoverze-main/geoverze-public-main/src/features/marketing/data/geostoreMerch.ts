@@ -31,7 +31,10 @@ export type GeostoreMerchProduct = {
   alt: string;
   /** Short card copy — one line preferred. */
   tagline: string;
-  /** USD minor units (cents). */
+  /**
+   * Legacy shelf MRP hint in whole INR rupees when no `GSTORE_PRODUCT_PRICES` row exists.
+   * Active selling price always comes from the checkout catalog — never from this alone.
+   */
   price: number;
   /** Whole GVRZE Credits when hybrid pricing applies. */
   credits: number;
@@ -224,7 +227,7 @@ export const geostoreMerchProducts: readonly GeostoreMerchProduct[] = [
     image: hoodieEveryPointHasAStory,
     alt: "GVRZE black hoodie lookbook — Every Point Has A Story design",
     tagline: "Every mapped point carries a story.",
-    price: 7_400,
+    price: 5_499,
     credits: 700,
     defaultColor: "black",
   },

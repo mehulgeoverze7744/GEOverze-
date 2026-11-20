@@ -1,21 +1,17 @@
-/** Money and credit formatting for the Gstore. */
+/** Money and credit formatting for the Gstore (INR paise minor units). */
 
-/** Formats minor units as USD. `null` renders as an em dash. */
+import { formatInrPaise } from "@/features/pricing/lib/formatInr";
+
+/** Formats minor units (INR paise). `null` renders as an em dash. */
 export function money(minor: number | null): string {
   if (minor === null) return "—";
-  const value = minor / 100;
-  return value.toLocaleString("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: value % 1 === 0 ? 0 : 2,
-    maximumFractionDigits: 2,
-  });
+  return formatInrPaise(minor);
 }
 
 /** Formats a credit amount, e.g. `90 credits`. */
 export function credits(amount: number | null): string {
   if (amount === null) return "—";
-  return `${amount.toLocaleString("en-US")} ${amount === 1 ? "credit" : "credits"}`;
+  return `${amount.toLocaleString("en-IN")} ${amount === 1 ? "credit" : "credits"}`;
 }
 
 /** Percentage saved between a list price and a sale price. */

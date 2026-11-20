@@ -1,10 +1,11 @@
-/** Formats subscription catalog amounts stored as USD cents. */
-export function formatUsdCents(cents: number): string {
-  const value = cents / 100;
-  return value.toLocaleString("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: value % 1 === 0 ? 0 : 2,
-    maximumFractionDigits: 2,
-  });
+import { formatInrRupees } from "./formatInr";
+
+/**
+ * Formats subscription catalog amounts (whole INR rupees).
+ * Legacy export name retained for compatibility — values are not USD cents.
+ */
+export function formatUsdCents(rupees: number): string {
+  return formatInrRupees(rupees);
 }
+
+export const formatCatalogPrice = formatInrRupees;

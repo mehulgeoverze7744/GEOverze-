@@ -8,6 +8,8 @@ import {
   type GeostoreMerchProduct,
 } from "@/features/marketing/data/geostoreMerch";
 
+import { resolveGstorePriceMinor } from "../lib/gstoreProductPrices";
+
 import { isPurchaseLocked, productBySlug, productsInCategory, type Product } from "./products";
 import { STORE_CATEGORIES, type StoreCategoryId, type StoreGroupId } from "./taxonomy";
 
@@ -29,7 +31,7 @@ function merchFacets(merch: GeostoreMerchProduct, category: StoreCategoryId): Pr
     description: merch.tagline,
     category,
     group: "merch",
-    price: merch.price,
+    price: resolveGstorePriceMinor(merch.id, merch.price),
     compareAt: null,
     credits: merch.credits,
     mode: "hybrid",

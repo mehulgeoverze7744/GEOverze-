@@ -1,7 +1,7 @@
 import type { DataTableColumn } from "@/components/shared/data-table";
 import { Highlight } from "@/components/shared/highlight";
 import { Badge } from "@/components/ui/badge";
-import { formatDate } from "@/features/users/format";
+import { dateSortKey, formatDate } from "@/features/users/format";
 import type { CreditRule, CreditTransaction } from "@/features/credits/types";
 import { num } from "@/lib/format";
 
@@ -60,7 +60,7 @@ export function buildTransactionColumns(query: string): DataTableColumn<CreditTr
     {
       id: "createdAt",
       header: "Date",
-      accessor: (t) => t.createdAt,
+      accessor: (t) => dateSortKey(t.createdAt),
       align: "right",
       cell: (t) => formatDate(t.createdAt),
     },
@@ -98,7 +98,7 @@ export function buildRuleColumns(): DataTableColumn<CreditRule>[] {
     {
       id: "updatedAt",
       header: "Updated",
-      accessor: (r) => r.updatedAt,
+      accessor: (r) => dateSortKey(r.updatedAt),
       align: "right",
       cell: (r) => formatDate(r.updatedAt),
     },

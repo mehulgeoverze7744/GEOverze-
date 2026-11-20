@@ -14,6 +14,7 @@ import {
   type MerchCategory,
 } from "@/features/marketing/data/geostoreMerch";
 
+import { resolveGstorePriceMinor } from "../lib/gstoreProductPrices";
 import { APPAREL_MERCH_SPECS } from "../data/apparelMerchSpecs";
 import { HOODIE_MERCH_SPECS, hoodieColorsWithImages } from "../data/hoodieMerchSpecs";
 import { productImageForSlug } from "../data/productImages";
@@ -126,7 +127,7 @@ function merchToProduct(merch: GeostoreMerchProduct, category: TryOnCategoryId):
     description: merch.tagline,
     category: category as import("../data/taxonomy").StoreCategoryId,
     group: "merch",
-    price: merch.price,
+    price: resolveGstorePriceMinor(merch.id, merch.price),
     compareAt: null,
     credits: merch.credits,
     mode: "hybrid",
@@ -291,9 +292,9 @@ function fromMerch(merch: GeostoreMerchProduct): TryOnGarment | null {
     slug: merch.id,
     name: displayNameForMerch(merch.id, merch),
     category,
-    price: merch.price,
+    price: product.price,
     credits: merch.credits,
-    priceLabel: formatPriceLabel(merch.price, merch.credits),
+    priceLabel: formatPriceLabel(product.price, merch.credits),
     sizes: productSizes(product),
     colors,
     stock: product.stock,

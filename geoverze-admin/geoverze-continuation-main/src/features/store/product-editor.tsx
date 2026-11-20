@@ -219,7 +219,7 @@ export function ProductEditor({
           <SectionHeader title="Pricing" description="Cash price, discounts and credit cost" />
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="product-price">Price (USD)</Label>
+              <Label htmlFor="product-price">Price (INR)</Label>
               <Input
                 id="product-price"
                 type="number"

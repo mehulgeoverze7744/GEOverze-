@@ -2,7 +2,7 @@
  * Gstore catalogue.
  *
  * Placeholder merchandising data with the shape a real commerce backend would
- * return. Money is stored in minor units (cents) and credits are whole GEO
+ * return. Money is stored in INR paise and credits are whole GEO
  * credits, so a product can be money-only, credits-only or hybrid.
  */
 import { merchProductById } from "@/features/marketing/data/geostoreMerch";
@@ -14,6 +14,8 @@ import {
   STOREFRONT_TEES,
   type StorefrontTeeProduct,
 } from "../storefront/storefront-product-data";
+
+import { staticPresentationPriceMinor } from "../lib/gstoreProductPrices";
 
 import { isPurchaseLockedProduct, isRetiredProductSlug } from "./catalogAvailability";
 import { categoryById, type StoreCategoryId, type StoreGroupId } from "./taxonomy";
@@ -44,7 +46,7 @@ export type Product = {
   description: string;
   category: StoreCategoryId;
   group: StoreGroupId;
-  /** Price in USD minor units. `null` for credits-only items. */
+  /** Price in INR paise. `null` for credits-only items. */
   price: number | null;
   /** Struck-through reference price in minor units, or `null`. */
   compareAt: number | null;
@@ -80,7 +82,10 @@ function make(draft: Draft): Product {
   seq += 1;
   const group = categoryById(draft.category)?.group ?? "merch";
   const comingSoon = draft.comingSoon ?? false;
-  const price = comingSoon ? null : (draft.price ?? null);
+  const price =
+    comingSoon || draft.price == null
+      ? null
+      : staticPresentationPriceMinor(draft.slug, draft.price);
   const credits = comingSoon ? null : (draft.credits ?? null);
   const mode: PriceMode =
     price !== null && credits !== null
@@ -215,7 +220,7 @@ export const PRODUCTS: readonly Product[] = [
     tagline: everyPointHoodieMerch?.tagline ?? "Every mapped point carries a story.",
     description: everyPointHoodieMerch?.tagline ?? "Every mapped point carries a story.",
     category: "hoodies",
-    price: everyPointHoodieMerch?.price ?? 7_400,
+    price: 549_900,
     credits: everyPointHoodieMerch?.credits ?? 700,
     rating: 4.9,
     reviews: 178,
