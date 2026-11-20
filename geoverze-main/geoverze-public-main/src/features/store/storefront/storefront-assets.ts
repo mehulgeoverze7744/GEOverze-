@@ -38,6 +38,58 @@ export const SF_HERO_PICTURE = {
   },
 } as const;
 
+const FEATURED_STEM = "featured-collection";
+export const SF_FEATURED_NATIVE = { width: 1672, height: 941 } as const;
+export const SF_FEATURED_WIDTHS = [640, 960, 1280, 1672] as const;
+export const SF_FEATURED_SIZES = "100vw";
+
+function featuredAssetPath(width: number, ext: "avif" | "webp" | "jpg"): string {
+  const file =
+    width === SF_FEATURED_NATIVE.width
+      ? `${FEATURED_STEM}.${ext}`
+      : `${FEATURED_STEM}-${width}w.${ext}`;
+  return `${BASE}/${file}`;
+}
+
+function featuredSrcSet(ext: "avif" | "webp" | "jpg"): string {
+  return SF_FEATURED_WIDTHS.map((w) => `${featuredAssetPath(w, ext)} ${w}w`).join(", ");
+}
+
+const BRAND_STEM = "brand-statement";
+export const SF_BRAND_NATIVE = { width: 2051, height: 767 } as const;
+export const SF_BRAND_WIDTHS = [640, 960, 1280, 2051] as const;
+export const SF_BRAND_SIZES = "(min-width: 768px) 1334px, 100vw";
+
+function brandAssetPath(width: number, ext: "avif" | "webp" | "jpg"): string {
+  const file =
+    width === SF_BRAND_NATIVE.width ? `${BRAND_STEM}.${ext}` : `${BRAND_STEM}-${width}w.${ext}`;
+  return `${BASE}/${file}`;
+}
+
+function brandSrcSet(ext: "avif" | "webp" | "jpg"): string {
+  return SF_BRAND_WIDTHS.map((w) => `${brandAssetPath(w, ext)} ${w}w`).join(", ");
+}
+
+/** “The world is your canvas” — GVRZE studio trio (cream tee) photograph. */
+export const SF_BRAND_PICTURE = {
+  ...SF_BRAND_NATIVE,
+  sizes: SF_BRAND_SIZES,
+  fallback: brandAssetPath(SF_BRAND_NATIVE.width, "jpg"),
+  srcSetAvif: brandSrcSet("avif"),
+  srcSetWebp: brandSrcSet("webp"),
+  srcSetJpg: brandSrcSet("jpg"),
+} as const;
+
+/** Featured collection banner — burgundy GVRZE studio photograph. */
+export const SF_FEATURED_PICTURE = {
+  ...SF_FEATURED_NATIVE,
+  sizes: SF_FEATURED_SIZES,
+  fallback: featuredAssetPath(SF_FEATURED_NATIVE.width, "jpg"),
+  srcSetAvif: featuredSrcSet("avif"),
+  srcSetWebp: featuredSrcSet("webp"),
+  srcSetJpg: featuredSrcSet("jpg"),
+} as const;
+
 export const SF_ASSETS = {
   logo: { src: "/assets/home/gvrze-wordmark.png", width: 581, height: 85 },
   hero: {
@@ -51,9 +103,17 @@ export const SF_ASSETS = {
   categoryHoodies: { src: `${BASE}/category-hoodies.webp`, width: 1597, height: 985 },
   categoryAccessories: { src: `${BASE}/category-accessories.webp`, width: 720, height: 900 },
   shadowTees: { src: `${BASE}/shadow-tees.svg`, width: 329, height: 269 },
-  featured: { src: `${BASE}/featured-collection.webp`, width: 1881, height: 836 },
+  featured: {
+    src: featuredAssetPath(SF_FEATURED_NATIVE.width, "webp"),
+    width: SF_FEATURED_NATIVE.width,
+    height: SF_FEATURED_NATIVE.height,
+  },
   shadowFeatured: { src: `${BASE}/shadow-featured.svg`, width: 593, height: 338 },
-  brand: { src: `${BASE}/brand-statement.webp`, width: 2050, height: 767 },
+  brand: {
+    src: brandAssetPath(SF_BRAND_NATIVE.width, "webp"),
+    width: SF_BRAND_NATIVE.width,
+    height: SF_BRAND_NATIVE.height,
+  },
   bestSellerEclipse: {
     src: `${BASE}/best-sellers/eclipse/ec-5.jpg`,
     width: 819,
