@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-import { SF_ASSETS } from "./storefront-assets";
+import { SF_ASSETS, SF_FEATURED_PICTURE } from "./storefront-assets";
 
 /** Full-bleed featured collection banner. The whole banner is one link into the T-shirt shelf. */
 export function StorefrontFeatured() {
@@ -12,15 +12,21 @@ export function StorefrontFeatured() {
         aria-label="Featured collection — shop now"
         className="group/featured relative block h-[clamp(340px,39.24vw,565px)] overflow-hidden bg-[#2a6f9e]"
       >
-        <img
-          src={SF_ASSETS.featured.src}
-          width={SF_ASSETS.featured.width}
-          height={SF_ASSETS.featured.height}
-          alt="A gloved hand holding a beige GVRZE tee printed with a planet graphic"
-          loading="lazy"
-          decoding="async"
-          className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover/featured:scale-[1.02] motion-reduce:transition-none"
-        />
+        <picture className="absolute inset-0 block h-full w-full">
+          <source type="image/avif" srcSet={SF_FEATURED_PICTURE.srcSetAvif} sizes={SF_FEATURED_PICTURE.sizes} />
+          <source type="image/webp" srcSet={SF_FEATURED_PICTURE.srcSetWebp} sizes={SF_FEATURED_PICTURE.sizes} />
+          <img
+            src={SF_FEATURED_PICTURE.fallback}
+            srcSet={SF_FEATURED_PICTURE.srcSetJpg}
+            sizes={SF_FEATURED_PICTURE.sizes}
+            width={SF_ASSETS.featured.width}
+            height={SF_ASSETS.featured.height}
+            alt="Black-gloved hands holding a burgundy GVRZE tee with gold logo and teal graphic in a dark studio"
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover object-[center_42%] transition-transform duration-700 ease-out group-hover/featured:scale-[1.02] motion-reduce:transition-none sm:object-center"
+          />
+        </picture>
 
         <div className="absolute left-1/2 top-[70%] flex w-full -translate-x-1/2 -translate-y-1/2 flex-col items-center px-4 text-center">
           <img

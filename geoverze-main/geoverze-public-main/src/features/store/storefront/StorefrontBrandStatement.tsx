@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-import { SF_ASSETS } from "./storefront-assets";
+import { SF_ASSETS, SF_BRAND_PICTURE } from "./storefront-assets";
 import { SF_SHELL } from "./storefront-ui";
 
 /**
@@ -16,15 +16,21 @@ export function StorefrontBrandStatement() {
       <div className={SF_SHELL}>
         <div className="relative overflow-hidden rounded-[11px] bg-[#ececec] md:aspect-[1334/525]">
           <div className="relative aspect-[4/3] md:absolute md:inset-0 md:aspect-auto">
-            <img
-              src={SF_ASSETS.brand.src}
-              width={SF_ASSETS.brand.width}
-              height={SF_ASSETS.brand.height}
-              alt="Three people in GVRZE streetwear seated in a photo studio"
-              loading="lazy"
-              decoding="async"
-              className="h-full w-full object-cover object-[78%_50%] md:absolute md:left-[-6.83%] md:top-0 md:h-[104%] md:w-[109.45%] md:object-fill"
-            />
+            <picture className="h-full w-full md:absolute md:inset-0">
+              <source type="image/avif" srcSet={SF_BRAND_PICTURE.srcSetAvif} sizes={SF_BRAND_PICTURE.sizes} />
+              <source type="image/webp" srcSet={SF_BRAND_PICTURE.srcSetWebp} sizes={SF_BRAND_PICTURE.sizes} />
+              <img
+                src={SF_BRAND_PICTURE.fallback}
+                srcSet={SF_BRAND_PICTURE.srcSetJpg}
+                sizes={SF_BRAND_PICTURE.sizes}
+                width={SF_ASSETS.brand.width}
+                height={SF_ASSETS.brand.height}
+                alt="Three models in GVRZE apparel seated together in a cream-backdrop photo studio"
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover object-[center_48%] md:object-[center_42%]"
+              />
+            </picture>
           </div>
 
           <div className="relative px-5 pb-7 pt-6 md:absolute md:inset-0 md:flex md:flex-col md:justify-center md:p-0 md:pl-[9.5%]">
