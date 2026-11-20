@@ -12,8 +12,8 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  // Outside Lovable's sandbox, pin Nitro to Vercel for self-hosted deploys (e.g. Vercel CI).
-  nitro: { preset: "vercel" },
+  // Hostinger Unlimited Node.js — long-lived Nitro server (Vercel preset kept in vercel.json for CI).
+  nitro: { preset: "node-server" },
   vite: {
     envPrefix: ["VITE_"],
   },
