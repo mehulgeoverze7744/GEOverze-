@@ -21,7 +21,7 @@ import { MembershipBadge, UserAvatar } from "@/features/users/columns";
 import { daysSince } from "@/features/users/data";
 import { formatDate, formatDateTime, relativeDays } from "@/features/users/format";
 import type { PlatformUser } from "@/features/users/types";
-import { money, num } from "@/lib/format";
+import { formatCredits, money, num } from "@/lib/format";
 
 function Field({ label, value }: { label: string; value: ReactNode }) {
   return (
@@ -249,7 +249,9 @@ export function UserDetailDrawer({
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
                     <span className="text-sm tabular text-foreground">
-                      {money(purchase.amount, purchase.currency)}
+                      {purchase.currency === "CREDITS"
+                        ? formatCredits(purchase.amount)
+                        : money(purchase.amount, purchase.currency === "USD" ? "INR" : purchase.currency)}
                     </span>
                     <StatusBadge status={purchase.status} />
                   </div>

@@ -12,4 +12,6 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Hostinger Unlimited Node.js — long-lived Nitro server (not Cloudflare/Vercel serverless).
+  nitro: { preset: "node-server" },
 });

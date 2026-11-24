@@ -2,7 +2,7 @@ import type { DataTableColumn } from "@/components/shared/data-table";
 import { Highlight } from "@/components/shared/highlight";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Badge } from "@/components/ui/badge";
-import { formatDate } from "@/features/users/format";
+import { dateSortKey, formatDate } from "@/features/users/format";
 import type { Reward, RewardClaim } from "@/features/rewards/types";
 import { num } from "@/lib/format";
 
@@ -59,7 +59,7 @@ export function buildRewardColumns(query: string): DataTableColumn<Reward>[] {
     {
       id: "availableFrom",
       header: "Available",
-      accessor: (r) => r.availableFrom,
+      accessor: (r) => dateSortKey(r.availableFrom),
       align: "right",
       defaultHidden: true,
       cell: (r) => formatDate(r.availableFrom),
@@ -67,14 +67,14 @@ export function buildRewardColumns(query: string): DataTableColumn<Reward>[] {
     {
       id: "expiresAt",
       header: "Expires",
-      accessor: (r) => r.expiresAt,
+      accessor: (r) => dateSortKey(r.expiresAt),
       align: "right",
       cell: (r) => formatDate(r.expiresAt),
     },
     {
       id: "updatedAt",
       header: "Updated",
-      accessor: (r) => r.updatedAt,
+      accessor: (r) => dateSortKey(r.updatedAt),
       align: "right",
       defaultHidden: true,
       cell: (r) => formatDate(r.updatedAt),
@@ -103,7 +103,7 @@ export function buildClaimColumns(): DataTableColumn<RewardClaim>[] {
     {
       id: "claimedAt",
       header: "Claimed",
-      accessor: (c) => c.claimedAt,
+      accessor: (c) => dateSortKey(c.claimedAt),
       align: "right",
       cell: (c) => formatDate(c.claimedAt),
     },

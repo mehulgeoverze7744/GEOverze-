@@ -8,7 +8,7 @@ import { GST_CONFIG } from "./gstConfig";
  * NOTE on catalog amounts:
  * subscription_plans.monthly_price_cents / annual_price_cents store WHOLE INR RUPEES
  * despite the _cents suffix. Use formatInrRupees() (no division by 100).
- * e.g. 499 → ₹499/month
+ * e.g. 399 → ₹399/month
  */
 
 const EMPTY_PROVIDER_IDS = { stripe: null, razorpay: null } as const;

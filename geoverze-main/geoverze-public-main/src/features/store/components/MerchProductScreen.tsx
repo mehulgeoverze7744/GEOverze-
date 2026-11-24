@@ -10,6 +10,10 @@
 import { memo } from "react";
 
 import type { GeostoreMerchProduct } from "@/features/marketing/data/geostoreMerch";
+import {
+  formatInrPaise,
+  resolveGstorePriceMinor,
+} from "@/features/store/lib/gstoreProductPrices";
 
 import { APPAREL_MERCH_SPECS } from "../data/apparelMerchSpecs";
 import { HOODIE_MERCH_SPECS, hoodieColorsWithImages } from "../data/hoodieMerchSpecs";
@@ -20,9 +24,9 @@ import {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-/** Convert minor-unit USD cents to a display string, e.g. 3700 → "$37.00". */
-function formatPrice(cents: number): string {
-  return `$${(cents / 100).toFixed(2)}`;
+function formatPrice(slug: string, legacyWholeRupees: number): string {
+  const minor = resolveGstorePriceMinor(slug, legacyWholeRupees);
+  return minor === null ? "—" : formatInrPaise(minor);
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
@@ -34,7 +38,7 @@ export const MerchProductScreen = memo(function MerchProductScreen({
   product: GeostoreMerchProduct;
 }) {
   const categorySlug = product.category === "t-shirt" ? "tshirts" : "hoodies";
-  const priceLabel = formatPrice(product.price);
+  const priceLabel = formatPrice(product.id, product.price);
 
   // ── Apparel (T-shirt) products ────────────────────────────────────────────
   const apparelSpec = APPAREL_MERCH_SPECS[product.id];
