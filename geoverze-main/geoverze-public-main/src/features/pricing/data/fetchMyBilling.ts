@@ -1,5 +1,4 @@
 import { supabase } from "@/lib/supabase/client";
-import type { Json } from "@/lib/supabase/database.types";
 
 import {
   libraryTierLabel,
@@ -8,6 +7,7 @@ import {
 } from "@/features/library/lib/access-tier";
 import { TIER_PRESENTATION } from "./plans";
 import { formatMinorAmount, formatInrRupees } from "../lib/formatInr";
+import { parseUserMembership } from "../lib/membership";
 import {
   isPendingAuthorizationStatus,
   pickMembershipForCheckout,
@@ -92,39 +92,14 @@ export type MyBillingSnapshot = {
   pendingPlanTier: string | null;
 };
 
-type PlanTierRpc = {
-  tier?: unknown;
-  display_name?: unknown;
-  monthly_price_cents?: unknown;
-  annual_price_cents?: unknown;
-  monthly_credit_grant?: unknown;
-  subscription?: unknown;
-};
-
-type SubscriptionRpc = {
-  status?: unknown;
-  billing_interval?: unknown;
-  started_at?: unknown;
-  current_period_start?: unknown;
-  current_period_end?: unknown;
-  cancel_at_period_end?: unknown;
-};
-
-function asRecord(value: unknown): Record<string, unknown> | null {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
-  return value as Record<string, unknown>;
-}
-
 function asString(value: unknown): string | null {
   return typeof value === "string" && value.length > 0 ? value : null;
 }
 
-function asNumber(value: unknown): number | null {
-  return typeof value === "number" && Number.isFinite(value) ? value : null;
-}
-
-function asBoolean(value: unknown): boolean {
-  return value === true;
+function throwIfUnauthenticated(message: string) {
+  if (/authentication required/i.test(message) || /jwt/i.test(message)) {
+    throw new Error(`UNAUTHENTICATED:${message}`);
+  }
 }
 
 function formatDateLabel(iso: string | null): string {
@@ -146,16 +121,17 @@ function mapPaymentStatus(status: string): BillingPaymentStatus {
   return "pending";
 }
 
-function membershipStatusLabel(
-  subscription: SubscriptionRpc | null,
-  isPaidTier: boolean,
-): string {
-  if (asBoolean(subscription?.cancel_at_period_end)) {
-    const periodEnd = asString(subscription?.current_period_end);
-    if (periodEnd) return `Cancels on ${formatDateLabel(periodEnd)}`;
+function membershipStatusLabel(input: {
+  cancelAtPeriodEnd: boolean;
+  periodEndIso: string | null;
+  status: string;
+  isPaidTier: boolean;
+}): string {
+  if (input.cancelAtPeriodEnd) {
+    if (input.periodEndIso) return `Cancels on ${formatDateLabel(input.periodEndIso)}`;
     return "Cancels at period end";
   }
-  return asString(subscription?.status) ?? (isPaidTier ? "inactive" : "active");
+  return input.status || (input.isPaidTier ? "inactive" : "active");
 }
 
 function formatCharge(amountMinor: number, currency: string): string {
@@ -163,13 +139,11 @@ function formatCharge(amountMinor: number, currency: string): string {
   return formatMinorAmount(amountMinor, currency);
 }
 
-function parsePlanTierRpc(data: Json): PlanTierRpc {
-  return asRecord(data) ?? {};
-}
-
-function parseSubscription(value: unknown): SubscriptionRpc | null {
-  return asRecord(value);
-}
+type PlanCatalogRow = {
+  display_name: string;
+  monthly_price_cents: number;
+  annual_price_cents: number | null;
+};
 
 /** Authenticated membership, credits and payment history. RLS-scoped. */
 export async function fetchMyBilling(): Promise<MyBillingSnapshot> {
@@ -200,101 +174,106 @@ export async function fetchMyBilling(): Promise<MyBillingSnapshot> {
     throw new Error("UNAUTHENTICATED:No active session. Please sign in to view your billing details.");
   }
 
-  const [planResult, paymentsResult, progressionResult, grantResult, activeSubResult] = await Promise.all([
-    supabase.rpc("get_my_plan_tier"),
+  const [membershipResult, paymentsResult, activeSubResult, catalogResult] = await Promise.all([
+    supabase.rpc("get_my_membership"),
     supabase
       .from("billing_payments")
       .select(
         "id, provider_invoice_id, provider_payment_id, plan_tier, status, paid_at, attempted_at, charge_amount_minor, charge_currency",
       )
-      .order("attempted_at", { ascending: false })
+      .eq("user_id", user.id)
+      .order("attempted_at", { ascending: false, nullsFirst: false })
       .limit(50),
-    supabase.from("user_progression").select("credits").maybeSingle(),
-    // Most recent completed credit grant — used to show "This period granted: N credits".
-    // Secondary sort by created_at ensures we get the latest grant when multiple exist
-    // in the same period (e.g. user upgraded from Basic → Pro in the same month).
-    // status = 'completed' (allowed: pending / completed / skipped / failed).
-    supabase
-      .from("membership_credit_grants")
-      .select("credit_amount, status, grant_period_start, created_at")
-      .eq("status", "completed")
-      .order("grant_period_start", { ascending: false })
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-    // Membership rows used for checkout detection (active, pending, retryable).
     supabase
       .from("user_subscriptions")
       .select("id, provider_name, status, plan_tier, billing_interval")
+      .eq("user_id", user.id)
       .in("status", ["active", "trialing", "past_due", "pending", "incomplete"])
       .order("created_at", { ascending: false })
       .limit(8),
+    supabase
+      .from("subscription_plans")
+      .select("tier, display_name, monthly_price_cents, annual_price_cents")
+      .eq("active", true),
   ]);
 
-  if (planResult.error) throw new Error(planResult.error.message);
-  if (paymentsResult.error) throw new Error(paymentsResult.error.message);
-  if (progressionResult.error) throw new Error(progressionResult.error.message);
-  if (grantResult.error) throw new Error(grantResult.error.message);
-  // activeSubResult errors are non-fatal (best-effort)
-  const membershipRows = (activeSubResult.data ?? []) as MembershipCheckoutRecord[];
-  const pickedMembership = pickMembershipForCheckout(membershipRows);
-  const activeSub = pickedMembership;
+  if (membershipResult.error) {
+    throwIfUnauthenticated(membershipResult.error.message);
+    throw new Error(membershipResult.error.message);
+  }
 
-  const rpc = parsePlanTierRpc(planResult.data);
-  const tier = parseLibraryAccessTier(asString(rpc.tier)) ?? "explorer";
+  const membership = parseUserMembership(membershipResult.data);
+  if (!membership) {
+    throw new Error("Could not read membership snapshot.");
+  }
+
+  if (paymentsResult.error) {
+    console.warn("[fetchMyBilling] billing_payments:", paymentsResult.error.message);
+  }
+  if (activeSubResult.error) {
+    console.warn("[fetchMyBilling] user_subscriptions:", activeSubResult.error.message);
+  }
+  if (catalogResult.error) {
+    console.warn("[fetchMyBilling] subscription_plans:", catalogResult.error.message);
+  }
+
+  const membershipRows = (activeSubResult.data ?? []) as MembershipCheckoutRecord[];
+  const activeSub = pickMembershipForCheckout(membershipRows);
+
+  const tier = membership.tier;
   const presentation = TIER_PRESENTATION[tier];
-  const subscription = parseSubscription(rpc.subscription);
-  const intervalRaw = asString(subscription?.billing_interval);
-  const billingInterval: "monthly" | "annual" = intervalRaw === "annual" ? "annual" : "monthly";
-  const monthlyPrice = asNumber(rpc.monthly_price_cents) ?? 0;
-  const annualPrice = asNumber(rpc.annual_price_cents);
-  const monthlyCreditGrant = asNumber(rpc.monthly_credit_grant) ?? 0;
+  const billingInterval: "monthly" | "annual" =
+    membership.billingInterval === "annual" ? "annual" : "monthly";
+
+  const catalogByTier = new Map(
+    (catalogResult.data ?? []).map((row) => [parseLibraryAccessTier(row.tier as string) ?? "explorer", row]),
+  );
+  const catalog = catalogByTier.get(tier) as PlanCatalogRow | undefined;
+  const monthlyPrice = catalog?.monthly_price_cents ?? 0;
+  const annualPrice = catalog?.annual_price_cents ?? null;
   const isPaidTier = tier !== "explorer";
   const priceCents =
     billingInterval === "annual" && annualPrice != null ? annualPrice : monthlyPrice;
 
   const payments = paymentsResult.data ?? [];
-
-  const cancelAtPeriodEnd = asBoolean(subscription?.cancel_at_period_end);
-  const periodEndIso = asString(subscription?.current_period_end);
-  const periodStartIso = asString(subscription?.current_period_start);
-  const currentPlanPriceRupees =
-    billingInterval === "annual" && annualPrice != null ? annualPrice : monthlyPrice;
+  const periodEndIso = membership.currentPeriodEnd;
+  const periodStartIso = membership.currentPeriodStart;
 
   return {
     userId: user.id,
     tier,
-    planName: asString(rpc.display_name) ?? libraryTierLabel(tier),
+    planName: membership.planName || catalog?.display_name || libraryTierLabel(tier),
     planSummary: presentation.summary,
-    statusLabel: membershipStatusLabel(subscription, isPaidTier),
+    statusLabel: membershipStatusLabel({
+      cancelAtPeriodEnd: membership.cancelAtPeriodEnd,
+      periodEndIso,
+      status: membership.status,
+      isPaidTier,
+    }),
     billingInterval,
-    memberSinceLabel: formatDateLabel(asString(subscription?.started_at) ?? user.created_at),
+    memberSinceLabel: formatDateLabel(membership.startedAt ?? user.created_at),
     renewsLabel: formatDateLabel(periodEndIso),
     accessUntilLabel: formatDateLabel(periodEndIso),
     periodEndIso,
-    cancelAtPeriodEnd,
+    cancelAtPeriodEnd: membership.cancelAtPeriodEnd,
     periodStartIso,
-    currentPlanPriceRupees,
-    // Both mock subscriptions and live subscriptions support reactivation via
-    // our RPCs (reactivate_mock_subscription / request_reactivate_subscription).
-    // Only hide the button if the sub is not in an active-ish state.
+    currentPlanPriceRupees: priceCents,
     reactivationSupported: isPaidTier,
-    // monthly_price_cents / annual_price_cents store whole INR rupees (not paise)
     priceAmount: isPaidTier ? formatInrRupees(priceCents) : "Free",
     priceCadence: isPaidTier
       ? billingInterval === "annual"
         ? "/ year"
         : "/ month"
       : "forever",
-    monthlyCreditGrant,
-    availableCredits: progressionResult.data?.credits ?? 0,
-    periodGrantAmount: grantResult.data?.credit_amount ?? null,
+    monthlyCreditGrant: membership.monthlyCreditGrant,
+    availableCredits: membership.availableCredits,
+    periodGrantAmount: membership.periodGrantAmount > 0 ? membership.periodGrantAmount : null,
     canSwitchToAnnual: isPaidTier && billingInterval === "monthly" && annualPrice != null,
     isPaidMembership: isPaidTier,
     isMockSubscription: activeSub?.provider_name === "mock",
     mockSubscriptionId: activeSub?.provider_name === "mock" ? activeSub.id : null,
     subscriptionId: activeSub?.id ?? null,
-    membershipStatus: activeSub?.status ?? asString(subscription?.status),
+    membershipStatus: activeSub?.status ?? membership.status,
     hasPendingAuthorization: Boolean(
       activeSub && isPendingAuthorizationStatus(activeSub.status),
     ),
@@ -302,12 +281,14 @@ export async function fetchMyBilling(): Promise<MyBillingSnapshot> {
       activeSub && isPendingAuthorizationStatus(activeSub.status) ? activeSub.plan_tier : null,
     history: payments.map((row) => {
       const historyTier = parseLibraryAccessTier(row.plan_tier);
+      const currency = (row.charge_currency ?? "INR").trim().toUpperCase();
+      const amountMinor = typeof row.charge_amount_minor === "number" ? row.charge_amount_minor : 0;
       return {
         id: row.provider_invoice_id ?? row.provider_payment_id ?? row.id,
         date: formatDateLabel(row.paid_at ?? row.attempted_at),
         description: `${historyTier ? libraryTierLabel(historyTier) : row.plan_tier} membership`,
-        amount: formatCharge(row.charge_amount_minor, row.charge_currency),
-        currency: row.charge_currency.trim().toUpperCase(),
+        amount: formatCharge(amountMinor, currency),
+        currency,
         status: mapPaymentStatus(row.status),
       };
     }),

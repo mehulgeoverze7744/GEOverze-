@@ -1,8 +1,8 @@
 /**
  * useEntitlements — React hook for client-side membership feature gating.
  *
- * Sources the current user's tier from `useMyBilling()` (which reads the live
- * Supabase `get_my_plan_tier` RPC). Falls back to "explorer" while loading or
+ * Sources the current user's tier from `useMyMembership()` (`get_my_membership` RPC).
+ * Falls back to "explorer" while loading or
  * when the user is not signed in.
  *
  * Usage:
