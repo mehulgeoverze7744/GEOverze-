@@ -37,6 +37,41 @@ function makeServiceClient(): SupabaseClient {
 const PlanTier = z.enum(["basic", "pro", "advance"]);
 const Interval = z.enum(["monthly", "annual"]);
 
+/** Map PostgREST/Supabase RPC failures to checkout-safe copy (no raw PGRST noise). */
+export function friendlyMembershipRpcError(
+  raw: string | undefined,
+  context: "upgrade" | "subscription" | "attach_upgrade",
+): string {
+  const message = (raw ?? "").trim();
+  if (!message) {
+    return context === "upgrade"
+      ? "We could not start your membership upgrade. Try again in a moment."
+      : "We could not start checkout. Try again in a moment.";
+  }
+  if (/Could not find the function public\.begin_razorpay_upgrade/i.test(message)) {
+    return "Membership upgrade is temporarily unavailable while we update billing. Please try again shortly or contact support.";
+  }
+  if (/schema cache|PGRST202|PGRST203/i.test(message)) {
+    return "Billing is updating. Wait a minute and try checkout again.";
+  }
+  if (/Authentication required|P0001/i.test(message)) {
+    return "Sign in again to continue checkout.";
+  }
+  if (/No active membership found|P0006/i.test(message)) {
+    return "Start a Basic membership first, or use checkout to subscribe to Pro as a new plan.";
+  }
+  if (/not an upgrade|P0007/i.test(message)) {
+    return "This checkout path is only for upgrading to a higher tier. Manage billing from your dashboard.";
+  }
+  if (/Billing interval mismatch|P0008/i.test(message)) {
+    return "Choose the same billing cycle as your current membership (monthly or yearly).";
+  }
+  if (context === "attach_upgrade" && /Upgrade payment not found|P0005/i.test(message)) {
+    return "Upgrade session expired. Return to pricing and start checkout again.";
+  }
+  return message;
+}
+
 async function catalogChargePaise(tier: string, interval: string): Promise<{
   catalogRupees: number;
   baseMinor: number;
@@ -197,7 +232,7 @@ export const createRazorpaySubscriptionFn = createServerFn({ method: "POST" })
         p_idempotency_key: data.idempotency_key,
       });
       if (upgradeError || !upgradeRpc) {
-        throw new Error(upgradeError?.message ?? "Failed to start membership upgrade.");
+        throw new Error(friendlyMembershipRpcError(upgradeError?.message, "upgrade"));
       }
       const upgrade = upgradeRpc as {
         subscription_id: string;
@@ -226,7 +261,9 @@ export const createRazorpaySubscriptionFn = createServerFn({ method: "POST" })
           p_upgrade_payment_id: upgrade.upgrade_payment_id,
           p_provider_order_id: rzpOrderId,
         });
-        if (attachError) throw new Error(attachError.message);
+        if (attachError) {
+          throw new Error(friendlyMembershipRpcError(attachError.message, "attach_upgrade"));
+        }
       }
       const diag = rzp.getSubscriptionRazorpayDiagnostics();
       const rupees = Number(upgrade.charge_amount_minor) / 100;
@@ -316,7 +353,7 @@ export const createRazorpaySubscriptionFn = createServerFn({ method: "POST" })
       p_idempotency_key: data.idempotency_key,
     });
     if (error || !rpcResult) {
-      throw new Error(error?.message ?? "Failed to start subscription.");
+      throw new Error(friendlyMembershipRpcError(error?.message, "subscription"));
     }
     const result = rpcResult as { subscription_id: string };
 
