@@ -330,6 +330,41 @@ export function getProductPrice(slug: string): GstoreProductPrice | null {
   return GSTORE_PRODUCT_PRICES[slug] ?? null;
 }
 
+/** Checkout-authoritative MRP in INR paise, or null when the slug is not in the sale catalog. */
+export function authoritativePriceMinor(slug: string): number | null {
+  return getProductPrice(slug)?.priceMinor ?? null;
+}
+
+/**
+ * Resolve a display/checkout minor amount: authoritative catalog first; otherwise explicit
+ * whole-rupee legacy metadata (merch cards not yet mapped in `GSTORE_PRODUCT_PRICES`).
+ */
+export function resolveGstorePriceMinor(
+  slug: string,
+  legacyWholeRupees?: number | null,
+): number | null {
+  const catalog = authoritativePriceMinor(slug);
+  if (catalog !== null) return catalog;
+  if (legacyWholeRupees == null) return null;
+  return legacyWholeRupees * 100;
+}
+
+/**
+ * Static PRODUCTS overlay: catalog price, else explicit paise (&gt;= 100_000) — no unit guessing.
+ */
+export function staticPresentationPriceMinor(
+  slug: string,
+  staticPricePaise: number | null | undefined,
+): number | null {
+  const catalog = authoritativePriceMinor(slug);
+  if (catalog !== null) return catalog;
+  if (staticPricePaise == null) return null;
+  return staticPricePaise >= 100_000 ? staticPricePaise : null;
+}
+
+/** @deprecated Use staticPresentationPriceMinor */
+export const normalizeCatalogPriceMinor = staticPresentationPriceMinor;
+
 /** Live catalogue name for renamed products without rewriting stored orders. */
 export function displayGstoreProductName(slug: string, storedName?: string): string {
   return getProductPrice(slug)?.name ?? storedName ?? slug;

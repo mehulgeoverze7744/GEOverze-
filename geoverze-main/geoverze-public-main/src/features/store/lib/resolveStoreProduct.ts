@@ -17,7 +17,11 @@ import {
   type StorefrontTeeProduct,
 } from "../storefront/storefront-product-data";
 
-import { storefrontTeeCredits } from "../storefront/storefront-product-data";
+import { resolveGstorePriceMinor } from "../lib/gstoreProductPrices";
+import {
+  storefrontTeeCredits,
+  storefrontTeePriceMinor,
+} from "../storefront/storefront-product-data";
 
 function merchCategory(merch: GeostoreMerchProduct): StoreCategoryId {
   return merch.category === "hoodie" ? "hoodies" : "tshirts";
@@ -35,7 +39,7 @@ function merchAsProduct(merch: GeostoreMerchProduct): Product {
     description: merch.tagline,
     category: merchCategory(merch),
     group: "merch",
-    price: merch.price,
+    price: resolveGstorePriceMinor(merch.id, merch.price),
     compareAt: null,
     credits: merch.credits,
     mode: "hybrid",
@@ -71,7 +75,7 @@ function storefrontTeeAsProduct(tee: StorefrontTeeProduct): Product {
     description: tee.description,
     category: "tshirts",
     group: "merch",
-    price: 37_00,
+    price: storefrontTeePriceMinor(tee),
     compareAt: null,
     credits: storefrontTeeCredits(tee),
     mode: "hybrid",

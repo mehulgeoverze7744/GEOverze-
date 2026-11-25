@@ -107,8 +107,8 @@ function buildPurchases(rand: () => number): UserPurchase[] {
   return Array.from({ length: Math.floor(rand() * 5) }, (_, i) => ({
     id: `pur_${i}`,
     item: pick(rand, storeItems),
-    amount: Math.floor(rand() * 90) + 5,
-    currency: "USD",
+    amount: Math.floor(rand() * 4_900) + 99,
+    currency: "INR",
     status: pick(rand, ["paid", "paid", "refunded", "failed"]) as Status,
     purchasedAt: isoDaysAgo(Math.floor(rand() * 240)),
   }));

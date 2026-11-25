@@ -66,7 +66,7 @@ export type CheckoutSessionResponse = {
   /** Tax label (e.g. "GST (18%)"). */
   gst_label: string;
 
-  /** Human-readable price label, e.g. "₹499 / month". */
+  /** Human-readable price label, e.g. "₹399 / month". */
   price_label: string;
   /** Whether a promo was applied. */
   promotion_applied: boolean;

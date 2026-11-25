@@ -10,10 +10,11 @@ export function formatPercent(value: number, digits = 0): string {
   return `${(value * 100).toFixed(digits)}%`;
 }
 
-export function formatMoney(value: number, currency = "USD"): string {
-  return new Intl.NumberFormat("en-US", {
+export function formatMoney(value: number, currency = "INR"): string {
+  return new Intl.NumberFormat(currency === "INR" ? "en-IN" : "en-US", {
     style: "currency",
     currency,
+    minimumFractionDigits: value % 1 === 0 ? 0 : 2,
     maximumFractionDigits: 2,
   }).format(value);
 }

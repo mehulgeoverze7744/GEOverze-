@@ -24,6 +24,9 @@ export function useMyBilling() {
       const msg = err instanceof Error ? err.message : "";
       // Never retry auth errors — they require user action, not a re-fetch.
       if (msg.startsWith("UNAUTHENTICATED:")) return false;
+      if (import.meta.env.DEV && err) {
+        console.error("[useMyBilling] load failed:", err);
+      }
       return failureCount < 1;
     },
     retryDelay: 2_000,

@@ -224,7 +224,7 @@ export const payments: Payment[] = Array.from({ length: 66 }, (_, i) => {
     method: pick(rand, ["Card", "UPI", "PayPal", "Bank Transfer", "Apple Pay"]),
     status: pick(rand, ["paid", "paid", "pending", "failed", "refunded"]) as Status,
     amount: Math.floor(rand() * 1400) + 9,
-    currency: pick(rand, ["USD", "EUR", "INR"]),
+    currency: "INR",
     processedAt: date(rand, 90),
   };
 });
@@ -366,7 +366,7 @@ export const dashboardMetrics = [
   { label: "Questions", value: "612,884", delta: 5.1, hint: "in question bank" },
   { label: "Articles", value: "3,942", delta: 0.9, hint: "GVRZE Library" },
   { label: "Store Orders", value: "18,663", delta: -1.8, hint: "last 30 days" },
-  { label: "Revenue", value: "$1,284,510", delta: 7.3, hint: "last 30 days" },
+  { label: "Revenue", value: "₹12,84,510", delta: 7.3, hint: "last 30 days" },
   { label: "Credits Issued", value: "94,120,000", delta: 3.2, hint: "lifetime" },
   { label: "Credits Redeemed", value: "71,449,320", delta: 4.7, hint: "lifetime" },
   { label: "Pending Reports", value: "428", delta: 12.4, hint: "needs triage" },

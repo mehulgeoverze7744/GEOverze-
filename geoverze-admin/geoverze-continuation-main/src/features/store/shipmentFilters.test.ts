@@ -1,32 +1,33 @@
-import assert from "node:assert/strict";
-import test from "node:test";
+import { describe, expect, it } from "vitest";
 
-import { deriveShipmentFilterBucket, matchesShipmentFilter } from "./shipmentFilters.ts";
+import { deriveShipmentFilterBucket, matchesShipmentFilter } from "./shipmentFilters";
 
-test("deriveShipmentFilterBucket flags logistics incomplete paid orders", () => {
-  assert.equal(
-    deriveShipmentFilterBucket({
-      payment_status: "paid",
-      shipment_status: "none",
-      logistics_incomplete: true,
-    }),
-    "logistics_incomplete",
-  );
+describe("deriveShipmentFilterBucket", () => {
+  it("flags logistics incomplete paid orders", () => {
+    expect(
+      deriveShipmentFilterBucket({
+        payment_status: "paid",
+        shipment_status: "none",
+        logistics_incomplete: true,
+      }),
+    ).toBe("logistics_incomplete");
+  });
+
+  it("does not mark unpaid orders as awaiting shipment", () => {
+    expect(
+      deriveShipmentFilterBucket({
+        payment_status: "pending",
+        shipment_status: "none",
+        logistics_incomplete: false,
+      }),
+    ).toBe("all");
+  });
 });
 
-test("unpaid orders awaiting shipment filter only when paid", () => {
-  assert.equal(
-    deriveShipmentFilterBucket({
-      payment_status: "pending",
-      shipment_status: "none",
-      logistics_incomplete: false,
-    }),
-    "all",
-  );
-});
-
-test("matchesShipmentFilter respects bucket", () => {
-  assert.equal(matchesShipmentFilter("shipment_failed", "shipment_failed"), true);
-  assert.equal(matchesShipmentFilter("delivered", "shipment_failed"), false);
-  assert.equal(matchesShipmentFilter("delivered", "all"), true);
+describe("matchesShipmentFilter", () => {
+  it("respects bucket", () => {
+    expect(matchesShipmentFilter("shipment_failed", "shipment_failed")).toBe(true);
+    expect(matchesShipmentFilter("delivered", "shipment_failed")).toBe(false);
+    expect(matchesShipmentFilter("delivered", "all")).toBe(true);
+  });
 });

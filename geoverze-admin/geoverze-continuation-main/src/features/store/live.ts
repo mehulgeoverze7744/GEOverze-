@@ -1,4 +1,4 @@
-import { fetchGstoreOrders, fetchStoreProducts } from "@/features/commerce/api";
+import { fetchGstoreOrders, fetchGstorePrices, fetchStoreProducts } from "@/features/commerce/api";
 import { fetchGstoreShippingSummaries } from "@/features/commerce/shippingApi";
 import { mergeShippingSummary } from "@/features/store/shipmentFilters";
 import type { OrderStatus, StoreOrder, StoreProduct } from "@/features/store/types";
@@ -7,9 +7,26 @@ function productStatus(active: boolean): StoreProduct["status"] {
   return active ? "published" : "archived";
 }
 
+function activePriceBySlug(
+  prices: Awaited<ReturnType<typeof fetchGstorePrices>>,
+): Map<string, number> {
+  const map = new Map<string, number>();
+  const active = prices
+    .filter((entry) => entry.is_active)
+    .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
+  for (const entry of active) {
+    if (!map.has(entry.product_slug)) {
+      map.set(entry.product_slug, Number(entry.price_minor));
+    }
+  }
+  return map;
+}
+
 export async function fetchMappedStoreProducts(): Promise<StoreProduct[]> {
-  const rows = await fetchStoreProducts();
+  const [rows, prices] = await Promise.all([fetchStoreProducts(), fetchGstorePrices()]);
+  const priceMinorBySlug = activePriceBySlug(prices);
   return rows.map((row) => {
+    const priceMinor = priceMinorBySlug.get(row.slug) ?? 0;
     const metadata = (row.metadata ?? {}) as {
       category?: string;
       group?: string;
@@ -24,7 +41,7 @@ export async function fetchMappedStoreProducts(): Promise<StoreProduct[]> {
       category: metadata.category ?? "rewards",
       collection: metadata.group ?? "GEOstore",
       description: row.description,
-      price: 0,
+      price: priceMinor / 100,
       compareAtPrice: 0,
       discountPercent: 0,
       creditPrice: row.credit_price,

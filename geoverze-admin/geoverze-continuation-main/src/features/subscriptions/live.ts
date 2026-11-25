@@ -21,13 +21,14 @@ export async function fetchMappedPlans(): Promise<SubscriptionPlan[]> {
       id: plan.tier,
       tier: asTier(plan.tier),
       tagline: plan.display_name,
-      monthlyPrice: plan.monthly_price_cents / 100,
-      annualPrice: (plan.annual_price_cents ?? 0) / 100,
+      // Column name is legacy — values are whole INR rupees, not paise.
+      monthlyPrice: plan.monthly_price_cents,
+      annualPrice: plan.annual_price_cents ?? 0,
       includedSeats: 1,
       monthlyCredits: plan.monthly_credit_grant,
       features: [`${plan.monthly_credit_grant} monthly credits`, plan.is_creator_plan ? "Creator tools" : "Standard play"],
       subscribers: members.length,
-      mrr: members.length * (plan.monthly_price_cents / 100),
+      mrr: members.length * plan.monthly_price_cents,
       popular: plan.tier === "pro",
     };
   });

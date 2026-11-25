@@ -7,6 +7,7 @@ import {
   computeTaxMinor,
   FREE_SHIPPING_THRESHOLD_MINOR,
   getProductPrice,
+  staticPresentationPriceMinor,
   GSTORE_BASICS_TEE_PRICE_MINOR,
   GSTORE_GST_RATE,
   GSTORE_PRIME_TEE_PRICE_MINOR,
@@ -64,4 +65,13 @@ test("standard shipping is free at or above ₹3,999", () => {
   assert.equal(computeShippingMinor("standard", GSTORE_BASICS_TEE_PRICE_MINOR, true), 0);
   assert.equal(computeShippingMinor("tracked", GSTORE_BASICS_TEE_PRICE_MINOR, true), 69_000);
   assert.equal(computeShippingMinor("standard", GSTORE_BASICS_TEE_PRICE_MINOR, false), 0);
+});
+
+test("staticPresentationPriceMinor prefers authoritative catalogue over legacy paise", () => {
+  assert.equal(
+    staticPresentationPriceMinor("hoodie-every-point-has-a-story", 7_400),
+    549_900,
+  );
+  assert.equal(staticPresentationPriceMinor("flag-sticker-pack", 120_000), 120_000);
+  assert.equal(staticPresentationPriceMinor("explore-the-unknown", 8_200), null);
 });
