@@ -436,7 +436,7 @@ BEGIN
       'to_plan_tier',   v_to_tier,
       'credit_rupees',  (v_pay.metadata->>'credit_rupees')::NUMERIC,
       'upgrade_rupees', (v_pay.metadata->>'upgrade_rupees')::NUMERIC,
-      'label', 'Upgrade: ' || UPPER(v_from_tier) || ' ? ' || UPPER(v_to_tier)
+      'label', 'Upgrade: ' || UPPER(v_from_tier) || ' -> ' || UPPER(v_to_tier)
     )
   ) RETURNING id INTO v_inv_id;
 

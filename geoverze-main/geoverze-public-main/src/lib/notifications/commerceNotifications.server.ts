@@ -8,10 +8,16 @@
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-export type CommerceNoticeKind = "gstore_order" | "subscription";
-export type CommerceNoticeChannel = "email" | "sms";
+import {
+  deliverCommerceNotice,
+  escapeHtmlForEmail,
+  formatInrPaise,
+  sendResendEmail,
+  type CommerceNoticeChannel,
+  type CommerceNoticeKind,
+} from "./commerceNotificationLedger.server";
 
-type ClaimResult = "claimed" | "duplicate" | "unavailable";
+export type { CommerceNoticeChannel, CommerceNoticeKind };
 
 function serviceClient(): SupabaseClient | null {
   const url = process.env["SUPABASE_URL"] ?? process.env["VITE_SUPABASE_URL"] ?? "";
@@ -28,11 +34,6 @@ function siteOrigin(): string {
   ).replace(/\/$/, "");
 }
 
-function formatInrPaise(minor: number): string {
-  const rupees = minor / 100;
-  return `₹${rupees.toLocaleString("en-IN", { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
-}
-
 function normalizePhone(raw: string | null | undefined): string | null {
   if (!raw) return null;
   const digits = raw.replace(/[^\d+]/g, "");
@@ -41,80 +42,6 @@ function normalizePhone(raw: string | null | undefined): string | null {
   if (digits.length === 10) return `+91${digits}`;
   if (digits.length === 12 && digits.startsWith("91")) return `+${digits}`;
   return digits.startsWith("+") ? digits : `+${digits}`;
-}
-
-async function claimNotice(
-  client: SupabaseClient,
-  kind: CommerceNoticeKind,
-  sourceId: string,
-  channel: CommerceNoticeChannel,
-): Promise<ClaimResult> {
-  const { error } = await client.from("commerce_notifications").insert({
-    kind,
-    source_id: sourceId,
-    channel,
-    status: "pending",
-  });
-  if (!error) return "claimed";
-  if (error.code === "23505") return "duplicate";
-  if (error.message?.includes("commerce_notifications") || error.code === "42P01") {
-    console.warn("[commerce-notifications] table missing — apply migration 20261114180000.");
-    return "unavailable";
-  }
-  console.error("[commerce-notifications] claim failed:", error.message);
-  return "unavailable";
-}
-
-async function markNotice(
-  client: SupabaseClient,
-  kind: CommerceNoticeKind,
-  sourceId: string,
-  channel: CommerceNoticeChannel,
-  status: "sent" | "failed" | "skipped",
-  errorMessage?: string,
-) {
-  const { error } = await client
-    .from("commerce_notifications")
-    .update({
-      status,
-      error: errorMessage ?? null,
-      sent_at: status === "sent" ? new Date().toISOString() : null,
-    })
-    .eq("kind", kind)
-    .eq("source_id", sourceId)
-    .eq("channel", channel);
-  if (error) console.error("[commerce-notifications] mark failed:", error.message);
-}
-
-async function sendResendEmail(input: {
-  to: string;
-  subject: string;
-  html: string;
-  text: string;
-}): Promise<{ ok: boolean; error?: string; skipped?: string }> {
-  const apiKey = process.env["RESEND_API_KEY"] ?? "";
-  const from = process.env["COMMERCE_EMAIL_FROM"] ?? "GVRZE <orders@gvrze.com>";
-  if (!apiKey) return { ok: false, skipped: "RESEND_API_KEY is not set" };
-
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from,
-      to: [input.to],
-      subject: input.subject,
-      html: input.html,
-      text: input.text,
-    }),
-  });
-  if (!response.ok) {
-    const body = await response.text().catch(() => "");
-    return { ok: false, error: `Resend ${response.status}: ${body.slice(0, 240)}` };
-  }
-  return { ok: true };
 }
 
 async function sendSms(to: string, body: string): Promise<{ ok: boolean; error?: string; skipped?: string }> {
@@ -183,35 +110,6 @@ async function sendSms(to: string, body: string): Promise<{ ok: boolean; error?:
   return { ok: false, skipped: `Unknown COMMERCE_SMS_PROVIDER "${provider}"` };
 }
 
-async function deliver(
-  client: SupabaseClient,
-  kind: CommerceNoticeKind,
-  sourceId: string,
-  channel: CommerceNoticeChannel,
-  send: () => Promise<{ ok: boolean; error?: string; skipped?: string }>,
-) {
-  const claim = await claimNotice(client, kind, sourceId, channel);
-  if (claim !== "claimed") return;
-  try {
-    const result = await send();
-    if (result.skipped) {
-      await markNotice(client, kind, sourceId, channel, "skipped", result.skipped);
-      console.warn(`[commerce-notifications] ${kind}/${channel} skipped: ${result.skipped}`);
-      return;
-    }
-    if (!result.ok) {
-      await markNotice(client, kind, sourceId, channel, "failed", result.error);
-      console.error(`[commerce-notifications] ${kind}/${channel} failed:`, result.error);
-      return;
-    }
-    await markNotice(client, kind, sourceId, channel, "sent");
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "unknown";
-    await markNotice(client, kind, sourceId, channel, "failed", message);
-    console.error(`[commerce-notifications] ${kind}/${channel} threw:`, message);
-  }
-}
-
 type OrderItemRow = {
   product_name: string;
   product_slug: string;
@@ -272,7 +170,7 @@ export async function notifyPaidGstoreOrder(orderId: string): Promise<void> {
   const itemHtml = items
     .map((item) => {
       const variant = optionLabel(item.options);
-      return `<li>${item.quantity}× ${escapeHtml(item.product_name)}${variant ? ` <span style="color:#555">(${escapeHtml(variant)})</span>` : ""} — ${formatInrPaise(item.line_total_minor)}</li>`;
+      return `<li>${item.quantity}× ${escapeHtmlForEmail(item.product_name)}${variant ? ` <span style="color:#555">(${escapeHtmlForEmail(variant)})</span>` : ""} — ${formatInrPaise(item.line_total_minor)}</li>`;
     })
     .join("");
   const shipping = [
@@ -304,7 +202,7 @@ export async function notifyPaidGstoreOrder(orderId: string): Promise<void> {
     .join("\n");
 
   const html = `
-    <p>Thanks for your GVRZE order <strong>${escapeHtml(order.order_number)}</strong>.</p>
+    <p>Thanks for your GVRZE order <strong>${escapeHtmlForEmail(order.order_number)}</strong>.</p>
     <ul>${itemHtml}</ul>
     <p>
       Subtotal (GST-inclusive): ${formatInrPaise(Number(order.subtotal_minor))}<br/>
@@ -313,12 +211,12 @@ export async function notifyPaidGstoreOrder(orderId: string): Promise<void> {
       ${Number(order.discount_minor) > 0 ? `Discount: −${formatInrPaise(Number(order.discount_minor))}<br/>` : ""}
       <strong>Total paid: ${formatInrPaise(Number(order.total_minor))}</strong>
     </p>
-    <p>Status: ${escapeHtml(String(order.order_status))}<br/>Ship to: ${escapeHtml(shipping)}</p>
+    <p>Status: ${escapeHtmlForEmail(String(order.order_status))}<br/>Ship to: ${escapeHtmlForEmail(shipping)}</p>
     <p><a href="${origin}/geostore/orders">Manage your order</a></p>
   `;
 
   if (email) {
-    await deliver(client, "gstore_order", orderId, "email", () =>
+    await deliverCommerceNotice(client, "gstore_order", orderId, "email", () =>
       sendResendEmail({
         to: email,
         subject: `GVRZE order ${order.order_number} confirmed`,
@@ -329,7 +227,7 @@ export async function notifyPaidGstoreOrder(orderId: string): Promise<void> {
   }
 
   if (phone) {
-    await deliver(client, "gstore_order", orderId, "sms", () =>
+    await deliverCommerceNotice(client, "gstore_order", orderId, "sms", () =>
       sendSms(
         phone,
         `GVRZE: order ${order.order_number} confirmed. Total ${formatInrPaise(Number(order.total_minor))}. Thank you.`,
@@ -394,13 +292,13 @@ export async function notifyPaidSubscription(subscriptionId: string): Promise<vo
   ].join("\n");
 
   const html = `
-    <p>Your GVRZE <strong>${escapeHtml(plan)}</strong> membership is active.</p>
-    <p>Amount: ${escapeHtml(amountLabel)} (GST-inclusive).<br/>Next billing date: ${escapeHtml(nextBill)}.</p>
+    <p>Your GVRZE <strong>${escapeHtmlForEmail(plan)}</strong> membership is active.</p>
+    <p>Amount: ${escapeHtmlForEmail(amountLabel)} (GST-inclusive).<br/>Next billing date: ${escapeHtmlForEmail(nextBill)}.</p>
     <p><a href="${origin}/settings?section=billing">Manage membership</a></p>
   `;
 
   if (email) {
-    await deliver(client, "subscription", subscriptionId, "email", () =>
+    await deliverCommerceNotice(client, "subscription", subscriptionId, "email", () =>
       sendResendEmail({
         to: email,
         subject: "GVRZE membership confirmed",
@@ -411,7 +309,7 @@ export async function notifyPaidSubscription(subscriptionId: string): Promise<vo
   }
 
   if (phone) {
-    await deliver(client, "subscription", subscriptionId, "sms", () =>
+    await deliverCommerceNotice(client, "subscription", subscriptionId, "sms", () =>
       sendSms(
         phone,
         `GVRZE: ${plan} membership is active. Next billing ${nextBill}. Manage: ${origin}/settings?section=billing`,
@@ -422,10 +320,3 @@ export async function notifyPaidSubscription(subscriptionId: string): Promise<vo
   }
 }
 
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}

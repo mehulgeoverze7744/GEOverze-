@@ -8,6 +8,7 @@ import {
   type OrderFilterState,
   type ProductFilterState,
 } from "@/features/store/types";
+import { shipmentFilterOptions } from "@/features/store/shipment-types";
 import { orderChannels, storeCategories, storeCollections } from "@/lib/catalog";
 
 const productDefinitions: FilterDefinition[] = [
@@ -68,6 +69,12 @@ const orderDefinitions: FilterDefinition[] = [
     label: "Channel",
     multiple: false,
     options: orderChannels.map((channel) => ({ label: channel, value: channel })),
+  },
+  {
+    id: "shipment",
+    label: "Shipment",
+    multiple: false,
+    options: shipmentFilterOptions.map((o) => ({ label: o.label, value: o.value })),
   },
 ];
 

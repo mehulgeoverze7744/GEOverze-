@@ -24,6 +24,7 @@ import { updateGstoreOrder } from "@/features/commerce/api";
 import { adminKeys } from "@/lib/admin/keys";
 import { useAdminQuery } from "@/lib/admin/hooks";
 import { useAdminRealtime } from "@/lib/admin/realtime";
+import { OrderShipmentPanel } from "@/features/store/components/order-shipment-panel";
 import { filterOrders } from "@/features/store/filtering";
 import { OrderFilters } from "@/features/store/store-filters";
 import { emptyOrderFilters, type OrderFilterState, type StoreOrder } from "@/features/store/types";
@@ -81,7 +82,7 @@ function StoreOrdersPage() {
 
   const refresh = () => {
     setLoading(true);
-    setTimeout(() => setLoading(false), 500);
+    void ordersQuery.refetch().finally(() => setLoading(false));
   };
 
   return (
@@ -209,6 +210,7 @@ function StoreOrdersPage() {
           <Tabs defaultValue="summary">
             <TabsList>
               <TabsTrigger value="summary">Summary</TabsTrigger>
+              <TabsTrigger value="shipment">Shipment</TabsTrigger>
               <TabsTrigger value="items">Items</TabsTrigger>
               <TabsTrigger value="timeline">Timeline</TabsTrigger>
             </TabsList>
@@ -259,6 +261,14 @@ function StoreOrdersPage() {
                   Cancel
                 </Button>
               </div>
+            </TabsContent>
+
+            <TabsContent value="shipment" className="mt-4">
+              <OrderShipmentPanel
+                orderId={current.id}
+                paymentStatus={current.paymentStatus}
+                onChanged={() => void ordersQuery.refetch()}
+              />
             </TabsContent>
 
             <TabsContent value="items" className="mt-4">

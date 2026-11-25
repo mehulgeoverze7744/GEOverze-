@@ -161,6 +161,43 @@ export function buildOrderColumns(query: string): DataTableColumn<StoreOrder>[] 
       cell: (o) => <StatusBadge status={o.status} />,
     },
     {
+      id: "shipmentStatus",
+      header: "Shipment",
+      accessor: (o) => o.shipmentStatus,
+      cell: (o) => (
+        <Badge variant={o.shipmentStatus === "failed" ? "destructive" : "secondary"}>
+          {o.shipmentStatus.replace(/_/g, " ")}
+        </Badge>
+      ),
+    },
+    {
+      id: "courier",
+      header: "Courier",
+      accessor: (o) => o.courierName ?? "",
+      defaultHidden: true,
+      cell: (o) => o.courierName ?? "—",
+    },
+    {
+      id: "awb",
+      header: "AWB",
+      accessor: (o) => o.awb ?? "",
+      cell: (o) => (o.awb ? <code className="text-xs">{o.awb}</code> : "—"),
+    },
+    {
+      id: "tracking",
+      header: "Tracking",
+      accessor: (o) => (o.trackingAvailable ? "yes" : "no"),
+      defaultHidden: true,
+      cell: (o) => (o.trackingAvailable ? "Available" : "—"),
+    },
+    {
+      id: "emailStatus",
+      header: "Order email",
+      accessor: (o) => o.orderEmailStatus ?? "",
+      defaultHidden: true,
+      cell: (o) => (o.orderEmailStatus ? <StatusBadge status={o.orderEmailStatus} /> : "—"),
+    },
+    {
       id: "coupon",
       header: "Coupon",
       accessor: (o) => o.couponCode ?? "",

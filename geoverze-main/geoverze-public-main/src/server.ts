@@ -56,6 +56,16 @@ export default {
           await import("./lib/payments/razorpayWebhookHandler");
         return handleRazorpayWebhookRequest(request);
       }
+      if (request.method === "POST" && url.pathname === "/api/webhooks/shiprocket") {
+        const { handleShiprocketWebhookHttpRequest } =
+          await import("./lib/shipping/shiprocketWebhookHttpHandler.server.ts");
+        return handleShiprocketWebhookHttpRequest(request);
+      }
+      if (request.method === "POST" && url.pathname === "/api/admin/gstore/shipment") {
+        const { handleAdminGstoreShipmentRequest } =
+          await import("./lib/shipping/adminGstoreShipmentHandler.server.ts");
+        return handleAdminGstoreShipmentRequest(request);
+      }
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);

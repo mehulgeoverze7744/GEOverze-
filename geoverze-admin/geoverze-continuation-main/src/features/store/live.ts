@@ -1,4 +1,6 @@
 import { fetchGstoreOrders, fetchStoreProducts } from "@/features/commerce/api";
+import { fetchGstoreShippingSummaries } from "@/features/commerce/shippingApi";
+import { mergeShippingSummary } from "@/features/store/shipmentFilters";
 import type { OrderStatus, StoreOrder, StoreProduct } from "@/features/store/types";
 
 function productStatus(active: boolean): StoreProduct["status"] {
@@ -43,39 +45,57 @@ export async function fetchMappedStoreProducts(): Promise<StoreProduct[]> {
   });
 }
 
-function mapOrderStatus(value: string): OrderStatus {
+function mapOrderStatus(value: string, paymentStatus: string): OrderStatus {
   if (value === "shipped" || value === "delivered") return "shipped";
   if (value === "cancelled") return "cancelled";
   if (value === "refunded") return "refunded";
-  if (value === "confirmed" || value === "processing" || value === "paid") return "paid";
+  if (paymentStatus === "paid" || value === "confirmed" || value === "processing") return "paid";
   return "pending";
 }
 
 export async function fetchMappedGstoreOrders(): Promise<StoreOrder[]> {
-  const rows = await fetchGstoreOrders();
-  return rows.map((row) => ({
-    id: row.id,
-    customer: row.customer_name,
-    email: row.customer_email,
-    channel: "Gstore",
-    status: mapOrderStatus(row.order_status),
-    lines: [],
-    subtotal: Number(row.subtotal_minor) / 100,
-    shipping: Number(row.shipping_minor) / 100,
-    discount: Number(row.discount_minor) / 100,
-    total: Number(row.total_minor) / 100,
-    couponCode: null,
-    shippingAddress: `${row.shipping_line1}, ${row.shipping_city}`,
-    placedAt: row.created_at,
-    updatedAt: row.updated_at,
-    timeline: [
-      {
-        id: `${row.id}-created`,
-        actor: "system",
-        action: `Order ${row.order_status}`,
-        target: row.order_number,
-        time: row.created_at,
-      },
-    ],
-  }));
+  const [rows, summaries] = await Promise.all([
+    fetchGstoreOrders(),
+    fetchGstoreShippingSummaries().catch(() => []),
+  ]);
+  const byOrder = new Map(summaries.map((s) => [s.order_id, s]));
+
+  return rows.map((row) => {
+    const summary = byOrder.get(row.id);
+    const shipping = mergeShippingSummary(row.id, summary);
+    return {
+      id: row.id,
+      customer: row.customer_name,
+      email: row.customer_email,
+      channel: "Gstore",
+      status: mapOrderStatus(row.order_status, row.payment_status),
+      lines: [],
+      subtotal: Number(row.subtotal_minor) / 100,
+      shipping: Number(row.shipping_minor) / 100,
+      discount: Number(row.discount_minor) / 100,
+      total: Number(row.total_minor) / 100,
+      couponCode: null,
+      shippingAddress: `${row.shipping_line1}, ${row.shipping_city}`,
+      placedAt: row.created_at,
+      updatedAt: row.updated_at,
+      orderNumber: row.order_number,
+      paymentStatus: row.payment_status,
+      shipmentStatus: shipping.shipmentStatus,
+      courierName: shipping.courierName,
+      awb: shipping.awb,
+      trackingAvailable: shipping.trackingAvailable,
+      orderEmailStatus: shipping.orderEmailStatus,
+      logisticsIncomplete: shipping.logisticsIncomplete,
+      shipmentFilterBucket: shipping.shipmentFilterBucket,
+      timeline: [
+        {
+          id: `${row.id}-created`,
+          actor: "system",
+          action: `Order ${row.order_status}`,
+          target: row.order_number,
+          time: row.created_at,
+        },
+      ],
+    };
+  });
 }

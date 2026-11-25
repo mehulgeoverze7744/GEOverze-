@@ -1,3 +1,4 @@
+import { matchesShipmentFilter } from "@/features/store/shipmentFilters";
 import type {
   Coupon,
   OrderFilterState,
@@ -37,6 +38,7 @@ export function filterOrders(orders: StoreOrder[], query: string, filters: Order
     if (!matches([order.id, order.customer, order.email, order.channel], query)) return false;
     if (filters.status !== "all" && order.status !== filters.status) return false;
     if (filters.channel !== "all" && order.channel !== filters.channel) return false;
+    if (!matchesShipmentFilter(order.shipmentFilterBucket, filters.shipment)) return false;
     return true;
   });
 }

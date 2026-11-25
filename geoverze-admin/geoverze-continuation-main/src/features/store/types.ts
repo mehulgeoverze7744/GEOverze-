@@ -1,3 +1,5 @@
+import type { ShipmentFilterBucket } from "./shipment-types";
+
 export type ProductType = "Physical" | "Digital" | "Reward" | "Credit Redemption" | "Gift Card";
 
 export type ProductStatus = "draft" | "published" | "archived";
@@ -72,6 +74,15 @@ export interface StoreOrder {
   placedAt: string;
   updatedAt: string;
   timeline: OrderEvent[];
+  orderNumber: string;
+  paymentStatus: string;
+  shipmentStatus: string;
+  courierName: string | null;
+  awb: string | null;
+  trackingAvailable: boolean;
+  orderEmailStatus: string | null;
+  logisticsIncomplete: boolean;
+  shipmentFilterBucket: ShipmentFilterBucket;
 }
 
 export type CouponType = "Percentage" | "Flat" | "Credit reward";
@@ -124,9 +135,10 @@ export const emptyProductFilters: ProductFilterState = {
 export interface OrderFilterState {
   status: string;
   channel: string;
+  shipment: ShipmentFilterBucket;
 }
 
-export const emptyOrderFilters: OrderFilterState = { status: "all", channel: "all" };
+export const emptyOrderFilters: OrderFilterState = { status: "all", channel: "all", shipment: "all" };
 
 export const productTypes: ProductType[] = [
   "Physical",
