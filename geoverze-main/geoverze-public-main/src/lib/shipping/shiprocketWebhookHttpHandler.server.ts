@@ -1,8 +1,22 @@
 /**
  * POST /api/webhooks/shiprocket
+ * POST /api/webhooks/carrier  — same handler (neutral public URL)
  */
 
 import { handleShiprocketWebhookRequest } from "./shiprocketWebhookHandler.server.ts";
+
+/** Both paths invoke the same authenticated webhook processor. */
+export const CARRIER_WEBHOOK_PATHNAMES = [
+  "/api/webhooks/shiprocket",
+  "/api/webhooks/carrier",
+] as const;
+
+export function matchesCarrierWebhookRoute(method: string, pathname: string): boolean {
+  return (
+    method === "POST" &&
+    (CARRIER_WEBHOOK_PATHNAMES as readonly string[]).includes(pathname)
+  );
+}
 
 export async function handleShiprocketWebhookHttpRequest(request: Request): Promise<Response> {
   if (request.method !== "POST") {

@@ -56,7 +56,11 @@ export default {
           await import("./lib/payments/razorpayWebhookHandler");
         return handleRazorpayWebhookRequest(request);
       }
-      if (request.method === "POST" && url.pathname === "/api/webhooks/shiprocket") {
+      // Paths must match CARRIER_WEBHOOK_PATHNAMES in shiprocketWebhookHttpHandler.server.ts
+      if (
+        request.method === "POST" &&
+        (url.pathname === "/api/webhooks/shiprocket" || url.pathname === "/api/webhooks/carrier")
+      ) {
         const { handleShiprocketWebhookHttpRequest } =
           await import("./lib/shipping/shiprocketWebhookHttpHandler.server.ts");
         return handleShiprocketWebhookHttpRequest(request);
