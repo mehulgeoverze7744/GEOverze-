@@ -8,18 +8,13 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { scheduleShipmentLifecycleNotification } from "../notifications/shipmentCommerceNotifications.server.ts";
 
 import { isActiveShipmentStatus } from "./shipmentEligibility.ts";
+import {
+  primaryTrackingStatus,
+  resolveShipmentLookup,
+  type ShiprocketWebhookEnvelope,
+} from "./shiprocketWebhookPayload.server.ts";
 
-export type ShiprocketWebhookEnvelope = {
-  awb?: string;
-  shipment_id?: string | number;
-  order_id?: string;
-  current_status?: string;
-  current_status_id?: number;
-  scans?: Array<{ activity?: string; date?: string; location?: string }>;
-  etd?: string;
-  channel_order_id?: string;
-  [key: string]: unknown;
-};
+export type { ShiprocketWebhookEnvelope } from "./shiprocketWebhookPayload.server.ts";
 
 function serviceClient(): SupabaseClient | null {
   const url = process.env["SUPABASE_URL"] ?? process.env["VITE_SUPABASE_URL"] ?? "";
@@ -54,7 +49,7 @@ export function resolveProviderEventId(
   rawBody: string,
 ): string {
   const awb = envelope.awb ?? "";
-  const status = envelope.current_status ?? "";
+  const status = primaryTrackingStatus(envelope) ?? "";
   const scan = envelope.scans?.[0];
   const stamp = scan?.date ?? "";
   if (awb && status && stamp) return `${awb}:${status}:${stamp}`;
@@ -64,39 +59,53 @@ export function resolveProviderEventId(
 
 export type WebhookProcessResult =
   | { ok: true; duplicate: boolean; shipmentId?: string }
-  | { ok: false; reason: string };
+  | { ok: false; reason: string; retryable?: boolean };
 
 export async function processShiprocketWebhook(
   rawBody: string,
   envelope: ShiprocketWebhookEnvelope,
 ): Promise<WebhookProcessResult> {
   const client = serviceClient();
-  if (!client) return { ok: false, reason: "service_client_unavailable" };
+  if (!client) return { ok: false, reason: "service_client_unavailable", retryable: true };
 
-  const gstoreOrderId = envelope.channel_order_id ?? envelope.order_id;
-  const awb = envelope.awb?.trim();
+  const lookup = resolveShipmentLookup(envelope);
+  if (!lookup) return { ok: false, reason: "missing_routing_fields" };
 
   let shipmentQuery = client.from("gstore_shipments").select("id, shipment_status, order_id");
-  if (awb) {
-    shipmentQuery = shipmentQuery.eq("awb", awb);
-  } else if (gstoreOrderId) {
-    shipmentQuery = shipmentQuery.eq("order_id", gstoreOrderId);
-  } else {
-    return { ok: false, reason: "missing_awb_or_order_id" };
+  switch (lookup.kind) {
+    case "awb":
+      shipmentQuery = shipmentQuery.eq("awb", lookup.value);
+      break;
+    case "provider_order_id":
+      shipmentQuery = shipmentQuery.eq("provider_order_id", lookup.value);
+      break;
+    case "provider_shipment_id":
+      shipmentQuery = shipmentQuery.eq("provider_shipment_id", lookup.value);
+      break;
+    case "gstore_order_id":
+      shipmentQuery = shipmentQuery.eq("order_id", lookup.value);
+      break;
   }
 
   const { data: shipment, error: shipErr } = await shipmentQuery.maybeSingle();
-  if (shipErr || !shipment) return { ok: false, reason: "shipment_not_found" };
+  if (shipErr) {
+    console.error("[shiprocket-webhook] shipment lookup error", shipErr.message);
+    return { ok: false, reason: "shipment_lookup_failed", retryable: true };
+  }
+  if (!shipment) {
+    return { ok: false, reason: "shipment_not_found", retryable: true };
+  }
 
+  const trackingStatus = primaryTrackingStatus(envelope);
   const providerEventId = resolveProviderEventId(envelope, rawBody);
-  const mappedStatus = mapShiprocketStatusToShipmentStatus(envelope.current_status);
-  const lastEvent =
-    envelope.scans?.[0]?.activity ?? envelope.current_status ?? null;
+  const mappedStatus = mapShiprocketStatusToShipmentStatus(trackingStatus);
+  const lastEvent = envelope.scans?.[0]?.activity ?? trackingStatus ?? null;
+  const awb = envelope.awb?.trim();
 
   const { error: insertErr } = await client.from("gstore_shipment_events").insert({
     shipment_id: shipment.id,
     provider_event_id: providerEventId,
-    status: mappedStatus ?? envelope.current_status ?? null,
+    status: mappedStatus ?? trackingStatus ?? null,
     event_description: lastEvent,
     event_timestamp: envelope.scans?.[0]?.date
       ? new Date(envelope.scans[0].date).toISOString()
@@ -104,11 +113,40 @@ export async function processShiprocketWebhook(
     raw_payload: envelope as Record<string, unknown>,
   });
 
-  if (insertErr) {
-    if (insertErr.code === "23505") return { ok: true, duplicate: true, shipmentId: shipment.id };
-    return { ok: false, reason: insertErr.message };
+  const duplicateEvent = Boolean(insertErr?.code === "23505");
+
+  if (insertErr && !duplicateEvent) {
+    console.error("[shiprocket-webhook] event insert failed", insertErr.message);
+    return { ok: false, reason: "event_persist_failed", retryable: true };
   }
 
+  const sync = await applyTrackingUpdateToShipment(client, shipment.id, {
+    envelope,
+    mappedStatus,
+    trackingStatus,
+    lastEvent,
+    awb,
+  });
+  if (!sync.ok) return sync;
+
+  return { ok: true, duplicate: duplicateEvent, shipmentId: shipment.id };
+}
+
+type TrackingSyncInput = {
+  envelope: ShiprocketWebhookEnvelope;
+  mappedStatus: string | null;
+  trackingStatus: string | undefined;
+  lastEvent: string | null;
+  awb: string | undefined;
+};
+
+/** Idempotent shipment row sync after event row exists (or duplicate event retry). */
+export async function applyTrackingUpdateToShipment(
+  client: SupabaseClient,
+  shipmentId: string,
+  input: TrackingSyncInput,
+): Promise<{ ok: true } | { ok: false; reason: string; retryable: true }> {
+  const { envelope, mappedStatus, trackingStatus, lastEvent, awb } = input;
   const patch: Record<string, unknown> = {
     raw_last_payload: envelope,
     last_tracking_event: lastEvent,
@@ -121,11 +159,15 @@ export async function processShiprocketWebhook(
     if (!Number.isNaN(d.getTime())) patch["estimated_delivery_date"] = d.toISOString().slice(0, 10);
   }
 
-  await client.from("gstore_shipments").update(patch).eq("id", shipment.id);
-
-  if (mappedStatus) {
-    scheduleShipmentLifecycleNotification(shipment.id, mappedStatus);
+  const { error: updateErr } = await client.from("gstore_shipments").update(patch).eq("id", shipmentId);
+  if (updateErr) {
+    console.error("[shiprocket-webhook] shipment update failed", updateErr.message);
+    return { ok: false, reason: "shipment_update_failed", retryable: true };
   }
 
-  return { ok: true, duplicate: false, shipmentId: shipment.id };
+  if (mappedStatus) {
+    scheduleShipmentLifecycleNotification(shipmentId, mappedStatus);
+  }
+
+  return { ok: true };
 }

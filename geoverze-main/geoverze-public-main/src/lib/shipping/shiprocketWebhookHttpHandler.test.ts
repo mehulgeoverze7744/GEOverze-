@@ -43,33 +43,23 @@ test("handleShiprocketWebhookHttpRequest rejects invalid webhook token", async (
   else delete process.env["SHIPROCKET_WEBHOOK_TOKEN"];
 });
 
-test("handleShiprocketWebhookHttpRequest accepts valid token on shiprocket path", async () => {
+test("handleShiprocketWebhookHttpRequest returns 200 for authenticated test callback", async () => {
   const prevToken = process.env["SHIPROCKET_WEBHOOK_TOKEN"];
-  const prevLive = process.env["SHIPROCKET_LIVE_ENABLED"];
-  const prevUrl = process.env["SUPABASE_URL"];
-  const prevKey = process.env["SUPABASE_SERVICE_ROLE_KEY"];
-
   process.env["SHIPROCKET_WEBHOOK_TOKEN"] = "expected-token";
-  delete process.env["SHIPROCKET_LIVE_ENABLED"];
-  delete process.env["SUPABASE_URL"];
-  delete process.env["SUPABASE_SERVICE_ROLE_KEY"];
 
-  const request = new Request("https://gvrze.com/api/webhooks/shiprocket", {
+  const request = new Request("https://gvrze.com/api/webhooks/carrier", {
     method: "POST",
     headers: { "x-api-key": "expected-token", "content-type": "application/json" },
-    body: JSON.stringify({ shipment_id: "999", awb: "X", current_status: "unknown" }),
+    body: JSON.stringify({ test: true }),
   });
 
   const response = await handleShiprocketWebhookHttpRequest(request);
-  const body = (await response.json()) as { ok: boolean; reason?: string };
+  const body = (await response.json()) as { ok: boolean; test?: boolean };
 
-  // Auth passes; processing may fail without Supabase — must not return 401.
-  assert.notEqual(response.status, 401);
-  assert.notEqual(body.reason, "unauthorized");
+  assert.equal(response.status, 200);
+  assert.equal(body.ok, true);
+  assert.equal(body.test, true);
 
   if (prevToken) process.env["SHIPROCKET_WEBHOOK_TOKEN"] = prevToken;
   else delete process.env["SHIPROCKET_WEBHOOK_TOKEN"];
-  if (prevLive) process.env["SHIPROCKET_LIVE_ENABLED"] = prevLive;
-  if (prevUrl) process.env["SUPABASE_URL"] = prevUrl;
-  if (prevKey) process.env["SUPABASE_SERVICE_ROLE_KEY"] = prevKey;
 });

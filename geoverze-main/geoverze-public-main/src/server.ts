@@ -51,7 +51,9 @@ export default {
       // Do not 301/308 hosts here — a second layer fights Vercel's apex/www
       // redirect and produces ERR_TOO_MANY_REDIRECTS.
       const url = new URL(request.url);
-      if (request.method === "POST" && url.pathname === "/api/webhooks/razorpay") {
+      const pathname =
+        url.pathname.length > 1 ? url.pathname.replace(/\/+$/, "") : url.pathname;
+      if (request.method === "POST" && pathname === "/api/webhooks/razorpay") {
         const { handleRazorpayWebhookRequest } =
           await import("./lib/payments/razorpayWebhookHandler");
         return handleRazorpayWebhookRequest(request);
@@ -59,13 +61,13 @@ export default {
       // Paths must match CARRIER_WEBHOOK_PATHNAMES in shiprocketWebhookHttpHandler.server.ts
       if (
         request.method === "POST" &&
-        (url.pathname === "/api/webhooks/shiprocket" || url.pathname === "/api/webhooks/carrier")
+        (pathname === "/api/webhooks/shiprocket" || pathname === "/api/webhooks/carrier")
       ) {
         const { handleShiprocketWebhookHttpRequest } =
           await import("./lib/shipping/shiprocketWebhookHttpHandler.server.ts");
         return handleShiprocketWebhookHttpRequest(request);
       }
-      if (request.method === "POST" && url.pathname === "/api/admin/gstore/shipment") {
+      if (request.method === "POST" && pathname === "/api/admin/gstore/shipment") {
         const { handleAdminGstoreShipmentRequest } =
           await import("./lib/shipping/adminGstoreShipmentHandler.server.ts");
         return handleAdminGstoreShipmentRequest(request);

@@ -1,0 +1,88 @@
+/**
+ * Shiprocket tracking webhook payload helpers (official sample shape).
+ * @see https://apidocs.shiprocket.in/
+ */
+
+export type ShiprocketWebhookEnvelope = {
+  awb?: string;
+  shipment_id?: string | number;
+  sr_order_id?: string | number;
+  order_id?: string;
+  current_status?: string;
+  shipment_status?: string;
+  current_status_id?: number;
+  shipment_status_id?: number;
+  current_timestamp?: string;
+  scans?: Array<{ activity?: string; date?: string; location?: string; status?: string }>;
+  etd?: string;
+  channel_order_id?: string;
+  test?: boolean;
+  webhook_test?: boolean;
+  event?: string;
+  event_type?: string;
+  status?: string;
+  [key: string]: unknown;
+};
+
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+/** Dashboard / connectivity test bodies without shipment routing fields. */
+export function isShiprocketWebhookTestPayload(envelope: ShiprocketWebhookEnvelope): boolean {
+  if (envelope.test === true) return true;
+  if (envelope.webhook_test === true) return true;
+  if (envelope.event === "test" || envelope.event_type === "test") return true;
+
+  const routing = shipmentRoutingFields(envelope);
+  if (routing.length > 0) return false;
+
+  const keys = Object.keys(envelope).filter((k) => envelope[k] !== undefined && envelope[k] !== null);
+  if (keys.length === 0) return true;
+  if (keys.length <= 2 && keys.every((k) => k === "test" || k === "webhook_test")) return true;
+
+  return false;
+}
+
+export function shipmentRoutingFields(envelope: ShiprocketWebhookEnvelope): string[] {
+  const fields: string[] = [];
+  if (envelope.awb?.trim()) fields.push("awb");
+  if (envelope.order_id?.trim()) fields.push("order_id");
+  if (envelope.channel_order_id?.trim()) fields.push("channel_order_id");
+  if (envelope.sr_order_id != null && String(envelope.sr_order_id).trim()) fields.push("sr_order_id");
+  if (envelope.shipment_id != null && String(envelope.shipment_id).trim()) fields.push("shipment_id");
+  return fields;
+}
+
+export type ShipmentLookup =
+  | { kind: "awb"; value: string }
+  | { kind: "provider_order_id"; value: string }
+  | { kind: "provider_shipment_id"; value: string }
+  | { kind: "gstore_order_id"; value: string };
+
+export function resolveShipmentLookup(envelope: ShiprocketWebhookEnvelope): ShipmentLookup | null {
+  const awb = envelope.awb?.trim();
+  if (awb) return { kind: "awb", value: awb };
+
+  const srOrder = envelope.sr_order_id != null ? String(envelope.sr_order_id).trim() : "";
+  const shipmentId = envelope.shipment_id != null ? String(envelope.shipment_id).trim() : "";
+  if (srOrder) return { kind: "provider_shipment_id", value: srOrder };
+  if (shipmentId) return { kind: "provider_shipment_id", value: shipmentId };
+
+  const channel = envelope.channel_order_id?.trim() ?? "";
+  const order = envelope.order_id?.trim() ?? "";
+  if (channel && UUID_RE.test(channel)) return { kind: "gstore_order_id", value: channel };
+  if (order && UUID_RE.test(order)) return { kind: "gstore_order_id", value: order };
+
+  const providerOrder = channel || order;
+  if (providerOrder) return { kind: "provider_order_id", value: providerOrder };
+
+  return null;
+}
+
+export function primaryTrackingStatus(envelope: ShiprocketWebhookEnvelope): string | undefined {
+  return (
+    envelope.current_status ??
+    envelope.shipment_status ??
+    (typeof envelope.status === "string" ? envelope.status : undefined)
+  );
+}

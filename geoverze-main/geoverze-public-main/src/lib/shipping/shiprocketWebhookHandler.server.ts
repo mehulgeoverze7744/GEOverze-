@@ -7,6 +7,11 @@ import {
   processShiprocketWebhook,
   type ShiprocketWebhookEnvelope,
 } from "./shiprocketWebhookProcess.server.ts";
+import { isShiprocketWebhookTestPayload, resolveShipmentLookup } from "./shiprocketWebhookPayload.server.ts";
+import {
+  mapWebhookProcessResultToHttp,
+  shiprocketWebhookTestAck,
+} from "./shiprocketWebhookResponse.server.ts";
 
 export async function handleShiprocketWebhookRequest(input: {
   rawBody: string;
@@ -23,9 +28,14 @@ export async function handleShiprocketWebhookRequest(input: {
     return { status: 400, body: { ok: false, reason: "invalid_json" } };
   }
 
-  const result = await processShiprocketWebhook(input.rawBody, envelope);
-  if (!result.ok) {
-    return { status: 422, body: { ok: false, reason: result.reason } };
+  if (isShiprocketWebhookTestPayload(envelope)) {
+    return shiprocketWebhookTestAck();
   }
-  return { status: 200, body: { ok: true, duplicate: result.duplicate, shipmentId: result.shipmentId } };
+
+  if (!resolveShipmentLookup(envelope)) {
+    return { status: 422, body: { ok: false, reason: "missing_routing_fields" } };
+  }
+
+  const result = await processShiprocketWebhook(input.rawBody, envelope);
+  return mapWebhookProcessResultToHttp(result);
 }
