@@ -53,12 +53,31 @@ describe("Gstore catalog availability", () => {
     }
   });
 
-  it("temporarily hides Atlas Encyclopedia and globe lookbook SKUs from storefront", () => {
-    for (const slug of ["field-notebook", "crystal-earth-globe", "vintage-world-globe"]) {
-      assert.equal(isStorefrontUnlistedSlug(slug), true);
-      assert.equal(isSlugAvailableForSale(slug, "accessories"), false);
+  it("temporarily hides selected accessories from storefront", () => {
+    const hidden = [
+      "field-notebook",
+      "crystal-earth-globe",
+      "vintage-world-globe",
+      "orbital-horizon-mug",
+      "celestial-meridian-mug",
+      "terra-contour-mug",
+      "cartographer-cap",
+      "polar-beanie",
+      "bronze-world-map-poster",
+      "night-sky-poster",
+      "tectonic-plates-poster",
+    ] as const;
+    for (const slug of hidden) {
+      assert.equal(isStorefrontUnlistedSlug(slug), true, slug);
+      assert.equal(isSlugAvailableForSale(slug, "accessories"), false, slug);
+      assert.equal(
+        isPurchaseLockedProduct({ slug, category: "mugs" }),
+        true,
+        slug,
+      );
     }
     assert.equal(isStorefrontUnlistedSlug("blue-ocean-globe"), false);
+    assert.equal(isStorefrontUnlistedSlug("different-by-default"), false);
   });
 
   it("locks hoodies and accessory merch as Coming Soon lookbook", () => {

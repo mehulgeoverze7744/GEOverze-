@@ -37,16 +37,26 @@ export const SHOPPABLE_STICKER_SLUGS = new Set<string>(ACCESSORIES_STICKER_SLUGS
  * Hidden from customer storefront listings, search, related items, and PDPs.
  * Product records, assets, and pricing stay in the catalogue for admin and restore.
  */
-export const STOREFRONT_UNLISTED_PRODUCT_SLUGS = new Set([
+/** Customer storefront off — remove a slug here to re-publish. */
+export const TEMPORARILY_UNLISTED_PRODUCT_SLUGS = [
   "old-world-mug",
   "expedition-enamel-mug",
   "desk-globe-mini",
   "explore-the-unknown",
-  /** Temporarily hidden — remove slugs to re-publish on Accessories. */
   "field-notebook",
   "crystal-earth-globe",
   "vintage-world-globe",
-]);
+  "orbital-horizon-mug",
+  "celestial-meridian-mug",
+  "terra-contour-mug",
+  "cartographer-cap",
+  "polar-beanie",
+  "bronze-world-map-poster",
+  "night-sky-poster",
+  "tectonic-plates-poster",
+] as const;
+
+export const STOREFRONT_UNLISTED_PRODUCT_SLUGS = new Set<string>(TEMPORARILY_UNLISTED_PRODUCT_SLUGS);
 
 /** @deprecated Use STOREFRONT_UNLISTED_PRODUCT_SLUGS */
 export const LISTING_HIDDEN_PRODUCT_SLUGS = STOREFRONT_UNLISTED_PRODUCT_SLUGS;
@@ -123,7 +133,11 @@ export function isPurchaseLockedProduct(product: {
   category: string;
   comingSoon?: boolean;
 }): boolean {
-  return isRetiredProductSlug(product.slug) || isLookbookProduct(product);
+  return (
+    isRetiredProductSlug(product.slug) ||
+    isStorefrontUnlistedSlug(product.slug) ||
+    isLookbookProduct(product)
+  );
 }
 
 /**

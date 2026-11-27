@@ -826,7 +826,7 @@ export function ProductScreen() {
           <PageHeader
             eyebrow="Gstore"
             title="This item isn't on the shelf right now"
-            description="Atlas Encyclopedia, globes and a few desk pieces are temporarily hidden while we refresh the Accessories collection."
+            description="This item is temporarily hidden while we refresh the Gstore collection. Stickers and other active products remain available."
             breadcrumb={[
               { label: "Gstore", to: "/geostore" },
               { label: "Accessories", to: "/geostore/category/accessories" },
