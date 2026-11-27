@@ -104,7 +104,7 @@ export function ProductGallery({ product }: { product: Product }) {
             />
           </div>
         ) : stickerSheet ? (
-          <div className="relative aspect-[16/10] w-full bg-[#f6f4ef]">
+          <div className="relative aspect-square w-full bg-white p-3 sm:p-4">
             <img
               src={stickerSheet.src}
               alt={stickerSheet.alt}

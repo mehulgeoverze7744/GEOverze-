@@ -241,6 +241,37 @@ body:has(#gvrze-storefront) footer .mt-16.border-t {
   max-width: 100%;
 }
 
+/* Sticker sheet PDP — full collection visible, no cover crop. */
+#gvrze-storefront.gvrze-storefront-product .sfpp-main-image-stage--contain {
+  background: #ffffff;
+}
+
+#gvrze-storefront.gvrze-storefront-product .sfpp-sticker-sheet-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(12px, 2.5vw, 20px);
+}
+
+#gvrze-storefront.gvrze-storefront-product .sfpp-sticker-sheet-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+@media (min-width: 1024px) {
+  #gvrze-storefront.gvrze-storefront-product .sfpp-main-image-stage--contain .sfpp-sticker-sheet-image {
+    aspect-ratio: 1 / 1;
+    max-height: 640px;
+  }
+
+  #gvrze-storefront.gvrze-storefront-product .sfpp-main-image-stage--contain img {
+    object-fit: contain;
+    object-position: center;
+  }
+}
+
 @media (max-width: 1023px) {
   /* Single column: minmax(0, 1fr) lets the track shrink below the
      image's intrinsic width. Default `auto` tracks will not. */

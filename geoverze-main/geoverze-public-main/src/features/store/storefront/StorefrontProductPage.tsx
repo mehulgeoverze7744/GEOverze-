@@ -71,6 +71,8 @@ export type SFRelatedProduct = {
   /** Card background colour (for coloured-background product cards). */
   tone?: string;
   comingSoon?: boolean;
+  /** Letterbox full sticker sheets without cropping. */
+  imageContain?: boolean;
 };
 
 export type StorefrontProductPageProps = {
@@ -112,6 +114,10 @@ export type StorefrontProductPageProps = {
   specialColour?: boolean;
   /** Third-tab label. Defaults to Washcare so T-shirt pages stay unchanged. */
   careTabLabel?: string;
+  /** PDP gallery fit — sticker sheets use contain on a white square stage. */
+  galleryImageFit?: "cover" | "contain";
+  galleryAspectClassName?: string;
+  gallerySurfaceClassName?: string;
 };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -275,8 +281,11 @@ function RelatedCard({ product }: { product: SFRelatedProduct }) {
   return (
     <li className="min-w-0">
       <div
-        className="relative overflow-hidden rounded-[11px] aspect-[324/407]"
-        style={{ backgroundColor: product.tone ?? "#f0f0f0" }}
+        className={cn(
+          "relative overflow-hidden rounded-[11px]",
+          product.imageContain ? "aspect-square bg-white" : "aspect-[324/407]",
+        )}
+        style={product.imageContain ? undefined : { backgroundColor: product.tone ?? "#f0f0f0" }}
       >
         <Link
           {...productLink}
@@ -288,10 +297,11 @@ function RelatedCard({ product }: { product: SFRelatedProduct }) {
             src={product.image}
             alt={product.imageAlt}
             className={cn(
-              "absolute inset-0 h-full w-full object-cover object-center",
+              "absolute inset-0 h-full w-full object-center",
+              product.imageContain ? "object-contain p-2" : "object-cover",
               product.comingSoon
                 ? "scale-[1.14] blur-[12px]"
-                : "transition-transform duration-300 hover:scale-105",
+                : !product.imageContain && "transition-transform duration-300 hover:scale-105",
             )}
             loading="lazy"
             decoding="async"
@@ -357,6 +367,9 @@ export function StorefrontProductPage({
   comingSoon = false,
   specialColour = false,
   careTabLabel = "Washcare",
+  galleryImageFit = "cover",
+  galleryAspectClassName = "aspect-[562/684]",
+  gallerySurfaceClassName = "bg-[#f6f6f6]",
 }: StorefrontProductPageProps) {
   const colorPickerColors =
     enableColorSelector && colors && colors.length > 1 ? colors : undefined;
@@ -620,6 +633,8 @@ export function StorefrontProductPage({
                       src={img.src}
                       alt={img.alt}
                       comingSoon={comingSoon}
+                      fit={galleryImageFit}
+                      surfaceClassName={gallerySurfaceClassName}
                       className="h-full w-full"
                     />
                   </button>
@@ -632,7 +647,11 @@ export function StorefrontProductPage({
               <div
                 ref={gallerySurfaceRef}
                 data-sfpp-gallery-swipe=""
-                className="relative w-full max-w-full overflow-hidden rounded-[11px] bg-[#f6f6f6] touch-pan-y"
+                className={cn(
+                  "sfpp-main-image-stage relative w-full max-w-full overflow-hidden rounded-[11px] touch-pan-y",
+                  gallerySurfaceClassName,
+                  galleryImageFit === "contain" && "sfpp-main-image-stage--contain",
+                )}
                 onTouchStart={(event) => {
                   const touch = event.changedTouches[0];
                   if (touch) beginGallerySwipe(touch.clientX, touch.clientY);
@@ -662,7 +681,13 @@ export function StorefrontProductPage({
                   alt={mainImage.alt}
                   priority
                   comingSoon={comingSoon}
-                  className="aspect-[562/684] h-auto w-full max-w-full"
+                  fit={galleryImageFit}
+                  surfaceClassName={gallerySurfaceClassName}
+                  className={cn(
+                    "h-auto w-full max-w-full",
+                    galleryAspectClassName,
+                    galleryImageFit === "contain" && "sfpp-sticker-sheet-image",
+                  )}
                 />
                 {comingSoon ? <ComingSoonImageOverlay /> : null}
                 {specialColour ? <SpecialColourBadge /> : null}

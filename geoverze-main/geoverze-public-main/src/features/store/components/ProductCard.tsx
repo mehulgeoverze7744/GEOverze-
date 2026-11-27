@@ -85,11 +85,12 @@ export function ProductCard({
   };
 
   const light = tone === "light";
+  const stickerSheet = product.category === "stickers";
   const seamlessBlend =
     Boolean(image) ||
     blendCover ||
     product.category === "mugs" ||
-    product.category === "stickers" ||
+    stickerSheet ||
     isGlobeProductSlug(product.slug) ||
     (product.category === "tshirts" && Boolean(productImage)) ||
     (equalizeHeight && product.category === "hoodies");
@@ -150,25 +151,29 @@ export function ProductCard({
                     ? {
                         imageSrc: productImage.src,
                         imageAlt: productImage.alt,
-                        ...(product.comingSoon ||
-                        purchaseLocked ||
-                        productImage.fillFrame ||
-                        seamlessBlend
-                          ? { fit: "cover" as const }
-                          : {}),
+                        ...(stickerSheet
+                          ? { fit: "contain" as const }
+                          : product.comingSoon ||
+                              purchaseLocked ||
+                              productImage.fillFrame ||
+                              seamlessBlend
+                            ? { fit: "cover" as const }
+                            : {}),
                         ...(productImage.objectPosition
                           ? { objectPosition: productImage.objectPosition }
                           : {}),
                         ...(seamlessBlend || light ? { overlay: "none" as const } : {}),
                       }
                     : { icon: Icon })}
-                  ratio={variant === "list" ? "square" : "video"}
+                  ratio={stickerSheet || variant === "list" ? "square" : "video"}
                   className={cn(
                     !purchaseLocked &&
                       !seamlessBlend &&
+                      !stickerSheet &&
                       "transition-transform motion-slow group-hover:scale-[1.03]",
                     variant === "list" && "sm:w-44",
-                    light ? "!bg-[#F5F6F8]" : seamlessBlend && "bg-transparent",
+                    stickerSheet && "!bg-white p-2",
+                    light ? "!bg-[#F5F6F8]" : seamlessBlend && !stickerSheet && "bg-transparent",
                     !light && isGlobeProductSlug(product.slug) && "!bg-[#0b0a09]",
                   )}
                 />

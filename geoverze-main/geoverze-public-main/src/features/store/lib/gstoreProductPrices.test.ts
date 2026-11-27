@@ -67,6 +67,22 @@ test("standard shipping is free at or above ₹3,999", () => {
   assert.equal(computeShippingMinor("standard", GSTORE_BASICS_TEE_PRICE_MINOR, false), 0);
 });
 
+test("sticker collections are ₹150 GST-inclusive", () => {
+  for (const slug of [
+    "different-by-default",
+    "off-the-map",
+    "main-character-energy",
+    "the-random-archive",
+  ]) {
+    const row = getProductPrice(slug);
+    assert.ok(row, slug);
+    assert.equal(row.priceMinor, 15_000);
+    assert.equal(row.physical, true);
+    assert.equal(row.category, "accessories");
+    assert.equal(staticPresentationPriceMinor(slug, 99_999), 15_000);
+  }
+});
+
 test("staticPresentationPriceMinor prefers authoritative catalogue over legacy paise", () => {
   assert.equal(
     staticPresentationPriceMinor("hoodie-every-point-has-a-story", 7_400),

@@ -2,43 +2,42 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  ACCESSORIES_STICKER_SLUGS,
   isLookbookProduct,
   isPurchaseLockedProduct,
   isRetiredProductSlug,
   isSlugAvailableForSale,
+  isStorefrontUnlistedSlug,
   RETIRED_PRODUCT_SLUGS,
 } from "./catalogAvailability.ts";
 import { STOREFRONT_TEES } from "../storefront/storefront-product-data.ts";
 
 describe("Gstore catalog availability", () => {
-  it("retires Flag Sticker Pack and Continent Sticker Set", () => {
+  it("retires legacy sticker packs and Midnight Black tee", () => {
     assert.equal(isRetiredProductSlug("flag-sticker-pack"), true);
     assert.equal(isRetiredProductSlug("continent-sticker-set"), true);
     assert.equal(isRetiredProductSlug("midnight-black-tshirt"), true);
-    assert.equal(RETIRED_PRODUCT_SLUGS.size, 3);
+    assert.equal(isRetiredProductSlug("vintage-expedition-sticker-collection"), true);
+    assert.equal(isRetiredProductSlug("the-cartographers-collection"), true);
+    assert.equal(RETIRED_PRODUCT_SLUGS.size, 8);
     assert.equal(isPurchaseLockedProduct({ slug: "flag-sticker-pack", category: "stickers" }), true);
     assert.equal(isSlugAvailableForSale("flag-sticker-pack", "accessories"), false);
-    assert.equal(isSlugAvailableForSale("continent-sticker-set", "accessories"), false);
-    assert.equal(isSlugAvailableForSale("midnight-black-tshirt", "tshirts"), false);
+    assert.equal(isSlugAvailableForSale("vintage-expedition-sticker-collection", "accessories"), false);
   });
 
-  it("keeps remaining sticker packs purchasable", () => {
-    for (const slug of [
-      "vintage-expedition-sticker-collection",
-      "the-explorers-trail",
-      "beyond-the-horizon",
-      "the-atlas-archive",
-      "the-cartographers-collection",
-    ]) {
+  it("keeps live sticker collections purchasable on Accessories", () => {
+    assert.deepEqual(ACCESSORIES_STICKER_SLUGS, [
+      "different-by-default",
+      "off-the-map",
+      "main-character-energy",
+      "the-random-archive",
+    ]);
+    for (const slug of ACCESSORIES_STICKER_SLUGS) {
       assert.equal(isRetiredProductSlug(slug), false);
       assert.equal(isLookbookProduct({ slug, category: "stickers" }), false);
       assert.equal(isPurchaseLockedProduct({ slug, category: "stickers" }), false);
       assert.equal(isSlugAvailableForSale(slug, "accessories"), true);
     }
-    assert.equal(
-      isLookbookProduct({ slug: "vintage-expedition-sticker-collection", category: "accessories" }),
-      false,
-    );
   });
 
   it("does not lock storefront T-shirts", () => {
@@ -52,6 +51,14 @@ describe("Gstore catalog availability", () => {
       assert.equal(isPurchaseLockedProduct({ slug: tee.id, category: "tshirts" }), false);
       assert.equal(isSlugAvailableForSale(tee.id, "tshirts"), true);
     }
+  });
+
+  it("temporarily hides Atlas Encyclopedia and globe lookbook SKUs from storefront", () => {
+    for (const slug of ["field-notebook", "crystal-earth-globe", "vintage-world-globe"]) {
+      assert.equal(isStorefrontUnlistedSlug(slug), true);
+      assert.equal(isSlugAvailableForSale(slug, "accessories"), false);
+    }
+    assert.equal(isStorefrontUnlistedSlug("blue-ocean-globe"), false);
   });
 
   it("locks hoodies and accessory merch as Coming Soon lookbook", () => {

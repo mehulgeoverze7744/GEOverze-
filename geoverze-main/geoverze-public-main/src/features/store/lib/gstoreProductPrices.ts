@@ -257,38 +257,31 @@ export const GSTORE_PRODUCT_PRICES: Record<string, GstoreProductPrice> = {
     physical: true,
     category: "accessories",
   },
-  "vintage-expedition-sticker-collection": {
-    slug: "vintage-expedition-sticker-collection",
-    name: "Vintage Expedition Sticker Collection",
-    priceMinor: 149_900,   // ₹1,499
+  "different-by-default": {
+    slug: "different-by-default",
+    name: "DIFFERENT BY DEFAULT",
+    priceMinor: 15_000, // ₹150
     physical: true,
     category: "accessories",
   },
-  "the-explorers-trail": {
-    slug: "the-explorers-trail",
-    name: "THE EXPLORER'S TRAIL",
-    priceMinor: 69_900,    // ₹699
+  "off-the-map": {
+    slug: "off-the-map",
+    name: "OFF THE MAP",
+    priceMinor: 15_000, // ₹150
     physical: true,
     category: "accessories",
   },
-  "beyond-the-horizon": {
-    slug: "beyond-the-horizon",
-    name: "BEYOND THE HORIZON",
-    priceMinor: 69_900,    // ₹699
+  "main-character-energy": {
+    slug: "main-character-energy",
+    name: "MAIN CHARACTER ENERGY",
+    priceMinor: 15_000, // ₹150
     physical: true,
     category: "accessories",
   },
-  "the-atlas-archive": {
-    slug: "the-atlas-archive",
-    name: "THE ATLAS ARCHIVE",
-    priceMinor: 69_900,    // ₹699
-    physical: true,
-    category: "accessories",
-  },
-  "the-cartographers-collection": {
-    slug: "the-cartographers-collection",
-    name: "THE CARTOGRAPHER'S COLLECTION",
-    priceMinor: 79_900,    // ₹799
+  "the-random-archive": {
+    slug: "the-random-archive",
+    name: "THE RANDOM ARCHIVE",
+    priceMinor: 15_000, // ₹150
     physical: true,
     category: "accessories",
   },

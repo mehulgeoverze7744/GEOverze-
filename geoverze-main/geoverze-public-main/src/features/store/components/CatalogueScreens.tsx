@@ -61,6 +61,7 @@ import {
 import {
   isAccessoryLookbookCategory,
   isRetiredProductSlug,
+  isStorefrontUnlistedSlug,
 } from "../data/catalogAvailability";
 import {
   ACCESSORIES_STICKER_SLUGS,
@@ -631,6 +632,7 @@ function StorefrontStickerProductPage({ product }: { product: Product }) {
         priceLabel: relatedPrice ? formatInrPaise(relatedPrice.priceMinor) : money(item.price),
         image: relatedImg.src,
         imageAlt: relatedImg.alt,
+        imageContain: true,
       },
     ];
   });
@@ -641,6 +643,9 @@ function StorefrontStickerProductPage({ product }: { product: Product }) {
       name={product.name}
       categoryLabel="Stickers"
       categorySlug="accessories"
+      galleryImageFit="contain"
+      galleryAspectClassName="aspect-square max-h-[min(88vw,640px)] sm:max-h-[640px]"
+      gallerySurfaceClassName="bg-white"
       priceLabel={
         checkoutPrice ? formatInrPaise(checkoutPrice.priceMinor) : money(product.price)
       }
@@ -805,6 +810,36 @@ export function ProductScreen() {
               action={
                 <GeoButton asChild variant="solid">
                   <Link to="/geostore/browse">Browse the catalogue</Link>
+                </GeoButton>
+              }
+            />
+          </SectionContainer>
+        </PageShell>
+      </ProductPageFrame>
+    );
+  }
+
+  if (isStorefrontUnlistedSlug(slug)) {
+    return (
+      <ProductPageFrame>
+        <PageShell>
+          <PageHeader
+            eyebrow="Gstore"
+            title="This item isn't on the shelf right now"
+            description="Atlas Encyclopedia, globes and a few desk pieces are temporarily hidden while we refresh the Accessories collection."
+            breadcrumb={[
+              { label: "Gstore", to: "/geostore" },
+              { label: "Accessories", to: "/geostore/category/accessories" },
+              { label: "Unavailable" },
+            ]}
+          />
+          <SectionContainer>
+            <EmptyState
+              icon={ShoppingBag}
+              title="Temporarily unavailable"
+              action={
+                <GeoButton asChild variant="solid">
+                  <Link to="/geostore/category/accessories">Back to Accessories</Link>
                 </GeoButton>
               }
             />

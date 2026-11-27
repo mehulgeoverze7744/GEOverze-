@@ -4,12 +4,14 @@ import continentStickerSet from "@/assets/geostore/continent-sticker-set.jpg";
 import crystalEarthGlobe from "@/assets/geostore/crystal-earth-globe-studio.jpg";
 import deskGlobeMini from "@/assets/geostore/desk-globe-mini.jpg";
 import atlasEncyclopedia from "@/assets/geostore/atlas-encyclopedia.jpg";
-import beyondTheHorizon from "@/assets/geostore/beyond-the-horizon.jpg";
 import blueOceanGlobe from "@/assets/geostore/blue-ocean-globe-studio.jpg";
+import differentByDefault from "@/assets/geostore/different-by-default.jpg";
 import expeditionEnamelMug from "@/assets/geostore/expedition-enamel-mug.jpg";
 import flagStickerPack from "@/assets/geostore/flag-sticker-pack.jpg";
 import goldenAtlasMug from "@/assets/geostore/golden-atlas-mug-studio-main.jpg";
 import hoodieExploreTheUnknown from "@/assets/geostore/hoodie-explore-the-unknown.jpg";
+import mainCharacterEnergy from "@/assets/geostore/main-character-energy.jpg";
+import offTheMap from "@/assets/geostore/off-the-map.jpg";
 import oldWorldMug from "@/assets/geostore/old-world-mug.jpg";
 import orbitalHorizonMug from "@/assets/geostore/orbital-horizon-mug-studio-front.jpg";
 import polarBeanie from "@/assets/geostore/polar-beanie.jpg";
@@ -20,10 +22,7 @@ import rewardNavigatorAvatar from "@/assets/geostore/reward-navigator-avatar.jpg
 import rewardPs5 from "@/assets/geostore/reward-ps5.jpg";
 import rewardSandstoneTheme from "@/assets/geostore/reward-sandstone-theme.jpg";
 import terraContourMug from "@/assets/geostore/terra-contour-mug-studio-main.jpg";
-import theAtlasArchive from "@/assets/geostore/the-atlas-archive.jpg";
-import theCartographersCollection from "@/assets/geostore/the-cartographers-collection.jpg";
-import theExplorersTrail from "@/assets/geostore/the-explorers-trail.jpg";
-import vintageExpeditionStickerCollection from "@/assets/geostore/vintage-expedition-sticker-collection.jpg";
+import theRandomArchive from "@/assets/geostore/the-random-archive.jpg";
 import vintageWorldGlobe from "@/assets/geostore/vintage-world-globe-studio.jpg";
 
 import { merchProductById } from "@/features/marketing/data/geostoreMerch";
@@ -96,30 +95,21 @@ const PRODUCT_IMAGES: Readonly<Record<string, ProductImage>> = {
     alt: "GVRZE Continent Sticker Set — seven matte-finish landmass stickers",
     fillFrame: true,
   },
-  "vintage-expedition-sticker-collection": {
-    src: vintageExpeditionStickerCollection,
-    alt: "GVRZE Vintage Expedition Sticker Collection — explorer badges, maps and navigation emblems",
-    fillFrame: true,
+  "different-by-default": {
+    src: differentByDefault,
+    alt: "GVRZE DIFFERENT BY DEFAULT sticker collection — full die-cut sheet on white",
   },
-  "the-explorers-trail": {
-    src: theExplorersTrail,
-    alt: "GVRZE THE EXPLORER'S TRAIL sticker collection",
-    fillFrame: true,
+  "off-the-map": {
+    src: offTheMap,
+    alt: "GVRZE OFF THE MAP sticker collection — full travel and exploration sheet on white",
   },
-  "beyond-the-horizon": {
-    src: beyondTheHorizon,
-    alt: "GVRZE BEYOND THE HORIZON sticker collection",
-    fillFrame: true,
+  "main-character-energy": {
+    src: mainCharacterEnergy,
+    alt: "GVRZE MAIN CHARACTER ENERGY sticker collection — full expressive sheet on white",
   },
-  "the-atlas-archive": {
-    src: theAtlasArchive,
-    alt: "GVRZE THE ATLAS ARCHIVE sticker collection",
-    fillFrame: true,
-  },
-  "the-cartographers-collection": {
-    src: theCartographersCollection,
-    alt: "GVRZE THE CARTOGRAPHER'S COLLECTION sticker collection",
-    fillFrame: true,
+  "the-random-archive": {
+    src: theRandomArchive,
+    alt: "GVRZE THE RANDOM ARCHIVE sticker collection — full lifestyle sheet on white",
   },
   "field-notebook": {
     src: atlasEncyclopedia,

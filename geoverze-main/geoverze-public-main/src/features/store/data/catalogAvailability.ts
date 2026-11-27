@@ -13,6 +13,11 @@ export const RETIRED_PRODUCT_SLUGS = new Set([
   "flag-sticker-pack",
   "continent-sticker-set",
   "midnight-black-tshirt",
+  "vintage-expedition-sticker-collection",
+  "the-explorers-trail",
+  "beyond-the-horizon",
+  "the-atlas-archive",
+  "the-cartographers-collection",
 ]);
 
 /**
@@ -20,14 +25,35 @@ export const RETIRED_PRODUCT_SLUGS = new Set([
  * priced under `accessories`, but they stay shoppable.
  */
 export const ACCESSORIES_STICKER_SLUGS = [
-  "vintage-expedition-sticker-collection",
-  "the-explorers-trail",
-  "beyond-the-horizon",
-  "the-atlas-archive",
-  "the-cartographers-collection",
+  "different-by-default",
+  "off-the-map",
+  "main-character-energy",
+  "the-random-archive",
 ] as const;
 
 export const SHOPPABLE_STICKER_SLUGS = new Set<string>(ACCESSORIES_STICKER_SLUGS);
+
+/**
+ * Hidden from customer storefront listings, search, related items, and PDPs.
+ * Product records, assets, and pricing stay in the catalogue for admin and restore.
+ */
+export const STOREFRONT_UNLISTED_PRODUCT_SLUGS = new Set([
+  "old-world-mug",
+  "expedition-enamel-mug",
+  "desk-globe-mini",
+  "explore-the-unknown",
+  /** Temporarily hidden — remove slugs to re-publish on Accessories. */
+  "field-notebook",
+  "crystal-earth-globe",
+  "vintage-world-globe",
+]);
+
+/** @deprecated Use STOREFRONT_UNLISTED_PRODUCT_SLUGS */
+export const LISTING_HIDDEN_PRODUCT_SLUGS = STOREFRONT_UNLISTED_PRODUCT_SLUGS;
+
+export function isStorefrontUnlistedSlug(slug: string): boolean {
+  return STOREFRONT_UNLISTED_PRODUCT_SLUGS.has(slug);
+}
 
 /**
  * Accessory merch that is lookbook-only (blurred Coming Soon).
@@ -109,6 +135,7 @@ export function isPurchaseLockedProduct(product: {
  */
 export function isSlugAvailableForSale(slug: string, priceCategory?: string): boolean {
   if (isRetiredProductSlug(slug)) return false;
+  if (isStorefrontUnlistedSlug(slug)) return false;
   if (isShopableStickerSlug(slug)) return true;
   if (LOOKBOOK_PRODUCT_SLUGS.has(slug)) return false;
   if (priceCategory && isLookbookCategory(priceCategory)) return false;
@@ -117,6 +144,7 @@ export function isSlugAvailableForSale(slug: string, priceCategory?: string): bo
 
 export function isCartLinePurchaseLocked(line: { slug: string; category: string }): boolean {
   if (isRetiredProductSlug(line.slug)) return true;
+  if (isStorefrontUnlistedSlug(line.slug)) return true;
   if (isShopableStickerSlug(line.slug)) return false;
   if (LOOKBOOK_PRODUCT_SLUGS.has(line.slug)) return true;
   return isLookbookCategory(line.category);

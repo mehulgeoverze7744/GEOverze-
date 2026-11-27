@@ -9,6 +9,10 @@ type StorefrontProductImageProps = {
   /** High-priority LCP image — skip lazy loading. */
   priority?: boolean;
   comingSoon?: boolean;
+  /** Default cover — use contain for full sticker sheets. */
+  fit?: "cover" | "contain";
+  /** Wrapper tone behind letterboxed photos. */
+  surfaceClassName?: string;
 };
 
 /**
@@ -21,6 +25,8 @@ export function StorefrontProductImage({
   className,
   priority = false,
   comingSoon = false,
+  fit = "cover",
+  surfaceClassName,
 }: StorefrontProductImageProps) {
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">(
     src ? "loading" : "idle",
@@ -70,7 +76,7 @@ export function StorefrontProductImage({
   }
 
   return (
-    <div className={cn("relative overflow-hidden bg-[#f0f0f0]", className)}>
+    <div className={cn("relative overflow-hidden bg-[#f0f0f0]", surfaceClassName, className)}>
       {status !== "ready" && status !== "error" ? (
         <div className="absolute inset-0 animate-pulse bg-[#e8e8e8]" aria-hidden="true" />
       ) : null}
@@ -92,7 +98,8 @@ export function StorefrontProductImage({
           setStatus("error");
         }}
         className={cn(
-          "h-full w-full object-cover object-center transition-opacity duration-200",
+          "h-full w-full object-center transition-opacity duration-200",
+          fit === "contain" ? "object-contain" : "object-cover",
           comingSoon && "scale-[1.14] blur-[12px]",
           status === "ready" ? "opacity-100" : "opacity-0",
         )}

@@ -52,7 +52,12 @@ export function EditorialCard({ item, onAdd, className }: EditorialCardProps) {
       )}
       data-coming-soon={item.comingSoon ? "true" : undefined}
     >
-      <div className="gvrze-editorial-card__media relative w-full overflow-hidden bg-[#d8d8d8]">
+      <div
+        className={cn(
+          "gvrze-editorial-card__media relative w-full overflow-hidden",
+          item.imageContain ? "bg-white" : "bg-[#d8d8d8]",
+        )}
+      >
         {item.image ? (
           <img
             src={item.image}
@@ -61,10 +66,11 @@ export function EditorialCard({ item, onAdd, className }: EditorialCardProps) {
             decoding="async"
             className={cn(
               "absolute inset-0 h-full w-full",
-              item.imageContain ? "object-contain object-center" : "object-cover",
+              item.imageContain ? "object-contain object-center p-2 sm:p-3" : "object-cover",
               item.comingSoon
                 ? "scale-[1.14] blur-[12px]"
-                : "transition-transform duration-500 ease-out group-hover:scale-[1.04]",
+                : !item.imageContain &&
+                    "transition-transform duration-500 ease-out group-hover:scale-[1.04]",
             )}
           />
         ) : (
