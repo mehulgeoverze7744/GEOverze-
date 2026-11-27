@@ -1,16 +1,44 @@
 import { Music, Video } from "lucide-react";
 
+import { quizThumbnailForId } from "@/features/play/data/quizThumbnails";
+
+import { isEmojiRebusMedia } from "../lib/emojiMedia";
+import { resolveQuizArtKey } from "../lib/quizArt";
+import { resolveMapBoard } from "../lib/mapBoards";
+import { EmojiRebusView } from "./EmojiRebusView";
 import { FlagTile, QuizImage } from "./QuizImage";
 import type { QuestionMedia } from "../data/types";
-import { resolveMapBoard } from "../lib/mapBoards";
 
 /**
  * Renders the media attached to a question card.
  *
- * Flags, photographs, illustrations and maps use real images. Audio and video
- * clues keep a labelled surface until a media file is attached.
+ * Flags, photographs, illustrations and maps use real images. Emoji rebus clues
+ * render native glyphs. Audio and video clues keep a labelled surface until a
+ * media file is attached.
  */
-export function QuestionMediaView({ media }: { media: QuestionMedia }) {
+export function QuestionMediaView({
+  media,
+  quizId,
+}: {
+  media: QuestionMedia;
+  /** Used for thematic supporting art on emoji quizzes (cover photo, non-spoiler). */
+  quizId?: string;
+}) {
+  if (isEmojiRebusMedia(media) && "glyph" in media) {
+    const explicit =
+      "art" in media && media.art ? resolveQuizArtKey(media.art) : null;
+    const cover =
+      explicit ??
+      (quizId?.startsWith("q-emo-") ? quizThumbnailForId(quizId)?.src ?? null : null);
+    return (
+      <EmojiRebusView
+        glyph={media.glyph}
+        caption={media.caption}
+        supportingImageSrc={cover}
+      />
+    );
+  }
+
   if (media.kind === "flag") {
     return (
       <QuizImage
@@ -45,10 +73,12 @@ export function QuestionMediaView({ media }: { media: QuestionMedia }) {
     media.kind === "map"
       ? resolveMapBoard({ mediaArt: media.art, boardArt: media.art, caption: media.caption })
       : null;
+  const localArt = resolveQuizArtKey(media.art);
+  const src = mapBoard?.src ?? localArt ?? media.art;
 
   return (
     <QuizImage
-      src={mapBoard?.src ?? media.art}
+      src={src}
       alt={media.caption ?? mapBoard?.label ?? (media.kind === "map" ? "Map" : "Question image")}
       caption={media.caption}
       className="mx-auto max-w-3xl"

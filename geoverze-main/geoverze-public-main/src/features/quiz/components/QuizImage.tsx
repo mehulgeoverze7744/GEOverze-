@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { resolveFlagUrl } from "../lib/flagImage";
-import { resolveMediaSrc } from "../lib/mediaUrl";
+import { resolveMediaSrc, resolveMediaSrcSync } from "../lib/mediaUrl";
 
 function FallbackPlate({
   className,
@@ -67,7 +67,9 @@ export function QuizImage({
     label: flagHint?.label,
     width: 640,
   });
-  const initial = flagUrl ?? (src && /^(https?:\/\/|\/)/i.test(src) ? src : null);
+  const localArt = src && !flagUrl ? resolveMediaSrcSync(src) : null;
+  const initial =
+    flagUrl ?? localArt ?? (src && /^(https?:\/\/|\/)/i.test(src) ? src : null);
   const [resolved, setResolved] = useState<string | null>(initial);
   const [failed, setFailed] = useState(false);
   const [pending, setPending] = useState(!initial && Boolean(src));
@@ -135,7 +137,12 @@ export function QuizImage({
           loading="lazy"
           decoding="async"
           onLoad={() => setPainted(true)}
-          onError={() => setFailed(true)}
+          onError={() => {
+            if (typeof console !== "undefined") {
+              console.warn("[quiz-image] failed to load", { src: resolved, alt });
+            }
+            setFailed(true);
+          }}
           className={cn(
             "mx-auto max-h-[22rem] w-full object-contain",
             !painted && "opacity-0",

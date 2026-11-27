@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 400" role="img" aria-label="Chile outline">
+  <path
+    fill="none"
+    stroke="#1e4d86"
+    stroke-width="3"
+    stroke-linejoin="round"
+    d="M58 8 C72 40, 76 80, 74 120 C72 160, 68 200, 64 240 C60 280, 56 320, 52 360 L48 392 L42 392 L38 360 C34 320, 36 280, 40 240 C44 200, 48 160, 52 120 C54 80, 52 40, 58 8 Z"
+  />
+</svg>

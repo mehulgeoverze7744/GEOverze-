@@ -27,7 +27,13 @@ const DragDropQuestion = lazy(() =>
  *
  * Screens hand a question here and never care what subject or format it is.
  */
-export function QuestionRenderer({ question, value, locked, onSelect }: QuestionViewProps) {
+export function QuestionRenderer({
+  question,
+  value,
+  locked,
+  onSelect,
+  quizId,
+}: QuestionViewProps & { quizId?: string }) {
   return (
     <div className="rounded-[1.75rem] border border-[#E2E8F0] bg-white p-5 shadow-[0_18px_40px_-28px_rgb(15_23_42_/_0.45)] sm:p-8">
       <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-[#2b74c4]">
@@ -39,7 +45,7 @@ export function QuestionRenderer({ question, value, locked, onSelect }: Question
 
       {question.media ? (
         <div className="mt-6">
-          <QuestionMediaView media={question.media} />
+          <QuestionMediaView media={question.media} quizId={quizId} />
         </div>
       ) : null}
 

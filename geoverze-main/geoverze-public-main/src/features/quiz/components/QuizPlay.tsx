@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { useQuizStore, type QuizMode } from "@/stores/quizStore";
 import type { QuizSet } from "../data/types";
 import { saveQuizRun } from "../lib/quizRunPersist";
+import { resolveMediaSrcSync } from "../lib/mediaUrl";
+import { isEmojiRebusMedia } from "../lib/emojiMedia";
 import { correctLabels, isCorrect, isPlayable } from "../lib/session";
 import { ExitDialog } from "./ExitDialog";
 import { QuestionRenderer } from "./QuestionRenderer";
@@ -154,6 +156,20 @@ export function QuizPlay({
     return () => window.removeEventListener("keydown", handler);
   }, [advance, canCheck, commit, locked, question]);
 
+  useEffect(() => {
+    const nextQuestion = set.questions[index + 1];
+    if (!nextQuestion?.media || isEmojiRebusMedia(nextQuestion.media)) return;
+    const art =
+      "art" in nextQuestion.media && nextQuestion.media.art
+        ? nextQuestion.media.art
+        : undefined;
+    const url = resolveMediaSrcSync(art);
+    if (!url) return;
+    const img = new Image();
+    img.decoding = "async";
+    img.src = url;
+  }, [index, set.questions]);
+
   const feedback = useMemo(() => {
     if (!locked) return null;
     if (recorded?.skipped) return { tone: "skipped" as const, title: "Skipped" };
@@ -180,6 +196,7 @@ export function QuizPlay({
         <div>
           <QuestionRenderer
             key={question.id}
+            quizId={set.id}
             question={question}
             value={value}
             locked={locked}

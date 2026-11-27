@@ -11,6 +11,8 @@
 export type QuestionMedia =
   | { kind: "image"; art: string; caption?: string }
   | { kind: "illustration"; art: string; caption?: string }
+  /** Emoji / rebus sequence — rendered natively, not as a raster image. */
+  | { kind: "emoji"; glyph: string; caption?: string; art?: string }
   /** Flag glyph, ISO code, or country name — rendered as a real flag image. */
   | { kind: "flag"; glyph: string; caption?: string; art?: string }
   | { kind: "map"; art: string; caption?: string }
