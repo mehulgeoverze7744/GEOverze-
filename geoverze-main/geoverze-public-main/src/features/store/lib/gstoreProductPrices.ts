@@ -44,6 +44,41 @@ export function getStickerCreditPrice(slug: string): number | null {
   return GSTORE_STICKER_CREDITS;
 }
 
+/** Live storefront signature tees that support INR + credits checkout. */
+export const GSTORE_SIGNATURE_TEE_SLUGS: ReadonlySet<string> = new Set([
+  "cherry-blossom-tshirt",
+  "golden-arc-tshirt",
+  "orbit-tshirt",
+  "ignite",
+  "eden",
+  "pace",
+  "eclipse",
+  "vanta",
+  "monogram",
+  "earthform",
+  "flux",
+  "vertical",
+]);
+
+/**
+ * Server-authoritative GVRZE credits price for hybrid Gstore products.
+ * Returns null when credits checkout is not configured for the slug.
+ */
+export function resolveGstoreCreditPrice(slug: string): number | null {
+  const row = getProductPrice(slug);
+  if (!row) return null;
+  if (row.creditPrice != null && row.creditPrice > 0) return row.creditPrice;
+  if (row.category === "tshirts" && GSTORE_SIGNATURE_TEE_SLUGS.has(slug)) {
+    return gstoreTeeCreditsForCollection(storefrontTeeCollectionFromSlug(slug));
+  }
+  return null;
+}
+
+/** Whether the slug can complete authenticated credits checkout on the server. */
+export function isGstoreCreditsCheckoutSlug(slug: string): boolean {
+  return resolveGstoreCreditPrice(slug) !== null;
+}
+
 /** @deprecated Use collection-specific constants. */
 export const GSTORE_STANDARD_TEE_PRICE_MINOR = GSTORE_BASICS_TEE_PRICE_MINOR;
 /** @deprecated Use collection-specific constants. */

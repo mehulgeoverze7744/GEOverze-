@@ -87,12 +87,13 @@ import { productImageForSlug } from "../data/productImages";
 import { checkoutSizeForProduct } from "../storefront/sizeGuide";
 import { MockPaymentGateway } from "../components/MockPaymentGateway";
 import {
-  STICKER_PAYMENT_CREDITS,
-  STICKER_PAYMENT_OPTION_KEY,
+  GSTORE_PAYMENT_CREDITS,
+  GSTORE_PAYMENT_OPTION_KEY,
   assertHomogeneousGstoreCheckout,
-  creditsDueForStickerLines,
-  isStickerCreditsCartLine,
-} from "../lib/stickerPricing";
+  creditsDueForGstoreCreditLines,
+  isGstoreCreditsCartLine,
+} from "../lib/gstoreDualPricing";
+import { resolveGstoreCreditPrice } from "../lib/gstoreProductPrices";
 import { useStoreCreditsState } from "../lib/useStoreCredits";
 import { refreshProgression } from "@/lib/supabase/auth-sync";
 import { useProgressionStore } from "@/stores/progressionStore";
@@ -266,8 +267,8 @@ export function GstoreCheckoutScreen() {
           ...(search.Design ? { Design: search.Design } : {}),
           ...(search.CustomDesign ? { "Custom Design": search.CustomDesign } : {}),
           ...(search.Instructions ? { Instructions: search.Instructions } : {}),
-          ...(search.Payment === STICKER_PAYMENT_CREDITS
-            ? { [STICKER_PAYMENT_OPTION_KEY]: STICKER_PAYMENT_CREDITS }
+          ...(search.Payment === GSTORE_PAYMENT_CREDITS
+            ? { [GSTORE_PAYMENT_OPTION_KEY]: GSTORE_PAYMENT_CREDITS }
             : {}),
         },
       }]
@@ -293,13 +294,13 @@ export function GstoreCheckoutScreen() {
   const creditsCheckout =
     !mixedPaymentError &&
     (isBuyNow
-      ? search.Payment === STICKER_PAYMENT_CREDITS
-      : cartLines.length > 0 && cartLines.every((line) => isStickerCreditsCartLine(line)));
+      ? search.Payment === GSTORE_PAYMENT_CREDITS
+      : cartLines.length > 0 && cartLines.every((line) => isGstoreCreditsCartLine(line)));
 
   const creditsDue = creditsCheckout
     ? isBuyNow
-      ? (getProductPrice(search.slug!)?.creditPrice ?? 150) * buyNowQty
-      : creditsDueForStickerLines(cartLines)
+      ? (resolveGstoreCreditPrice(search.slug!) ?? 0) * buyNowQty
+      : creditsDueForGstoreCreditLines(cartLines)
     : 0;
 
   // Price computation (client-side preview only — server recomputes for real)

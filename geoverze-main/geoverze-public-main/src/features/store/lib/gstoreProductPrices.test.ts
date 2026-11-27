@@ -12,6 +12,9 @@ import {
   GSTORE_GST_RATE,
   GSTORE_PRIME_TEE_PRICE_MINOR,
   GSTORE_STICKER_CREDITS,
+  resolveGstoreCreditPrice,
+  GSTORE_BASICS_TEE_CREDITS,
+  GSTORE_PRIME_TEE_CREDITS,
 } from "./gstoreProductPrices.ts";
 
 const PRIME_SIGNATURE_SLUGS = [
@@ -82,6 +85,15 @@ test("sticker collections are ₹150 GST-inclusive", () => {
     assert.equal(row.physical, true);
     assert.equal(row.category, "accessories");
     assert.equal(staticPresentationPriceMinor(slug, 99_999), 15_000);
+  }
+});
+
+test("resolveGstoreCreditPrice maps signature tees by collection line", () => {
+  for (const slug of BASICS_SIGNATURE_SLUGS) {
+    assert.equal(resolveGstoreCreditPrice(slug), GSTORE_BASICS_TEE_CREDITS, slug);
+  }
+  for (const slug of ["cherry-blossom-tshirt", "eclipse", "ignite"] as const) {
+    assert.equal(resolveGstoreCreditPrice(slug), GSTORE_PRIME_TEE_CREDITS, slug);
   }
 });
 

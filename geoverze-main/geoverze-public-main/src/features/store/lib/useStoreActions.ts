@@ -10,10 +10,10 @@ import { cartLineIdForProduct, defaultOptions, toCartLine } from "./cart";
 import { resolveStoreProduct } from "./resolveStoreProduct";
 import { isProductionRewardSlug } from "./rewards";
 import {
-  isShopableStickerSlug,
-  type StickerPaymentMethod,
-  toStickerCartLine,
-} from "./stickerPricing";
+  productSupportsDualPayment,
+  toGstoreDualPaymentCartLine,
+  type GstorePaymentMethod,
+} from "./gstoreDualPricing";
 
 export function useStoreActions() {
   const add = useCartStore((s) => s.add);
@@ -26,7 +26,7 @@ export function useStoreActions() {
     product: Product,
     options?: Record<string, string>,
     quantity = 1,
-    stickerPayment?: StickerPaymentMethod,
+    hybridPayment?: GstorePaymentMethod,
   ) => {
     if (isPurchaseLocked(product)) {
       toast.message("Coming soon", {
@@ -52,21 +52,20 @@ export function useStoreActions() {
       return;
     }
 
-    const line =
-      isShopableStickerSlug(product.slug) || product.category === "stickers"
-        ? toStickerCartLine(
-            product,
-            options ?? defaultOptions(product),
-            quantity,
-            stickerPayment ?? "inr",
-          )
-        : toCartLine(product, options ?? defaultOptions(product), quantity);
+    const line = productSupportsDualPayment(product)
+      ? toGstoreDualPaymentCartLine(
+          product,
+          options ?? defaultOptions(product),
+          quantity,
+          hybridPayment ?? "inr",
+        )
+      : toCartLine(product, options ?? defaultOptions(product), quantity);
 
     add(line);
   const paymentNote =
     line.unitAmount === null
       ? "Ready to checkout with credits."
-      : stickerPayment === "credits"
+      : hybridPayment === "credits"
         ? "Ready to checkout with credits."
         : product.price === null
           ? "Ready to claim with credits."

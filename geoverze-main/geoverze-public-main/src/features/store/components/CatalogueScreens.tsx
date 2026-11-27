@@ -82,11 +82,15 @@ import {
 import { filterProducts, sortProducts } from "../lib/filter";
 import { defaultOptions } from "../lib/cart";
 import { money } from "../lib/format";
-import { formatInrPaise, getProductPrice } from "../lib/gstoreProductPrices";
 import {
-  formatStickerDualPriceStacked,
-  isShopableStickerSlug,
-} from "../lib/stickerPricing";
+  formatInrPaise,
+  getProductPrice,
+  resolveGstoreCreditPrice,
+} from "../lib/gstoreProductPrices";
+import {
+  formatDualPriceStacked,
+  productSupportsDualPayment,
+} from "../lib/gstoreDualPricing";
 import { resolveStoreProduct } from "../lib/resolveStoreProduct";
 import { useStoreActions } from "../lib/useStoreActions";
 import { globeGalleryExtras } from "../data/globeGalleries";
@@ -100,6 +104,14 @@ import { catalogueProductBySlug } from "../lib/mergeCatalogue";
 import { isPurchasableRewardSlug } from "../lib/rewards";
 
 const ALL = { id: "all", label: "All" } as const;
+
+function hybridStackedPriceLabel(product: Product, comingSoon: boolean): string | null {
+  if (comingSoon || !productSupportsDualPayment(product)) return null;
+  const credits = resolveGstoreCreditPrice(product.slug);
+  const inrMinor = getProductPrice(product.slug)?.priceMinor ?? product.price;
+  if (credits === null || inrMinor === null || inrMinor <= 0) return null;
+  return formatDualPriceStacked(inrMinor, credits);
+}
 
 /* ─── Editorial adapters ──────────────────────────────────────────────────── */
 
@@ -129,23 +141,23 @@ function productToEditorial(p: Product): EditorialItem {
   const tee = storefrontTeeById(p.slug);
   const checkoutPrice = getProductPrice(p.slug);
   const comingSoon = isPurchaseLocked(p);
+  const hybridStacked = hybridStackedPriceLabel(p, comingSoon);
   const livePrice =
     tee?.priceLabel ??
-    (isShopableStickerSlug(p.slug) && !comingSoon
-      ? formatStickerDualPriceStacked()
-      : checkoutPrice
+    (hybridStacked ??
+      (checkoutPrice
         ? formatInrPaise(checkoutPrice.priceMinor)
         : p.price !== null
           ? money(p.price)
           : p.credits !== null
             ? `${p.credits} credits`
-            : "Coming soon");
+            : "Coming soon"));
   return {
     id: p.id,
     slug: p.slug,
     name: p.name,
     priceLabel: livePrice,
-    dualStickerPrice: isShopableStickerSlug(p.slug) && !comingSoon,
+    dualStickerPrice: Boolean(hybridStacked),
     image: img?.src ?? "",
     alt: img?.alt ?? p.name,
     comingSoon,
@@ -540,9 +552,8 @@ function storefrontImagesForProduct(product: Product): SFGalleryImage[] {
 }
 
 function accessoryPriceLabel(product: Product): string {
-  if (isShopableStickerSlug(product.slug) && !isPurchaseLocked(product)) {
-    return formatStickerDualPriceStacked();
-  }
+  const hybridStacked = hybridStackedPriceLabel(product, isPurchaseLocked(product));
+  if (hybridStacked) return hybridStacked;
   const checkoutPrice = getProductPrice(product.slug);
   if (checkoutPrice) return formatInrPaise(checkoutPrice.priceMinor);
   if (product.price !== null) return money(product.price);
@@ -639,11 +650,11 @@ function StorefrontStickerProductPage({ product }: { product: Product }) {
       {
         slug: item.slug,
         name: item.name,
-        priceLabel: isShopableStickerSlug(item.slug)
-          ? formatStickerDualPriceStacked()
-          : relatedPrice
+        priceLabel:
+          hybridStackedPriceLabel(item, isPurchaseLocked(item)) ??
+          (relatedPrice
             ? formatInrPaise(relatedPrice.priceMinor)
-            : money(item.price),
+            : money(item.price)),
         image: relatedImg.src,
         imageAlt: relatedImg.alt,
         imageContain: true,

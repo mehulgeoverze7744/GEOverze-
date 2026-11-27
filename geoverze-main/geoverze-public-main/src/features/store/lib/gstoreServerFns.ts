@@ -33,13 +33,13 @@ import {
   computeShippingMinor,
   computeTaxMinor,
   computeOrderTotalMinor,
-  getStickerCreditPrice,
-  isGstoreStickerSlug,
+  isGstoreCreditsCheckoutSlug,
+  resolveGstoreCreditPrice,
 } from "./gstoreProductPrices";
 import {
-  STICKER_PAYMENT_CREDITS,
-  STICKER_PAYMENT_OPTION_KEY,
-} from "./stickerPricing";
+  GSTORE_PAYMENT_CREDITS,
+  GSTORE_PAYMENT_OPTION_KEY,
+} from "./gstoreDualPricing";
 import { computeMembershipDiscountMinor } from "./membershipDiscount";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -261,9 +261,9 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
 
     const validatedItems: ValidatedItem[] = [];
     for (const item of items) {
-      if (item.options?.[STICKER_PAYMENT_OPTION_KEY] === STICKER_PAYMENT_CREDITS) {
+      if (item.options?.[GSTORE_PAYMENT_OPTION_KEY] === GSTORE_PAYMENT_CREDITS) {
         throw new Error(
-          `Sticker ${item.slug} is set to pay with credits. Use the credits checkout flow.`,
+          `${item.slug} is set to pay with credits. Use the credits checkout flow.`,
         );
       }
       const product = getProductPrice(item.slug);
@@ -1330,16 +1330,16 @@ export const createGstoreCreditsOrderFn = createServerFn({ method: "POST" })
 
     for (const item of items) {
       const product = getProductPrice(item.slug);
-      if (!product || !isGstoreStickerSlug(item.slug)) {
-        throw new Error(`Credits checkout is only available for sticker collections: ${item.slug}`);
+      if (!product || !isGstoreCreditsCheckoutSlug(item.slug)) {
+        throw new Error(`Credits checkout is not available for: ${item.slug}`);
       }
       if (!isSlugAvailableForSale(item.slug, product.category)) {
         throw new Error(`Product not available: ${item.slug}`);
       }
-      if (item.options?.[STICKER_PAYMENT_OPTION_KEY] !== STICKER_PAYMENT_CREDITS) {
+      if (item.options?.[GSTORE_PAYMENT_OPTION_KEY] !== GSTORE_PAYMENT_CREDITS) {
         throw new Error(`Missing credits payment selection for ${item.slug}`);
       }
-      const unitCredits = product.creditPrice ?? getStickerCreditPrice(item.slug);
+      const unitCredits = resolveGstoreCreditPrice(item.slug);
       if (!unitCredits || unitCredits <= 0) {
         throw new Error(`Invalid credits price for ${item.slug}`);
       }
