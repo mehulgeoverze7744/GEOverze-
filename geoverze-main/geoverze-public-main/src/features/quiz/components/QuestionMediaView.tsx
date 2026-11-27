@@ -1,8 +1,6 @@
 import { Music, Video } from "lucide-react";
 
-import { quizThumbnailForId } from "@/features/play/data/quizThumbnails";
-
-import { isEmojiRebusMedia } from "../lib/emojiMedia";
+import { isEmojiFunQuizId, isEmojiRebusMedia } from "../lib/emojiMedia";
 import { resolveQuizArtKey } from "../lib/quizArt";
 import { resolveMapBoard } from "../lib/mapBoards";
 import { EmojiRebusView } from "./EmojiRebusView";
@@ -21,22 +19,14 @@ export function QuestionMediaView({
   quizId,
 }: {
   media: QuestionMedia;
-  /** Used for thematic supporting art on emoji quizzes (cover photo, non-spoiler). */
   quizId?: string;
 }) {
+  if (isEmojiFunQuizId(quizId) && (media.kind === "image" || media.kind === "illustration")) {
+    return null;
+  }
+
   if (isEmojiRebusMedia(media) && "glyph" in media) {
-    const explicit =
-      "art" in media && media.art ? resolveQuizArtKey(media.art) : null;
-    const cover =
-      explicit ??
-      (quizId?.startsWith("q-emo-") ? quizThumbnailForId(quizId)?.src ?? null : null);
-    return (
-      <EmojiRebusView
-        glyph={media.glyph}
-        caption={media.caption}
-        supportingImageSrc={cover}
-      />
-    );
+    return <EmojiRebusView glyph={media.glyph} caption={media.caption} />;
   }
 
   if (media.kind === "flag") {

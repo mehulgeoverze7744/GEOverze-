@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 
 import { parseEmojiRebusTokens } from "../lib/emojiMedia";
-import { QuizImage } from "./QuizImage";
 
 function isEmojiToken(token: string): boolean {
   return /[^\u0000-\u007f]/.test(token);
@@ -10,13 +9,10 @@ function isEmojiToken(token: string): boolean {
 export function EmojiRebusView({
   glyph,
   caption,
-  supportingImageSrc,
   className,
 }: {
   glyph: string;
   caption?: string;
-  /** Thematic quiz art — must not replace the emoji clue sequence. */
-  supportingImageSrc?: string | null;
   className?: string;
 }) {
   const tokens = parseEmojiRebusTokens(glyph);
@@ -24,7 +20,7 @@ export function EmojiRebusView({
   return (
     <figure className={cn("mx-auto w-full max-w-3xl space-y-4", className)}>
       <div
-        className="flex min-h-[10rem] w-full flex-wrap items-center justify-center gap-3 rounded-2xl border border-[#E2E8F0] bg-gradient-to-b from-[#FAFCFF] to-[#F1F5F9] px-4 py-8 sm:gap-4 sm:px-8"
+        className="flex min-h-[11rem] w-full flex-wrap items-center justify-center gap-3 rounded-2xl border border-[#E2E8F0] bg-gradient-to-b from-[#FAFCFF] to-[#F1F5F9] px-4 py-9 sm:min-h-[12rem] sm:gap-4 sm:px-8"
         role="img"
         aria-label={caption ?? "Emoji rebus clue"}
       >
@@ -53,14 +49,6 @@ export function EmojiRebusView({
         <figcaption className="text-center text-[0.75rem] leading-relaxed text-[#64748B]">
           {caption}
         </figcaption>
-      ) : null}
-      {supportingImageSrc ? (
-        <QuizImage
-          src={supportingImageSrc}
-          alt=""
-          className="opacity-[0.92]"
-          imgClassName="max-h-[12rem] object-cover"
-        />
       ) : null}
     </figure>
   );

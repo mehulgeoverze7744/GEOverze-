@@ -4,6 +4,11 @@ import { resolveFlagUrl } from "./flagImage.ts";
 const HAS_EXTENDED_CHAR = /[^\u0000-\u007f]/;
 const REBUS_SEP = /\s\+\s|\+/;
 
+/** Emoji Fun quiz sets from the play catalogue (`q-emo-*`). */
+export function isEmojiFunQuizId(quizId?: string): boolean {
+  return !!quizId?.startsWith("q-emo-");
+}
+
 /** Emoji/rebus clues stored as `kind: flag` in the seed — not ISO flags. */
 export function isEmojiRebusMedia(media: QuestionMedia): boolean {
   if (media.kind === "emoji") return true;

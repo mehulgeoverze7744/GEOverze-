@@ -58,15 +58,7 @@ export function StorefrontCategoryCards({
       <CategoryCard id="tshirts" name="Tees">
         {() => (
           <>
-            <span
-              aria-hidden="true"
-              className="absolute inset-0"
-              style={{
-                backgroundImage:
-                  "linear-gradient(231.17deg, rgb(2, 0, 34) 2.82%, rgb(6, 0, 97) 100%)",
-              }}
-            />
-            <span className="absolute inset-x-0 bottom-0 block h-[83.6%] overflow-hidden">
+            <span className="tees-banner absolute inset-0 overflow-hidden rounded-[inherit]">
               <img
                 src={SF_ASSETS.categoryTees.src}
                 width={SF_ASSETS.categoryTees.width}
@@ -74,18 +66,14 @@ export function StorefrontCategoryCards({
                 alt="GVRZE IGNITE T-shirt in Midnight Black — back view with orange 3D mesh artwork"
                 loading="lazy"
                 decoding="async"
-                className="h-full w-full object-cover object-[50%_42%] transition-transform duration-500 ease-out group-hover/cat:scale-[1.03] motion-reduce:transition-none"
+                className="block h-full w-full object-cover object-[center_38%] transition-transform duration-500 ease-out group-hover/cat:scale-[1.03] motion-reduce:transition-none"
               />
             </span>
-            <img
-              src={SF_ASSETS.shadowTees.src}
-              width={SF_ASSETS.shadowTees.width}
-              height={SF_ASSETS.shadowTees.height}
-              alt=""
-              aria-hidden="true"
-              className="pointer-events-none absolute left-[18%] top-[79%] w-[75%] -translate-x-1/2 -translate-y-1/2"
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-t from-black/55 via-black/20 to-transparent"
             />
-            <span className={cn(LABEL, "absolute bottom-[9.8%] left-[8%]")}>TEES</span>
+            <span className={cn(LABEL, "absolute bottom-[9.8%] left-[8%] z-[1]")}>TEES</span>
           </>
         )}
       </CategoryCard>
