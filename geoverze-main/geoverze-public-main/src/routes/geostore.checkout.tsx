@@ -28,6 +28,7 @@ export const Route = createFileRoute("/geostore/checkout")({
       Design: asSearchString(search["Design"]),
       CustomDesign: asSearchString(search["CustomDesign"]),
       Instructions: asSearchString(search["Instructions"]),
+      Payment: asSearchString(search["Payment"]),
     };
   },
   head: () => ({

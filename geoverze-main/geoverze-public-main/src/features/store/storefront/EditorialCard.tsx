@@ -18,6 +18,8 @@ export type EditorialItem = {
   name: string;
   /** Pre-formatted price string e.g. "$37" or "300 credits". */
   priceLabel: string;
+  /** Sticker collections — stack ₹ / OR / Credits on product cards. */
+  dualStickerPrice?: boolean;
   /** Resolved image `src` (imported asset URL or public path). Empty string → no image. */
   image: string;
   alt: string;
@@ -92,7 +94,11 @@ export function EditorialCard({ item, onAdd, className }: EditorialCardProps) {
       <div className="relative z-[3] flex h-[4.75rem] shrink-0 items-center justify-between gap-1.5 bg-[#ffffff] px-2.5 py-2 sm:h-[4.25rem] sm:gap-3 sm:px-4 sm:py-3">
         <div className="min-w-0 flex-1">
           <p className="truncate text-[13px] font-semibold leading-tight text-[#111111] sm:text-sm">{item.name}</p>
-          <StorefrontCardPrice>{item.priceLabel}</StorefrontCardPrice>
+          <StorefrontCardPrice
+            className={item.dualStickerPrice ? "whitespace-pre-line leading-snug" : undefined}
+          >
+            {item.priceLabel}
+          </StorefrontCardPrice>
         </div>
 
         {onAdd && !item.comingSoon ? (

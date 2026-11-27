@@ -11,6 +11,7 @@ import {
   GSTORE_BASICS_TEE_PRICE_MINOR,
   GSTORE_GST_RATE,
   GSTORE_PRIME_TEE_PRICE_MINOR,
+  GSTORE_STICKER_CREDITS,
 } from "./gstoreProductPrices.ts";
 
 const PRIME_SIGNATURE_SLUGS = [
@@ -77,6 +78,7 @@ test("sticker collections are ₹150 GST-inclusive", () => {
     const row = getProductPrice(slug);
     assert.ok(row, slug);
     assert.equal(row.priceMinor, 15_000);
+    assert.equal(row.creditPrice, GSTORE_STICKER_CREDITS);
     assert.equal(row.physical, true);
     assert.equal(row.category, "accessories");
     assert.equal(staticPresentationPriceMinor(slug, 99_999), 15_000);

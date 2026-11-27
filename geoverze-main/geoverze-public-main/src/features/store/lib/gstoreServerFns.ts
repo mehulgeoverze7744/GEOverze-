@@ -33,7 +33,13 @@ import {
   computeShippingMinor,
   computeTaxMinor,
   computeOrderTotalMinor,
+  getStickerCreditPrice,
+  isGstoreStickerSlug,
 } from "./gstoreProductPrices";
+import {
+  STICKER_PAYMENT_CREDITS,
+  STICKER_PAYMENT_OPTION_KEY,
+} from "./stickerPricing";
 import { computeMembershipDiscountMinor } from "./membershipDiscount";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -255,6 +261,11 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
 
     const validatedItems: ValidatedItem[] = [];
     for (const item of items) {
+      if (item.options?.[STICKER_PAYMENT_OPTION_KEY] === STICKER_PAYMENT_CREDITS) {
+        throw new Error(
+          `Sticker ${item.slug} is set to pay with credits. Use the credits checkout flow.`,
+        );
+      }
       const product = getProductPrice(item.slug);
       if (!product || !isSlugAvailableForSale(item.slug, product.category)) {
         throw new Error(`Product not found or not available: ${item.slug}`);
@@ -1290,5 +1301,97 @@ export const retryGstorePaymentFn = createServerFn({ method: "POST" })
       rzp_order_id: placed.rzpOrderId,
       rzp_key_id: placed.rzpKeyId,
       total_minor: Number(row.total_minor),
+    };
+  });
+
+// ── createGstoreCreditsOrderFn ────────────────────────────────────────────────
+//
+// Sticker collections paid with GVRZE Credits (not Razorpay).
+// Server validates slugs, credit amounts, and calls create_gstore_credits_order.
+
+const CreateCreditsOrderSchema = CreateOrderSchema;
+
+export type CreateGstoreCreditsOrderResult = {
+  order_id: string;
+  order_number: string;
+  credits_total: number;
+  new_balance: number;
+  idempotent: boolean;
+};
+
+export const createGstoreCreditsOrderFn = createServerFn({ method: "POST" })
+  .validator((raw: unknown) => CreateCreditsOrderSchema.parse(raw))
+  .handler(async ({ data }): Promise<CreateGstoreCreditsOrderResult> => {
+    const { access_token, items, details, idempotency_key } = data;
+    assertRateLimit(`gstore-credits-create:${access_token.slice(-24)}`, 10, 60_000);
+
+    let creditsTotal = 0;
+    const pItems: Array<Record<string, unknown>> = [];
+
+    for (const item of items) {
+      const product = getProductPrice(item.slug);
+      if (!product || !isGstoreStickerSlug(item.slug)) {
+        throw new Error(`Credits checkout is only available for sticker collections: ${item.slug}`);
+      }
+      if (!isSlugAvailableForSale(item.slug, product.category)) {
+        throw new Error(`Product not available: ${item.slug}`);
+      }
+      if (item.options?.[STICKER_PAYMENT_OPTION_KEY] !== STICKER_PAYMENT_CREDITS) {
+        throw new Error(`Missing credits payment selection for ${item.slug}`);
+      }
+      const unitCredits = product.creditPrice ?? getStickerCreditPrice(item.slug);
+      if (!unitCredits || unitCredits <= 0) {
+        throw new Error(`Invalid credits price for ${item.slug}`);
+      }
+      const lineCredits = unitCredits * item.quantity;
+      creditsTotal += lineCredits;
+      pItems.push({
+        product_id: item.slug,
+        product_name: product.name,
+        product_slug: item.slug,
+        sku: item.slug,
+        category: product.category,
+        options: item.options,
+        quantity: item.quantity,
+        unit_credits: unitCredits,
+        line_credits: lineCredits,
+      });
+    }
+
+    const sb = makeSupabaseClient(access_token);
+
+    const { data: rpcResult, error: rpcError } = await sb.rpc("create_gstore_credits_order", {
+      p_customer_name: details.customerName,
+      p_customer_email: details.customerEmail,
+      p_customer_phone: details.customerPhone,
+      p_shipping_name: details.shippingName,
+      p_shipping_line1: details.shippingLine1,
+      p_shipping_line2: details.shippingLine2 ?? "",
+      p_shipping_city: details.shippingCity,
+      p_shipping_state: details.shippingState,
+      p_shipping_pincode: details.shippingPincode,
+      p_shipping_country: details.shippingCountry ?? "India",
+      p_delivery_notes: details.deliveryNotes ?? "",
+      p_shipping_method: details.shippingMethod ?? "standard",
+      p_items: pItems,
+      p_idempotency_key: idempotency_key,
+      p_credits_total: creditsTotal,
+    });
+
+    if (rpcError) {
+      const msg = rpcError.message ?? "Credits checkout failed";
+      if (msg.toLowerCase().includes("insufficient credit")) {
+        throw new Error("Insufficient GVRZE credits for this order.");
+      }
+      throw new Error(msg);
+    }
+
+    const row = rpcResult as Record<string, unknown>;
+    return {
+      order_id: String(row["order_id"] ?? ""),
+      order_number: String(row["order_number"] ?? ""),
+      credits_total: Number(row["credits_total"] ?? creditsTotal),
+      new_balance: Number(row["new_balance"] ?? 0),
+      idempotent: Boolean(row["idempotent"]),
     };
   });

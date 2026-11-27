@@ -9,6 +9,11 @@ import { isPurchaseLocked, type Product } from "../data/products";
 import { cartLineIdForProduct, defaultOptions, toCartLine } from "./cart";
 import { resolveStoreProduct } from "./resolveStoreProduct";
 import { isProductionRewardSlug } from "./rewards";
+import {
+  isShopableStickerSlug,
+  type StickerPaymentMethod,
+  toStickerCartLine,
+} from "./stickerPricing";
 
 export function useStoreActions() {
   const add = useCartStore((s) => s.add);
@@ -17,7 +22,12 @@ export function useStoreActions() {
   const wishlist = useStoreStore((s) => s.wishlist);
   const navigate = useNavigate();
 
-  const addProduct = (product: Product, options?: Record<string, string>, quantity = 1) => {
+  const addProduct = (
+    product: Product,
+    options?: Record<string, string>,
+    quantity = 1,
+    stickerPayment?: StickerPaymentMethod,
+  ) => {
     if (isPurchaseLocked(product)) {
       toast.message("Coming soon", {
         description: `${product.name} isn’t available to purchase yet.`,
@@ -42,10 +52,27 @@ export function useStoreActions() {
       return;
     }
 
-    add(toCartLine(product, options ?? defaultOptions(product), quantity));
+    const line =
+      isShopableStickerSlug(product.slug) || product.category === "stickers"
+        ? toStickerCartLine(
+            product,
+            options ?? defaultOptions(product),
+            quantity,
+            stickerPayment ?? "inr",
+          )
+        : toCartLine(product, options ?? defaultOptions(product), quantity);
+
+    add(line);
+  const paymentNote =
+    line.unitAmount === null
+      ? "Ready to checkout with credits."
+      : stickerPayment === "credits"
+        ? "Ready to checkout with credits."
+        : product.price === null
+          ? "Ready to claim with credits."
+          : "Waiting in your cart.";
     toast.success(`${product.name} added`, {
-      description:
-        product.price === null ? "Ready to claim with credits." : "Waiting in your cart.",
+      description: paymentNote,
       action: { label: "View cart", onClick: () => void navigate({ to: "/geostore/cart" }) },
     });
   };

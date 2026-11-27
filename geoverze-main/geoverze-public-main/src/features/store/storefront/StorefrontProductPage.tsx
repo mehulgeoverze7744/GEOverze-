@@ -38,7 +38,15 @@ import {
   tshirtSizesFrom,
 } from "./sizeGuide";
 import { StorefrontProductPriceRow } from "./StorefrontProductPriceRow";
+import { StickerPaymentSelector } from "./StickerPaymentSelector";
 import { SF_SHELL, SF_UI_FONT, StorefrontCardPrice } from "./storefront-ui";
+import { useStoreCreditsState } from "../lib/useStoreCredits";
+import {
+  formatStickerPdpPriceLabel,
+  GSTORE_STICKER_CREDITS,
+  isShopableStickerSlug,
+  type StickerPaymentMethod,
+} from "../lib/stickerPricing";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -379,6 +387,9 @@ export function StorefrontProductPage({
   );
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [stickerPayment, setStickerPayment] = useState<StickerPaymentMethod>("inr");
+  const dualStickerPricing = isShopableStickerSlug(slug) && !comingSoon;
+  const { balance, signedIn, authReady } = useStoreCreditsState();
   const [activeTab, setActiveTab] = useState<Tab>("description");
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const thumbsRef = useRef<HTMLDivElement>(null);
@@ -404,6 +415,7 @@ export function StorefrontProductPage({
     setSelectedColorId(colorPickerColors?.[0]?.id ?? null);
     setSelectedSize(null);
     setQuantity(1);
+    setStickerPayment("inr");
     setActiveTab("description");
     setSizeGuideOpen(false);
     // Reset only when the product route changes — not when the colours array
@@ -539,7 +551,7 @@ export function StorefrontProductPage({
       colorPickerColors?.find((entry) => entry.id === selectedColorId)?.label ??
       defaultColourLabel;
     if (colorLabel) options["Colour"] = colorLabel;
-    addProduct(product, options, quantity);
+    addProduct(product, options, quantity, dualStickerPricing ? stickerPayment : undefined);
   }
 
   function handleBuyNow() {
@@ -557,6 +569,8 @@ export function StorefrontProductPage({
         qty: String(quantity),
         Size: selectedSize ?? undefined,
         Colour: colorLabel,
+        Payment:
+          dualStickerPricing && stickerPayment === "credits" ? "Credits" : undefined,
         Design: undefined,
         CustomDesign: undefined,
         Instructions: undefined,
@@ -734,8 +748,26 @@ export function StorefrontProductPage({
                 </button>
               </div>
 
-              <StorefrontProductPriceRow priceLabel={priceLabel} showProBadge={!comingSoon} />
-              <MemberDiscountHint />
+              {dualStickerPricing ? (
+                <>
+                  <StorefrontProductPriceRow
+                    priceLabel={formatStickerPdpPriceLabel()}
+                    showProBadge
+                  />
+                  <StickerPaymentSelector
+                    method={stickerPayment}
+                    onChange={setStickerPayment}
+                    credits={GSTORE_STICKER_CREDITS}
+                    balance={balance}
+                    signedIn={signedIn}
+                    authReady={authReady}
+                  />
+                </>
+              ) : (
+                <StorefrontProductPriceRow priceLabel={priceLabel} showProBadge={!comingSoon} />
+              )}
+              {!dualStickerPricing ? <MemberDiscountHint /> : null}
+              {dualStickerPricing && stickerPayment === "inr" ? <MemberDiscountHint /> : null}
               {comingSoon ? (
                 <p className={`mt-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-black/40 ${SF_UI_FONT}`}>
                   Coming soon

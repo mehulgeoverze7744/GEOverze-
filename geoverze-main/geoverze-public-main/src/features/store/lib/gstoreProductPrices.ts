@@ -24,6 +24,26 @@ export const GSTORE_PRIME_TEE_CREDITS = 499;
 export const GSTORE_BASICS_TEE_PRICE_MINOR = 269_900; // ₹2,699
 export const GSTORE_BASICS_TEE_CREDITS = 449;
 
+/** Live sticker collections — flat MRP / alternate credits price. */
+export const GSTORE_STICKER_PRICE_MINOR = 15_000; // ₹150
+export const GSTORE_STICKER_CREDITS = 150;
+
+export const GSTORE_STICKER_SLUGS = [
+  "different-by-default",
+  "off-the-map",
+  "main-character-energy",
+  "the-random-archive",
+] as const;
+
+export function isGstoreStickerSlug(slug: string): boolean {
+  return (GSTORE_STICKER_SLUGS as readonly string[]).includes(slug);
+}
+
+export function getStickerCreditPrice(slug: string): number | null {
+  if (!isGstoreStickerSlug(slug)) return null;
+  return GSTORE_STICKER_CREDITS;
+}
+
 /** @deprecated Use collection-specific constants. */
 export const GSTORE_STANDARD_TEE_PRICE_MINOR = GSTORE_BASICS_TEE_PRICE_MINOR;
 /** @deprecated Use collection-specific constants. */
@@ -61,6 +81,8 @@ export type GstoreProductPrice = {
   name: string;
   /** Price in INR paise (₹1 = 100 paise). */
   priceMinor: number;
+  /** Whole GVRZE credits when hybrid sticker pricing applies. */
+  creditPrice?: number;
   /** Whether the product requires shipping (physical). */
   physical: boolean;
   /** Category for shipping calculation. */
@@ -260,28 +282,32 @@ export const GSTORE_PRODUCT_PRICES: Record<string, GstoreProductPrice> = {
   "different-by-default": {
     slug: "different-by-default",
     name: "DIFFERENT BY DEFAULT",
-    priceMinor: 15_000, // ₹150
+    priceMinor: GSTORE_STICKER_PRICE_MINOR,
+    creditPrice: GSTORE_STICKER_CREDITS,
     physical: true,
     category: "accessories",
   },
   "off-the-map": {
     slug: "off-the-map",
     name: "OFF THE MAP",
-    priceMinor: 15_000, // ₹150
+    priceMinor: GSTORE_STICKER_PRICE_MINOR,
+    creditPrice: GSTORE_STICKER_CREDITS,
     physical: true,
     category: "accessories",
   },
   "main-character-energy": {
     slug: "main-character-energy",
     name: "MAIN CHARACTER ENERGY",
-    priceMinor: 15_000, // ₹150
+    priceMinor: GSTORE_STICKER_PRICE_MINOR,
+    creditPrice: GSTORE_STICKER_CREDITS,
     physical: true,
     category: "accessories",
   },
   "the-random-archive": {
     slug: "the-random-archive",
     name: "THE RANDOM ARCHIVE",
-    priceMinor: 15_000, // ₹150
+    priceMinor: GSTORE_STICKER_PRICE_MINOR,
+    creditPrice: GSTORE_STICKER_CREDITS,
     physical: true,
     category: "accessories",
   },

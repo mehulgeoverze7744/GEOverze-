@@ -83,6 +83,10 @@ import { filterProducts, sortProducts } from "../lib/filter";
 import { defaultOptions } from "../lib/cart";
 import { money } from "../lib/format";
 import { formatInrPaise, getProductPrice } from "../lib/gstoreProductPrices";
+import {
+  formatStickerDualPriceStacked,
+  isShopableStickerSlug,
+} from "../lib/stickerPricing";
 import { resolveStoreProduct } from "../lib/resolveStoreProduct";
 import { useStoreActions } from "../lib/useStoreActions";
 import { globeGalleryExtras } from "../data/globeGalleries";
@@ -127,18 +131,21 @@ function productToEditorial(p: Product): EditorialItem {
   const comingSoon = isPurchaseLocked(p);
   const livePrice =
     tee?.priceLabel ??
-    (checkoutPrice
-      ? formatInrPaise(checkoutPrice.priceMinor)
-      : p.price !== null
-        ? money(p.price)
-        : p.credits !== null
-          ? `${p.credits} credits`
-          : "Coming soon");
+    (isShopableStickerSlug(p.slug) && !comingSoon
+      ? formatStickerDualPriceStacked()
+      : checkoutPrice
+        ? formatInrPaise(checkoutPrice.priceMinor)
+        : p.price !== null
+          ? money(p.price)
+          : p.credits !== null
+            ? `${p.credits} credits`
+            : "Coming soon");
   return {
     id: p.id,
     slug: p.slug,
     name: p.name,
     priceLabel: livePrice,
+    dualStickerPrice: isShopableStickerSlug(p.slug) && !comingSoon,
     image: img?.src ?? "",
     alt: img?.alt ?? p.name,
     comingSoon,
@@ -533,6 +540,9 @@ function storefrontImagesForProduct(product: Product): SFGalleryImage[] {
 }
 
 function accessoryPriceLabel(product: Product): string {
+  if (isShopableStickerSlug(product.slug) && !isPurchaseLocked(product)) {
+    return formatStickerDualPriceStacked();
+  }
   const checkoutPrice = getProductPrice(product.slug);
   if (checkoutPrice) return formatInrPaise(checkoutPrice.priceMinor);
   if (product.price !== null) return money(product.price);
@@ -629,7 +639,11 @@ function StorefrontStickerProductPage({ product }: { product: Product }) {
       {
         slug: item.slug,
         name: item.name,
-        priceLabel: relatedPrice ? formatInrPaise(relatedPrice.priceMinor) : money(item.price),
+        priceLabel: isShopableStickerSlug(item.slug)
+          ? formatStickerDualPriceStacked()
+          : relatedPrice
+            ? formatInrPaise(relatedPrice.priceMinor)
+            : money(item.price),
         image: relatedImg.src,
         imageAlt: relatedImg.alt,
         imageContain: true,

@@ -60,6 +60,7 @@ import {
 
 import {
   createGstoreOrderFn,
+  createGstoreCreditsOrderFn,
   createGstoreGuestOrderFn,
   verifyGstorePaymentFn,
   verifyGstoreGuestPaymentFn,
@@ -85,6 +86,16 @@ import { isSlugAvailableForSale } from "../data/catalogAvailability";
 import { productImageForSlug } from "../data/productImages";
 import { checkoutSizeForProduct } from "../storefront/sizeGuide";
 import { MockPaymentGateway } from "../components/MockPaymentGateway";
+import {
+  STICKER_PAYMENT_CREDITS,
+  STICKER_PAYMENT_OPTION_KEY,
+  assertHomogeneousGstoreCheckout,
+  creditsDueForStickerLines,
+  isStickerCreditsCartLine,
+} from "../lib/stickerPricing";
+import { useStoreCreditsState } from "../lib/useStoreCredits";
+import { refreshProgression } from "@/lib/supabase/auth-sync";
+import { useProgressionStore } from "@/stores/progressionStore";
 
 // ── India-specific validation helpers ────────────────────────────────────────
 
@@ -204,6 +215,7 @@ export function GstoreCheckoutScreen() {
   const { gstoreDiscountBps } = useEntitlements();
 
   const search = useSearch({ from: "/geostore/checkout" });
+  const { balance, signedIn } = useStoreCreditsState();
 
   const cartLines = useCartStore(s => s.lines);
   const clearCart = useCartStore(s => s.clear);
@@ -254,6 +266,9 @@ export function GstoreCheckoutScreen() {
           ...(search.Design ? { Design: search.Design } : {}),
           ...(search.CustomDesign ? { "Custom Design": search.CustomDesign } : {}),
           ...(search.Instructions ? { Instructions: search.Instructions } : {}),
+          ...(search.Payment === STICKER_PAYMENT_CREDITS
+            ? { [STICKER_PAYMENT_OPTION_KEY]: STICKER_PAYMENT_CREDITS }
+            : {}),
         },
       }]
     : cartLines.map(l => ({
@@ -266,27 +281,54 @@ export function GstoreCheckoutScreen() {
     return Boolean(priced && isSlugAvailableForSale(item.slug, priced.category));
   });
 
+  let mixedPaymentError: string | null = null;
+  if (!isBuyNow && cartLines.length > 0) {
+    try {
+      assertHomogeneousGstoreCheckout(cartLines);
+    } catch (err) {
+      mixedPaymentError = err instanceof Error ? err.message : "Mixed payment methods in cart.";
+    }
+  }
+
+  const creditsCheckout =
+    !mixedPaymentError &&
+    (isBuyNow
+      ? search.Payment === STICKER_PAYMENT_CREDITS
+      : cartLines.length > 0 && cartLines.every((line) => isStickerCreditsCartLine(line)));
+
+  const creditsDue = creditsCheckout
+    ? isBuyNow
+      ? (getProductPrice(search.slug!)?.creditPrice ?? 150) * buyNowQty
+      : creditsDueForStickerLines(cartLines)
+    : 0;
+
   // Price computation (client-side preview only — server recomputes for real)
   const hasPhysical = checkoutItems.some(item => {
     const p = getProductPrice(item.slug);
     return p?.physical ?? true;
   });
 
-  const subtotalMinor = checkoutItems.reduce((acc, item) => {
-    const p = getProductPrice(item.slug);
-    return acc + (p ? p.priceMinor * item.quantity : 0);
-  }, 0);
+  const subtotalMinor = creditsCheckout
+    ? 0
+    : checkoutItems.reduce((acc, item) => {
+        const p = getProductPrice(item.slug);
+        return acc + (p ? p.priceMinor * item.quantity : 0);
+      }, 0);
 
   // Product prices are GST-inclusive MRPs.
   // taxMinor = GST extracted from the inclusive subtotal (display/reporting only).
   // totalMinor = inclusive subtotal + shipping — GST is NOT added again.
-  const shippingMinor = computeShippingMinor(shippingMethod, subtotalMinor, hasPhysical);
+  const shippingMinor = creditsCheckout
+    ? 0
+    : computeShippingMinor(shippingMethod, subtotalMinor, hasPhysical);
   const discountMinor = user
     ? computeMembershipDiscountMinor(subtotalMinor, gstoreDiscountBps)
     : 0;
   const discountedSubtotal = Math.max(0, subtotalMinor - discountMinor);
   const taxMinor      = computeTaxMinor(discountedSubtotal, shippingMinor); // extracted, not added
-  const totalMinor    = computeOrderTotalMinor(subtotalMinor, shippingMinor, discountMinor);
+  const totalMinor = creditsCheckout
+    ? 0
+    : computeOrderTotalMinor(subtotalMinor, shippingMinor, discountMinor);
 
   // Status state
   const [status, setStatus]     = useState<"idle" | "creating" | "paying" | "verifying" | "done" | "failed" | "cancelled">("idle");
@@ -310,6 +352,25 @@ export function GstoreCheckoutScreen() {
       (l) => l.slug === item.slug && JSON.stringify(l.options) === JSON.stringify(item.options),
     );
     if (line) setCartQuantity(line.id, qty);
+  }
+
+  if (mixedPaymentError) {
+    return (
+      <div id="gvrze-storefront" className="gvrze-storefront-checkout min-h-screen bg-[#F3F4F6]">
+        <StorefrontNav variant="solid" />
+        <div className="mx-auto max-w-lg px-4 py-20 text-center">
+          <AlertCircle className="mx-auto h-10 w-10 text-amber-600" />
+          <h2 className="mt-4 text-xl font-bold text-[#111827]">Separate your payment methods</h2>
+          <p className="mt-2 text-sm text-[#6B7280]">{mixedPaymentError}</p>
+          <Link
+            to="/geostore/cart"
+            className="mt-6 inline-flex rounded-xl bg-[#111827] px-6 py-3 text-sm font-semibold text-white"
+          >
+            Back to cart
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   if (checkoutItems.length === 0) return <EmptyCartState />;
@@ -461,9 +522,77 @@ export function GstoreCheckoutScreen() {
 
   // ── Handle checkout submit ──────────────────────────────────────────────────
 
+  async function handleCreditsCheckout() {
+    if (inflight.current) return;
+    if (!validate()) {
+      toast.error("Please fix the form errors above.");
+      return;
+    }
+    if (!user || guestMode) {
+      toast.error("Sign in required", {
+        description: "Credits checkout is available for signed-in explorers only.",
+      });
+      return;
+    }
+    if (balance !== null && balance < creditsDue) {
+      toast.error("Not enough credits", {
+        description: `You need ${creditsDue} credits for this order.`,
+      });
+      return;
+    }
+
+    inflight.current = true;
+    setStatus("creating");
+    setErrorMsg(null);
+    const details = buildDetails();
+
+    try {
+      const {
+        data: { session: authSession },
+      } = await supabase.auth.getSession();
+      if (!authSession?.access_token) {
+        throw new Error("Session expired — please sign in again.");
+      }
+
+      const result = await createGstoreCreditsOrderFn({
+        data: {
+          items: checkoutItems,
+          details,
+          access_token: authSession.access_token,
+          idempotency_key: idempotencyKey.current,
+        },
+      });
+
+      const player = useProgressionStore.getState().player;
+      useProgressionStore.getState().setPlayer({
+        ...player,
+        credits: result.new_balance,
+      });
+      void refreshProgression(user.id);
+
+      if (!isBuyNow) clearCart();
+      setStatus("done");
+      toast.success("Order placed with credits", {
+        description: `${result.credits_total} credits spent`,
+      });
+      navToConfirmation(result.order_id, result.order_number);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Credits checkout failed";
+      setStatus("failed");
+      setErrorMsg(msg);
+      toast.error(msg);
+    } finally {
+      inflight.current = false;
+    }
+  }
+
   async function handleCheckout() {
     if (inflight.current) return;
     if (!validate()) { toast.error("Please fix the form errors above."); return; }
+    if (creditsCheckout) {
+      void handleCreditsCheckout();
+      return;
+    }
     inflight.current = true;
 
     const isGuest = !user || guestMode;
@@ -537,6 +666,10 @@ export function GstoreCheckoutScreen() {
   async function handleCheckoutWithMockCapture() {
     if (inflight.current) return;
     if (!validate()) { toast.error("Please fix the form errors above."); return; }
+    if (creditsCheckout) {
+      void handleCreditsCheckout();
+      return;
+    }
     inflight.current = true;
 
     const isGuest = !user || guestMode;
@@ -1197,7 +1330,16 @@ export function GstoreCheckoutScreen() {
             {/* ── Payment method info ── */}
             {(status === "idle" || status === "failed" || status === "cancelled") && (
               <div className="mb-5">
-                {mockEnabled ? (
+                {creditsCheckout ? (
+                  <div className="rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-3 space-y-1">
+                    <p className="text-sm font-medium text-[#111827]">Pay with GVRZE Credits</p>
+                    <p className="text-sm text-[#6B7280]">
+                      {signedIn && balance !== null
+                        ? `Balance: ${balance} credits · Due: ${creditsDue}`
+                        : "Sign in to complete credits checkout."}
+                    </p>
+                  </div>
+                ) : mockEnabled ? (
                   <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 space-y-1.5">
                     <div className="flex items-center gap-2">
                       <FlaskConical className="w-4 h-4 text-amber-600 flex-shrink-0" />
@@ -1235,7 +1377,7 @@ export function GstoreCheckoutScreen() {
             {/* ── Pay button ── */}
             {(status === "idle" || status === "failed" || status === "cancelled") &&
               !configLoading &&
-              (mockEnabled || rzpConfigured) && (
+              (mockEnabled || rzpConfigured || creditsCheckout) && (
                 <button
                   type="button"
                   onClick={() => void handleCheckoutWithMockCapture()}
@@ -1247,7 +1389,9 @@ export function GstoreCheckoutScreen() {
                   ) : (
                     <>
                       <Lock className="w-4 h-4" />
-                      Pay {formatInrPaise(totalMinor)} with Razorpay
+                      {creditsCheckout
+                        ? `Place order · ${creditsDue} credits`
+                        : `Pay ${formatInrPaise(totalMinor)} with Razorpay`}
                     </>
                   )}
                 </button>
@@ -1305,7 +1449,11 @@ export function GstoreCheckoutScreen() {
               {checkoutItems.map((item, i) => {
                 const p   = getProductPrice(item.slug);
                 const img = productImageForSlug(item.slug);
-                const lineTotal = p ? p.priceMinor * item.quantity : 0;
+                const lineTotal = creditsCheckout
+                  ? (p?.creditPrice ?? 150) * item.quantity
+                  : p
+                    ? p.priceMinor * item.quantity
+                    : 0;
 
                 return (
                   <div key={i} className="flex items-start gap-3">
@@ -1362,7 +1510,7 @@ export function GstoreCheckoutScreen() {
 
                     {/* Line price */}
                     <span className="text-sm font-semibold text-[#111827] flex-shrink-0">
-                      {formatInrPaise(lineTotal)}
+                      {creditsCheckout ? `${lineTotal} credits` : formatInrPaise(lineTotal)}
                     </span>
                   </div>
                 );
@@ -1375,7 +1523,9 @@ export function GstoreCheckoutScreen() {
             <div className="space-y-2.5 text-sm mb-5">
               <div className="flex justify-between">
                 <span className="text-[#6B7280]">Subtotal</span>
-                <span className="text-[#374151] font-medium">{formatInrPaise(subtotalMinor)}</span>
+                <span className="text-[#374151] font-medium">
+                  {creditsCheckout ? `${creditsDue} credits` : formatInrPaise(subtotalMinor)}
+                </span>
               </div>
               {discountMinor > 0 ? (
                 <div className="flex justify-between">
