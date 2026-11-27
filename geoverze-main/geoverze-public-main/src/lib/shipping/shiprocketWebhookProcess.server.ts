@@ -11,6 +11,7 @@ import { isActiveShipmentStatus } from "./shipmentEligibility.ts";
 import {
   primaryTrackingStatus,
   resolveShipmentLookup,
+  shiprocketWebhookString,
   type ShiprocketWebhookEnvelope,
 } from "./shiprocketWebhookPayload.server.ts";
 
@@ -48,7 +49,7 @@ export function resolveProviderEventId(
   envelope: ShiprocketWebhookEnvelope,
   rawBody: string,
 ): string {
-  const awb = envelope.awb ?? "";
+  const awb = shiprocketWebhookString(envelope.awb);
   const status = primaryTrackingStatus(envelope) ?? "";
   const scan = envelope.scans?.[0];
   const stamp = scan?.date ?? "";
@@ -100,7 +101,7 @@ export async function processShiprocketWebhook(
   const providerEventId = resolveProviderEventId(envelope, rawBody);
   const mappedStatus = mapShiprocketStatusToShipmentStatus(trackingStatus);
   const lastEvent = envelope.scans?.[0]?.activity ?? trackingStatus ?? null;
-  const awb = envelope.awb?.trim();
+  const awb = shiprocketWebhookString(envelope.awb);
 
   const { error: insertErr } = await client.from("gstore_shipment_events").insert({
     shipment_id: shipment.id,

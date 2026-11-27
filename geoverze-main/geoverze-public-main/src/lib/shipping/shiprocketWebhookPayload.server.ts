@@ -3,8 +3,14 @@
  * @see https://apidocs.shiprocket.in/
  */
 
+/** Shiprocket JSON may send numeric AWB codes; always coerce before string ops. */
+export function shiprocketWebhookString(value: unknown): string {
+  if (value == null) return "";
+  return String(value).trim();
+}
+
 export type ShiprocketWebhookEnvelope = {
-  awb?: string;
+  awb?: string | number;
   shipment_id?: string | number;
   sr_order_id?: string | number;
   order_id?: string;
@@ -43,8 +49,8 @@ export const SHIPROCKET_OFFICIAL_DOC_DEMO_IDENTIFIERS = {
 export function isShiprocketOfficialDocumentationDemoPayload(
   envelope: ShiprocketWebhookEnvelope,
 ): boolean {
-  const awb = envelope.awb?.trim();
-  const orderId = envelope.order_id?.trim();
+  const awb = shiprocketWebhookString(envelope.awb);
+  const orderId = shiprocketWebhookString(envelope.order_id);
   const srOrderId = envelope.sr_order_id != null ? String(envelope.sr_order_id).trim() : "";
   return (
     awb === SHIPROCKET_OFFICIAL_DOC_DEMO_IDENTIFIERS.awb &&
@@ -73,13 +79,13 @@ export const SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS = {
 export function isShiprocketDownloadedDocumentationSamplePayload(
   envelope: ShiprocketWebhookEnvelope,
 ): boolean {
-  const awb = envelope.awb != null ? String(envelope.awb).trim() : "";
-  const orderId = envelope.order_id?.trim() ?? "";
-  const currentStatus = envelope.current_status?.trim() ?? "";
-  const shipmentStatus = envelope.shipment_status?.trim() ?? "";
-  const channelOrderId = envelope.channel_order_id?.trim() ?? "";
-  const channel = envelope.channel?.trim() ?? "";
-  const courierName = envelope.courier_name?.trim() ?? "";
+  const awb = shiprocketWebhookString(envelope.awb);
+  const orderId = shiprocketWebhookString(envelope.order_id);
+  const currentStatus = shiprocketWebhookString(envelope.current_status);
+  const shipmentStatus = shiprocketWebhookString(envelope.shipment_status);
+  const channelOrderId = shiprocketWebhookString(envelope.channel_order_id);
+  const channel = shiprocketWebhookString(envelope.channel);
+  const courierName = shiprocketWebhookString(envelope.courier_name);
   const scans = envelope.scans;
 
   return (
@@ -100,10 +106,11 @@ export function isShiprocketDownloadedDocumentationSamplePayload(
 
 /** Authenticated connectivity probes that must not touch the database. */
 export function isShiprocketConnectivityProbe(envelope: ShiprocketWebhookEnvelope): boolean {
+  // Evaluate strict doc samples before generic test routing (numeric awb must not throw in routing helpers).
   return (
-    isShiprocketWebhookTestPayload(envelope) ||
+    isShiprocketDownloadedDocumentationSamplePayload(envelope) ||
     isShiprocketOfficialDocumentationDemoPayload(envelope) ||
-    isShiprocketDownloadedDocumentationSamplePayload(envelope)
+    isShiprocketWebhookTestPayload(envelope)
   );
 }
 
@@ -125,9 +132,9 @@ export function isShiprocketWebhookTestPayload(envelope: ShiprocketWebhookEnvelo
 
 export function shipmentRoutingFields(envelope: ShiprocketWebhookEnvelope): string[] {
   const fields: string[] = [];
-  if (envelope.awb?.trim()) fields.push("awb");
-  if (envelope.order_id?.trim()) fields.push("order_id");
-  if (envelope.channel_order_id?.trim()) fields.push("channel_order_id");
+  if (shiprocketWebhookString(envelope.awb)) fields.push("awb");
+  if (shiprocketWebhookString(envelope.order_id)) fields.push("order_id");
+  if (shiprocketWebhookString(envelope.channel_order_id)) fields.push("channel_order_id");
   if (envelope.sr_order_id != null && String(envelope.sr_order_id).trim()) fields.push("sr_order_id");
   if (envelope.shipment_id != null && String(envelope.shipment_id).trim()) fields.push("shipment_id");
   return fields;
@@ -140,7 +147,7 @@ export type ShipmentLookup =
   | { kind: "gstore_order_id"; value: string };
 
 export function resolveShipmentLookup(envelope: ShiprocketWebhookEnvelope): ShipmentLookup | null {
-  const awb = envelope.awb?.trim();
+  const awb = shiprocketWebhookString(envelope.awb);
   if (awb) return { kind: "awb", value: awb };
 
   const srOrder = envelope.sr_order_id != null ? String(envelope.sr_order_id).trim() : "";
@@ -148,8 +155,8 @@ export function resolveShipmentLookup(envelope: ShiprocketWebhookEnvelope): Ship
   if (srOrder) return { kind: "provider_shipment_id", value: srOrder };
   if (shipmentId) return { kind: "provider_shipment_id", value: shipmentId };
 
-  const channel = envelope.channel_order_id?.trim() ?? "";
-  const order = envelope.order_id?.trim() ?? "";
+  const channel = shiprocketWebhookString(envelope.channel_order_id);
+  const order = shiprocketWebhookString(envelope.order_id);
   if (channel && UUID_RE.test(channel)) return { kind: "gstore_order_id", value: channel };
   if (order && UUID_RE.test(order)) return { kind: "gstore_order_id", value: order };
 

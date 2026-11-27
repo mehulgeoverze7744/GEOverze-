@@ -63,9 +63,18 @@ export default {
         request.method === "POST" &&
         (pathname === "/api/webhooks/shiprocket" || pathname === "/api/webhooks/carrier")
       ) {
-        const { handleShiprocketWebhookHttpRequest } =
-          await import("./lib/shipping/shiprocketWebhookHttpHandler.server.ts");
-        return handleShiprocketWebhookHttpRequest(request);
+        try {
+          const { handleShiprocketWebhookHttpRequest } =
+            await import("./lib/shipping/shiprocketWebhookHttpHandler.server.ts");
+          return await handleShiprocketWebhookHttpRequest(request);
+        } catch (error) {
+          const message = error instanceof Error ? error.message : "unknown_error";
+          console.error("[shiprocket-webhook] route error", message);
+          return new Response(
+            JSON.stringify({ ok: false, reason: "internal_error", retryable: true }),
+            { status: 503, headers: { "content-type": "application/json" } },
+          );
+        }
       }
       if (request.method === "POST" && pathname === "/api/admin/gstore/shipment") {
         const { handleAdminGstoreShipmentRequest } =

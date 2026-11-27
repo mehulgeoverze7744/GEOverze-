@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS,
   SHIPROCKET_OFFICIAL_DOC_DEMO_IDENTIFIERS,
+  isShiprocketConnectivityProbe,
   isShiprocketDownloadedDocumentationSamplePayload,
   isShiprocketOfficialDocumentationDemoPayload,
   isShiprocketWebhookTestPayload,
@@ -46,6 +47,19 @@ test("does not treat official sample as explicit test payload", () => {
     }),
     true,
   );
+});
+
+test("numeric awb is coerced for routing and connectivity probe", () => {
+  const numericBody = {
+    ...DOWNLOADED_SAMPLE_BODY,
+    awb: Number(SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.awb),
+  };
+  assert.equal(isShiprocketConnectivityProbe(numericBody), true);
+  assert.deepEqual(resolveShipmentLookup({ awb: 88223344556611 }), {
+    kind: "awb",
+    value: "88223344556611",
+  });
+  assert.equal(isShiprocketWebhookTestPayload({ awb: 59629792084, order_id: "x" }), false);
 });
 
 test("downloaded doc sample requires full identifying and placeholder fields", () => {
