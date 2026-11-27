@@ -2,11 +2,26 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS,
   SHIPROCKET_OFFICIAL_DOC_DEMO_IDENTIFIERS,
+  isShiprocketDownloadedDocumentationSamplePayload,
   isShiprocketOfficialDocumentationDemoPayload,
   isShiprocketWebhookTestPayload,
   resolveShipmentLookup,
 } from "./shiprocketWebhookPayload.server.ts";
+
+const DOWNLOADED_SAMPLE_BODY = {
+  awb: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.awb,
+  order_id: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.order_id,
+  current_status: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.current_status,
+  current_status_id: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.current_status_id,
+  shipment_status: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.shipment_status,
+  shipment_status_id: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.shipment_status_id,
+  channel_order_id: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.channel_order_id,
+  channel: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.channel,
+  courier_name: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.courier_name,
+  scans: Array.from({ length: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.scansLength }, () => ({})),
+};
 
 test("detects Shiprocket dashboard test body", () => {
   assert.equal(isShiprocketWebhookTestPayload({ test: true }), true);
@@ -31,6 +46,25 @@ test("does not treat official sample as explicit test payload", () => {
     }),
     true,
   );
+});
+
+test("downloaded doc sample requires full identifying and placeholder fields", () => {
+  assert.equal(isShiprocketDownloadedDocumentationSamplePayload(DOWNLOADED_SAMPLE_BODY), true);
+  assert.equal(
+    isShiprocketDownloadedDocumentationSamplePayload({
+      ...DOWNLOADED_SAMPLE_BODY,
+      courier_name: "Delhivery",
+    }),
+    false,
+  );
+  assert.equal(
+    isShiprocketDownloadedDocumentationSamplePayload({
+      ...DOWNLOADED_SAMPLE_BODY,
+      scans: Array.from({ length: 10 }, () => ({})),
+    }),
+    false,
+  );
+  assert.equal(isShiprocketWebhookTestPayload(DOWNLOADED_SAMPLE_BODY), false);
 });
 
 test("resolveShipmentLookup prefers awb then provider ids", () => {

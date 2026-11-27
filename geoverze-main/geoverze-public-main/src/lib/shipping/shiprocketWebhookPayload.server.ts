@@ -16,6 +16,8 @@ export type ShiprocketWebhookEnvelope = {
   scans?: Array<{ activity?: string; date?: string; location?: string; status?: string }>;
   etd?: string;
   channel_order_id?: string;
+  channel?: string;
+  courier_name?: string;
   test?: boolean;
   webhook_test?: boolean;
   event?: string;
@@ -51,11 +53,57 @@ export function isShiprocketOfficialDocumentationDemoPayload(
   );
 }
 
+/**
+ * Shiprocket dashboard "download sample" webhook (exact placeholder fields + 11 scan rows).
+ * Every identifying field must match — not AWB/status alone.
+ */
+export const SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS = {
+  awb: "59629792084",
+  order_id: "13905312",
+  current_status: "Delivered",
+  current_status_id: 7,
+  shipment_status: "Delivered",
+  shipment_status_id: 7,
+  channel_order_id: "enter your channel order id",
+  channel: "enter your channel name",
+  courier_name: "enter courier_name",
+  scansLength: 11,
+} as const;
+
+export function isShiprocketDownloadedDocumentationSamplePayload(
+  envelope: ShiprocketWebhookEnvelope,
+): boolean {
+  const awb = envelope.awb != null ? String(envelope.awb).trim() : "";
+  const orderId = envelope.order_id?.trim() ?? "";
+  const currentStatus = envelope.current_status?.trim() ?? "";
+  const shipmentStatus = envelope.shipment_status?.trim() ?? "";
+  const channelOrderId = envelope.channel_order_id?.trim() ?? "";
+  const channel = envelope.channel?.trim() ?? "";
+  const courierName = envelope.courier_name?.trim() ?? "";
+  const scans = envelope.scans;
+
+  return (
+    awb === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.awb &&
+    orderId === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.order_id &&
+    currentStatus === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.current_status &&
+    shipmentStatus === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.shipment_status &&
+    envelope.current_status_id === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.current_status_id &&
+    envelope.shipment_status_id ===
+      SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.shipment_status_id &&
+    channelOrderId === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.channel_order_id &&
+    channel === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.channel &&
+    courierName === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.courier_name &&
+    Array.isArray(scans) &&
+    scans.length === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.scansLength
+  );
+}
+
 /** Authenticated connectivity probes that must not touch the database. */
 export function isShiprocketConnectivityProbe(envelope: ShiprocketWebhookEnvelope): boolean {
   return (
     isShiprocketWebhookTestPayload(envelope) ||
-    isShiprocketOfficialDocumentationDemoPayload(envelope)
+    isShiprocketOfficialDocumentationDemoPayload(envelope) ||
+    isShiprocketDownloadedDocumentationSamplePayload(envelope)
   );
 }
 

@@ -3,11 +3,25 @@ import test from "node:test";
 
 import { handleShiprocketWebhookRequest } from "./shiprocketWebhookHandler.server.ts";
 import {
+  SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS,
   SHIPROCKET_OFFICIAL_DOC_DEMO_IDENTIFIERS,
   isShiprocketOfficialDocumentationDemoPayload,
   isShiprocketWebhookTestPayload,
 } from "./shiprocketWebhookPayload.server.ts";
 import { mapWebhookProcessResultToHttp } from "./shiprocketWebhookResponse.server.ts";
+
+const DOWNLOADED_SAMPLE_BODY = {
+  awb: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.awb,
+  order_id: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.order_id,
+  current_status: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.current_status,
+  current_status_id: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.current_status_id,
+  shipment_status: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.shipment_status,
+  shipment_status_id: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.shipment_status_id,
+  channel_order_id: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.channel_order_id,
+  channel: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.channel,
+  courier_name: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.courier_name,
+  scans: Array.from({ length: SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.scansLength }, () => ({})),
+};
 
 const OFFICIAL_DEMO_BODY = {
   awb: SHIPROCKET_OFFICIAL_DOC_DEMO_IDENTIFIERS.awb,
@@ -91,6 +105,62 @@ test("4. modified unrecognized AWB with doc order ids -> 503", async () => {
         ...OFFICIAL_DEMO_BODY,
         awb: "19041424751541",
       }),
+      headers: { token: "expected-token" },
+    });
+    assert.equal(res.status, 503);
+    assert.equal(res.body.retryable, true);
+  });
+});
+
+test("downloaded sample: exact payload with auth -> 200", async () => {
+  await withToken(async () => {
+    const res = await handleShiprocketWebhookRequest({
+      rawBody: JSON.stringify(DOWNLOADED_SAMPLE_BODY),
+      headers: { token: "expected-token" },
+    });
+    assert.equal(res.status, 200);
+    assert.equal(res.body.ok, true);
+    assert.equal(res.body.accepted, true);
+    assert.equal(res.body.test, true);
+  });
+});
+
+test("downloaded sample: invalid token -> 401", async () => {
+  await withToken(async () => {
+    const res = await handleShiprocketWebhookRequest({
+      rawBody: JSON.stringify(DOWNLOADED_SAMPLE_BODY),
+      headers: { token: "wrong" },
+    });
+    assert.equal(res.status, 401);
+  });
+});
+
+test("downloaded sample: changed AWB -> 503", async () => {
+  await withToken(async () => {
+    const res = await handleShiprocketWebhookRequest({
+      rawBody: JSON.stringify({ ...DOWNLOADED_SAMPLE_BODY, awb: "59629792085" }),
+      headers: { token: "expected-token" },
+    });
+    assert.equal(res.status, 503);
+    assert.equal(res.body.retryable, true);
+  });
+});
+
+test("downloaded sample: changed order_id -> 503", async () => {
+  await withToken(async () => {
+    const res = await handleShiprocketWebhookRequest({
+      rawBody: JSON.stringify({ ...DOWNLOADED_SAMPLE_BODY, order_id: "13905313" }),
+      headers: { token: "expected-token" },
+    });
+    assert.equal(res.status, 503);
+    assert.equal(res.body.retryable, true);
+  });
+});
+
+test("downloaded sample: missing placeholder courier_name -> 503", async () => {
+  await withToken(async () => {
+    const res = await handleShiprocketWebhookRequest({
+      rawBody: JSON.stringify({ ...DOWNLOADED_SAMPLE_BODY, courier_name: "BlueDart" }),
       headers: { token: "expected-token" },
     });
     assert.equal(res.status, 503);
