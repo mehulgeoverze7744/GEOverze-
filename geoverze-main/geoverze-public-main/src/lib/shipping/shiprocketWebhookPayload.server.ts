@@ -27,6 +27,38 @@ export type ShiprocketWebhookEnvelope = {
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
+/**
+ * Shiprocket API documentation sample webhook identifiers (apidocs.shiprocket.in / Postman).
+ * All three must match together — never match on AWB alone.
+ */
+export const SHIPROCKET_OFFICIAL_DOC_DEMO_IDENTIFIERS = {
+  awb: "19041424751540",
+  order_id: "1373900_150876814",
+  sr_order_id: "348456385",
+} as const;
+
+/** Exact documentation sample used in Shiprocket dashboard / API docs connectivity probes. */
+export function isShiprocketOfficialDocumentationDemoPayload(
+  envelope: ShiprocketWebhookEnvelope,
+): boolean {
+  const awb = envelope.awb?.trim();
+  const orderId = envelope.order_id?.trim();
+  const srOrderId = envelope.sr_order_id != null ? String(envelope.sr_order_id).trim() : "";
+  return (
+    awb === SHIPROCKET_OFFICIAL_DOC_DEMO_IDENTIFIERS.awb &&
+    orderId === SHIPROCKET_OFFICIAL_DOC_DEMO_IDENTIFIERS.order_id &&
+    srOrderId === SHIPROCKET_OFFICIAL_DOC_DEMO_IDENTIFIERS.sr_order_id
+  );
+}
+
+/** Authenticated connectivity probes that must not touch the database. */
+export function isShiprocketConnectivityProbe(envelope: ShiprocketWebhookEnvelope): boolean {
+  return (
+    isShiprocketWebhookTestPayload(envelope) ||
+    isShiprocketOfficialDocumentationDemoPayload(envelope)
+  );
+}
+
 /** Dashboard / connectivity test bodies without shipment routing fields. */
 export function isShiprocketWebhookTestPayload(envelope: ShiprocketWebhookEnvelope): boolean {
   if (envelope.test === true) return true;

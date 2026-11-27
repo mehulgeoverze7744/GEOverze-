@@ -7,7 +7,10 @@ import {
   processShiprocketWebhook,
   type ShiprocketWebhookEnvelope,
 } from "./shiprocketWebhookProcess.server.ts";
-import { isShiprocketWebhookTestPayload, resolveShipmentLookup } from "./shiprocketWebhookPayload.server.ts";
+import {
+  isShiprocketConnectivityProbe,
+  resolveShipmentLookup,
+} from "./shiprocketWebhookPayload.server.ts";
 import {
   mapWebhookProcessResultToHttp,
   shiprocketWebhookTestAck,
@@ -28,7 +31,7 @@ export async function handleShiprocketWebhookRequest(input: {
     return { status: 400, body: { ok: false, reason: "invalid_json" } };
   }
 
-  if (isShiprocketWebhookTestPayload(envelope)) {
+  if (isShiprocketConnectivityProbe(envelope)) {
     return shiprocketWebhookTestAck();
   }
 

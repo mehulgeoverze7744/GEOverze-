@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  SHIPROCKET_OFFICIAL_DOC_DEMO_IDENTIFIERS,
+  isShiprocketOfficialDocumentationDemoPayload,
   isShiprocketWebhookTestPayload,
   resolveShipmentLookup,
 } from "./shiprocketWebhookPayload.server.ts";
@@ -11,15 +13,23 @@ test("detects Shiprocket dashboard test body", () => {
   assert.equal(isShiprocketWebhookTestPayload({}), true);
 });
 
-test("does not treat official sample as test payload", () => {
+test("does not treat official sample as explicit test payload", () => {
   assert.equal(
     isShiprocketWebhookTestPayload({
-      awb: "19041424751540",
+      awb: SHIPROCKET_OFFICIAL_DOC_DEMO_IDENTIFIERS.awb,
       current_status: "IN TRANSIT",
-      sr_order_id: 348456385,
-      order_id: "1373900_150876814",
+      sr_order_id: Number(SHIPROCKET_OFFICIAL_DOC_DEMO_IDENTIFIERS.sr_order_id),
+      order_id: SHIPROCKET_OFFICIAL_DOC_DEMO_IDENTIFIERS.order_id,
     }),
     false,
+  );
+  assert.equal(
+    isShiprocketOfficialDocumentationDemoPayload({
+      awb: SHIPROCKET_OFFICIAL_DOC_DEMO_IDENTIFIERS.awb,
+      order_id: SHIPROCKET_OFFICIAL_DOC_DEMO_IDENTIFIERS.order_id,
+      sr_order_id: Number(SHIPROCKET_OFFICIAL_DOC_DEMO_IDENTIFIERS.sr_order_id),
+    }),
+    true,
   );
 });
 
