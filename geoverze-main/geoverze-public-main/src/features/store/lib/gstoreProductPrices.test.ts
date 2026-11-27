@@ -5,7 +5,7 @@ import {
   computeOrderTotalMinor,
   computeShippingMinor,
   computeTaxMinor,
-  FREE_SHIPPING_THRESHOLD_MINOR,
+  GSTORE_EXPRESS_SHIPPING_MINOR,
   getProductPrice,
   staticPresentationPriceMinor,
   GSTORE_BASICS_TEE_PRICE_MINOR,
@@ -64,11 +64,12 @@ test("GST is extracted from inclusive MRP and never added again", () => {
   );
 });
 
-test("standard shipping is free at or above ₹3,999", () => {
-  assert.equal(computeShippingMinor("standard", FREE_SHIPPING_THRESHOLD_MINOR, true), 0);
+test("Gstore shipping: standard free, express ₹150, digital none", () => {
   assert.equal(computeShippingMinor("standard", GSTORE_BASICS_TEE_PRICE_MINOR, true), 0);
-  assert.equal(computeShippingMinor("tracked", GSTORE_BASICS_TEE_PRICE_MINOR, true), 69_000);
+  assert.equal(computeShippingMinor("express", GSTORE_BASICS_TEE_PRICE_MINOR, true), GSTORE_EXPRESS_SHIPPING_MINOR);
+  assert.equal(computeShippingMinor("express", 0, true), GSTORE_EXPRESS_SHIPPING_MINOR);
   assert.equal(computeShippingMinor("standard", GSTORE_BASICS_TEE_PRICE_MINOR, false), 0);
+  assert.equal(computeShippingMinor("tracked", GSTORE_BASICS_TEE_PRICE_MINOR, true), 0);
 });
 
 test("sticker collections are ₹150 GST-inclusive", () => {

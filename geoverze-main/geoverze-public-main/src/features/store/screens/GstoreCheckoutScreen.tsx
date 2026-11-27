@@ -74,8 +74,10 @@ import {
   computeShippingMinor,
   computeTaxMinor,
   computeOrderTotalMinor,
-  FREE_SHIPPING_THRESHOLD_MINOR,
+  gstoreDeliveryEstimateLabel,
   getProductPrice,
+  type GstoreShippingMethod,
+  GSTORE_EXPRESS_SHIPPING_MINOR,
 } from "../lib/gstoreProductPrices";
 import {
   computeMembershipDiscountMinor,
@@ -119,7 +121,7 @@ function validateIndianPhone(phone: string): string | null {
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-type ShippingMethod = "standard" | "tracked" | "express";
+type ShippingMethod = GstoreShippingMethod;
 
 type FormState = {
   customerName:    string;
@@ -135,9 +137,8 @@ type FormState = {
 };
 
 const SHIPPING_OPTIONS: Array<{ value: ShippingMethod; label: string; note: string }> = [
-  { value: "standard", label: "Standard Delivery",         note: "Free on orders ≥ ₹3,999 · 5–7 business days" },
-  { value: "tracked",  label: "Tracked Delivery — ₹690",   note: "3–5 business days with tracking" },
-  { value: "express",  label: "Express Delivery — ₹1,499", note: "1–2 business days" },
+  { value: "standard", label: "Standard Delivery — FREE", note: gstoreDeliveryEstimateLabel("standard") },
+  { value: "express", label: "Express Delivery — ₹150", note: `${gstoreDeliveryEstimateLabel("express")} · additional shipping charge` },
 ];
 
 const INDIAN_STATES = [
@@ -319,16 +320,14 @@ export function GstoreCheckoutScreen() {
   // Product prices are GST-inclusive MRPs.
   // taxMinor = GST extracted from the inclusive subtotal (display/reporting only).
   // totalMinor = inclusive subtotal + shipping — GST is NOT added again.
-  const shippingMinor = creditsCheckout
-    ? 0
-    : computeShippingMinor(shippingMethod, subtotalMinor, hasPhysical);
+  const shippingMinor = computeShippingMinor(shippingMethod, subtotalMinor, hasPhysical);
   const discountMinor = user
     ? computeMembershipDiscountMinor(subtotalMinor, gstoreDiscountBps)
     : 0;
   const discountedSubtotal = Math.max(0, subtotalMinor - discountMinor);
   const taxMinor      = computeTaxMinor(discountedSubtotal, shippingMinor); // extracted, not added
-  const totalMinor = creditsCheckout
-    ? 0
+  const inrDueMinor = creditsCheckout
+    ? shippingMinor
     : computeOrderTotalMinor(subtotalMinor, shippingMinor, discountMinor);
 
   // Status state
@@ -570,6 +569,37 @@ export function GstoreCheckoutScreen() {
         credits: result.new_balance,
       });
       void refreshProgression(user.id);
+
+      if (result.requires_shipping_payment && result.shipping_payment_id) {
+        toast.success("Credits applied", {
+          description: `${result.credits_total} credits spent — complete express shipping payment.`,
+        });
+
+        if (result.mock_enabled) {
+          setPendingOrder({
+            orderId: result.order_id,
+            paymentId: result.shipping_payment_id,
+            orderNumber: result.order_number,
+          });
+          setStatus("paying");
+          inflight.current = false;
+          return;
+        }
+
+        if (!result.rzp_order_id || !result.rzp_key_id) {
+          throw new Error("Payment gateway not configured for express shipping.");
+        }
+
+        await handleRazorpayPayment(
+          result.rzp_order_id,
+          result.rzp_key_id,
+          result.order_id,
+          result.shipping_payment_id,
+          result.order_number,
+        );
+        if (!isBuyNow) clearCart();
+        return;
+      }
 
       if (!isBuyNow) clearCart();
       setStatus("done");
@@ -839,8 +869,6 @@ export function GstoreCheckoutScreen() {
   }
 
   const isLoading = status === "creating" || status === "verifying";
-  const freeShippingGap = FREE_SHIPPING_THRESHOLD_MINOR - subtotalMinor;
-  const freeShippingPct = Math.min(100, (subtotalMinor / FREE_SHIPPING_THRESHOLD_MINOR) * 100);
 
   // ── Render ──────────────────────────────────────────────────────────────────
 
@@ -1188,7 +1216,7 @@ export function GstoreCheckoutScreen() {
             </div>
           </Card>
 
-          {/* ── Shipping Method ── */}
+          {hasPhysical ? (
           <Card className="p-6">
             <h2 className="text-[#111827] font-semibold text-base mb-5 flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-[#111827] text-white text-xs flex items-center justify-center font-bold flex-shrink-0">3</span>
@@ -1201,6 +1229,7 @@ export function GstoreCheckoutScreen() {
                 const previewShipping = computeShippingMinor(opt.value, subtotalMinor, hasPhysical);
                 const isFree = previewShipping === 0;
                 const isSelected = shippingMethod === opt.value;
+                const showExpressSurcharge = opt.value === "express" && hasPhysical;
 
                 return (
                   <label
@@ -1225,29 +1254,29 @@ export function GstoreCheckoutScreen() {
                         <span className={cn("font-medium text-sm", isSelected ? "text-[#111827]" : "text-[#374151]")}>
                           {opt.label}
                         </span>
-                        {isFree && (
+                        {isFree ? (
                           <span className="text-emerald-600 text-xs font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                             FREE
                           </span>
-                        )}
+                        ) : showExpressSurcharge ? (
+                          <span className="text-[#111827] text-xs font-semibold bg-[#F3F4F6] px-2 py-0.5 rounded-full border border-[#E5E7EB]">
+                            +{formatInrPaise(GSTORE_EXPRESS_SHIPPING_MINOR)}
+                          </span>
+                        ) : null}
                       </div>
                       <p className="text-xs text-[#6B7280] mt-0.5">{opt.note}</p>
-                      {opt.value === "standard" && subtotalMinor < FREE_SHIPPING_THRESHOLD_MINOR && (
-                        <p className="text-xs text-amber-600 mt-1 font-medium">
-                          Add {formatInrPaise(FREE_SHIPPING_THRESHOLD_MINOR - subtotalMinor)} more for free shipping
-                        </p>
-                      )}
                     </div>
                   </label>
                 );
               })}
             </div>
           </Card>
+          ) : null}
 
           {/* ── Payment ── */}
           <Card className="p-6">
             <h2 className="text-[#111827] font-semibold text-base mb-5 flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-[#111827] text-white text-xs flex items-center justify-center font-bold flex-shrink-0">4</span>
+              <span className="w-6 h-6 rounded-full bg-[#111827] text-white text-xs flex items-center justify-center font-bold flex-shrink-0">{hasPhysical ? "4" : "3"}</span>
               <Lock className="w-4 h-4 text-[#6B7280]" />
               Payment
             </h2>
@@ -1321,7 +1350,7 @@ export function GstoreCheckoutScreen() {
             {status === "paying" && mockEnabled && pendingOrder && (
               <div className="mb-4">
                 <MockPaymentGateway
-                  totalMinor={totalMinor}
+                  totalMinor={inrDueMinor}
                   orderNumber={pendingOrder.orderNumber}
                   onOutcome={(outcome) => void handleMockOutcome(outcome)}
                 />
@@ -1332,13 +1361,19 @@ export function GstoreCheckoutScreen() {
             {(status === "idle" || status === "failed" || status === "cancelled") && (
               <div className="mb-5">
                 {creditsCheckout ? (
-                  <div className="rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-3 space-y-1">
+                  <div className="rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-3 space-y-1.5">
                     <p className="text-sm font-medium text-[#111827]">Pay with GVRZE Credits</p>
                     <p className="text-sm text-[#6B7280]">
                       {signedIn && balance !== null
-                        ? `Balance: ${balance} credits · Due: ${creditsDue}`
+                        ? `Balance: ${balance} credits · Product: ${creditsDue} credits`
                         : "Sign in to complete credits checkout."}
                     </p>
+                    {shippingMinor > 0 ? (
+                      <p className="text-xs text-[#374151]">
+                        Express shipping is charged separately in INR ({formatInrPaise(shippingMinor)} via Razorpay).
+                        Credits are not used for the shipping surcharge.
+                      </p>
+                    ) : null}
                   </div>
                 ) : mockEnabled ? (
                   <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 space-y-1.5">
@@ -1391,8 +1426,10 @@ export function GstoreCheckoutScreen() {
                     <>
                       <Lock className="w-4 h-4" />
                       {creditsCheckout
-                        ? `Place order · ${creditsDue} credits`
-                        : `Pay ${formatInrPaise(totalMinor)} with Razorpay`}
+                        ? shippingMinor > 0
+                          ? `Place order · ${creditsDue} credits + ${formatInrPaise(shippingMinor)} shipping`
+                          : `Place order · ${creditsDue} credits`
+                        : `Pay ${formatInrPaise(inrDueMinor)} with Razorpay`}
                     </>
                   )}
                 </button>
@@ -1546,43 +1583,41 @@ export function GstoreCheckoutScreen() {
                   {shippingMinor === 0 ? "FREE" : formatInrPaise(shippingMinor)}
                 </span>
               </div>
-              {/* GST extracted from inclusive price — displayed for transparency, not added */}
-              <div className="flex justify-between">
-                <span className="text-[#6B7280]">GST (included)</span>
-                <span className="text-[#9CA3AF]">{formatInrPaise(taxMinor)}</span>
-              </div>
+              {!creditsCheckout ? (
+                <div className="flex justify-between">
+                  <span className="text-[#6B7280]">GST (included)</span>
+                  <span className="text-[#9CA3AF]">{formatInrPaise(taxMinor)}</span>
+                </div>
+              ) : null}
 
               <hr className="border-[#E5E7EB]" />
 
               <div className="flex justify-between items-baseline pt-0.5">
                 <div>
-                  <span className="font-bold text-base text-[#111827]">Total</span>
-                  <p className="text-[10px] text-[#9CA3AF] font-normal mt-0.5">Inclusive of all taxes</p>
-                </div>
-                <span className="font-bold text-lg text-[#111827]">{formatInrPaise(totalMinor)}</span>
-              </div>
-            </div>
-
-            {/* ── Free shipping progress bar ── */}
-            {subtotalMinor < FREE_SHIPPING_THRESHOLD_MINOR && shippingMethod === "standard" && (
-              <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-3.5 mb-4">
-                <div className="flex justify-between mb-2">
-                  <span className="text-xs text-[#374151] font-medium">Free shipping progress</span>
-                  <span className="text-xs text-[#6B7280]">
-                    {formatInrPaise(subtotalMinor)} / {formatInrPaise(FREE_SHIPPING_THRESHOLD_MINOR)}
+                  <span className="font-bold text-base text-[#111827]">
+                    {creditsCheckout ? "INR due today" : "Total"}
                   </span>
+                  <p className="text-[10px] text-[#9CA3AF] font-normal mt-0.5">
+                    {creditsCheckout
+                      ? shippingMinor > 0
+                        ? "Product paid in credits · shipping in INR"
+                        : "Product paid in credits only"
+                      : "Inclusive of all taxes"}
+                  </p>
                 </div>
-                <div className="h-2 bg-[#E5E7EB] rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-emerald-500 rounded-full transition-all duration-300"
-                    style={{ width: `${freeShippingPct}%` }}
-                  />
-                </div>
-                <p className="text-xs text-[#6B7280] mt-1.5">
-                  Add <span className="font-medium text-amber-600">{formatInrPaise(freeShippingGap)}</span> more for free standard shipping
-                </p>
+                <span className="font-bold text-lg text-[#111827]">
+                  {creditsCheckout && shippingMinor === 0
+                    ? "—"
+                    : formatInrPaise(inrDueMinor)}
+                </span>
               </div>
-            )}
+              {creditsCheckout ? (
+                <div className="flex justify-between text-sm">
+                  <span className="text-[#6B7280]">Credits (product)</span>
+                  <span className="font-medium text-[#111827]">{creditsDue} credits</span>
+                </div>
+              ) : null}
+            </div>
 
             {/* ── Back link ── */}
             <Link
@@ -1614,7 +1649,7 @@ export function GstoreCheckoutScreen() {
                 mockEnabled
                   ? { icon: FlaskConical, text: "TEST MODE — simulated payment, no real charges" }
                   : { icon: CheckCircle2, text: "Verified by Razorpay payment gateway" },
-                { icon: Truck, text: "Ships from India — delivery in 5–7 days" },
+                { icon: Truck, text: `Delivery estimate: ${gstoreDeliveryEstimateLabel(shippingMethod)}` },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="flex items-center gap-2.5">
                   <Icon className="w-4 h-4 text-emerald-500 flex-shrink-0" />

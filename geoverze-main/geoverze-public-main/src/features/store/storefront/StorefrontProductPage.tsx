@@ -376,7 +376,7 @@ export function StorefrontProductPage({
   specialColour = false,
   careTabLabel = "Washcare",
   galleryImageFit = "cover",
-  galleryAspectClassName = "aspect-[562/684]",
+  galleryAspectClassName = "aspect-[562/748] max-lg:aspect-[562/684]",
   gallerySurfaceClassName = "bg-[#f6f6f6]",
 }: StorefrontProductPageProps) {
   const colorPickerColors =
@@ -879,8 +879,8 @@ export function StorefrontProductPage({
               </div>
             </section>
 
-            <section className="sfpp-desc-card rounded-[11px] bg-[#f6f6f6] p-5 sm:p-6">
-              <div className="sfpp-desc-tabs flex shrink-0 gap-6 border-b border-[#e0e0e0]">
+            <section className="sfpp-desc-card rounded-[11px] bg-[#f6f6f6] p-5 sm:p-7">
+              <div className="sfpp-desc-tabs flex shrink-0 gap-6 border-b border-[#e0e0e0] pb-0.5">
                 {(
                   [
                     { id: "description", label: "Product Description" },
@@ -897,7 +897,7 @@ export function StorefrontProductPage({
                 ))}
               </div>
 
-              <div className="sfpp-desc-body mt-4 space-y-4 text-[13px] leading-relaxed text-[#444]">
+              <div className="sfpp-desc-body mt-5 space-y-5 text-[13px] leading-relaxed text-[#444] sm:text-[14px]">
                 {activeTab === "description" && (
                   <>
                     {description && <p className="whitespace-pre-line">{description}</p>}
@@ -905,9 +905,9 @@ export function StorefrontProductPage({
                     {highlights && highlights.length > 0 && (
                       <div>
                         <p className="mb-2 font-semibold text-black">Product Highlights</p>
-                        <ul className="space-y-1.5">
+                        <ul className="space-y-2">
                           {highlights.map((h, i) => (
-                            <li key={i} className="flex gap-2">
+                            <li key={i} className="flex gap-2.5">
                               <span className="mt-[5px] h-1.5 w-1.5 shrink-0 rounded-full bg-black" />
                               <span>{h}</span>
                             </li>
@@ -928,9 +928,9 @@ export function StorefrontProductPage({
                 {activeTab === "shipping" && <p className="whitespace-pre-line">{DEFAULT_SHIPPING}</p>}
 
                 {activeTab === "washcare" && (
-                  <ul className="space-y-1.5">
+                  <ul className="space-y-2">
                     {washcareList.map((item, i) => (
-                      <li key={i} className="flex gap-2">
+                      <li key={i} className="flex gap-2.5">
                         <span className="mt-[5px] h-1.5 w-1.5 shrink-0 rounded-full bg-black" />
                         <span>{item}</span>
                       </li>

@@ -19,8 +19,6 @@ import { isProductOwned, useEntitlements } from "../hooks/useEntitlements";
 import { useStoreCatalogue } from "../hooks/useStoreCatalogue";
 import { catalogueProductBySlug } from "../lib/mergeCatalogue";
 import { bestSellers } from "../lib/filter";
-import { FREE_SHIPPING_THRESHOLD_MINOR } from "../lib/gstoreProductPrices";
-import { money } from "../lib/format";
 import { useStoreActions } from "../lib/useStoreActions";
 import { useStoreCreditsState } from "../lib/useStoreCredits";
 
@@ -85,7 +83,6 @@ export function StoreHome() {
             }
             catalogueCount={PRODUCTS.length}
             categoryCount={STORE_CATEGORIES.length}
-            freeShippingThreshold={money(FREE_SHIPPING_THRESHOLD_MINOR)}
           />
 
           {/* ── Merchandising sections ──────────────────────────────────── */}

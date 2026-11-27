@@ -9,9 +9,8 @@ import type { CartLine } from "@/stores/cartStore";
 import type { Order, OrderLine } from "../data/orders";
 
 export const SHIPPING_METHODS = [
-  { id: "standard", label: "Standard", note: "7 – 12 business days", amount: 0 },
-  { id: "tracked", label: "Tracked worldwide", note: "4 – 7 business days", amount: 690 },
-  { id: "express", label: "Express", note: "2 – 3 business days", amount: 1_490 },
+  { id: "standard", label: "Standard Delivery — FREE", note: "Delivery within 7 days", amount: 0 },
+  { id: "express", label: "Express Delivery — ₹150", note: "Priority delivery within 3–4 days", amount: 150 },
 ] as const;
 
 export type ShippingMethodId = (typeof SHIPPING_METHODS)[number]["id"];

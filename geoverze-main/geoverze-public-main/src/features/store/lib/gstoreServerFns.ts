@@ -31,6 +31,7 @@ import { isMockPaymentsExplicit, readRazorpayKeyId } from "@/lib/payments/razorp
 import {
   getProductPrice,
   computeShippingMinor,
+  isGstoreShippingMethod,
   computeTaxMinor,
   computeOrderTotalMinor,
   isGstoreCreditsCheckoutSlug,
@@ -184,7 +185,7 @@ export type GstoreCheckoutDetails = {
   shippingPincode: string;
   shippingCountry: string;
   deliveryNotes: string;
-  shippingMethod: "standard" | "tracked" | "express";
+  shippingMethod: "standard" | "express";
 };
 
 // ── 1. createGstoreOrderFn ────────────────────────────────────────────────────
@@ -215,7 +216,7 @@ const CreateOrderSchema = z.object({
     shippingPincode: z.string().min(4).max(10),
     shippingCountry: z.string().min(1).max(100).optional().default("India"),
     deliveryNotes:   z.string().max(500).optional().default(""),
-    shippingMethod:  z.enum(["standard", "tracked", "express"]).optional().default("standard"),
+    shippingMethod:  z.enum(["standard", "express"]).optional().default("standard"),
   }),
   idempotency_key: z.string().min(1).max(256),
 });
@@ -293,6 +294,9 @@ export const createGstoreOrderFn = createServerFn({ method: "POST" })
       (sum, i) => sum + i.line_total_minor, 0,
     );
     const hasPhysical = validatedItems.some((i) => i.physical);
+    if (!isGstoreShippingMethod(details.shippingMethod)) {
+      throw new Error("Invalid delivery method.");
+    }
     const shippingMinor = computeShippingMinor(
       details.shippingMethod,
       subtotalMinor,
@@ -793,7 +797,7 @@ const GuestOrderSchema = z.object({
     shippingPincode: z.string().min(4).max(10),
     shippingCountry: z.string().min(1).max(100).optional().default("India"),
     deliveryNotes:   z.string().max(500).optional().default(""),
-    shippingMethod:  z.enum(["standard", "tracked", "express"]).optional().default("standard"),
+    shippingMethod:  z.enum(["standard", "express"]).optional().default("standard"),
   }),
   idempotency_key: z.string().min(1).max(256),
 });
@@ -880,6 +884,9 @@ export const createGstoreGuestOrderFn = createServerFn({ method: "POST" })
 
     // GST is extracted from the inclusive product subtotal (for accounting only).
     // Total = inclusive subtotal + shipping — no extra tax layer.
+    if (!isGstoreShippingMethod(data.details.shippingMethod ?? "standard")) {
+      throw new Error("Invalid delivery method.");
+    }
     const shippingMinor = computeShippingMinor(data.details.shippingMethod ?? "standard", subtotalMinor, hasPhysical);
     const taxMinor      = computeTaxMinor(subtotalMinor, shippingMinor); // extracted, not added
     const totalMinor    = computeOrderTotalMinor(subtotalMinor, shippingMinor, 0);
@@ -1317,6 +1324,12 @@ export type CreateGstoreCreditsOrderResult = {
   credits_total: number;
   new_balance: number;
   idempotent: boolean;
+  shipping_minor: number;
+  requires_shipping_payment: boolean;
+  shipping_payment_id?: string;
+  rzp_order_id?: string;
+  rzp_key_id?: string;
+  mock_enabled?: boolean;
 };
 
 export const createGstoreCreditsOrderFn = createServerFn({ method: "POST" })
@@ -1358,6 +1371,10 @@ export const createGstoreCreditsOrderFn = createServerFn({ method: "POST" })
       });
     }
 
+    if (!isGstoreShippingMethod(details.shippingMethod ?? "standard")) {
+      throw new Error("Invalid delivery method.");
+    }
+
     const sb = makeSupabaseClient(access_token);
 
     const { data: rpcResult, error: rpcError } = await sb.rpc("create_gstore_credits_order", {
@@ -1387,11 +1404,73 @@ export const createGstoreCreditsOrderFn = createServerFn({ method: "POST" })
     }
 
     const row = rpcResult as Record<string, unknown>;
-    return {
+    const shippingMinor = Number(row["shipping_minor"] ?? 0);
+    const requiresShippingPayment = Boolean(row["requires_shipping_payment"]);
+    const shippingPaymentId = row["shipping_payment_id"]
+      ? String(row["shipping_payment_id"])
+      : undefined;
+
+    const base: CreateGstoreCreditsOrderResult = {
       order_id: String(row["order_id"] ?? ""),
       order_number: String(row["order_number"] ?? ""),
       credits_total: Number(row["credits_total"] ?? creditsTotal),
       new_balance: Number(row["new_balance"] ?? 0),
       idempotent: Boolean(row["idempotent"]),
+      shipping_minor: shippingMinor,
+      requires_shipping_payment: requiresShippingPayment,
+      ...(shippingPaymentId ? { shipping_payment_id: shippingPaymentId } : {}),
+    };
+
+    if (!requiresShippingPayment || !shippingPaymentId || shippingMinor <= 0) {
+      return base;
+    }
+
+    const mock = isMockEnabled();
+    if (mock) {
+      await sb
+        .from("gstore_payments")
+        .update({ provider: "mock", is_mock: true })
+        .eq("id", shippingPaymentId);
+      return { ...base, mock_enabled: true };
+    }
+
+    const rzp = await import("./gstoreRazorpay.server");
+    if (!rzp.isRazorpayServerConfigured()) {
+      throw new Error("Razorpay is not configured for express shipping payment.");
+    }
+
+    if (!base.idempotent) {
+      const placed = await rzp.placeRazorpayOrder({
+        orderId: base.order_id,
+        paymentId: shippingPaymentId,
+        orderNumber: base.order_number,
+        totalMinor: shippingMinor,
+        customerEmail: details.customerEmail,
+        notes: { kind: "gstore_express_shipping", product_payment: "credits" },
+      });
+      await sb.rpc("attach_gstore_razorpay_order", {
+        p_order_id: base.order_id,
+        p_payment_id: shippingPaymentId,
+        p_provider_order_id: placed.rzpOrderId,
+      });
+      return {
+        ...base,
+        rzp_order_id: placed.rzpOrderId,
+        rzp_key_id: placed.rzpKeyId,
+        mock_enabled: false,
+      };
+    }
+
+    const { data: existingPay } = await sb
+      .from("gstore_payments")
+      .select("provider_order_id")
+      .eq("id", shippingPaymentId)
+      .maybeSingle();
+    const existingRzp = (existingPay as { provider_order_id?: string } | null)?.provider_order_id;
+    return {
+      ...base,
+      rzp_order_id: existingRzp ?? undefined,
+      rzp_key_id: rzp.getRazorpayKeyId(),
+      mock_enabled: false,
     };
   });

@@ -424,17 +424,18 @@ export function displayGstoreProductName(slug: string, storedName?: string): str
   return getProductPrice(slug)?.name ?? storedName ?? slug;
 }
 
-/**
- * Shipping method costs in INR paise.
- * Free above FREE_SHIPPING_THRESHOLD_MINOR.
- */
-export const GSTORE_SHIPPING_COSTS: Record<string, number> = {
-  standard: 0,          // Free standard shipping
-  tracked: 69_000,      // ₹690
-  express: 149_900,     // ₹1,499
+/** Gstore physical delivery options (India). */
+export type GstoreShippingMethod = "standard" | "express";
+
+export const GSTORE_EXPRESS_SHIPPING_MINOR = 15_000; // ₹150
+
+export const GSTORE_SHIPPING_COSTS: Record<GstoreShippingMethod, number> = {
+  standard: 0,
+  express: GSTORE_EXPRESS_SHIPPING_MINOR,
 };
 
-export const FREE_SHIPPING_THRESHOLD_MINOR = 399_900; // ₹3,999
+/** @deprecated Free standard delivery — no minimum order threshold. */
+export const FREE_SHIPPING_THRESHOLD_MINOR = 0;
 
 /**
  * GST rate applicable to Gstore physical products (18%).
@@ -443,20 +444,28 @@ export const FREE_SHIPPING_THRESHOLD_MINOR = 399_900; // ₹3,999
  */
 export const GSTORE_GST_RATE = 0.18;
 
+export function isGstoreShippingMethod(method: string): method is GstoreShippingMethod {
+  return method === "standard" || method === "express";
+}
+
+export function gstoreDeliveryEstimateLabel(method: GstoreShippingMethod): string {
+  return method === "express"
+    ? "Priority delivery within 3–4 days"
+    : "Delivery within 7 days";
+}
+
 /**
- * Compute the INR shipping cost for a given method and subtotal.
- * Standard shipping is free above FREE_SHIPPING_THRESHOLD_MINOR.
- * Shipping costs are quoted as final inclusive amounts — no additional GST
- * is charged on shipping separately.
+ * Compute the INR shipping surcharge for physical Gstore orders.
+ * Subtotal is ignored (kept for call-site compatibility). Digital-only carts: ₹0.
  */
 export function computeShippingMinor(
   method: string,
-  subtotalMinor: number,
+  _subtotalMinor: number,
   hasPhysical: boolean,
 ): number {
   if (!hasPhysical) return 0;
-  if (method === "standard" && subtotalMinor >= FREE_SHIPPING_THRESHOLD_MINOR) return 0;
-  return GSTORE_SHIPPING_COSTS[method] ?? 0;
+  if (!isGstoreShippingMethod(method)) return 0;
+  return GSTORE_SHIPPING_COSTS[method];
 }
 
 /**

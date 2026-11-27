@@ -14,7 +14,6 @@ type StoreHeroProps = {
   creditHistoryLink: ReactNode;
   catalogueCount: number;
   categoryCount: number;
-  freeShippingThreshold: string;
 };
 
 /** Gstore cinematic hero — merchandise photography backdrop, editorial layout. */
@@ -23,7 +22,6 @@ export function StoreHero({
   creditHistoryLink,
   catalogueCount,
   categoryCount,
-  freeShippingThreshold,
 }: StoreHeroProps) {
   return (
     <header className="geostore-hero">
@@ -95,9 +93,9 @@ export function StoreHero({
             <StoreSummaryCard
               compact
               icon={Truck}
-              label="Free shipping"
-              value={freeShippingThreshold}
-              footer={<p className="text-[0.55rem] text-foreground/45">On physical orders above</p>}
+              label="Standard delivery"
+              value="FREE"
+              footer={<p className="text-[0.55rem] text-foreground/45">On all physical orders</p>}
             />
           </div>
         </div>
