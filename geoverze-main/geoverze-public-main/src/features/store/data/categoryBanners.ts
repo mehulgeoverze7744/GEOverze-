@@ -8,8 +8,8 @@ const CATEGORY_BANNER_BASE = "/assets/store/categories";
 
 export const CATEGORY_BANNERS: Readonly<Record<string, CategoryBanner>> = {
   tshirts: {
-    src: `${CATEGORY_BANNER_BASE}/gvrze-tshirts-category.jpg`,
-    alt: "GVRZE T-shirts",
+    src: "/assets/gvrze-storefront/best-sellers/ignite/ig-2.png",
+    alt: "GVRZE IGNITE T-shirt — back view with orange 3D mesh artwork",
   },
   hoodies: {
     src: `${CATEGORY_BANNER_BASE}/gvrze-hoodies-category.jpg`,

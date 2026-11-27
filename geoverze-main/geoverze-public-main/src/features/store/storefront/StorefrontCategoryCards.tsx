@@ -71,10 +71,10 @@ export function StorefrontCategoryCards({
                 src={SF_ASSETS.categoryTees.src}
                 width={SF_ASSETS.categoryTees.width}
                 height={SF_ASSETS.categoryTees.height}
-                alt="Back of a beige GVRZE tee with a topographic print"
+                alt="GVRZE IGNITE T-shirt in Midnight Black — back view with orange 3D mesh artwork"
                 loading="lazy"
                 decoding="async"
-                className="h-full w-full object-cover object-[53%_0] transition-transform duration-500 ease-out group-hover/cat:scale-[1.03] motion-reduce:transition-none"
+                className="h-full w-full object-cover object-[50%_42%] transition-transform duration-500 ease-out group-hover/cat:scale-[1.03] motion-reduce:transition-none"
               />
             </span>
             <img

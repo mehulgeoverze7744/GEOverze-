@@ -99,7 +99,11 @@ export const SF_ASSETS = {
   },
   heroFade: { src: `${BASE}/hero-fade.png`, width: 1024, height: 99 },
   heroUnderline: { src: `${BASE}/hero-underline.svg`, width: 83, height: 1 },
-  categoryTees: { src: `${BASE}/category-tees.webp`, width: 1816, height: 866 },
+  categoryTees: {
+    src: `${BASE}/best-sellers/ignite/ig-2.png`,
+    width: 819,
+    height: 1024,
+  },
   categoryHoodies: { src: `${BASE}/category-hoodies.webp`, width: 1597, height: 985 },
   categoryAccessories: { src: `${BASE}/category-accessories.webp`, width: 720, height: 900 },
   shadowTees: { src: `${BASE}/shadow-tees.svg`, width: 329, height: 269 },
