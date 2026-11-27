@@ -81,8 +81,23 @@ export function useDrawStrokesRealtime(
 
     subscribe();
 
+    const onOnline = () => {
+      if (cancelled) return;
+      if (channel) void supabase.removeChannel(channel);
+      subscribe();
+    };
+    window.addEventListener("online", onOnline);
+
+  const onVisible = () => {
+    if (cancelled || document.visibilityState !== "visible" || !turnId) return;
+    void replay();
+  };
+  document.addEventListener("visibilitychange", onVisible);
+
     return () => {
       cancelled = true;
+      window.removeEventListener("online", onOnline);
+      document.removeEventListener("visibilitychange", onVisible);
       if (retryTimer) window.clearTimeout(retryTimer);
       if (channel) void supabase.removeChannel(channel);
     };

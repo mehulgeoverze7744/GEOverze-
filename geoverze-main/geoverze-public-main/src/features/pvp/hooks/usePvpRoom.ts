@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useRoomMembershipNotices } from "@/features/rooms/hooks/useRoomMembershipNotices";
+import { useRoomReconcileWhenOffline } from "@/features/rooms/hooks/useRoomReconcileWhenOffline";
 import { selectUser, useAuthStore } from "@/stores/authStore";
-import { fetchPvpRoomState, setPvpReady, startPvpMatch } from "../data/pvpRoomApi";
+import { fetchPvpRoomState, leavePvpRoom, setPvpReady, startPvpMatch } from "../data/pvpRoomApi";
 import type { PvpRoomState } from "../types";
 import { usePvpRoomRealtime } from "./usePvpRoomRealtime";
 
@@ -61,7 +62,21 @@ export function usePvpRoom(roomId: string | undefined) {
   }, [roomId, refresh]);
 
   const syncStatus = usePvpRoomRealtime(roomId, refresh);
+  useRoomReconcileWhenOffline(roomId, syncStatus, refresh);
   useRoomMembershipNotices(state?.participants, user?.id);
+
+  const roomStatusRef = useRef(state?.room.status);
+  roomStatusRef.current = state?.room.status;
+
+  useEffect(() => {
+    if (!roomId) return;
+    return () => {
+      const status = roomStatusRef.current;
+      if (status === "waiting" || status === "ready") {
+        void leavePvpRoom(roomId).catch(() => undefined);
+      }
+    };
+  }, [roomId]);
 
   const toggleReady = useCallback(
     async (ready: boolean) => {

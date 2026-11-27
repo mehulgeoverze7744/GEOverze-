@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useRoomMembershipNotices } from "@/features/rooms/hooks/useRoomMembershipNotices";
+import { useRoomReconcileWhenOffline } from "@/features/rooms/hooks/useRoomReconcileWhenOffline";
 import { selectUser, useAuthStore } from "@/stores/authStore";
 import {
   advanceDrawTurn,
@@ -68,6 +69,7 @@ export function useDrawRoom(roomId: string | undefined) {
   }, [roomId, refresh]);
 
   const syncStatus = useDrawRoomRealtime(roomId, refresh);
+  useRoomReconcileWhenOffline(roomId, syncStatus, refresh);
   useRoomMembershipNotices(state?.participants, user?.id);
 
   // Lightweight presence heartbeat — lets the server-side grace-period /

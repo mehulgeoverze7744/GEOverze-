@@ -8,11 +8,16 @@ export function useDrawRoomRealtime(
   return useRoomRealtime({
     channelName: roomId ? `draw-room:${roomId}` : undefined,
     tables: roomId
-      ? [
-          { table: "draw_participants", filter: `room_id=eq.${roomId}` },
-          { event: "UPDATE", table: "draw_rooms", filter: `id=eq.${roomId}` },
-          { event: "INSERT", table: "draw_events", filter: `room_id=eq.${roomId}` },
-        ]
+      ? (() => {
+          const pf = `room_id=eq.${roomId}`;
+          return [
+            { event: "INSERT" as const, table: "draw_participants", filter: pf },
+            { event: "UPDATE" as const, table: "draw_participants", filter: pf },
+            { event: "DELETE" as const, table: "draw_participants", filter: pf },
+            { event: "UPDATE" as const, table: "draw_rooms", filter: `id=eq.${roomId}` },
+            { event: "INSERT" as const, table: "draw_events", filter: pf },
+          ];
+        })()
       : [],
     onEvent: onChange,
     onReady: onChange,

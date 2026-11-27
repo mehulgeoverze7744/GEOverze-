@@ -8,10 +8,15 @@ export function usePvpRoomRealtime(
   return useRoomRealtime({
     channelName: roomId ? `pvp-room:${roomId}` : undefined,
     tables: roomId
-      ? [
-          { table: "pvp_participants", filter: `room_id=eq.${roomId}` },
-          { event: "UPDATE", table: "pvp_rooms", filter: `id=eq.${roomId}` },
-        ]
+      ? (() => {
+          const pf = `room_id=eq.${roomId}`;
+          return [
+            { event: "INSERT" as const, table: "pvp_participants", filter: pf },
+            { event: "UPDATE" as const, table: "pvp_participants", filter: pf },
+            { event: "DELETE" as const, table: "pvp_participants", filter: pf },
+            { event: "UPDATE" as const, table: "pvp_rooms", filter: `id=eq.${roomId}` },
+          ];
+        })()
       : [],
     onEvent: onChange,
     onReady: onChange,

@@ -44,7 +44,17 @@ export function useRoomRealtime({
 
     let cancelled = false;
     let retryTimer: number | null = null;
+    let debounceTimer: number | null = null;
     let channel: ReturnType<typeof supabase.channel> | null = null;
+
+    const scheduleEvent = () => {
+      if (cancelled) return;
+      if (debounceTimer) window.clearTimeout(debounceTimer);
+      debounceTimer = window.setTimeout(() => {
+        debounceTimer = null;
+        if (!cancelled) onEventRef.current();
+      }, 60);
+    };
 
     const subscribe = () => {
       if (cancelled) return;
@@ -61,7 +71,7 @@ export function useRoomRealtime({
             filter: table.filter,
           },
           () => {
-            if (!cancelled) onEventRef.current();
+            scheduleEvent();
           },
         );
       }
@@ -93,10 +103,18 @@ export function useRoomRealtime({
     };
     window.addEventListener("online", onOnline);
 
+    const onVisible = () => {
+      if (cancelled) return;
+      if (document.visibilityState === "visible") onReadyRef.current();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+
     return () => {
       cancelled = true;
       window.removeEventListener("online", onOnline);
+      document.removeEventListener("visibilitychange", onVisible);
       if (retryTimer) window.clearTimeout(retryTimer);
+      if (debounceTimer) window.clearTimeout(debounceTimer);
       if (channel) void supabase.removeChannel(channel);
     };
     // tables is identified by tablesKey so callers can pass inline arrays.

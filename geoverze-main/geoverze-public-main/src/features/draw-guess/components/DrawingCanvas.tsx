@@ -47,6 +47,7 @@ function drawSegment(
 ) {
   if (points.length === 0) return;
   ctx.save();
+  ctx.imageSmoothingEnabled = false;
   ctx.lineJoin = "round";
   ctx.lineCap = "round";
   ctx.globalCompositeOperation = tool === "eraser" ? "destination-out" : "source-over";
@@ -208,10 +209,9 @@ export function DrawingCanvas({
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d", { alpha: false });
+    const ctx = canvas.getContext("2d", { alpha: false, desynchronized: true });
     if (ctx) {
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = "high";
+      ctx.imageSmoothingEnabled = false;
     }
     ctxRef.current = ctx;
     strokesRef.current = [];

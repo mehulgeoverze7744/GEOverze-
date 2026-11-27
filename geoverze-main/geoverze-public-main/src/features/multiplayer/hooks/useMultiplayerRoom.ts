@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useRoomMembershipNotices } from "@/features/rooms/hooks/useRoomMembershipNotices";
+import { useRoomReconcileWhenOffline } from "@/features/rooms/hooks/useRoomReconcileWhenOffline";
 import { selectUser, useAuthStore } from "@/stores/authStore";
 import {
   fetchMultiplayerRoomState,
+  leaveMultiplayerRoom,
   setMultiplayerReady,
   startMultiplayerMatch,
 } from "../data/multiplayerRoomApi";
@@ -65,7 +67,21 @@ export function useMultiplayerRoom(roomId: string | undefined) {
   }, [roomId, refresh]);
 
   const syncStatus = useMultiplayerRoomRealtime(roomId, refresh);
+  useRoomReconcileWhenOffline(roomId, syncStatus, refresh);
   useRoomMembershipNotices(state?.participants, user?.id);
+
+  const roomStatusRef = useRef(state?.room.status);
+  roomStatusRef.current = state?.room.status;
+
+  useEffect(() => {
+    if (!roomId) return;
+    return () => {
+      const status = roomStatusRef.current;
+      if (status === "waiting" || status === "ready") {
+        void leaveMultiplayerRoom(roomId).catch(() => undefined);
+      }
+    };
+  }, [roomId]);
 
   const toggleReady = useCallback(
     async (ready: boolean) => {

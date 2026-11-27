@@ -1,10 +1,16 @@
 import { useNavigate } from "@tanstack/react-router";
-import { Trophy, Users } from "lucide-react";
+import { Trophy } from "lucide-react";
 
-import { PageShell } from "@/components/layout/PageShell";
-import { AnimatedSection, GeoButton, SectionContainer } from "@/components/shared";
+import { GeoButton } from "@/components/shared";
 import { ParticipantAvatar } from "@/features/matchmaking/components/RoomPlayerAvatar";
-import { MetaChip } from "@/features/play/components/Badges";
+import {
+  MatchResultsActions,
+  MatchResultsHeader,
+  MatchResultsHeroCard,
+  MatchResultsLeaderboardCard,
+  MatchResultsLightPage,
+  matchResultsTokens,
+} from "@/features/rooms/components/MatchResultsLightShell";
 import { selectUser, useAuthStore } from "@/stores/authStore";
 import type { QuizSet } from "@/features/quiz/data/types";
 import { resetQuizRun } from "@/stores/quizStore";
@@ -61,148 +67,141 @@ export function MultiplayerMatchComplete({
     resetQuizRun();
     void navigate({ to: "/play/multiplayer", replace: true });
   };
+
   const youRank = you?.finish_rank ?? null;
   const isFirstPlace = youRank === 1;
-
   const headline = youRank != null ? `${formatRankLabel(youRank)} place` : "Match complete";
-
   const youCreditLabel = rewardsSettled ? creditLabel(you?.credits_earned) : null;
+  const winner = participants.find((p) => p.finish_rank === 1) ?? participants[0];
 
   return (
-    <PageShell>
-      <SectionContainer
-        size="wide"
-        className="pt-[calc(var(--nav-height)+var(--space-section-sm))] pb-[var(--space-section-sm)]"
-      >
-        <AnimatedSection>
-          <MetaChip tone="bronze">
-            <Users className="h-3 w-3" strokeWidth={2.2} aria-hidden />
-            Match complete
-          </MetaChip>
-          <h1 className="mt-4 text-[clamp(1.8rem,4vw,2.7rem)] font-semibold tracking-tight text-foreground">
-            {set.title}
-          </h1>
-          <p className="mt-3 max-w-xl text-[0.9rem] leading-relaxed text-foreground/60">
-            Room {room.room_code ?? roomCode} — server-graded final standings.
-          </p>
-        </AnimatedSection>
+    <MatchResultsLightPage>
+      <MatchResultsHeader
+        eyebrow="Multiplayer quiz"
+        modeLabel="Multiplayer"
+        title={set.title}
+        description={`Room ${room.room_code ?? roomCode} — server-graded final standings for ${room.active_player_count ?? participants.length} players.`}
+      />
 
-        <AnimatedSection className="mt-10">
-          <div className="game-surface rounded-2xl p-6 text-center sm:p-8">
-            <span
-              className={`mx-auto inline-flex h-14 w-14 items-center justify-center rounded-2xl border ${
-                isFirstPlace
-                  ? "border-[oklch(0.72_0.13_150/0.5)] bg-[oklch(0.72_0.13_150/0.12)] text-[oklch(0.78_0.12_150)]"
-                  : "border-bronze/30 bg-bronze/10 text-bronze-glow"
-              }`}
-            >
-              <Trophy className="h-7 w-7" strokeWidth={1.8} aria-hidden />
+      <MatchResultsHeroCard>
+        <span
+          className={`mx-auto inline-flex h-14 w-14 items-center justify-center rounded-2xl border bg-[#FAFAFA] ${
+            isFirstPlace ? "border-emerald-500/40 text-emerald-700" : "border-[#E5E7EB] text-[#111827]"
+          }`}
+        >
+          <Trophy className="h-7 w-7" strokeWidth={1.8} aria-hidden />
+        </span>
+        <h2 className="mt-5 text-2xl font-bold tracking-tight text-[#111827]">{headline}</h2>
+        {winner ? (
+          <p className={`mt-2 text-[0.9rem] ${matchResultsTokens.muted}`}>
+            Winner:{" "}
+            <span className="font-semibold text-[#111827]">
+              {winner.display_name || winner.username}
             </span>
-            <h2 className="mt-5 text-2xl font-semibold tracking-tight text-foreground">
-              {headline}
-            </h2>
-            <p className="mt-2 text-[0.88rem] text-foreground/55">
-              Rankings by score, then submission time, for{" "}
-              {room.active_player_count ?? participants.length} players.
-            </p>
-            {!rewardsSettled ? (
-              <p className="mt-3 text-[0.82rem] text-foreground/45">Settling rewards…</p>
-            ) : null}
-            {rewardsSettled && you?.xp_earned != null ? (
-              <p className="mt-3 text-[0.85rem] text-foreground/60">+{you.xp_earned} XP</p>
-            ) : null}
-            {youCreditLabel ? (
-              <p className="mt-1 text-[0.85rem] font-medium text-bronze-glow">{youCreditLabel}</p>
-            ) : null}
-          </div>
-        </AnimatedSection>
+          </p>
+        ) : null}
+        {!rewardsSettled ? (
+          <p className={`mt-3 text-[0.82rem] ${matchResultsTokens.muted}`}>Settling rewards…</p>
+        ) : null}
+        {rewardsSettled && you?.xp_earned != null ? (
+          <p className="mt-3 text-[0.85rem] font-medium text-emerald-700">+{you.xp_earned} XP</p>
+        ) : null}
+        {youCreditLabel ? (
+          <p className="mt-1 text-[0.85rem] font-semibold text-[#111827]">{youCreditLabel}</p>
+        ) : null}
+      </MatchResultsHeroCard>
 
-        <div className="mt-8 space-y-3">
-          {participants.map((participant) => {
-            const isYou = participant.user_id === youUserId;
-            const rankLabel = formatRankLabel(participant.finish_rank);
-            const isFirst = participant.finish_rank === 1;
-            const participantCreditLabel = rewardsSettled
-              ? creditLabel(participant.credits_earned)
-              : null;
+      <ul className="mt-8 list-none space-y-3 p-0" aria-label="Final leaderboard">
+        {participants.map((participant) => {
+          const isYou = participant.user_id === youUserId;
+          const rankLabel = formatRankLabel(participant.finish_rank);
+          const isFirst = participant.finish_rank === 1;
+          const participantCreditLabel = rewardsSettled
+            ? creditLabel(participant.credits_earned)
+            : null;
 
-            return (
-              <AnimatedSection key={participant.id}>
-                <div
-                  className={`game-surface flex flex-col gap-4 rounded-2xl p-5 sm:flex-row sm:items-center sm:justify-between ${
-                    isYou ? "ring-1 ring-bronze/40" : ""
-                  } ${isFirst ? "ring-1 ring-[oklch(0.72_0.13_150/0.35)]" : ""}`}
+          return (
+            <MatchResultsLeaderboardCard key={participant.id} highlight={isYou} winner={isFirst}>
+              <div className="flex min-w-0 flex-1 items-center gap-4">
+                <span
+                  className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border text-sm font-bold tabular-nums ${
+                    isFirst
+                      ? "border-emerald-500/35 bg-emerald-50 text-emerald-800"
+                      : "border-[#E5E7EB] bg-[#FAFAFA] text-[#374151]"
+                  }`}
                 >
-                  <div className="flex min-w-0 items-center gap-4">
-                    <ParticipantAvatar
-                      participant={participant}
-                      you={isYou}
-                      selfAvatar={{ avatarId: user?.avatarId, avatarUrl: user?.avatarUrl }}
-                      size={48}
-                      alt=""
-                    />
-                    <span
-                      className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border text-sm font-semibold tabular-nums ${
-                        isFirst
-                          ? "border-[oklch(0.72_0.13_150/0.5)] bg-[oklch(0.72_0.13_150/0.12)] text-[oklch(0.78_0.12_150)]"
-                          : "border-foreground/10 bg-foreground/5 text-foreground/70"
-                      }`}
-                    >
-                      {isFirst ? (
-                        <Trophy className="h-5 w-5" strokeWidth={1.8} aria-hidden />
-                      ) : (
-                        rankLabel
-                      )}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="truncate text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-foreground/50">
-                        {rankLabel}
-                        {isYou ? " · You" : ""}
-                      </p>
-                      <p className="mt-1 truncate text-lg font-semibold text-foreground">
-                        {participant.display_name || participant.username}
-                      </p>
-                      {rewardsSettled && participant.xp_earned != null ? (
-                        <p className="mt-1 text-[0.78rem] text-foreground/55">
-                          +{participant.xp_earned} XP
-                          {participantCreditLabel ? ` · ${participantCreditLabel}` : ""}
-                        </p>
-                      ) : null}
-                    </div>
-                  </div>
-
-                  <dl className="grid shrink-0 grid-cols-3 gap-4 text-[0.82rem] sm:gap-6">
-                    <div>
-                      <dt className="text-foreground/50">Score</dt>
-                      <dd className="mt-0.5 font-semibold tabular-nums text-foreground">
-                        {participant.score ?? "—"}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="text-foreground/50">Correct</dt>
-                      <dd className="mt-0.5 font-semibold tabular-nums text-foreground">
-                        {participant.correct ?? 0}/{participant.total ?? 0}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="text-foreground/50">Best streak</dt>
-                      <dd className="mt-0.5 font-semibold tabular-nums text-foreground">
-                        {participant.best_streak ?? 0}
-                      </dd>
-                    </div>
-                  </dl>
+                  {isFirst ? <Trophy className="h-4 w-4" aria-hidden /> : rankLabel}
+                </span>
+                <ParticipantAvatar
+                  participant={participant}
+                  you={isYou}
+                  selfAvatar={{ avatarId: user?.avatarId, avatarUrl: user?.avatarUrl }}
+                  size={48}
+                  alt=""
+                />
+                <div className="min-w-0">
+                  <p className={matchResultsTokens.label}>
+                    {rankLabel}
+                    {isYou ? " · You" : ""}
+                  </p>
+                  <p className="mt-1 truncate text-lg font-semibold text-[#111827]">
+                    {participant.display_name || participant.username}
+                  </p>
+                  {rewardsSettled && participant.xp_earned != null ? (
+                    <p className={`mt-1 text-[0.78rem] ${matchResultsTokens.muted}`}>
+                      +{participant.xp_earned} XP
+                      {participantCreditLabel ? ` · ${participantCreditLabel}` : ""}
+                    </p>
+                  ) : null}
                 </div>
-              </AnimatedSection>
-            );
-          })}
-        </div>
+              </div>
 
-        <AnimatedSection className="mt-10 flex flex-wrap gap-3">
-          <GeoButton variant="solid" size="lg" onClick={exitToHub}>
-            Back to multiplayer hub
-          </GeoButton>
-        </AnimatedSection>
-      </SectionContainer>
-    </PageShell>
+              <dl className="grid shrink-0 grid-cols-3 gap-4 text-[0.82rem] sm:gap-6">
+                <div>
+                  <dt className={matchResultsTokens.muted}>Score</dt>
+                  <dd className="mt-0.5 font-semibold tabular-nums text-[#111827]">
+                    {participant.score ?? "—"}
+                  </dd>
+                </div>
+                <div>
+                  <dt className={matchResultsTokens.muted}>Correct</dt>
+                  <dd className="mt-0.5 font-semibold tabular-nums text-[#111827]">
+                    {participant.correct ?? 0}/{participant.total ?? 0}
+                  </dd>
+                </div>
+                <div>
+                  <dt className={matchResultsTokens.muted}>Best streak</dt>
+                  <dd className="mt-0.5 font-semibold tabular-nums text-[#111827]">
+                    {participant.best_streak ?? 0}
+                  </dd>
+                </div>
+              </dl>
+            </MatchResultsLeaderboardCard>
+          );
+        })}
+      </ul>
+
+      <MatchResultsActions>
+        <GeoButton
+          variant="solid"
+          size="lg"
+          className="min-h-11 w-full border border-[#111827] bg-[#111827] text-white sm:w-auto"
+          onClick={exitToHub}
+        >
+          Play again
+        </GeoButton>
+        <GeoButton
+          variant="dark"
+          size="lg"
+          className="min-h-11 w-full bg-white text-[#111827] ring-1 ring-[#E5E7EB] sm:w-auto"
+          onClick={() => {
+            resetQuizRun();
+            void navigate({ to: "/play", replace: true });
+          }}
+        >
+          Back to play
+        </GeoButton>
+      </MatchResultsActions>
+    </MatchResultsLightPage>
   );
 }
