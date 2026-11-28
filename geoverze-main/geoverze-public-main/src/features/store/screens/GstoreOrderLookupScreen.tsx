@@ -20,6 +20,7 @@ import { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 
 import { getGuestOrderDetailFn, type GuestOrderRow } from "../lib/gstoreServerFns";
+import { GstoreOrderShippingBlock } from "./GstoreOrderShippingBlock";
 import { displayGstoreProductName, formatInrPaise } from "../lib/gstoreProductPrices";
 import { StorefrontNav } from "../storefront/StorefrontNav";
 import "../storefront/storefront.css";
@@ -225,13 +226,14 @@ export function GstoreOrderLookupScreen() {
                     <p>{order.shipping_line1}{order.shipping_line2 ? `, ${order.shipping_line2}` : ""}</p>
                     <p>{order.shipping_city}, {order.shipping_state} {order.shipping_pincode}</p>
                     <p>{order.shipping_country}</p>
-                    {order.tracking_number && (
-                      <p className="mt-1.5 font-semibold text-black">
-                        Tracking: {order.tracking_number}
-                      </p>
-                    )}
                   </div>
                 </div>
+                <GstoreOrderShippingBlock
+                  paymentStatus={order.payment_status}
+                  orderStatus={order.order_status}
+                  trackingNumber={order.tracking_number}
+                  shipment={order.shipment}
+                />
               </div>
 
               {/* Order placed */}

@@ -11,7 +11,7 @@ import {
   Truck,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "@tanstack/react-router";
+import { Link, useParams, useSearch } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 
 import { supabase } from "@/lib/supabase/client";
@@ -28,11 +28,16 @@ import {
   gstoreGhostBtn,
 } from "./gstoreOrderUi";
 import { GstoreRetryPaymentButton } from "./GstoreRetryPaymentButton";
+import { GstoreOrderShippingBlock } from "./GstoreOrderShippingBlock";
 
 export function GstoreOrderDetailScreen() {
-  const user     = useAuthStore(selectUser);
+  const user = useAuthStore(selectUser);
   const { orderId } = useParams({ strict: false }) as { orderId?: string };
+  const { guest_token: guestTokenFromUrl } = useSearch({ strict: false }) as {
+    guest_token?: string;
+  };
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [guestToken, setGuestToken] = useState<string | null>(guestTokenFromUrl ?? null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -40,13 +45,30 @@ export function GstoreOrderDetailScreen() {
     });
   }, []);
 
+  useEffect(() => {
+    if (guestTokenFromUrl) {
+      setGuestToken(guestTokenFromUrl);
+      return;
+    }
+    if (!orderId) return;
+    const stored = localStorage.getItem(`gstore_guest_order_${orderId}`);
+    if (stored) setGuestToken(stored);
+  }, [guestTokenFromUrl, orderId]);
+
+  const useGuestAccess = Boolean(guestToken && !user);
+  const canFetch = Boolean(
+    orderId && ((user && accessToken) || (useGuestAccess && guestToken)),
+  );
+
   const { data: order, isLoading, error, refetch } = useQuery({
-    queryKey: ["gstoreOrderDetail", orderId],
+    queryKey: ["gstoreOrderDetail", orderId, useGuestAccess ? "guest" : "user"],
     queryFn: () =>
       getGstoreOrderDetailFn({
-        data: { access_token: accessToken!, order_id: orderId! },
+        data: useGuestAccess
+          ? { guest_token: guestToken!, order_id: orderId! }
+          : { access_token: accessToken!, order_id: orderId! },
       }),
-    enabled: Boolean(orderId && user && accessToken),
+    enabled: canFetch,
     staleTime: 60_000,
   });
 
@@ -81,6 +103,19 @@ export function GstoreOrderDetailScreen() {
         {isLoading ? (
           <div className="flex max-w-2xl items-center justify-center rounded-2xl border border-[#e8e8e8] bg-white p-16">
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-black border-t-transparent" />
+          </div>
+        ) : !canFetch && !isLoading ? (
+          <div className="max-w-2xl">
+            <GstoreOrderEmpty
+              icon={Package}
+              title="Sign in or use your order token"
+              description="Open the link from your confirmation email, or sign in to view this order."
+              action={
+                <Link to="/geostore/order-lookup" className={gstoreGhostBtn}>
+                  Track with order token
+                </Link>
+              }
+            />
           </div>
         ) : error || !order ? (
           <div className="max-w-2xl">
@@ -185,14 +220,12 @@ export function GstoreOrderDetailScreen() {
               </div>
             </div>
 
-            {order.tracking_number && (
-              <div className="mt-4 flex items-center gap-2 rounded-lg border border-[#ececec] bg-[#f7f8fa] px-3 py-2.5 text-[12px] text-[#4b5563]">
-                <Truck className="h-3.5 w-3.5 text-[#6b7280]" />
-                <span>
-                  Tracking number: <span className="font-medium text-[#111827]">{order.tracking_number}</span>
-                </span>
-              </div>
-            )}
+            <GstoreOrderShippingBlock
+              paymentStatus={order.payment_status}
+              orderStatus={order.order_status}
+              trackingNumber={order.tracking_number}
+              shipment={order.shipment}
+            />
 
             {order.is_mock && (
               <div className="mt-4 flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-[11px] text-amber-700">

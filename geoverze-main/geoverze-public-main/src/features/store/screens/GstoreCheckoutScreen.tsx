@@ -426,6 +426,7 @@ export function GstoreCheckoutScreen() {
     const search: Record<string, string> = { order_id: orderId, order_number: orderNumber };
     if (guestToken) {
       localStorage.setItem(`gstore_guest_${orderNumber}`, guestToken);
+      localStorage.setItem(`gstore_guest_order_${orderId}`, guestToken);
       search['guest_token'] = guestToken;
     }
     void navigate({ to: "/geostore/order-confirmation", search });

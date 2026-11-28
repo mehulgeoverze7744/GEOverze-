@@ -42,6 +42,7 @@ import {
   GSTORE_PAYMENT_OPTION_KEY,
 } from "./gstoreDualPricing";
 import { computeMembershipDiscountMinor } from "./membershipDiscount";
+import type { GstoreShipmentSnapshot } from "./gstoreOrderShipment";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -158,6 +159,36 @@ function makeServiceRoleClient(): SupabaseClient {
   }
 
   return createClient(url, serviceRole, { auth: { persistSession: false } });
+}
+
+async function loadLatestGstoreShipmentForOrder(
+  orderId: string,
+): Promise<GstoreShipmentSnapshot | null> {
+  try {
+    const svc = makeServiceRoleClient();
+    const { data, error } = await svc
+      .from("gstore_shipments")
+      .select("awb, courier_name, tracking_url, shipment_status")
+      .eq("order_id", orderId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (error || !data) return null;
+    const row = data as {
+      awb?: string | null;
+      courier_name?: string | null;
+      tracking_url?: string | null;
+      shipment_status?: string | null;
+    };
+    return {
+      awb: row.awb?.trim() ? row.awb.trim() : null,
+      courier_name: row.courier_name?.trim() ? row.courier_name.trim() : null,
+      tracking_url: row.tracking_url?.trim() ? row.tracking_url.trim() : null,
+      shipment_status: row.shipment_status?.trim() ? row.shipment_status.trim() : null,
+    };
+  } catch {
+    return null;
+  }
 }
 
 function getAdminEmails(): string[] {
@@ -672,10 +703,22 @@ export const getMyGstoreOrdersFn = createServerFn({ method: "GET" })
 
 // ── 5. getGstoreOrderDetailFn ────────────────────────────────────────────────
 
-const GetOrderDetailSchema = z.object({
-  access_token: z.string().min(10),
-  order_id:     z.string().uuid(),
-});
+const GetOrderDetailSchema = z
+  .object({
+    access_token: z.string().min(10).optional(),
+    guest_token: z.string().uuid().optional(),
+    order_id: z.string().uuid(),
+  })
+  .superRefine((val, ctx) => {
+    const hasAuth = Boolean(val.access_token);
+    const hasGuest = Boolean(val.guest_token);
+    if (hasAuth === hasGuest) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Provide exactly one of access_token or guest_token",
+      });
+    }
+  });
 
 export type GstoreOrderDetail = GstoreOrderRow & {
   customer_name:    string;
@@ -693,36 +736,82 @@ export type GstoreOrderDetail = GstoreOrderRow & {
   tax_minor:        number;
   discount_minor:   number;
   latest_payment_id: string | null;
+  shipment: GstoreShipmentSnapshot | null;
 };
 
 export const getGstoreOrderDetailFn = createServerFn({ method: "GET" })
   .validator((raw: unknown) => GetOrderDetailSchema.parse(raw))
   .handler(async ({ data }): Promise<GstoreOrderDetail> => {
-    const sb = makeSupabaseClient(data.access_token);
+    type OrderSelect = GstoreOrderRow & {
+      customer_name: string;
+      customer_email: string;
+      customer_phone: string;
+      shipping_name: string;
+      shipping_line1: string;
+      shipping_line2: string;
+      shipping_city: string;
+      shipping_state: string;
+      shipping_pincode: string;
+      shipping_country: string;
+      subtotal_minor: number;
+      shipping_minor: number;
+      tax_minor: number;
+      discount_minor: number;
+      gstore_order_items: GstoreOrderRow["items"];
+    };
 
-    const { data: order, error } = await sb
-      .from("gstore_orders")
-      .select(`
-        id, order_number, total_minor, currency,
-        order_status, payment_status, shipping_method,
-        tracking_number, is_mock, created_at,
-        customer_name, customer_email, customer_phone,
-        shipping_name, shipping_line1, shipping_line2,
-        shipping_city, shipping_state, shipping_pincode, shipping_country,
-        subtotal_minor, shipping_minor, tax_minor, discount_minor,
-        gstore_order_items (
-          id, product_name, product_slug, options,
-          quantity, unit_price_minor, line_total_minor
-        )
-      `)
-      .eq("id", data.order_id)
-      .single();
+    let order: OrderSelect | null = null;
+    let paymentQueryClient: SupabaseClient;
 
-    if (error || !order) {
+    if (data.access_token) {
+      paymentQueryClient = makeSupabaseClient(data.access_token);
+      const { data: row, error } = await paymentQueryClient
+        .from("gstore_orders")
+        .select(`
+          id, order_number, total_minor, currency,
+          order_status, payment_status, shipping_method,
+          tracking_number, is_mock, created_at,
+          customer_name, customer_email, customer_phone,
+          shipping_name, shipping_line1, shipping_line2,
+          shipping_city, shipping_state, shipping_pincode, shipping_country,
+          subtotal_minor, shipping_minor, tax_minor, discount_minor,
+          gstore_order_items (
+            id, product_name, product_slug, options,
+            quantity, unit_price_minor, line_total_minor
+          )
+        `)
+        .eq("id", data.order_id)
+        .single();
+      if (error || !row) throw new Error("Order not found or access denied.");
+      order = row as OrderSelect;
+    } else if (data.guest_token) {
+      const svc = makeServiceRoleClient();
+      paymentQueryClient = svc;
+      const { data: row, error } = await svc
+        .from("gstore_orders")
+        .select(`
+          id, order_number, total_minor, currency,
+          order_status, payment_status, shipping_method,
+          tracking_number, is_mock, created_at,
+          customer_name, customer_email, customer_phone,
+          shipping_name, shipping_line1, shipping_line2,
+          shipping_city, shipping_state, shipping_pincode, shipping_country,
+          subtotal_minor, shipping_minor, tax_minor, discount_minor,
+          gstore_order_items (
+            id, product_name, product_slug, options,
+            quantity, unit_price_minor, line_total_minor
+          )
+        `)
+        .eq("id", data.order_id)
+        .eq("guest_token", data.guest_token)
+        .single();
+      if (error || !row) throw new Error("Order not found or access denied.");
+      order = row as OrderSelect;
+    } else {
       throw new Error("Order not found or access denied.");
     }
 
-    const { data: latestPayment } = await sb
+    const { data: latestPayment } = await paymentQueryClient
       .from("gstore_payments")
       .select("id")
       .eq("order_id", data.order_id)
@@ -730,14 +819,8 @@ export const getGstoreOrderDetailFn = createServerFn({ method: "GET" })
       .limit(1)
       .maybeSingle();
 
-    const o = order as typeof order & {
-      customer_name: string; customer_email: string; customer_phone: string;
-      shipping_name: string; shipping_line1: string; shipping_line2: string;
-      shipping_city: string; shipping_state: string; shipping_pincode: string;
-      shipping_country: string; subtotal_minor: number; shipping_minor: number;
-      tax_minor: number; discount_minor: number;
-      gstore_order_items: GstoreOrderRow["items"];
-    };
+    const o = order;
+    const shipment = await loadLatestGstoreShipmentForOrder(o.id);
 
     return {
       id:               o.id,
@@ -766,6 +849,7 @@ export const getGstoreOrderDetailFn = createServerFn({ method: "GET" })
       discount_minor:   o.discount_minor,
       latest_payment_id: (latestPayment as { id?: string } | null)?.id ?? null,
       items:            o.gstore_order_items ?? [],
+      shipment,
     };
   });
 
@@ -1112,6 +1196,7 @@ export type GuestOrderRow = {
   shipping_country: string;
   is_mock: boolean;
   created_at: string;
+  shipment: GstoreShipmentSnapshot | null;
   items: Array<{
     id: string;
     product_name: string;
@@ -1138,7 +1223,10 @@ export const getGuestOrderDetailFn = createServerFn({ method: "POST" })
     });
 
     if (error) throw new Error(error.message);
-    return result as GuestOrderRow | null;
+    const guest = result as GuestOrderRow | null;
+    if (!guest) return null;
+    const shipment = await loadLatestGstoreShipmentForOrder(guest.id);
+    return { ...guest, shipment };
   });
 
 // ── 10. getAdminOrdersFn ──────────────────────────────────────────────────────
