@@ -9,6 +9,138 @@ export function shiprocketWebhookString(value: unknown): string {
   return String(value).trim();
 }
 
+export function shiprocketWebhookJsonType(value: unknown): string {
+  if (value === null) return "null";
+  if (value === undefined) return "undefined";
+  if (Array.isArray(value)) return "array";
+  return typeof value;
+}
+
+function sortedScanFieldNames(scan: unknown): string {
+  if (!scan || typeof scan !== "object" || Array.isArray(scan)) return "";
+  return Object.keys(scan as Record<string, unknown>)
+    .sort()
+    .join(",");
+}
+
+/**
+ * Privacy-safe payload shape for production diagnostics (no values, no customer data).
+ * Inferred production dashboard test (2026-03): non-doc AWB/order/courier, status ids 7, two scans.
+ */
+export type ShiprocketWebhookEnvelopeStructureDiagnostics = {
+  topLevelKeyCount: number;
+  hasAwb: boolean;
+  awbJsonType: string;
+  hasOrderId: boolean;
+  orderIdJsonType: string;
+  hasSrOrderId: boolean;
+  srOrderIdJsonType: string;
+  hasShipmentId: boolean;
+  shipmentIdJsonType: string;
+  hasCurrentStatus: boolean;
+  currentStatusJsonType: string;
+  hasShipmentStatus: boolean;
+  shipmentStatusJsonType: string;
+  hasCurrentStatusId: boolean;
+  currentStatusIdJsonType: string;
+  hasShipmentStatusId: boolean;
+  shipmentStatusIdJsonType: string;
+  hasChannel: boolean;
+  channelJsonType: string;
+  hasChannelOrderId: boolean;
+  channelOrderIdJsonType: string;
+  hasCourierName: boolean;
+  courierNameJsonType: string;
+  hasTestBoolean: boolean;
+  hasWebhookTestBoolean: boolean;
+  hasEventField: boolean;
+  eventFieldJsonType: string;
+  hasEventTypeField: boolean;
+  eventTypeFieldJsonType: string;
+  scansIsArray: boolean;
+  scansLength: number;
+  firstScanFieldNames: string;
+  lastScanFieldNames: string;
+};
+
+export function shiprocketWebhookEnvelopeStructureDiagnostics(
+  envelope: ShiprocketWebhookEnvelope,
+): ShiprocketWebhookEnvelopeStructureDiagnostics {
+  const scans = envelope.scans;
+  const scansIsArray = Array.isArray(scans);
+  const scansLength = scansIsArray ? scans.length : 0;
+  const firstScan = scansIsArray && scansLength > 0 ? scans[0] : undefined;
+  const lastScan = scansIsArray && scansLength > 0 ? scans[scansLength - 1] : undefined;
+
+  const keys = Object.keys(envelope).filter(
+    (k) => envelope[k] !== undefined && envelope[k] !== null,
+  );
+
+  return {
+    topLevelKeyCount: keys.length,
+    hasAwb: envelope.awb !== undefined && envelope.awb !== null && shiprocketWebhookString(envelope.awb) !== "",
+    awbJsonType: shiprocketWebhookJsonType(envelope.awb),
+    hasOrderId:
+      envelope.order_id !== undefined &&
+      envelope.order_id !== null &&
+      shiprocketWebhookString(envelope.order_id) !== "",
+    orderIdJsonType: shiprocketWebhookJsonType(envelope.order_id),
+    hasSrOrderId: envelope.sr_order_id !== undefined && envelope.sr_order_id !== null,
+    srOrderIdJsonType: shiprocketWebhookJsonType(envelope.sr_order_id),
+    hasShipmentId: envelope.shipment_id !== undefined && envelope.shipment_id !== null,
+    shipmentIdJsonType: shiprocketWebhookJsonType(envelope.shipment_id),
+    hasCurrentStatus:
+      envelope.current_status !== undefined &&
+      envelope.current_status !== null &&
+      shiprocketWebhookString(envelope.current_status) !== "",
+    currentStatusJsonType: shiprocketWebhookJsonType(envelope.current_status),
+    hasShipmentStatus:
+      envelope.shipment_status !== undefined &&
+      envelope.shipment_status !== null &&
+      shiprocketWebhookString(envelope.shipment_status) !== "",
+    shipmentStatusJsonType: shiprocketWebhookJsonType(envelope.shipment_status),
+    hasCurrentStatusId:
+      envelope.current_status_id !== undefined && envelope.current_status_id !== null,
+    currentStatusIdJsonType: shiprocketWebhookJsonType(envelope.current_status_id),
+    hasShipmentStatusId:
+      envelope.shipment_status_id !== undefined && envelope.shipment_status_id !== null,
+    shipmentStatusIdJsonType: shiprocketWebhookJsonType(envelope.shipment_status_id),
+    hasChannel:
+      envelope.channel !== undefined &&
+      envelope.channel !== null &&
+      shiprocketWebhookString(envelope.channel) !== "",
+    channelJsonType: shiprocketWebhookJsonType(envelope.channel),
+    hasChannelOrderId:
+      envelope.channel_order_id !== undefined &&
+      envelope.channel_order_id !== null &&
+      shiprocketWebhookString(envelope.channel_order_id) !== "",
+    channelOrderIdJsonType: shiprocketWebhookJsonType(envelope.channel_order_id),
+    hasCourierName:
+      envelope.courier_name !== undefined &&
+      envelope.courier_name !== null &&
+      shiprocketWebhookString(envelope.courier_name) !== "",
+    courierNameJsonType: shiprocketWebhookJsonType(envelope.courier_name),
+    hasTestBoolean: envelope.test === true,
+    hasWebhookTestBoolean: envelope.webhook_test === true,
+    hasEventField: envelope.event !== undefined && envelope.event !== null,
+    eventFieldJsonType: shiprocketWebhookJsonType(envelope.event),
+    hasEventTypeField: envelope.event_type !== undefined && envelope.event_type !== null,
+    eventTypeFieldJsonType: shiprocketWebhookJsonType(envelope.event_type),
+    scansIsArray,
+    scansLength,
+    firstScanFieldNames: sortedScanFieldNames(firstScan),
+    lastScanFieldNames: sortedScanFieldNames(lastScan),
+  };
+}
+
+/** Fields present on dashboard Test Webhook per production correlation 3a5702e3 (values omitted). */
+export const SHIPROCKET_PRODUCTION_DASHBOARD_TEST_SHAPE = {
+  description:
+    "Authenticated POST with routing fields; not a doc sample; Delivered status ids 7; two scan rows; real courier label",
+  scansLength: 2,
+  deliveredStatusId: 7,
+} as const;
+
 export type ShiprocketWebhookEnvelope = {
   awb?: string | number;
   shipment_id?: string | number;

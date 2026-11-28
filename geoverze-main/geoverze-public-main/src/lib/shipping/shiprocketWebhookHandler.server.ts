@@ -4,6 +4,7 @@
 
 import { verifyShiprocketWebhook } from "./shiprocketWebhookVerify.server.ts";
 import {
+  describeShiprocketServiceClientAvailability,
   processShiprocketWebhook,
   type ShiprocketWebhookEnvelope,
 } from "./shiprocketWebhookProcess.server.ts";
@@ -13,6 +14,7 @@ import {
   isShiprocketOfficialDocumentationDemoPayload,
   isShiprocketWebhookTestPayload,
   resolveShipmentLookup,
+  shiprocketWebhookEnvelopeStructureDiagnostics,
 } from "./shiprocketWebhookPayload.server.ts";
 import {
   mapWebhookProcessResultToHttp,
@@ -20,6 +22,8 @@ import {
 } from "./shiprocketWebhookResponse.server.ts";
 import {
   classifyConnectivityProbeAckCategory,
+  logCarrierWebhookPayloadShape,
+  logCarrierWebhookServiceClientConfig,
   logCarrierWebhookStage,
   type CarrierWebhookAckCategory,
 } from "./shiprocketWebhookDiagnostics.server.ts";
@@ -70,6 +74,9 @@ export async function handleShiprocketWebhookRequest(input: {
     };
   }
 
+  const shape = shiprocketWebhookEnvelopeStructureDiagnostics(envelope);
+  logCarrierWebhookPayloadShape({ correlationId, shape });
+
   const downloadDiag = downloadedSampleMatchDiagnostics(envelope);
   const connectivityProbe = isShiprocketConnectivityProbe(envelope);
   logCarrierWebhookStage({
@@ -85,8 +92,12 @@ export async function handleShiprocketWebhookRequest(input: {
     scansLength: downloadDiag.scansLength,
     awbOk: downloadDiag.awbOk,
     orderIdOk: downloadDiag.orderIdOk,
+    currentStatusOk: downloadDiag.currentStatusOk,
+    shipmentStatusOk: downloadDiag.shipmentStatusOk,
     currentStatusIdOk: downloadDiag.currentStatusIdOk,
     shipmentStatusIdOk: downloadDiag.shipmentStatusIdOk,
+    channelOrderIdOk: downloadDiag.channelOrderIdOk,
+    channelOk: downloadDiag.channelOk,
     courierNameOk: downloadDiag.courierNameOk,
   });
 
@@ -105,6 +116,7 @@ export async function handleShiprocketWebhookRequest(input: {
     stage: "routing_check",
     authOk: true,
     routingResolved: routing !== null,
+    lookupKind: routing?.kind ?? "none",
   });
 
   if (!routing) {
@@ -113,6 +125,15 @@ export async function handleShiprocketWebhookRequest(input: {
       body: { ok: false, reason: "missing_routing_fields" },
       ackCategory: "internal_error",
     };
+  }
+
+  const serviceAvailability = describeShiprocketServiceClientAvailability();
+  if (!serviceAvailability.available) {
+    logCarrierWebhookServiceClientConfig({
+      correlationId,
+      stage: "shipment_process",
+      availability: serviceAvailability,
+    });
   }
 
   const result = await processShiprocketWebhook(input.rawBody, envelope);

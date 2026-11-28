@@ -14,13 +14,18 @@ import {
   shiprocketWebhookString,
   type ShiprocketWebhookEnvelope,
 } from "./shiprocketWebhookPayload.server.ts";
+import { describeShiprocketServiceClientAvailability } from "./shiprocketWebhookServiceClient.server.ts";
 
 export type { ShiprocketWebhookEnvelope } from "./shiprocketWebhookPayload.server.ts";
+export { describeShiprocketServiceClientAvailability } from "./shiprocketWebhookServiceClient.server.ts";
 
 function serviceClient(): SupabaseClient | null {
-  const url = process.env["SUPABASE_URL"] ?? process.env["VITE_SUPABASE_URL"] ?? "";
-  const key = process.env["SUPABASE_SERVICE_ROLE_KEY"] ?? "";
-  if (!url || !key) return null;
+  const availability = describeShiprocketServiceClientAvailability();
+  if (!availability.available) return null;
+  const url =
+    (process.env["SUPABASE_URL"] ?? "").trim() ||
+    (process.env["VITE_SUPABASE_URL"] ?? "").trim();
+  const key = process.env["SUPABASE_SERVICE_ROLE_KEY"]?.trim() ?? "";
   return createClient(url, key, { auth: { persistSession: false } });
 }
 

@@ -9,7 +9,9 @@ import {
   isShiprocketDownloadedDocumentationSamplePayload,
   isShiprocketOfficialDocumentationDemoPayload,
   type ShiprocketWebhookEnvelope,
+  type ShiprocketWebhookEnvelopeStructureDiagnostics,
 } from "./shiprocketWebhookPayload.server.ts";
+import type { ShiprocketServiceClientAvailability } from "./shiprocketWebhookServiceClient.server.ts";
 
 export type CarrierWebhookAckCategory =
   | "explicit_test"
@@ -106,7 +108,52 @@ const STAGE_LOG_ALLOWLIST = new Set([
   "courierNameOk",
   "processOk",
   "processReason",
+  "hasSupabaseUrl",
+  "hasServiceRoleKey",
+  "urlSource",
+  "unavailableReason",
+  "currentStatusOk",
+  "shipmentStatusOk",
+  "channelOk",
+  "channelOrderIdOk",
+  "lookupKind",
 ]);
+
+const PAYLOAD_SHAPE_LOG_KEYS: readonly (keyof ShiprocketWebhookEnvelopeStructureDiagnostics)[] = [
+  "topLevelKeyCount",
+  "hasAwb",
+  "awbJsonType",
+  "hasOrderId",
+  "orderIdJsonType",
+  "hasSrOrderId",
+  "srOrderIdJsonType",
+  "hasShipmentId",
+  "shipmentIdJsonType",
+  "hasCurrentStatus",
+  "currentStatusJsonType",
+  "hasShipmentStatus",
+  "shipmentStatusJsonType",
+  "hasCurrentStatusId",
+  "currentStatusIdJsonType",
+  "hasShipmentStatusId",
+  "shipmentStatusIdJsonType",
+  "hasChannel",
+  "channelJsonType",
+  "hasChannelOrderId",
+  "channelOrderIdJsonType",
+  "hasCourierName",
+  "courierNameJsonType",
+  "hasTestBoolean",
+  "hasWebhookTestBoolean",
+  "hasEventField",
+  "eventFieldJsonType",
+  "hasEventTypeField",
+  "eventTypeFieldJsonType",
+  "scansIsArray",
+  "scansLength",
+  "firstScanFieldNames",
+  "lastScanFieldNames",
+];
 
 const FORBIDDEN_LOG_KEY_RE =
   /^(authorization|cookie|x-api-key|x-shiprocket-token|x-shiprocket-hmac|x-signature|rawbody|body|token|signature|hmac|secret|env)$/i;
@@ -270,6 +317,37 @@ function pickStageLogFields(record: CarrierWebhookStageLog): Record<string, unkn
 
 export function logCarrierWebhookStage(log: CarrierWebhookStageLog): void {
   console.info("[carrier-webhook-diag]", JSON.stringify(pickStageLogFields(log)));
+}
+
+export function logCarrierWebhookPayloadShape(input: {
+  correlationId: string;
+  shape: ShiprocketWebhookEnvelopeStructureDiagnostics;
+}): void {
+  const picked = pickAllowedKeys(input.shape, PAYLOAD_SHAPE_LOG_KEYS);
+  const record = sanitizeCarrierWebhookLogRecord({
+    event: "carrier_webhook_payload_shape",
+    correlationId: input.correlationId,
+    ...picked,
+  });
+  console.info("[carrier-webhook-diag]", JSON.stringify(record));
+}
+
+export function logCarrierWebhookServiceClientConfig(input: {
+  correlationId: string;
+  stage: CarrierWebhookProcessingStage;
+  availability: ShiprocketServiceClientAvailability;
+}): void {
+  logCarrierWebhookStage({
+    event: "carrier_webhook_stage",
+    correlationId: input.correlationId,
+    stage: input.stage,
+    authOk: true,
+    hasSupabaseUrl: input.availability.hasSupabaseUrl,
+    hasServiceRoleKey: input.availability.hasServiceRoleKey,
+    urlSource: input.availability.urlSource,
+    unavailableReason:
+      input.availability.available ? "ok" : input.availability.unavailableReason,
+  });
 }
 
 export function logCarrierWebhookException(log: CarrierWebhookExceptionLog): void {
