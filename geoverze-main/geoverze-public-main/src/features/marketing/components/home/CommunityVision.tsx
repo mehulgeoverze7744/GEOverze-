@@ -103,7 +103,7 @@ export const CommunityVision = memo(function CommunityVision() {
         <h2
           ref={headingRef}
           id="community-vision-heading"
-          className="community-vision__heading mx-auto mt-6 max-w-3xl font-light leading-[1.18] tracking-tight text-[clamp(1.6rem,3.4vw,2.6rem)]"
+          className="community-vision__heading mx-auto mt-6 max-w-3xl font-light"
         >
           Building the world&rsquo;s most engaging geography learning community.
         </h2>
