@@ -6,6 +6,7 @@ import { StatusBadge } from "@/components/shared/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/features/users/format";
 import type { Coupon, RedemptionItem, StoreOrder, StoreProduct } from "@/features/store/types";
+import { formatGstoreShipmentStatusForAdmin } from "@/features/store/shipmentFilters";
 import { money, num } from "@/lib/format";
 
 function stockTone(status: StoreProduct["stockStatus"]) {
@@ -127,11 +128,16 @@ export function buildOrderColumns(query: string): DataTableColumn<StoreOrder>[] 
     {
       id: "id",
       header: "Order",
-      accessor: (o) => o.id,
+      accessor: (o) => `${o.orderNumber} ${o.id}`,
       cell: (o) => (
-        <code className="font-mono text-xs font-medium text-foreground">
-          <Highlight text={o.id} query={query} />
-        </code>
+        <div className="max-w-48">
+          <span className="block font-mono text-xs font-semibold text-foreground">
+            <Highlight text={o.orderNumber} query={query} />
+          </span>
+          <span className="block truncate font-mono text-[10px] text-muted-foreground">
+            <Highlight text={o.id} query={query} />
+          </span>
+        </div>
       ),
     },
     {
@@ -164,11 +170,20 @@ export function buildOrderColumns(query: string): DataTableColumn<StoreOrder>[] 
       id: "shipmentStatus",
       header: "Shipment",
       accessor: (o) => o.shipmentStatus,
-      cell: (o) => (
-        <Badge variant={o.shipmentStatus === "failed" ? "destructive" : "secondary"}>
-          {o.shipmentStatus.replace(/_/g, " ")}
-        </Badge>
-      ),
+      cell: (o) => {
+        const label = formatGstoreShipmentStatusForAdmin({
+          paymentStatus: o.paymentStatus,
+          shipmentStatus: o.shipmentStatus,
+          trackingAvailable: o.trackingAvailable,
+          awb: o.awb,
+          logisticsIncomplete: o.logisticsIncomplete,
+        });
+        return (
+          <Badge variant={o.shipmentStatus === "failed" ? "destructive" : "secondary"}>
+            {label}
+          </Badge>
+        );
+      },
     },
     {
       id: "courier",

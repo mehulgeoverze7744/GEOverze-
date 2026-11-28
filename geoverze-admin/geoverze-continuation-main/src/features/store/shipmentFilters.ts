@@ -47,3 +47,29 @@ export function matchesShipmentFilter(
   if (filter === "all") return true;
   return bucket === filter;
 }
+
+/** Human-readable shipment column text for the Gstore orders list. */
+export function formatGstoreShipmentStatusForAdmin(fields: {
+  paymentStatus: string;
+  shipmentStatus: string;
+  trackingAvailable: boolean;
+  awb: string | null;
+  logisticsIncomplete?: boolean;
+}): string {
+  if (fields.trackingAvailable) return "Tracking available";
+  if (fields.awb?.trim()) return "Shipment booked";
+  const status = fields.shipmentStatus ?? "none";
+  if (fields.logisticsIncomplete && fields.paymentStatus === "paid") {
+    return "Ready to ship — logistics incomplete";
+  }
+  if (status !== "none" && status !== "cancelled") {
+    if (["created", "awb_assigned", "pickup_scheduled", "pending"].includes(status)) {
+      return "Ready to ship";
+    }
+    return status.replace(/_/g, " ");
+  }
+  if (fields.paymentStatus === "paid") {
+    return "Paid — preparing shipment";
+  }
+  return status.replace(/_/g, " ");
+}

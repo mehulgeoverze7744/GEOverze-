@@ -21,8 +21,8 @@ export const Route = createFileRoute("/store")({
 });
 
 const sections = [
-  { to: "/store", label: "Products", exact: true },
   { to: "/store/orders", label: "Orders", exact: false },
+  { to: "/store", label: "Products", exact: true },
   { to: "/store/coupons", label: "Coupons", exact: false },
   { to: "/store/redemptions", label: "Credit redemptions", exact: false },
 ] as const;

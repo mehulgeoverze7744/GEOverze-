@@ -1,4 +1,10 @@
-import { fetchGstoreOrders, fetchGstorePrices, fetchStoreProducts } from "@/features/commerce/api";
+import {
+  fetchAllGstoreOrderItems,
+  fetchGstoreOrders,
+  fetchGstorePrices,
+  fetchStoreProducts,
+} from "@/features/commerce/api";
+import { groupGstoreOrderLinesByOrderId } from "@/features/store/mapGstoreOrderLines";
 import { fetchGstoreShippingSummaries } from "@/features/commerce/shippingApi";
 import { mergeShippingSummary } from "@/features/store/shipmentFilters";
 import type { OrderStatus, StoreOrder, StoreProduct } from "@/features/store/types";
@@ -71,11 +77,13 @@ function mapOrderStatus(value: string, paymentStatus: string): OrderStatus {
 }
 
 export async function fetchMappedGstoreOrders(): Promise<StoreOrder[]> {
-  const [rows, summaries] = await Promise.all([
+  const [rows, summaries, itemRows] = await Promise.all([
     fetchGstoreOrders(),
     fetchGstoreShippingSummaries().catch(() => []),
+    fetchAllGstoreOrderItems(),
   ]);
   const byOrder = new Map(summaries.map((s) => [s.order_id, s]));
+  const linesByOrder = groupGstoreOrderLinesByOrderId(itemRows);
 
   return rows.map((row) => {
     const summary = byOrder.get(row.id);
@@ -86,7 +94,7 @@ export async function fetchMappedGstoreOrders(): Promise<StoreOrder[]> {
       email: row.customer_email,
       channel: "Gstore",
       status: mapOrderStatus(row.order_status, row.payment_status),
-      lines: [],
+      lines: linesByOrder.get(row.id) ?? [],
       subtotal: Number(row.subtotal_minor) / 100,
       shipping: Number(row.shipping_minor) / 100,
       discount: Number(row.discount_minor) / 100,

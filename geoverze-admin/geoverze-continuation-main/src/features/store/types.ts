@@ -48,6 +48,8 @@ export interface OrderLine {
   name: string;
   quantity: number;
   unitPrice: number;
+  productSlug?: string;
+  options?: Record<string, string>;
 }
 
 export interface OrderEvent {

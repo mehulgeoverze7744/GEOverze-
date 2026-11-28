@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { deriveShipmentFilterBucket, matchesShipmentFilter } from "./shipmentFilters";
+import {
+  deriveShipmentFilterBucket,
+  formatGstoreShipmentStatusForAdmin,
+  matchesShipmentFilter,
+} from "./shipmentFilters";
 
 describe("deriveShipmentFilterBucket", () => {
   it("flags logistics incomplete paid orders", () => {
@@ -21,6 +25,40 @@ describe("deriveShipmentFilterBucket", () => {
         logistics_incomplete: false,
       }),
     ).toBe("all");
+  });
+
+  it("marks paid orders without shipment as awaiting_shipment", () => {
+    expect(
+      deriveShipmentFilterBucket({
+        payment_status: "paid",
+        shipment_status: "none",
+        logistics_incomplete: false,
+      }),
+    ).toBe("awaiting_shipment");
+  });
+});
+
+describe("formatGstoreShipmentStatusForAdmin", () => {
+  it("GV-10032 paid without shipment shows preparing copy", () => {
+    expect(
+      formatGstoreShipmentStatusForAdmin({
+        paymentStatus: "paid",
+        shipmentStatus: "none",
+        trackingAvailable: false,
+        awb: null,
+      }),
+    ).toBe("Paid — preparing shipment");
+  });
+
+  it("shows tracking available when flag set", () => {
+    expect(
+      formatGstoreShipmentStatusForAdmin({
+        paymentStatus: "paid",
+        shipmentStatus: "in_transit",
+        trackingAvailable: true,
+        awb: "123",
+      }),
+    ).toBe("Tracking available");
   });
 });
 

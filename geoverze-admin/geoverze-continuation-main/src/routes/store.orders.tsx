@@ -203,8 +203,10 @@ function StoreOrdersPage() {
       <SideDrawer
         open={Boolean(current)}
         onOpenChange={(open) => !open && setActive(null)}
-        title={current ? `Order ${current.id}` : "Order"}
-        description={current?.customer}
+        title={current ? `Order ${current.orderNumber}` : "Order"}
+        description={
+          current ? `${current.customer} · ${current.id}` : undefined
+        }
       >
         {current && (
           <Tabs defaultValue="summary">
@@ -273,15 +275,28 @@ function StoreOrdersPage() {
 
             <TabsContent value="items" className="mt-4">
               <ul className="divide-y divide-border rounded-lg border border-border">
-                {current.lines.map((line) => (
-                  <li key={line.id} className="flex items-center gap-2 p-3 text-sm">
-                    <span className="min-w-0 flex-1 truncate">{line.name}</span>
-                    <span className="text-xs text-muted-foreground">x{line.quantity}</span>
-                    <span className="text-xs text-muted-foreground tabular">
-                      {money(line.unitPrice * line.quantity)}
-                    </span>
-                  </li>
-                ))}
+                {current.lines.length === 0 ? (
+                  <li className="p-3 text-sm text-muted-foreground">No line items loaded.</li>
+                ) : (
+                  current.lines.map((line) => (
+                    <li key={line.id} className="flex flex-col gap-1 p-3 text-sm">
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="min-w-0 flex-1 font-medium text-foreground">{line.name}</span>
+                        <span className="shrink-0 text-xs text-muted-foreground">x{line.quantity}</span>
+                      </div>
+                      {line.options && Object.keys(line.options).length > 0 ? (
+                        <p className="text-xs text-muted-foreground">
+                          {Object.entries(line.options)
+                            .map(([key, value]) => `${key}: ${value}`)
+                            .join(" · ")}
+                        </p>
+                      ) : null}
+                      <span className="text-xs text-muted-foreground tabular">
+                        {money(line.unitPrice * line.quantity)}
+                      </span>
+                    </li>
+                  ))
+                )}
               </ul>
             </TabsContent>
 

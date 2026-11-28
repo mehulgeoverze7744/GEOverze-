@@ -76,6 +76,16 @@ export async function fetchGstoreOrderItems(orderId: string) {
   );
 }
 
+export async function fetchAllGstoreOrderItems() {
+  return throwOnError(
+    await supabase
+      .from("gstore_order_items")
+      .select("id, order_id, product_slug, product_name, options, quantity, unit_price_minor")
+      .order("created_at", { ascending: true }),
+    "Failed to load gstore order line items",
+  );
+}
+
 export async function updateGstoreOrder(orderId: string, status?: string, tracking?: string) {
   return throwOnError(
     await supabase.rpc("admin_update_gstore_order", {
