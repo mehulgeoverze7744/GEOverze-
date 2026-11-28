@@ -74,9 +74,18 @@ test("downloaded doc sample requires full identifying and placeholder fields", (
   assert.equal(
     isShiprocketDownloadedDocumentationSamplePayload({
       ...DOWNLOADED_SAMPLE_BODY,
-      scans: Array.from({ length: 10 }, () => ({})),
+      scans: [],
     }),
     false,
+  );
+  assert.equal(
+    isShiprocketDownloadedDocumentationSamplePayload({
+      ...DOWNLOADED_SAMPLE_BODY,
+      current_status_id: "7",
+      shipment_status_id: "7",
+      scans: Array.from({ length: 4 }, () => ({})),
+    }),
+    true,
   );
   assert.equal(isShiprocketWebhookTestPayload(DOWNLOADED_SAMPLE_BODY), false);
 });

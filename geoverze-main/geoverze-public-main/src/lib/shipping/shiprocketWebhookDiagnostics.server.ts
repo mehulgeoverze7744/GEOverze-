@@ -38,6 +38,32 @@ export type CarrierWebhookResponseLog = {
   ackCategory: CarrierWebhookAckCategory;
   elapsedMs: number;
   responseBodyByteLength: number;
+  httpReason?: string;
+};
+
+export type CarrierWebhookProcessingStage =
+  | "request_read"
+  | "auth_verify"
+  | "json_parse"
+  | "connectivity_probe"
+  | "routing_check"
+  | "shipment_process"
+  | "response_map"
+  | "unhandled";
+
+export type CarrierWebhookStageLog = {
+  event: "carrier_webhook_stage";
+  correlationId: string;
+  stage: CarrierWebhookProcessingStage;
+} & Record<string, boolean | number | string | null>;
+
+export type CarrierWebhookExceptionLog = {
+  event: "carrier_webhook_exception";
+  correlationId: string;
+  stage: CarrierWebhookProcessingStage;
+  errorName: string;
+  errorMessage: string;
+  errorStack?: string;
 };
 
 const REQUEST_LOG_KEYS: readonly (keyof CarrierWebhookRequestLog)[] = [
@@ -58,7 +84,29 @@ const RESPONSE_LOG_KEYS: readonly (keyof CarrierWebhookResponseLog)[] = [
   "ackCategory",
   "elapsedMs",
   "responseBodyByteLength",
+  "httpReason",
 ];
+
+const STAGE_LOG_ALLOWLIST = new Set([
+  "event",
+  "correlationId",
+  "stage",
+  "authOk",
+  "connectivityProbe",
+  "downloadSampleMatch",
+  "officialDemoMatch",
+  "explicitTestPayload",
+  "routingResolved",
+  "scansIsArray",
+  "scansLength",
+  "awbOk",
+  "orderIdOk",
+  "currentStatusIdOk",
+  "shipmentStatusIdOk",
+  "courierNameOk",
+  "processOk",
+  "processReason",
+]);
 
 const FORBIDDEN_LOG_KEY_RE =
   /^(authorization|cookie|x-api-key|x-shiprocket-token|x-shiprocket-hmac|x-signature|rawbody|body|token|signature|hmac|secret|env)$/i;
@@ -123,12 +171,39 @@ export function buildCarrierWebhookRequestLog(input: {
   };
 }
 
+const SECRET_INLINE_RE =
+  /(bearer\s+\S+|x-api-key|authorization|shiprocket_webhook|supabase_service|eyJ[a-zA-Z0-9_-]{10,})/gi;
+
+export function sanitizeExceptionText(value: string, maxLen: number): string {
+  return value
+    .replace(SECRET_INLINE_RE, "[redacted]")
+    .replace(/[a-f0-9]{32,}/gi, "[redacted]")
+    .slice(0, maxLen);
+}
+
+export function sanitizeExceptionForLog(error: unknown): {
+  name: string;
+  message: string;
+  stack?: string;
+} {
+  const err = error instanceof Error ? error : new Error("unknown_error");
+  const stack = err.stack
+    ? sanitizeExceptionText(err.stack, 1200)
+    : undefined;
+  return {
+    name: err.name.slice(0, 80),
+    message: sanitizeExceptionText(err.message, 240),
+    stack,
+  };
+}
+
 export function buildCarrierWebhookResponseLog(input: {
   correlationId: string;
   status: number;
   ackCategory: CarrierWebhookAckCategory;
   elapsedMs: number;
   responseBodyByteLength: number;
+  httpReason?: string;
 }): CarrierWebhookResponseLog {
   return {
     event: "carrier_webhook_response",
@@ -137,6 +212,7 @@ export function buildCarrierWebhookResponseLog(input: {
     ackCategory: input.ackCategory,
     elapsedMs: input.elapsedMs,
     responseBodyByteLength: input.responseBodyByteLength,
+    ...(input.httpReason ? { httpReason: sanitizeExceptionText(input.httpReason, 80) } : {}),
   };
 }
 
@@ -180,4 +256,30 @@ export function logCarrierWebhookRequestStart(log: CarrierWebhookRequestLog): vo
 
 export function logCarrierWebhookResponseComplete(log: CarrierWebhookResponseLog): void {
   console.info("[carrier-webhook-diag]", serializeCarrierWebhookResponseLog(log));
+}
+
+function pickStageLogFields(record: CarrierWebhookStageLog): Record<string, unknown> {
+  const safe: Record<string, unknown> = {};
+  for (const [key, val] of Object.entries(record)) {
+    if (!STAGE_LOG_ALLOWLIST.has(key)) continue;
+    if (typeof val === "object" && val !== null) continue;
+    safe[key] = val;
+  }
+  return sanitizeCarrierWebhookLogRecord(safe);
+}
+
+export function logCarrierWebhookStage(log: CarrierWebhookStageLog): void {
+  console.info("[carrier-webhook-diag]", JSON.stringify(pickStageLogFields(log)));
+}
+
+export function logCarrierWebhookException(log: CarrierWebhookExceptionLog): void {
+  const safe = sanitizeCarrierWebhookLogRecord({
+    event: log.event,
+    correlationId: log.correlationId,
+    stage: log.stage,
+    errorName: log.errorName,
+    errorMessage: log.errorMessage,
+    ...(log.errorStack ? { errorStack: log.errorStack } : {}),
+  });
+  console.error("[carrier-webhook-diag]", JSON.stringify(safe));
 }

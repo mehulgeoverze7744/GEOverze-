@@ -59,9 +59,102 @@ export function isShiprocketOfficialDocumentationDemoPayload(
   );
 }
 
+/** Numeric status ids in live JSON may arrive as strings; coerced before comparison. */
+export function shiprocketWebhookStatusIdMatches(value: unknown, expected: number): boolean {
+  if (value === expected) return true;
+  if (typeof value === "number" && Number.isFinite(value)) return value === expected;
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (!trimmed) return false;
+    const n = Number(trimmed);
+    return Number.isFinite(n) && n === expected;
+  }
+  return false;
+}
+
+export type DownloadedSampleMatchDiagnostics = {
+  matches: boolean;
+  awbOk: boolean;
+  orderIdOk: boolean;
+  currentStatusOk: boolean;
+  shipmentStatusOk: boolean;
+  currentStatusIdOk: boolean;
+  shipmentStatusIdOk: boolean;
+  channelOrderIdOk: boolean;
+  channelOk: boolean;
+  courierNameOk: boolean;
+  scansIsArray: boolean;
+  scansLength: number;
+};
+
+/** Privacy-safe field-level match flags for dashboard / carrier diagnostics (no field values). */
+export function downloadedSampleMatchDiagnostics(
+  envelope: ShiprocketWebhookEnvelope,
+): DownloadedSampleMatchDiagnostics {
+  const awb = shiprocketWebhookString(envelope.awb);
+  const orderId = shiprocketWebhookString(envelope.order_id);
+  const currentStatus = shiprocketWebhookString(envelope.current_status);
+  const shipmentStatus = shiprocketWebhookString(envelope.shipment_status);
+  const channelOrderId = shiprocketWebhookString(envelope.channel_order_id);
+  const channel = shiprocketWebhookString(envelope.channel);
+  const courierName = shiprocketWebhookString(envelope.courier_name);
+  const scans = envelope.scans;
+  const scansIsArray = Array.isArray(scans);
+  const scansLength = scansIsArray ? scans.length : 0;
+
+  const awbOk = awb === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.awb;
+  const orderIdOk = orderId === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.order_id;
+  const currentStatusOk =
+    currentStatus === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.current_status;
+  const shipmentStatusOk =
+    shipmentStatus === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.shipment_status;
+  const currentStatusIdOk = shiprocketWebhookStatusIdMatches(
+    envelope.current_status_id,
+    SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.current_status_id,
+  );
+  const shipmentStatusIdOk = shiprocketWebhookStatusIdMatches(
+    envelope.shipment_status_id,
+    SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.shipment_status_id,
+  );
+  const channelOrderIdOk =
+    channelOrderId === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.channel_order_id;
+  const channelOk = channel === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.channel;
+  const courierNameOk =
+    courierName === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.courier_name;
+  const scansOk = scansIsArray && scansLength > 0;
+
+  const matches =
+    awbOk &&
+    orderIdOk &&
+    currentStatusOk &&
+    shipmentStatusOk &&
+    currentStatusIdOk &&
+    shipmentStatusIdOk &&
+    channelOrderIdOk &&
+    channelOk &&
+    courierNameOk &&
+    scansOk;
+
+  return {
+    matches,
+    awbOk,
+    orderIdOk,
+    currentStatusOk,
+    shipmentStatusOk,
+    currentStatusIdOk,
+    shipmentStatusIdOk,
+    channelOrderIdOk,
+    channelOk,
+    courierNameOk,
+    scansIsArray,
+    scansLength,
+  };
+}
+
 /**
- * Shiprocket dashboard "download sample" webhook (exact placeholder fields + 11 scan rows).
- * Every identifying field must match — not AWB/status alone.
+ * Shiprocket dashboard "download sample" webhook (placeholder fields + scan history array).
+ * Every identifying field must match — not AWB/status alone. Live dashboard tests may send
+ * fewer scan rows than the static API doc export (length is not used for identification).
  */
 export const SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS = {
   awb: "59629792084",
@@ -79,29 +172,7 @@ export const SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS = {
 export function isShiprocketDownloadedDocumentationSamplePayload(
   envelope: ShiprocketWebhookEnvelope,
 ): boolean {
-  const awb = shiprocketWebhookString(envelope.awb);
-  const orderId = shiprocketWebhookString(envelope.order_id);
-  const currentStatus = shiprocketWebhookString(envelope.current_status);
-  const shipmentStatus = shiprocketWebhookString(envelope.shipment_status);
-  const channelOrderId = shiprocketWebhookString(envelope.channel_order_id);
-  const channel = shiprocketWebhookString(envelope.channel);
-  const courierName = shiprocketWebhookString(envelope.courier_name);
-  const scans = envelope.scans;
-
-  return (
-    awb === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.awb &&
-    orderId === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.order_id &&
-    currentStatus === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.current_status &&
-    shipmentStatus === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.shipment_status &&
-    envelope.current_status_id === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.current_status_id &&
-    envelope.shipment_status_id ===
-      SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.shipment_status_id &&
-    channelOrderId === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.channel_order_id &&
-    channel === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.channel &&
-    courierName === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.courier_name &&
-    Array.isArray(scans) &&
-    scans.length === SHIPROCKET_DOWNLOADED_DOC_SAMPLE_IDENTIFIERS.scansLength
-  );
+  return downloadedSampleMatchDiagnostics(envelope).matches;
 }
 
 /** Authenticated connectivity probes that must not touch the database. */

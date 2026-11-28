@@ -11,10 +11,13 @@ import {
   createCarrierWebhookCorrelationId,
   hasCarrierWebhookApiKeyHeader,
   hasCarrierWebhookHmacHeader,
+  logCarrierWebhookException,
   logCarrierWebhookRequestStart,
   logCarrierWebhookResponseComplete,
+  logCarrierWebhookStage,
   normalizeCarrierWebhookContentType,
   normalizeCarrierWebhookPathname,
+  sanitizeExceptionForLog,
   type CarrierWebhookAckCategory,
 } from "./shiprocketWebhookDiagnostics.server.ts";
 
@@ -67,8 +70,13 @@ export async function handleShiprocketWebhookHttpRequest(request: Request): Prom
     }),
   );
 
-  const complete = (status: number, body: Record<string, unknown>, ackCategory: CarrierWebhookAckCategory) => {
+  const complete = (
+    status: number,
+    body: Record<string, unknown>,
+    ackCategory: CarrierWebhookAckCategory,
+  ) => {
     const responseBody = JSON.stringify(body);
+    const httpReason = typeof body.reason === "string" ? body.reason : undefined;
     logCarrierWebhookResponseComplete(
       buildCarrierWebhookResponseLog({
         correlationId,
@@ -76,6 +84,7 @@ export async function handleShiprocketWebhookHttpRequest(request: Request): Prom
         ackCategory,
         elapsedMs: elapsedMsSince(startedAt),
         responseBodyByteLength: bodyUtf8ByteLength(responseBody),
+        httpReason,
       }),
     );
     return shiprocketWebhookJsonResponse(status, body);
@@ -86,18 +95,41 @@ export async function handleShiprocketWebhookHttpRequest(request: Request): Prom
   }
 
   try {
+    logCarrierWebhookStage({
+      event: "carrier_webhook_stage",
+      correlationId,
+      stage: "request_read",
+      authOk: false,
+    });
+
     const token = request.headers.get("x-api-key") ?? request.headers.get("x-shiprocket-token");
     const signature = request.headers.get("x-shiprocket-hmac") ?? request.headers.get("x-signature");
 
     const result = await handleShiprocketWebhookRequest({
       rawBody,
       headers: { token, signature },
+      diagnostics: { correlationId },
+    });
+
+    logCarrierWebhookStage({
+      event: "carrier_webhook_stage",
+      correlationId,
+      stage: "response_map",
+      authOk: true,
+      processOk: result.status < 400,
     });
 
     return complete(result.status, result.body, result.ackCategory);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "unknown_error";
-    console.error("[shiprocket-webhook] unhandled handler error", message);
+    const sanitized = sanitizeExceptionForLog(error);
+    logCarrierWebhookException({
+      event: "carrier_webhook_exception",
+      correlationId,
+      stage: "unhandled",
+      errorName: sanitized.name,
+      errorMessage: sanitized.message,
+      errorStack: sanitized.stack,
+    });
     return complete(
       503,
       {

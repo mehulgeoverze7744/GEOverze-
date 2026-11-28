@@ -9,6 +9,7 @@ import {
   hasCarrierWebhookHmacHeader,
   normalizeCarrierWebhookPathname,
   sanitizeCarrierWebhookLogRecord,
+  sanitizeExceptionForLog,
   serializeCarrierWebhookRequestLog,
   serializeCarrierWebhookResponseLog,
 } from "./shiprocketWebhookDiagnostics.server.ts";
@@ -173,6 +174,15 @@ test("http handler diagnostics never echo webhook token in logs", async () => {
     if (prevToken) process.env["SHIPROCKET_WEBHOOK_TOKEN"] = prevToken;
     else delete process.env["SHIPROCKET_WEBHOOK_TOKEN"];
   }
+});
+
+test("sanitizeExceptionForLog redacts inline secrets", () => {
+  const sanitized = sanitizeExceptionForLog(
+    new Error("Unauthorized x-api-key Bearer eyJhbGciOiJIUzI1NiJ9.fail"),
+  );
+  assert.equal(sanitized.message.includes("x-api-key"), false);
+  assert.equal(sanitized.message.includes("Bearer"), false);
+  assert.equal(sanitized.message.includes("[redacted]"), true);
 });
 
 test("non-POST carrier webhook logs method and internal_error category", async () => {
