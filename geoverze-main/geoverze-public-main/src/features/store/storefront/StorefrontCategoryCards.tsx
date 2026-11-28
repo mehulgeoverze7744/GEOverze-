@@ -58,7 +58,7 @@ export function StorefrontCategoryCards({
       <CategoryCard id="tshirts" name="Tees">
         {() => (
           <>
-            <span className="tees-banner absolute inset-0 overflow-hidden rounded-[inherit]">
+            <span className="tees-banner relative absolute inset-0 overflow-hidden rounded-[inherit]">
               <img
                 src={SF_ASSETS.categoryTees.src}
                 width={SF_ASSETS.categoryTees.width}
@@ -73,7 +73,9 @@ export function StorefrontCategoryCards({
               aria-hidden
               className="pointer-events-none absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-t from-black/55 via-black/20 to-transparent"
             />
-            <span className={cn(LABEL, "absolute bottom-[9.8%] left-[8%] z-[1]")}>TEES</span>
+            <span className="sf-category-card__label-wrap pointer-events-none absolute inset-0 z-[1]">
+              <span className={cn(LABEL, "absolute bottom-[9.8%] left-[8%]")}>TEES</span>
+            </span>
           </>
         )}
       </CategoryCard>
@@ -90,10 +92,12 @@ export function StorefrontCategoryCards({
               decoding="async"
               className="absolute inset-0 h-full w-full -translate-y-[3.6%] scale-[1.098] object-cover transition-transform duration-500 ease-out group-hover/cat:scale-[1.13] motion-reduce:transition-none"
             />
-            <span className={cn(LABEL, "absolute bottom-[8.9%] left-[9%]")}>
-              HOODIES &amp;
-              <br />
-              SWEATSHIRTS
+            <span className="sf-category-card__label-wrap pointer-events-none absolute inset-0 z-[1]">
+              <span className={cn(LABEL, "absolute bottom-[8.9%] left-[9%]")}>
+                HOODIES &amp;
+                <br />
+                SWEATSHIRTS
+              </span>
             </span>
           </>
         )}
@@ -131,10 +135,10 @@ export function StorefrontCategoryCards({
                   : "absolute inset-0 bg-[rgba(196,196,196,0.11)] backdrop-blur-[21px]"
               }
             />
-            <span className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-4 text-center">
+            <span className="sf-category-card__label-wrap absolute inset-0 flex flex-col items-center justify-center gap-2 px-4 text-center">
               <span className={LABEL}>ACCESSORIES</span>
               {soon || accessoriesComingSoon ? (
-                <span className="text-[clamp(0.78rem,1.4vw,1.05rem)] font-bold uppercase tracking-[0.28em] text-white">
+                <span className="sf-category-card__label--soon text-[clamp(0.78rem,1.4vw,1.05rem)] font-bold uppercase tracking-[0.28em] text-white">
                   COMING SOON
                 </span>
               ) : null}

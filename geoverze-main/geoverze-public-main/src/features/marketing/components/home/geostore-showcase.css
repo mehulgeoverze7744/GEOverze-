@@ -158,6 +158,63 @@
   .geostore-showcase .sf-category-card:nth-child(3) img {
     object-position: 50% 50%;
   }
+
+  /* Homepage mobile — centered, smaller category typography (desktop + Gstore unchanged). */
+  #gvrze-home .geostore-showcase .sf-category-card__label-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    text-align: center;
+  }
+
+  #gvrze-home .geostore-showcase .sf-category-card__label-wrap .sf-category-card__label {
+    position: static;
+    bottom: auto;
+    left: auto;
+    width: 100%;
+    max-width: 18rem;
+    text-align: center;
+    text-shadow: 0 1px 12px rgb(0 0 0 / 0.45);
+  }
+
+  #gvrze-home .geostore-showcase .sf-category-card:nth-child(1) .sf-category-card__label {
+    font-size: clamp(1.25rem, 5.4vw, 1.375rem);
+    letter-spacing: 0.14em;
+    line-height: 1.15;
+  }
+
+  #gvrze-home .geostore-showcase .sf-category-card:nth-child(2) .sf-category-card__label {
+    font-size: clamp(1.125rem, 4.8vw, 1.25rem);
+    letter-spacing: 0.12em;
+    line-height: 1.12;
+  }
+
+  #gvrze-home .geostore-showcase .sf-category-card:nth-child(3) .sf-category-card__label {
+    font-size: clamp(1.1875rem, 5vw, 1.3125rem);
+    letter-spacing: 0.14em;
+    line-height: 1.15;
+  }
+
+  #gvrze-home .geostore-showcase .sf-category-card__label--soon {
+    font-size: clamp(0.75rem, 3.2vw, 0.875rem);
+    letter-spacing: 0.22em;
+    line-height: 1.2;
+    text-shadow: 0 1px 10px rgb(0 0 0 / 0.4);
+  }
+
+  #gvrze-home .geostore-showcase .sf-category-card:nth-child(1) .tees-banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgb(0 0 0 / 0.12) 0%,
+      rgb(0 0 0 / 0.22) 45%,
+      rgb(0 0 0 / 0.38) 100%
+    );
+    pointer-events: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
